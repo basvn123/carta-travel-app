@@ -299,6 +299,7 @@
   --rate-soft:    var(--text-3);
   --rate-bg:      var(--surface-sunken);
   --green:        #3f6332;       /* good news text: 6.28 on stone */
+  --owe:          #b3402a;       /* a balance that is owed, the Reiskas bar and figure (G15): 4.9 on stone, 5.7 on paper */
   --danger:       #a12a1c;       /* destructive, always with words: 6.43 on stone */
   --danger-dark:  #86200f;
   --status-success: #10b981;     /* indicator only */

@@ -501,29 +501,31 @@
 .mt-tl-next { font-weight: 600; color: var(--select-ink); }
 .mt-tl-ticket { display: inline-flex; align-items: center; gap: 4px; color: var(--text); }
 
-/* Spent today: the figure, the plan line, the bar by category. */
-/* Spent today: a column of the card with a hairline, not a sunken card. */
-.mt-spend { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) 0 0; border-top: 1px solid var(--border-soft); }
-.mt-spend-h { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.mt-spend-fig { display: flex; align-items: baseline; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.mt-spend-fig .money { font-size: var(--text-title); font-weight: 700; color: var(--text); }
-.mt-spend-plan, .mt-spend-none, .mt-spend-help { margin: 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
-.mt-spend-bar { display: flex; gap: 1px; height: 8px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface); }
-.mt-spend-bar i { display: block; min-width: 4px; }
-.mt-spend-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; font-size: var(--text-caption); color: var(--text-2); }
-.mt-spend-legend li { display: inline-flex; align-items: center; gap: 6px; }
-.mt-spend-legend li .money { color: var(--text); }
-.mt-spend-legend i { width: 8px; height: 8px; border-radius: var(--radius-pill); }
-/* Money groups in the formation's paint: food beige with its edge, getting
-   around umber, the rest ink tints; the legend always names them. */
-.mt-spend .is-food { background: var(--wagon-food); outline: 1px solid var(--wagon-food-edge); outline-offset: -1px; }
-.mt-spend .is-transport { background: var(--action); }
-.mt-spend .is-activities { background: var(--umber-300); }
-.mt-spend .is-other, .mt-spend .is-stay, .mt-spend .is-flights { background: var(--edge); }
-.mt-spend .btn { align-self: flex-start; }
-.mt-spend-form { display: flex; flex-direction: column; gap: var(--space-2); }
-.mt-spend-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-2); }
-.mt-spend-foot { display: flex; gap: var(--space-2); }
+/* Uitgaven (G15): one quiet row that opens the spending page; no figures
+   here (owner, 2026-11-21). The page's own styles are in 72-spend.css. */
+.mt-spend-door {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: 0 var(--space-1);
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  font-family: var(--ui);
+  font-size: var(--text-lead);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.mt-spend-door:hover { background: var(--select-row); }
+.mt-spend-door-ico { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--action-press); }
+.mt-spend-door-t { flex: 1; min-width: 0; }
+.mt-spend-door > svg { color: var(--text-3); }
 
 /* Quick tiles: kit secondary buttons laid out as an icon over two lines. */
 .mt-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }

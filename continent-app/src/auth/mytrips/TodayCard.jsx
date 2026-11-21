@@ -1,14 +1,12 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, ChipGroup, Field, IconButton, Money } from '../../components/ui/index.js';
+import { Button, IconButton, Money } from '../../components/ui/index.js';
 import {
   SunIcon, PartSunIcon, CloudIcon, FogIcon, RainIcon, DrizzleIcon, SnowIcon, StormIcon,
-  BedIcon, CheckIcon, PlusIcon, TicketIcon, CalendarIcon, CameraIcon, FriendsIcon,
+  BedIcon, CheckIcon, TicketIcon, CalendarIcon, CameraIcon, FriendsIcon,
 } from '../../components/Icons.jsx';
 import { useForecast } from '../../lib/weather.js';
-import { toEur } from '../../lib/currency.js';
-import { formatMoney } from '../../lib/money.js';
-import { spendOnDay, tripStops } from '../../lib/myTrips.js';
+import { tripStops } from '../../lib/myTrips.js';
 import { dayPlaceNames } from '../../planner/trip/dayNames.js';
 import { ideasOnDay } from '../../planner/trip/ownIdeas.js';
 import { useTripDayStore } from '../../planner/trip/useTripDayStore.js';
@@ -17,13 +15,15 @@ import { readPhoto } from '../PastTripForm.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../../components/Icons.jsx';
+import { WalletGlyph } from './spend/icons.jsx';
+
+// G15: the Uitgaven page loads with its own chunk, when it is opened.
+const SpendPage = lazy(() => import('./spend/SpendPage.jsx'));
 
 const SKY = {
   sun: SunIcon, partsun: PartSunIcon, cloud: CloudIcon, fog: FogIcon,
   rain: RainIcon, drizzle: DrizzleIcon, snow: SnowIcon, storm: StormIcon,
 };
-/** What a spend on the road is, in the past-trip memory's own words. */
-const DAY_CATS = ['food', 'transport', 'activities', 'other'];
 const DONE_KEY = 'carta.mytrips.done.v1';
 const readDone = () => { try { return JSON.parse(localStorage.getItem(DONE_KEY) || '{}') || {}; } catch { return {}; } };
 const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v)); } catch { /* private mode */ } };
@@ -34,9 +34,10 @@ const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v
  * timeline from the day plans (places picked in the day planner, the
  * traveller's own ideas for the day, and booked things put on the day, which
  * carry a ticket mark), each marked done by the traveller, the first not done
- * being next; what was spent today from the expense ledger, against the
- * plan's food and drink a person a day, with a bar by category and Add a
- * spend; then quick tiles for the bookings, tomorrow, photos and the crew.
+ * being next; the quiet "Uitgaven" row (G15), which opens the spending page
+ * with today's spends, the food plan tick, adding by keypad, speech or a
+ * receipt, and the Reiskas; then quick tiles for the bookings, tomorrow,
+ * photos and the crew.
  * A part with no data is not drawn.
  *
  *   plan, today          the trip row and lib/myTrips.tripToday()
@@ -45,6 +46,7 @@ const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v
  */
 export function TodayCard({
   plan, today, destinations = {}, figure = null, todayIso, crewNames = '', spendLabels = {},
+  title = '', img = null, userId = null, openSpend = false,
   onPlanDay, onOpenTrip, onCrew, onPhotoAdded,
 }) {
   const { t } = useI18n();
@@ -84,31 +86,8 @@ export function TodayCard({
   };
   const dayWords = String(extras.dayNotes?.[today.dayNum] || '').trim();
 
-  // What was spent today, a person, against the plan's food and drink.
-  const head = Math.max(1, figure?.party || plan.choices?.groupSize || 1);
-  const spent = useMemo(() => spendOnDay(extras.expenses, todayIso, toEur), [extras.expenses, todayIso]);
-  const pp = spent.total / head;
-  const foodPP = (spent.byCat.food || 0) / head;
-  const plannedFood = figure?.foodDayPP || null;
-  const cats = Object.entries(spent.byCat).filter(([, v]) => v > 0);
-
-  // Add a spend: one line in the trip's own expense ledger, dated today.
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ desc: '', amount: '', cat: 'food' });
-  const amount = Number(String(form.amount).replace(',', '.'));
-  const addSpend = (e) => {
-    e.preventDefault();
-    if (!(amount > 0)) return;
-    saveExtras({
-      ...extras,
-      expenses: [...(extras.expenses || []), {
-        id: `${Date.now()}`, desc: form.desc.trim() || spendLabels[form.cat] || '', amount, currency: 'EUR',
-        paidBy: 0, sharers: null, date: todayIso, cat: form.cat,
-      }],
-    });
-    setForm({ desc: '', amount: '', cat: form.cat });
-    setAdding(false);
-  };
+  // Uitgaven (G15): the page holds the spends, the food plan and the kas.
+  const [spendOpen, setSpendOpen] = useState(openSpend);
 
   // Photos go to the trip's memory, marked with the day they were taken.
   const fileRef = useRef(null);
@@ -208,51 +187,29 @@ export function TodayCard({
       </div>
 
       <div className="mt-today-side">
-        <section className="mt-spend" aria-labelledby="mt-spend-h">
-          <h4 className="mt-spend-h" id="mt-spend-h">{t('mt.spendToday')}</h4>
-          {spent.total > 0 ? (
-            <>
-              <p className="mt-spend-fig">
-                <Money value={pp} precision="cents" />
-                <span>{t('mt.aPerson')}</span>
-              </p>
-              {plannedFood > 0 && (
-                <p className="mt-spend-plan">{t('mt.foodVsPlan', { spent: formatMoney(foodPP), plan: formatMoney(plannedFood) })}</p>
-              )}
-              <span className="mt-spend-bar" aria-hidden="true">
-                {cats.map(([c, v]) => <i key={c} className={`is-${c}`} style={{ flexGrow: v }} />)}
-              </span>
-              <ul className="mt-spend-legend">
-                {cats.map(([c, v]) => (
-                  <li key={c}><i className={`is-${c}`} aria-hidden="true" />{spendLabels[c] || c} <Money value={v / head} precision="cents" /></li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <p className="mt-spend-none">{t('mt.spendNone')}</p>
-          )}
-          {adding ? (
-            <form className="mt-spend-form" onSubmit={addSpend}>
-              <ChipGroup label={t('mt.spendKind')} className="mt-chips">
-                {DAY_CATS.map((c) => (
-                  <Chip key={c} kind="choice" selected={form.cat === c} onClick={() => setForm((f) => ({ ...f, cat: c }))}>{spendLabels[c] || c}</Chip>
-                ))}
-              </ChipGroup>
-              <div className="mt-spend-fields">
-                <Field label={t('mt.spendWhat')} value={form.desc} onChange={(e) => setForm((f) => ({ ...f, desc: e.target.value }))} />
-                <Field label={t('mt.spendAmount')} inputMode="decimal" value={form.amount}
-                  onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value.replace(/[^\d.,]/g, '') }))} />
-              </div>
-              <p className="mt-spend-help">{t('mt.spendWhole', { n: head })}</p>
-              <div className="mt-spend-foot">
-                <Button type="submit" disabled={!(amount > 0)}>{t('mt.spendAdd')}</Button>
-                <Button variant="quiet" onClick={() => setAdding(false)}>{t('pf.cancel')}</Button>
-              </div>
-            </form>
-          ) : (
-            <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={() => setAdding(true)}>{t('mt.addSpend')}</Button>
-          )}
-        </section>
+        <Pressable type="button" className="mt-spend-door" onClick={() => setSpendOpen(true)} aria-haspopup="dialog">
+          <span className="mt-spend-door-ico"><WalletGlyph size={18} /></span>
+          <span className="mt-spend-door-t">{t('sp.title')}</span>
+          <ChevronRightIcon size={18} />
+        </Pressable>
+        {spendOpen && (
+          <Suspense fallback={null}>
+            <SpendPage
+              planId={plan.id}
+              extras={extras}
+              saveExtras={saveExtras}
+              todayIso={todayIso}
+              startIso={plan.start_date || null}
+              title={title || city}
+              img={img}
+              groupSize={Math.max(1, figure?.party || plan.choices?.groupSize || 1)}
+              plannedFood={figure?.foodDayPP || null}
+              userId={userId}
+              onClose={() => setSpendOpen(false)}
+              onCrew={onCrew}
+            />
+          </Suspense>
+        )}
 
         <div className="mt-quick">
           {bookedCount > 0 && (

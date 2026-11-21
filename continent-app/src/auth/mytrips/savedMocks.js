@@ -18,10 +18,13 @@
  *   years      14 past trips 2022 to 2026, 17 countries, spend on 10, grades on 13
  *   loading    the trips never arrive
  *   error      the trips cannot be read
+ *   spend      a trip in Portugal on day 4 of 7 with Sam, Jo and Lien, and
+ *              their spends and Reiskas (G15, the Uitgaven page)
  */
 import { addDaysIso } from '../../lib/myTrips.js';
+import { kasPeople, makeSpend } from '../../lib/spend/model.js';
 
-export const MOCK_VARIANTS = ['guest', 'empty', 'one', 'statement', 'next', '1', 'drafts', 'nopast', 'firstpast', 'lots', 'years', 'loading', 'error'];
+export const MOCK_VARIANTS = ['guest', 'empty', 'one', 'statement', 'next', '1', 'drafts', 'nopast', 'firstpast', 'lots', 'years', 'loading', 'error', 'spend'];
 
 const stopsAt = (list) => list.map(([id, a, b]) => ({ destination_id: id, city: '', country: '', arrive_date: a, depart_date: b }));
 const rel = (list) => stopsAt(list.map(([id, a, b]) => [id, addDaysIso(a), addDaysIso(b)]));
@@ -100,3 +103,29 @@ export const LOTS_WATCH = [
   { id: 'day:gem:bled', kind: 'day', ref: 'gem:bled', label: 'Bled', placeKey: 'dest:gem:bled', unitNote: 'day, each', source: 'Carta, bed and food in September', alert: false, pts: hist([[-79, 101], [-51, 99], [-37, 99], [-23, 97], [-9, 96], [0, 94]]) },
   { id: 'stay:LJU:celica', kind: 'stay', ref: 'LJU:celica', label: 'Hostel Celica, Ljubljana', placeKey: 'dest:LJU', unitNote: 'night', source: 'Hostelworld, 1 bed in a dorm', alert: false, pts: hist([[-37, 38], [-30, 38], [-23, 41], [-9, 44], [0, 44]]) },
 ];
+
+/* G15: the Uitgaven page's sample, the approved prototype's own trip. */
+export const SPEND_PLANS = [
+  { id: 'msp1', label: 'Portugal', cities: ['Lisbon', 'Sintra'], countries: ['Portugal'], start_date: addDaysIso(-3), end_date: addDaysIso(3), destination_ids: ['LIS'], stops: rel([['LIS', -3, 3]]), choices: { groupSize: 4 } },
+];
+
+/** The sample trip's extras: the crew and seven spends over three days. */
+export function spendExtras() {
+  const people = [{ name: 'Sam', userId: null }, { name: 'Jo', userId: null }, { name: 'Lien', userId: null }];
+  const crew = kasPeople({ people });
+  const at = (day, h) => { const d = new Date(); d.setDate(d.getDate() + day); d.setHours(h, 0, 0, 0); return `${d.getTime()}`; };
+  const row = (day, h, o) => makeSpend({ currency: 'EUR', rate: 1, src: 'hand', ...o }, crew, { id: at(day, h), date: addDaysIso(day) });
+  return {
+    people,
+    expenses: [
+      row(-2, 20, { amount: 120, cat: 'other', desc: 'Extra nacht hostel', payer: 'me', mode: 'all' }),
+      row(-1, 10, { amount: 80, cat: 'activities', desc: 'Pena-paleis', payer: 'me', mode: 'all' }),
+      row(-1, 20, { amount: 96, cat: 'food', desc: 'Diner Sintra', payer: 'p2', mode: 'all' }),
+      row(0, 9, { amount: 9.6, cat: 'food', desc: 'Pastéis de Belém', payer: 'me', mode: 'all' }),
+      row(0, 10, { amount: 12, cat: 'transport', desc: 'Tram 28', payer: 'p0', mode: 'all' }),
+      row(0, 13, { amount: 58, cat: 'food', desc: 'Lunch Time Out Market', payer: 'p1', mode: 'each', shares: { me: 14.5, p0: 18, p1: 12, p2: 13.5 } }),
+      row(0, 15, { amount: 8.5, cat: 'other', desc: 'Zonnebrand', payer: 'me', mode: 'me' }),
+    ],
+    kas: { settled: [], nudged: {}, remind: {} },
+  };
+}

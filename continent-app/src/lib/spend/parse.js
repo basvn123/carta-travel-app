@@ -119,7 +119,7 @@ function fold(vals) {
 
 // A currency by the word or sign heard. "cent" is a number in French.
 const CURRENCY_TOKEN = {
-  '€': 'EUR', eur: 'EUR', euro: 'EUR', euros: 'EUR', "euro's": 'EUR',
+  '\u20ac': 'EUR', eur: 'EUR', euro: 'EUR', euros: 'EUR', "euro's": 'EUR',
   '£': 'GBP', gbp: 'GBP', pond: 'GBP', ponden: 'GBP', pound: 'GBP', pounds: 'GBP', pfund: 'GBP', livre: 'GBP', livres: 'GBP',
   libra: 'GBP', libras: 'GBP', sterlina: 'GBP', sterline: 'GBP',
   chf: 'CHF', frank: 'CHF', franken: 'CHF', franc: 'CHF', francs: 'CHF', franco: 'CHF', francos: 'CHF', franchi: 'CHF',
@@ -136,14 +136,14 @@ const ARTICLES = { en: [], nl: ['een'], de: ['ein', 'eine', 'einen'], fr: ['un',
 
 /**
  * The numbers in a text: [{ value, words: [start, end) token range, digits }].
- * Digits ("12,50", "12.50", "€12") and number words both count.
+ * Digits ("12,50", "12.50", "\u20ac12") and number words both count.
  */
 function numberGroups(tokens, lang) {
   const out = [];
   let i = 0;
   while (i < tokens.length) {
     const w = tokens[i];
-    const dig = w.match(/^€?(\d{1,6})(?:[.,](\d{1,2}))?€?$/);
+    const dig = w.match(/^\u20ac?(\d{1,6})(?:[.,](\d{1,2}))?\u20ac?$/);
     if (dig) {
       const value = Number(dig[1]) + (dig[2] ? Number(dig[2].padEnd(2, '0')) / 100 : 0);
       out.push({ value, from: i, to: i + 1, digits: true, decimals: !!dig[2] });
@@ -249,7 +249,7 @@ const FILLER = new Set([
 
 const norm = (s) => String(s || '').toLowerCase().normalize('NFC');
 const tokenize = (s) => norm(s)
-  .replace(/(\d)\s*€/g, '$1 €').replace(/€\s*(\d)/g, '€ $1')
+  .replace(/(\d)\s*\u20ac/g, '$1 \u20ac').replace(/\u20ac\s*(\d)/g, '\u20ac $1')
   .replace(/[!?;:"()]/g, ' ')
   .replace(/(\D)[.,](\s|$)/g, '$1 ')
   .replace(/-/g, ' ')
@@ -355,7 +355,7 @@ export function parseSpeech(text, lang = 'en', people = []) {
 
 const TOTAL_WORDS = /\b(total|totaal|totale|totaal bedrag|summe|gesamt|gesamtbetrag|endsumme|zu zahlen|te betalen|a pagar|importe|montant|net a payer|net à payer|à payer|ttc|totale euro|tot\.?|suma|sum|amount due|balance due|bar|contanti|pagato)\b/i;
 const NOT_TOTAL = /\b(subtotal|sub total|subtotaal|zwischensumme|sous total|sous-total|btw|vat|mwst|iva|tva|ust|tax|change|wisselgeld|rückgeld|retour|cambio|resto|rendu|korting|discount|rabatt|remise|descuento|sconto)\b/i;
-const MONEY_AT_END = /(-?\d{1,5}(?:[ .]\d{3})*[.,]\d{2})\s*(?:€|eur|euro|[a-z]{1,2})?\s*$/i;
+const MONEY_AT_END = /(-?\d{1,5}(?:[ .]\d{3})*[.,]\d{2})\s*(?:\u20ac|eur|euro|[a-z]{1,2})?\s*$/i;
 
 /**
  * A receipt's text as
@@ -372,7 +372,7 @@ export function parseReceipt(text) {
     const num = m[1].replace(/[ .](?=\d{3}\b)/g, '').replace(',', '.');
     const cents = Math.round(Number(num) * 100);
     if (!Number.isFinite(cents) || cents <= 0) return;
-    const label = l.slice(0, m.index).replace(/[€*:]+\s*$/, '').trim() || '';
+    const label = l.slice(0, m.index).replace(/[\u20ac*:]+\s*$/, '').trim() || '';
     lines.push({ label, cents, isTotal: TOTAL_WORDS.test(l) && !NOT_TOTAL.test(l) });
   });
   let total = null;
@@ -390,7 +390,7 @@ export function parseReceipt(text) {
   }
   const low = norm(text);
   let currency = null;
-  if (/€|\beur\b|\beuro/.test(low)) currency = 'EUR';
+  if (/\u20ac|\beur\b|\beuro/.test(low)) currency = 'EUR';
   else if (/£|\bgbp\b/.test(low)) currency = 'GBP';
   else if (/\bchf\b/.test(low)) currency = 'CHF';
   else if (/\bpln\b|zł/.test(low)) currency = 'PLN';

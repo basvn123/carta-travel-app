@@ -41,6 +41,7 @@ import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { seedWatch } from '../lib/watchStore.js';
 import {
   ONE_PLANS, STATEMENT_PLANS, FIRST_PAST_PLANS, FIRST_PAST_MEMS, YEARS_PLANS, YEARS_MEMS, LOTS_FAV_KEYS, LOTS_WATCH,
+  SPEND_PLANS, spendExtras,
 } from './mytrips/savedMocks.js';
 import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
@@ -177,6 +178,7 @@ function mockPlansFor(v) {
   if (v === 'statement') return STATEMENT_PLANS;
   if (v === 'firstpast') return FIRST_PAST_PLANS;
   if (v === 'years') return YEARS_PLANS;
+  if (v === 'spend') return SPEND_PLANS;
   if (v === 'drafts') return MOCK_PLANS.filter((p) => !p.start_date);
   if (v === 'nopast') return MOCK_PLANS.filter((p) => !p.end_date || p.end_date >= addDaysIso(0));
   if (v === 'next') return MOCK_PLANS.filter((p) => p.id !== 'mp6');
@@ -188,6 +190,7 @@ function seedMock() {
   const ownMems = MOCK_VARIANT === 'firstpast' ? FIRST_PAST_MEMS : MOCK_VARIANT === 'years' ? YEARS_MEMS : null;
   if (ownMems) Object.entries(ownMems).forEach(([id, m]) => { if (!loadMemory(id)) saveMemory(id, { ...emptyMemory(), ...m }, {}); });
   if (MOCK_VARIANT === 'lots') seedWatch(LOTS_WATCH);
+  if (MOCK_VARIANT === 'spend' && !hasTripExtras('msp1')) persistTripExtras('msp1', { ...loadTripExtras('msp1'), ...spendExtras() });
   if (!MOCK_DEFAULT_TRIPS) return;
   if (!hasTripExtras('mp6')) {
     const at = (h) => { const d = new Date(); d.setHours(h, 0, 0, 0); return `${d.getTime()}`; };
@@ -888,6 +891,9 @@ export function SavedTripsPanel({
         todayIso={todayIso}
         crewNames={planLocal[happening.id]?.crewLine || ''}
         spendLabels={spendLabels}
+        title={journeyParts(happening).title}
+        img={resolveImage({ ids: happening.destination_ids || [], cities: planCities(happening), countries: journeyParts(happening).countries })}
+        userId={user?.id || null}
         onPlanDay={(stopIndex, dayIndex) => onOpenDayPlan?.({ planId: happening.id, stopIndex, dayIndex })}
         onOpenTrip={() => onLoadTripPlan?.(happening.id)}
         onCrew={() => toggleShare(happening.id)}

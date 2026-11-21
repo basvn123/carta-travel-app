@@ -1144,17 +1144,6 @@
   font-weight: 800;
 }
 
-.mt-panel.is-trips .mt-spend {
-  padding: 0;
-  border-top: 0;
-}
-
-.mt-panel.is-trips .mt-spend-bar {
-  height: 12px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-}
-
 .mt-panel.is-trips .mt-quick {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
