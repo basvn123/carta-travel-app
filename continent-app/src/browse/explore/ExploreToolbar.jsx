@@ -14,25 +14,30 @@ import { countKey } from '../../lib/plural.js';
  * phone) and Filters. What it dropped as a repeat: the search chip (the field
  * shows it), the "Showing places in" hint and the second and third pill
  * styles. Share stays at the desktop row's right end; a phone has it in the
- * field. On the map (`mapView`) the row keeps Share only: Sort is the list
+ * field. On the map (`mapView`) the row keeps no tools: Sort is the list
  * sheet's or the column's head, Saved a quick chip on the map (judgement-4:
- * each control once).
+ * each control once), and Share stands beside List | Map from 1024 px (ExploreTab)
+ * or sits in the search field below it (ExploreBand). From 769 px on the map
+ * with no filter on, the row would be an empty band above the map, so it is
+ * not drawn (judgement-5).
  */
 export function ExploreToolbar({
   TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang, mapView = false,
   resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
 }) {
-  const tools = isDesktop ? (
+  const tools = isDesktop && !mapView ? (
     <>
-      {!mapView && sortMenu}
-      {!mapView && <SavedToggle on={showFavOnly} onChange={setShowFavOnly} t={t} />}
+      {sortMenu}
+      <SavedToggle on={showFavOnly} onChange={setShowFavOnly} t={t} />
       <IconButton className="xap-share" label={t('explore.toolShare')} onClick={shareView}>
         <HouseIcon.share size={18} />
       </IconButton>
     </>
   ) : null;
+  const shown = isDesktop ? deskChips(chips) : phoneChips(chips);
+  const bare = isDesktop && mapView && shown.length === 0;
   return (
-    <div className="xhead">
+    <div className={`xhead${bare ? ' is-bare' : ''}`}>
       {/* The page's one h1, only while this tab is the one showing: the
           tab stays mounted under Destinations (row T380-g). It says
           "Places", not "Places in Europe", which was wrong over a
@@ -43,9 +48,10 @@ export function ExploreToolbar({
           { n: new Intl.NumberFormat(lang).format(gridTotal) })}
       </span>
       {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
-      <AppliedRow t={t} desktop={isDesktop} count={filterCount}
-        chips={isDesktop ? deskChips(chips) : phoneChips(chips)}
-        onClearAll={resetAll} tools={tools} />
+      {!bare && (
+        <AppliedRow t={t} desktop={isDesktop} count={filterCount}
+          chips={shown} onClearAll={resetAll} tools={tools} />
+      )}
     </div>
   );
 }

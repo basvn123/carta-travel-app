@@ -95,7 +95,8 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   // map on a phone, the band floats over it: the field and Ask, then one
   // swipeable row with Filters first, the style and the settings. The
   // header, the tabs and the band's ground step aside (86-map-view.css).
-  const mapView = useMapViewOn() && places && !isDesktop;
+  const onMap = useMapViewOn() && places;
+  const mapView = onMap && !isDesktop;
 
   const [q, setQ] = React.useState('');
   const [open, setOpen] = React.useState(false);
@@ -302,7 +303,9 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                     <HouseIcon.close size={18} />
                   </IconButton>
                 )}
-                {results?.canShare && !open && !isDesktop && (
+                {/* A tablet's map has Share here too (judgement-5): the tab
+                    row has no room for it below 1024 px (80-band.css). */}
+                {results?.canShare && !open && (!isDesktop || onMap) && (
                   <IconButton className="band-in band-share" label={t('explore.toolShare')} onClick={dockShare}>
                     <HouseIcon.share size={20} />
                   </IconButton>

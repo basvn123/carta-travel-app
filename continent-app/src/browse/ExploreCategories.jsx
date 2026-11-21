@@ -60,7 +60,7 @@ function focusTabSoon(key) {
   requestAnimationFrame(step);
 }
 
-export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid', view, onView, onViewIntent }) {
+export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid', view, onView, onViewIntent, end = null }) {
   const row = variant === 'row';
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
@@ -92,18 +92,25 @@ export function ExploreCategories({ current, onPick, columns = 3, panelId, class
     // G12 round 2 (decision.md 6): on a desktop the row is one line with
     // the hairline under it, and the List | Map switch closes it at the
     // right when the tab passes `view` ('list' | 'map') and `onView(view)`;
-    // `onViewIntent` runs on hover or focus (the map's prefetch).
+    // `onViewIntent` runs on hover or focus (the map's prefetch). `end` (the
+    // map's Share, judgement-5) stands just before the switch, so the switch
+    // keeps its place between the list and the map.
     return (
       <div className="xcats-line">
         {tabs}
-        {onView && (
-          <span className="xcats-view-wrap" onPointerEnter={onViewIntent} onFocus={onViewIntent}>
-            <Segmented label={t('explore.viewAria')} size="sm" className="xcats-view"
-              value={view === 'map' ? 'map' : 'list'} onChange={onView}
-              options={[
-                { value: 'list', label: t('explore.viewList'), icon: <HouseIcon.list size={16} /> },
-                { value: 'map', label: t('explore.viewMap'), icon: <HouseIcon.map size={16} /> },
-              ]} />
+        {(onView || end) && (
+          <span className="xcats-end">
+            {end}
+            {onView && (
+              <span className="xcats-view-wrap" onPointerEnter={onViewIntent} onFocus={onViewIntent}>
+                <Segmented label={t('explore.viewAria')} size="sm" className="xcats-view"
+                  value={view === 'map' ? 'map' : 'list'} onChange={onView}
+                  options={[
+                    { value: 'list', label: t('explore.viewList'), icon: <HouseIcon.list size={16} /> },
+                    { value: 'map', label: t('explore.viewMap'), icon: <HouseIcon.map size={16} /> },
+                  ]} />
+              </span>
+            )}
           </span>
         )}
       </div>

@@ -40,6 +40,10 @@
 //              photo pin at Europe zoom, no bubble at 4.6, the match mark
 //              level with the figure, each control once, the quick row one
 //              line, a quick chip one filter, the style chip one line (--d-only)
+//   round E    judgement-5's fixes: from 769 px the map starts under the tabs
+//              with no empty row, Share once (with and without filters); the
+//              picked row in the column does not move; the phone map's
+//              settings row fades where it has more (--e-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -1006,9 +1010,81 @@ async function roundDPass() {
   }
 }
 
+// Fix round E (judgement-5), --e-only runs just this pass.
+const headJs = `(() => {
+  const r = (q) => document.querySelector(q)?.getBoundingClientRect();
+  const vis = (el) => { const b = el.getBoundingClientRect(); return b.width > 0 && b.height > 0; };
+  const tabs = r('.xcats-bar'); const map = r('.xcontent-map .xmap'); const xap = r('.xap');
+  const row = document.querySelector('.xcats-line .xcats-row');
+  return {
+    gap: tabs && map ? Math.round(map.top - tabs.bottom) : null,
+    xap: xap ? { top: Math.round(xap.top - tabs.bottom), bottom: Math.round(map.top - xap.bottom), h: Math.round(xap.height) } : null,
+    chips: document.querySelectorAll('.xap-chip').length, tools: document.querySelectorAll('.xap-tools').length,
+    shares: [...document.querySelectorAll('button[aria-label="Share"]')].filter(vis).map((b) => b.className.replace(/icon-btn(-plain)?/g, '').trim()),
+    tabsOver: row ? row.scrollWidth - row.clientWidth : null,
+  };
+})()`;
+async function roundEPass() {
+  for (const [w, h] of [[820, 1180], [1180, 820], [1440, 900]]) {
+    await guard(`roundE head ${w}`, async () => {
+      const { ctx, page, errors } = await boot(w, h, '?tab=map&xw=map');
+      const rest = await page.evaluate(headJs);
+      check(`roundE ${w}: no filter on, no applied row; the map starts within 16 px of the tabs`, !rest.xap && rest.gap != null && rest.gap >= 0 && rest.gap <= 16, JSON.stringify(rest));
+      // Below 1024 px Share is in the field (the tabs need the row), from
+      // 1024 it stands just before List | Map at the tab row's end.
+      const where = w < 1024 ? 'band-in band-share' : 'xcats-share';
+      check(`roundE ${w}: Share once, ${w < 1024 ? 'in the field' : 'beside List | Map'}`, rest.shares.length === 1 && rest.shares[0] === where, JSON.stringify(rest.shares));
+      if (w < 1024) check(`roundE ${w}: Share leaves the six tabs their room`, rest.tabsOver <= 0, String(rest.tabsOver));
+      if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `e-head-${w}-rest.png`) });
+      await page.locator('.xmap-quick [data-quick="water"]').click();
+      await page.waitForTimeout(1500);
+      await page.locator('.xmap-quick [data-quick="score8"]').click();
+      await page.waitForTimeout(1500);
+      const on = await page.evaluate(headJs);
+      check(`roundE ${w}: two filters on, the row shows their chips between the tabs and the map, no tools of its own`,
+        on.xap && on.chips === 2 && on.tools === 0 && on.xap.top >= 8 && on.xap.bottom >= 8, JSON.stringify(on));
+      check(`roundE ${w}: Share still once with filters on`, on.shares.length === 1 && on.shares[0] === where, JSON.stringify(on.shares));
+      if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `e-head-${w}-chips.png`) });
+      check(`roundE ${w}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    });
+  }
+  // The picked row keeps its content where it was (it moved 8 px left).
+  await guard('roundE pick 1440', async () => {
+    const { ctx, page } = await boot(1440, 900, '?tab=map&xw=map');
+    const row = page.locator('.mpp .xmr').nth(1);
+    const at = () => row.evaluate((el) => ({ sel: el.classList.contains('is-selected'), media: Math.round(el.querySelector('.xmr-media').getBoundingClientRect().left), name: Math.round(el.querySelector('.xmr-hit').getBoundingClientRect().left) }));
+    const before = await at();
+    await row.locator('.xmr-media').click({ force: true });
+    await page.waitForTimeout(1200);
+    const after = await at();
+    check('roundE 1440: a picked row in the column does not move its photo or name', after.sel && after.media === before.media && after.name === before.name, `${JSON.stringify(before)} -> ${JSON.stringify(after)}`);
+    await ctx.close();
+  });
+  // The phone map's settings row ends as the quick row does: a fade where
+  // there is more, none at the end.
+  for (const [w, h, lang] of [[390, 844, 'en'], [360, 640, 'nl']]) {
+    await guard(`roundE fade ${w} ${lang}`, async () => {
+      const { ctx, page } = await boot(w, h, '?tab=map&xw=map', lang);
+      const read = () => page.evaluate(() => {
+        const el = document.querySelector('.band.is-map .band-chips.is-swipe');
+        const m = getComputedStyle(el).maskImage || getComputedStyle(el).webkitMaskImage || 'none';
+        return { over: el.scrollWidth > el.clientWidth + 1, end: el.classList.contains('has-end'), masked: m !== 'none' };
+      });
+      const rest = await read();
+      check(`roundE ${w} ${lang}: the settings row fades at its end when it has more`, rest.masked && rest.over === rest.end, JSON.stringify(rest));
+      await page.evaluate(() => { const el = document.querySelector('.band.is-map .band-chips.is-swipe'); el.scrollLeft = el.scrollWidth; });
+      await page.waitForTimeout(400);
+      const end = await read();
+      check(`roundE ${w} ${lang}: scrolled to its end, no fade there`, !end.end, JSON.stringify(end));
+      await ctx.close();
+    });
+  }
+}
+
 const perf = {};
 // --layout-only skips the speed runs (a quick rerun of the layout checks).
-if (!flag('layout-only') && !flag('round2-only') && !flag('why-only') && !flag('d-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
+if (!flag('layout-only') && !flag('round2-only') && !flag('why-only') && !flag('d-only') && !flag('e-only')) for (const [w, h] of [[390, 844], [1440, 900]]) perf[`${w}x${h}`] = await speed(w, h);
 console.log('speed (CPU %dx, pan)', RATE, JSON.stringify(perf, null, 1));
 
 if (!PERF_ONLY) {
@@ -1017,12 +1093,14 @@ if (!PERF_ONLY) {
     check(`speed ${k}: no DOM price pins`, v.domPins === 0, `${v.domPins}`);
   }
   if (flag('d-only')) await roundDPass();
+  else if (flag('e-only')) await roundEPass();
   else {
     if (!flag('cards-only') && !flag('round2-only') && !flag('why-only')) for (const [w, h] of SIZES) await layoutChecks(w, h);
   if (!flag('round2-only') && !flag('why-only')) await cardPass();
   if (!flag('cards-only') && !flag('why-only')) await round2Pass();
   if (!flag('cards-only')) await whyPass();
   if (!flag('cards-only') && !flag('why-only')) await roundDPass();
+  if (!flag('cards-only') && !flag('why-only')) await roundEPass();
   }
 }
 

@@ -111,14 +111,14 @@
   .band.is-map .band-ask-word { display: none; }
   .band.is-phone.is-map > .band-strip { padding-top: var(--space-1); }
   /* One row of chips on the map: each a paper pill, the style on its mist,
-     Filters first with its umber edge; the row swipes, no fade over the map. */
+     Filters first with its umber edge; the row swipes and, like the quick
+     row under it, fades only on a side that has more (judgement-5: no hard
+     cut). The mask is the strip's own (80-band.css, SummaryChips' edges). */
   .band.is-map .band-chips.is-swipe {
     gap: var(--space-2);
     padding: 0 var(--space-3);
     background: transparent;
     scroll-snap-type: none;
-    -webkit-mask-image: none;
-    mask-image: none;
   }
   .band.is-map .band-chips.is-swipe .band-chip { padding: 0 var(--space-3); font-size: var(--text-label); }
   .band.is-map .band-chips.is-swipe .band-chip.is-style { margin-right: 0; }
@@ -485,7 +485,10 @@
   padding: var(--space-3) 0;
   border-bottom: var(--stroke-hair) solid var(--border-soft);
 }
-.explore-shell .xmr.is-selected { margin: 0 calc(-1 * var(--space-2)); padding-inline: var(--space-2); border-radius: var(--radius-panel); background: var(--select-bg); }
+/* As specific as the row rule above, so the padding holds against the
+   negative margin and the picked row's content stays put (judgement-5). */
+.explore-shell .xrow.xmr.is-selected,
+.explore-shell .xrows > .xrow.xmr.is-selected { margin: 0 calc(-1 * var(--space-2)); padding-inline: var(--space-2); border-radius: var(--radius-panel); background: var(--select-bg); }
 .explore-shell .xmr.is-linked .xmr-media { outline: var(--stroke-edge) solid var(--action); outline-offset: 2px; }
 .explore-shell .xmr-media { width: var(--xmr-w, 112px); height: 96px; overflow: hidden; border-radius: var(--radius-panel); background: var(--surface-sunken); }
 .explore-shell .xmr-media .xmr-img,

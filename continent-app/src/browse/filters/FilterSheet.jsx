@@ -12,6 +12,7 @@ import {
 } from './filterModel.js';
 import { filtersOpener } from './filtersStore.js';
 import { countKey } from '../../lib/plural.js';
+import { useI18n } from '../../i18n/index.jsx';
 import '../../styles/83-filters.css';
 
 /**
@@ -222,10 +223,13 @@ function Group({ id, label, children, className = '' }) {
 }
 
 /** An option's live count (G12 map view round 2): how many places the list
- *  would hold with it. A count of 0 greys the option out. */
+ *  would hold with it. A count of 0 greys the option out. Said in the app's
+ *  language, not the browser's: an English page on a Dutch browser read
+ *  "3.855" (judgement-5). */
 function Count({ n }) {
+  const { lang } = useI18n();
   if (n == null) return null;
-  return <span className={`flt-n${n === 0 ? ' is-zero' : ''}`}>{new Intl.NumberFormat().format(n)}</span>;
+  return <span className={`flt-n${n === 0 ? ' is-zero' : ''}`}>{new Intl.NumberFormat(lang).format(n)}</span>;
 }
 
 /** A row of toggle chips (several may be on): the kit's filter chips. */

@@ -973,6 +973,8 @@
     min-height: 0;
     margin: var(--space-3) calc(var(--page-gutter) - var(--page-inset)) 0;
   }
+  /* No applied row (judgement-5): the map starts one step under the tabs. */
+  .explore-shell.is-map .explore-wrap:has(> .xhead.is-bare) .xcontent { margin-top: 0; }
   .explore-shell.is-map .xcontent-map {
     position: relative;
     top: auto;

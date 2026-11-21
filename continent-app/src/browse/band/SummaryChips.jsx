@@ -64,6 +64,9 @@ export function SummaryChips({ items, className = '', lead = null, pinStyle = fa
   const changed = Boolean(ts?.active && (ts.changed || ts.held));
   const rowRef = React.useRef(null);
   const [edges, setEdges] = React.useState({ start: false, end: false });
+  // Read again when the row mounts anew (the map pins the style chip) and
+  // when the chips' words change: the map's settings row fades only where
+  // it has more (judgement-5), so a stale reading left a hard cut.
   React.useEffect(() => {
     const el = rowRef.current;
     if (!el) return undefined;
@@ -80,8 +83,9 @@ export function SummaryChips({ items, className = '', lead = null, pinStyle = fa
     el.addEventListener('scroll', read, { passive: true });
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(el);
+    document.fonts?.ready?.then(read);
     return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
-  }, [items.length]);
+  }, [items, pinStyle]);
 
   const pinRef = React.useRef(null);
   const [pinCut, setPinCut] = React.useState(false);

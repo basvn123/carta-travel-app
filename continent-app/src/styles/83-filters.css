@@ -136,6 +136,8 @@
 
 /* ---- The applied row ---- */
 .xhead { margin: 0 0 var(--space-4); }
+/* On the map from 769 px with no filter on: no applied row, so no band. */
+.xhead.is-bare { margin: 0; }
 .xap {
   display: flex;
   align-items: center;

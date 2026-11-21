@@ -15,7 +15,7 @@ import { HouseIcon } from '../components/HouseIcons.jsx';
 import { MapCorner } from '../components/dock/MapCorner.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { scrollBehavior } from '../lib/motion.js';
-import { Button } from '../components/ui/index.js';
+import { Button, IconButton } from '../components/ui/index.js';
 import { useGuidedState } from '../lib/guidedData.js';
 import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './searchDockStore.js';
 // T586: the overview first page.
@@ -485,8 +485,9 @@ export function ExploreTab({
     setDockKind('places');
     setDockResults(railsIdle ? null : {
       label: dockLabel, query: locationQuery || '', filterCount,
-      // G12: the applied field carries Share on a phone; a desktop has it at
-      // the applied row's right end.
+      // G12: the applied field carries Share on a phone and on a tablet's
+      // map; a desktop has it at the applied row's right end, on the map
+      // beside List | Map (judgement-5).
       canShare: true,
     });
   }, [isActive, railsIdle, dockLabel, locationQuery, filterCount]);
@@ -697,10 +698,19 @@ export function ExploreTab({
   // G12 (Explore top): on a phone the band in the top bar draws them.
   // G12 round 2 (decision.md section 6): the desktop List | Map switch sits
   // at the tab row's right end; the row draws it from `view` and `onView`.
+  // On the map Share stands just before it from 1024 px (judgement-5): the
+  // applied row under the tabs would otherwise stand empty above the map
+  // just to hold it. Below 1024 the six tabs fill the row, so the field
+  // holds Share.
   const catTiles = onPickCategory && isDesktop ? (
     <ExploreCategories current="places" variant="row"
       view={view === 'map' ? 'map' : 'list'} onView={(v) => setView(v === 'map' ? 'map' : 'grid')}
       onViewIntent={prefetchMap}
+      end={view === 'map' ? (
+        <IconButton className="xcats-share" label={t('explore.toolShare')} onClick={shareView}>
+          <HouseIcon.share size={18} />
+        </IconButton>
+      ) : null}
       onPick={(key) => onPickCategory(key, oneCountry || '')} />
   ) : null;
 

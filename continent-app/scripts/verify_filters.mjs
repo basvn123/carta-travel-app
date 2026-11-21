@@ -198,7 +198,37 @@ async function run(browser, width, height, lang) {
   await ctx.close();
 }
 
+// Judgement-5: the options' counts are said in the app's language, not the
+// browser's. An English page on a Dutch browser read "Any 3.855".
+async function localeRun(browser) {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, serviceWorkers: 'block', hasTouch: true, isMobile: true, locale: 'nl-NL' });
+  await mirrorData(ctx);
+  const page = await ctx.newPage();
+  await page.route(/supabase\.co\//, (r) => r.fulfill({ status: 200, contentType: 'application/json', body: '[]' }));
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('continent.lang.v1', 'en');
+      localStorage.setItem('continent.guestMode.v1', '1');
+      localStorage.setItem('continent.homeSeen.v1', '1');
+      localStorage.setItem('carta.welcomeSeen.v1', '1');
+      localStorage.setItem('carta.styleStudio.seen.v1', '1');
+    } catch { /* storage unavailable */ }
+  });
+  await page.goto(`${BASE}?tab=explore`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.hs-rail, .xrow', { timeout: 60000 }).catch(() => {});
+  await page.waitForTimeout(1500);
+  await page.keyboard.press('Escape');
+  await openSheet(page, true);
+  await settled(page);
+  const said = await page.evaluate(() => ({ nav: navigator.language, counts: [...document.querySelectorAll('.flt-n')].map((e) => e.textContent) }));
+  const big = said.counts.filter((c) => c.replace(/\D/g, '').length >= 4);
+  check('en page, nl-NL browser: the options\' counts use the English separator (3,855, not 3.855)',
+    said.nav === 'nl-NL' && big.length > 0 && big.every((c) => /^\d{1,3}(,\d{3})+$/.test(c)), big.slice(0, 4).join(' '));
+  await ctx.close();
+}
+
 const browser = await chromium.launch();
+try { await localeRun(browser); } catch (e) { fails += 1; console.log(`FAIL locale: ${e.message.split('\n')[0]}`); }
 // LANGS=en,de,fr and SIZES=360x640,390x844 pick the runs.
 const LANGS = (process.env.LANGS || 'en,de').split(',');
 const SIZES = (process.env.SIZES || '360x780,390x844,1280x800,1440x900').split(',').map((s) => s.split('x').map(Number));

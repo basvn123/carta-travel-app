@@ -72,9 +72,15 @@ test('the applied row: Filters leads on a phone, then the chips, then Clear all;
   assert.match(row, /role="status"/);
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   assert.doesNotMatch(bar, /PhoneTools|xtools|viewSwitch|xov-back/);
-  // Judgement-4: on the map the row keeps Share only (Sort is the sheet's
-  // or the column's head, Saved a quick chip).
-  assert.match(bar, /\{!mapView && sortMenu\}\s*\{!mapView && <SavedToggle/);
+  // Judgement-4: on the map the row keeps no Sort (the sheet's or the
+  // column's head) or Saved (a quick chip). Judgement-5: no Share either
+  // (it follows List | Map, or sits in the field below 1024 px), and from
+  // 769 px with no filter on the row is not drawn at all.
+  assert.match(bar, /const tools = isDesktop && !mapView \?/);
+  assert.match(bar, /const bare = isDesktop && mapView && shown\.length === 0;/);
+  assert.match(bar, /\{!bare && \(\s*<AppliedRow/);
+  const tab = read('src/browse/ExploreTab.jsx');
+  assert.match(tab, /end=\{view === 'map' \? \(\s*<IconButton className="xcats-share" label=\{t\('explore\.toolShare'\)\}/);
 });
 
 test('a quick chip is one filter: By the water and 20 °C+ make one chip each', () => {
