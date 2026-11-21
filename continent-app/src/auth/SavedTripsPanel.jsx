@@ -22,7 +22,7 @@ import {
   updatePastTripInAccount, updatePastTripOnDevice,
 } from './pastTrip.js';
 import {
-  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, spendPerPerson, emptyMemory, SPEND_CATS,
+  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, spendPerPerson, tripSpendPerPerson, emptyMemory, SPEND_CATS,
 } from './pastTripMemory.js';
 import { COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { crewLabel, crewInitials, namedCrew, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
@@ -1103,7 +1103,7 @@ export function SavedTripsPanel({
     ];
     return rows.map((r) => {
       const mem = memories[r.id] || null;
-      return { ...r, mem, spendPP: mem ? spendPerPerson(mem) : null, estDayPP: r.est, score: scoreOf(r.ids) };
+      return { ...r, mem, spendPP: tripSpendPerPerson(r.id, mem), estDayPP: r.est, score: scoreOf(r.ids) };
     }).sort((a, b) => ((a.end || '') < (b.end || '') ? 1 : -1));
   }, [pastPlans, pastDayPlans, memories, destinations, journeyParts, dayJourneyParts, priceFor]);
 
