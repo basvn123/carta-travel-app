@@ -2211,6 +2211,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
    - Node-network edges go to `cycle_node_edges`.
    - Superroutes are kept only as membership (`carta:family_ref`).
    - Geometry is cross-checked against EuroVelo GPX and national portals (`AGREE_TOL_M = 40`).
+   - **Famous routes** (D25 d, `seed_cycling.py`). `data/famous/seed_cycling.json`, written by `pipeline/famous/coverage.py --handoff`, names the famous cycle routes the wire lacks. Their OSM relations (Wikidata P402 and the trails famous registry) are always assembled, even when the filter or `--limit` would skip them; a relation id is pinned in any extract that holds it. A route with none of its relations in an extract is looked up there by name: a `route=bicycle` relation whose folded `name` or `name:en` equals one of the route's names, only in the route's own countries, never a node-network edge or a feeder with another name. A famous superroute, or a route made only of child relations, is not assembled; its sections are, depth first, without variant roles. Each pinned row carries `raw_tags["carta:famous"]` (`why: "famous"`, `wd`, `name`, `how`, `section`); a section without a network of its own takes the route's name as `cycle_network`. Several name hits are the route's sections too. The log line per country says how many famous relations were found and assembled.
 2. **Surface.** Length-weighted `way_spans` with a `known_share`. `BIKE_ALLOWS`: touring allows only tracktype grade1, gravel allows grade1 to 3, mtb allows all.
 3. **Safety.** A house metric: 10 minus the mean penalty.
 4. **Stage planner** (`stage_planner.py`, `cycle_tour_v1`):
@@ -2228,6 +2229,9 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
    - The rated tier needs `SCORE_GATE = 5.4` and `PHOTOS_RATED_MIN = 2`, with `COUNTRY_CEILING = 900`.
    - Score weights: scenic 0.26, safety 0.20, surface 0.16, designation 0.14, services 0.14, shape 0.10 (`cycle_index.py`, `cycle_index_v1`).
    - Ride time uses `RIDE_FLAT_KMH = 18` plus `RIDE_MIN_PER_100M = 10` minutes per 100 m of climb.
+   - The floor (`basic_row`): named, 3 km or more, one continuous part, placed in a region. A row that fails it is absent in any tier, famous or not.
+   - Region quotas (`apply_quotas`): a region's rated rows over its target leave the wire. A famous row that cleared every gate stays rated beyond the target (`keep_famous`).
+   - A famous row that misses the score or photo gate ships listed (unrated coverage), never editorial: no person vouched for it. Its card carries `wd` (the route's Wikidata id, which the famous coverage report matches on); a section's card also carries `sec: 1`, so the page says "part of" the route and the report counts the sections as stages. The export log counts the famous rows the floor kept out (`famous_not_continuous`, `famous_no_region`, ...).
 7. **Cycle page** (`CyclePage.jsx`).
    - Six facts, and a card with length, time, percent paved, percent traffic-free, GPX, and bike trains or directions.
    - Sections: Route (map and elevation), Surface and traffic (two bars), Stages (previous and next, or the tour's stages with season), Getting there, Along the way (facilities, towns), Other routes.
@@ -2237,7 +2241,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - Tasks: `cycling_harvest` (quarterly), `cycling_enrich`, `cycling_photos`, `cycling_bridge`, `cycling_publish`, or `python pipeline/cycling/build_cycling.py` for all.
 - Wire of 2026-10-23: 513 rated, 16,460 listed, 16 tours, 39 countries.
 
-**Where it lives.** `pipeline/cycling/` (`harvest_cycling.py`, `stage_planner.py`, `validate_cycling.py`, `cycle_index.py`, `export_cycling.py`, `cycle_images.py`, `bridge_gaps.py`), `continent-app/src/browse/CyclePage.jsx`, `continent-app/src/lib/cycling.js`, `archive/execution-2026-11-11:archive/docs-2026-11/CYCLING.md`.
+**Where it lives.** `pipeline/cycling/` (`harvest_cycling.py`, `seed_cycling.py`, `stage_planner.py`, `validate_cycling.py`, `cycle_index.py`, `export_cycling.py`, `cycle_images.py`, `bridge_gaps.py`), `continent-app/src/browse/CyclePage.jsx`, `continent-app/src/lib/cycling.js`, `archive/execution-2026-11-11:archive/docs-2026-11/CYCLING.md`.
 
 **Limits.**
 - In GB, 95 of 103 tour candidates fail continuity.
@@ -2245,6 +2249,8 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - 26 tours were refused by the image gate.
 - Cycle pages have no "Stay nearby", because rows carry no `base` (T922-a).
 - Bike trains are a placeholder (T918-d).
+- Famous routes (D25 d): the hand-off takes effect only after `famous_coverage --handoff` writes `data/famous/seed_cycling.json` and the quarterly `cycling_harvest` and the chain after it run; not measured yet. A famous section whose line breaks at a border or in OSM stays out (the floor is not loosened). A route over 400 km is held only as sections. Tests: `tests/test_famous_cycling.py`.
+- A region's rated rows over its quota are dropped, not listed, although the code marks them `l` first (`apply_quotas` builds its listed list before the demotion). Not changed by D25 d.
 
 ### Beaches
 

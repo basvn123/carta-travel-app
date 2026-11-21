@@ -1,0 +1,20 @@
+{
+ "schema": "carta-famous-seed/1",
+ "kind": "cycling",
+ "generated_by": "pipeline/famous/coverage.py --handoff",
+ "rows": [
+  {"n": "Elbe Cycle Route", "cc": "CZ", "countries": ["CZ", "DE"],
+   "wd": "Q90001", "osm_rel": null, "osm_rels": [],
+   "length_km": 1220.0, "names": ["Elberadweg", "Labska stezka"],
+   "why": "famous", "note": "fixture"},
+  {"n": "EuroVelo 6", "cc": "DE", "countries": ["DE", "FR"],
+   "wd": "Q90002", "osm_rel": 100, "osm_rels": [100],
+   "length_km": 4450.0, "names": ["EuroVelo 6"],
+   "why": "famous", "note": "fixture"},
+  {"n": "Bodensee-Radweg", "cc": "DE", "countries": ["DE"],
+   "wd": "Q90003", "osm_rel": 7, "osm_rels": [7, 8],
+   "length_km": 260.0, "names": ["Bodensee-Radweg"],
+   "why": "famous", "note": "fixture", "lat": 47.6, "lon": 9.4},
+  {"n": "No id", "cc": "DE", "why": "famous"}
+ ]
+}
