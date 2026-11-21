@@ -7,6 +7,8 @@ Things learned in Carta that every future run should know. Claude reads this at 
 - **Keep it short.** Past about 40 lines, promote or prune. Full stories are in the old reports (`.work/INDEX.md`).
 
 ## Lessons
+- 2026-11-21 · Brief builder and judge subagents to run checks in the foreground and to write their output file early: a subagent that ends while a background job runs loses its report, and one that reads for 40 turns writes nothing · (My trips atlas: four builders and a judge had to be resumed or re-run)
+- 2026-11-21 · Make a task worktree from origin/main (the script's default), not from a local main that may be behind · (the first My trips worktree started 17 commits behind)
 - 2026-11-18 · PowerShell here prints numbers in Dutch format: "115.447 MB" is 115 GB, not 115 MB. Read free space with `[math]::Round((Get-PSDrive C).Free/1GB,1)` before calling the disk full · (a run told the owner the disk was full while 115 GB were free)
 - 2026-11-18 · Parallel builder lanes in worktrees committed whole files as CRLF; before merging a lane, check its blobs for `\r\n` with Python (Git Bash `grep $'\r'` matches every line) · (a 63,000 line i18n conflict that was only line endings)
 - 2026-11-17 · Launch headless lanes hidden (`Start-Process -WindowStyle Hidden`) and judge them alive by a `claude.exe` that holds their session id, not by their log · (a lane in a visible console died silently when the window closed; a lane that hit a usage limit stayed alive but idle behind a background shell; the house style run's `watchdog.sh` handles both)
