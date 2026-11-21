@@ -493,7 +493,7 @@ Trails: famous walks OSM has no route for, routed with BRouter (D24)
 - Cadence: after, follows famous_coverage
 - Writes: neither the master nor the wire directly
 - Code: guard `guard_trails_route_bridge`
-- Note: behind CARTA_TRAILS_ROUTE_BRIDGE=1 like the route bridge. For each famous trail the coverage report lists as no_osm_relation, routes Wikidata's start (P1427) to end (P1444), through the walk's own point, and keeps it only on paths (80% path-like, 50% trail ways), snapped, of a sane length and not doubling back. Kept walks enter the lab as source seed_routed with the QID; curate's reference pass picks them by that id. Every refusal is in data/reports/famous/seed_routes.json.
+- Note: behind CARTA_TRAILS_ROUTE_BRIDGE=1 like the route bridge. For each famous trail the coverage report lists as no_osm_relation, routes Wikidata's start (P1427) to end (P1444), through the walk's own point, or else (D25 a) from its D24 trailhead to the landmark its name or QID names and back, and keeps it only on paths (80% path-like, 50% trail ways), snapped, of a sane length and not doubling back. Kept walks enter the lab as source seed_routed with the QID; curate's reference pass picks them by that id. Every refusal is in data/reports/famous/seed_routes.json.
 - Reads and runs: `pipeline/trails/seed_routes.py`
 - Commands:
 

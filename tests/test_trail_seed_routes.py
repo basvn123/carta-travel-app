@@ -97,3 +97,156 @@ def test_unroutable_and_brouter_down():
     places = {"Q2": A, "Q3": B}
     assert sr.route_ref(ref(), places, none_router)["gate"] == "unroutable"
     assert sr.route_ref(ref(), places, down_router)["gate"] == "brouter_down"
+
+
+# ---------------------------------------------------------------------------
+# D25 a: trailhead and landmark (plan 2)
+# ---------------------------------------------------------------------------
+
+T = (7.01, 46.01)            # a D24 trailhead, two decimals
+L = (7.01, 46.037)           # the summit, about 3.0 km north
+EAST = (7.022, 46.0235)      # a different way down, about 0.9 km east
+
+
+def path(*pts, highway="path"):
+    coords = []
+    for a, b in zip(pts, pts[1:]):
+        seg = line(a, b)
+        coords += seg if not coords else seg[1:]
+    m = sum(sr.dist_m(a, b) for a, b in zip(coords, coords[1:]))
+    return {"coords": coords, "segments": [(m, {"highway": highway})],
+            "track_m": m, "ascend_m": 600}
+
+
+def walk(**kw):
+    r = {"id": "wd:Q9", "qid": "Q9", "name": "Pen y Fan from Pont ar Daf",
+         "countries": ["GB"], "length_km": 6, "trail_kind": "day",
+         "trailhead": {"lat": T[1], "lon": T[0]}}
+    r.update(kw)
+    return r
+
+
+MARK = {"point": L, "qid": "Q10", "by": "label", "label": "Pen y Fan"}
+
+
+def canned(start=T, end=L, back=None, highway="path"):
+    """A BRouter stand-in: the way up from `start`, BRouter's best way down
+    retraces it, and alternative 1 is `back` (a list of points) if given."""
+    def router(a, b, alt=0):
+        if sr.dist_m(a, T) < 1:            # going up
+            return path(start, end, highway=highway), None
+        if alt == 0:
+            return path(end, start, highway=highway), None
+        if alt == 1 and back:
+            return path(*back, highway=highway), None
+        return None, "no alternative"
+    return router
+
+
+def test_landmark_spans_lead_then_contained():
+    spans = sr.landmark_spans("Pen y Fan from Pont ar Daf")
+    assert spans.index("Pen y Fan") < spans.index("Pont ar Daf")
+    assert "from Pont" not in spans and "Pen y Fan from" not in spans
+    assert sr.landmark_spans("Tre Cime di Lavaredo circuit")[0] == \
+        "Tre Cime di Lavaredo"
+    # a bare landform noun names no place
+    assert "Hill" not in sr.landmark_spans("Diamond Hill")
+    assert "Seceda" in sr.landmark_spans("Seceda ridge")
+
+
+def test_pick_landmark_by_label_within_reach():
+    hits = {"Pont ar Daf": [["Q11", 3, (T[1] + 0.001, T[0]), ["GB"]]],
+            "Pen y Fan": [["Q12", 40, (46.41, 7.01), ["GB"]],   # 44 km away
+                          ["Q10", 30, (L[1], L[0]), ["GB"]]]}
+    got = sr.pick_landmark(walk(qid=None), None, hits)
+    assert got["qid"] == "Q10" and got["by"] == "label"
+    # only the trailhead's own village matches: no landmark
+    assert sr.pick_landmark(walk(qid=None), None,
+                            {"Pont ar Daf": hits["Pont ar Daf"]}) is None
+
+
+def test_pick_landmark_prefers_the_walks_own_coordinate():
+    got = sr.pick_landmark(walk(), L, {})
+    assert got["by"] == "own" and got["qid"] == "Q9"
+    # an own coordinate on the trailhead is not a landmark
+    assert sr.pick_landmark(walk(), T, {}) is None
+
+
+def test_trailhead_snap_follows_its_rounding():
+    assert 600 < sr.snap_radius_m((-3.43, 51.88)) < 700
+    assert sr.snap_radius_m((-3.43712, 51.88412)) == sr.SNAP_M
+    # 46.60 reads 46.6 in JSON: the other axis gives the precision
+    assert sr.snap_radius_m((11.72, 46.6)) < 700
+    assert sr.snap_radius_m((7.6, 46.5)) == sr.TRAILHEAD_SNAP_MAX_M
+
+
+def test_out_and_back_is_kept_from_a_rounded_trailhead():
+    assert 600 < sr.snap_radius_m(T) < 700
+    near = (7.014, 46.010)   # BRouter starts 310 m from the rounded point
+    res = sr.route_ref(walk(), {}, canned(start=near), MARK)
+    assert res["verdict"] == "kept", res.get("gate")
+    assert res["plan"] == "trailhead" and res["shape"] == "out_and_back"
+    assert len(res["points"]) == 3 and res["points"][0] == res["points"][2]
+
+
+def test_out_and_back_length_has_35_percent():
+    # about 6.0 km routed
+    assert sr.route_ref(walk(length_km=9), {}, canned(), MARK)["verdict"] \
+        == "kept"
+    res = sr.route_ref(walk(length_km=10), {}, canned(), MARK)
+    assert (res["verdict"], res["gate"]) == ("refused", "length")
+
+
+def test_landmark_keeps_the_tight_snap():
+    short = (7.01, 46.0345)  # the way up stops 280 m below the summit
+    res = sr.route_ref(walk(), {}, canned(end=short), MARK)
+    assert (res["verdict"], res["gate"]) == ("refused", "snap")
+
+
+def test_trailhead_plan_keeps_the_path_gate():
+    res = sr.route_ref(walk(), {}, canned(highway="secondary"), MARK)
+    assert (res["verdict"], res["gate"]) == ("refused", "off_path")
+
+
+def test_circuit_comes_back_another_way_when_brouter_offers_one():
+    w = walk(name="Tre Cime di Lavaredo circuit", length_km=7)
+    res = sr.route_ref(w, {}, canned(back=[L, EAST, T]), MARK)
+    assert res["verdict"] == "kept", res.get("gate")
+    assert res["shape"] == "loop"
+    # no alternative: out and back
+    res = sr.route_ref(w, {}, canned(), MARK)
+    assert res["shape"] == "out_and_back"
+    # a walk not called a circuit never asks for one
+    res = sr.route_ref(walk(length_km=7), {}, canned(back=[L, EAST, T]), MARK)
+    assert res["shape"] == "out_and_back"
+
+
+def test_circuit_alternative_that_retraces_is_not_a_loop():
+    w = walk(name="Tre Cime di Lavaredo circuit")
+    res = sr.route_ref(w, {}, canned(back=[L, T]), MARK)
+    assert res["shape"] == "out_and_back"
+
+
+def test_trailhead_plan_skips():
+    r = sr.route_ref(walk(), {}, canned(), None)
+    assert (r["verdict"], r["gate"]) == ("skipped", "no_landmark")
+    r = sr.route_ref(walk(length_km=66, trail_kind="multi-day"), {},
+                     canned(), MARK)
+    assert (r["verdict"], r["gate"]) == ("skipped", "not_a_day_walk")
+    r = sr.route_ref(walk(trailhead=None), {}, canned(), MARK)
+    assert (r["verdict"], r["gate"]) == ("skipped", "no_start_end")
+
+
+def test_start_and_end_plan_still_comes_first():
+    places = {"Q2": A, "Q3": B}
+    w = walk(start="Q2", end="Q3", length_km=None)
+    res = sr.route_ref(w, places, lambda a, b: (leg(a, b), None), MARK)
+    assert res["plan"] == "start_end" and res["verdict"] == "kept"
+
+
+def test_seed_without_a_qid_keys_on_its_reference_id():
+    r = {"id": "ref:hoellentalklamm", "qid": None, "name": "Höllentalklamm",
+         "points": [], "plan": "trailhead", "shape": "out_and_back"}
+    assert sr.source_ref_of(r) == "ref:hoellentalklamm"
+    assert "wikidata" not in sr.raw_tags_of(r)
+    assert sr.raw_tags_of(dict(r, qid="Q9"))["wikidata"] == "Q9"
