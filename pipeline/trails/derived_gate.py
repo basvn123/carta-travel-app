@@ -382,6 +382,36 @@ def reference_ids():
     return _REFERENCE_IDS
 
 
+# Wikidata's long-distance trail class: a famous trail of this class with no
+# length on record is taken as too long for one row (D25 e).
+LONG_DISTANCE_CLASS = "Q13405588"
+_REFERENCE_LENGTHS = None
+
+
+def reference_length(ref_id):
+    """(length in km or None, long-distance class) for a reference id, from
+    the famous row first (Wikidata P2043 or the merged D24 figure), then the
+    D24 reference."""
+    global _REFERENCE_LENGTHS
+    if _REFERENCE_LENGTHS is None:
+        _REFERENCE_LENGTHS = {}
+        try:
+            data = json.loads(REFERENCE_FILE.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            data = {}
+        for t in data.get("trails") or []:
+            if t.get("id"):
+                _REFERENCE_LENGTHS[t["id"]] = (
+                    t.get("length_km"), t.get("kind") == "multi-day")
+        for t in famous_rows():
+            ref_id_ = t.get("legacy_id") or t["id"]
+            km, long_ = _REFERENCE_LENGTHS.get(ref_id_, (None, False))
+            _REFERENCE_LENGTHS[ref_id_] = (
+                t.get("length_km") if t.get("length_km") is not None else km,
+                long_ or LONG_DISTANCE_CLASS in (t.get("classes") or []))
+    return _REFERENCE_LENGTHS.get(ref_id, (None, False))
+
+
 def reference_of_row(row):
     """(reference id, exact) for a candidate row: by the registry's OSM or
     Wikidata id first (exact), then by name."""

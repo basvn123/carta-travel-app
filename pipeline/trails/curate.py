@@ -943,7 +943,8 @@ class Picker:
         quota = self.quotas.get(n3)
         return quota is not None and self.regions[n3] >= quota
 
-    def take(self, row, reason, cell_cap, respect_region=True):
+    def take(self, row, reason, cell_cap, respect_region=True,
+             respect_series=True):
         if row["id"] in self.ids:
             return False
         if respect_region and self.region_full(row):
@@ -954,9 +955,11 @@ class Picker:
         # wikipedia=en:Sultans Trail and ST701 does not, so they landed in
         # different families while being the same walk. Capping the operator's
         # numbered series is what catches the ones tagging inconsistency lets
-        # through.
+        # through. The one exception is the stages of a famous trail too long
+        # for one row (D25 e): there the stages ARE the walk people look for.
         series = series_key(row)
-        if series is not None and self.series[series] >= SERIES_CAP:
+        if respect_series and series is not None and \
+                self.series[series] >= SERIES_CAP:
             return False
         cell = grid_key(row)
         if cell is not None and cell_cap is not None and self.cells[cell] >= cell_cap:
@@ -971,7 +974,7 @@ class Picker:
         return True
 
     def fill(self, rows, want, reason, cell_caps=(CELL_CAP, CELL_CAP * 2, None),
-             respect_region=True):
+             respect_region=True, respect_series=True):
         """Take up to `want` rows, loosening the spatial cap only when the
         stricter pass could not find enough."""
         taken = 0
@@ -981,7 +984,8 @@ class Picker:
             for row in rows:
                 if taken >= want:
                     break
-                if self.take(row, reason, cap, respect_region=respect_region):
+                if self.take(row, reason, cap, respect_region=respect_region,
+                             respect_series=respect_series):
                     taken += 1
         return taken
 
@@ -1092,6 +1096,88 @@ def reference_picks(heads, rows):
     return picks
 
 
+# D25 e (2026-11-21). A famous trail longer than TREK_MAX_M never passes the
+# candidate query as one row (South West Coast Path, Lycian Way, the E paths),
+# and 92 famous trails reached the wire only as one piece of themselves. For
+# those, pass 0b takes the trail's stage relations as well, so the coverage
+# report can count the trail as in_as_stages (pipeline/famous/coverage.py:
+# matched rows covering STAGES_SHARE of the length). A piece is a best row
+# under STAGE_PIECE_SHARE of the reference length, the coverage report's own
+# PIECE_SHARE. STAGES_MAX bounds one trail in one country: enough for the
+# South West Coast Path's 52 stages, not a country list of one path.
+STAGE_PIECE_SHARE = 0.5
+STAGES_MAX = 60
+
+
+def stage_ref_of(row):
+    """The reference id this candidate is a stage of, or None: its relation
+    tree (hierarchy.py's top_of or stage_of) is the reference's relation, or
+    its title is the reference's exact name plus a stage word or counter
+    ("Kungsleden Etapp 1: Abisko - Abiskojaure", "Pieterpad deel 1 - 02").
+    Relations only: an assembled route is never a famous trail's stage."""
+    if row.get("derived_route"):
+        return None
+    cc = (row.get("country") or "").upper()
+    ids = derived_gate.reference_ids().get(cc, {})
+    for tree in (row.get("top_of"), row.get("stage_of")):
+        if tree is not None and str(tree) in ids:
+            return ids[str(tree)]
+    title = (row.get("title") or "").strip()
+    base = STAGE_SUFFIX_RE.sub("", title).strip(" :-,;.")
+    if base == title:
+        base = LEADING_COUNTER_RE.sub("", title).strip(" :-,;.")
+        if base == title:
+            return None
+    ref_id, exact = derived_gate.reference_of(base, cc)
+    return ref_id if exact else None
+
+
+def wants_stages(ref_id, best_m):
+    """True when one row cannot carry this reference: longer than
+    TREK_MAX_M, of unknown length but a long-distance trail, or its best
+    single pick (best_m, 0 when none) under STAGE_PIECE_SHARE of it."""
+    km, long_class = derived_gate.reference_length(ref_id)
+    if km is None:
+        return bool(long_class)
+    if km * 1000 > TREK_MAX_M:
+        return True
+    return (best_m or 0) < STAGE_PIECE_SHARE * km * 1000
+
+
+def stage_picks(rows, refs, cap=STAGES_MAX):
+    """Pass 0b: up to `cap` stage relations per reference that wants_stages,
+    longest first so the cap covers the most of the trail. A section whose
+    own stages are also candidates is taken instead of them: the same
+    ground twice would count twice in the coverage report."""
+    best = {}
+    for r in refs:
+        best[r["reference"]] = max(best.get(r["reference"], 0),
+                                   r.get("distance_m") or 0)
+    have = {r["id"] for r in refs}
+    by_ref = defaultdict(list)
+    for r in rows:
+        if r["id"] in have:
+            continue
+        ref_id = stage_ref_of(r)
+        if ref_id:
+            by_ref[ref_id].append(r)
+    picks = []
+    for ref_id, cands in sorted(by_ref.items()):
+        if not wants_stages(ref_id, best.get(ref_id, 0)):
+            continue
+        rels = {str(r.get("source_ref")) for r in cands}
+        rels |= {str(r.get("source_ref")) for r in refs
+                 if r.get("reference") == ref_id}
+        cands = [r for r in cands if r.get("stage_of") is None
+                 or str(r["stage_of"]) not in rels]
+        cands.sort(key=lambda r: (-(r.get("distance_m") or 0), r["id"]))
+        for r in cands[:cap]:
+            r["reference"] = ref_id
+            r["famous"] = True
+            picks.append(r)
+    return picks
+
+
 def select_country(rows, target, quotas, loop_target=None, verbose=False,
                    floor=COUNTRY_FLOOR, national=False):
     """The country's list, in the order the wire will carry it.
@@ -1164,6 +1250,15 @@ def select_country(rows, target, quotas, loop_target=None, verbose=False,
     refs = reference_picks(heads, rows)
     picker.fill(refs, len(refs), "reference", cell_caps=(None,),
                 respect_region=False)
+    # 0b. A famous trail one row cannot carry (over TREK_MAX_M, or only a
+    #     piece of it in one row) comes in as its stages (D25 e), ahead of
+    #     the quotas and past the series cap, up to STAGES_MAX a trail.
+    stages = stage_picks(rows, refs)
+    if stages:
+        picker.fill(stages, len(stages), "reference-stage", cell_caps=(None,),
+                    respect_region=False, respect_series=False)
+        print(f"    reference stages: {len(stages)} for "
+              f"{len({r['reference'] for r in stages})} famous trail(s)")
 
     # 1. Famous first, and never blocked by either spatial cap: if a country's
     #    two best-known walks share a massif, or its most famous one sits in a
