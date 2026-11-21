@@ -39,6 +39,10 @@ import { activeLocale } from '../lib/localeState.js';
 import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
 import { parseFavKey } from '../lib/favorites.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+import { seedWatch } from '../lib/watchStore.js';
+import {
+  ONE_PLANS, FIRST_PAST_PLANS, FIRST_PAST_MEMS, YEARS_PLANS, YEARS_MEMS, LOTS_FAV_KEYS, LOTS_WATCH,
+} from './mytrips/savedMocks.js';
 import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
@@ -83,6 +87,26 @@ import { TodayCard } from './mytrips/TodayCard.jsx';
 // the account-only shapes render in headless checks. Never on in production.
 const SAVED_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('savedmock');
+// G12: ?savedmock=<variant> picks a fixture state (./mytrips/savedMocks.js);
+// a bare ?savedmock is the default set.
+const MOCK_VARIANT = SAVED_MOCK ? (new URLSearchParams(window.location.search).get('savedmock') || '') : null;
+// Nothing of the seam's own: signed out, or signed in with nothing at all.
+const MOCK_BARE = ['guest', 'empty'].includes(MOCK_VARIANT);
+// The variants built on the default trips (and their stored extras).
+const MOCK_DEFAULT_TRIPS = ['', 'next', '1', 'lots', 'nopast', 'drafts'].includes(MOCK_VARIANT);
+// Each variant starts from a clean device: the seam writes trip extras,
+// memories, lists and watched prices into localStorage, and a variant must
+// not show another's. Cleared once when the variant changes (dev only).
+if (SAVED_MOCK) {
+  try {
+    const MARK = 'carta.savedmock.variant';
+    if (localStorage.getItem(MARK) !== MOCK_VARIANT) {
+      const keep = new Set(['carta.savedTripsTab', 'continent.homeSeen.v1']);
+      Object.keys(localStorage).filter((k) => !keep.has(k)).forEach((k) => localStorage.removeItem(k));
+      localStorage.setItem(MARK, MOCK_VARIANT);
+    }
+  } catch { /* private mode */ }
+}
 const MOCK_FAVS = [
   { id: 'mf1', destination_id: 'LIS', city: 'Lisbon', country: 'Portugal', depart_date: addDaysIso(34), return_date: addDaysIso(38), created_at: addDaysIso(-12) },
   { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65), created_at: addDaysIso(-30) },
@@ -134,8 +158,23 @@ const MOCK_PLANS = [
 
 /** The seam's own trip state, written once into this browser so the cards
  *  read it through the same stores a real trip uses (dev only). */
+// The plans each variant starts with.
+function mockPlansFor(v) {
+  if (v === 'one') return ONE_PLANS;
+  if (v === 'firstpast') return FIRST_PAST_PLANS;
+  if (v === 'years') return YEARS_PLANS;
+  if (v === 'drafts') return MOCK_PLANS.filter((p) => !p.start_date);
+  if (v === 'nopast') return MOCK_PLANS.filter((p) => !p.end_date || p.end_date >= addDaysIso(0));
+  if (v === 'next') return MOCK_PLANS.filter((p) => p.id !== 'mp6');
+  return MOCK_DEFAULT_TRIPS ? MOCK_PLANS : [];
+}
+
 function seedMock() {
   if (!SAVED_MOCK) return;
+  const ownMems = MOCK_VARIANT === 'firstpast' ? FIRST_PAST_MEMS : MOCK_VARIANT === 'years' ? YEARS_MEMS : null;
+  if (ownMems) Object.entries(ownMems).forEach(([id, m]) => { if (!loadMemory(id)) saveMemory(id, { ...emptyMemory(), ...m }, {}); });
+  if (MOCK_VARIANT === 'lots') seedWatch(LOTS_WATCH);
+  if (!MOCK_DEFAULT_TRIPS) return;
   if (!hasTripExtras('mp6')) {
     const at = (h) => { const d = new Date(); d.setHours(h, 0, 0, 0); return `${d.getTime()}`; };
     persistTripExtras('mp6', {
@@ -235,17 +274,16 @@ export function SavedTripsPanel({
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
 
-  const authed = !!user || SAVED_MOCK;
-  const [trips, setTrips] = useState(SAVED_MOCK ? MOCK_FAVS : []);
+  const authed = !!user || (SAVED_MOCK && MOCK_VARIANT !== 'guest');
+  const [trips, setTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FAVS : []);
   const [loading, setLoading] = useState(!!user && !SAVED_MOCK);
   // ?savedmock=next leaves out the trip happening today, so the seam shows
   // the next trip's focal card instead of Today.
-  const [tripPlans, setTripPlans] = useState(() => (!SAVED_MOCK ? []
-    : new URLSearchParams(window.location.search).get('savedmock') === 'next' ? MOCK_PLANS.filter((p) => p.id !== 'mp6') : MOCK_PLANS));
-  const [tripPlansLoading, setTripPlansLoading] = useState(!!user && !SAVED_MOCK);
+  const [tripPlans, setTripPlans] = useState(() => (!SAVED_MOCK || MOCK_VARIANT === 'loading' ? [] : mockPlansFor(MOCK_VARIANT)));
+  const [tripPlansLoading, setTripPlansLoading] = useState((!!user && !SAVED_MOCK) || MOCK_VARIANT === 'loading');
   // A list that cannot be read is not a traveller with no trips (020 lesson).
-  const [tripPlansError, setTripPlansError] = useState('');
-  const [statements, setStatements] = useState(SAVED_MOCK ? MOCK_STATEMENTS : []);
+  const [tripPlansError, setTripPlansError] = useState(() => (MOCK_VARIANT === 'error' ? t('saved.errLoad') : ''));
+  const [statements, setStatements] = useState(SAVED_MOCK && MOCK_DEFAULT_TRIPS ? MOCK_STATEMENTS : []);
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
   // The one trip kept on this device without an account (T500, carta.
   // deviceTrip.v1), read once per opening of My trips (T503, owner T500-a).
@@ -283,7 +321,7 @@ export function SavedTripsPanel({
     fetchMyStatements().then(setStatements).catch((e) => console.error('statements of reasons failed to load', e));
   };
   useEffect(() => {
-    if (!user || SAVED_MOCK) { setLoading(false); setTripPlansLoading(false); return; }
+    if (!user || SAVED_MOCK) { setLoading(false); setTripPlansLoading(MOCK_VARIANT === 'loading'); return; }
     loadTrips();
     loadTripPlans();
     loadStatements();
@@ -304,7 +342,7 @@ export function SavedTripsPanel({
   const [openMemory, setOpenMemory] = useState('');
   const [openShare, setOpenShare] = useState('');
   const [friends, setFriends] = useState([]);
-  const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
+  const [friendTrips, setFriendTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
   const [recapOpen, setRecapOpen] = useState(false);
   // T927: the Add a booking sheet, opened from the header or a trip's
@@ -819,14 +857,16 @@ export function SavedTripsPanel({
 
   // ── Saved (T925): the starred things and the account's saved places, one list. ──
   const shownFavs = useMemo(
-    () => (SAVED_MOCK ? new Set([...MOCK_FAV_KEYS, ...(favorites || [])]) : favorites),
+    () => (SAVED_MOCK && !MOCK_BARE
+      ? new Set([...MOCK_FAV_KEYS, ...(MOCK_VARIANT === 'lots' ? LOTS_FAV_KEYS : []), ...(favorites || [])])
+      : favorites),
     [favorites],
   );
   const shortlist = useFavoriteItems(shownFavs, destinations);
   const savedLists = useSavedLists();
   // T941: lists shared with friends (migration 059; nothing before it), and
   // their items resolved to photos and points like the traveller's own saves.
-  const sharedState = useSharedLists(user, { mock: SAVED_MOCK });
+  const sharedState = useSharedLists(user, { mock: SAVED_MOCK && !MOCK_BARE });
   const sharedKeySet = useMemo(() => new Set(sharedKeys(sharedState.lists)), [sharedState.lists]);
   const sharedFav = useFavoriteItems(sharedKeySet, destinations);
   const sharedRowMap = useMemo(
@@ -860,7 +900,7 @@ export function SavedTripsPanel({
 
   // The seam's saves get a price at save time and two lists, once (dev only).
   useEffect(() => {
-    if (!SAVED_MOCK || !costs) return;
+    if (!SAVED_MOCK || MOCK_BARE || !costs) return;
     const cur = loadSavedLists();
     Object.entries(MOCK_SAVED_AT).forEach(([k, off]) => {
       const now = costs.get?.(k.slice(5))?.dayEur;
