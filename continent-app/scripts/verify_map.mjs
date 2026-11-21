@@ -746,7 +746,8 @@ async function round2Pass() {
       await page.waitForTimeout(500);
     } else check('round2 390: a match mark to open', false, 'none in All');
     // The Filters sheet: an option's count is the result once it is on.
-    await page.locator('.xsheet-filters').click();
+    // The sheet head no longer repeats Filters (judgement-4): the chip row's.
+    await page.locator('.band-quick .xquick-filters').click();
     await page.waitForTimeout(900);
     const opt = page.locator('.flt [data-count]').filter({ hasText: /8\+/ }).first();
     const want = Number(await opt.getAttribute('data-count'));

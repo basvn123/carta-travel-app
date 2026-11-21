@@ -19,13 +19,33 @@ const GLYPH = {
  * desktop): Filters with its count first, then one toggle chip per quick
  * filter (filterModel.js QUICK), an active one moved to the front. A chip
  * sets the same filter the sheet holds, in place; the list and the pins
- * follow, the camera stays. The row swipes sideways on a phone.
+ * follow, the camera stays. The row is one line at every width and
+ * scrolls sideways, a soft fade on a side that has more (judgement-4: on a
+ * tablet or desktop it wrapped to a second line over the map).
  */
 export function QuickChips({ className = '', withFilters = true }) {
   const { t } = useI18n();
   const f = useFilters();
   const count = f.count || 0;
   const rowRef = React.useRef(null);
+  const [edges, setEdges] = React.useState({ start: false, end: false });
+  React.useEffect(() => {
+    const el = rowRef.current;
+    if (!el) return undefined;
+    const read = () => {
+      const max = el.scrollWidth - el.clientWidth;
+      const x = Math.abs(el.scrollLeft);
+      setEdges((e) => {
+        const n = { start: x > 1, end: max - x > 1 };
+        return e.start === n.start && e.end === n.end ? e : n;
+      });
+    };
+    read();
+    el.addEventListener('scroll', read, { passive: true });
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
+    ro?.observe(el);
+    return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
+  }, [f.quick.length]);
   // A chip turned on moves to the front: the row swipes back to its start,
   // so the chip and Filters are in view (a far chip left both off screen).
   const toFront = () => {
@@ -33,7 +53,8 @@ export function QuickChips({ className = '', withFilters = true }) {
     if (el && el.scrollLeft > 0) el.scrollTo({ left: 0, behavior: scrollBehavior() });
   };
   return (
-    <div ref={rowRef} className={`xquick ${className}`.trim()} role="group" aria-label={t('filters.quickAria')}>
+    <div ref={rowRef} className={`xquick${edges.start ? ' has-start' : ''}${edges.end ? ' has-end' : ''} ${className}`.trim()}
+      role="group" aria-label={t('filters.quickAria')}>
       {withFilters && (
         <Pressable className={`xquick-chip xquick-filters${count ? ' is-on' : ''}`}
           aria-label={count ? t(countKey(t.lang, count, 'band.filtersOnOne', 'band.filtersOn'), { n: count }) : t('band.filters')}

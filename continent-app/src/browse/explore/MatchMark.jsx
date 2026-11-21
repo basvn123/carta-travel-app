@@ -227,12 +227,14 @@ function WhyBody({ f, m, styleName, t, lang }) {
             </span>
           </li>
         ))}
-        {m.conflict > 0 && f.conflicts.map((c, i) => (
-          <li key={c.key} className="xwhy-row is-conflict" data-points={i === 0 ? -m.conflict : 0}>
+        {/* Each conflict with its own figure (judgement-4); one that takes
+            no whole point does not move the % and is left out. */}
+        {m.conflicts.filter((c) => c.points > 0).map((c) => (
+          <li key={c.key} className="xwhy-row is-conflict" data-points={-c.points}>
             <span className="xwhy-row-top">
               <span className="xwhy-sw is-hatch" aria-hidden="true" />
               <span className="xwhy-name">{t(`fit.short.${c.key}`, { month: c.month ? monthName(c.month, lang) : '' })}</span>
-              {i === 0 && <span className="xwhy-pts" aria-label={t('fit.points', { n: -m.conflict })}>-{m.conflict}</span>}
+              <span className="xwhy-pts" aria-label={t('fit.points', { n: -c.points })}>-{c.points}</span>
             </span>
           </li>
         ))}

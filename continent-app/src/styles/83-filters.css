@@ -96,7 +96,9 @@
 .flt-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* A long word (German) wraps inside its chip rather than past the sheet. */
 .flt-chips .ui-chip { max-width: 100%; white-space: normal; line-height: var(--leading-tight); text-align: left; }
-.flt-note { margin: 0; font-size: var(--text-label); color: var(--text-2); text-wrap: pretty; }
+/* The flight row's .flt-note (74-flights.css) names a grid area; here a
+   note takes the group's full width under its options (judgement-4). */
+.flt-note { grid-area: auto; margin: 0; font-size: var(--text-label); color: var(--text-2); text-wrap: pretty; }
 .flt-nomonth { display: grid; justify-items: start; gap: var(--space-2); }
 .flt-sort { width: 100%; }
 .flt-saved {

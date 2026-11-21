@@ -72,7 +72,17 @@ test('the applied row: Filters leads on a phone, then the chips, then Clear all;
   assert.match(row, /role="status"/);
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   assert.doesNotMatch(bar, /PhoneTools|xtools|viewSwitch|xov-back/);
-  assert.match(bar, /\{sortMenu\}\s*<SavedToggle/);
+  // Judgement-4: on the map the row keeps Share only (Sort is the sheet's
+  // or the column's head, Saved a quick chip).
+  assert.match(bar, /\{!mapView && sortMenu\}\s*\{!mapView && <SavedToggle/);
+});
+
+test('a quick chip is one filter: By the water and 20 °C+ make one chip each', () => {
+  const src = read('src/browse/explore/useExploreChips.js');
+  assert.match(src, /key: 'p:water'/);
+  assert.match(src, /key: 't:warm'/);
+  // The two picks By the water sets count once.
+  assert.equal(badgeCount([chip('p:water'), chip('minScore')]), 2);
 });
 
 test('the chips are capped with an ellipsis; the phone row never wraps', () => {

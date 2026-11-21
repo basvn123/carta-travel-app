@@ -75,7 +75,9 @@ export function settingsSummary(choices, style, t, { lang = activeLocale(), data
   const spanKey = m.priceSpan === 'trip' ? 'trip' : 'day';
   const viewKey = m.priceView === 'total' ? 'Group' : 'Pp';
   return [
-    { key: 'style', icon: 'heart', text: styleName || t('settingsSum.styleNone'), step: 'style' },
+    // `short`: the pinned chip on the phone map says the no-style door in
+    // fewer words (judgement-4); its name keeps the whole sentence.
+    { key: 'style', icon: 'heart', text: styleName || t('settingsSum.styleNone'), short: styleName ? '' : t('settingsSum.styleNoneShort'), step: 'style' },
     {
       key: 'start',
       icon: m.originKind === 'country' ? 'flag' : 'pin',

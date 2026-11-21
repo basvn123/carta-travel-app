@@ -50,6 +50,13 @@ test("match points add up to the shown % for random tastes, conflicts included",
     assert.ok(tagged.length <= 2);
     const top = [...m.rows].sort((a, b) => b.points - a.points);
     if (tagged.length) assert.equal(tagged.find((x) => x.tag === "strongest").points, top[0].points);
+    // Judgement-4: every row follows the points, high to low, and the tags
+    // are on the first two.
+    for (let k = 1; k < m.rows.length; k += 1) assert.ok(m.rows[k - 1].points >= m.rows[k].points, "rows by points");
+    if (tagged.length) assert.equal(m.rows[0].tag, "strongest");
+    // Each conflict carries its own figure; together they are the conflict.
+    assert.equal(m.conflicts.length, f.conflicts.length);
+    assert.equal(m.conflicts.reduce((s, c) => s + c.points, 0), m.conflict);
     checked += 1;
   }
   assert.ok(checked > 100, `${checked} fits checked`);
@@ -62,6 +69,15 @@ test("match points: one like is all the points", () => {
   assert.equal(m.rows[0].points, 86);
   assert.equal(m.rows[0].tag, "strongest");
   assert.equal(matchPoints(null), null);
+});
+
+test("match points: two conflicts each take their part", () => {
+  // Quiet in August (crowd tier 3) and no car where one is needed.
+  const f = fit({ likes: ["hiking", "food"], quiet: "quiet", noCar: true }, profile({ hiking: 0.9, food: 0.8 }), 8);
+  assert.equal(f.conflicts.length, 2);
+  const m = matchPoints(f);
+  assert.ok(m.conflicts.every((c) => c.points > 0), JSON.stringify(m.conflicts));
+  assert.equal(m.rows.reduce((s, x) => s + x.points, 0) - m.conflicts.reduce((s, c) => s + c.points, 0), f.pct);
 });
 
 const P = (id, extra = {}) => ({ id, city: id, rating: { score: 7 }, cost: { dayEur: 50 }, city_lat: 50, city_lon: 4, ...extra });

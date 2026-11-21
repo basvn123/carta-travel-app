@@ -57,7 +57,7 @@ export function MapAnchorCard({ p, overview, fav, onToggleFav, onOpen, onClose, 
           <MatchMark place={p} />
         </p>
         <div className="xtc-l3">
-          <PlaceFigure place={p} t={t} className="xtc-fig" />
+          <PlaceFigure place={p} t={t} className="xtc-fig" short />
         </div>
       </div>
     </div>

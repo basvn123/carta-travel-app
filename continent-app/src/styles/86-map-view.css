@@ -539,6 +539,12 @@
 .explore-shell .xmr-best .xmap-best-dot { margin-right: var(--space-1); }
 .explore-shell .xmr-l3,
 .explore-shell .xtc-l3 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-2); }
+/* Judgement-4: the mark stays on the figure's line, level with it; when the
+   line is tight the short basis wraps inside the figure's button instead,
+   so a row with a mark is as tall as one without. */
+.explore-shell .xmr-l3 { flex-wrap: nowrap; align-items: flex-start; }
+.explore-shell .xmr-l3 .xmr-fig { flex: 0 1 auto; }
+.explore-shell .xmr-l3 .xmr-match { flex: none; margin-top: 2px; }
 .explore-shell .xmr-l3 > *,
 .explore-shell .xmr-save { position: relative; z-index: 1; }
 .explore-shell .xmr .xmr-fig,
@@ -654,32 +660,18 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
 .explore-shell .xtc-step.is-next { right: calc(-1 * var(--space-4)); }
 .explore-shell .xtc-step:focus-visible { opacity: 1; }
 
-/* --- The sheet's head: In view | All and Filters, then Sort and the basis */
+/* --- The sheet's head (judgement-4): on a phone In view | All and List,
+   then Sort and the basis on one line; from 769 px all three on one line.
+   Filters and List | Map are the band's, said once on the page. */
 .explore-shell .xsheet-head .xsheet-row { flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+.explore-shell .xsheet-head .xsheet-row.is-one { justify-content: flex-start; column-gap: var(--space-4); }
+.explore-shell .xsheet-head .xsheet-row.is-one .xsheet-basis { margin-left: auto; }
 .explore-shell .xsheet-scope .xsheet-n,
 .explore-shell .mpp .xsheet-n { font-weight: 800; font-variant-numeric: tabular-nums; }
-.explore-shell .xsheet-filters {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: 36px;
-  padding: 0 var(--space-3);
-  border: var(--stroke-edge) solid var(--action);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--text);
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 700;
-  cursor: pointer;
-}
-.explore-shell .xsheet-filters::after { content: ''; position: absolute; inset: -4px 0; }
-.explore-shell .xsheet-filters .band-count { position: static; }
-.explore-shell .xsheet-row2 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--space-2); padding-top: var(--space-1); }
+.explore-shell .xsheet-row2 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--space-3); }
 .explore-shell .xsheet-sort { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .explore-shell .xtool-sort.is-bare { padding-inline: 0; font-weight: 700; }
-.explore-shell .xsheet-basis { color: var(--text-2); font-weight: 600; white-space: normal; text-align: right; }
+.explore-shell .xsheet-basis { min-width: 0; padding-inline: 0; color: var(--text-2); font-weight: 600; white-space: normal; text-align: right; }
 /* Nothing in view: the dashed blaze, the space named, one way out. */
 .explore-shell .xsheet-empty { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-6) var(--space-4); text-align: center; }
 .explore-shell .xsheet-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 800; }
@@ -687,8 +679,23 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
 
 /* --- Quick filters: the phone's third row and the desktop map's top edge  */
 .xquick { display: flex; align-items: center; gap: var(--space-2); }
-.xquick.is-swipe { padding: 0 var(--space-3); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; }
-.xquick.is-swipe::-webkit-scrollbar { display: none; }
+/* One line at every width that scrolls sideways, a soft fade on a side
+   that has more (QuickChips.jsx reads the edges). */
+.xquick.is-swipe,
+.explore-shell .xmap-quick {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.xquick.is-swipe { padding: 0 var(--space-3); }
+.xquick.is-swipe::-webkit-scrollbar,
+.explore-shell .xmap-quick::-webkit-scrollbar { display: none; }
+.xquick.has-start { --fade-s: var(--space-6); }
+.xquick.has-end { --fade-e: var(--space-6); }
 .xquick-chip {
   position: relative;
   display: inline-flex;
@@ -716,13 +723,16 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
 .xquick-chip.is-on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 .xquick-chip.xquick-filters { border: var(--stroke-edge) solid var(--action); }
 .xquick-chip .band-count { position: static; }
+/* The map's top edge: room above and below for the chips' shadow, which
+   a scroller clips; the gaps let a drag reach the map. */
 .explore-shell .xmap-quick {
   position: absolute;
-  top: var(--space-3);
+  top: var(--space-2);
   left: calc(var(--mpp-w, 400px) + var(--space-3));
   right: calc(var(--space-3) + 48px);
   z-index: 3;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  padding-block: var(--space-1);
   pointer-events: none;
 }
 .explore-shell .xmap-quick .xquick-chip { pointer-events: auto; margin: 0; }
@@ -732,11 +742,18 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   .band.is-map .band-chips-pin { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-left: var(--space-3); }
   .band.is-map .band-chips-pin > .band-chip.is-style {
     flex: none;
-    max-width: 52%;
+    max-width: 46%;
     padding: 0 var(--space-3);
     font-size: var(--text-label);
   }
-  .band.is-map .band-chips-pin > .band-chip.is-style .band-chip-text { overflow-wrap: anywhere; white-space: normal; line-height: 1.15; }
+  /* One line, as tall as its neighbours (judgement-4): a style name too
+     long for the room fades out at its end; the chip's title and name
+     carry it whole. */
+  .band.is-map .band-chips-pin > .band-chip.is-style .band-chip-text { min-width: 0; overflow: hidden; white-space: nowrap; }
+  .band.is-map .band-chips-pin > .band-chip.is-style.is-cut .band-chip-text {
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--space-5)), transparent);
+    mask-image: linear-gradient(to right, black calc(100% - var(--space-5)), transparent);
+  }
   .band.is-map .band-chips-pin > .band-chip.is-style::before {
     content: '';
     position: absolute;

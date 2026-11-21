@@ -355,8 +355,9 @@ export function FilterGroups({ f, t }) {
               )}
             </>
           ) : (
+            // The button says what is missing; a sentence beside it said it
+            // twice (judgement-4).
             <div className="flt-nomonth">
-              <p className="flt-note">{t('filters.noMonth')}</p>
               <Button variant="secondary" size="sm" onClick={f.onSetMonth}
                 iconStart={<HouseIcon.calendar size={16} />}>
                 {t('filters.setMonth')}

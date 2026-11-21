@@ -3,8 +3,8 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { Blaze, Button, Segmented } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { prefersReducedMotion } from '../../lib/motion.js';
-import { openFilters } from '../filters/filtersStore.js';
 import { openSettings } from '../settings/settingsSheetStore.js';
+import { useMedia } from '../settings/settingsBits.jsx';
 import { MapRow } from './MapRow.jsx';
 
 /**
@@ -17,8 +17,12 @@ import { MapRow } from './MapRow.jsx';
  * top; a flick moves one stop.
  *
  * The head: In view | All (the traveller's choice; a pan never changes it)
- * with Filters beside it, then Sort and the price basis (a quiet button to
- * the basis setting). In view lists the places on the map, All every place
+ * with List beside it on a phone, then Sort and the price basis (a quiet
+ * button to the basis setting); from 769 px one line, In view | All, Sort
+ * and the basis. Each control is said once on the page (judgement-4):
+ * Filters is the chip row's (phone) or the search field's and the quick
+ * row's (tablet), List | Map the band's from 769 px. The rows say the basis
+ * short under this head. In view lists the places on the map, All every place
  * the filters keep; a row picks its place (in All the map flies there). With
  * nothing in view the pill says so and the sheet offers Show all and Zoom
  * out. The state is the sheet's own, so a drag never re-renders the tab
@@ -28,7 +32,6 @@ import { MapRow } from './MapRow.jsx';
  *   allRows, allCount  every place the filters keep (rows capped)
  *   pickedId           the picked place; a new pick closes the sheet
  *   sort               the sort control (SortMenu, bare), drawn in the head
- *   filterCount        how many filters are on (the Filters pill's figure)
  *   basis              the price basis in words (the Settings' prices chip)
  *   bestId             the best value in view (its row says so)
  *   onZoomOut          zooms the map out a step (the empty state)
@@ -46,13 +49,16 @@ function measureTop(host) {
   return Math.round(room + 8);
 }
 const PEEK_PX = 72;
+// From here the band has List | Map and the page Filters of its own.
+const WIDE = '(min-width: 769px)';
 // A release faster than this (px per ms) moves one stop the way it went.
 const FLICK = 0.45;
 
 export function MapSheet({
   rows, count, allRows = [], allCount = 0, pickedId, overviewOf, onPick, favSet, onToggleFav, sort,
-  filterCount = 0, basis = '', bestId = '', onZoomOut = null, listSwitch = null, t, lang,
+  basis = '', bestId = '', onZoomOut = null, listSwitch = null, t, lang,
 }) {
+  const wide = useMedia(WIDE);
   const [stop, setStop] = React.useState('closed');
   const [scope, setScope] = React.useState('view');
   const rootRef = React.useRef(null);
@@ -197,6 +203,19 @@ export function MapSheet({
     { value: 'view', label: <><span>{t('explore.map.scopeView')}</span> <span className="xsheet-n">{fmt(count)}</span></> },
     { value: 'all', label: <><span>{t('explore.map.scopeAll')}</span> <span className="xsheet-n">{fmt(allCount)}</span></> },
   ];
+  const scopeControl = (
+    <Segmented label={t('explore.map.scopeAria')} size="sm" className="xsheet-scope"
+      options={scopeOptions} value={scope} onChange={setScope} />
+  );
+  const sortLine = (
+    <>
+      <span className="xsheet-sort">{sort}</span>
+      {basis && (
+        <Button variant="quiet" size="sm" className="xsheet-basis"
+          onClick={() => openSettings({ step: 'prices' })}>{basis}</Button>
+      )}
+    </>
+  );
   return (
     <>
       {stop === 'closed' && drag == null && (
@@ -224,23 +243,14 @@ export function MapSheet({
             onClick={() => setStop(stop === 'full' ? 'peek' : stop === 'half' ? 'full' : 'half')}>
             <span className="xsheet-grab-bar" aria-hidden="true" />
           </Pressable>
-          <div className="xsheet-row">
-            <Segmented label={t('explore.map.scopeAria')} size="sm" className="xsheet-scope"
-              options={scopeOptions} value={scope} onChange={setScope} />
-            <Pressable className={`xsheet-filters${filterCount ? ' is-on' : ''}`} aria-haspopup="dialog"
-              onClick={(e) => openFilters({ opener: e.currentTarget })}>
-              <HouseIcon.filter size={18} />
-              <span>{t('band.filters')}</span>
-              {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
-            </Pressable>
-          </div>
-          <div className="xsheet-row2">
-            <span className="xsheet-sort">{sort}{listSwitch}</span>
-            {basis && (
-              <Button variant="quiet" size="sm" className="xsheet-basis"
-                onClick={() => openSettings({ step: 'prices' })}>{basis}</Button>
-            )}
-          </div>
+          {wide ? (
+            <div className="xsheet-row is-one">{scopeControl}{sortLine}</div>
+          ) : (
+            <>
+              <div className="xsheet-row">{scopeControl}{listSwitch}</div>
+              <div className="xsheet-row2">{sortLine}</div>
+            </>
+          )}
         </div>
         <div ref={bodyRef} className="xsheet-body" style={{ height: `${Math.max(0, shown(stop === 'closed' ? 'half' : stop) - headH)}px` }}>
           {open && empty ? (

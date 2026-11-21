@@ -58,7 +58,7 @@ function CardFace({ p, overview, fav, onToggleFav, onOpen, t, ghost = false }) {
             <MatchMark place={p} className="xtc-match" />
           </p>
           <div className="xtc-l3">
-            <PlaceFigure place={p} t={t} className="xtc-fig" />
+            <PlaceFigure place={p} t={t} className="xtc-fig" short />
           </div>
         </div>
       )}

@@ -244,7 +244,7 @@ export const EXTRA_SORTS = Object.freeze(['costDesc', 'distance', 'gemsFirst']);
  */
 export const QUICK = Object.freeze(['score8', 'budget', 'warm', 'water', 'hiking', 'gems', 'match', 'saved']);
 export const QUICK_BUDGET = 100;
-const WARM = ['20', '25', '30'];
+export const WARM = Object.freeze(['20', '25', '30']);
 
 /** Whether a quick chip is on, from { xf, gemOnly, showFavOnly }. */
 export function quickOn(id, { xf, gemOnly = false, showFavOnly = false }) {

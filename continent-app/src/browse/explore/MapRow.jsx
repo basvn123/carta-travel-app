@@ -20,7 +20,10 @@ import { MatchMark } from './MatchMark.jsx';
  *   1  the name, wrapping, with the Score plate inline after its last word
  *   2  the flag, the region and the country, the water (a house icon and
  *      "By the sea"), the hidden gem and the best value in view
- *   3  the figure over its basis (the receipt's button) and the match mark
+ *   3  the figure with its short basis (the receipt's button; the head
+ *      says the basis in full) and the match mark at the line's end, level
+ *      with the figure: the basis wraps inside the button before the mark
+ *      ever drops, so every row keeps one height (judgement-4)
  *
  * The name is the row's link, stretched over the row; the figure, the mark
  * and Save are buttons beside it, never inside it. The match sentence and
@@ -67,7 +70,7 @@ export const MapRow = React.memo(function MapRow({
           {best && <span className="xmr-best"><span className="xmap-best-dot" aria-hidden="true" />{t('explore.map.bestValue')}</span>}
         </p>
         <div className="xmr-l3">
-          <PlaceFigure place={p} t={t} figRef={figRef} className="xmr-fig" />
+          <PlaceFigure place={p} t={t} figRef={figRef} className="xmr-fig" short />
           <MatchMark place={p} className="xmr-match" />
         </div>
       </div>

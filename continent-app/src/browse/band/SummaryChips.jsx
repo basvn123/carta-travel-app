@@ -53,7 +53,10 @@ export function useSummaryItems() {
  */
 // G12 map view round 2: `pinStyle` keeps the style chip out of the swipe, at
 // the row's left, so it never scrolls away (owner, 2026-11-20: on the phone
-// map the travel style must stay in view).
+// map the travel style must stay in view). Judgement-4: the pinned chip is
+// one line like its neighbours; the no-style door says it short, a long
+// style name ends in a fade (`is-cut`), the whole name in its title and its
+// accessible name.
 export function SummaryChips({ items, className = '', lead = null, pinStyle = false }) {
   const { t } = useI18n();
   const s = useSettings();
@@ -80,24 +83,37 @@ export function SummaryChips({ items, className = '', lead = null, pinStyle = fa
     return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
   }, [items.length]);
 
-  const chip = (it) => {
+  const pinRef = React.useRef(null);
+  const [pinCut, setPinCut] = React.useState(false);
+  const chip = (it, pin = false) => {
     const Ico = glyphOf(it.icon);
     const isStyle = it.key === 'style';
+    const text = pin && it.short ? it.short : it.text;
     const name = t('band.chipAria', { text: it.text }) + (isStyle && changed ? `. ${t('styles.kickerChanged')}` : '');
     return (
       <Pressable key={it.key}
-        className={`band-chip${isStyle ? ' is-style' : ''}`}
+        className={`band-chip${isStyle ? ' is-style' : ''}${pin && pinCut ? ' is-cut' : ''}`}
         data-band-step={isStyle ? 'style' : it.step || 'overview'}
-        aria-label={name}
+        aria-label={name} title={pin ? it.text : undefined}
         onClick={() => (isStyle ? openStudio(ts) : openSettings({ step: it.step || 'overview' }))}>
         {Ico && <span className="band-chip-ic" aria-hidden="true"><Ico size={18} /></span>}
-        <span className="band-chip-text">{it.text}</span>
+        <span className="band-chip-text" ref={pin ? pinRef : undefined}>{text}</span>
         {isStyle && changed && <span className="band-chip-dot" aria-hidden="true" />}
       </Pressable>
     );
   };
   const pinned = pinStyle ? items.find((it) => it.key === 'style') : null;
   const rest = pinned ? items.filter((it) => it !== pinned) : items;
+  const pinText = pinned ? pinned.short || pinned.text : '';
+  React.useLayoutEffect(() => {
+    const el = pinRef.current;
+    if (!el) return undefined;
+    const read = () => setPinCut(el.scrollWidth > el.clientWidth + 1);
+    read();
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
+    ro?.observe(el);
+    return () => ro?.disconnect();
+  }, [pinText]);
   const row = (
     <div ref={rowRef}
       className={`band-chips${edges.start ? ' has-start' : ''}${edges.end ? ' has-end' : ''} ${className}`.trim()}
@@ -109,7 +125,7 @@ export function SummaryChips({ items, className = '', lead = null, pinStyle = fa
   if (!pinned) return row;
   return (
     <div className="band-chips-pin" role="group" aria-label={t('band.chipsAria')}>
-      {chip(pinned)}
+      {chip(pinned, true)}
       {row}
     </div>
   );

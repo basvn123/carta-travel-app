@@ -14,16 +14,18 @@ import { countKey } from '../../lib/plural.js';
  * phone) and Filters. What it dropped as a repeat: the search chip (the field
  * shows it), the "Showing places in" hint and the second and third pill
  * styles. Share stays at the desktop row's right end; a phone has it in the
- * field.
+ * field. On the map (`mapView`) the row keeps Share only: Sort is the list
+ * sheet's or the column's head, Saved a quick chip on the map (judgement-4:
+ * each control once).
  */
 export function ExploreToolbar({
-  TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang,
+  TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang, mapView = false,
   resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
 }) {
   const tools = isDesktop ? (
     <>
-      {sortMenu}
-      <SavedToggle on={showFavOnly} onChange={setShowFavOnly} t={t} />
+      {!mapView && sortMenu}
+      {!mapView && <SavedToggle on={showFavOnly} onChange={setShowFavOnly} t={t} />}
       <IconButton className="xap-share" label={t('explore.toolShare')} onClick={shareView}>
         <HouseIcon.share size={18} />
       </IconButton>

@@ -93,7 +93,7 @@ export function ExploreContent({
   pageOver, pending, pickedId, pickedRow, pinLinkId, pins, railLead, railMonth, rails,
   railsIdle, reachMinutes, resetAll, roleFor, searchHits, selectedId, sentinelRef,
   setCardLinkId, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
-  shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf, mapSort = null, filterCount = 0,
+  shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf, mapSort = null,
 }) {
   useRouteIn(contentRef, view);
   // G12 map view round 2: the best value in view (its row says so, as its
@@ -194,7 +194,7 @@ export function ExploreContent({
               allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
               pickedId={pickedId} overviewOf={overviewOf} onPick={onPick}
               favSet={favSet} onToggleFav={onToggleFav} sort={mapSort}
-              filterCount={filterCount} basis={basis} bestId={bestId} onZoomOut={zoomOut}
+              basis={basis} bestId={bestId} onZoomOut={zoomOut}
               listSwitch={viewSwitch('xsheet-view')} />
           )}
           {!mapSplit && view === 'map' && isActiveMap && pickedRow && (
