@@ -65,5 +65,27 @@ export function frame(points, aspect = 1, { minW = 220, pad = 0.4 } = {}) {
   return { x: cx - w / 2, y: cy - h / 2, w, h };
 }
 
+/**
+ * A frame kept inside the plate, so a wide pane never shows past the plate's
+ * land edges (a flat cut of the east and a strip of bare pane, judgement 1).
+ * The plate's west edge is open Atlantic, so the frame may run up to `west`
+ * units past it (more sea, nothing cut); the north, east and south edges cut
+ * land and hold. A frame too big for that room shrinks round its centre at
+ * the same aspect, then slides back inside; the aspect is the pane's, so
+ * the plate still covers it.
+ * @returns {{x, y, w, h}}
+ */
+export function clampFrame(f, W = PLATE.w, H = PLATE.h, west = 400) {
+  let { w, h } = f;
+  const aspect = w / h;
+  if (w > W + west) { w = W + west; h = w / aspect; }
+  if (h > H) { h = H; w = h * aspect; }
+  const cx = f.x + f.w / 2;
+  const cy = f.y + f.h / 2;
+  const x = Math.min(Math.max(cx - w / 2, -west), W - w);
+  const y = Math.min(Math.max(cy - h / 2, 0), H - h);
+  return { x, y, w, h };
+}
+
 /** A frame as an SVG viewBox string. */
 export const viewBoxOf = (f) => `${f.x.toFixed(1)} ${f.y.toFixed(1)} ${f.w.toFixed(1)} ${f.h.toFixed(1)}`;

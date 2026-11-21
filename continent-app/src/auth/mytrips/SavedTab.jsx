@@ -332,7 +332,7 @@ export function SavedTab({
           <h2 className="atlas-empty-h">{t('mt.savedEmptyTitle')}</h2>
           <div className="atlas-empty-acts">
             <Button variant="primary" iconStart={<BookmarkIcon size={18} />} onClick={onBrowse}>{t('mt.discoverPlaces')}</Button>
-            {onExample && <Button variant="soft" iconStart={<EyeIcon size={18} />} onClick={onExample}>{t('mt.seeExample')}</Button>}
+            {onExample && <Button variant="secondary" className="mt-soft" iconStart={<EyeIcon size={18} />} onClick={onExample}>{t('mt.seeExample')}</Button>}
           </div>
         </div>
       </>

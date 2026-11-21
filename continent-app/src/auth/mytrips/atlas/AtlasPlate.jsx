@@ -5,7 +5,7 @@ import { Blaze } from '../../../components/ui/index.js';
 import { Pressable } from '../../../components/ui/Pressable.jsx';
 import { CountryFlag } from '../../../components/CountryFlag.jsx';
 import { countryName } from '../../../lib/countryName.js';
-import { frame, viewBoxOf } from './project.js';
+import { clampFrame, frame, viewBoxOf } from './project.js';
 import { WHOLE } from './layers.js';
 
 /**
@@ -134,9 +134,9 @@ export function AtlasPlate({
   const L = layer || WHOLE_LAYER;
   const w = size?.w || 390;
   const h = size?.h || 250;
-  const vb = useMemo(() => (L.whole || !L.focus?.length
+  const vb = useMemo(() => clampFrame(L.whole || !L.focus?.length
     ? frame(WHOLE, w / h, { minW: 400, pad: 0 })
-    : frame(L.focus, w / h, { minW: Math.max(220, L.minW ?? (w > 500 ? 560 : 320)), pad: L.pad ?? 0.25 })), [L, w, h]);
+    : frame(L.focus, w / h, { minW: Math.max(220, L.minW ?? (w > 500 ? 560 : 320)), pad: L.pad ?? 0.25 }), geo?.w, geo?.h), [L, w, h, geo]);
   const k = vb.w / w;
   const ramp = L.ramp || {};
   const classOf = (cc) => {

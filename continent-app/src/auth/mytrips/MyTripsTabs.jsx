@@ -120,7 +120,7 @@ export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }
 export function TripsTab({
   authed, configured, loading, error, onRetry, today = null, next, coming = [], planning = [], dayPlans = [],
   friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onAllInPlan, onSignIn, signInLine = true,
-  example = false, onExample = null, onExampleClose = null, rate = null, unit = null, onLift = null,
+  example = false, onExample = null, onExampleClose = null, rate = null, unit = null, onLift = null, hasPast = false,
 }) {
   const { t } = useI18n();
   const nothing = !example && !today && !next && !coming.length && !planning.length && !dayPlans.length;
@@ -136,7 +136,9 @@ export function TripsTab({
         <>
           {rate}
           <div className="mt-first">
-            <h3 className="mt-first-title">{t('mt.firstTrip')}</h3>
+            {/* A traveller with past trips is not new here: the plate above shows
+                their routes, so the line asks for the next one (judgement 1). */}
+            <h3 className="mt-first-title">{t(hasPast ? 'mt.nextTrip' : 'mt.firstTrip')}</h3>
             <div className="mt-first-acts">
               <Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onPlanTrip}>{t('saved.planTrip')}</Button>
               {onExample && (
@@ -154,8 +156,9 @@ export function TripsTab({
       ) : (
         <>
           {example && <ExampleBar onClose={onExampleClose} />}
-          {rate}
           {today}
+          {/* Today is the focal card during a trip; the grade can wait. */}
+          {!today && rate}
           {next && (
             <div className="mt-next">
               <NextTripCard {...next} />
@@ -163,6 +166,7 @@ export function TripsTab({
               {next.below}
             </div>
           )}
+          {today && rate}
           {(coming.length > 0 || planning.length > 0) && (
             <div className="mt-two">
               {coming.length > 0 && (

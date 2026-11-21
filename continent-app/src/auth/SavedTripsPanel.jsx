@@ -392,11 +392,11 @@ export function SavedTripsPanel({
     setUndo(null);
     u.commit?.();
   }, []);
-  const removeWithUndo = useCallback(({ key, label, commit, restore }) => {
+  const removeWithUndo = useCallback(({ key, label, text, commit, restore }) => {
     flushUndo();
     const timer = window.setTimeout(flushUndo, UNDO_MS);
     undoRef.current = { key, commit, restore, timer };
-    setUndo({ key, label });
+    setUndo({ key, label, text });
   }, [flushUndo]);
   const undoRemoval = () => {
     const u = undoRef.current;
@@ -1180,13 +1180,6 @@ export function SavedTripsPanel({
     .slice(0, 10)
     .map((d) => ({ key: `ex:${d.id}`, kind: 'dest', id: d.id, cc: d.iso2 || '', name: d.city || d.id, img: resolveImage({ ids: [d.id], cities: [d.city], countries: [d.country] }) }))
     : []), [example, shortRows.length, destinations, costs, resolveImage]);
-  const tripsMap = tripsLayer(showExample ? { ahead: [atlasTrip(examplePlans[0])] } : {
-    today: happening && todayAt ? atlasTrip(happening) : null,
-    todayAt,
-    ahead: ahead.filter((p) => p.start_date).map(atlasTrip),
-  });
-  tripsMap.nextIso = new Set(showExample ? ['SI'] : happening ? [] : nextIsoAll);
-  tripsMap.lift = lift;
 
   // "Hoe was {trip}?" (decision 8): the latest ended trip without a grade,
   // until it is graded; the grade is memory.rating, Je cijfer.
@@ -1195,8 +1188,15 @@ export function SavedTripsPanel({
     <RateTrip
       title={toRate.title}
       onRate={(n) => {
-        saveMemory(toRate.id, { ...(loadMemory(toRate.id) || emptyMemory()), rating: n }, spendLabels);
+        const before = loadMemory(toRate.id) || emptyMemory();
+        saveMemory(toRate.id, { ...before, rating: n }, spendLabels);
         setMemTick((k) => k + 1);
+        // One tap saves the grade, so it gets the house undo like a removal.
+        removeWithUndo({
+          key: `rate:${toRate.id}`,
+          text: t('mt.ratedUndo', { trip: toRate.title, n }),
+          restore: () => { saveMemory(toRate.id, before, spendLabels); setMemTick((k) => k + 1); },
+        });
       }}
     />
   ) : null;
@@ -1218,6 +1218,17 @@ export function SavedTripsPanel({
         spendPP: Number.isFinite(r.spendPP) ? r.spendPP : null,
       };
     }), [pastTrips]); // eslint-disable-line react-hooks/exhaustive-deps -- the helpers follow destinations, which pastTrips already follows
+  // With no trip ahead, the Trips plate shows the past routes and the
+  // countries been to, so a returning traveller never sees a blank Europe.
+  const tripsMap = tripsLayer(showExample ? { ahead: [atlasTrip(examplePlans[0])] } : {
+    today: happening && todayAt ? atlasTrip(happening) : null,
+    todayAt,
+    ahead: ahead.filter((p) => p.start_date).map(atlasTrip),
+    past: atlasPast,
+  });
+  tripsMap.nextIso = new Set(showExample ? ['SI'] : happening ? [] : nextIsoAll);
+  tripsMap.been = tripsMap.state === 'past' ? beenIso : undefined;
+  tripsMap.lift = lift;
   // Example mode on Your Europe: a record of real catalogue places, marked
   // Voorbeeld, held only here (never saved, counted or shared as a record).
   const [exGrades, setExGrades] = useState({});
@@ -1485,6 +1496,7 @@ export function SavedTripsPanel({
               onExample={() => setExample(true)}
               onExampleClose={() => setExample(false)}
               rate={rateNode}
+              hasPast={pastTrips.length > 0}
               unit={<UnitButton choices={choices} onOpen={() => setUnitOpen(true)} />}
               onLift={setLift}
               friendsShared={friendTrips.length}
@@ -1615,7 +1627,7 @@ export function SavedTripsPanel({
             mockRead={SAVED_MOCK ? mockRead : null}
           />
         )}
-        {undo && <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />}
+        {undo && <UndoToast key={undo.key} label={undo.label} text={undo.text} onUndo={undoRemoval} onClose={flushUndo} />}
         <SiteFooter />
       </div>
     </div>

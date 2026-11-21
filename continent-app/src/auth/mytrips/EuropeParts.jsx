@@ -138,7 +138,7 @@ export function CostChart({ trips, per, onPer, missing = 0, onFill }) {
     </div>
   );
   return (
-    <Sect id="mt-cost-h" title={t('mt.costTitle')} action={rows.length ? seg : null}>
+    <Sect id="mt-cost-h" full title={t('mt.costTitle')} action={rows.length ? seg : null}>
       {!rows.length ? (
         <Pressable className="atlas-softbtn" onClick={onFill}>{t('mt.costFill')}</Pressable>
       ) : (

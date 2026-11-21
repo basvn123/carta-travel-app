@@ -42,7 +42,7 @@ export function rampOf(firstYear = {}) {
  * lib/myTrips.tripToday; `ahead` the trips to come, the next one first.
  * The next stop takes the one saffron point (decision 2).
  */
-export function tripsLayer({ today = null, todayAt = null, ahead = [] } = {}) {
+export function tripsLayer({ today = null, todayAt = null, ahead = [], past = [] } = {}) {
   if (today) {
     const stops = located(today.stops);
     if (stops.length) {
@@ -60,7 +60,19 @@ export function tripsLayer({ today = null, todayAt = null, ahead = [] } = {}) {
     }
   }
   const trips = ahead.map((t) => ({ ...t, located: located(t.stops) })).filter((t) => t.located.length);
-  if (!trips.length) return { state: 'empty', whole: true, summary: { key: 'mt.mapTripsEmpty' } };
+  if (!trips.length) {
+    // Nothing ahead but trips behind: their routes in the quiet past line.
+    const done = past.map((t) => located(t.stops)).filter((ls) => ls.length);
+    if (!done.length) return { state: 'empty', whole: true, summary: { key: 'mt.mapTripsEmpty' } };
+    return {
+      state: 'past',
+      focus: done.flat().map(xy),
+      pad: 0.12,
+      routes: done.filter((ls) => ls.length > 1).map((ls, i) => ({ id: `past${i}`, pts: ls.map(xy), kind: 'past' })),
+      stops: done.flat().map((s) => ({ x: s.x, y: s.y })),
+      summary: { key: 'mt.mapTripsPast', n: done.length },
+    };
+  }
   const [next] = trips;
   const first = next.located[0];
   const many = trips.length > 1;

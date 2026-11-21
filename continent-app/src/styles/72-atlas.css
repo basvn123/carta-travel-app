@@ -603,8 +603,10 @@
 
 .atlas-yr i.is-next {
   width: 14px;
-  background: repeating-linear-gradient(-45deg, var(--umber-600) 0 2px, var(--atlas-land) 2px 5px);
-  outline: 1px solid var(--atlas-border);
+  /* The legend sits outside .atlas-map, where the plate colours are not
+     set, so the swatch falls back to the ground (it showed nothing). */
+  background: repeating-linear-gradient(-45deg, var(--umber-600) 0 2px, var(--atlas-land, var(--surface)) 2px 5px);
+  outline: 1px solid var(--atlas-border, var(--border));
   outline-offset: -1px;
 }
 
@@ -1048,8 +1050,13 @@
 
 .mt-rate-scale {
   display: grid;
-  grid-template-columns: repeat(10, minmax(0, 1fr));
+  /* Two rows of five on a phone, so every number is a full 44 px target. */
+  grid-template-columns: repeat(5, minmax(var(--tap), 1fr));
   gap: var(--space-1);
+}
+
+@media (min-width: 600px) {
+  .mt-rate-scale { grid-template-columns: repeat(10, minmax(var(--tap), 1fr)); }
 }
 
 .mt-rate-scale button {
@@ -1091,7 +1098,8 @@
   min-height: 50px;
 }
 
-.mt-first-acts .btn.mt-soft {
+/* "Bekijk een voorbeeld" has one look on all three tabs (judgement 1). */
+.btn.mt-soft {
   border-color: transparent;
   background: var(--surface-sunken);
 }
@@ -1159,6 +1167,16 @@
 .atlas-slot.is-saved .atlas-map { height: 300px; }
 .atlas-slot.is-saved.is-empty .atlas-map { height: 340px; }
 .atlas-live .mt-map.is-saved { height: 100%; min-height: 0; border-radius: 0; }
+/* The live Saved map keeps its pins and count bubbles: on a phone only the
+   last 24 px fade into the ground, and the attribution moves to the top-left
+   corner, off the clusters (judgement 1). */
+@media (max-width: 767px) {
+  .atlas-slot.is-saved .atlas-map.atlas-live {
+    -webkit-mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);
+    mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);
+  }
+  .atlas-live .maplibregl-ctrl-bottom-right { top: 0; right: auto; bottom: auto; left: 0; }
+}
 @media (min-width: 768px) {
   .atlas-slot.is-saved .atlas-map,
   .atlas-slot.is-saved.is-empty .atlas-map { height: 420px; }
@@ -1197,6 +1215,7 @@
 .atlas-watch-n { font-weight: 800; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .atlas-watch-p { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
 .atlas-watch-p b { font-size: var(--text-headline); font-weight: 800; }
+.atlas-watch-wait { display: grid; place-items: center; height: 54px; padding: 0 var(--space-2); border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); text-align: center; }
 .atlas-chart { display: block; max-width: 100%; height: auto; overflow: visible; }
 .atlas-chart-area { fill: var(--umber-100); opacity: 0.55; }
 .atlas-chart-line { fill: none; stroke: var(--umber-600); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
@@ -1359,7 +1378,11 @@
 .atlas-cbar { position: absolute; inset: 0 auto 0 0; border-radius: var(--radius-sm); background: var(--umber-600); }
 
 /* the four extremes */
-.atlas-extremes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+/* Two tiles a row where they fit, one under the other in a narrow column
+   (the 1440 side column), so a place name never breaks into four lines. */
+.atlas-extremes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-2); }
+/* The cost rows need the width: from the two-column layout they span it. */
+.atlas-eu > .atlas-sect.is-full { grid-column: 1 / -1; }
 .atlas-ext { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; align-items: center; padding: 10px var(--space-3); border-radius: var(--radius-panel); background: var(--surface-sunken); }
 .atlas-ext i { grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--radius-sm); background: var(--umber-800); color: var(--action-text); font-size: var(--text-body); font-style: normal; font-weight: 800; }
 .atlas-ext b { overflow: hidden; font-size: var(--text-body); white-space: nowrap; text-overflow: ellipsis; }

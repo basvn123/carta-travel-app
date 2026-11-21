@@ -60,7 +60,7 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
     const L = trips || { whole: true, state: 'empty', summary: { key: 'mt.mapTripsEmpty' } };
     empty = L.state === 'empty';
     const { key, ...vars } = L.summary || { key: 'mt.mapTripsEmpty' };
-    plate = <AtlasPlate geo={geo} layer={L} next={trips?.nextIso} label={t(key, vars)} drawKey={drawKey} cornerT={cornerT} />;
+    plate = <AtlasPlate geo={geo} layer={L} been={trips?.been} next={trips?.nextIso} label={t(key, vars)} drawKey={drawKey} cornerT={cornerT} />;
   } else {
     const E = europe;
     const n = E.been.size;

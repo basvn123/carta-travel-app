@@ -110,7 +110,7 @@ export function CardMenu({ actions = [], onRemove, removeLabel, label }) {
  * with every other transient message. Undo takes focus when the removal took
  * the focused control away with it.
  */
-export function UndoToast({ label, onUndo, onClose }) {
+export function UndoToast({ label, text = '', onUndo, onClose }) {
   const { t } = useI18n();
   const undoRef = useRef(null);
   useEffect(() => {
@@ -119,7 +119,7 @@ export function UndoToast({ label, onUndo, onClose }) {
   }, []);
   const node = (
     <div className="undo-toast" role="status">
-      <span className="undo-toast-text">{t('saved.undoRemoved', { name: label })}</span>
+      <span className="undo-toast-text">{text || t('saved.undoRemoved', { name: label })}</span>
       <Button ref={undoRef} size="sm" onClick={onUndo}>{t('saved.undo')}</Button>
       <IconButton label={t('a11y.close')} onClick={onClose}><CloseIcon size={16} /></IconButton>
     </div>

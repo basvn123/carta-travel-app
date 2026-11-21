@@ -99,10 +99,16 @@ function WatchCard({ item, onOpen }) {
         {item.alert && <span className="atlas-watch-bell" aria-label={t('watch.alertOn')}><BellIcon size={14} /></span>}
       </span>
       <span className="atlas-watch-n">{item.label}</span>
-      <WatchChart pts={item.pts} w={222} h={54} label={t('watch.chartAria', { name: item.label, from: formatMoney(first), to: formatMoney(now) })} />
+      {item.pts.length > 1 ? (
+        <WatchChart pts={item.pts} w={222} h={54} label={t('watch.chartAria', { name: item.label, from: formatMoney(first), to: formatMoney(now) })} />
+      ) : (
+        // One measurement is no line and no move: the empty frame says when
+        // the next point comes instead of "gelijk" (never an invented point).
+        <span className="atlas-watch-wait">{t('watch.weekly')}</span>
+      )}
       <span className="atlas-watch-p">
         <b className="num">{formatMoney(now)}</b>
-        <MovePill delta={delta}>{moveWords(t, delta)}</MovePill>
+        {item.pts.length > 1 && <MovePill delta={delta}>{moveWords(t, delta)}</MovePill>}
       </span>
     </Pressable>
   );

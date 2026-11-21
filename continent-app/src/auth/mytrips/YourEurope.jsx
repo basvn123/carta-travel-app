@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
+import { Button } from '../../components/ui/index.js';
 import { EyeIcon, PlusIcon } from '../../components/Icons.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { extremes, nightsPerMonth, nightsPerYear, tripLogOrder, tripYear } from '../../lib/atlasFacts.js';
@@ -69,7 +70,7 @@ export function YourEurope({
       <div className="mt-europe atlas-eu is-empty">
         <div className="atlas-empty-acts">
           <Pressable className="atlas-btn" onClick={onAddPast}><PlusIcon size={18} />{t('saved.addPastTrip')}</Pressable>
-          {onExample && <Pressable className="atlas-btn is-soft" onClick={onExample}><EyeIcon size={18} />{t('mt.seeExample')}</Pressable>}
+          {onExample && <Button variant="secondary" className="mt-soft" iconStart={<EyeIcon size={18} />} onClick={onExample}>{t('mt.seeExample')}</Button>}
         </div>
       </div>
     );

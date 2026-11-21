@@ -24,6 +24,16 @@ test('tripsLayer: no trip shows the whole of Europe', () => {
   assert.equal(L.summary.key, 'mt.mapTripsEmpty');
 });
 
+test('tripsLayer: nothing ahead but past trips draws their routes, no saffron point', () => {
+  const L = tripsLayer({ ahead: [], past: [{ id: 'p', stops: [LIS, POR] }, { id: 'q', stops: [TRO] }] });
+  assert.equal(L.state, 'past');
+  assert.equal(L.routes.length, 1);
+  assert.equal(L.routes[0].kind, 'past');
+  assert.equal(L.stops.length, 3);
+  assert.equal(L.stops.some((s) => s.sun), false);
+  assert.deepEqual(L.summary, { key: 'mt.mapTripsPast', n: 2 });
+});
+
 test('tripsLayer: one trip frames its stops, the first stop takes the one saffron point', () => {
   const L = tripsLayer({ ahead: [{ id: 'a', title: 'Austria', stops: [HALL, VIE] }] });
   assert.equal(L.state, 'one');

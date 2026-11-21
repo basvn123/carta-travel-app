@@ -3,7 +3,7 @@
 // Run: npm test (continent-app/).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { project, frame, PLATE, viewBoxOf } from '../src/auth/mytrips/atlas/project.js';
+import { project, frame, clampFrame, PLATE, viewBoxOf } from '../src/auth/mytrips/atlas/project.js';
 
 const near = (got, want, tol = 0.15) => {
   assert.ok(Math.abs(got[0] - want[0]) <= tol && Math.abs(got[1] - want[1]) <= tol, `${got} vs ${want}`);
@@ -32,4 +32,15 @@ test('frame keeps the slot aspect and a minimum width', () => {
   const empty = frame([], 1);
   assert.equal(empty.w, PLATE.w);
   assert.match(viewBoxOf(one), /^[\d.-]+ [\d.-]+ 220\.0 110\.0$/);
+});
+
+test('clampFrame keeps a wide pane inside the plate at the pane aspect', () => {
+  const f = clampFrame({ x: -100, y: 0, w: 1600, h: 800 });
+  assert.ok(Math.abs(f.w / f.h - 2) < 1e-9);
+  // Only the Atlantic side may run past the plate.
+  assert.ok(f.x >= -400 - 1e-9 && f.x + f.w <= PLATE.w + 1e-9);
+  assert.ok(f.y >= 0 && f.y + f.h <= PLATE.h + 1e-9);
+  const east = clampFrame({ x: 800, y: 300, w: 400, h: 300 });
+  assert.equal(east.w, 400);
+  assert.ok(Math.abs(east.x + east.w - PLATE.w) < 1e-9);
 });
