@@ -4,7 +4,7 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { DiamondIcon, HeartIcon } from '../../components/Icons.jsx';
 import { countKey } from '../../lib/plural.js';
-import { prefersReducedMotion } from '../../lib/motion.js';
+import { scrollBehavior } from '../../lib/motion.js';
 import { useFilters } from './filtersStore.js';
 
 // Each quick chip's glyph, from the house set where it has one.
@@ -30,7 +30,7 @@ export function QuickChips({ className = '', withFilters = true }) {
   // so the chip and Filters are in view (a far chip left both off screen).
   const toFront = () => {
     const el = rowRef.current;
-    if (el && el.scrollLeft > 0) el.scrollTo({ left: 0, behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    if (el && el.scrollLeft > 0) el.scrollTo({ left: 0, behavior: scrollBehavior() });
   };
   return (
     <div ref={rowRef} className={`xquick ${className}`.trim()} role="group" aria-label={t('filters.quickAria')}>

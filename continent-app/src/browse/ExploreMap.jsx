@@ -629,7 +629,10 @@ export function ExploreMap({
       b.l < EDGE_GAP || b.r > W - EDGE_GAP || b.t < EDGE_GAP || b.b > H - EDGE_GAP
       || rects.some((r) => b.r > r.l && b.l < r.r && b.b > r.t && b.t < r.b));
     const placed = [];
-    const clashes = (b) => placed.some((p) => b.r + PIN_GAP > p.l && b.l - PIN_GAP < p.r && b.b + PIN_GAP > p.t && b.t - PIN_GAP < p.b);
+    // Each placed photo or pill's box by place, so the best value can move
+    // them aside (below).
+    const boxOf = new Map();
+    const clashes =(b) => placed.some((p) => b.r + PIN_GAP > p.l && b.l - PIN_GAP < p.r && b.b + PIN_GAP > p.t && b.t - PIN_GAP < p.b);
     const picked = pickedRef.current || '';
     const hot = hoverRef.current || ringRef.current || '';
     for (const f of geojsonRef.current.features) {
@@ -639,8 +642,13 @@ export function ExploreMap({
         if (pr.fig && inBox(f.geometry.coordinates, ring)) outside.push(pr);
         continue;
       }
-      inView.push([pr, map.project(f.geometry.coordinates)]);
-      if (pinFigRef.current !== 'score' && pr.eur >= 0
+      const pt = map.project(f.geometry.coordinates);
+      inView.push([pr, pt]);
+      // The best value is one the reader can see: the margin's places just
+      // past an edge are judged for the pins but never named best (Ohrid,
+      // off screen at Europe zoom, left the map with no best value shown).
+      const seen = pt.x >= 0 && pt.x <= W && pt.y >= 0 && pt.y <= H;
+      if (seen && pinFigRef.current !== 'score' && pr.eur >= 0
         && (!best || pr.eur < best.eur || (pr.eur === best.eur && pr.rank < best.rank))) best = pr;
     }
     inView.sort((a, c) => a[0].rank - c[0].rank);
@@ -665,6 +673,9 @@ export function ExploreMap({
     const figOf = (pr) => (pinFigRef.current === 'score' ? '' : pr.fig);
     for (const [pr, pt] of inView) {
       if (pr.id === picked || pr.id === hot) continue;
+      // The best value's pin is 12 px wider (its saffron dot): measured at
+      // the plain size it met its neighbour in MapLibre's collision and hid.
+      const isBest = pr.id === best?.id;
       if (photos.length < tier.n) {
         if (hasPhoto(pr.id)) {
           const tries = [];
@@ -672,11 +683,12 @@ export function ExploreMap({
           tries.push('fs');
           let done = false;
           for (const kind of tries) {
-            const d = faceDims(kind, pr.score, figOf(pr), kind === 'fn' ? pr.city : '');
+            const d = faceDims(isBest ? `${kind}b` : kind, pr.score, figOf(pr), kind === 'fn' ? pr.city : '');
             if (kind === 'fn' && !d.nameFits) continue;
             const b = boxAt(pt, [d.w, d.h]);
             if (covered(b) || clashes(b)) continue;
             placed.push(b);
+            boxOf.set(pr.id, b);
             photos.push({ id: pr.id, kind });
             if (kind === 'fn') named += 1;
             done = true;
@@ -688,10 +700,33 @@ export function ExploreMap({
         }
       }
       if (!pr.fig || shown.length >= cap) continue;
-      const b = boxAt(pt, pinSize(`xp${SEP}n${SEP}${pr.fig}`) || [pillWidth(pr.fig), PILL_H]);
+      const b = boxAt(pt, pinSize(`xp${SEP}${isBest ? 'b' : 'n'}${SEP}${pr.fig}`) || [pillWidth(pr.fig) + (isBest ? 12 : 0), PILL_H]);
       if (covered(b) || clashes(b)) continue;
       placed.push(b);
+      boxOf.set(pr.id, b);
       shown.push(pr.id);
+    }
+    // The best value in view always shows, as the list's "Best value" row
+    // says: when no photo or pill of its own was placed, its pill takes its
+    // room and the pins it meets step aside (forced in unplaced, it lost
+    // MapLibre's collision and the map showed none at Europe zoom,
+    // integration check 2026-11-21). Never over the picked or hovered pin,
+    // never under the chrome: a best value with no room is not named, so the
+    // best layer (drawn past MapLibre's collision, mapPins.js) never covers
+    // the chrome or the picked pin.
+    let bestShown = !!best && boxOf.has(best.id);
+    if (best && best.id !== picked && best.id !== hot && !bestShown) {
+      const at = inView.find(([pr]) => pr.id === best.id);
+      const bb = at && boxAt(at[1], pinSize(`xp${SEP}b${SEP}${best.fig}`) || [pillWidth(best.fig) + 12, PILL_H]);
+      const meets = (p) => bb.r + PIN_GAP > p.l && bb.l - PIN_GAP < p.r && bb.b + PIN_GAP > p.t && bb.t - PIN_GAP < p.b;
+      const fixed = placed.filter((p) => ![...boxOf.values()].includes(p));
+      if (bb && !covered(bb) && !fixed.some(meets)) {
+        const away = new Set([...boxOf].filter(([, p]) => meets(p)).map(([id]) => id));
+        for (let i = photos.length - 1; i >= 0; i -= 1) if (away.has(photos[i].id)) photos.splice(i, 1);
+        for (let i = shown.length - 1; i >= 0; i -= 1) if (away.has(shown[i])) shown.splice(i, 1);
+        shown.push(best.id);
+        bestShown = true;
+      }
     }
     outside.sort((a, c) => a.rank - c.rank);
     // The ring is twice the view's area beyond it: twice the cap.
@@ -704,7 +739,7 @@ export function ExploreMap({
         if (covered(b)) hiddenClusters.push(f.id ?? f.properties.cluster_id);
       }
     }
-    pinStateRef.current = { shown, photos, hiddenClusters, best: best?.id || '' };
+    pinStateRef.current = { shown, photos, hiddenClusters, best: bestShown ? best.id : '' };
     applyPins(map);
     evictPhotos(map, new Set([...photos.map((x) => x.id), picked, hot].filter(Boolean)));
     // The photographs the best-ranked places still need, loaded while the
@@ -1063,14 +1098,41 @@ export function ExploreMap({
     if (!f) return undefined;
     const el = document.createElement('div');
     el.className = 'xmap-anchor';
-    const right = map.project(f.geometry.coordinates).x > map.getCanvas().clientWidth / 2;
     // Clear of the picked pin's label, which is as wide as its name.
     const half = (pinSize(oneImage('pick', f.properties))?.[0] || 72) / 2 + 12;
+    // The side with room for the card (320 px at most, 16 px to spare): the
+    // pin's own half first, else the other side, else the roomier one; a
+    // pin just left of the middle of a 720 px map put the card past the
+    // frame at 1180 (integration check, 2026-11-21).
+    const x = map.project(f.geometry.coordinates).x;
+    const W = map.getCanvas().clientWidth;
+    const need = 320 + 16;
+    const roomL = x - half;
+    const roomR = W - x - half;
+    const pref = x > W / 2;
+    const right = (pref ? roomL : roomR) >= need ? pref : (pref ? roomR : roomL) >= need ? !pref : roomL > roomR;
     const marker = new maplibregl.Marker({ element: el, anchor: right ? 'right' : 'left', offset: [right ? -half : half, -28] })
       .setLngLat(f.geometry.coordinates).addTo(map);
     setAnchorEl(el);
     const settle = setTimeout(() => window.dispatchEvent(new Event('carta:map-chrome')), 60);
-    return () => { clearTimeout(settle); marker.remove(); setAnchorEl(null); };
+    // Neither side wide enough: once the camera rests, the map moves the
+    // card's overflow (and 16 px) back inside the frame.
+    let gone = false;
+    const keepIn = () => {
+      if (gone) return;
+      const r = el.getBoundingClientRect();
+      const c = map.getCanvas().getBoundingClientRect();
+      if (!r.width) return;
+      const dx = r.right > c.right - 16 ? r.right - c.right + 16 : r.left < c.left + 16 ? r.left - c.left - 16 : 0;
+      if (Math.abs(dx) > 1) map.panBy([dx, 0], { duration: reducedMotion() ? 0 : 320 });
+    };
+    const later = () => {
+      if (gone) return;
+      if (map.isMoving()) map.once('moveend', later);
+      else requestAnimationFrame(keepIn);
+    };
+    const inside = setTimeout(later, 160);
+    return () => { gone = true; clearTimeout(settle); clearTimeout(inside); marker.remove(); setAnchorEl(null); };
   }, [hasCard, pickedId, pinsIn]);
 
   // New places or new figures: the same camera, the pins re-priced and

@@ -833,6 +833,14 @@ async function round2Pass() {
         const some = await page.evaluate(() => !!document.querySelector('.xmap-tapcard, .xmap-anchor-card'));
         if (!some) bad.push(`${id.slice(4)} no card`);
         bad.push(...cut.map((c) => `${id.slice(4)} ${c}`));
+        // From 1024 the anchored card stands inside the map's frame (at 1180
+        // it once ran past the right edge), once the camera has moved it in.
+        if (w >= 1024) {
+          await page.waitForTimeout(900);
+          const out = await page.evaluate(`(() => { const a = document.querySelector('.xmap-anchor-card')?.getBoundingClientRect(); const c = ${MAP}.getCanvas().getBoundingClientRect();
+            if (!a) return 'no anchored card'; return a.left >= c.left - 0.5 && a.right <= c.right + 0.5 ? '' : 'card ' + Math.round(a.left) + '-' + Math.round(a.right) + ' outside the map ' + Math.round(c.left) + '-' + Math.round(c.right); })()`);
+          if (out) bad.push(`${id.slice(4)} ${out}`);
+        }
         await ctx.close();
       }
       check(`round2 cut ${lang} ${w}: the stress names are whole`, bad.length === 0, bad.slice(0, 3).join(' | '));

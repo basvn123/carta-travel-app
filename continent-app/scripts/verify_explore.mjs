@@ -377,8 +377,13 @@ try {
     return {
       labels: pills.length,
       inside: pills.every((f) => { const pt = map.project(f.geometry.coordinates); return pt.x > 0 && pt.y > 0 && pt.x < W && pt.y < H; }),
-      cheapest: q('xpin-best').length,
+      // Round 2: the best value is a pill, or a photo pin whose kind ends
+      // in "b" (mapPins.js faceId), never both.
+      cheapest: q('xpin-best').length + q('xpin-photo').filter((f) => /b$/.test(String(f.properties.img || '').split('\t')[1] || '')).length,
       domPills: document.querySelectorAll('.xmap-kpin.is-label, .xmap-kpin-label').length,
+      // In the pins' data, drawn or not (MapLibre's collision guard may hide one).
+      bestData: (map.getSource('dests')?._data?.geojson?.features || map.getSource('dests')?._data?.features || [])
+        .filter((f) => f.properties.best === 1).map((f) => f.properties.city).join(', '),
       zoom: map.getZoom(),
       center: map.getCenter().toArray(),
     };
@@ -386,7 +391,7 @@ try {
   netCheck('map: prices from the opening view', pins.labels >= 8, `${pins.labels} labels`);
   check('map: every pill sits inside the frame', pins.inside);
   check('map: the pins are map layers, not DOM', pins.domPills === 0);
-  netCheck('map: one best value in view', pins.cheapest === 1);
+  netCheck('map: one best value in view', pins.cheapest === 1, `${pins.cheapest} drawn, in the data: ${pins.bestData || 'none'}, zoom ${pins.zoom?.toFixed(2)}`);
   await page.screenshot({ path: 'shots/explore-desktop-map.png' });
   await page.locator('.xcontent-map .maplibregl-canvas').evaluate((c) => { c.dataset.probe = '1'; });
   await seg('List').click();
@@ -550,7 +555,7 @@ try {
   });
   check('phone map: the tap card sits just above the nav', dock.clear, `card at ${dock.cardTop}, nav ${dock.navTop}`);
   await page.screenshot({ path: 'shots/explore-phone-map.png' });
-  await page.locator('.xmap-tapcard .xrow-hit').tap();
+  await page.locator('.xmap-tapcard .xtc-hit').first().tap();
   await page.locator('.destp').waitFor({ timeout: 30000 }).catch(() => {});
   check('phone map: the card opens the place', await page.locator('.destp').isVisible());
   }

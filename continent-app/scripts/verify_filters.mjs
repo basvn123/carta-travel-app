@@ -122,11 +122,15 @@ async function run(browser, width, height, lang) {
   for (let i = 0; i < n; i += 1) {
     const chip = chips.nth(i);
     const label = (await chip.innerText()).trim();
+    // G12 map view round 2: every option shows the count it would leave; an
+    // option that says 0 (Saved only, with nothing saved) leaves exactly 0.
+    const said = await chip.getAttribute('data-count');
     lags.push(await tapAndTime(page, chip, base));
     const on = await settled(page);
     lags.push(await tapAndTime(page, chip, on));
     const off = await settled(page);
-    check(`${tag}: "${label}" narrows and reverses`, on < base && on > 0 && off === base, `${base} -> ${on} -> ${off}`);
+    if (said === '0') check(`${tag}: "${label}" says 0, leaves 0 and reverses`, on === 0 && off === base, `${base} -> ${on} -> ${off}`);
+    else check(`${tag}: "${label}" narrows and reverses`, on < base && on > 0 && off === base, `${base} -> ${on} -> ${off}`);
   }
   lags.sort((a, b) => a - b);
   const p90 = lags[Math.floor(lags.length * 0.9)];

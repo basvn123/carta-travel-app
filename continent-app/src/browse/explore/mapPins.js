@@ -539,8 +539,12 @@ export function addPinLayers(map, data) {
   symbol('xpin', 'dests', ['!=', ['get', 'best'], 1],
     ['concat', `xp${SEP}n${SEP}`, ['get', 'fig']],
     { 'symbol-sort-key': ['get', 'rank'], ...stand });
+  // The best value draws past MapLibre's collision: the chooser
+  // (ExploreMap.jsx refreshPins) gives it room and names it only then, and
+  // MapLibre's boxes, shadow room included, hid it beside a photo pin that
+  // stood clear of it (integration check, 2026-11-21).
   symbol('xpin-best', 'dests', ['==', ['get', 'best'], 1],
-    ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']], stand);
+    ['concat', `xp${SEP}b${SEP}`, ['get', 'fig']], { 'icon-allow-overlap': true, 'icon-ignore-placement': true, ...stand });
   symbol('xpin-photo', 'dests-photo', ['has', 'img'], ['get', 'img'],
     { 'symbol-sort-key': ['get', 'rank'], ...stand });
   symbol('xpin-hot', 'dests-hot', ['has', 'img'], ['get', 'img'],

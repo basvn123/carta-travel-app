@@ -765,6 +765,11 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   .explore-shell .xmap-anchor { z-index: 4; }
   .explore-shell .xmap-anchor-card {
     width: 320px;
+    /* A map marker inherits MapLibre's own font (Helvetica 12/20): the
+       card sets the house type again. */
+    font-family: var(--ui);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
     overflow: hidden;
     border-radius: var(--radius-card);
     background: var(--surface);
