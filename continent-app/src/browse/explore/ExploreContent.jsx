@@ -169,8 +169,7 @@ export function ExploreContent({
           {/* G12 map view round 2: the quick filters on the map's top edge
               (desktop); on a phone they are the band's third row. */}
           {isDesktop && view === 'map' && (
-            <QuickChips className="xmap-quick" withFilters={false}
-              onClearAll={clearOnQuick ? resetAll : null} />
+            <QuickChips className="xmap-quick" withFilters={false} showClear={clearOnQuick} />
           )}
           {/* While maplibre downloads, the frame the map will fill is
               already drawn at its final size: a skeleton, not the app's

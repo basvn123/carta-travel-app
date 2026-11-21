@@ -51,8 +51,9 @@
 //              at 769, 820, 900, 1023, map and list) shows every item whole
 //              or fades where it has more; from 769 px a quick filter shows
 //              once on the map (no applied row for quick filters alone, the
-//              map within 16 px of the tabs, Clear all once at the quick
-//              row's end); the column names no basis; Tab reaches the column
+//              map within 16 px of the tabs, Clear all once in the quick
+//              row right after the checked chips, whole in view at 360 to
+//              1440); the column names no basis; Tab reaches the column
 //              before the map's pins (in --e-only)
 import http from 'node:http';
 import fs from 'node:fs';
@@ -1176,6 +1177,43 @@ async function roundEPass() {
       first === 'column' && q >= 0 && m > q && !after.slice(0, m).includes('other'), `first ${first}, then ${after.join(' ')}`);
     await ctx.close();
   });
+  // Clear all right after the checked chips, whole in the row's view
+  // without a swipe, with one and with two quick filters on (judgement-6).
+  for (const [w, h] of [[360, 640], [390, 844], [769, 1000], [820, 1180], [1440, 900]]) {
+    await guard(`roundF clear ${w}`, async () => {
+      const { ctx, page, errors } = await boot(w, h, '?tab=map&xw=map');
+      const read = () => page.evaluate(() => {
+        const row = [...document.querySelectorAll('.xquick')].find((e) => e.getClientRects().length > 0);
+        const btn = row?.querySelector('.xquick-clear');
+        if (!row || !btn) return { btn: false };
+        const r = row.getBoundingClientRect(); const b = btn.getBoundingClientRect();
+        const fadeE = row.classList.contains('has-end') ? 32 : 0;
+        const fadeS = row.classList.contains('has-start') ? 32 : 0;
+        const kids = [...row.children].filter((e) => e.matches('.xquick-chip, .xquick-clear'));
+        const at = kids.indexOf(btn);
+        return {
+          btn: true, inView: b.left >= r.left + fadeS - 1 && b.right <= r.right - fadeE + 1,
+          afterOn: kids.slice(0, at).every((e) => e.classList.contains('xquick-filters') || e.classList.contains('is-on'))
+            && kids.slice(at + 1).every((e) => !e.classList.contains('is-on')),
+          afterFilters: at === 1 && kids[0].classList.contains('xquick-filters'),
+          clears: [...document.querySelectorAll('.xquick-clear, .xap-clear')].filter((e) => e.getClientRects().length > 0).length, scroll: row.scrollLeft,
+          box: [Math.round(b.left), Math.round(b.right)], row: [Math.round(r.left), Math.round(r.right)], fadeE,
+        };
+      });
+      for (const [n, id] of [[1, 'water'], [2, 'score8']]) {
+        await page.locator(`.xquick [data-quick="${id}"]`).first().click();
+        await page.waitForTimeout(1500);
+        const c = await read();
+        // A phone's row starts with Filters and two checked chips fill it, so
+        // Clear all follows Filters there.
+        check(`roundF clear ${w}, ${n} quick on: Clear all once, right after ${w < 769 ? 'Filters' : 'the checked chips'}, whole in view`,
+          c.btn && c.inView && (w < 769 ? c.afterFilters : c.afterOn) && c.clears === 1, JSON.stringify(c));
+        if (SHOTS && n === 2) await page.screenshot({ path: path.join(SHOTS, `f-clear-${w}.png`) });
+      }
+      check(`roundF clear ${w}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    });
+  }
   // The picked row keeps its content where it was (it moved 8 px left).
   await guard('roundE pick 1440', async () => {
     const { ctx, page } = await boot(1440, 900, '?tab=map&xw=map');

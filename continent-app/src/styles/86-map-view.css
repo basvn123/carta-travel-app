@@ -730,6 +730,32 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
 .xquick-chip.is-on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
 .xquick-chip.xquick-filters { border: var(--stroke-edge) solid var(--action); }
 .xquick-chip .band-count { position: static; }
+/* Clear all: quiet words, not a chip that reads as a filter (judgement-6),
+   right after the checked chips (after Filters on a phone). No box, so it
+   sits 4 px nearer its neighbours: a chip turned on at 360 px in fr stays
+   in view beside Filters and it. */
+.xquick-clear {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 36px;
+  margin: 0 calc(-1 * var(--space-1));
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--action);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.xquick-clear::after { content: ''; position: absolute; inset: -4px calc(-1 * var(--space-1)); }
+.xquick-clear:active { transform: scale(var(--press-scale)); }
+.xquick-clear:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 /* The map's top edge: room above and below for the chips' shadow, which
    a scroller clips; the gaps let a drag reach the map. */
 .explore-shell .xmap-quick {

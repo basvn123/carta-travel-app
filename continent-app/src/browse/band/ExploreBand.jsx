@@ -392,7 +392,9 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
           settings; row 3 is Filters and the quick filters. */}
       {mapView && (
         <div className="band-quick">
-          <QuickChips className="is-swipe" />
+          {/* The phone map draws no applied row, so Clear all is this
+              row's whenever a filter is on (judgement-6). */}
+          <QuickChips className="is-swipe" showClear={filters.count > 0} />
         </div>
       )}
       {!mapView && tabs}

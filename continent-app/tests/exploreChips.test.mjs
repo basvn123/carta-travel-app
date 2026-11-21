@@ -120,6 +120,16 @@ test('the map from 769 px: a quick filter that is on shows once, in the quick ro
   assert.match(bar, /mapView \? mapRowChips\(chips, quick\)/);
   // Clear all has one home: the quick row's end when the row is not drawn.
   const content = read('src/browse/explore/ExploreContent.jsx');
-  assert.match(content, /onClearAll=\{clearOnQuick \? resetAll : null\}/);
-  assert.match(read('src/browse/filters/QuickChips.jsx'), /xquick-clear/);
+  assert.match(content, /showClear=\{clearOnQuick\}/);
+  // Right after the checked chips (they lead the row), before the others.
+  const qsrc = read('src/browse/filters/QuickChips.jsx');
+  // On the map's top edge right after the checked chips; on a phone right
+  // after Filters (two checked chips fill the row there).
+  const onAt = qsrc.indexOf('f.quick.filter((c) => c.on).map(chip)');
+  const deskAt = qsrc.indexOf('{!withFilters && clear}');
+  const phoneAt = qsrc.indexOf('{withFilters && clear}');
+  const off = qsrc.indexOf('f.quick.filter((c) => !c.on).map(chip)');
+  assert.ok(phoneAt > 0 && onAt > phoneAt && deskAt > onAt && off > deskAt, 'Filters, Clear all (phone), checked, Clear all (desk), the rest');
+  assert.match(qsrc, /className="xquick-clear"/);
+  assert.match(read('src/browse/band/ExploreBand.jsx'), /<QuickChips className="is-swipe" showClear=\{filters\.count > 0\} \/>/);
 });

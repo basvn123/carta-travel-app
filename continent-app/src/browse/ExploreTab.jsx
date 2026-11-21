@@ -643,7 +643,7 @@ export function ExploreTab({
     if ('gemOnly' in g) setGemOnly(g.gemOnly);
     if ('showFavOnly' in g) setShowFavOnly(g.showFavOnly);
   }, [setGemOnly, setShowFavOnly]);
-  if (isActive) setFilterHandlers({ applyQuick });
+  if (isActive) setFilterHandlers({ applyQuick, clearAll: resetAll });
   React.useEffect(() => {
     if (!isActive) return;
     publishFilters({ count: filterCount, total: sheetTotal, shortcuts: shortcutList, quick: quickList });

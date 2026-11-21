@@ -31,7 +31,7 @@ import { useSyncExternalStore } from 'react';
 // a desktop; applyQuick(id, on) sets one.
 const INITIAL = Object.freeze({ isOpen: false, group: null, nonce: 0, count: 0, total: null, shortcuts: [], quick: [] });
 let state = INITIAL;
-let handlers = { applyShortcut: null, applyQuick: null };
+let handlers = { applyShortcut: null, applyQuick: null, clearAll: null };
 let opener = null;
 const subs = new Set();
 const emit = () => subs.forEach((f) => f());
@@ -80,6 +80,11 @@ export function applyShortcut(id, on = true) {
 
 export function applyQuick(id, on = true) {
   handlers.applyQuick?.(id, on);
+}
+
+/** Every filter off: the quick row's Clear all (judgement-6). */
+export function clearAllFilters() {
+  handlers.clearAll?.();
 }
 
 /** The current state, for code outside React (tests, a verify script). */

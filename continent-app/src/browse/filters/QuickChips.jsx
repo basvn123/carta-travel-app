@@ -5,7 +5,7 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { DiamondIcon, HeartIcon } from '../../components/Icons.jsx';
 import { countKey } from '../../lib/plural.js';
 import { scrollBehavior } from '../../lib/motion.js';
-import { useFilters } from './filtersStore.js';
+import { clearAllFilters, useFilters } from './filtersStore.js';
 
 // Each quick chip's glyph, from the house set where it has one.
 const GLYPH = {
@@ -22,16 +22,16 @@ const GLYPH = {
  * follow, the camera stays. The row is one line at every width and
  * scrolls sideways, a soft fade on a side that has more (judgement-4: on a
  * tablet or desktop it wrapped to a second line over the map).
- * `onClearAll`: Clear all at the row's end, given when the map's applied
- * row is not drawn because every filter on is a quick chip (judgement-6:
- * Clear all has one home).
+ * `showClear`: Clear all, a quiet text button right after the checked
+ * chips (they lead the row; on a phone right after Filters), so it is in
+ * view without a swipe; given where
+ * no applied row says it (judgement-6: Clear all has one home).
  */
-export function QuickChips({ className = '', withFilters = true, onClearAll = null }) {
+export function QuickChips({ className = '', withFilters = true, showClear = false }) {
   const { t } = useI18n();
   const f = useFilters();
   const count = f.count || 0;
   const rowRef = React.useRef(null);
-  const hasClear = Boolean(onClearAll);
   const [said, setSaid] = React.useState('');
   React.useEffect(() => {
     if (!said) return undefined;
@@ -55,12 +55,32 @@ export function QuickChips({ className = '', withFilters = true, onClearAll = nu
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(el);
     return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
-  }, [f.quick.length, hasClear]);
+  }, [f.quick.length, showClear]);
   // A chip turned on moves to the front: the row swipes back to its start,
   // so the chip and Filters are in view (a far chip left both off screen).
   const toFront = () => {
     const el = rowRef.current;
     if (el && el.scrollLeft > 0) el.scrollTo({ left: 0, behavior: scrollBehavior() });
+  };
+  const clear = showClear && (
+    <Pressable className="xquick-clear" onClick={() => {
+      setSaid(t('filters.cleared'));
+      clearAllFilters();
+      // The button leaves with the last filter: focus stays in the row.
+      requestAnimationFrame(() => rowRef.current?.querySelector('.xquick-chip')?.focus({ preventScroll: true }));
+    }}>
+      {t('filters.clearAll')}
+    </Pressable>
+  );
+  const chip = (c) => {
+    const Ico = GLYPH[c.id];
+    return (
+      <Pressable key={c.id} className={`xquick-chip${c.on ? ' is-on' : ''}`} aria-pressed={c.on}
+        data-quick={c.id} onClick={() => { f.applyQuick(c.id, !c.on); if (!c.on) toFront(); }}>
+        {c.on ? <HouseIcon.check size={16} /> : Ico && <Ico size={16} />}
+        <span className="xquick-word">{c.label}</span>
+      </Pressable>
+    );
   };
   return (
     <div ref={rowRef} className={`xquick${edges.start ? ' has-start' : ''}${edges.end ? ' has-end' : ''} ${className}`.trim()}
@@ -75,27 +95,14 @@ export function QuickChips({ className = '', withFilters = true, onClearAll = nu
           {count > 0 && <span className="band-count" aria-hidden="true">{count}</span>}
         </Pressable>
       )}
-      {f.quick.map((c) => {
-        const Ico = GLYPH[c.id];
-        return (
-          <Pressable key={c.id} className={`xquick-chip${c.on ? ' is-on' : ''}`} aria-pressed={c.on}
-            data-quick={c.id} onClick={() => { f.applyQuick(c.id, !c.on); if (!c.on) toFront(); }}>
-            {c.on ? <HouseIcon.check size={16} /> : Ico && <Ico size={16} />}
-            <span className="xquick-word">{c.label}</span>
-          </Pressable>
-        );
-      })}
-      {onClearAll && (
-        <Pressable className="xquick-chip xquick-clear" onClick={() => {
-          setSaid(t('filters.cleared'));
-          onClearAll();
-          // The button leaves with the last filter: focus stays in the row.
-          requestAnimationFrame(() => rowRef.current?.querySelector('.xquick-chip')?.focus({ preventScroll: true }));
-        }}>
-          <HouseIcon.close size={16} />
-          <span className="xquick-word">{t('filters.clearAll')}</span>
-        </Pressable>
-      )}
+      {/* On a phone Filters leads the row and two checked chips already
+          fill it (370 px of 390), so Clear all stands right after Filters,
+          the count it clears; on the map's top edge right after the checked
+          chips. Either way in view without a swipe. */}
+      {withFilters && clear}
+      {f.quick.filter((c) => c.on).map(chip)}
+      {!withFilters && clear}
+      {f.quick.filter((c) => !c.on).map(chip)}
       <p className="sr-only" role="status">{said}</p>
     </div>
   );
