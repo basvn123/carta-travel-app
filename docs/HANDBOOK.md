@@ -2275,8 +2275,13 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
    - beaches that fail fall to the listed tier instead of being dropped;
    - dedupe within 150 m, a quota per coastal stretch, and floors of at least 1 per NUTS3 and 3 per coastal stretch;
    - `PUBLISH_MAX = 900`.
-7. **Swim bans.** `harvest_swim_bans.py` finds OSM `swimming=no` or `bathing=no` within `RADIUS_KM = 5.0` of a destination (`KEEP = 6`). This feeds the place page, not single beaches. No row means nothing is mapped, not that swimming is allowed.
-8. **Page sections** (`BeachPage.jsx`).
+   - Famous beaches (D25 c, see "Famous coverage" above) are the exception, as the next step says.
+7. **Famous seed** (D25 c). `pipeline/famous/coverage.py --handoff` writes the famous beaches the wire lacks to `data/famous/seed_beaches.json`, keyed by Wikidata id with `why: "famous"`; `pipeline/beaches/seed_beaches.py` reads it (`famous_entries()`, `by_country()`, `[]` when the file is absent). There is no hand seed for beaches.
+   - Harvest (`harvest_beaches.resolve_seed`, after the OSM and register merge, and on a cached country too, so no `--refresh` is needed): an id already on a row marks it `seed: {why: "famous", name}`. Any other id is fetched by id (`ITEMS_QUERY`, any class and country, coordinate required) and folds into the OSM row that names it, or an unlinked row within `MERGE_KM` whose name agrees, else becomes a row of its own under the seed's country. An item Wikidata gives no coordinate is reported as unresolved, never invented. A row only a seed brought in leaves when its seed does.
+   - Enrich: `pick_shortlist()` adds every famous seed the prelim cut left out.
+   - Export: a famous beach goes first into the dedupe, so it is kept over a neighbour on the same sand; past every gate it ships rated beyond the region quota, the country cap and `PUBLISH_MAX` (`keep_famous`). One that misses the score, photo or reasons gate ships as a listed row (`famous_listed`: unrated coverage, never an editorial pick), and a non-famous rated row within 150 m of it gives way (`clear_for_famous`). The name test and the Europe window still apply.
+8. **Swim bans.** `harvest_swim_bans.py` finds OSM `swimming=no` or `bathing=no` within `RADIUS_KM = 5.0` of a destination (`KEEP = 6`). This feeds the place page, not single beaches. No row means nothing is mapped, not that swimming is allowed.
+9. **Page sections** (`BeachPage.jsx`).
    - Facts: water class, surface, lifeguard, length, facing, access.
    - The water: class steps, sea by month, waves, facing, lifeguard season.
    - On the beach: facilities, including shade, sunbeds, step-free, dogs, naturist.
@@ -2296,6 +2301,7 @@ Carta shows walks, bike routes, beaches, lakes and peaks on their own pages. Eac
 - No Blue Flag data.
 - Shade, sunbeds, lifeguard season and waves are placeholders (T918-d); step-free is known for 33 beaches, parking for 522.
 - The four-photo pass has not run to completion.
+- The famous seed is tested on fixtures only (`tests/test_famous_beaches.py`); it has not run on the box. The seed file does not exist until the next `coverage.py --handoff`. A seed that folds into an OSM row gives that row a Wikidata id and name, so its beach id changes once.
 
 ### Lakes
 
