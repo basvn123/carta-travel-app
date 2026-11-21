@@ -232,12 +232,16 @@
   place-items: center;
   width: 38px;
   height: 38px;
-  border: 0;
+  border: 1px solid var(--border-soft);
   border-radius: 50%;
   background: var(--surface);
   color: var(--text);
+  box-shadow: var(--elev-1);
   cursor: pointer;
 }
+
+/* The minus drawn as a bar the width of the plus icon, so both read as buttons. */
+.atlas-minus { display: block; width: 12px; height: 2px; border-radius: 1px; background: currentColor; }
 
 /* ---- badges: milestones and the trip log grade ---- */
 .atlas-badges {
@@ -1232,18 +1236,19 @@
 /* The row as in the reference (p06): name and flag, then Score, kind, the
    move and the quiet cheapest-month tag on one line that wraps. */
 .mt-item-title { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; max-width: 100%; }
-.mt-saved .btn.mt-item-name { font-size: var(--text-lead); font-weight: 800; overflow-wrap: break-word; }
+.mt-saved .btn.mt-item-name { min-width: 0; max-width: 100%; overflow: hidden; font-size: var(--text-lead); font-weight: 800; }
+/* A long name ends in an ellipsis on one line; the flag beside it never shrinks. */
+.mt-saved .btn.mt-item-name .btn-label { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mt-item-title > :not(.mt-item-name) { flex: none; }
 /* A whole-trip figure is twice as long: on a phone it steps down so the name keeps its word. */
 @media (max-width: 480px) { .mt-saved .mt-item-fig:not(.mt-muted) { font-size: var(--text-lead); } }
 .mt-item-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
 .mt-item-line .mt-item-kind { font-size: var(--text-caption); color: var(--text-2); }
-.mt-item-tag { font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; }
 /* No price yet: quiet words that wrap in a narrow column, never squeezing the name. */
 .mt-saved .mt-item-fig.mt-muted { max-width: 9ch; font-size: var(--text-caption); font-weight: 600; white-space: normal; text-align: end; }
 
 /* The kind chips, Price fell, the country and the Map pill on one scrolling line. */
 .mt-saved .mt-saved-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-.mt-saved .mt-saved-filters > * { flex: none; }
 
 /* The selection bar: a dark ink bar floating over the list (p06). */
 .mt-saved .mt-selbar {
@@ -1492,4 +1497,16 @@
   .fsheet.atlas-studio-sheet { max-width: 980px; }
   .atlas-studio-grid { grid-template-columns: 340px minmax(0, 1fr); align-items: start; }
   .atlas-studio-prev { position: sticky; top: 0; }
+}
+
+/* The lists rail: the mosaic sits on the ground, no white panel (p06); the chosen list is marked by its cover ring. */
+.mt-saved .btn.mt-lcard,
+.mt-saved .btn.mt-lcard:not([aria-pressed="true"]),
+.mt-saved .btn.mt-lcard[aria-pressed="true"] { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.mt-saved .btn.mt-lcard[aria-pressed="true"] .mt-mosaic { outline: var(--stroke-focus) solid var(--select-border); outline-offset: 2px; }
+
+/* The live Saved map's controls fade in as MapLibre mounts; with reduced motion they just appear. */
+@media (prefers-reduced-motion: reduce) {
+  .atlas-body .maplibregl-ctrl,
+  .atlas-body .maplibregl-ctrl-group { transition: none; }
 }

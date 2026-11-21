@@ -942,7 +942,7 @@
 .mt-story-body { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); }
 .mt-story-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); }
 .mt-story-cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; }
-.mt-story-cells div { display: flex; flex-direction: column-reverse; }
+.mt-story-cell { display: flex; flex-direction: column-reverse; }
 .mt-story-cells dt { font-size: var(--text-label); }
 .mt-story-cells dd { margin: 0; font-size: var(--text-display); font-weight: 700; line-height: 1.1; }
 .mt-story-line { margin: 0; font-size: var(--text-body); }

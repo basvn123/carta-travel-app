@@ -2766,6 +2766,20 @@ This section covers the parts of Carta that sit around the travel content: the A
 
 **Limits.** Signed out, trips kept from the trip finder stay on the device only; signed in they sync once migration 065 is live (T1104). The paywall's device gates can be bypassed with devtools by design (usePaywall.jsx comment). Not found in code: any server-side cap on the number of account trips.
 
+### My trips atlas (G12, 2026-11-21)
+
+**What it does.** My trips is one atlas over three tabs (Trips, Saved, Your Europe). A map leads each tab: on a phone it sits above the tab and fades into the ground, from 1100 px it stands sticky beside the content. Trips draws the routes of the planned trips (the next one picked, the others dimmed when a row is lifted); Your Europe colours the countries by nights and shows "n of total" and the share of Europe's land, with tap-to-mark when nothing is recorded; Saved shows the live trip map with the saved places, clustered with count bubbles above 20 pins, and a pin tap filters the list to its country.
+
+**The price control and the unit.** One control (`PriceControl`, `lib/price/priceView.js`) picks the unit every figure on the tab is shown in: a day or the whole trip, for 1 or N people, with a nights stepper for the whole trip. The next trip's umber mark plate opens it. Saved rows show one figure in that unit, no formation wagons; "X lower since D" shows only when the saved price stood on the same month and stay style (`meta.basis`). The cheapest month, when it differs from the When month, is in the row's menu.
+
+**Example mode.** An empty tab has one action and "See an example". The example fills the tab under one Example pill: Trips shows the Julian Alps ready-made trip and one Lisbon to Porto trip, Saved the top ten catalogue places by rating with today's figures, Your Europe a sample record. Examples are priced by the engine, never saved, never counted in the tab counts and never shared.
+
+**Follow and the watch store.** A Follow chip on a place's day, stay or fare figure keeps the price in `lib/watchStore.js` (`carta.watch.v1`): every new figure is a point. Saved shows the Followed rail; a card opens the sheet with Now, Since you follow, Lowest seen, the measured chart, the 10% mail switch (price alerts) and Stop following. Signed in it syncs as kind `watch` in `account_things` once migration 076 is live (owner step 4 in `docs/owner/supabase-migrations.md`); until then followed prices stay on the device.
+
+**Your Europe.** Year bars (tap to filter), months, the cost chart with only the logged spend per person (per day or per trip) and its average, no estimate tick, because `memory.spend` holds every category and an estimate is not like for like; extremes, badges, Your travel log with a grade per trip, and after a trip the "How was {trip}?" prompt that writes `memory.rating`. The year card studio (`YearStudio.jsx`, `yearCardModel.js`) makes a Story, Post or Square card in four token styles with a trip photo or an upload and eight items, downloaded or shared at 1080 wide. Your taste moved to the Style Studio overview (`browse/styles/StudioTaste.jsx`).
+
+**Proof.** `continent-app/scripts/verify_mytrips.mjs` checks every `?savedmock=` variant and tab at 360 to 1920: no overflow, no page errors, axe serious and critical 0, CLS under 0.05 across the tab switches, examples never counted, no animation under reduced motion.
+
 ### Installable app and offline
 
 **What it does.** Carta installs to a phone's home screen and opens offline after one visit: the app shell, My trips and every trip kept on this device. Prices, the AI, live flights and the account wait for the network, and My trips says so with one status line. ROADMAP I7 (PWA part), T1169.

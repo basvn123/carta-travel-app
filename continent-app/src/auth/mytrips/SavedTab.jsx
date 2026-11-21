@@ -8,7 +8,7 @@ import { PriceControl, ExampleBar } from './TripParts.jsx';
 import { WatchRail, WatchSheet, MovePill, useWatched } from './Watch.jsx';
 import { inUnit, moveInUnit, basisOf, sameBasis } from '../../lib/price/priceView.js';
 import {
-  PlusIcon, RouteIcon, EyeIcon, CloseIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
+  PlusIcon, ArrowDownIcon, RouteIcon, EyeIcon, CloseIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
 } from '../../components/Icons.jsx';
 import { FAV_KIND_LABEL } from '../../lib/favorites.js';
 import { formatMoney } from '../../lib/money.js';
@@ -124,8 +124,6 @@ function SavedItem({
               {t(move < 0 ? 'mt.lowerSince' : 'mt.higherSince', { price: formatMoney(Math.abs(move)), date: sinceDay(change.at) })}
             </MovePill>
           ) : null}
-          {/* The cheapest month is news only when it is not the month the figures already use. */}
-          {cheapMonth && <span className="mt-item-tag">{t('mt.cheapestTag', { month: monthName(cheapMonth, 'short') })}</span>}
         </span>
         {editing ? (
           <form className="mt-note-form" onSubmit={(e) => { e.preventDefault(); setNote(k, draft); setEditing(false); }}>
@@ -162,6 +160,9 @@ function SavedItem({
         actions={[
           // The lists this place is in: the picker shows them chosen, the menu line counts them.
           ...(lists.length || shared.length ? [{ key: 'lists', label: inLists.length ? `${t('mt.addToList')} (${inLists.length})` : t('mt.addToList'), icon: <PlusIcon size={16} />, onClick: () => setPicking(true) }] : []),
+          // The cheapest month is news only when it is not the month the figures
+          // use; it sits in the menu so the row stays one figure and a name.
+          ...(cheapMonth ? [{ key: 'cheap', label: t('mt.cheapestTag', { month: monthName(cheapMonth, 'long') }), icon: <ArrowDownIcon size={16} />, onClick: () => onOpen(row) }] : []),
           { key: 'note', label: t(meta?.note ? 'mt.editNote' : 'mt.addNote'), icon: <PencilIcon size={16} />, onClick: () => { setDraft(meta?.note || ''); setEditing(true); } },
         ]}
         onRemove={() => onRemove(row)}

@@ -53,6 +53,8 @@ The sweep could not apply migrations or write secrets: the session's permission 
      ```
      `source_header` must be `cf-connecting-ip`. That also closes T068-c.
 
+4. **Migration 076: followed prices across devices (G12, My trips atlas).** Paste `supabase/migrations/076_account_things_watch.sql` in the Supabase SQL editor and run it. It adds the kind `watch` to the `account_things` check. Undo: `076_account_things_watch_down.sql`. Until it runs, followed prices stay on the device. Check: follow a price signed in on one device and see it under Saved, Followed on another.
+
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
 T1110-b and T1205-b were merged into steps 2 and 3 by owner sweep round 2.

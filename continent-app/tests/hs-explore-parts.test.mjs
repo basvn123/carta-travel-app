@@ -29,7 +29,9 @@ test('the row keeps its link, its price items and the save outside the link', ()
   // button to the receipt.
   assert.match(parts, /aria-haspopup="dialog"/);
   assert.match(parts, /className="xfig-basis"/);
-  assert.match(read('src/auth/mytrips/SavedTab.jsx'), /<RowFormation cost=\{cost\} t=\{t\} figRef=\{ref\} \/>/);
+  // G12 (My trips atlas): a Saved row shows one figure in the chosen unit,
+  // so the formation wagons stay on Explore rows only.
+  assert.doesNotMatch(read('src/auth/mytrips/SavedTab.jsx'), /<RowFormation /);
 });
 
 test('the row is the grid: the formation and the save sit in its areas, beside the link subgrid', () => {

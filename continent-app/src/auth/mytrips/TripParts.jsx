@@ -62,7 +62,7 @@ export function PriceControl({ choices, setChoices, withNights = true }) {
       {withNights && u.span === 'trip' && (
         <span className="atlas-nights" role="group" aria-label={t('mt.nightsGroup')}>
           <span>{t('mt.nightsShort', { n: u.nights })}</span>
-          <Pressable aria-label={t('mt.nightLess')} onClick={() => set(stepNights(-1))}><span aria-hidden="true">-</span></Pressable>
+          <Pressable aria-label={t('mt.nightLess')} onClick={() => set(stepNights(-1))}><span className="atlas-minus" aria-hidden="true" /></Pressable>
           <Pressable aria-label={t('mt.nightMore')} onClick={() => set(stepNights(1))}><PlusIcon size={14} /></Pressable>
         </span>
       )}

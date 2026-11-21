@@ -79,8 +79,9 @@ export function YearBars({ data, ramp = {}, year, onYear }) {
             >
               <rect className="atlas-bar-hit" x={x - gap / 2} y="0" width={bw + gap} height={h} />
               <rect className={on ? `is-r${ramp[d.year] ?? 2}` : 'is-off'} x={x} y={h - 20 - bh} width={bw} height={Math.max(2, bh)} rx="5" />
-              <text className="is-v" x={x + bw / 2} y={h - 26 - bh} textAnchor="middle">{d.nights}</text>
+              {/* The year first in the DOM, so the visible text reads in the order of the name (axe label-content-name-mismatch). */}
               <text className="atlas-bar-y" x={x + bw / 2} y={h - 4} textAnchor="middle">{d.year}</text>
+              <text className="is-v" x={x + bw / 2} y={h - 26 - bh} textAnchor="middle">{d.nights}</text>
             </g>
           );
         })}

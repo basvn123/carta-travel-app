@@ -368,7 +368,7 @@ export function YearRecap({ recap, onBack }) {
             <p className="mt-story-title">{title}</p>
             <dl className="mt-story-cells">
               {cells.map((c) => (
-                <div key={c.key}><dt>{c.label}</dt><dd>{c.value}</dd></div>
+                <div key={c.key} className="mt-story-cell"><dt>{c.label}</dt><dd>{c.value}</dd></div>
               ))}
             </dl>
             {lines.map((l) => <p key={l} className="mt-story-line">{l}</p>)}
