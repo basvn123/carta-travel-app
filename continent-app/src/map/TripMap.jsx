@@ -7,8 +7,6 @@ import { tokenColour } from './tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { durationMs } from '../lib/motion.js';
 import { houseBasemap } from './houseBasemap.js';
-import { cartaMapStyle } from '../lib/map/cartaMapStyle.js';
-import { registerPmtiles, basemapFallback } from '../lib/map/pmtilesProtocol.js';
 
 /* The route reveal (T398, DIRECTION 2.3 "Route reveal"): the first part of
    the lines, `frac` of their total length, in drawing order, so the route
@@ -106,25 +104,6 @@ const POI_PLUS_ICON = S('<path d="M12 5v14M5 12h14"/>');
 const POI_SPARK_ICON = S('<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M18.5 15.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/>');
 // Festivals and dated events, which the catalogue structurally cannot hold.
 const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M14 8v12"/>');
-
-// Cluster mode: the plain pins as points of a clustered source. An
-// invisible layer makes MapLibre tile the source, so querySourceFeatures can
-// say which pins stand alone; the bubbles themselves are DOM (house style).
-const CLUSTER_SRC = 'trip-cluster';
-function setClusterData(map, pts, photoZoom) {
-  const data = {
-    type: 'FeatureCollection',
-    features: pts.map((p, i) => (p.plain
-      ? { type: 'Feature', properties: { i }, geometry: { type: 'Point', coordinates: [p.lon, p.lat] } }
-      : null)).filter(Boolean),
-  };
-  const src = map.getSource(CLUSTER_SRC);
-  if (src) { src.setData(data); return; }
-  // At the photo zoom every pin stands alone, so the photos are never hidden.
-  const maxZoom = Math.max(0, Math.floor((photoZoom ?? 8) - 1));
-  map.addSource(CLUSTER_SRC, { type: 'geojson', data, cluster: true, clusterRadius: 44, clusterMaxZoom: maxZoom });
-  map.addLayer({ id: 'trip-cluster-probe', type: 'circle', source: CLUSTER_SRC, paint: { 'circle-radius': 1, 'circle-opacity': 0 } });
-}
 
 // The pushpin for places that are marked rather than sequenced (the travel
 // record). Colours live in the stylesheet so it stays on the palette.
@@ -227,14 +206,8 @@ function routeArrowImage(px = 26) {
  * zooming in on a dot would. `zoomControls` adds the +/- buttons, and
  * `cooperativeGestures` makes the wheel scroll the page unless ctrl is held,
  * which is what an embedded map inside a scrolling panel wants.
- *
- * `cluster` (optional, default off; G12 Saved with many pins) gathers the
- * plain pins into count bubbles below `photoZoom`: a clustered GeoJSON source
- * decides which pins stand alone, those keep their DOM pin (and its photo),
- * the rest hide behind a bubble that zooms in on a tap. Other pins are never
- * clustered.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, cluster = false, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager', revealRoute = false, foldCredit = false }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager', revealRoute = false }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   // Pin titles go through the catalogues (T388: they were English in every
@@ -260,8 +233,6 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   countryFillsRef.current = countryFills;
   const photoZoomRef = useRef(photoZoom);
   photoZoomRef.current = photoZoom;
-  const clusterRef = useRef(cluster);
-  clusterRef.current = cluster;
   // The zoom the current framing settled on. Photos are meant to answer "I
   // zoomed in", so the threshold is one step past whatever the map opened at,
   // however wide or tight that was, and never later than `photoZoom`.
@@ -339,13 +310,9 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   // Initialise once.
   useEffect(() => {
     if (mapRef.current) return;
-    // G12 (Saved, decision 5): 'carta' is Explore's own basemap from our
-    // PMTiles, with CARTO only if the archive fails.
-    const carta = basemap === 'carta';
-    if (carta) registerPmtiles(maplibregl);
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: carta ? cartaMapStyle() : (MAP_STYLES[basemap] || MAP_STYLE),
+      style: MAP_STYLES[basemap] || MAP_STYLE,
       center: [10, 48],
       zoom: 3.6,
       attributionControl: { compact: true },
@@ -361,7 +328,6 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       ...(mapLocale ? { locale: mapLocale } : {}),
     });
     houseBasemap(map);
-    if (carta) basemapFallback(map, { onFallback: () => { if (containerRef.current) containerRef.current.dataset.basemap = 'carto'; } });
     if (zoomControls) {
       map.addControl(new maplibregl.NavigationControl({ showCompass: false, showZoom: true }), 'top-right');
     }
@@ -410,10 +376,6 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._syncPinZoom = syncPinZoom;
     map.on('zoom', syncPinZoom);
     map.on('load', syncPinZoom);
-    // The compact credit opens itself on load; on a small map it lies over
-    // the pins, so it starts folded to its button, one tap from the line
-    // (as DestMap, T446; G12 Saved, judgement 2).
-    if (foldCredit) map.on('load', () => containerRef.current?.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show'));
     map.on('load', () => {
       map.addSource('trip-route', {
         type: 'geojson',
@@ -776,8 +738,6 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         return { marker, el, lngLat: [p.lon, p.lat] };
       });
       spreadStopPins();
-      if (clusterRef.current) setClusterData(map, pts, photoZoomRef.current);
-      map._syncClusters?.();
 
       // Frame the whole route in the strip above the sheet. With no stops yet,
       // settle on the plan's own city (focus) instead of the whole continent,       // a freshly opened saved day plan should show its city, not Europe.
@@ -844,57 +804,6 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._drawTrip = draw;
     if (readyRef.current) draw();
   }, [stops, padBottom, routeGeometry, routeSegments, showRoute, focusKey, focusLat, focusLon, focusZoom, hasPois, fitMaxZoom, fitPadding, revealRoute]);
-
-  // Count bubbles for the plain pins (cluster mode). The source does the
-  // grouping; the pins and bubbles stay DOM so the photo pins work as before.
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !cluster) return undefined;
-    let bubbles = [];
-    const clear = () => { bubbles.forEach((b) => b.remove()); bubbles = []; };
-    const sync = () => {
-      const src = map.getSource(CLUSTER_SRC);
-      if (!src || !map.isSourceLoaded(CLUSTER_SRC)) return;
-      const alone = new Set();
-      const groups = new Map();
-      map.querySourceFeatures(CLUSTER_SRC).forEach((f) => {
-        const pr = f.properties || {};
-        if (pr.cluster) groups.set(pr.cluster_id, { n: pr.point_count, at: f.geometry.coordinates });
-        else alone.add(pr.i);
-      });
-      markersRef.current.forEach((m, i) => {
-        if (m.el.classList.contains('trip-pin-plain')) m.el.classList.toggle('is-clustered', !alone.has(i));
-      });
-      clear();
-      groups.forEach(({ n, at }, id) => {
-        const el = document.createElement('button');
-        el.type = 'button';
-        el.className = 'trip-cluster';
-        el.textContent = String(n);
-        el.setAttribute('aria-label', tRef.current('explore.clusterAria', { n }));
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
-          Promise.resolve(src.getClusterExpansionZoom(id))
-            .then((z) => map.easeTo({ center: at, zoom: Math.max(map.getZoom() + 1, z + 0.2) }))
-            .catch(() => map.easeTo({ center: at, zoom: map.getZoom() + 2 }));
-        });
-        bubbles.push(new maplibregl.Marker({ element: el, anchor: 'center' }).setLngLat(at).addTo(map));
-      });
-    };
-    const onData = (e) => { if (e.sourceId === CLUSTER_SRC && e.isSourceLoaded) sync(); };
-    map._syncClusters = sync;
-    map.on('moveend', sync);
-    map.on('sourcedata', onData);
-    // draw() has given the pins their source when they came with this change.
-    if (readyRef.current) sync();
-    return () => {
-      map.off('moveend', sync);
-      map.off('sourcedata', onData);
-      map._syncClusters = null;
-      clear();
-      markersRef.current.forEach((m) => m.el.classList.remove('is-clustered'));
-    };
-  }, [cluster]);
 
   // Glide to one place without reframing the route: "how far is this from
   // today's walk?" is answered by moving the camera, not by refitting the

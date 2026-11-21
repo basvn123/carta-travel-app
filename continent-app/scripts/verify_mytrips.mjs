@@ -22,7 +22,7 @@ import AxeBuilder from '@axe-core/playwright';
 const arg = (k, d) => { const i = process.argv.indexOf(`--${k}`); return i > 0 ? process.argv[i + 1] : d; };
 const PORT = arg('port', '5841');
 const WIDTHS = arg('widths', '360,390,820,1180,1440,1920').split(',').map(Number);
-const VARIANTS = arg('variants', 'guest,empty,one,next,1,drafts,nopast,firstpast,lots,years,loading,error').split(',');
+const VARIANTS = arg('variants', 'guest,empty,one,statement,next,1,drafts,nopast,firstpast,lots,years,loading,error').split(',');
 const LANG = arg('lang', 'en-GB');
 const OUT = path.resolve(arg('out', 'verify-mytrips'));
 const SHOTS = process.argv.includes('--shots');
@@ -85,6 +85,18 @@ async function runOne(browser, v, w) {
     const ax = await axe(page);
     const row = { v, w, tab: TABS[i], overflow: ov, axe: ax, errors: [...errors] };
     row.ok = ov <= 1 && !ax.length && !errors.length;
+    // statement (G12 round 4): the DSA statement starts as one closed line
+    // and its chevron opens every row of the ledger in place.
+    if (v === 'statement' && i === 0) {
+      const head = page.locator('.modnote-head').first();
+      const closed = (await head.count()) === 1 && (await page.locator('.modnote-body').count()) === 0;
+      if (closed) await head.click();
+      const facts = closed ? await page.locator('.modnote-facts > div').count() : 0;
+      const ax2 = facts ? await axe(page) : [];
+      row.statement = { closed, facts, axe: ax2 };
+      row.ok = row.ok && closed && facts >= 7 && !ax2.length;
+      if (facts) await head.click();
+    }
     const want = SHOTS && (!row.ok || (v === VARIANTS[0] && (w === 390 || w === 1440)));
     if (want) await page.screenshot({ path: path.join(OUT, `verify-${v}-${TABS[i]}-${w}.png`) });
     rows.push(row);

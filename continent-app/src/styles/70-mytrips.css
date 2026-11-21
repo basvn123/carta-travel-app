@@ -242,14 +242,7 @@
 .mt-section-unit + .mt-section-action { margin-left: var(--space-3); }
 /* The moderation statement under a trip is its own row, a full gap below
    the card (not a half-joined panel hanging off it). */
-.mt-next .modnote, .mt-row-wrap .modnote {
-  margin: var(--space-3) 0 0;
-  padding: var(--space-4);
-  border: 0;
-  border-radius: var(--radius-panel);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-}
+/* The statement's look (G12 round 4, no card) is in 72-atlas.css. */
 /* Face stacks in My trips overlap lightly so no initial is clipped. */
 .mytrips .frn-stack .frn-face + .frn-face { margin-left: -2px; }
 /* Saved's list tiles: a hairline edge like every other panel here, the
@@ -1070,8 +1063,6 @@
    what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
 .mt-empty,
 .mt-next-card,
-.mt-next .modnote,
-.mt-row-wrap .modnote,
 .mt-crew,
 .mytrips .tshare,
 .mt-today,

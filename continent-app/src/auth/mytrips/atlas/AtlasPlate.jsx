@@ -111,9 +111,13 @@ const WHOLE_LAYER = { whole: true };
  *             never at first paint (reduced motion shows the end state)
  *   cornerT   { n, s, e, w } the compass letters
  *   children  what floats on the map (the count chip)
+ *   zoom      { z, cx, cy } (Saved): z > 1 shows 1/z of the frame around
+ *             cx, cy (plate units), kept inside the unzoomed frame; the
+ *             strokes and labels stay their screen size since k follows it
+ *   overlay(vb, k)  HTML drawn over the plate on the shown frame (Saved pins)
  */
 export function AtlasPlate({
-  geo, layer, been = EMPTY, next = EMPTY, label, year = null, drawKey = 0, picked, onPick, cornerT = {}, children,
+  geo, layer, been = EMPTY, next = EMPTY, label, year = null, drawKey = 0, picked, onPick, cornerT = {}, zoom = null, overlay = null, children,
 }) {
   const box = useRef(null);
   const [size, setSize] = useState(null);
@@ -134,7 +138,7 @@ export function AtlasPlate({
   const L = layer || WHOLE_LAYER;
   const w = size?.w || 390;
   const h = size?.h || 250;
-  const vb = useMemo(() => {
+  const base = useMemo(() => {
     const f = clampFrame(L.whole || !L.focus?.length
       ? frame(WHOLE, w / h, { minW: 400, pad: 0 })
       : frame(L.focus, w / h, { minW: Math.max(220, L.minW ?? (w > 500 ? 560 : 320)), pad: L.pad ?? 0.25 }), geo?.w, geo?.h);
@@ -150,6 +154,15 @@ export function AtlasPlate({
     });
     return keepMarks(f, marks, geo?.w, geo?.h);
   }, [L, w, h, geo]);
+  const vb = useMemo(() => {
+    if (!zoom || !(zoom.z > 1)) return base;
+    const zw = base.w / zoom.z;
+    const zh = base.h / zoom.z;
+    const cx = zoom.cx ?? base.x + base.w / 2;
+    const cy = zoom.cy ?? base.y + base.h / 2;
+    const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+    return { x: clamp(cx - zw / 2, base.x, base.x + base.w - zw), y: clamp(cy - zh / 2, base.y, base.y + base.h - zh), w: zw, h: zh };
+  }, [base, zoom]);
   const k = vb.w / w;
   const ramp = L.ramp || {};
   const classOf = (cc) => {
@@ -224,6 +237,7 @@ export function AtlasPlate({
           ))}
         </div>
       )}
+      {size && overlay?.(vb, k)}
       {children}
     </div>
   );

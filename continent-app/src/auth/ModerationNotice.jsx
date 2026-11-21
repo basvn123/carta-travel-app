@@ -1,7 +1,7 @@
 import React, { useEffect, useId, useRef, useState } from 'react';
-import { Button } from '../components/ui/index.js';
 import { useI18n } from '../i18n/index.jsx';
-import { AlertIcon, CheckIcon } from '../components/Icons.jsx';
+import { Pressable } from '../components/ui/Pressable.jsx';
+import { AlertIcon, CheckIcon, ChevronDownIcon } from '../components/Icons.jsx';
 
 const BODY_MIN = 10;
 const BODY_MAX = 4000;
@@ -19,12 +19,14 @@ const RULES = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7'];
  * one place in the app they are sure to see it. There is no email route in
  * the project, so this is the delivery.
  *
- * SHAPE. Closed, one line says what happened and where things stand (taken
- * down, contested, upheld or reversed), with a secondary button to read the
- * statement. Open, the statement is a run of labelled facts divided by
- * hairlines: what we did, why (the moderator's words), what started it, who
- * decided, when, and the options. The complaint form sits under it while a
- * complaint is still possible, with the view's only filled button.
+ * SHAPE (G12 round 4, the house look). Closed, one line on the ground: the
+ * warning mark, the title, the date and a chevron; the whole line is the
+ * button that opens the ledger in place. Open, the ledger is hairline rows
+ * on the ground, no card: where things stand (taken down, contested, upheld
+ * or reversed), what we did, why (the moderator's words), the ground, what
+ * started it, who decided, when, publishing again and the options. The
+ * complaint form sits under it while a complaint is still possible, with the
+ * view's only filled button, then Hide closes the ledger again.
  *
  * The statement is built from fields, not stored prose, so it reads in the
  * owner's language. The only free text is the moderator's reason and answer,
@@ -110,31 +112,33 @@ export function ModerationNotice({ statement, contest, onContested }) {
     : t('moderation.startOwn');
 
   return (
-    <section className="modnote" aria-labelledby={`${uid}-title`}>
-      <div className="modnote-head">
-        {status === 'reversed' ? <CheckIcon size={15} /> : <AlertIcon size={15} />}
-        <h3 className="modnote-title" id={`${uid}-title`}>
-          {t(status === 'reversed' ? 'moderation.titleReversed' : 'moderation.title')}
-        </h3>
-        <span className="modnote-date">{fmtDate(s.created_at)}</span>
-      </div>
-      <p className="modnote-line" role={sent ? 'status' : undefined}>
-        {sent ? t('moderation.contestSent') : line}
-      </p>
-      {/* The kit's small secondary (T474, row T435-h): it was a 12.5 px pill. */}
-      <Button
-        variant="secondary"
-        size="sm"
-        className="modnote-toggle"
+    <section className={`modnote${open ? ' is-open' : ''}`} aria-labelledby={`${uid}-title`}>
+      {/* The disclosure pattern: the heading holds the button (a heading
+          inside a button is not allowed). */}
+      <h3 className="modnote-h">
+      <Pressable
+        haptic="tick"
+        className="modnote-head"
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((v) => !v)}
       >
-        {t(open ? 'moderation.hideWhy' : 'moderation.readWhy')}
-      </Button>
+        {status === 'reversed' ? <CheckIcon size={16} /> : <AlertIcon size={16} />}
+        <span className="modnote-title" id={`${uid}-title`}>
+          {t(status === 'reversed' ? 'moderation.titleReversed' : 'moderation.title')}
+        </span>
+        <span className="modnote-date">{fmtDate(s.created_at)}</span>
+        <span className="sr-only">{t(open ? 'moderation.hideWhy' : 'moderation.readWhy')}</span>
+        <ChevronDownIcon size={18} className="modnote-chev" />
+      </Pressable>
+      </h3>
+      {sent && !open && <p className="sr-only" role="status">{t('moderation.contestSent')}</p>}
 
       {open && (
         <div id={panelId} className="modnote-body">
+          <p className="modnote-line" role={sent ? 'status' : undefined}>
+            {sent ? t('moderation.contestSent') : line}
+          </p>
           <dl className="modnote-facts">
             <div>
               <dt>{t('moderation.whatLabel')}</dt>
@@ -224,6 +228,10 @@ export function ModerationNotice({ statement, contest, onContested }) {
               </div>
             </form>
           )}
+
+          <Pressable className="gld-copy modnote-hide" aria-controls={panelId} aria-expanded={open} onClick={() => setOpen(false)}>
+            {t('moderation.hideWhy')}
+          </Pressable>
         </div>
       )}
     </section>

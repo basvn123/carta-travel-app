@@ -40,7 +40,7 @@ import { parseFavKey } from '../lib/favorites.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { seedWatch } from '../lib/watchStore.js';
 import {
-  ONE_PLANS, FIRST_PAST_PLANS, FIRST_PAST_MEMS, YEARS_PLANS, YEARS_MEMS, LOTS_FAV_KEYS, LOTS_WATCH,
+  ONE_PLANS, STATEMENT_PLANS, FIRST_PAST_PLANS, FIRST_PAST_MEMS, YEARS_PLANS, YEARS_MEMS, LOTS_FAV_KEYS, LOTS_WATCH,
 } from './mytrips/savedMocks.js';
 import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
@@ -104,6 +104,9 @@ const MOCK_VARIANT = SAVED_MOCK ? (new URLSearchParams(window.location.search).g
 const MOCK_BARE = ['guest', 'empty'].includes(MOCK_VARIANT);
 // The variants built on the default trips (and their stored extras).
 const MOCK_DEFAULT_TRIPS = ['', 'next', '1', 'lots', 'nopast', 'drafts'].includes(MOCK_VARIANT);
+// The statement of reasons (DSA) has its own variant, one trip to come with
+// it, so the busy variants stay about the lists (G12 round 4).
+const MOCK_WITH_STATEMENT = MOCK_VARIANT === 'statement';
 // Each variant starts from a clean device: the seam writes trip extras,
 // memories, lists and watched prices into localStorage, and a variant must
 // not show another's. Cleared once when the variant changes (dev only).
@@ -143,7 +146,7 @@ const MOCK_FRIEND_TRIPS = [
   { ownerId: 'u-jonas', ownerHandle: 'jonas', ownerName: 'Jonas Peeters', tripPlanId: 'ft3', label: 'A week in Rome', startDate: addDaysIso(-150), endDate: addDaysIso(-143), cities: ['Rome'], countries: ['Italy'], destinationIds: ['FCO'] },
 ];
 const MOCK_STATEMENTS = [
-  { id: 1, plan_id: 'mp1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false, ground: 'terms', ground_ref: 'c6' },
+  { id: 1, plan_id: 'ms1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false, ground: 'terms', ground_ref: 'c6' },
 ];
 // Stops carry their own windows so the seam can price the trips the way a
 // real account's rows are priced (choices on the first stop, T434).
@@ -171,6 +174,7 @@ const MOCK_PLANS = [
 // The plans each variant starts with.
 function mockPlansFor(v) {
   if (v === 'one') return ONE_PLANS;
+  if (v === 'statement') return STATEMENT_PLANS;
   if (v === 'firstpast') return FIRST_PAST_PLANS;
   if (v === 'years') return YEARS_PLANS;
   if (v === 'drafts') return MOCK_PLANS.filter((p) => !p.start_date);
@@ -296,7 +300,7 @@ export function SavedTripsPanel({
   const [tripPlansLoading, setTripPlansLoading] = useState((!!user && !SAVED_MOCK) || MOCK_VARIANT === 'loading');
   // A list that cannot be read is not a traveller with no trips (020 lesson).
   const [tripPlansError, setTripPlansError] = useState(() => (MOCK_VARIANT === 'error' ? t('saved.errLoad') : ''));
-  const [statements, setStatements] = useState(SAVED_MOCK && MOCK_DEFAULT_TRIPS ? MOCK_STATEMENTS : []);
+  const [statements, setStatements] = useState(SAVED_MOCK && MOCK_WITH_STATEMENT ? MOCK_STATEMENTS : []);
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
   // The one trip kept on this device without an account (T500, carta.
   // deviceTrip.v1), read once per opening of My trips (T503, owner T500-a).
@@ -985,12 +989,6 @@ export function SavedTripsPanel({
     pastPlans, pastDayPlans, memories, destinations, manualCountries,
   }), [pastPlans, pastDayPlans, memories, destinations, manualCountries]);
 
-  const mapLocale = useMemo(() => ({
-    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
-    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
-    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
-  }), [t]);
-
   const placesFromPlan = (p) => (p.cities || []).map((city, i) => ({
     id: (p.destination_ids || [])[i] || null, city,
     country: destinations[(p.destination_ids || [])[i]]?.country || '', lat: null, lon: null, nights: null,
@@ -1530,7 +1528,8 @@ export function SavedTripsPanel({
               onPlan={(stops) => onPlanStops?.(stops)}
               onBrowse={() => onGoToTab?.('places')}
               onUndo={removeWithUndo}
-              mapLocale={mapLocale}
+              geo={atlasGeo}
+              europe={{ ...europeMap, been: euBeen, next: euExample ? new Set() : nextIso }}
               shared={authed || SAVED_MOCK ? sharedState : null}
               friends={SAVED_MOCK ? MOCK_FRIENDS : friends}
               sharedRows={sharedRowMap}

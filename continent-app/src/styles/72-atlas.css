@@ -1176,17 +1176,12 @@
 /* ---- Phase D: Bewaard ---- */
 .atlas-slot.is-saved .atlas-map { height: 300px; }
 .atlas-slot.is-saved.is-empty .atlas-map { height: 340px; }
-.atlas-live .mt-map.is-saved { height: 100%; min-height: 0; border-radius: 0; }
-/* The live Saved map keeps its pins and count bubbles: on a phone only the
-   last 24 px fade into the ground, and the attribution moves to the top-left
-   corner, folded to its button with the fit padding clear of it (judgement 1
-   and 2). */
+/* The Saved plate keeps its pins: on a phone only the last 24 px fade into the ground. */
 @media (max-width: 767px) {
-  .atlas-slot.is-saved .atlas-map.atlas-live {
+  .atlas-slot.is-saved .atlas-map.atlas-saved-host {
     -webkit-mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);
     mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);
   }
-  .atlas-live .maplibregl-ctrl-bottom-right { top: 0; right: auto; bottom: auto; left: 0; }
 }
 @media (min-width: 768px) {
   .atlas-slot.is-saved .atlas-map,
@@ -1302,27 +1297,6 @@
 .mt-saved .mt-selbar .btn-quiet { color: var(--on-plate-2); }
 .watch-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
 
-/* Saved map, cluster mode (TripMap cluster): a paper disc with the count in
-   umber 800; the pins it stands for hide until it is zoomed apart. */
-.trip-cluster {
-  display: grid;
-  place-items: center;
-  min-width: 36px;
-  height: 36px;
-  padding: 0 var(--space-2);
-  border: 1.5px solid var(--umber-800);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-  color: var(--umber-800);
-  font-size: var(--text-body);
-  font-weight: 800;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  box-shadow: var(--elev-2);
-  cursor: pointer;
-}
-.trip-cluster:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.trip-pin.is-clustered { visibility: hidden; pointer-events: none; }
 
 
 /* ==== G12 Phase E: Your Europe (the reference's .under .legend .chart .cost
@@ -1905,3 +1879,156 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .mt-view-toggle:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 /* From 1024 the list and the map show side by side, so the switch stays hidden (70-mytrips.css). */
 @media (min-width: 1024px) { .mt-saved-tools .mt-view-toggle { display: none; } }
+
+/* ==== G12 owner fixes round 4 ==== */
+
+/* The statement of reasons (DSA) under a trip: no card. Closed it is one line
+   on the ground (mark, title, date, chevron), the whole line the button;
+   open, a ledger of hairline rows in place. */
+.mt-next .modnote,
+.mt-row-wrap .modnote,
+.saved-trips-panel .modnote {
+  display: block;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.modnote-h { margin: 0; font: inherit; }
+.modnote-head {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: var(--umber-700);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.modnote-head > svg:first-child { flex: none; }
+.modnote-head .modnote-title { flex: 1 1 auto; min-width: 0; font-size: var(--text-label); font-weight: 700; line-height: 1.3; color: var(--text); }
+.modnote-head .modnote-date { flex: none; color: var(--text-2); }
+.modnote-chev { flex: none; color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+.modnote.is-open .modnote-chev { transform: rotate(180deg); }
+.modnote-head:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.saved-trips-panel .modnote-body { gap: 0; padding-bottom: var(--space-2); }
+.saved-trips-panel .modnote-line { padding-bottom: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.saved-trips-panel .modnote-facts > div { display: grid; gap: 2px; padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
+.saved-trips-panel .modnote-facts dt { font-size: var(--text-caption); font-weight: 700; color: var(--text-2); }
+.saved-trips-panel .modnote-facts dd { margin: 0; font-size: var(--text-label); line-height: 1.45; color: var(--text); }
+.saved-trips-panel .modnote-facts + .modnote-toggle,
+.saved-trips-panel .modnote-form { margin-top: var(--space-2); }
+.modnote-hide { min-height: var(--tap); margin-top: var(--space-1); }
+@media (min-width: 600px) {
+  .saved-trips-panel .modnote-facts > div { grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); gap: var(--space-3); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modnote-chev { transition: none; }
+}
+
+/* The Saved plate (atlas/SavedPlate.jsx): the Your Europe plate with the saved
+   places. Zoom redraws the viewBox; a drag pans once zoomed. */
+.atlas-zoom { position: absolute; inset: 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.atlas-zoom.is-zoomed { cursor: grab; touch-action: none; }
+.atlas-zoom.is-dragging { cursor: grabbing; }
+.atlas-pins { position: absolute; inset: 0; pointer-events: none; }
+.atlas-pin-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-sizing: content-box;
+  border: 1.5px solid var(--surface);
+  background: var(--umber-600);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.atlas-pin-dot.is-dim { opacity: 0.3; }
+.atlas-pin-photo {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2.5px solid var(--surface);
+  background: var(--surface-sunken);
+  box-shadow: var(--elev-2);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.atlas-pin-photo.is-big { width: 54px; height: 54px; }
+.atlas-pin-photo .atlas-pin-img,
+.atlas-pin-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.atlas-pin-cap {
+  position: absolute;
+  transform: translate(-50%, 24px);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--text);
+}
+.atlas-pin-photo.is-big + .atlas-pin-cap { transform: translate(-50%, 31px); }
+.atlas-pill {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font: 700 var(--text-caption) / 1 var(--ui);
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+}
+/* The pill's hit area reaches 44 px. */
+.atlas-pill::after { content: ''; position: absolute; inset: -8px -2px; }
+.atlas-pill b { color: var(--umber-800); font-weight: 800; }
+.atlas-pill[aria-pressed="true"] { background: var(--umber-800); color: var(--action-text); }
+.atlas-pill[aria-pressed="true"] b { color: var(--action-text); }
+.atlas-zoomctl {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 2;
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.atlas-zoomctl button { display: grid; place-items: center; width: var(--tap); height: var(--tap); border: 0; background: none; color: var(--text); cursor: pointer; }
+.atlas-zoomctl button + button { border-top: 1px solid var(--border-soft); }
+.atlas-zoomctl button:disabled { color: var(--text-3); cursor: default; }
+.atlas-zoomctl button:focus-visible,
+.atlas-pill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
+
+/* Past rows, a strict grid (owner fixes round 4): photo | text minmax(0, 1fr) |
+   grade or Geef een cijfer | menu. The estimate chip wraps inside the text
+   column, so the button never sits over it. */
+.atlas-prow-wrap, .atlas-prow-wrap.mt-jcard { column-gap: var(--space-2); }
+.atlas-prow-t, .atlas-prow-est { min-width: 0; max-width: 100%; }
+.atlas-prow-est .atlas-move { min-width: 0; max-width: 100%; white-space: normal; }
+.atlas-prow-end { min-width: 0; }
+@media (max-width: 599px) {
+  .atlas-rateit { max-width: 88px; padding: var(--space-1) var(--space-2); line-height: 1.15; white-space: normal; text-align: center; }
+}

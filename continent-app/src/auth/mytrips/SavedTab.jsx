@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, ChipGroup, Field, ScorePlate } from '../../components/ui/index.js';
@@ -26,9 +26,8 @@ import { Empty } from './MyTripsTabs.jsx';
 import { scrollBehavior } from '../../lib/motion.js';
 import { SharedItem, PeoplePicker, facesOf } from './SharedList.jsx';
 
-const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
+import { SavedPlate } from './atlas/SavedPlate.jsx';
 // The top holds the folded credit button (24 px) clear of the northern pins.
-const MAP_PAD = { top: 56, left: 32, right: 32, bottom: 32 };
 const WIDE = '(min-width: 1024px)';
 
 /** Whether the map stands beside the list (1024 px and up). */
@@ -196,7 +195,7 @@ function SavedItem({
  *   onUndo      the panel's undo slot: ({ key, label, commit, restore })
  */
 export function SavedTab({
-  rows: ownRows, saved, costs, destinations = {}, loading, onOpen, onRemove, onPlan, onBrowse, onUndo, top = null, mapLocale,
+  rows: ownRows, saved, costs, destinations = {}, loading, onOpen, onRemove, onPlan, onBrowse, onUndo, top = null, geo = null, europe = null,
   shared = null, friends = [], sharedRows = null, heldKey = '',
   choices = null, setChoices = null, example = false, onExample = null, onExampleClose = null, exampleRows = [], mapHost = null, initialCc = '', onCcUsed = null,
 }) {
@@ -318,23 +317,16 @@ export function SavedTab({
     const d = r.kind === 'dest' ? destinations[r.id] : null;
     const lat = d ? (d.city_lat ?? d.lat) : r.lat;
     const lon = d ? (d.city_lon ?? d.lon) : r.lon;
-    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, city: r.name || '', plain: true, img: r.img, key: metaKey(r), cc: r.cc } : null;
+    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: r.name || '', img: r.img, key: metaKey(r), cc: r.cc } : null;
   }).filter(Boolean), [shown, destinations]);
-  const mapProps = useMemo(() => ({
-    stops: points, showRoute: false, scrollZoom: true, cooperativeGestures: true, zoomControls: true, mapLocale, photoZoom: 6, basemap: 'carta', foldCredit: true,
-    // Count bubbles once the pins would crowd (G12): above 20 saved places.
-    cluster: points.length > 20,
-    easeToSelected: false, padBottom: 0, fitMaxZoom: 8, fitPadding: MAP_PAD,
-    onSelectStop: (i) => {
-      const k = points[i]?.key;
-      if (!k) return;
-      setActive(k);
-      // A tapped pin filters the rows to its country (a removable chip).
-      if (points[i].cc) setCc(points[i].cc);
-      setView('list');
-      requestAnimationFrame(() => itemRefs.current.get(k)?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() }));
-    },
-  }), [points, mapLocale]);
+  // A pin opens its row: the list filters to the pin's country (a removable
+  // chip) and scrolls the row into view.
+  const pickPin = (pin) => {
+    setActive(pin.key);
+    if (pin.cc) setCc(pin.cc);
+    setView('list');
+    requestAnimationFrame(() => itemRefs.current.get(pin.key)?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() }));
+  };
 
   if (!rows.length && !loading) {
     return (
@@ -350,12 +342,9 @@ export function SavedTab({
       </>
     );
   }
-  const liveMap = points.length > 0 ? (
-    <div className="mt-map is-saved">
-      <Suspense fallback={<div className="mt-map-wait" aria-hidden="true" />}>
-        <TripMap {...mapProps} />
-      </Suspense>
-    </div>
+  // G12 round 4: the Your Europe plate with the saved places, not a street map.
+  const liveMap = points.length > 0 && geo ? (
+    <SavedPlate geo={geo} europe={europe} points={points} cc={cc} onCountry={setCc} onPin={pickPin} />
   ) : null;
 
   return (

@@ -8,6 +8,8 @@
  *   guest      signed out, nothing kept
  *   empty      signed in, nothing at all
  *   one        one trip: Hallstatt in 224 days, 7 nights, 2 people
+ *   statement  one trip to come, Lisbon and Porto, taken off the public
+ *              guides: the statement of reasons under it (DSA)
  *   next, 1    the existing fixtures (next leaves out today's trip)
  *   drafts     only trips without dates
  *   nopast     the trips to come, no record
@@ -19,13 +21,17 @@
  */
 import { addDaysIso } from '../../lib/myTrips.js';
 
-export const MOCK_VARIANTS = ['guest', 'empty', 'one', 'next', '1', 'drafts', 'nopast', 'firstpast', 'lots', 'years', 'loading', 'error'];
+export const MOCK_VARIANTS = ['guest', 'empty', 'one', 'statement', 'next', '1', 'drafts', 'nopast', 'firstpast', 'lots', 'years', 'loading', 'error'];
 
 const stopsAt = (list) => list.map(([id, a, b]) => ({ destination_id: id, city: '', country: '', arrive_date: a, depart_date: b }));
 const rel = (list) => stopsAt(list.map(([id, a, b]) => [id, addDaysIso(a), addDaysIso(b)]));
 
 export const ONE_PLANS = [
   { id: 'mo1', label: null, cities: ['Hallstatt'], countries: ['Austria'], start_date: addDaysIso(224), end_date: addDaysIso(231), destination_ids: ['gem:hallstatt'], stops: rel([['gem:hallstatt', 224, 231]]), choices: { groupSize: 2 } },
+];
+
+export const STATEMENT_PLANS = [
+  { id: 'ms1', label: 'Lisbon and Porto', cities: ['Lisbon', 'Porto'], countries: ['Portugal'], start_date: addDaysIso(40), end_date: addDaysIso(46), destination_ids: ['LIS', 'OPO'], stops: rel([['LIS', 40, 43], ['OPO', 43, 46]]), choices: { groupSize: 2 }, visibility: 'private' },
 ];
 
 export const FIRST_PAST_PLANS = [

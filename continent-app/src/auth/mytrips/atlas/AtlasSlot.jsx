@@ -16,7 +16,7 @@ import { landShare, plateColours, stateOf } from './plateData.js';
  * routes draw in only when the tab changes, never at first paint.
  *
  * Saved (Phase D): the whole plate when nothing is saved, else a host the
- * Saved tab portals its live map into (savedHost), so MapLibre loads only there.
+ * Saved tab portals its own plate into (savedHost, atlas/SavedPlate.jsx).
  *
  *   trips    tripsLayer() output
  *   europe   europeLayer() output plus { been, next, viaTrip, total }
@@ -47,7 +47,7 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
         </div>
       );
     }
-    return <div className="atlas-slot is-saved"><div className="atlas-map atlas-live" ref={savedHost} /></div>;
+    return <div className="atlas-slot is-saved"><div className="atlas-map atlas-saved-host" style={plateColours()} ref={savedHost} /></div>;
   }
   if (tab !== 'trips' && tab !== 'europe') return null;
 
