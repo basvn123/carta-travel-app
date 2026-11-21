@@ -1,6 +1,6 @@
 # Famous coverage for every outdoor kind (D25)
 
-Status: paused. Everything is built, on `main` and queued on the box. The measured "after" numbers come from the box runs. The trails, mountains, lakes and beaches runs are expected about 2026-11-23 to 11-24; cycling is queued after them and is not dated yet.
+Status: paused. Everything is built, on `main` and queued on the box. The measured "after" numbers come from the box runs. Revised 2026-11-21 10:35: the quarterly catch-up runs about 3 times its stated hours (Overpass mirrors time out), so the last run is now expected about 2026-11-27 to 11-29 (range 11-26 to 11-30).
 Run: `.work/2026-11-20-famous-coverage/`, 2026-11-20 to 2026-11-21. ROADMAP D25 (with D23, D24).
 
 ## What the owner asked
@@ -57,14 +57,27 @@ Measured means from the box logs; the rest is estimated.
 
 | What | When |
 |---|---|
-| Quarterly catch-up finishes | 2026-11-21, late. It is on `beach_context`; the remaining tasks have no box timings, and several call Gemini. |
+Revised 2026-11-21 10:35 from the box log.
+- **Measured:** `beach_context` (stated 5 h) has run 8.5 h and is 13 countries into its last phase of about 40, with Overpass batches failing. `sea_temp` and `heat_fire` took 6 h against 2.5 h stated.
+- **Still to run:** 18 more catch-up tasks, stated at about 22 h.
+
+| What | When |
+|---|---|
+| Quarterly catch-up finishes | about 2026-11-24 (range 11-23 to 11-25) |
 | Trails pass 1 | about 4 to 6 h after that. Curation (855 s), regions (333 s) and heights (711 s) are measured. |
 | Pass 2 go | automatic: `carta-chain-check` gives it when pass 1 exits 0 with sane curation |
-| Trails pass 2 and publish (famous ids, stages) | 2026-11-22 to 11-23 |
-| Beaches, mountains, lakes and coverage (`carta-famous-followup`) | 2026-11-23 |
-| Cycling chain and coverage (`carta-famous-cycling`) | 2026-11-23 to 11-24. The harvest from every country extract has no box timing. |
-| Trails pass 3: seed walks, curation, the chain, coverage (`carta-famous-trails`) | 2026-11-24 to 11-25 |
+| Trails pass 2 and publish (famous ids, stages) | about 2026-11-25 |
+| Beaches, mountains, lakes and coverage (`carta-famous-followup`) | about 2026-11-25 to 11-26 |
+| Cycling chain and coverage (`carta-famous-cycling`) | about 2026-11-26 to 11-27. The harvest from every country extract has no box timing. |
+| Trails pass 3: seed walks, curation, the chain, coverage (`carta-famous-trails`) | about 2026-11-27 to 11-29 |
 | Real per-tab numbers | from the coverage report of each run |
+
+On 2026-11-21 at 10:32 the five waiting units were re-created with doubled wait limits:
+- before: chain lock 7 days, check 7, follow-up 7, cycling 8, trails 9;
+- after: 14, 14, 14, 16, 18;
+- why: at the measured pace the old limits left about a day of margin before a unit would give up.
+
+Nothing had started; the chain was still waiting on the lock. Scripts: `/home/carta/stretch_waits.py`, `/home/carta/requeue.sh`.
 
 ## Reviews
 - **Three judges**, scoring 38, then 45, then 48 of 70.
