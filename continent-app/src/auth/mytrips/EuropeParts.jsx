@@ -190,12 +190,16 @@ export function Extremes({ ex }) {
   );
 }
 
-/** "9/10": the traveller's own grade as a badge; the top one on umber 600. */
-export function GradeBadge({ n, top = false, big = false }) {
+/** The traveller's own grade (owner review): "8" and a small "/10" on one
+ *  baseline, a blaze-style meter under it painted to the grade; the best
+ *  trip's number in umber 700 and its meter in umber 800. No pill, so it
+ *  reads as Carta's mark and not a stock badge. */
+export function GradeBadge({ n, top = false }) {
   const { t } = useI18n();
   return (
-    <span className={`atlas-grade${top ? ' is-top' : ''}${big ? ' is-big' : ''}`} role="img" aria-label={t('mt.gradeAria', { n })}>
-      {big ? <b>{n}</b> : n}<small>/10</small>
+    <span className={`atlas-grade${top ? ' is-top' : ''}`} role="img" aria-label={t('mt.gradeAria', { n })}>
+      <span className="atlas-grade-n" aria-hidden="true"><b>{n}</b><small>/10</small></span>
+      <span className="atlas-grade-m" aria-hidden="true"><i style={{ width: top ? '100%' : `${Math.max(0, Math.min(10, n)) * 10}%` }} /></span>
     </span>
   );
 }
@@ -224,7 +228,6 @@ export function TripLog({ rated, unrated, ask, onAsk, rate }) {
               <span className="atlas-rk">{i + 1}</span>
               <span className="atlas-lt">
                 <b>{x.title} <small>{x.year}</small></b>
-                <span className="atlas-lbar" aria-hidden="true"><i style={{ width: `${x.grade * 10}%` }} /></span>
               </span>
               <GradeBadge n={x.grade} top={i === 0} />
             </li>
@@ -329,7 +332,7 @@ export function PastRow({ x, top = false, rating = false, onRateOpen, onRate }) 
         </span>
       </Pressable>
       <span className="atlas-prow-end">
-        {x.grade != null ? <GradeBadge n={x.grade} top={top} big /> : onRate ? (
+        {x.grade != null ? <GradeBadge n={x.grade} top={top} /> : onRate ? (
           <Pressable className="atlas-rateit" aria-expanded={rating} onClick={onRateOpen}>{t('mt.giveGrade')}</Pressable>
         ) : null}
         {(x.menuActions?.length > 0 || x.onRemove) && (

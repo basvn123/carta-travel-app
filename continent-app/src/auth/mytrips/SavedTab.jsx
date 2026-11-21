@@ -10,6 +10,7 @@ import { WatchRail, WatchSheet, MovePill, useWatched } from './Watch.jsx';
 import { inUnit, moveInUnit, basisOf, sameBasis } from '../../lib/price/priceView.js';
 import {
   PlusIcon, ArrowDownIcon, RouteIcon, EyeIcon, CloseIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
+  MapIcon, ListIcon,
 } from '../../components/Icons.jsx';
 import { FAV_KIND_LABEL } from '../../lib/favorites.js';
 import { formatMoney } from '../../lib/money.js';
@@ -475,8 +476,15 @@ export function SavedTab({
 
       {list === 'all' && top}
 
-      <PriceControl choices={choices} setChoices={setChoices} />
-      <div className="mt-saved-filters atlas-chips-scroll">
+      {/* One compact row (owner review): the price control, then List / Map at its end. */}
+      <div className="mt-saved-tools">
+        <PriceControl choices={choices} setChoices={setChoices} />
+        <Pressable className="mt-view-toggle" onClick={() => setView((v) => (v === 'map' ? 'list' : 'map'))}>
+          {view === 'map' ? <ListIcon size={16} /> : <MapIcon size={16} />}
+          {t(view === 'map' ? 'mt.viewList' : 'mt.viewMap')}
+        </Pressable>
+      </div>
+      {(kinds.length > 1 || anyFell || fell || cc) && <div className="mt-saved-filters atlas-chips-scroll">
         {kinds.length > 1 && (
           <ChipGroup label={t('saved.kindLabel')} className="mt-chips">
             <Chip kind="choice" selected={kindNow === 'all'} onClick={() => setKind('all')}>{t('mt.kindAllN', { n: inList.length })}</Chip>
@@ -493,11 +501,7 @@ export function SavedTab({
             <CountryFlag country={cc} size={14} />{cc}
           </Chip>
         )}
-        <span className="mt-spacer" />
-        <Button size="sm" className="mt-view-toggle" onClick={() => setView((v) => (v === 'map' ? 'list' : 'map'))}>
-          {t(view === 'map' ? 'mt.viewList' : 'mt.viewMap')}
-        </Button>
-      </div>
+      </div>}
 
       {shown.length > 0 && (
         <div className="mt-listhead">

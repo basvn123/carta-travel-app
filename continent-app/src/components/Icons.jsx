@@ -123,6 +123,48 @@ export function MapPinIcon({ size = 20, className = '' }) {
   );
 }
 
+/** A folded paper map: the Saved tab's List / Map switch (G12). */
+export function MapIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2Z" />
+      <path d="M9 4.5v13M15 6.5v13" />
+    </svg>
+  );
+}
+
+/** Rows of a list: the same switch when the map is showing. */
+export function ListIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M9 6.5h11M9 12h11M9 17.5h11" />
+      <path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01" strokeWidth="2.4" />
+    </svg>
+  );
+}
+
 export function RouteIcon({ size = 20, className = '' }) {
   return (
     <svg

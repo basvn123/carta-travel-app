@@ -7641,7 +7641,7 @@ export const fr = {
   "mt.tripLog": "Ton carnet de voyages",
   "mt.logAll": "Les {n}",
   "mt.logLess": "Moins",
-  "mt.gradeAria": "ta note {n} sur 10",
+  "mt.gradeAria": "Ta note {n} sur 10",
   "mt.unrated1": "1 voyage sans note : donne-lui une note",
   "mt.unratedN": "{n} voyages sans note : donnes-en une",
   "mt.badgeNotYet": "{name}, pas encore",

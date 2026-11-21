@@ -7641,7 +7641,7 @@ export const it = {
   "mt.tripLog": "Il tuo diario di viaggio",
   "mt.logAll": "Tutti e {n}",
   "mt.logLess": "Meno",
-  "mt.gradeAria": "il tuo voto {n} su 10",
+  "mt.gradeAria": "Il tuo voto {n} su 10",
   "mt.unrated1": "1 viaggio senza voto: dagliene uno",
   "mt.unratedN": "{n} viaggi senza voto: danne uno",
   "mt.badgeNotYet": "{name}, non ancora",

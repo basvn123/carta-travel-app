@@ -8275,7 +8275,7 @@ export const en = {
   "mt.tripLog": "Your trip log",
   "mt.logAll": "All {n}",
   "mt.logLess": "Less",
-  "mt.gradeAria": "your grade {n} of 10",
+  "mt.gradeAria": "Your grade {n} of 10",
   "mt.unrated1": "1 trip without a grade: give one",
   "mt.unratedN": "{n} trips without a grade: give one",
   "mt.badgeNotYet": "{name}, not yet",

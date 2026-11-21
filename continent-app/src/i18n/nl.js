@@ -7652,7 +7652,7 @@ export const nl = {
   "mt.tripLog": "Je reislog",
   "mt.logAll": "Alle {n}",
   "mt.logLess": "Minder",
-  "mt.gradeAria": "je cijfer {n} van 10",
+  "mt.gradeAria": "Je cijfer {n} van 10",
   "mt.unrated1": "1 reis zonder cijfer: geef er een",
   "mt.unratedN": "{n} reizen zonder cijfer: geef er een",
   "mt.badgeNotYet": "{name}, nog niet",
