@@ -1,12 +1,12 @@
 # Famous coverage
 
-Generated 2026-11-21T00:46:09Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
+Generated 2026-11-21T01:35:03Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
 
 | Kind | Famous (A) | In | Share | Rated | Listed | Stages | Piece only | Missing | Near (B) in |
 |---|---|---|---|---|---|---|---|---|---|
-| trails | 663 | 210 | 32% | 199 | 1 | 10 | 92 | 361 | 249 of 1226 |
-| cycling | 235 | 45 | 19% | 11 | 34 | 0 | 12 | 178 | 37 of 313 |
-| beaches | 193 | 141 | 73% | 117 | 24 | 0 | 0 | 52 | 496 of 1591 |
+| trails | 663 | 209 | 32% | 198 | 1 | 10 | 93 | 361 | 249 of 1226 |
+| cycling | 235 | 45 | 19% | 11 | 34 | 0 | 36 | 154 | 37 of 313 |
+| beaches | 186 | 141 | 76% | 117 | 24 | 0 | 0 | 45 | 496 of 1591 |
 | lakes | 249 | 165 | 66% | 147 | 18 | 0 | 0 | 84 | 190 of 364 |
 | mountains | 346 | 287 | 83% | 207 | 80 | 0 | 0 | 59 | 361 of 871 |
 
@@ -118,6 +118,7 @@ Missing famous (A) by reason: osm_relation_not_published 170, no_osm_relation 15
 | Glyndŵr's Way | GB | 5 | missing | osm_relation_not_published |
 | Great Western Greenway | IE | 5 | missing | no_osm_relation |
 | Hermannsweg | DE | 5 | in_as_piece |  |
+| Ingegerdsleden | SE | 5 | in_as_piece |  |
 | Peaks of the Balkans | AL,ME,XK | 5 | missing | osm_relation_not_published |
 | Perć Akademików | PL | 5 | missing | no_osm_relation |
 | Rheinburgenweg Trail | DE | 5 | in_as_piece |  |
@@ -472,204 +473,204 @@ Missing famous (A) by reason: osm_relation_not_published 170, no_osm_relation 15
 
 ## cycling
 
-Missing famous (A) by reason: not_in_wire 159, matcher_miss 19
+Missing famous (A) by reason: osm_relation_not_published 82, no_osm_relation 53, matcher_miss 19
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
-| Via Claudia Augusta | AT,DE,IT | 24 | missing | not_in_wire |
-| EuroVelo 10 – Baltic Sea Cycle Route | DE,DK,EE,FI,LT,LV,PL,SE | 16 | missing | not_in_wire |
-| EuroVelo 13 – Iron Curtain Trail | AT,BG,CZ,DE,EE,FI,GR,HR,HU,LT,LV,MK,NO,PL,RO,RS,SI,SK,TR | 16 | missing | not_in_wire |
+| Via Claudia Augusta | AT,DE,IT | 24 | missing | no_osm_relation |
+| EuroVelo 10 – Baltic Sea Cycle Route | DE,DK,EE,FI,LT,LV,PL,SE | 16 | in_as_piece |  |
+| EuroVelo 13 – Iron Curtain Trail | AT,BG,CZ,DE,EE,FI,GR,HR,HU,LT,LV,MK,NO,PL,RO,RS,SI,SK,TR | 16 | in_as_piece |  |
 | EuroVelo 2 – Capitals Route | DE,GB,IE,NL,PL | 16 | in_as_piece |  |
-| EuroVelo 6 – The Rivers Route | AT,BG,CH,DE,FR,HR,HU,RO,RS,SK | 16 | missing | not_in_wire |
-| EuroVelo 9 – Baltic-Adriatic | AT,CZ,HR,IT,PL,SI | 16 | missing | not_in_wire |
+| EuroVelo 6 – The Rivers Route | AT,BG,CH,DE,FR,HR,HU,RO,RS,SK | 16 | missing | osm_relation_not_published |
+| EuroVelo 9 – Baltic-Adriatic | AT,CZ,HR,IT,PL,SI | 16 | in_as_piece |  |
 | Donauradweg | AT,DE | 15 | in_as_piece |  |
 | EuroVelo 1 – Atlantic Coast Route | ES,FR,GB,IE,NO,PT | 15 | in_as_piece |  |
-| EuroVelo 15 – Rhine Cycle Route | AT,CH,DE,FR,NL | 14 | missing | not_in_wire |
-| EuroVelo 3 – The Pilgrims Route | BE,DE,DK,ES,FR,NO,SE | 13 | missing | not_in_wire |
-| EuroVelo 4 – Central Europe Route | BE,CZ,DE,FR,NL,PL,UA | 13 | missing | not_in_wire |
-| EuroVelo 5 – Via Romea Francigena | BE,CH,DE,FR,GB,IT,LU | 13 | missing | not_in_wire |
-| EuroVelo 7 – The Sun Route | AT,CZ,DE,DK,FI,IT,MT,NO,SE | 13 | missing | not_in_wire |
-| Old Salt Route | DE | 13 | missing | not_in_wire |
-| EuroVelo 8 – Mediterranean Route | AL,BA,CY,ES,FR,GR,HR,IT,MC,ME,SI,TR | 12 | missing | not_in_wire |
-| EuroVelo 11 – East Europe Route | EE,FI,GR,HU,LT,LV,MK,NO,PL,RS,SK | 11 | missing | not_in_wire |
-| EuroVelo 12 - North Sea Cycle Route | BE,DE,DK,FR,GB,NL,NO,SE | 11 | missing | not_in_wire |
-| Sultans Trail | AT,BG,HR,HU,RS,SK,TR | 11 | missing | not_in_wire |
-| German Timber-Frame Road | DE | 10 | missing | not_in_wire |
-| Green Velo – East of Poland Cycling Trail | PL | 10 | missing | not_in_wire |
+| EuroVelo 15 – Rhine Cycle Route | AT,CH,DE,FR,NL | 14 | missing | osm_relation_not_published |
+| EuroVelo 3 – The Pilgrims Route | BE,DE,DK,ES,FR,NO,SE | 13 | in_as_piece |  |
+| EuroVelo 4 – Central Europe Route | BE,CZ,DE,FR,NL,PL,UA | 13 | missing | osm_relation_not_published |
+| EuroVelo 5 – Via Romea Francigena | BE,CH,DE,FR,GB,IT,LU | 13 | in_as_piece |  |
+| EuroVelo 7 – The Sun Route | AT,CZ,DE,DK,FI,IT,MT,NO,SE | 13 | in_as_piece |  |
+| Old Salt Route | DE | 13 | missing | osm_relation_not_published |
+| EuroVelo 8 – Mediterranean Route | AL,BA,CY,ES,FR,GR,HR,IT,MC,ME,SI,TR | 12 | missing | osm_relation_not_published |
+| EuroVelo 11 – East Europe Route | EE,FI,GR,HU,LT,LV,MK,NO,PL,RS,SK | 11 | missing | osm_relation_not_published |
+| EuroVelo 12 - North Sea Cycle Route | BE,DE,DK,FR,GB,NL,NO,SE | 11 | in_as_piece |  |
+| Sultans Trail | AT,BG,HR,HU,RS,SK,TR | 11 | missing | no_osm_relation |
+| German Timber-Frame Road | DE | 10 | in_as_piece |  |
+| Green Velo – East of Poland Cycling Trail | PL | 10 | missing | osm_relation_not_published |
 | Elbe Cycle Route | CZ,DE | 8 | in_as_piece |  |
-| EuroVelo 19 – Meuse Cycle Route | BE,FR | 8 | missing | not_in_wire |
+| EuroVelo 19 – Meuse Cycle Route | BE,FR | 8 | missing | osm_relation_not_published |
 | Alpe Adria cycling route | AT,IT | 7 | in_as_piece |  |
-| Dão line | PT | 7 | missing | not_in_wire |
-| EuroVelo 14 – Waters of Central Europe | AT,HU | 7 | missing | not_in_wire |
-| Oder-Neiße-Radweg | CZ,DE | 7 | missing | not_in_wire |
-| German Ferry Road | DE | 6 | missing | not_in_wire |
-| Saale-Radwanderweg | DE | 6 | missing | not_in_wire |
-| Vistula River Cycling Route | PL | 6 | missing | not_in_wire |
-| Weser-Harz-Heide Cycle Route | DE | 6 | missing | not_in_wire |
-| West Coast Route | DK | 6 | missing | not_in_wire |
-| Berliner Mauerweg | DE | 5 | missing | not_in_wire |
+| Dão line | PT | 7 | missing | no_osm_relation |
+| EuroVelo 14 – Waters of Central Europe | AT,HU | 7 | missing | osm_relation_not_published |
+| Oder-Neiße-Radweg | CZ,DE | 7 | missing | osm_relation_not_published |
+| German Ferry Road | DE | 6 | missing | osm_relation_not_published |
+| Saale-Radwanderweg | DE | 6 | in_as_piece |  |
+| Vistula River Cycling Route | PL | 6 | missing | osm_relation_not_published |
+| Weser-Harz-Heide Cycle Route | DE | 6 | missing | no_osm_relation |
+| West Coast Route | DK | 6 | missing | osm_relation_not_published |
+| Berliner Mauerweg | DE | 5 | missing | no_osm_relation |
 | Bodensee-Radweg | AT | 5 | missing | matcher_miss |
 | Ciclabile della Drava | AT,IT | 5 | in_as_piece |  |
-| Danish National Cycle Route 5 | DK | 5 | missing | not_in_wire |
-| Euroroute R1 | BE,DE,EE,FR,LT,LV,NL,PL | 5 | missing | not_in_wire |
-| Green Cycle Routes | DK | 5 | missing | not_in_wire |
-| Internationale Dollardroute | DE,NL | 5 | missing | not_in_wire |
-| Main-Radweg | DE | 5 | missing | not_in_wire |
-| RAVeL network | BE | 5 | missing | not_in_wire |
+| Danish National Cycle Route 5 | DK | 5 | missing | osm_relation_not_published |
+| Euroroute R1 | BE,DE,EE,FR,LT,LV,NL,PL | 5 | missing | osm_relation_not_published |
+| Green Cycle Routes | DK | 5 | missing | no_osm_relation |
+| Internationale Dollardroute | DE,NL | 5 | missing | osm_relation_not_published |
+| Main-Radweg | DE | 5 | missing | osm_relation_not_published |
+| RAVeL network | BE | 5 | missing | no_osm_relation |
 | Radwanderweg Donau-Bodensee | DE | 5 | missing | matcher_miss |
 | Szczecin Lagoon Cycling Path | DE,PL | 5 | missing | matcher_miss |
-| ViaRhôna | FR | 5 | missing | not_in_wire |
-| Werratal-Radweg | DE | 5 | missing | not_in_wire |
-| 100 Schlösser Route | DE | 4 | missing | not_in_wire |
-| Ahr Cycleway | DE | 4 | missing | not_in_wire |
-| Altmühltal-Radweg | DE | 4 | missing | not_in_wire |
-| Avenue Verte | FR,GB | 4 | missing | not_in_wire |
-| Beara Way | IE | 4 | missing | not_in_wire |
-| Berlin-Copenhagen Cycle Route | DE | 4 | missing | not_in_wire |
-| Bikeway 3 | IT | 4 | missing | not_in_wire |
-| Bocklradweg | DE | 4 | missing | not_in_wire |
-| Bornholm circular route | DK | 4 | missing | not_in_wire |
-| Ciclopista della valle dell'Adige | AT,IT | 4 | missing | not_in_wire |
-| Cycling routes in the Czech Republic | CZ | 4 | missing | not_in_wire |
-| EuroVelo 17 - Rhone Cycle Route | CH,FR | 4 | missing | not_in_wire |
+| ViaRhôna | FR | 5 | in_as_piece |  |
+| Werratal-Radweg | DE | 5 | missing | no_osm_relation |
+| 100 Schlösser Route | DE | 4 | in_as_piece |  |
+| Ahr Cycleway | DE | 4 | missing | osm_relation_not_published |
+| Altmühltal-Radweg | DE | 4 | missing | osm_relation_not_published |
+| Avenue Verte | FR,GB | 4 | in_as_piece |  |
+| Beara Way | IE | 4 | missing | osm_relation_not_published |
+| Berlin-Copenhagen Cycle Route | DE | 4 | missing | osm_relation_not_published |
+| Bikeway 3 | IT | 4 | missing | osm_relation_not_published |
+| Bocklradweg | DE | 4 | missing | no_osm_relation |
+| Bodensee-Königssee-Radweg | DE | 4 | in_as_piece |  |
+| Bornholm circular route | DK | 4 | missing | no_osm_relation |
+| Ciclopista della valle dell'Adige | AT,IT | 4 | missing | no_osm_relation |
+| Cycling routes in the Czech Republic | CZ | 4 | missing | no_osm_relation |
+| EuroVelo 17 - Rhone Cycle Route | CH,FR | 4 | in_as_piece |  |
 | Flaeming-Skate | DE | 4 | missing | matcher_miss |
-| Garte Valley Railway | DE | 4 | missing | not_in_wire |
-| Gera-Radweg | DE | 4 | missing | not_in_wire |
-| Gurkenradweg | DE | 4 | missing | not_in_wire |
+| Garte Valley Railway | DE | 4 | missing | no_osm_relation |
+| Gera-Radweg | DE | 4 | missing | no_osm_relation |
+| Gurkenradweg | DE | 4 | in_as_piece |  |
 | Hessian long-distance cycle route R1 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R2 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R3 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R4 | DE | 4 | missing | matcher_miss |
-| Hessian long-distance cycle route R5 | DE | 4 | missing | not_in_wire |
+| Hessian long-distance cycle route R5 | DE | 4 | missing | osm_relation_not_published |
 | Hessian long-distance cycle route R6 | DE | 4 | missing | matcher_miss |
 | Hessian long-distance cycle route R8 | DE | 4 | in_as_piece |  |
-| Hessischer Radfernweg | DE | 4 | missing | not_in_wire |
-| Kattegattleden | SE | 4 | missing | not_in_wire |
-| Klarälvsbanan | SE | 4 | missing | not_in_wire |
+| Hessischer Radfernweg | DE | 4 | missing | osm_relation_not_published |
+| Kattegattleden | SE | 4 | missing | no_osm_relation |
+| Klarälvsbanan | SE | 4 | missing | osm_relation_not_published |
 | Kyll-Radweg | DE | 4 | missing | matcher_miss |
-| Lahn Valley Cycle Path | DE | 4 | missing | not_in_wire |
+| Lahn Valley Cycle Path | DE | 4 | missing | no_osm_relation |
 | Leine-Heide Cycle Path | DE | 4 | missing | matcher_miss |
-| Maare-Mosel-Radweg | DE | 4 | missing | not_in_wire |
-| Main-Werra-Radweg | DE | 4 | missing | not_in_wire |
-| Mergellandroute | NL | 4 | missing | not_in_wire |
-| Mosel-Radweg | DE,FR | 4 | missing | not_in_wire |
-| Nahe-Radweg | DE | 4 | missing | not_in_wire |
-| Neckartalradweg | DE | 4 | missing | not_in_wire |
-| NiederRheinroute | DE | 4 | missing | not_in_wire |
-| Noordzeeroute | BE,FR,NL | 4 | missing | not_in_wire |
-| Pilgerweg Loccum - Volkenroda | DE | 4 | missing | not_in_wire |
-| Radfernweg Berlin–Usedom | DE | 4 | missing | not_in_wire |
-| Radfernweg Thüringer Städtekette | DE | 4 | missing | not_in_wire |
-| Rhön Cycleway | DE | 4 | missing | not_in_wire |
-| RuhrtalRadweg | DE | 4 | missing | not_in_wire |
-| RurUfer cycling route | BE,DE,NL | 4 | missing | not_in_wire |
-| Römer-Lippe-Route | DE | 4 | missing | not_in_wire |
-| Saar-Radweg | DE,FR | 4 | missing | not_in_wire |
+| Maare-Mosel-Radweg | DE | 4 | missing | osm_relation_not_published |
+| Main-Werra-Radweg | DE | 4 | missing | no_osm_relation |
+| Mergellandroute | NL | 4 | missing | no_osm_relation |
+| Mosel-Radweg | DE,FR | 4 | missing | osm_relation_not_published |
+| Nahe-Radweg | DE | 4 | missing | osm_relation_not_published |
+| Neckartalradweg | DE | 4 | missing | osm_relation_not_published |
+| NiederRheinroute | DE | 4 | missing | no_osm_relation |
+| Noordzeeroute | BE,FR,NL | 4 | missing | no_osm_relation |
+| Pilgerweg Loccum - Volkenroda | DE | 4 | missing | no_osm_relation |
+| Radfernweg Berlin–Usedom | DE | 4 | missing | no_osm_relation |
+| Radfernweg Thüringer Städtekette | DE | 4 | missing | osm_relation_not_published |
+| Rhön Cycleway | DE | 4 | missing | no_osm_relation |
+| RuhrtalRadweg | DE | 4 | missing | no_osm_relation |
+| RurUfer cycling route | BE,DE,NL | 4 | missing | osm_relation_not_published |
+| Römer-Lippe-Route | DE | 4 | missing | no_osm_relation |
+| Saar-Radweg | DE,FR | 4 | missing | osm_relation_not_published |
 | Sverigeleden | SE | 4 | in_as_piece |  |
-| Tauber Valley Cycleway | DE | 4 | missing | not_in_wire |
-| Tauern Cycle Path | AT,DE | 4 | missing | not_in_wire |
+| Tauber Valley Cycleway | DE | 4 | missing | no_osm_relation |
+| Tauern Cycle Path | AT,DE | 4 | in_as_piece |  |
 | Voie Bleue | FR | 4 | in_as_piece |  |
-| Aischtal cycling route | DE | 3 | missing | not_in_wire |
-| Aller-Radweg | DE | 3 | missing | not_in_wire |
-| Altmark circuit | DE | 3 | missing | not_in_wire |
-| Balatoni kerékpárút | HU | 3 | missing | not_in_wire |
-| Baltic Cycle Route | DK | 3 | missing | not_in_wire |
-| Beara-Breifne Way | IE | 3 | missing | not_in_wire |
-| Bicycle Trail of the former Borderland | PL | 3 | missing | not_in_wire |
-| Bike route 1 (Switzerland) | CH | 3 | missing | not_in_wire |
-| Blue Velo | PL | 3 | missing | not_in_wire |
-| Cycling route Berlin–Leipzig | DE | 3 | missing | not_in_wire |
-| Cyklistická trasa Vlčí Důl | CZ | 3 | missing | not_in_wire |
-| D-Route 9 | DE | 3 | missing | not_in_wire |
-| Dahme-Radweg | DE | 3 | missing | not_in_wire |
-| Den Grønne Sti | DK | 3 | missing | not_in_wire |
-| Deutsche Fußball Route NRW | DE | 3 | missing | not_in_wire |
-| Deutscher Limes-Radweg | DE | 3 | missing | not_in_wire |
-| Elster-Radweg | CZ,DE | 3 | missing | not_in_wire |
-| Emsradweg | DE | 3 | missing | not_in_wire |
-| Ennsradweg | AT | 3 | missing | not_in_wire |
-| Esbjerg - Copenhagen | DK | 3 | missing | not_in_wire |
-| EuroVelo 10 in Germany | DE | 3 | missing | not_in_wire |
-| Fürst-Pückler-Weg | DE | 3 | missing | not_in_wire |
-| Gaubahn-Radweg | DE | 3 | missing | not_in_wire |
-| German Unity Cycle Route | DE | 3 | missing | not_in_wire |
-| Glan-Blies Way | DE,FR | 3 | missing | not_in_wire |
-| Greenway Krakow-Moravia-Vienna | AT,CZ,PL | 3 | missing | not_in_wire |
+| Aischtal cycling route | DE | 3 | missing | osm_relation_not_published |
+| Aller-Radweg | DE | 3 | in_as_piece |  |
+| Altmark circuit | DE | 3 | missing | osm_relation_not_published |
+| Balatoni kerékpárút | HU | 3 | missing | osm_relation_not_published |
+| Baltic Cycle Route | DK | 3 | missing | osm_relation_not_published |
+| Beara-Breifne Way | IE | 3 | missing | no_osm_relation |
+| Bicycle Trail of the former Borderland | PL | 3 | missing | osm_relation_not_published |
+| Bike route 1 (Switzerland) | CH | 3 | in_as_piece |  |
+| Blue Velo | PL | 3 | missing | osm_relation_not_published |
+| Cycling route Berlin–Leipzig | DE | 3 | missing | osm_relation_not_published |
+| Cyklistická trasa Vlčí Důl | CZ | 3 | missing | no_osm_relation |
+| D-Route 9 | DE | 3 | in_as_piece |  |
+| Dahme-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Den Grønne Sti | DK | 3 | missing | osm_relation_not_published |
+| Deutsche Fußball Route NRW | DE | 3 | missing | osm_relation_not_published |
+| Deutscher Limes-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Elster-Radweg | CZ,DE | 3 | missing | osm_relation_not_published |
+| Emsradweg | DE | 3 | missing | osm_relation_not_published |
+| Ennsradweg | AT | 3 | in_as_piece |  |
+| Esbjerg - Copenhagen | DK | 3 | missing | osm_relation_not_published |
+| EuroVelo 10 in Germany | DE | 3 | missing | no_osm_relation |
+| Fürst-Pückler-Weg | DE | 3 | missing | no_osm_relation |
+| Gaubahn-Radweg | DE | 3 | missing | osm_relation_not_published |
+| German Unity Cycle Route | DE | 3 | in_as_piece |  |
+| Glan-Blies Way | DE,FR | 3 | missing | osm_relation_not_published |
+| Greenway Krakow-Moravia-Vienna | AT,CZ,PL | 3 | in_as_piece |  |
 | Greenway Oder River Trail | PL | 3 | in_as_piece |  |
-| Greenways Praha-Wien | AT,CZ | 3 | missing | not_in_wire |
-| Harzrundweg | DE | 3 | missing | not_in_wire |
-| Heidelberg-Schwarzwald-Bodensee-Weg | DE | 3 | missing | not_in_wire |
-| Helsingør - Gedser | DK | 3 | missing | not_in_wire |
+| Greenways Praha-Wien | AT,CZ | 3 | missing | no_osm_relation |
+| Harzrundweg | DE | 3 | missing | no_osm_relation |
+| Heidelberg-Schwarzwald-Bodensee-Weg | DE | 3 | missing | osm_relation_not_published |
+| Helsingør - Gedser | DK | 3 | missing | osm_relation_not_published |
 | Herkules-Wartburg-Radweg | DE | 3 | missing | matcher_miss |
-| Hessian long-distance cycle route R7 | DE | 3 | missing | not_in_wire |
-| Hessian long-distance cycle route R9 | DE | 3 | missing | not_in_wire |
-| Hiwwel-Route | DE | 3 | missing | not_in_wire |
-| Hofjagdweg | DE | 3 | missing | not_in_wire |
+| Hessian long-distance cycle route R7 | DE | 3 | missing | osm_relation_not_published |
+| Hessian long-distance cycle route R9 | DE | 3 | missing | osm_relation_not_published |
+| Hiwwel-Route | DE | 3 | missing | no_osm_relation |
+| Hofjagdweg | DE | 3 | missing | osm_relation_not_published |
 | Information plaques on Following Švejk Hiking Trail | AT,CZ,HU,PL,SK,UA | 3 | missing | matcher_miss |
 | Kaiser-Route | DE | 3 | missing | matcher_miss |
-| Karlsroute | CZ,DE | 3 | missing | not_in_wire |
-| Kulturringen | DK | 3 | missing | not_in_wire |
-| LF Kustroute | BE,NL | 3 | missing | not_in_wire |
-| La Régalante | FR | 3 | missing | not_in_wire |
-| La Seine à Vélo | FR | 3 | missing | not_in_wire |
+| Kulturringen | DK | 3 | missing | osm_relation_not_published |
+| LF Kustroute | BE,NL | 3 | missing | osm_relation_not_published |
+| La Régalante | FR | 3 | missing | no_osm_relation |
+| La Seine à Vélo | FR | 3 | missing | no_osm_relation |
 | Mittelland-Route | CH | 3 | in_as_piece |  |
-| Moldaufietsroute | CZ | 3 | missing | not_in_wire |
-| Mulderadweg | DE | 3 | missing | not_in_wire |
-| Mönchsweg | DE | 3 | missing | not_in_wire |
+| Moldaufietsroute | CZ | 3 | missing | no_osm_relation |
+| Mulderadweg | DE | 3 | missing | osm_relation_not_published |
+| Mönchsweg | DE | 3 | missing | no_osm_relation |
 | National Cycle Route 8 | GB | 3 | missing | matcher_miss |
-| PC1 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC10 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC11 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC12 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC14 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC15 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC17 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC18 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC2 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC20 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC21 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC22 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC23 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC3 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC4 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC5 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC6 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC8 Cycle Route | LU | 3 | missing | not_in_wire |
-| PC9 Cycle Route | LU | 3 | missing | not_in_wire |
-| Paneuropa-Radweg | CZ,DE,FR | 3 | missing | not_in_wire |
+| PC1 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC10 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC11 Cycle Route | LU | 3 | missing | no_osm_relation |
+| PC12 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC14 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC15 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC17 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC18 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC2 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC20 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC21 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC22 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC23 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC3 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC4 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC5 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC6 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC8 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC9 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| Paneuropa-Radweg | CZ,DE,FR | 3 | missing | no_osm_relation |
 | Pennine Cycleway | GB | 3 | missing | matcher_miss |
-| Pierścień Rowerowy dookoła Poznania | PL | 3 | missing | not_in_wire |
-| Queich Valley Cycleway | DE | 3 | missing | not_in_wire |
-| Radfernweg Hamburg-Bremen | DE | 3 | missing | not_in_wire |
-| Radrunde Allgäu | DE | 3 | missing | not_in_wire |
-| Radweg Berlin–Hameln | DE | 3 | missing | not_in_wire |
-| Ruhr-Sieg-Radweg | DE | 3 | missing | not_in_wire |
+| Pierścień Rowerowy dookoła Poznania | PL | 3 | missing | no_osm_relation |
+| Queich Valley Cycleway | DE | 3 | missing | osm_relation_not_published |
+| Radfernweg Hamburg-Bremen | DE | 3 | missing | no_osm_relation |
+| Radrunde Allgäu | DE | 3 | missing | osm_relation_not_published |
+| Radweg Berlin–Hameln | DE | 3 | in_as_piece |  |
+| Ruhr-Sieg-Radweg | DE | 3 | missing | osm_relation_not_published |
 | Saar-Mosel-Main (D5) | DE,FR | 3 | in_as_piece |  |
-| Sauertalradweg | DE,LU | 3 | missing | not_in_wire |
-| Schwarze-Elster-Radweg | DE | 3 | missing | not_in_wire |
-| Sea to Sea Cycle Route | GB | 3 | missing | not_in_wire |
-| Sydostleden | SE | 3 | missing | not_in_wire |
+| Sauertalradweg | DE,LU | 3 | missing | no_osm_relation |
+| Schwarze-Elster-Radweg | DE | 3 | missing | no_osm_relation |
+| Sea to Sea Cycle Route | GB | 3 | missing | no_osm_relation |
+| Sydostleden | SE | 3 | in_as_piece |  |
 | Szlak "Zielona Odra" | PL | 3 | missing | matcher_miss |
-| Søndervig - København | DK | 3 | missing | not_in_wire |
-| Südschwarzwald-Radweg | CH,DE | 3 | missing | not_in_wire |
-| The Limfjord route | DK | 3 | missing | not_in_wire |
+| Søndervig - København | DK | 3 | missing | osm_relation_not_published |
+| Südschwarzwald-Radweg | CH,DE | 3 | missing | no_osm_relation |
+| The Limfjord route | DK | 3 | missing | osm_relation_not_published |
 | Ulstertal-Radweg | DE | 3 | missing | matcher_miss |
-| Unstrut-Radweg | DE | 3 | missing | not_in_wire |
-| Unstrut-Werra-Radweg | DE | 3 | missing | not_in_wire |
-| Veloroute SaarLorLux | DE,FR,LU | 3 | missing | not_in_wire |
-| Vogelsberger Südbahnradweg | DE | 3 | missing | not_in_wire |
-| Vélo Francette | FR | 3 | missing | not_in_wire |
-| Véloroute du Calavon | FR | 3 | missing | not_in_wire |
-| Waddenzeeroute | NL | 3 | missing | not_in_wire |
-| Weiltalweg | DE | 3 | missing | not_in_wire |
+| Unstrut-Radweg | DE | 3 | missing | no_osm_relation |
+| Unstrut-Werra-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Veloroute SaarLorLux | DE,FR,LU | 3 | missing | osm_relation_not_published |
+| Vogelsberger Südbahnradweg | DE | 3 | missing | no_osm_relation |
+| Vélo Francette | FR | 3 | missing | no_osm_relation |
+| Véloroute du Calavon | FR | 3 | missing | no_osm_relation |
+| Waddenzeeroute | NL | 3 | missing | no_osm_relation |
+| Weiltalweg | DE | 3 | missing | osm_relation_not_published |
 | Westphalian Mill Route | DE | 3 | missing | matcher_miss |
-| cycleway of the Sun | IT | 3 | missing | not_in_wire |
-| cycling in Gdańsk | PL | 3 | missing | not_in_wire |
-| La Loire à vélo | FR | 2 | missing | not_in_wire |
+| cycleway of the Sun | IT | 3 | missing | no_osm_relation |
+| cycling in Gdańsk | PL | 3 | missing | no_osm_relation |
+| La Loire à vélo | FR | 2 | missing | no_osm_relation |
 
 ## beaches
 
-Missing famous (A) by reason: dropped_at_export 27, not_in_catalogue 15, matcher_miss 10
+Missing famous (A) by reason: dropped_at_export 26, matcher_miss 10, not_in_catalogue 9
 
 | Name | Countries | Sitelinks | Status | Reason |
 |---|---|---|---|---|
@@ -685,13 +686,11 @@ Missing famous (A) by reason: dropped_at_export 27, not_in_catalogue 15, matcher
 | Bolata | BG | 10 | missing | dropped_at_export |
 | Bedruthan Steps | GB | 9 | missing | dropped_at_export |
 | Bellevue Beach | DK | 9 | missing | dropped_at_export |
-| Bjarnarfjörður | IS | 9 | missing | not_in_catalogue |
 | Dueodde | DK | 9 | missing | dropped_at_export |
 | Ensenada de los Galápagos Beach | ES | 9 | missing | matcher_miss |
 | Playa El Tarajal | ES | 9 | missing | dropped_at_export |
 | Ftelia | GR | 8 | missing | dropped_at_export |
 | Hietaniemi beach | FI | 8 | missing | matcher_miss |
-| Kollafjörður (Strandir) | IS | 8 | missing | not_in_catalogue |
 | Nugal Beach | HR | 8 | missing | dropped_at_export |
 | Platja de la Nova Mar Bella | ES | 8 | missing | matcher_miss |
 | Playa de la Caleta | ES | 8 | missing | dropped_at_export |
@@ -705,20 +704,15 @@ Missing famous (A) by reason: dropped_at_export 27, not_in_catalogue 15, matcher
 | Lido | RS | 6 | missing | not_in_catalogue |
 | Moesgård Beach | DK | 6 | missing | dropped_at_export |
 | Praia da Arrifana | PT | 6 | missing | dropped_at_export |
-| Richtis Gorge | GR | 6 | missing | dropped_at_export |
 | Sahara Beach | HR | 6 | missing | dropped_at_export |
 | Strandbad Wannsee | DE | 6 | missing | dropped_at_export |
 | Svanemølle Beach | DK | 6 | missing | dropped_at_export |
 | Agios Ioannis Peristeron | GR | 5 | missing | dropped_at_export |
-| Dunkerque LNG terminal | FR | 5 | missing | not_in_catalogue |
 | Kakome Bay | AL | 5 | missing | not_in_catalogue |
-| Nedstrandsfjorden | NO | 5 | missing | not_in_catalogue |
-| Porvarinlahti | FI | 5 | missing | not_in_catalogue |
 | Praia Formosa | PT | 5 | missing | matcher_miss |
 | Praia da Adraga | PT | 5 | missing | matcher_miss |
 | Praia de Vale Figueira | PT | 5 | missing | dropped_at_export |
 | Santo André Beach | PT | 5 | missing | dropped_at_export |
-| Vallon des Auffes | FR | 5 | missing | not_in_catalogue |
 | Vault Beach | GB | 5 | missing | dropped_at_export |
 | Rhossili Bay | GB | 3 | missing | not_in_catalogue |
 | Cala Macarella | ES |  | missing | matcher_miss |

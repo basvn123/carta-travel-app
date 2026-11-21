@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "mountains",
- "generated_at": "2026-11-21T00:46:09Z",
+ "generated_at": "2026-11-21T01:28:51Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -125,7 +125,7 @@
     "Везувий",
     "Везувій"
    ],
-   "elev_m": 1297.0,
+   "elev_m": 1281.0,
    "prom_m": 1232.0,
    "beach_word": false,
    "sources": [
@@ -170,7 +170,7 @@
     "Мон Блан",
     "Монблан"
    ],
-   "elev_m": 4807.81,
+   "elev_m": 4805.59,
    "prom_m": 4692.0,
    "beach_word": false,
    "sources": [
@@ -210,7 +210,7 @@
     "Αίτνα",
     "Етна"
    ],
-   "elev_m": 3345.0,
+   "elev_m": 3357.0,
    "beach_word": false,
    "sources": [
     "carta_canary",
@@ -969,7 +969,7 @@
     "Γιουνγκφράου",
     "Юнгфрау"
    ],
-   "elev_m": 4167.0,
+   "elev_m": 4158.0,
    "prom_m": 694.0,
    "beach_word": false,
    "sources": [
@@ -1114,7 +1114,7 @@
     "Ането"
    ],
    "elev_m": 3404.0,
-   "prom_m": 2812.0,
+   "prom_m": 2811.0,
    "beach_word": false,
    "sources": [
     "carta_canary",
@@ -1555,7 +1555,6 @@
     "Лорелеи (карпа)",
     "Лорелей"
    ],
-   "elev_m": 109.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -2658,7 +2657,7 @@
     "Вайсгорн",
     "Вайсхорн"
    ],
-   "elev_m": 4512.0,
+   "elev_m": 4505.0,
    "prom_m": 1234.0,
    "beach_word": false,
    "sources": [
@@ -5677,7 +5676,7 @@
     "Posets"
    ],
    "elev_m": 3369.0,
-   "prom_m": 1131.0,
+   "prom_m": 1130.1,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -8096,8 +8095,8 @@
    "names": [
     "Møysalen"
    ],
-   "elev_m": 1263.2,
-   "prom_m": 1263.0,
+   "elev_m": 1263.7,
+   "prom_m": 1263.7,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -9066,7 +9065,7 @@
     "monte Drago",
     "Вагански врх"
    ],
-   "elev_m": 1757.5,
+   "elev_m": 1758.0,
    "prom_m": 1058.0,
    "beach_word": false,
    "sources": [
@@ -9751,8 +9750,8 @@
     "Breitinden",
     "Reaiddaidčohkka"
    ],
-   "elev_m": 1007.9,
-   "prom_m": 1001.0,
+   "elev_m": 1007.6,
+   "prom_m": 1007.6,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -16108,7 +16107,7 @@
     "Зімілаун",
     "Симилаун"
    ],
-   "elev_m": 3606.0,
+   "elev_m": 3597.0,
    "prom_m": 250.0,
    "beach_word": false,
    "sources": [
@@ -17607,7 +17606,6 @@
     "Фалькніс"
    ],
    "elev_m": 2562.0,
-   "prom_m": 40.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -21982,7 +21980,7 @@
     "Mont Brûlé",
     "Monte Brulé"
    ],
-   "elev_m": 3585.0,
+   "elev_m": 3571.0,
    "prom_m": 372.0,
    "beach_word": false,
    "sources": [
@@ -26392,7 +26390,7 @@
     "Burkelkopf",
     "Bürkelkopf"
    ],
-   "elev_m": 3033.0,
+   "elev_m": 3032.0,
    "prom_m": 229.0,
    "beach_word": false,
    "sources": [
@@ -26863,7 +26861,7 @@
     "First",
     "First i Grindelwald"
    ],
-   "elev_m": 2167.0,
+   "elev_m": 2184.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -26940,7 +26938,7 @@
    "names": [
     "Glatthorn"
    ],
-   "elev_m": 2134.0,
+   "elev_m": 2133.0,
    "prom_m": 647.0,
    "beach_word": false,
    "sources": [
@@ -27127,7 +27125,7 @@
     "Gwachtenhorn",
     "Gwächtenhorn"
    ],
-   "elev_m": 3420.0,
+   "elev_m": 3404.0,
    "prom_m": 218.0,
    "beach_word": false,
    "sources": [
@@ -28207,7 +28205,7 @@
    "names": [
     "Parpaner Rothorn"
    ],
-   "elev_m": 2899.0,
+   "elev_m": 2861.0,
    "prom_m": 70.0,
    "beach_word": false,
    "sources": [
@@ -29293,7 +29291,7 @@
    "names": [
     "Tournelon Blanc"
    ],
-   "elev_m": 3707.0,
+   "elev_m": 3700.0,
    "prom_m": 159.0,
    "beach_word": false,
    "sources": [
@@ -32250,7 +32248,7 @@
     "Catinaccio d'Antermoia",
     "Kesselkogel"
    ],
-   "elev_m": 3004.0,
+   "elev_m": 3002.0,
    "prom_m": 814.0,
    "beach_word": false,
    "sources": [
@@ -32490,7 +32488,7 @@
     "Puigpedros",
     "Puigpedrós"
    ],
-   "elev_m": 2914.0,
+   "elev_m": 2915.0,
    "prom_m": 644.0,
    "beach_word": false,
    "sources": [
@@ -34612,7 +34610,7 @@
    "names": [
     "Hochgrat"
    ],
-   "elev_m": 1833.6,
+   "elev_m": 1834.0,
    "prom_m": 714.0,
    "beach_word": false,
    "sources": [
@@ -34692,7 +34690,7 @@
     "Kramerspitze"
    ],
    "elev_m": 1985.0,
-   "prom_m": 780.0,
+   "prom_m": 776.0,
    "beach_word": false,
    "sources": [
     "wikidata"
@@ -35069,7 +35067,7 @@
     "Storskrymten",
     "Сторскрймтен"
    ],
-   "elev_m": 1984.9,
+   "elev_m": 1984.8,
    "prom_m": 608.5,
    "beach_word": false,
    "sources": [

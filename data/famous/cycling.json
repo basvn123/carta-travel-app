@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "cycling",
- "generated_at": "2026-11-21T00:32:25Z",
+ "generated_at": "2026-11-21T01:16:18Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -3914,7 +3914,7 @@
    "names": [
     "Fünf-Flüsse-Radweg"
    ],
-   "length_km": 280.0,
+   "length_km": 300.0,
    "osm_rel": 90120,
    "beach_word": false,
    "sources": [
@@ -13132,7 +13132,7 @@
    "names": [
     "Szlak Motławski"
    ],
-   "length_km": 36.0,
+   "length_km": 40.4,
    "beach_word": false,
    "sources": [
     "wikidata"

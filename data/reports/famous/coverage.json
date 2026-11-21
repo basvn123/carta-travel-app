@@ -1,22 +1,22 @@
 {
  "schema": "carta-famous-coverage/1",
- "generated_at": "2026-11-21T00:46:09Z",
+ "generated_at": "2026-11-21T01:35:03Z",
  "kinds": {
   "trails": {
    "kind": "trails",
-   "reference_at": "2026-11-21T00:30:11Z",
+   "reference_at": "2026-11-21T01:13:24Z",
    "wire_rows": 0,
    "summary": {
     "A": {
      "n": 663,
-     "in": 210,
+     "in": 209,
      "outside_countries": 0,
-     "share": 0.3167,
+     "share": 0.3152,
      "by_status": {
       "in_as_stages": 10,
-      "in_as_piece": 92,
+      "in_as_piece": 93,
       "missing": 361,
-      "in": 199,
+      "in": 198,
       "in_listed": 1
      },
      "missing_by_reason": {
@@ -3104,7 +3104,7 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_as_piece",
      "by": "name exact",
      "km": 0.0,
      "carta": {
@@ -32274,7 +32274,7 @@
   },
   "cycling": {
    "kind": "cycling",
-   "reference_at": "2026-11-21T00:32:25Z",
+   "reference_at": "2026-11-21T01:16:18Z",
    "wire_rows": 16973,
    "summary": {
     "A": {
@@ -32283,13 +32283,14 @@
      "outside_countries": 0,
      "share": 0.1915,
      "by_status": {
-      "missing": 178,
-      "in_as_piece": 12,
+      "missing": 154,
+      "in_as_piece": 36,
       "in": 11,
       "in_listed": 34
      },
      "missing_by_reason": {
-      "not_in_wire": 159,
+      "no_osm_relation": 53,
+      "osm_relation_not_published": 82,
       "matcher_miss": 19
      }
     },
@@ -32300,13 +32301,14 @@
      "share": 0.1182,
      "by_status": {
       "in_listed": 34,
-      "missing": 270,
+      "missing": 262,
       "in": 3,
-      "in_as_piece": 6
+      "in_as_piece": 14
      },
      "missing_by_reason": {
-      "not_in_wire": 242,
-      "matcher_miss": 28
+      "no_osm_relation": 136,
+      "matcher_miss": 28,
+      "osm_relation_not_published": 98
      }
     }
    },
@@ -32326,7 +32328,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2036072",
@@ -32346,8 +32348,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 61571,
+      "name": "EuroVelo 10, Baltic Sea Cycle Route, part Poland 2",
+      "cc": "PL",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q1289628",
@@ -32378,8 +32387,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 1996,
+      "name": "EuroVelo 13, Iron Curtain Trail (Hohenau an der March-Schloss Hof)",
+      "cc": "AT",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q3060534",
@@ -32428,7 +32444,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3060539",
@@ -32446,8 +32462,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 61901,
+      "name": "Eurovelo 9 (proponowana), wschodnia strona Wisły",
+      "cc": "PL",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q540745",
@@ -32515,7 +32538,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1800050",
@@ -32534,8 +32557,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 2624,
+      "name": "EuroVelo 3, Pilgrim's Route, part Belgium 1",
+      "cc": "BE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q1940135",
@@ -32555,7 +32585,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3060535",
@@ -32574,8 +32604,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 118,
+      "name": "EuroVelo 5, Via Romea Francigena, part Germany 1",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q3060536",
@@ -32596,8 +32633,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 8286,
+      "name": "EuroVelo 7, Sun Route, part Finland",
+      "cc": "FI",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q436177",
@@ -32611,7 +32655,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3060538",
@@ -32636,7 +32680,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3060533",
@@ -32660,7 +32704,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q456594",
@@ -32680,8 +32724,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 46941,
+      "name": "EuroVelo 12, North Sea Cycle Route, part United Kingdom 4",
+      "cc": "GB",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q699630",
@@ -32701,7 +32752,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q452401",
@@ -32714,8 +32765,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 18614,
+      "name": "Deutsche Fachwerkstraße Abschnitt Bietigheim-Calw",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q25407118",
@@ -32729,7 +32787,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q882270",
@@ -32767,7 +32825,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1091655",
@@ -32804,7 +32862,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q103159272",
@@ -32819,7 +32877,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q159890",
@@ -32834,7 +32892,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q668119",
@@ -32848,7 +32906,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q322905",
@@ -32882,8 +32940,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 15900,
+      "name": "Saaleradweg Etappe 1- Von der Saalequelle nach Hof",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q9376094",
@@ -32897,7 +32962,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2563833",
@@ -32911,7 +32976,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q5219846",
@@ -32925,7 +32990,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q20827135",
@@ -32939,7 +33004,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q889682",
@@ -32991,7 +33056,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1375670",
@@ -33012,7 +33077,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3525046",
@@ -33026,7 +33091,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q883273",
@@ -33041,7 +33106,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1885499",
@@ -33056,7 +33121,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q918250",
@@ -33070,7 +33135,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2126802",
@@ -33136,8 +33201,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 10501,
+      "name": "ViaRhôna 17: Lapalud, Caderousse",
+      "cc": "FR",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q2563316",
@@ -33151,7 +33223,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2563880",
@@ -33186,8 +33258,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 27203,
+      "name": "EuroVelo 3, Pilgrim's Route, part Germany #6 100 Schlösser Route",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q402624",
@@ -33201,7 +33280,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q442954",
@@ -33215,7 +33294,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2874205",
@@ -33229,8 +33308,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 10333,
+      "name": "Avenue Verte de Tarentaise (itinéraire velo du tunnel de Siaix)",
+      "cc": "FR",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q47462567",
@@ -33266,7 +33352,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2126817",
@@ -33280,7 +33366,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3676408",
@@ -33294,7 +33380,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q889221",
@@ -33308,7 +33394,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q889672",
@@ -33321,8 +33407,8 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
-     "by": "name",
+     "status": "in_as_piece",
+     "by": "section",
      "km": 0.0,
      "carta": {
       "id": 43553,
@@ -33343,7 +33429,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q3676522",
@@ -33358,7 +33444,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11773819",
@@ -33372,7 +33458,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1202515",
@@ -33450,8 +33536,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 12921,
+      "name": "EuroVélo 17, 12: Geneva, Valleiry",
+      "cc": "CH",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q1296698",
@@ -33479,7 +33572,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1320028",
@@ -33493,7 +33586,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1555200",
@@ -33506,8 +33599,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 21138,
+      "name": "Gurkenradweg (Westring)",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q1473473",
@@ -33577,7 +33677,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1615949",
@@ -33626,7 +33726,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1658771",
@@ -33703,7 +33803,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q10546074",
@@ -33717,7 +33817,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1245544",
@@ -33745,7 +33845,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q975833",
@@ -33773,7 +33873,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1885510",
@@ -33787,7 +33887,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q3946399",
@@ -33801,7 +33901,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1949067",
@@ -33817,7 +33917,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1963661",
@@ -33831,7 +33931,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1769622",
@@ -33845,7 +33945,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1987564",
@@ -33859,7 +33959,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2090784",
@@ -33875,7 +33975,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2094971",
@@ -33889,7 +33989,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2125620",
@@ -33903,7 +34003,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2125609",
@@ -33917,7 +34017,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1795212",
@@ -33952,7 +34052,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1273242",
@@ -33966,7 +34066,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2176751",
@@ -33982,7 +34082,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q15957675",
@@ -33996,7 +34096,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2209081",
@@ -34011,7 +34111,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14524498",
@@ -34088,7 +34188,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2396840",
@@ -34103,8 +34203,15 @@
       "carta_canary",
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 414,
+      "name": "Tauernradweg (Stadt Salzburg, Landesgrenze Oberösterreich)",
+      "cc": "AT",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q2521699",
@@ -34181,7 +34288,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2648465",
@@ -34194,8 +34301,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 15833,
+      "name": "Aller-Radweg Teil 1",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q2650806",
@@ -34230,7 +34344,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106106840",
@@ -34286,7 +34400,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q52658870",
@@ -34300,7 +34414,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q17380386",
@@ -34314,7 +34428,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q28673022",
@@ -34328,7 +34442,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1418357",
@@ -34341,8 +34455,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 54543,
+      "name": "Route du Rhône, Voie d'accès (Étape 5-Aigle)",
+      "cc": "CH",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q60170312",
@@ -34356,7 +34477,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q996457",
@@ -34391,7 +34512,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q11773832",
@@ -34405,7 +34526,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11773825",
@@ -34440,8 +34561,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 16377,
+      "name": "Weser-Romantische Straße Teil 7",
+      "cc": "DE",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q14513070",
@@ -34455,7 +34583,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q12308062",
@@ -34469,7 +34597,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1478415",
@@ -34483,7 +34611,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1205080",
@@ -34497,7 +34625,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1283677",
@@ -34533,7 +34661,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1339758",
@@ -34547,7 +34675,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1343465",
@@ -34560,8 +34688,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 1531,
+      "name": "Ennsradweg (Salzburg)",
+      "cc": "AT",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q52666028",
@@ -34575,7 +34710,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1647178",
@@ -34589,7 +34724,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q16548583",
@@ -34603,7 +34738,7 @@
       "wikidata"
      ],
      "status": "in",
-     "by": "section",
+     "by": "name",
      "km": 0.0,
      "carta": {
       "id": 13215,
@@ -34624,7 +34759,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q26836593",
@@ -34638,7 +34773,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q29035474",
@@ -34651,8 +34786,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 22645,
+      "name": "Radweg Deutsche Einheit, Etappe 3",
+      "cc": "DE",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q1529165",
@@ -34667,7 +34809,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1543697",
@@ -34703,8 +34845,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 7171,
+      "name": "Greenway Krakow-Moravia-Vienna (Rezerwat przyrody Wisła)",
+      "cc": "PL",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q9323003",
@@ -34740,7 +34889,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1588045",
@@ -34754,7 +34903,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1593987",
@@ -34768,7 +34917,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q52666542",
@@ -34782,7 +34931,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1610074",
@@ -34810,7 +34959,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1615951",
@@ -34824,7 +34973,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14543727",
@@ -34838,7 +34987,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14543728",
@@ -34852,7 +35001,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q15060320",
@@ -35006,8 +35155,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 6177,
+      "name": "Karlsroute (Hauptroute)",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q1737813",
@@ -35063,7 +35219,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106097253",
@@ -35078,7 +35234,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q133839373",
@@ -35092,7 +35248,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q129419583",
@@ -35106,7 +35262,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1647053",
@@ -35165,8 +35321,8 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 54164,
-      "name": "Route Mittelland",
+      "id": 54160,
+      "name": "Mittelland-Route",
       "cc": "CH",
       "tier": "rated"
      }
@@ -35183,7 +35339,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1943846",
@@ -35218,7 +35374,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1958028",
@@ -35232,7 +35388,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q72287781",
@@ -35324,7 +35480,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64506385",
@@ -35338,7 +35494,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64510133",
@@ -35352,7 +35508,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q16764997",
@@ -35366,7 +35522,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64526237",
@@ -35380,7 +35536,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64526302",
@@ -35394,7 +35550,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q16764415",
@@ -35408,7 +35564,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64532934",
@@ -35422,7 +35578,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q13105401",
@@ -35436,7 +35592,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64667052",
@@ -35450,7 +35606,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64667633",
@@ -35464,7 +35620,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64670858",
@@ -35478,7 +35634,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64676399",
@@ -35492,7 +35648,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q16764998",
@@ -35506,7 +35662,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64490725",
@@ -35520,7 +35676,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64490956",
@@ -35534,7 +35690,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64495444",
@@ -35548,7 +35704,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64504516",
@@ -35562,7 +35718,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64505952",
@@ -35576,7 +35732,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2049383",
@@ -35592,7 +35748,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1996471",
@@ -35620,7 +35776,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1029259",
@@ -35634,7 +35790,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2125615",
@@ -35648,7 +35804,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q18560320",
@@ -35662,7 +35818,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q28974725",
@@ -35675,8 +35831,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 15979,
+      "name": "Radweg Berlin-Hameln (Teilstrecke Brandenburg)",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q1253779",
@@ -35711,7 +35874,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q140391713",
@@ -35748,7 +35911,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1799492",
@@ -35804,7 +35967,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q7440138",
@@ -35818,7 +35981,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2299474",
@@ -35852,8 +36015,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 59663,
+      "name": "Sydostleden (Fridafors, Karlshamn)",
+      "cc": "SE",
+      "tier": "rated"
+     }
     },
     {
      "id": "wd:Q9351767",
@@ -35881,7 +36051,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q507891",
@@ -35896,7 +36066,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q52666777",
@@ -35910,7 +36080,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2477550",
@@ -35938,7 +36108,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14535760",
@@ -35952,7 +36122,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14535893",
@@ -35968,7 +36138,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2530088",
@@ -35982,7 +36152,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1799976",
@@ -36017,7 +36187,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q21027504",
@@ -36052,7 +36222,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6165301",
@@ -36087,7 +36257,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1666564",
@@ -36101,7 +36271,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q932170",
@@ -36150,7 +36320,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q17066263",
@@ -36164,7 +36334,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q3210116",
@@ -36179,7 +36349,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q65241531",
@@ -36215,7 +36385,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q138658276",
@@ -36243,7 +36413,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2631762",
@@ -36257,7 +36427,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q303155",
@@ -36292,7 +36462,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14510834",
@@ -36306,7 +36476,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q16683026",
@@ -36320,7 +36490,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q106098226",
@@ -36334,7 +36504,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2302085",
@@ -36348,7 +36518,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q125465456",
@@ -36362,7 +36532,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q801790",
@@ -36390,7 +36560,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q807764",
@@ -36425,7 +36595,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q66821215",
@@ -36439,7 +36609,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q857161",
@@ -36481,7 +36651,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11773833",
@@ -36495,7 +36665,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2173665",
@@ -36509,7 +36679,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q895575",
@@ -36544,7 +36714,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q140389350",
@@ -36558,7 +36728,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14543609",
@@ -36572,7 +36742,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14513058",
@@ -36586,7 +36756,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106592781",
@@ -36599,8 +36769,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 58590,
+      "name": "Ciclovia dei Parchi della Calabria, Tappa 1",
+      "cc": "IT",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q5168494",
@@ -36614,7 +36791,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q124343268",
@@ -36628,7 +36805,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q95981099",
@@ -36656,7 +36833,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q135923503",
@@ -36670,7 +36847,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q135923514",
@@ -36684,7 +36861,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q135923537",
@@ -36698,7 +36875,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q122451249",
@@ -36712,7 +36889,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q130270354",
@@ -36726,7 +36903,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q19818148",
@@ -36768,7 +36945,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q124671916",
@@ -36782,7 +36959,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q141156644",
@@ -36796,7 +36973,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q117081626",
@@ -36832,7 +37009,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11756153",
@@ -36846,7 +37023,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11773831",
@@ -36881,7 +37058,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q28455587",
@@ -36895,7 +37072,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q123663743",
@@ -36908,8 +37085,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 9247,
+      "name": "Dolce Via : section Le Cheylard, Lamastre (Ancien CFD)",
+      "cc": "FR",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q67872695",
@@ -36923,7 +37107,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1250612",
@@ -36937,7 +37121,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q114891283",
@@ -36951,7 +37135,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q115147146",
@@ -36965,7 +37149,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q115055454",
@@ -36979,7 +37163,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q130307834",
@@ -36993,7 +37177,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1302847",
@@ -37036,7 +37220,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1325094",
@@ -37050,7 +37234,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1333605",
@@ -37085,7 +37269,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1346147",
@@ -37113,7 +37297,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14554959",
@@ -37126,8 +37310,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 18953,
+      "name": "D2 Ostseeküsten-Radweg, Abschnitt Fehmarn",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q18544870",
@@ -37141,7 +37332,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q125851720",
@@ -37156,7 +37347,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q5432450",
@@ -37170,7 +37361,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1319317",
@@ -37206,7 +37397,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1411768",
@@ -37221,7 +37412,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q112133630",
@@ -37235,7 +37426,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q12311508",
@@ -37270,7 +37461,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1435836",
@@ -37284,7 +37475,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q3082438",
@@ -37320,7 +37511,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q110890334",
@@ -37334,7 +37525,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1239231",
@@ -37348,7 +37539,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q10505008",
@@ -37362,7 +37553,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q109326865",
@@ -37376,7 +37567,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q12018457",
@@ -37390,7 +37581,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q17494355",
@@ -37404,7 +37595,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1368585",
@@ -37418,7 +37609,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14522447",
@@ -37467,7 +37658,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1588175",
@@ -37481,7 +37672,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1451891",
@@ -37495,7 +37686,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q130391049",
@@ -37509,7 +37700,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1593038",
@@ -37523,7 +37714,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q31838860",
@@ -37537,7 +37728,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q109807540",
@@ -37551,7 +37742,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q93106146",
@@ -37600,7 +37791,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q108744567",
@@ -37614,7 +37805,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14545274",
@@ -37628,7 +37819,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6301853",
@@ -37642,7 +37833,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q54878213",
@@ -37740,7 +37931,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14568052",
@@ -37769,7 +37960,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1743220",
@@ -37783,7 +37974,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q18287918",
@@ -37797,7 +37988,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q138025942",
@@ -37825,7 +38016,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1568570",
@@ -37860,7 +38051,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q131881544",
@@ -37874,7 +38065,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1791804",
@@ -37888,7 +38079,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q20190974",
@@ -37902,7 +38093,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2293122",
@@ -37916,7 +38107,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q18340237",
@@ -37930,7 +38121,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q106488176",
@@ -37944,7 +38135,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106529287",
@@ -37958,7 +38149,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106529285",
@@ -37973,7 +38164,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106488175",
@@ -37987,7 +38178,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106529274",
@@ -38001,7 +38192,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64334516",
@@ -38016,7 +38207,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q106488178",
@@ -38030,7 +38221,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q107458170",
@@ -38044,7 +38235,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q107457412",
@@ -38058,7 +38249,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1980391",
@@ -38072,7 +38263,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q118950837",
@@ -38086,7 +38277,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q118951104",
@@ -38100,7 +38291,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2852065",
@@ -38114,7 +38305,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2445175",
@@ -38129,7 +38320,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2633800",
@@ -38144,7 +38335,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2182599",
@@ -38158,7 +38349,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q116771371",
@@ -38194,7 +38385,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q18431475",
@@ -38208,7 +38399,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q18431476",
@@ -38222,7 +38413,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1417405",
@@ -38236,7 +38427,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1869973",
@@ -38271,7 +38462,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q118733090",
@@ -38285,7 +38476,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2536211",
@@ -38299,7 +38490,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1885225",
@@ -38327,7 +38518,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q17151339",
@@ -38362,7 +38553,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q13747751",
@@ -38376,7 +38567,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1323268",
@@ -38447,7 +38638,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q29197673",
@@ -38461,7 +38652,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2184469",
@@ -38475,7 +38666,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972055",
@@ -38489,7 +38680,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6972039",
@@ -38503,7 +38694,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q55137008",
@@ -38517,7 +38708,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972040",
@@ -38531,7 +38722,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q16896877",
@@ -38545,7 +38736,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972043",
@@ -38559,7 +38750,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6972044",
@@ -38587,7 +38778,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972045",
@@ -38615,7 +38806,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q28404876",
@@ -38629,7 +38820,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q55137005",
@@ -38664,7 +38855,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q28404871",
@@ -38678,7 +38869,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972048",
@@ -38720,7 +38911,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972052",
@@ -38733,8 +38924,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 50124,
+      "name": "National Cycle Route 20 Crawley, Pyecombe (proposed)",
+      "cc": "GB",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q6972054",
@@ -38748,7 +38946,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q16998472",
@@ -38762,7 +38960,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6972057",
@@ -38776,7 +38974,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972058",
@@ -38811,7 +39009,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6972062",
@@ -38825,7 +39023,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q16896879",
@@ -38839,7 +39037,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6972068",
@@ -38853,7 +39051,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q30687084",
@@ -38867,7 +39065,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q48771048",
@@ -38881,7 +39079,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q96251179",
@@ -38895,7 +39093,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q60744983",
@@ -38909,7 +39107,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q60742709",
@@ -38923,7 +39121,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q56276771",
@@ -38937,7 +39135,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q28404653",
@@ -38951,7 +39149,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q48815871",
@@ -38965,7 +39163,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q28404488",
@@ -38979,7 +39177,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q28404699",
@@ -38993,7 +39191,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972071",
@@ -39007,7 +39205,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q28404770",
@@ -39021,7 +39219,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q97386312",
@@ -39035,7 +39233,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q55136981",
@@ -39049,7 +39247,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q60740253",
@@ -39063,7 +39261,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972072",
@@ -39077,7 +39275,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q55136964",
@@ -39091,7 +39289,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q48816728",
@@ -39105,7 +39303,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q6972074",
@@ -39119,7 +39317,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972077",
@@ -39133,7 +39331,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q16896880",
@@ -39147,7 +39345,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q134315280",
@@ -39161,7 +39359,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q6972082",
@@ -39176,7 +39374,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q20191091",
@@ -39190,7 +39388,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q119091874",
@@ -39204,7 +39402,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1757195",
@@ -39253,7 +39451,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q117287655",
@@ -39267,7 +39465,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2014347",
@@ -39281,7 +39479,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2014407",
@@ -39295,7 +39493,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2294420",
@@ -39310,7 +39508,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q17138376",
@@ -39345,7 +39543,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64513560",
@@ -39359,7 +39557,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64526392",
@@ -39373,7 +39571,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64667044",
@@ -39387,7 +39585,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q64691770",
@@ -39401,7 +39599,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64504428",
@@ -39415,7 +39613,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q134705012",
@@ -39429,7 +39627,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1514238",
@@ -39443,7 +39641,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14538716",
@@ -39457,7 +39655,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2265414",
@@ -39491,8 +39689,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 29221,
+      "name": "Pilgerroute NRW Part aaa",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q22689867",
@@ -39506,7 +39711,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q16494537",
@@ -39520,7 +39725,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q20191186",
@@ -39534,7 +39739,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1029009",
@@ -39590,7 +39795,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q105826888",
@@ -39604,7 +39809,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q28661155",
@@ -39618,7 +39823,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1763142",
@@ -39646,7 +39851,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14536559",
@@ -39660,7 +39865,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2126811",
@@ -39688,7 +39893,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2126813",
@@ -39702,7 +39907,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1275365",
@@ -39716,7 +39921,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q15842332",
@@ -39765,7 +39970,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q113195775",
@@ -39779,7 +39984,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2176270",
@@ -39793,7 +39998,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q19965240",
@@ -39828,7 +40033,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1419789",
@@ -39842,7 +40047,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q15831703",
@@ -39856,7 +40061,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2054082",
@@ -39870,7 +40075,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1739751",
@@ -39898,7 +40103,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q140965817",
@@ -39926,7 +40131,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q65244854",
@@ -39940,7 +40145,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q64027415",
@@ -39954,7 +40159,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q23787500",
@@ -39968,7 +40173,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1266432",
@@ -39982,7 +40187,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1112609",
@@ -40010,7 +40215,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q110413226",
@@ -40024,7 +40229,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q12054301",
@@ -40038,7 +40243,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q52666348",
@@ -40052,7 +40257,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q63536461",
@@ -40066,7 +40271,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q110390218",
@@ -40079,8 +40284,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 61868,
+      "name": "Stary Kolejowy Szlak, łącznik do Mielna (przebieg planowany)",
+      "cc": "PL",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q3438485",
@@ -40095,7 +40307,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q136533595",
@@ -40130,7 +40342,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q114598495",
@@ -40149,7 +40361,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q7622115",
@@ -40163,7 +40375,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2356022",
@@ -40177,7 +40389,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q65197228",
@@ -40225,8 +40437,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 18302,
+      "name": "Telegraphenradweg (Abschnitt Bördekreis)",
+      "cc": "DE",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q7753151",
@@ -40239,8 +40458,15 @@
      "sources": [
       "wikidata"
      ],
-     "status": "missing",
-     "reason": "not_in_wire"
+     "status": "in_as_piece",
+     "by": "section",
+     "km": 0.0,
+     "carta": {
+      "id": 44823,
+      "name": "National Byway (Cambridgeshire)",
+      "cc": "GB",
+      "tier": "listed"
+     }
     },
     {
      "id": "wd:Q2430873",
@@ -40254,7 +40480,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2445995",
@@ -40289,7 +40515,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q7859310",
@@ -40324,7 +40550,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q66482810",
@@ -40338,7 +40564,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q110576076",
@@ -40353,7 +40579,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q2850593",
@@ -40368,7 +40594,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q130236975",
@@ -40382,7 +40608,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q25089281",
@@ -40396,7 +40622,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q1497770",
@@ -40410,7 +40636,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q23692095",
@@ -40426,7 +40652,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q24929856",
@@ -40462,7 +40688,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q111309383",
@@ -40476,7 +40702,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q137708340",
@@ -40490,7 +40716,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q2533085",
@@ -40504,7 +40730,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1244314",
@@ -40539,7 +40765,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q3564129",
@@ -40553,7 +40779,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q73002277",
@@ -40630,7 +40856,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q14537721",
@@ -40644,7 +40870,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q30094476",
@@ -40658,7 +40884,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q14538071",
@@ -40714,7 +40940,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q134429386",
@@ -40729,7 +40955,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q125822816",
@@ -40744,7 +40970,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11773810",
@@ -40758,7 +40984,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q106784659",
@@ -40772,7 +40998,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q11773812",
@@ -40786,7 +41012,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q13986530",
@@ -40800,7 +41026,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q90840760",
@@ -40814,7 +41040,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q111106574",
@@ -40828,7 +41054,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q134303895",
@@ -40842,7 +41068,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q1158836",
@@ -40856,7 +41082,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "osm_relation_not_published"
     },
     {
      "id": "wd:Q86667378",
@@ -40870,7 +41096,7 @@
       "wikidata"
      ],
      "status": "missing",
-     "reason": "not_in_wire"
+     "reason": "no_osm_relation"
     },
     {
      "id": "wd:Q15613808",
@@ -40896,6 +41122,112 @@
    ],
    "sample": [
     {
+     "id": "wd:Q301127",
+     "name": "Aare-Route",
+     "tier": "A",
+     "countries": [
+      "CH"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 13559,
+      "name": "Aare-Route",
+      "cc": "CH",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q4316318",
+     "name": "National Cycle Route 72",
+     "tier": "A",
+     "countries": [
+      "GB"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "carta_canary",
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.15,
+     "carta": {
+      "id": 44692,
+      "name": "Hadrian's Cycleway",
+      "cc": "GB",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q895575",
+     "name": "Boxenstopp-Route",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 14545,
+      "name": "Boxenstopp-Route",
+      "cc": "DE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q1721211",
+     "name": "Kahltal-Spessart-Radwanderweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 15724,
+      "name": "Kahltal-Spessart-Radwanderweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1220754",
+     "name": "Diemelradweg",
+     "tier": "A",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 15793,
+      "name": "Diemelradweg",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
      "id": "wd:Q1713786",
      "name": "Jura-Route",
      "tier": "B",
@@ -40917,77 +41249,13 @@
      }
     },
     {
-     "id": "wd:Q117081626",
-     "name": "Cyklostezka Bevlava",
+     "id": "wd:Q15613808",
+     "name": "Štefánikova cyklomagistrála",
      "tier": "B",
      "countries": [
-      "CZ",
       "SK"
      ],
      "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 7415,
-      "name": "BeVlaVa",
-      "cc": "CZ",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1202515",
-     "name": "Deutsche Fehnroute",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 4,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 34921,
-      "name": "Deutsche Fehnroute",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q3564127",
-     "name": "Voie Bleue",
-     "tier": "A",
-     "countries": [
-      "FR"
-     ],
-     "sitelinks": 4,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_as_piece",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 10267,
-      "name": "Voie Bleue",
-      "cc": "FR",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1778090",
-     "name": "Kocher-Jagst-Radweg",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
@@ -40995,60 +41263,18 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 13369,
-      "name": "Kocher-Jagst-Radweg",
-      "cc": "DE",
+      "id": 63680,
+      "name": "Štefánikova cyklomagistrála",
+      "cc": "SK",
       "tier": "rated"
      }
     },
     {
-     "id": "wd:Q1935788",
-     "name": "Milseburgradweg",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 13679,
-      "name": "Milseburgradweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1997426",
-     "name": "Nationale fietsroute 3 - Noordzuidroute",
-     "tier": "A",
-     "countries": [
-      "CH"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 54179,
-      "name": "Percorso Nord-Sud",
-      "cc": "CH",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q303155",
-     "name": "Aartal-Radweg (Taunus)",
+     "id": "wd:Q6972058",
+     "name": "National Cycle Route 4",
      "tier": "B",
      "countries": [
-      "DE"
+      "GB"
      ],
      "sitelinks": 2,
      "sources": [
@@ -41058,8 +41284,29 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 14023,
-      "name": "Aartal-Radweg",
+      "id": 44881,
+      "name": "National Cycle Network Route 4",
+      "cc": "GB",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1737813",
+     "name": "Kegelspiel-Radweg",
+     "tier": "A",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 3,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 20202,
+      "name": "Hünfeld-Kegelspiel Radweg-R7-Vulkanradweg",
       "cc": "DE",
       "tier": "listed"
      }
@@ -41086,13 +41333,13 @@
      }
     },
     {
-     "id": "wd:Q1323268",
-     "name": "Mineralquellen-Route",
+     "id": "wd:Q65241531",
+     "name": "Möhnetal-Radweg",
      "tier": "B",
      "countries": [
       "DE"
      ],
-     "sitelinks": 2,
+     "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
@@ -41100,36 +41347,15 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 13925,
-      "name": "Mineralquellen Route",
+      "id": 23037,
+      "name": "Möhnetalradweg",
       "cc": "DE",
       "tier": "listed"
      }
     },
     {
-     "id": "wd:Q1721211",
-     "name": "Kahltal-Spessart-Radwanderweg",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 15724,
-      "name": "Kahltal-Spessart-Radwanderweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q15613808",
-     "name": "Štefánikova cyklomagistrála",
+     "id": "wd:Q17151339",
+     "name": "Malokarpatská cyklomagistrála",
      "tier": "B",
      "countries": [
       "SK"
@@ -41138,24 +41364,24 @@
      "sources": [
       "wikidata"
      ],
-     "status": "in",
+     "status": "in_listed",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 63680,
-      "name": "Štefánikova cyklomagistrála",
+      "id": 63687,
+      "name": "Malokarpatská cyklomagistrála",
       "cc": "SK",
-      "tier": "rated"
+      "tier": "listed"
      }
     },
     {
-     "id": "wd:Q889672",
-     "name": "Bodensee-Königssee-Radweg",
+     "id": "wd:Q1647053",
+     "name": "Lahn-Eder cycle path",
      "tier": "A",
      "countries": [
       "DE"
      ],
-     "sitelinks": 4,
+     "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
@@ -41163,15 +41389,15 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 43553,
-      "name": "Bodensee-Königssee-Radweg: Alpenregion Tegernsee Schliersee",
+      "id": 13638,
+      "name": "Lahn-Eder-Radweg",
       "cc": "DE",
       "tier": "listed"
      }
     },
     {
-     "id": "wd:Q1317213",
-     "name": "Ilmtal-Radweg",
+     "id": "wd:Q1202515",
+     "name": "Deutsche Fehnroute",
      "tier": "A",
      "countries": [
       "DE"
@@ -41184,8 +41410,76 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 13223,
-      "name": "Ilmtal-Radweg",
+      "id": 34921,
+      "name": "Deutsche Fehnroute",
+      "cc": "DE",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1663848",
+     "name": "Innradweg",
+     "tier": "A",
+     "countries": [
+      "AT"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 562,
+      "name": "Inn-Radweg",
+      "cc": "AT",
+      "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q3060531",
+     "name": "EuroVelo 1 – Atlantic Coast Route",
+     "tier": "A",
+     "countries": [
+      "ES",
+      "FR",
+      "GB",
+      "IE",
+      "NO",
+      "PT"
+     ],
+     "sitelinks": 15,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_as_piece",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 50731,
+      "name": "EuroVelo 1",
+      "cc": "IE",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q125572435",
+     "name": "Werra-Suhltal-Radweg",
+     "tier": "B",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in_listed",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 17188,
+      "name": "Werra-Suhltal-Radweg",
       "cc": "DE",
       "tier": "listed"
      }
@@ -41212,48 +41506,6 @@
      }
     },
     {
-     "id": "wd:Q76831997",
-     "name": "Kanonenbahn-Radweg",
-     "tier": "A",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 19769,
-      "name": "Kanonenbahn Radweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q115857128",
-     "name": "Ybbstal valley bike path",
-     "tier": "A",
-     "countries": [
-      "AT"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 648,
-      "name": "Ybbstalradweg",
-      "cc": "AT",
-      "tier": "listed"
-     }
-    },
-    {
      "id": "wd:Q2445995",
      "name": "Tour Brandenburg",
      "tier": "B",
@@ -41271,28 +41523,6 @@
       "id": 21016,
       "name": "Tour Brandenburg 13",
       "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q4316318",
-     "name": "National Cycle Route 72",
-     "tier": "A",
-     "countries": [
-      "GB"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "carta_canary",
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.15,
-     "carta": {
-      "id": 44692,
-      "name": "Hadrian's Cycleway",
-      "cc": "GB",
       "tier": "listed"
      }
     },
@@ -41318,14 +41548,13 @@
      }
     },
     {
-     "id": "wd:Q14541751",
-     "name": "Euregio Egrensis cycling route",
+     "id": "wd:Q76831997",
+     "name": "Kanonenbahn-Radweg",
      "tier": "A",
      "countries": [
-      "CZ",
       "DE"
      ],
-     "sitelinks": 4,
+     "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
@@ -41333,10 +41562,31 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 6661,
-      "name": "Euregio-Egrensis-Radfernweg",
+      "id": 19769,
+      "name": "Kanonenbahn Radweg",
       "cc": "DE",
       "tier": "listed"
+     }
+    },
+    {
+     "id": "wd:Q1658771",
+     "name": "Iller-Radweg",
+     "tier": "A",
+     "countries": [
+      "DE"
+     ],
+     "sitelinks": 4,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 13279,
+      "name": "Iller-Radweg",
+      "cc": "DE",
+      "tier": "rated"
      }
     },
     {
@@ -41364,24 +41614,24 @@
      }
     },
     {
-     "id": "wd:Q1569105",
-     "name": "Haidenaab-Radweg",
-     "tier": "B",
+     "id": "wd:Q6165301",
+     "name": "Vía Verde de la Sierra de la Demanda",
+     "tier": "A",
      "countries": [
-      "DE"
+      "ES"
      ],
-     "sitelinks": 2,
+     "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
+     "status": "in",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 15776,
-      "name": "Haidenaab-Radweg",
-      "cc": "DE",
-      "tier": "listed"
+      "id": 55296,
+      "name": "Vía Verde de la Sierra de la Demanda",
+      "cc": "ES",
+      "tier": "rated"
      }
     },
     {
@@ -41407,23 +41657,23 @@
      }
     },
     {
-     "id": "wd:Q2521699",
-     "name": "Via Verda de la Terra Alta",
+     "id": "wd:Q3564127",
+     "name": "Voie Bleue",
      "tier": "A",
      "countries": [
-      "ES"
+      "FR"
      ],
      "sitelinks": 4,
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
+     "status": "in_as_piece",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 55290,
-      "name": "Via Verda de la Terra Alta",
-      "cc": "ES",
+      "id": 10267,
+      "name": "Voie Bleue",
+      "cc": "FR",
       "tier": "listed"
      }
     },
@@ -41449,52 +41699,53 @@
      }
     },
     {
-     "id": "wd:Q21027504",
-     "name": "Véloroute Via Venaissia",
+     "id": "wd:Q11773831",
+     "name": "Cyklostezka Varhany",
+     "tier": "B",
+     "countries": [
+      "CZ"
+     ],
+     "sitelinks": 2,
+     "sources": [
+      "wikidata"
+     ],
+     "status": "in",
+     "by": "name",
+     "km": 0.0,
+     "carta": {
+      "id": 6365,
+      "name": "Cyklostezka Varhany",
+      "cc": "CZ",
+      "tier": "rated"
+     }
+    },
+    {
+     "id": "wd:Q106106840",
+     "name": "Ammer-Amper-Radweg",
      "tier": "A",
      "countries": [
-      "FR"
+      "DE"
      ],
      "sitelinks": 3,
      "sources": [
       "wikidata"
      ],
-     "status": "in_listed",
+     "status": "in",
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 8911,
-      "name": "Véloroute de la Via Venaissia",
-      "cc": "FR",
-      "tier": "listed"
+      "id": 13842,
+      "name": "Ammer-Amper-Radweg",
+      "cc": "DE",
+      "tier": "rated"
      }
     },
     {
-     "id": "wd:Q2650806",
-     "name": "Alpenpanorama-Route",
+     "id": "wd:Q14541751",
+     "name": "Euregio Egrensis cycling route",
      "tier": "A",
      "countries": [
-      "CH"
-     ],
-     "sitelinks": 3,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 54554,
-      "name": "Alpenpanorama-Route",
-      "cc": "CH",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q1220754",
-     "name": "Diemelradweg",
-     "tier": "A",
-     "countries": [
+      "CZ",
       "DE"
      ],
      "sitelinks": 4,
@@ -41505,29 +41756,8 @@
      "by": "name",
      "km": 0.0,
      "carta": {
-      "id": 15793,
-      "name": "Diemelradweg",
-      "cc": "DE",
-      "tier": "listed"
-     }
-    },
-    {
-     "id": "wd:Q19965240",
-     "name": "Röderradroute",
-     "tier": "B",
-     "countries": [
-      "DE"
-     ],
-     "sitelinks": 2,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "in_listed",
-     "by": "name",
-     "km": 0.0,
-     "carta": {
-      "id": 16867,
-      "name": "Röderradroute",
+      "id": 6661,
+      "name": "Euregio-Egrensis-Radfernweg",
       "cc": "DE",
       "tier": "listed"
      }
@@ -41536,23 +41766,23 @@
   },
   "beaches": {
    "kind": "beaches",
-   "reference_at": "2026-11-21T00:37:43Z",
+   "reference_at": "2026-11-21T01:21:44Z",
    "wire_rows": 6619,
    "summary": {
     "A": {
-     "n": 193,
+     "n": 186,
      "in": 141,
      "outside_countries": 15,
-     "share": 0.7306,
+     "share": 0.7581,
      "by_status": {
       "in_listed": 24,
       "in": 117,
-      "missing": 52
+      "missing": 45
      },
      "missing_by_reason": {
-      "dropped_at_export": 27,
+      "dropped_at_export": 26,
       "matcher_miss": 10,
-      "not_in_catalogue": 15
+      "not_in_catalogue": 9
      }
     },
     "B": {
@@ -42796,20 +43026,6 @@
      "reason": "dropped_at_export"
     },
     {
-     "id": "wd:Q879340",
-     "name": "Bjarnarfjörður",
-     "tier": "A",
-     "countries": [
-      "IS"
-     ],
-     "sitelinks": 9,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_catalogue"
-    },
-    {
      "id": "wd:Q957702",
      "name": "Bønnerup Strand",
      "tier": "A",
@@ -43291,20 +43507,6 @@
      ],
      "status": "missing",
      "reason": "out_of_scope:country"
-    },
-    {
-     "id": "wd:Q2144963",
-     "name": "Kollafjörður (Strandir)",
-     "tier": "A",
-     "countries": [
-      "IS"
-     ],
-     "sitelinks": 8,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_catalogue"
     },
     {
      "id": "wd:Q6434546",
@@ -44206,20 +44408,6 @@
      }
     },
     {
-     "id": "wd:Q7331108",
-     "name": "Richtis Gorge",
-     "tier": "A",
-     "countries": [
-      "GR"
-     ],
-     "sitelinks": 6,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "dropped_at_export"
-    },
-    {
      "id": "wd:Q16899579",
      "name": "Sahara Beach",
      "tier": "A",
@@ -44500,20 +44688,6 @@
      }
     },
     {
-     "id": "wd:Q16040906",
-     "name": "Dunkerque LNG terminal",
-     "tier": "A",
-     "countries": [
-      "FR"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_catalogue"
-    },
-    {
      "id": "wd:Q4251048",
      "name": "Eastern Beach",
      "tier": "A",
@@ -44787,20 +44961,6 @@
      }
     },
     {
-     "id": "wd:Q11187007",
-     "name": "Nedstrandsfjorden",
-     "tier": "A",
-     "countries": [
-      "NO"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_catalogue"
-    },
-    {
      "id": "wd:Q2029730",
      "name": "Orford Ness",
      "tier": "A",
@@ -44862,20 +45022,6 @@
       "cc": "HR",
       "tier": "rated"
      }
-    },
-    {
-     "id": "wd:Q4411923",
-     "name": "Porvarinlahti",
-     "tier": "A",
-     "countries": [
-      "FI"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_catalogue"
     },
     {
      "id": "wd:Q10352428",
@@ -45205,20 +45351,6 @@
       "cc": "GR",
       "tier": "rated"
      }
-    },
-    {
-     "id": "wd:Q2467550",
-     "name": "Vallon des Auffes",
-     "tier": "A",
-     "countries": [
-      "FR"
-     ],
-     "sitelinks": 5,
-     "sources": [
-      "wikidata"
-     ],
-     "status": "missing",
-     "reason": "not_in_catalogue"
     },
     {
      "id": "wd:Q7917408",
@@ -72922,7 +73054,7 @@
   },
   "lakes": {
    "kind": "lakes",
-   "reference_at": "2026-11-21T00:40:14Z",
+   "reference_at": "2026-11-21T01:23:49Z",
    "wire_rows": 2676,
    "summary": {
     "A": {
@@ -85447,7 +85579,7 @@
   },
   "mountains": {
    "kind": "mountains",
-   "reference_at": "2026-11-21T00:46:09Z",
+   "reference_at": "2026-11-21T01:28:51Z",
    "wire_rows": 2143,
    "summary": {
     "A": {

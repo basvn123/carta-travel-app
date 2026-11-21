@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "trails",
- "generated_at": "2026-11-21T00:30:11Z",
+ "generated_at": "2026-11-21T01:13:24Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -5385,7 +5385,7 @@
    "names": [
     "Ingegerdsleden"
    ],
-   "length_km": 33.0,
+   "length_km": 110.0,
    "osm_rel": 8436154,
    "beach_word": false,
    "weak_class": true,
@@ -15273,7 +15273,7 @@
    "names": [
     "Two Moors Way"
    ],
-   "length_km": 165.762,
+   "length_km": 186.684,
    "start": "Q2500455",
    "end": "Q1234805",
    "osm_rel": 228450,
@@ -15420,7 +15420,7 @@
     "The Vanguard Way",
     "Vanguard Way"
    ],
-   "length_km": 106.5,
+   "length_km": 106.539,
    "osm_rel": 86545,
    "beach_word": false,
    "weak_class": false,
@@ -22608,7 +22608,7 @@
    "names": [
     "Bornsjöns natur- och kulturstig"
    ],
-   "length_km": 11.0,
+   "length_km": 4.5,
    "osm_rel": 19809172,
    "beach_word": false,
    "weak_class": false,
@@ -24256,7 +24256,7 @@
    "names": [
     "Dalkarlsvägen"
    ],
-   "length_km": 32.0,
+   "length_km": 300.0,
    "osm_rel": 2926839,
    "beach_word": false,
    "weak_class": false,
@@ -26042,7 +26042,7 @@
     "Náučný chodník Štrbské pleso",
     "sentier pédagogique Štrbské pleso"
    ],
-   "length_km": 5.0,
+   "length_km": 6.0,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -26200,7 +26200,7 @@
    "names": [
     "Ekoleden"
    ],
-   "length_km": 13.0,
+   "length_km": 12.3,
    "osm_rel": 21149689,
    "beach_word": false,
    "weak_class": false,
@@ -26598,7 +26598,7 @@
     "Escaliers du Marché et de la Cathédrale",
     "Stairs of the Market and the Cathedral"
    ],
-   "length_km": 0.022,
+   "length_km": 0.091,
    "beach_word": false,
    "weak_class": true,
    "walk_word": false,
@@ -26887,7 +26887,7 @@
     "Flaten runt",
     "Flaten runt 7,4 km"
    ],
-   "length_km": 7.4,
+   "length_km": 6.0,
    "beach_word": false,
    "weak_class": false,
    "walk_word": false,
@@ -30976,7 +30976,7 @@
     "sentier de randonnée 0853",
     "znakowany szlak turystyczny nr 0853"
    ],
-   "length_km": 15.4,
+   "length_km": 15.5,
    "osm_rel": 3075668,
    "beach_word": false,
    "weak_class": false,
@@ -31038,7 +31038,7 @@
     "sentier de randonnée 0857",
     "znakowany szlak turystyczny nr 0857"
    ],
-   "length_km": 19.1,
+   "length_km": 18.7,
    "osm_rel": 1505758,
    "beach_word": false,
    "weak_class": false,
@@ -31100,7 +31100,7 @@
     "sentier de randonnée 0871",
     "znakowany szlak turystyczny nr 0871"
    ],
-   "length_km": 8.0,
+   "length_km": 7.5,
    "osm_rel": 2054444,
    "beach_word": false,
    "weak_class": false,
@@ -31567,7 +31567,7 @@
     "sentier de randonnée 2628",
     "znakowany szlak turystyczny nr 2628"
    ],
-   "length_km": 7.3,
+   "length_km": 7.5,
    "osm_rel": 1154309,
    "beach_word": false,
    "weak_class": false,
@@ -31691,7 +31691,7 @@
     "sentier de randonnée 2721",
     "znakowany szlak turystyczny nr 2721"
    ],
-   "length_km": 11.7,
+   "length_km": 12.8,
    "osm_rel": 2213965,
    "beach_word": false,
    "weak_class": false,
@@ -31722,7 +31722,7 @@
     "sentier de randonnée 2724",
     "znakowany szlak turystyczny nr 2724"
    ],
-   "length_km": 8.9,
+   "length_km": 11.04,
    "osm_rel": 1360374,
    "beach_word": false,
    "weak_class": false,
@@ -31784,7 +31784,7 @@
     "sentier de randonnée 2733",
     "znakowany szlak turystyczny nr 2733"
    ],
-   "length_km": 17.53,
+   "length_km": 16.9,
    "osm_rel": 1369650,
    "beach_word": false,
    "weak_class": false,
@@ -32342,7 +32342,7 @@
     "sentier de randonnée 5432",
     "znakowany szlak turystyczny nr 5432"
    ],
-   "length_km": 9.7,
+   "length_km": 8.5,
    "osm_rel": 1154308,
    "beach_word": false,
    "weak_class": false,
@@ -32404,7 +32404,7 @@
     "sentier de randonnée 5570",
     "znakowany szlak turystyczny nr 5570"
    ],
-   "length_km": 9.7,
+   "length_km": 10.1,
    "osm_rel": 3874294,
    "beach_word": false,
    "weak_class": false,
@@ -32435,7 +32435,7 @@
     "sentier de randonnée 5600",
     "znakowany szlak turystyczny nr 5600"
    ],
-   "length_km": 44.11,
+   "length_km": 43.7,
    "osm_rel": 1272894,
    "beach_word": false,
    "weak_class": false,
@@ -32466,7 +32466,7 @@
     "sentier de randonnée 5601",
     "znakowany szlak turystyczny nr 5601"
    ],
-   "length_km": 8.0,
+   "length_km": 7.7,
    "osm_rel": 1735589,
    "beach_word": false,
    "weak_class": false,
@@ -32497,7 +32497,7 @@
     "sentier de randonnée 5603",
     "znakowany szlak turystyczny nr 5603"
    ],
-   "length_km": 14.0,
+   "length_km": 11.5,
    "osm_rel": 1859218,
    "beach_word": false,
    "weak_class": false,
@@ -32621,7 +32621,7 @@
     "sentier de randonnée 5635",
     "znakowany szlak turystyczny nr 5635"
    ],
-   "length_km": 10.27,
+   "length_km": 9.8,
    "osm_rel": 2054450,
    "beach_word": false,
    "weak_class": false,
@@ -33551,7 +33551,7 @@
     "sentier de randonnée 8454",
     "znakowany szlak turystyczny nr 8454"
    ],
-   "length_km": 3.1,
+   "length_km": 4.0,
    "osm_rel": 1151932,
    "beach_word": false,
    "weak_class": false,
@@ -33644,7 +33644,7 @@
     "sentier de randonnée 8602",
     "znakowany szlak turystyczny nr 8602"
    ],
-   "length_km": 6.3,
+   "length_km": 5.9,
    "osm_rel": 3421018,
    "beach_word": false,
    "weak_class": false,
@@ -33799,7 +33799,7 @@
     "sentier de randonnée 8611",
     "znakowany szlak turystyczny nr 8611"
    ],
-   "length_km": 8.33,
+   "length_km": 3.3,
    "osm_rel": 3125018,
    "beach_word": false,
    "weak_class": false,
@@ -33954,7 +33954,7 @@
     "sentier de randonnée 8631",
     "znakowany szlak turystyczny nr 8631"
    ],
-   "length_km": 1.3,
+   "length_km": 1.1,
    "osm_rel": 6477574,
    "beach_word": false,
    "weak_class": false,
@@ -33985,7 +33985,7 @@
     "sentier de randonnée 8633",
     "znakowany szlak turystyczny nr 8633"
    ],
-   "length_km": 2.99,
+   "length_km": 2.6,
    "osm_rel": 1830814,
    "beach_word": false,
    "weak_class": false,
@@ -34016,7 +34016,7 @@
     "sentier de randonnée 8636",
     "znakowany szlak turystyczny nr 8636"
    ],
-   "length_km": 10.2,
+   "length_km": 10.8,
    "osm_rel": 2054453,
    "beach_word": false,
    "weak_class": false,
@@ -34047,7 +34047,7 @@
     "sentier de randonnée 8638",
     "znakowany szlak turystyczny nr 8638"
    ],
-   "length_km": 6.6,
+   "length_km": 6.4,
    "osm_rel": 4164698,
    "beach_word": false,
    "weak_class": false,
@@ -34078,7 +34078,7 @@
     "sentier de randonnée 8639",
     "znakowany szlak turystyczny nr 8639"
    ],
-   "length_km": 5.0,
+   "length_km": 3.6,
    "osm_rel": 1360502,
    "beach_word": false,
    "weak_class": false,
@@ -34202,7 +34202,7 @@
     "sentier de randonnée 8646",
     "znakowany szlak turystyczny nr 8646"
    ],
-   "length_km": 6.6,
+   "length_km": 5.7,
    "osm_rel": 2054455,
    "beach_word": false,
    "weak_class": false,
@@ -34233,7 +34233,7 @@
     "sentier de randonnée 8647",
     "znakowany szlak turystyczny nr 8647"
    ],
-   "length_km": 8.5,
+   "length_km": 8.1,
    "osm_rel": 2213968,
    "beach_word": false,
    "weak_class": false,
@@ -34264,7 +34264,7 @@
     "sentier de randonnée 8648",
     "znakowany szlak turystyczny nr 8648"
    ],
-   "length_km": 17.2,
+   "length_km": 17.3,
    "osm_rel": 1358871,
    "beach_word": false,
    "weak_class": false,
@@ -34693,7 +34693,7 @@
    "names": [
     "Holavedsleden"
    ],
-   "length_km": 56.1,
+   "length_km": 59.0,
    "osm_rel": 7474227,
    "beach_word": false,
    "weak_class": false,
@@ -35570,7 +35570,7 @@
    "names": [
     "John Bauerleden"
    ],
-   "length_km": 58.0,
+   "length_km": 57.7,
    "osm_rel": 7825725,
    "beach_word": false,
    "weak_class": false,
@@ -44983,7 +44983,7 @@
    "names": [
     "Siegerland-Höhenring"
    ],
-   "length_km": 143.6,
+   "length_km": 142.0,
    "osm_rel": 60923,
    "beach_word": false,
    "weak_class": false,
@@ -46668,7 +46668,7 @@
    "names": [
     "Szlak Motławski"
    ],
-   "length_km": 36.0,
+   "length_km": 40.4,
    "beach_word": false,
    "weak_class": false,
    "walk_word": true,
@@ -50125,7 +50125,7 @@
    "names": [
     "Vildmarksleden"
    ],
-   "length_km": 39.2,
+   "length_km": 42.0,
    "osm_rel": 78742,
    "beach_word": false,
    "weak_class": false,

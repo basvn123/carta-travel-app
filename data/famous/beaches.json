@@ -1,7 +1,7 @@
 {
  "schema": "carta-famous/1",
  "kind": "beaches",
- "generated_at": "2026-11-21T00:37:43Z",
+ "generated_at": "2026-11-21T01:21:44Z",
  "sources": {
   "carta_canary": {
    "name": "Carta canaries (data/famous/canaries.json)",
@@ -75,7 +75,7 @@
  ],
  "fell_back": [],
  "counts": {
-  "A": 208,
+  "A": 201,
   "B": 1664
  },
  "rows": [
@@ -2016,30 +2016,6 @@
    "id": "wd:Q3375957"
   },
   {
-   "qid": "Q879340",
-   "sitelinks": 9,
-   "lat": 65.769994,
-   "lon": -21.427088,
-   "countries": [
-    "IS"
-   ],
-   "class_kind": "extra",
-   "classes": [
-    "Q45776"
-   ],
-   "name": "Bjarnarfjörður",
-   "names": [
-    "Bjarnarfjörður",
-    "Bjarnarfjörður, Strandir"
-   ],
-   "beach_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q879340"
-  },
-  {
    "qid": "Q957702",
    "sitelinks": 9,
    "lat": 56.528889,
@@ -2716,35 +2692,6 @@
    ],
    "tier": "A",
    "id": "wd:Q284093"
-  },
-  {
-   "qid": "Q2144963",
-   "sitelinks": 8,
-   "lat": 65.582146,
-   "lon": -21.429657,
-   "countries": [
-    "IS"
-   ],
-   "class_kind": "extra",
-   "classes": [
-    "Q45776"
-   ],
-   "name": "Kollafjörður (Strandir)",
-   "names": [
-    "Kollafjörður",
-    "Kollafjörður (Húnaflói)",
-    "Kollafjörður (Strandasýsla)",
-    "Kollafjörður (Strandir)",
-    "Kollafjörður á Ströndum",
-    "Kollafjörður, Strandir"
-   ],
-   "osm_rel": 12513867,
-   "beach_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q2144963"
   },
   {
    "qid": "Q6434546",
@@ -3966,33 +3913,6 @@
    "id": "wd:Q115641739"
   },
   {
-   "qid": "Q7331108",
-   "sitelinks": 6,
-   "lat": 35.164167,
-   "lon": 25.988889,
-   "countries": [
-    "GR"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q40080"
-   ],
-   "name": "Richtis Gorge",
-   "names": [
-    "Richtis Gorge",
-    "Richtis-Schlucht",
-    "Ríchtiksen rotko",
-    "Φαράγγι του Ρίχτη",
-    "Рихтиски водопад"
-   ],
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q7331108"
-  },
-  {
    "qid": "Q16899579",
    "sitelinks": 6,
    "lat": 44.8408,
@@ -4374,35 +4294,6 @@
    "id": "wd:Q3465043"
   },
   {
-   "qid": "Q16040906",
-   "sitelinks": 5,
-   "lat": 51.0442,
-   "lon": 2.31039,
-   "countries": [
-    "FR"
-   ],
-   "class_kind": "extra",
-   "classes": [
-    "Q3398676"
-   ],
-   "name": "Dunkerque LNG terminal",
-   "names": [
-    "Dunkerque LNG terminal",
-    "Dunkerques LNG-terminal",
-    "Dunkirk LNG terminal",
-    "LNG-terminal van Loon-Plage",
-    "Loon-Plage LNG terminal",
-    "terminal méthanier de Loon-Plage",
-    "Термінал ЗПГ Дюнкерк"
-   ],
-   "beach_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q16040906"
-  },
-  {
    "qid": "Q4251048",
    "sitelinks": 5,
    "lat": 36.14893,
@@ -4752,30 +4643,6 @@
    "id": "wd:Q15427318"
   },
   {
-   "qid": "Q11187007",
-   "sitelinks": 5,
-   "lat": 59.3,
-   "lon": 5.8,
-   "countries": [
-    "NO"
-   ],
-   "class_kind": "extra",
-   "classes": [
-    "Q45776"
-   ],
-   "name": "Nedstrandsfjorden",
-   "names": [
-    "Nedstrandfjorden",
-    "Nedstrandsfjorden"
-   ],
-   "beach_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q11187007"
-  },
-  {
    "qid": "Q2029730",
    "sitelinks": 5,
    "lat": 52.081389,
@@ -4848,32 +4715,6 @@
    ],
    "tier": "A",
    "id": "wd:Q16111759"
-  },
-  {
-   "qid": "Q4411923",
-   "sitelinks": 5,
-   "lat": 60.216667,
-   "lon": 25.183333,
-   "countries": [
-    "FI"
-   ],
-   "class_kind": "extra",
-   "classes": [
-    "Q39594"
-   ],
-   "name": "Porvarinlahti",
-   "names": [
-    "Borgarstrandsviken",
-    "Porvarinlahti",
-    "Порварінлахті"
-   ],
-   "osm_rel": 14041955,
-   "beach_word": true,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q4411923"
   },
   {
    "qid": "Q10352428",
@@ -5293,31 +5134,6 @@
    ],
    "tier": "A",
    "id": "wd:Q2453857"
-  },
-  {
-   "qid": "Q2467550",
-   "sitelinks": 5,
-   "lat": 43.285,
-   "lon": 5.35139,
-   "countries": [
-    "FR"
-   ],
-   "class_kind": "core",
-   "classes": [
-    "Q1026259",
-    "Q1420027"
-   ],
-   "name": "Vallon des Auffes",
-   "names": [
-    "Vallon des Auffes",
-    "Valon deis Aufas"
-   ],
-   "beach_word": false,
-   "sources": [
-    "wikidata"
-   ],
-   "tier": "A",
-   "id": "wd:Q2467550"
   },
   {
    "qid": "Q7917408",
