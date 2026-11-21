@@ -62,7 +62,8 @@
 //              the map's top edge on paper, 8 px from its neighbours, its
 //              words 4.5:1 on that paper; a list row under the "Good in
 //              July" chip does not say it again (1440 list); the
-//              style disc clear of the list's cards from 769 to 1023 (--g-only)
+//              style disc clear of the list's cards and rows from 769 to
+//              1440, rails and list (--g-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -1362,18 +1363,19 @@ async function roundGPass() {
       await ctx.close();
     });
   }
-  // 4. The style disc clear of the list's cards from 769 to 1023.
-  for (const lang of ['en', 'fr']) {
-    for (const [w, h] of [[769, 1024], [820, 1180], [900, 1000], [1023, 768]]) {
-      await guard(`roundG disc ${w} ${lang}`, async () => {
-        const { ctx, page } = await boot(w, h, '?tab=explore', lang, '', '.xrc');
+  // 4. The style disc clear of the list's cards and rows from 769 px, on
+  // the rails (en, fr) and on the list with a filter on (en).
+  for (const [lang, url, wait] of [['en', '?tab=explore', '.xrc'], ['fr', '?tab=explore', '.xrc'], ['en', '?tab=explore&xm=7', '.xrow']]) {
+    for (const [w, h] of [[769, 1024], [820, 1180], [900, 1000], [1023, 768], [1180, 820], [1440, 900]]) {
+      await guard(`roundG disc ${w} ${lang} ${url}`, async () => {
+        const { ctx, page } = await boot(w, h, url, lang, '', wait);
         const rest = await page.evaluate(discJs);
         await page.evaluate(() => { const t = [...document.querySelectorAll('.explore-shell .explore-tab')].find((e) => e.getClientRects().length); t.scrollTop = 420; });
         await page.waitForTimeout(600);
         const moved = await page.evaluate(discJs);
-        check(`roundG ${w} ${lang}: the style disc sits clear of every card, at rest and scrolled, 24 px from its corner`,
+        check(`roundG ${w} ${lang} ${wait === '.xrow' ? 'list' : 'rails'}: the style disc sits clear of every card, at rest and scrolled, 24 px from its corner`,
           rest.disc && rest.under === 0 && moved.under === 0 && rest.listBottom <= rest.discTop && rest.left === 24 && rest.fromFoot === 24, JSON.stringify({ rest, moved }));
-        if (SHOTS && w === 769) await page.screenshot({ path: path.join(SHOTS, `g-disc-${w}-${lang}.png`) });
+        if (SHOTS && (w === 769 || w === 1440)) await page.screenshot({ path: path.join(SHOTS, `g-disc-${w}-${lang}${wait === '.xrow' ? '-list' : ''}.png`) });
         await ctx.close();
       });
     }
