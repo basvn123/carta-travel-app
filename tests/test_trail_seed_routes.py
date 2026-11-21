@@ -198,7 +198,8 @@ def test_out_and_back_length_has_35_percent():
 
 
 def test_landmark_keeps_the_tight_snap():
-    short = (7.01, 46.0345)  # the way up stops 280 m below the summit
+    # the way up stops 500 m below the summit: past the landmark's 300 m
+    short = (7.01, 46.0325)
     res = sr.route_ref(walk(), {}, canned(end=short), MARK)
     assert (res["verdict"], res["gate"]) == ("refused", "snap")
 
@@ -250,3 +251,29 @@ def test_seed_without_a_qid_keys_on_its_reference_id():
     assert sr.source_ref_of(r) == "ref:hoellentalklamm"
     assert "wikidata" not in sr.raw_tags_of(r)
     assert sr.raw_tags_of(dict(r, qid="Q9"))["wikidata"] == "Q9"
+
+
+def test_landmark_candidates_name_part_before_own_point():
+    # Box dry run 2026-11-21: the walk's own point sat by the car park.
+    ref_ = {"qid": "Q1", "name": "Pen y Fan from Pont ar Daf",
+            "trailhead": {"lat": 51.87, "lon": -3.45}, "length_km": 6}
+    hits = {"Pen y Fan": [["Q2", 40, (51.8836, -3.4372), ["GB"]]]}
+    own = (-3.4100, 51.8900)
+    cands = sr.pick_landmarks(ref_, own, hits)
+    assert [c["by"] for c in cands] == ["label", "own"]
+    assert cands[0]["qid"] == "Q2"
+
+
+def test_landmark_tries_the_next_candidate_when_one_is_refused():
+    th = (7.000, 46.000)
+    near = (7.000, 46.006)     # 670 m: too short a walk
+    far = (7.000, 46.025)      # 2.8 km up, 5.6 km out and back
+
+    def router(a, b, alt=0):
+        return leg(a, b), None
+    ref_ = ref(start=None, end=None, length_km=5.6,
+               trailhead={"lat": th[1], "lon": th[0]})
+    cands = [{"point": near, "qid": "Qa", "by": "own", "label": "x"},
+             {"point": far, "qid": "Qb", "by": "label", "label": "y"}]
+    res = sr.route_ref(ref_, {}, router, landmark=cands)
+    assert res["verdict"] == "kept" and res["landmark"]["qid"] == "Qb"

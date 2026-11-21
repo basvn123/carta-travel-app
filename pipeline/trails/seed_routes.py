@@ -92,6 +92,10 @@ RETRACE_MAX = 0.30
 # same-named hill in the next valley out.
 LANDMARK_MAX_M = 15_000.0
 TRAILHEAD_LENGTH_TOL = 0.35
+# A landmark is often an area (a lake, a gorge, a cliff): its Wikidata point
+# is the middle of the water, which no path reaches within 50 m (box dry run
+# 2026-11-21: Morskie Oko, Oeschinensee, Vintgar refused on snap).
+LANDMARK_SNAP_M = 300.0
 # The widest snap a rounded trailhead gets: a point stored to one decimal is
 # 7 km wide, and BRouter's start that far off is another walk.
 TRAILHEAD_SNAP_MAX_M = 1_000.0
@@ -236,6 +240,30 @@ def is_day_walk(ref):
     return ref.get("trail_kind") != "multi-day"
 
 
+def pick_landmarks(ref, own_point, label_hits):
+    """Every landmark candidate in the order they are tried: the parts of
+    the walk's name Wikidata knows ("Pen y Fan" in "Pen y Fan from Pont ar
+    Daf"), then the walk's own point. The box dry run of 2026-11-21 took the
+    walk's own point first, which for "Pen y Fan from Pont ar Daf" sits by the
+    car park: a 1.4 km walk, refused on length."""
+    th = trailhead_of(ref)
+    if th is None:
+        return []
+    out, seen = [], set()
+    for span in landmark_spans(ref.get("name")):
+        for qid, _sl, (lat, lon), _cc in label_hits.get(span) or []:
+            p = (lon, lat)
+            if qid not in seen and VIA_MIN_M < dist_m(th, p) <= LANDMARK_MAX_M:
+                seen.add(qid)
+                out.append({"point": p, "qid": qid, "by": "label",
+                            "label": span})
+    if own_point and VIA_MIN_M < dist_m(th, own_point) <= LANDMARK_MAX_M \
+            and ref.get("qid") not in seen:
+        out.append({"point": own_point, "qid": ref.get("qid"), "by": "own",
+                    "label": ref.get("name")})
+    return out
+
+
 def pick_landmark(ref, own_point, label_hits):
     """{point, qid, by, label} or None. own_point is the walk's own Wikidata
     coordinate (lon, lat); label_hits is wikidata.by_label's answer
@@ -373,9 +401,23 @@ def route_trailhead(out, ref, landmark, router):
                     **extra)
     extra["shape"] = how
     tol = snap_radius_m(th)
-    gate = judge(ref, pts, [up, down], snap_m=[tol, SNAP_M, tol],
+    gate = judge(ref, pts, [up, down], snap_m=[tol, LANDMARK_SNAP_M, tol],
                  length_tol=TRAILHEAD_LENGTH_TOL)
     return _finish(out, pts, [up, down], gate, **extra)
+
+
+def route_trailhead_any(out, ref, candidates, router):
+    """Plan 2 over the landmark candidates in turn: the first kept walk, or
+    the first refusal when none is kept (its gate names the reason)."""
+    if not candidates:
+        return route_trailhead(out, ref, None, router)
+    first = None
+    for mark in candidates:
+        res = route_trailhead(out, ref, mark, router)
+        if res["verdict"] == "kept" or res.get("gate") == "brouter_down":
+            return res
+        first = first or res
+    return first
 
 
 def route_ref(ref, places, router, landmark=None):
@@ -388,6 +430,8 @@ def route_ref(ref, places, router, landmark=None):
     pts, why = plan_points(ref, places)
     if why:
         if trailhead_of(ref) is not None:
+            if isinstance(landmark, list):
+                return route_trailhead_any(out, ref, landmark, router)
             return route_trailhead(out, ref, landmark, router)
         return dict(out, verdict="skipped", gate=why)
     legs = []
@@ -449,7 +493,7 @@ def landmarks(refs, places):
     todo = [r for r in refs if trailhead_of(r) is not None
             and plan_points(r, places)[1] and is_day_walk(r)]
     hits = lookup_labels(s for r in todo for s in landmark_spans(r["name"]))
-    return {r["id"]: pick_landmark(r, places.get(r.get("qid")), hits)
+    return {r["id"]: pick_landmarks(r, places.get(r.get("qid")), hits)
             for r in todo}
 
 
