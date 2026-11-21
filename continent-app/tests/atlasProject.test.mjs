@@ -3,7 +3,7 @@
 // Run: npm test (continent-app/).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { project, frame, clampFrame, PLATE, viewBoxOf } from '../src/auth/mytrips/atlas/project.js';
+import { project, frame, clampFrame, keepMarks, PLATE, viewBoxOf } from '../src/auth/mytrips/atlas/project.js';
 
 const near = (got, want, tol = 0.15) => {
   assert.ok(Math.abs(got[0] - want[0]) <= tol && Math.abs(got[1] - want[1]) <= tol, `${got} vs ${want}`);
@@ -43,4 +43,15 @@ test('clampFrame keeps a wide pane inside the plate at the pane aspect', () => {
   const east = clampFrame({ x: 800, y: 300, w: 400, h: 300 });
   assert.equal(east.w, 400);
   assert.ok(Math.abs(east.x + east.w - PLATE.w) < 1e-9);
+});
+
+test('keepMarks slides the frame so the Tromso ring and its N show, inside the plate', () => {
+  const f = { x: 0, y: 120, w: 1000, h: 600 };
+  const [x, y] = project(69.649, 18.956);
+  const k = keepMarks(f, [{ x0: x - 12, x1: x + 12, y0: y - 30, y1: y + 10 }]);
+  assert.equal(k.w, 1000);
+  assert.ok(k.y <= y - 30 + 1e-9 && k.y >= 0);
+  // A mark past the plate's north edge holds the frame at the edge.
+  assert.equal(keepMarks(f, [{ x0: 500, x1: 520, y0: -40, y1: 5 }]).y, 0);
+  assert.deepEqual(keepMarks(f, []), f);
 });

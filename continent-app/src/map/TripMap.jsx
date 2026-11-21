@@ -234,7 +234,7 @@ function routeArrowImage(px = 26) {
  * the rest hide behind a bubble that zooms in on a tap. Other pins are never
  * clustered.
  */
-export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, cluster = false, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager', revealRoute = false }) {
+export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedIndex = null, routeGeometry = null, routeSegments = null, showRoute = true, focus = null, flyTo = null, pois = null, onPoiClick = null, onViewChange = null, fitMaxZoom = 7.5, fitPadding = null, scrollZoom = true, easeToSelected = true, countryFills = null, photoZoom = null, cluster = false, zoomControls = false, cooperativeGestures = false, mapLocale = null, basemap = 'voyager', revealRoute = false, foldCredit = false }) {
   const containerRef = useRef(null);
   const mapRef = useRef(null);
   // Pin titles go through the catalogues (T388: they were English in every
@@ -410,6 +410,10 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
     map._syncPinZoom = syncPinZoom;
     map.on('zoom', syncPinZoom);
     map.on('load', syncPinZoom);
+    // The compact credit opens itself on load; on a small map it lies over
+    // the pins, so it starts folded to its button, one tap from the line
+    // (as DestMap, T446; G12 Saved, judgement 2).
+    if (foldCredit) map.on('load', () => containerRef.current?.querySelector('.maplibregl-ctrl-attrib')?.classList.remove('maplibregl-compact-show'));
     map.on('load', () => {
       map.addSource('trip-route', {
         type: 'geojson',

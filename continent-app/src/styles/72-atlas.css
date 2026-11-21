@@ -1169,7 +1169,8 @@
 .atlas-live .mt-map.is-saved { height: 100%; min-height: 0; border-radius: 0; }
 /* The live Saved map keeps its pins and count bubbles: on a phone only the
    last 24 px fade into the ground, and the attribution moves to the top-left
-   corner, off the clusters (judgement 1). */
+   corner, folded to its button with the fit padding clear of it (judgement 1
+   and 2). */
 @media (max-width: 767px) {
   .atlas-slot.is-saved .atlas-map.atlas-live {
     -webkit-mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);

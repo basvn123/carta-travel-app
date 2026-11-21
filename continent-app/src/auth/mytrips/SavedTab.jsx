@@ -25,7 +25,8 @@ import { scrollBehavior } from '../../lib/motion.js';
 import { SharedItem, PeoplePicker, facesOf } from './SharedList.jsx';
 
 const TripMap = lazy(() => import('../../map/TripMap.jsx').then((m) => ({ default: m.TripMap })));
-const MAP_PAD = { top: 32, left: 32, right: 32, bottom: 32 };
+// The top holds the folded credit button (24 px) clear of the northern pins.
+const MAP_PAD = { top: 56, left: 32, right: 32, bottom: 32 };
 const WIDE = '(min-width: 1024px)';
 
 /** Whether the map stands beside the list (1024 px and up). */
@@ -309,7 +310,7 @@ export function SavedTab({
     return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, city: r.name || '', plain: true, img: r.img, key: metaKey(r), cc: r.cc } : null;
   }).filter(Boolean), [shown, destinations]);
   const mapProps = useMemo(() => ({
-    stops: points, showRoute: false, scrollZoom: true, cooperativeGestures: true, zoomControls: true, mapLocale, photoZoom: 6, basemap: 'carta',
+    stops: points, showRoute: false, scrollZoom: true, cooperativeGestures: true, zoomControls: true, mapLocale, photoZoom: 6, basemap: 'carta', foldCredit: true,
     // Count bubbles once the pins would crowd (G12): above 20 saved places.
     cluster: points.length > 20,
     easeToSelected: false, padBottom: 0, fitMaxZoom: 8, fitPadding: MAP_PAD,

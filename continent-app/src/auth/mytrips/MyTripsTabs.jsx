@@ -134,7 +134,6 @@ export function TripsTab({
         // G12 (Revision 1): one action plus "Bekijk een voorbeeld"; the map
         // above is the picture, so no drawn slots and no helper line.
         <>
-          {rate}
           <div className="mt-first">
             {/* A traveller with past trips is not new here: the plate above shows
                 their routes, so the line asks for the next one (judgement 1). */}
@@ -152,13 +151,13 @@ export function TripsTab({
               </p>
             )}
           </div>
+          {/* Plan is the focal action; the grade can wait (judgement 2). */}
+          {rate}
         </>
       ) : (
         <>
           {example && <ExampleBar onClose={onExampleClose} />}
           {today}
-          {/* Today is the focal card during a trip; the grade can wait. */}
-          {!today && rate}
           {next && (
             <div className="mt-next">
               <NextTripCard {...next} />
@@ -166,7 +165,8 @@ export function TripsTab({
               {next.below}
             </div>
           )}
-          {today && rate}
+          {/* Today and the next trip are the focal cards; the grade can wait. */}
+          {rate}
           {(coming.length > 0 || planning.length > 0) && (
             <div className="mt-two">
               {coming.length > 0 && (

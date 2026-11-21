@@ -87,5 +87,28 @@ export function clampFrame(f, W = PLATE.w, H = PLATE.h, west = 400) {
   return { x, y, w, h };
 }
 
+/**
+ * The clamped frame slid so each mark's box ({x0, y0, x1, y1}, plate units)
+ * sits inside it: the extreme rings and their compass letters sit near the
+ * plate's edges (Tromso is 77 units under the top), and the whole-Europe
+ * frame cut the north ring and hid its "N" (judgement 2). The slide stays
+ * within clampFrame's room, so the plate still covers the pane; a mark that
+ * cannot fit wins over none.
+ * @returns {{x, y, w, h}}
+ */
+export function keepMarks(f, marks, W = PLATE.w, H = PLATE.h, west = 400) {
+  if (!marks?.length) return f;
+  let x0 = Infinity; let y0 = Infinity; let x1 = -Infinity; let y1 = -Infinity;
+  marks.forEach((m) => { x0 = Math.min(x0, m.x0); y0 = Math.min(y0, m.y0); x1 = Math.max(x1, m.x1); y1 = Math.max(y1, m.y1); });
+  let { x, y } = f;
+  if (x1 > x + f.w) x = x1 - f.w;
+  if (x0 < x) x = x0;
+  if (y1 > y + f.h) y = y1 - f.h;
+  if (y0 < y) y = y0;
+  x = Math.min(Math.max(x, -west), W - f.w);
+  y = Math.min(Math.max(y, 0), H - f.h);
+  return { ...f, x, y };
+}
+
 /** A frame as an SVG viewBox string. */
 export const viewBoxOf = (f) => `${f.x.toFixed(1)} ${f.y.toFixed(1)} ${f.w.toFixed(1)} ${f.h.toFixed(1)}`;
