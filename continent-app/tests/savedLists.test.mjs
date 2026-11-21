@@ -76,3 +76,13 @@ test('mergeSavedLists: union of lists and keys, the earlier save price wins, a l
   assert.deepEqual(m.meta['dest:A'], { at: 10, eur: 90, note: 'here' });
   assert.deepEqual(m.meta['dest:C'], { at: 3, eur: 40 });
 });
+
+test('noteSaved keeps the basis beside the price, and only with a price (G12)', () => {
+  noteSaved('dest:ZAG', 80, 5000, '2027-06|mid|');
+  assert.equal(loadSavedLists().meta['dest:ZAG'].basis, '2027-06|mid|');
+  assert.equal(loadSavedLists().meta['dest:ZAG'].eur, 80);
+  noteSaved('trail:zz', null, 5000, '2027-06|mid|');
+  assert.equal(loadSavedLists().meta['trail:zz'].basis, undefined);
+  noteSaved('dest:SKP', 70, 5000);
+  assert.equal(loadSavedLists().meta['dest:SKP'].basis, undefined, 'no basis given, none stored');
+});

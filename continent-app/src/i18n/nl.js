@@ -7481,6 +7481,7 @@ export const nl = {
   "mt.fellSince": "{price} minder per dag sinds je het bewaarde",
   "mt.roseSince": "{price} meer per dag sinds je het bewaarde",
   "mt.cheapestIn": "Het goedkoopst om te overnachten in {month}",
+  "mt.cheapestTag": "Goedkoopst in {month}",
   "mt.note": "Je notitie",
   "mt.inLists": "Lijsten",
   "mt.itemMenu": "Meer voor {name}",

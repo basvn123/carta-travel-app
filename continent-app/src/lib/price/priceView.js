@@ -67,10 +67,19 @@ export const stepNights = (delta) => (prev) => {
   return next === now ? prev : withTripNights(next)(prev);
 };
 
-/** The basis a saved price stood on: the month and the stay style. A saved
- *  row hides its move when today's basis differs (Revision 2). */
+/** The basis a saved price stood on: the month, the stay style and the
+ *  lifestyle. A saved row hides its move when today's basis differs
+ *  (Revision 2): a cheaper figure from a cheaper month is no price drop. */
 export const basisOf = (choices) => {
   const m = asModel(choices);
   const month = m.month || String(m.start || '').slice(0, 7);
-  return `${month}|${choices?.stay_tier || m.stayTier || ''}`;
+  const life = choices?.lifestyle;
+  const lifeKey = life && typeof life === 'object'
+    ? Object.keys(life).sort().map((k) => `${k}=${life[k]}`).join(',')
+    : String(life || '');
+  return `${month}|${choices?.stay_tier || m.stayTier || ''}|${lifeKey}`;
 };
+
+/** Whether a saved row may show its move: old saves have no basis and keep
+ *  showing it, as before the basis was stored. */
+export const sameBasis = (meta, basis) => !meta?.basis || meta.basis === basis;

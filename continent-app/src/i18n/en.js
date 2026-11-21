@@ -8104,6 +8104,7 @@ export const en = {
   "mt.fellSince": "{price} less a day since you saved it",
   "mt.roseSince": "{price} more a day since you saved it",
   "mt.cheapestIn": "Cheapest to stay in {month}",
+  "mt.cheapestTag": "Cheapest in {month}",
   "mt.note": "Your note",
   "mt.inLists": "Lists",
   "mt.itemMenu": "More for {name}",

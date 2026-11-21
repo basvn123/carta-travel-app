@@ -1229,5 +1229,54 @@
 .mt-saved .mt-item-check { height: var(--tap); }
 .mt-saved .mt-item-media { width: 64px; height: 64px; }
 .mt-item-fig { font-size: var(--text-title); font-weight: 800; white-space: nowrap; }
-.mt-saved .mt-selbar { position: sticky; bottom: var(--space-3); }
+/* The row as in the reference (p06): name and flag, then Score, kind, the
+   move and the quiet cheapest-month tag on one line that wraps. */
+.mt-item-title { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; max-width: 100%; }
+.mt-saved .btn.mt-item-name { font-size: var(--text-lead); font-weight: 800; overflow-wrap: break-word; }
+/* A whole-trip figure is twice as long: on a phone it steps down so the name keeps its word. */
+@media (max-width: 480px) { .mt-saved .mt-item-fig:not(.mt-muted) { font-size: var(--text-lead); } }
+.mt-item-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+.mt-item-line .mt-item-kind { font-size: var(--text-caption); color: var(--text-2); }
+.mt-item-tag { font-size: var(--text-caption); color: var(--text-3); white-space: nowrap; }
+/* No price yet: quiet words that wrap in a narrow column, never squeezing the name. */
+.mt-saved .mt-item-fig.mt-muted { max-width: 9ch; font-size: var(--text-caption); font-weight: 600; white-space: normal; text-align: end; }
+
+/* The kind chips, Price fell, the country and the Map pill on one scrolling line. */
+.mt-saved .mt-saved-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+.mt-saved .mt-saved-filters > * { flex: none; }
+
+/* The selection bar: a dark ink bar floating over the list (p06). */
+.mt-saved .mt-selbar {
+  position: sticky;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  background: var(--plate);
+  color: var(--on-plate);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-3);
+}
+.mt-saved .mt-selbar-text { color: var(--on-plate); font-weight: 700; }
+.mt-saved .mt-selbar-note { color: var(--on-plate-2); }
+.mt-saved .mt-selbar .btn-quiet { color: var(--on-plate-2); }
 .watch-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+/* Saved map, cluster mode (TripMap cluster): a paper disc with the count in
+   umber 800; the pins it stands for hide until it is zoomed apart. */
+.trip-cluster {
+  display: grid;
+  place-items: center;
+  min-width: 36px;
+  height: 36px;
+  padding: 0 var(--space-2);
+  border: 1.5px solid var(--umber-800);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--umber-800);
+  font-size: var(--text-body);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  box-shadow: var(--elev-2);
+  cursor: pointer;
+}
+.trip-cluster:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.trip-pin.is-clustered { visibility: hidden; pointer-events: none; }

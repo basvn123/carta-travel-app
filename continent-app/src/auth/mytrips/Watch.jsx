@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { chartGeometry } from '../../lib/watchChart.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { useAuth } from '../AuthContext.jsx';
 import { Button, Switch } from '../../components/ui/index.js';
@@ -20,9 +21,9 @@ const dayLabel = (iso) => {
   try { return new Date(iso).toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short' }); } catch { return ''; }
 };
 
-// eslint-disable-next-line react-refresh/only-export-components -- the rail's hook lives with the rail
 /** The followed items, current across tabs; synced once with the account
  *  where the rail mounts (as TasteChips does for taste). */
+// eslint-disable-next-line react-refresh/only-export-components -- the rail's hook lives with the rail
 export function useWatched({ sync = true } = {}) {
   const { user } = useAuth();
   const [items, setItems] = useState(() => listWatched());
@@ -43,24 +44,16 @@ export function useWatched({ sync = true } = {}) {
  *  sheet's with dates and values on an axis. */
 export function WatchChart({ pts, w, h, axis = false, label }) {
   const vals = pts.map((p) => p.eur);
-  if (!vals.length) return null;
-  const pad = axis ? 14 : 6;
-  const foot = axis ? 16 : 0;
-  const min = Math.min(...vals);
-  const max = Math.max(...vals);
-  const rng = Math.max(max - min, 1);
-  const last = vals.length - 1;
-  const X = (i) => pad + (w - pad * 2) * (last ? i / last : 0.5);
-  const Y = (v) => pad + (h - pad * 2 - foot) * (1 - (v - min) / rng);
-  const d = `M${vals.map((v, i) => `${X(i).toFixed(1)} ${Y(v).toFixed(1)}`).join('L')}`;
-  const area = `${d}L${X(last).toFixed(1)} ${h - foot}L${X(0).toFixed(1)} ${h - foot}Z`;
-  const mi = vals.indexOf(min);
+  const g = chartGeometry(vals, w, h, { axis });
+  if (!g) return null;
+  const { d, area, last, min, foot, pad, X, Y } = g;
+  const mi = g.lowest;
   return (
     <svg className="atlas-chart" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="img" aria-label={label}>
       <path className="atlas-chart-area" d={area} />
       <path className="atlas-chart-line" d={d} />
-      {vals.map((v, i) => (
-        <circle key={i} className={i === last ? 'is-now' : ''} cx={X(i).toFixed(1)} cy={Y(v).toFixed(1)} r={i === last ? 4.5 : 2.6} />
+      {g.dots.map((p, i) => (
+        <circle key={i} className={p.now ? 'is-now' : ''} cx={p.x} cy={p.y} r={p.now ? 4.5 : 2.6} />
       ))}
       {axis && (
         <>

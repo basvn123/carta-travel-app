@@ -1,12 +1,12 @@
 import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, ChipGroup, Field } from '../../components/ui/index.js';
+import { Button, Chip, ChipGroup, Field, ScorePlate } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { PriceControl, ExampleBar } from './TripParts.jsx';
 import { WatchRail, WatchSheet, MovePill, useWatched } from './Watch.jsx';
-import { inUnit, moveInUnit, basisOf } from '../../lib/price/priceView.js';
+import { inUnit, moveInUnit, basisOf, sameBasis } from '../../lib/price/priceView.js';
 import {
   PlusIcon, RouteIcon, EyeIcon, CloseIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
 } from '../../components/Icons.jsx';
@@ -58,8 +58,8 @@ const sinceDay = (ms) => {
   try { return new Date(ms).toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short' }); } catch { return ''; }
 };
 
-const monthName = (m) => {
-  try { return new Date(Date.UTC(2026, m - 1, 15)).toLocaleDateString(activeLocale(), { month: 'long', timeZone: 'UTC' }); } catch { return ''; }
+const monthName = (m, style = 'long') => {
+  try { return new Date(Date.UTC(2026, m - 1, 15)).toLocaleDateString(activeLocale(), { month: style, timeZone: 'UTC' }); } catch { return ''; }
 };
 
 /** A list's cover: its first four photos as a 2 x 2 mosaic. */
@@ -74,8 +74,9 @@ function Mosaic({ rows }) {
   );
 }
 
-/** One saved thing: select box, photo, kind, name, today's price and its
- *  move since the save, the cheapest month, the traveller's note, a menu. */
+/** One saved thing: select box, photo, name and flag, Score and kind, the
+ *  move since the save, the cheapest month when it is not the When month,
+ *  the traveller's note, today's figure, a menu (lists, note, remove). */
 function SavedItem({
   row, meta, cost, choices, basis, dest, lists, shared = [], me = null, onShared = null, selected, onSelect, onOpen, onRemove, active, itemRef,
 }) {
@@ -85,9 +86,12 @@ function SavedItem({
   const [draft, setDraft] = useState(meta?.note || '');
   const change = priceChange(meta, cost?.dayEur);
   // The move in the chosen unit; hidden when the saved price stood on another month or stay style.
-  const move = change ? moveInUnit(meta.eur, cost.dayEur, choices, { sameBasis: !meta.basis || meta.basis === basis }) : null;
+  const move = change ? moveInUnit(meta.eur, cost.dayEur, choices, { sameBasis: sameBasis(meta, basis) }) : null;
   const fig = cost ? inUnit(cost.dayEur, choices) : null;
   const months = row.kind === 'dest' && dest ? cheapestStayMonths(dest) : null;
+  // The When month, as the basis reads it ('YYYY-MM|...'); none in the any-time view.
+  const whenMonth = Number(String(basis || '').slice(5, 7)) || null;
+  const cheapMonth = months?.length > 0 && months[0] !== whenMonth ? months[0] : null;
   const k = metaKey(row);
   const inShared = (l) => l.items.find((it) => it.key === k) || null;
   const inLists = [...lists.filter((l) => l.keys.includes(k)), ...shared.filter(inShared)];
@@ -103,22 +107,26 @@ function SavedItem({
         <HeroImage url={row.img} city={row.name || row.id} iso2={row.cc} className="mt-item-img" maxWidth={330} ratio={[1, 1]} sizes="88px" />
       </span>
       <div className="mt-item-body">
-        <span className="mt-item-kind">
+        <span className="mt-item-title">
+          {row.missing ? (
+            <span className="mt-item-name is-missing">{t('fav.missing')}</span>
+          ) : (
+            <Button variant="quiet" className="mt-item-name" onClick={() => onOpen(row)}>{row.name || row.id}</Button>
+          )}
           {row.cc && <CountryFlag country={row.cc} size={14} />}
-          {[FAV_KIND_LABEL[row.kind] ? t(FAV_KIND_LABEL[row.kind]) : '', row.sub].filter(Boolean).join(', ')}
         </span>
-        {row.missing ? (
-          <span className="mt-item-name is-missing">{t('fav.missing')}</span>
-        ) : (
-          <Button variant="quiet" className="mt-item-name" onClick={() => onOpen(row)}>{row.name || row.id}</Button>
-        )}
-        {move ? (
-          <MovePill delta={move}>
-            {t(move < 0 ? 'mt.lowerSince' : 'mt.higherSince', { price: formatMoney(Math.abs(move)), date: sinceDay(change.at) })}
-          </MovePill>
-        ) : null}
-        {months?.length > 0 && <span className="mt-item-meta">{t('mt.cheapestIn', { month: monthName(months[0]) })}</span>}
-        {inLists.length > 0 && <span className="mt-item-meta">{inLists.map((l) => l.name).join(', ')}</span>}
+        <span className="mt-item-line">
+          {dest?.rating && <ScorePlate rating={dest.rating} />}
+          {/* A place's sub is its country, which the flag already says. */}
+          <span className="mt-item-kind">{[FAV_KIND_LABEL[row.kind] ? t(FAV_KIND_LABEL[row.kind]) : '', row.kind === 'dest' ? '' : row.sub].filter(Boolean).join(', ')}</span>
+          {move ? (
+            <MovePill delta={move}>
+              {t(move < 0 ? 'mt.lowerSince' : 'mt.higherSince', { price: formatMoney(Math.abs(move)), date: sinceDay(change.at) })}
+            </MovePill>
+          ) : null}
+          {/* The cheapest month is news only when it is not the month the figures already use. */}
+          {cheapMonth && <span className="mt-item-tag">{t('mt.cheapestTag', { month: monthName(cheapMonth, 'short') })}</span>}
+        </span>
         {editing ? (
           <form className="mt-note-form" onSubmit={(e) => { e.preventDefault(); setNote(k, draft); setEditing(false); }}>
             <Field label={t('mt.note')} value={draft} maxLength={MAX_NOTE} onChange={(e) => setDraft(e.target.value)} autoFocus />
@@ -152,7 +160,8 @@ function SavedItem({
       <CardMenu
         label={t('mt.itemMenu', { name: row.name || row.id })}
         actions={[
-          ...(lists.length || shared.length ? [{ key: 'lists', label: t('mt.addToList'), icon: <PlusIcon size={16} />, onClick: () => setPicking(true) }] : []),
+          // The lists this place is in: the picker shows them chosen, the menu line counts them.
+          ...(lists.length || shared.length ? [{ key: 'lists', label: inLists.length ? `${t('mt.addToList')} (${inLists.length})` : t('mt.addToList'), icon: <PlusIcon size={16} />, onClick: () => setPicking(true) }] : []),
           { key: 'note', label: t(meta?.note ? 'mt.editNote' : 'mt.addNote'), icon: <PencilIcon size={16} />, onClick: () => { setDraft(meta?.note || ''); setEditing(true); } },
         ]}
         onRemove={() => onRemove(row)}
@@ -298,6 +307,8 @@ export function SavedTab({
   }).filter(Boolean), [shown, destinations]);
   const mapProps = useMemo(() => ({
     stops: points, showRoute: false, scrollZoom: true, cooperativeGestures: true, zoomControls: true, mapLocale, photoZoom: 6, basemap: 'carta',
+    // Count bubbles once the pins would crowd (G12): above 20 saved places.
+    cluster: points.length > 20,
     easeToSelected: false, padBottom: 0, fitMaxZoom: 8, fitPadding: MAP_PAD,
     onSelectStop: (i) => {
       const k = points[i]?.key;

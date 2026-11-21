@@ -55,6 +55,7 @@ import { loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, country
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { noteSaved, noteUnsaved, loadSavedLists } from './lib/savedLists.js';
+import { basisOf } from './lib/price/priceView.js';
 import { trackFunnel, stepOfTab } from './lib/funnelCounts.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
@@ -887,11 +888,14 @@ function TravelApp() {
   const favoritesRef = useRef(favorites);
   favoritesRef.current = favorites;
   const dayPricesRef = useRef(null);
+  // The save records the basis its price stood on (month, stay style, lifestyle).
+  const choicesRef = useRef(choices);
+  choicesRef.current = choices;
   const toggleFav = useCallback((id, kind = 'dest', cc = '') => {
     const key = favKey(kind, id, cc);
     if (key) {
       if (favoritesRef.current?.has(key)) noteUnsaved(key);
-      else noteSaved(key, kind === 'dest' ? dayPricesRef.current?.get?.(id)?.dayEur ?? null : null);
+      else noteSaved(key, kind === 'dest' ? dayPricesRef.current?.get?.(id)?.dayEur ?? null : null, Date.now(), basisOf(choicesRef.current));
     }
     setFavorites((prev) => toggleFavKey(prev, kind, id, cc));
   }, []);

@@ -7470,6 +7470,7 @@ export const fr = {
   "mt.fellSince": "{price} de moins par jour depuis l'enregistrement",
   "mt.roseSince": "{price} de plus par jour depuis l'enregistrement",
   "mt.cheapestIn": "Le moins cher pour dormir en {month}",
+  "mt.cheapestTag": "Moins cher en {month}",
   "mt.note": "Votre note",
   "mt.inLists": "Listes",
   "mt.itemMenu": "Plus pour {name}",
