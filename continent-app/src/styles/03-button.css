@@ -31,6 +31,22 @@
 }
 .btn-block { display: flex; width: 100%; }
 .btn-icon { display: inline-flex; flex: none; }
+/* An icon beside a word sits on the word's capitals (owner 2026-11-21,
+   G12 judgement-9): the flex row centred the icon on the font's ascent and
+   descent box, whose middle is 1.5 to 2.3 px under the capitals' middle, so
+   every icon looked low. The word's box is trimmed to its cap height and
+   padded back to one line height, so the row's height and the clip room
+   for accents and descenders stay as they were. Every chip and button that
+   puts an icon beside its word: the kit Button, the band's chips, Filters
+   and Ask, the quick chips and the applied chips. Without text-box the old
+   centring stays. */
+@supports (text-box: trim-both cap alphabetic) {
+  .btn:has(> .btn-icon) > .btn-label,
+  .band-chip-text, .band-filters-word, .band-ask-word, .xquick-word, .xap-text {
+    text-box: trim-both cap alphabetic;
+    padding-block: calc((1lh - 1cap) / 2);
+  }
+}
 @media (hover: hover) {
   .btn:hover { background: var(--surface-hover); }
 }

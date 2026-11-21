@@ -71,11 +71,14 @@
 //              map's Clear all 8 px from its neighbours; the phone map's two
 //              chip rows paint no ground and do not cut their chips'
 //              shadows, row 3 keeps its taps and the map below the band
-//              its drags, Clear all on paper (judgement-9) (--g-only)
+//              its drags, Clear all on paper (judgement-9); every icon in a
+//              chip or button level with its word's capitals, six languages
+//              at 390 and 1440 on the map and Explore (--g-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createRequire } from 'node:module';
+import { ICON_ALIGN_JS } from './lib/iconAlign.mjs';
 
 const args = process.argv.slice(2);
 const arg = (name, dflt) => {
@@ -1108,7 +1111,7 @@ async function tabletPass() {
         const { ctx, page, errors } = await boot(w, 1000, '?tab=map&xw=map', lang);
         const judge = (tag, s) => {
           check(`${tag}: the search hint is whole`, s.hintW <= s.room, `"${s.hint}" ${s.hintW} in ${s.room}`);
-          check(`${tag}: the six tabs fit, or slide with a fade and the chosen tab in view`,
+          check(`${tag}: the six tabs fit whole, or the row scrolls with a fade and the chosen tab in view`,
             !s.labelCut && s.sideways <= 0 && s.activeIn && ((s.over <= 1 && s.tabsWhole) || (s.scrollable && s.masked && (s.start || s.end))), JSON.stringify(s));
           check(`${tag}: the settings line shows every item whole, or fades at its end`,
             s.band && (s.band.over <= 1 ? s.band.cut.length === 0 : s.band.end && s.band.masked), JSON.stringify(s.band));
@@ -1524,6 +1527,26 @@ async function roundGPass() {
         if (SHOTS && (lang === 'fr' || lang === 'en')) await page.screenshot({ path: path.join(SHOTS, `g-quick-${w}-${lang}.png`) });
         await ctx.close();
       });
+    }
+  }
+  // 7. Owner 2026-11-21: in every chip and button with an icon beside its
+  // word, the icon's centre is level with the word's capitals (1 px or
+  // less), on the map and on Explore with filters on, six languages, a
+  // phone and a desktop (scripts/lib/iconAlign.mjs).
+  for (const lang of LANGS) {
+    for (const [w, h] of [[390, 844], [1440, 900]]) {
+      for (const url of ['?tab=map&xw=map&xq=8&xk=water', '?tab=explore&xq=8&xk=water']) {
+        const where = url.includes('xw=map') ? 'map' : 'explore';
+        await guard(`roundG icons ${w} ${lang} ${where}`, async () => {
+          const { ctx, page } = await boot(w, h, url, lang, '', where === 'map' ? '' : '.band-chip');
+          await page.evaluate(() => document.fonts.ready);
+          const rows = await page.evaluate(ICON_ALIGN_JS);
+          const off = rows.filter((r) => Math.abs(r.dCap) > 1);
+          check(`roundG ${w} ${lang} ${where}: every icon level with its word's capitals (1 px or less)`, rows.length >= 6 && off.length === 0,
+            `${rows.length} chips, worst ${Math.max(...rows.map((r) => Math.abs(r.dCap)))} px${off.length ? `: ${JSON.stringify(off.slice(0, 3))}` : ''}`);
+          await ctx.close();
+        });
+      }
     }
   }
 }

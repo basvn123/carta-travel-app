@@ -85,3 +85,11 @@ test('the tab row scrolls when over; the phone map rows keep their shadows whole
   assert.match(map, /\.band\.is-map \.band-quick > \.xquick\.is-swipe \{\s*padding-block: var\(--space-2\) var\(--space-6\);\s*margin-block: calc\(var\(--space-2\) \* -1\) calc\(var\(--space-6\) \* -1\);\s*background: transparent;/);
   assert.match(map, /\.band\.is-map \.band-quick > \.xquick\.is-swipe \{ pointer-events: none; \}/);
 });
+
+// Owner 2026-11-21: an icon beside a word sits on the word's capitals, and
+// the word's box keeps one line height (so no chip changes height).
+test('every chip word is trimmed to its capitals and padded back to one line', () => {
+  const css = read('src/styles/03-button.css');
+  assert.match(css, /@supports \(text-box: trim-both cap alphabetic\) \{[\s\S]*?\.band-chip-text, \.band-filters-word, \.band-ask-word, \.xquick-word, \.xap-text \{\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/);
+  assert.match(read('src/browse/filters/QuickChips.jsx'), /<span className="xquick-word">\{t\('filters\.clearAll'\)\}<\/span>/);
+});

@@ -69,7 +69,8 @@ export function QuickChips({ className = '', withFilters = true, showClear = fal
       // The button leaves with the last filter: focus stays in the row.
       requestAnimationFrame(() => rowRef.current?.querySelector('.xquick-chip')?.focus({ preventScroll: true }));
     }}>
-      {t('filters.clearAll')}
+      {/* The word box, so it sits on its capitals like the chips' words. */}
+      <span className="xquick-word">{t('filters.clearAll')}</span>
     </Pressable>
   );
   const chip = (c) => {
