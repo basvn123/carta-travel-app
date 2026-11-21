@@ -39,6 +39,14 @@
 .mt-tabs .ui-tabs::-webkit-scrollbar { display: none; }
 .mt-tabs .ui-tab { flex: none; min-height: var(--tap); font-size: var(--text-lead); font-weight: 600; white-space: nowrap; }
 .mt-tabs .ui-tab-count { margin-left: 6px; font-size: var(--text-label); }
+/* At 360 the third tab was cut beside the add-booking icon in every language ("Dein Europa" in German):
+   on narrow phones the tabs step down to body text with a tighter gap, so all three show whole
+   (measured: de, nl, es, it, en fit at 360; fr still scrolls about 20 px there and fits from 390). */
+@media (max-width: 420px) {
+  .mt-tabs .ui-tabs { gap: var(--space-3); }
+  .mt-tabs .ui-tab { font-size: var(--text-body); }
+  .mt-tabs .ui-tab-count { margin-left: var(--space-1); }
+}
 .mt-filter-label {
   display: block;
   margin-bottom: var(--space-2);

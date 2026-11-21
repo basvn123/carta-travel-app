@@ -373,10 +373,12 @@ export function SavedTab({
         {sharedLists.map((l) => {
           const cover = sharedRowsOf(l);
           return (
-            <Button key={`sh:${l.id}`} className="mt-lcard" aria-pressed={list === `sh:${l.id}`} onClick={() => setList(`sh:${l.id}`)}
-              aria-label={t('mt2.sharedListLabel', { name: l.name, people: l.members.map((m) => m.name).join(', ') })}>
+            <Button key={`sh:${l.id}`} className="mt-lcard" aria-pressed={list === `sh:${l.id}`} onClick={() => setList(`sh:${l.id}`)}>
               <Mosaic rows={cover} />
               <span className="mt-lcard-name">{l.name}</span>
+              {/* Who it is shared with, read after the visible name: an aria-label would hide the count the card shows
+                  (axe label-content-name-mismatch). Every language's key starts with "{name}, ". */}
+              <span className="sr-only">{t('mt2.sharedListLabel', { name: '', people: l.members.map((m) => m.name).join(', ') })}</span>
               <span className="mt-lcard-n mt-lcard-shared">
                 <Faces people={facesOf(l.members)} max={3} />
                 {t(cover.length === 1 ? 'mt.saves1' : 'mt.savesN', { n: cover.length })}

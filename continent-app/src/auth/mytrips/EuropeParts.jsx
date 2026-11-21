@@ -79,9 +79,12 @@ export function YearBars({ data, ramp = {}, year, onYear }) {
             >
               <rect className="atlas-bar-hit" x={x - gap / 2} y="0" width={bw + gap} height={h} />
               <rect className={on ? `is-r${ramp[d.year] ?? 2}` : 'is-off'} x={x} y={h - 20 - bh} width={bw} height={Math.max(2, bh)} rx="5" />
-              {/* The year first in the DOM, so the visible text reads in the order of the name (axe label-content-name-mismatch). */}
-              <text className="atlas-bar-y" x={x + bw / 2} y={h - 4} textAnchor="middle">{d.year}</text>
-              <text className="is-v" x={x + bw / 2} y={h - 26 - bh} textAnchor="middle">{d.nights}</text>
+              {/* One text with the year first and a space, so the visible text ("2025 9") sits inside the name
+                  ("2025: 9 nights"); two text elements read as "20259" (axe label-content-name-mismatch). */}
+              <text textAnchor="middle">
+                <tspan className="atlas-bar-y" x={x + bw / 2} y={h - 4}>{d.year}</tspan>{' '}
+                <tspan className="is-v" x={x + bw / 2} y={h - 26 - bh}>{d.nights}</tspan>
+              </text>
             </g>
           );
         })}
@@ -274,7 +277,9 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
   return (
     <Sect id="mt-yc-h" full title={t('mt.yearCard')}>
       <div className="atlas-yc-wrap">
-        <Pressable className="atlas-ycbtn" aria-label={t('mt.yearCardEdit')} onClick={onEdit}>
+        {/* The preview is a mouse and touch shortcut to Aanpassen, which is the named control beside it;
+            hidden from the keyboard and screen readers so the card's many words never have to fit a name. */}
+        <Pressable className="atlas-ycbtn" tabIndex={-1} aria-hidden="true" onClick={onEdit}>
           <YearCard model={model} geo={geo} width={210} example={example} />
         </Pressable>
         <div className="atlas-yc-acts">

@@ -241,7 +241,7 @@
 }
 
 /* The minus drawn as a bar the width of the plus icon, so both read as buttons. */
-.atlas-minus { display: block; width: 12px; height: 2px; border-radius: 1px; background: currentColor; }
+.atlas-minus { display: block; width: 12px; height: 2px; border-radius: var(--radius-pill); background: currentColor; }
 
 /* ---- badges: milestones and the trip log grade ---- */
 .atlas-badges {
@@ -573,6 +573,14 @@
 }
 
 .atlas-yr.is-key { cursor: default; }
+
+/* At 360 a five-year record pushed 2025 and 2026 under "Länder als Liste" (the strip scrolled with no
+   sign of it): on narrow phones the years take the whole line and wrap, the list link goes under them. */
+@media (max-width: 420px) {
+  .atlas-under { flex-wrap: wrap; justify-content: flex-end; }
+  .atlas-legend { flex: 1 1 100%; flex-wrap: wrap; overflow-x: visible; }
+  .atlas-legend .atlas-yr { padding: 0 var(--space-1); }
+}
 
 .atlas-yr[aria-pressed="true"] {
   background: var(--surface);
