@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton, ScorePlate } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -10,78 +10,13 @@ import { countryName } from '../../lib/countryName.js';
 import { formatMoney } from '../../lib/money.js';
 import { activeLocale } from '../../lib/localeState.js';
 import { CardMenu } from './parts.jsx';
+import { EuropeMap, CountryPick } from './atlas/AtlasPlate.jsx';
+import { useEuropeMap, NAME_OF, stateOf, landShare } from './atlas/plateData.js';
 import { Section } from './MyTripsTabs.jsx';
 
-/**
- * Europe drawn as a map (T970, owner 2026-11-01: "the cleanest, nicest
- * looking map", replacing T926's tiles). public/europe_map.json is Natural
- * Earth projected equal-area at 52N 10E and already written as SVG paths
- * (pipeline/oneoff/build_europe_map.py): the 43 catalogue countries one path
- * each with a label point and true area, the land around them as one quiet
- * context path, the smallest countries flagged to draw as a dot too.
- */
-let europeMapPromise = null;
-const loadEuropeMap = () => {
-  if (!europeMapPromise) {
-    europeMapPromise = fetch('/europe_map.json')
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .catch(() => { europeMapPromise = null; return null; });
-  }
-  return europeMapPromise;
-};
-function useEuropeMap() {
-  const [geo, setGeo] = useState(null);
-  useEffect(() => {
-    let live = true;
-    loadEuropeMap().then((g) => { if (live) setGeo(g); });
-    return () => { live = false; };
-  }, []);
-  return geo;
-}
-
-const NAME_OF = Object.fromEntries(Object.entries(COUNTRY_ISO2).map(([name, iso]) => [iso, name]));
-const stateOf = (cc, been, next, saved) => (been.has(cc) ? 'been' : next.has(cc) ? 'next' : saved.has(cc) ? 'saved' : 'none');
-
-/**
- * The map: land you have not been to one flat grey, been in umber, the next
- * trip hatched in umber, a saved country a small umber dot; borders are
- * hairline gaps, no labels. A tap names the country under the map.
- */
-export function EuropeMap({ geo, been, next, saved, label, picked, onPick }) {
-  const pid = useId().replace(/:/g, '');
-  if (!geo) return <div className="mt-eumap is-loading" aria-hidden="true" />;
-  const pick = (cc) => (e) => { e.stopPropagation(); onPick?.(cc === picked ? '' : cc); };
-  return (
-    <svg className="mt-eumap" viewBox={`0 0 ${geo.w} ${geo.h}`} role="img" aria-label={label} onClick={() => onPick?.('')}>
-      <defs>
-        <pattern id={`${pid}-hatch`} width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-          <rect width="9" height="9" className="mt-eumap-hatch-bg" />
-          <rect width="4" height="9" className="mt-eumap-hatch" />
-        </pattern>
-      </defs>
-      <path className="mt-eumap-context" d={geo.context} />
-      {geo.countries.map((c) => {
-        const st = stateOf(c.cc, been, next, saved);
-        return (
-          <path
-            key={c.cc}
-            className={`mt-eumap-land is-${st}${picked === c.cc ? ' is-picked' : ''}`}
-            d={c.d}
-            style={st === 'next' ? { fill: `url(#${pid}-hatch)` } : undefined}
-            onClick={pick(c.cc)}
-          />
-        );
-      })}
-      {geo.countries.filter((c) => c.dot).map((c) => (
-        <circle key={`dot-${c.cc}`} className={`mt-eumap-dot is-${stateOf(c.cc, been, next, saved)}${picked === c.cc ? ' is-picked' : ''}`}
-          cx={c.x} cy={c.y} r="7" onClick={pick(c.cc)} />
-      ))}
-      {geo.countries.filter((c) => !c.dot && stateOf(c.cc, been, next, saved) === 'saved').map((c) => (
-        <circle key={`saved-${c.cc}`} className="mt-eumap-pin" cx={c.x} cy={c.y} r="11" onClick={pick(c.cc)} />
-      ))}
-    </svg>
-  );
-}
+// The plate moved to ./atlas/AtlasPlate.jsx (G12 Phase B), which takes
+// overlays; the plain map is re-exported here for its old importers.
+export { EuropeMap } from './atlas/AtlasPlate.jsx';
 
 /** A share as the reader's locale writes it: one decimal under 10, whole above. */
 const shareText = (n) => Number(n).toLocaleString(activeLocale(), { maximumFractionDigits: n < 10 ? 1 : 0 });
@@ -119,7 +54,7 @@ function milestoneText(t, m, fmtMonth) {
  */
 export function YourEurope({
   map, figures, milestones = [], journal = [], recap = null, onRecap, onMark, markRef, onToggleCountry, onAddPast, pastForm, error,
-  fmtMonth,
+  fmtMonth, mapInSlot = false,
 }) {
   const { t } = useI18n();
   const hasAny = figures.countries > 0 || journal.length > 0;
@@ -127,21 +62,12 @@ export function YourEurope({
   const [picked, setPicked] = useState('');
   // The share of the catalogue's land: honest because the map's areas are
   // equal-area (km2 per country from the build script).
-  const share = useMemo(() => {
-    if (!geo) return 0;
-    let all = 0;
-    let mine = 0;
-    for (const c of geo.countries) {
-      all += c.km2;
-      if (map.been.has(c.cc)) mine += c.km2;
-    }
-    return all > 0 ? (mine / all) * 100 : 0;
-  }, [geo, map.been]);
+  const share = useMemo(() => landShare(geo, map.been), [geo, map.been]);
   const pickedState = picked ? stateOf(picked, map.been, map.next, map.saved) : '';
   return (
     <div className="mt-europe">
       <div className="mt-europe-map">
-        <div className="mt-atlas">
+        {!mapInSlot && <div className="mt-atlas">
           <p className="mt-atlas-head">
             <b className="mt-atlas-n">{map.been.size}</b>
             <span className="mt-atlas-of">
@@ -162,30 +88,19 @@ export function YourEurope({
               picked={picked}
               onPick={setPicked}
             />
-            <p className="mt-atlas-pick" aria-live="polite">
-              {picked && (
-                <span className="mt-atlas-pill">
-                  <CountryFlag country={NAME_OF[picked] || picked} size={14} />
-                  <b>{countryName(picked, NAME_OF[picked] || picked)}</b>
-                  {/* T972: a tap marks a country by hand, as the sheet does;
-                      one a finished trip put on the record stays fixed. */}
-                  {onToggleCountry && !map.viaTrip?.has(picked) ? (
-                    <button type="button" className={`mt-atlas-toggle${pickedState === 'been' ? ' is-on' : ''}`} onClick={() => onToggleCountry(picked)}>
-                      {pickedState === 'been' ? t('mt.unmarkCountry') : t('mt.markBeen')}
-                    </button>
-                  ) : (
-                    <span className={`is-${pickedState}`}>{t(`mt.state.${pickedState}`)}</span>
-                  )}
-                </span>
-              )}
-            </p>
+            <CountryPick
+              picked={picked}
+              state={pickedState}
+              canToggle={!!onToggleCountry && !map.viaTrip?.has(picked)}
+              onToggle={onToggleCountry}
+            />
           </div>
           <div className="mt-atlas-legend">
             <span><i className="is-been" aria-hidden="true" />{t('mt.legendBeen', { n: map.been.size })}</span>
             {map.next.size > 0 && <span><i className="is-next" aria-hidden="true" />{t('mt.legendNext', { name: map.nextName })}</span>}
             {map.saved.size > 0 && <span><i className="is-saved" aria-hidden="true" />{t('mt.legendSaved', { n: map.saved.size })}</span>}
           </div>
-        </div>
+        </div>}
         {recap && (
           <Button className="mt-recap-card" onClick={onRecap}>
             {recap.img && <HeroImage url={recap.img} city={String(recap.year)} className="mt-recap-img" maxWidth={640} ratio={[16, 9]} sizes="(min-width: 1024px) 480px, 100vw" />}

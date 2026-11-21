@@ -72,7 +72,7 @@
   mask-image: linear-gradient(var(--mask-solid) 80%, transparent);
 }
 
-.atlas-map svg {
+.atlas-map .mt-eumap {
   display: block;
   width: 100%;
   height: 100%;
@@ -129,7 +129,7 @@
   }
 
   .atlas-floatchip b {
-    font-size: var(--text-display);
+    font-size: var(--text-headline);
   }
 }
 
@@ -319,4 +319,306 @@
   .atlas-seg2 button {
     transition: none;
   }
+}
+
+/* ==== Phase B: the plate in its slot ==== */
+
+/* Inside the My trips panel the panel already pads; the slot goes full-bleed
+   on a phone and the tab bodies keep the panel's own column rhythm. */
+.mt-panel > .atlas-body {
+  padding: 0;
+}
+
+.mt-panel .atlas-content {
+  padding: 0;
+}
+
+.atlas-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.mt-panel .atlas-slot {
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--gutter)) var(--space-2);
+}
+
+.mt-panel .atlas-slot .mt-atlas-pick,
+.mt-panel .atlas-under {
+  padding: 0 var(--gutter);
+}
+
+/* The height is reserved per tab and state before the plate loads, so a
+   tab switch does not shift the page (CLS under 0.05). */
+.atlas-slot.is-trips .atlas-map { height: 250px; }
+.atlas-slot.is-trips.is-empty .atlas-map { height: 340px; }
+.atlas-slot.is-europe .atlas-map { height: 400px; }
+.atlas-slot.is-europe.is-empty .atlas-map { height: 460px; }
+
+@media (min-width: 768px) {
+  .mt-panel .atlas-slot {
+    margin: 0 0 var(--space-2);
+  }
+
+  .mt-panel .atlas-slot .mt-atlas-pick,
+  .mt-panel .atlas-under {
+    padding: 0;
+  }
+
+  .atlas-slot.is-trips .atlas-map,
+  .atlas-slot.is-trips.is-empty .atlas-map { height: 380px; }
+
+  .atlas-slot.is-europe .atlas-map,
+  .atlas-slot.is-europe.is-empty .atlas-map { height: 520px; }
+}
+
+@media (min-width: 1100px) {
+  .mt-panel .atlas-slot {
+    top: var(--space-4);
+    margin: 0;
+  }
+
+  /* The pane fills the window under the tabs. */
+  .atlas-slot.is-trips .atlas-map,
+  .atlas-slot.is-trips.is-empty .atlas-map,
+  .atlas-slot.is-europe .atlas-map,
+  .atlas-slot.is-europe.is-empty .atlas-map {
+    height: max(480px, calc(100dvh - var(--header-h) - 176px));
+  }
+
+  .atlas-slot.is-europe .atlas-map {
+    height: max(440px, calc(100dvh - var(--header-h) - 236px));
+  }
+}
+
+.atlas-plate {
+  position: absolute;
+  inset: 0;
+}
+
+.atlas-plate .mt-eumap,
+.atlas-plate .mt-eumap.is-loading {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  background: var(--atlas-sea);
+}
+
+.atlas-plate .mt-eumap-context {
+  fill: var(--atlas-land);
+  opacity: 0.7;
+}
+
+.atlas-plate .mt-eumap-land,
+.atlas-plate .mt-eumap-dot {
+  fill: var(--atlas-land);
+  stroke: var(--atlas-border);
+  stroke-width: 0.8;
+  cursor: default;
+}
+
+.atlas-plate .mt-eumap-dot { fill: var(--umber-200); stroke: var(--surface); }
+.atlas-plate .is-tappable .mt-eumap-land,
+.atlas-plate .is-tappable .mt-eumap-dot { cursor: pointer; }
+.atlas-plate .mt-eumap-land.is-been,
+.atlas-plate .mt-eumap-dot.is-been,
+.atlas-plate .mt-eumap .is-hand { fill: var(--umber-600); }
+.atlas-plate .mt-eumap .is-r0 { fill: var(--umber-300); }
+.atlas-plate .mt-eumap .is-r1 { fill: var(--umber-500); }
+.atlas-plate .mt-eumap .is-r2 { fill: var(--umber-600); }
+.atlas-plate .mt-eumap .is-r3 { fill: var(--umber-700); }
+.atlas-plate .mt-eumap .is-r4 { fill: var(--umber-800); }
+.atlas-plate .mt-eumap .is-off { fill: var(--umber-200); }
+.atlas-plate .mt-eumap-land.is-picked { stroke: var(--text); stroke-width: 2; }
+.atlas-plate .mt-eumap-hatch-bg { fill: var(--atlas-land); }
+.atlas-plate .mt-eumap-hatch { fill: var(--umber-600); }
+
+/* The ramp and the filter outrank is-been (three classes, later). */
+
+/* Routes: a white casing under the line; the mask draws them in. */
+.atlas-plate mask { mask-type: alpha; }
+
+.atlas-mk {
+  fill: none;
+  stroke: var(--mask-solid);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+.atlas-plate.is-draw .atlas-mk {
+  animation: atlas-draw 1.1s var(--ease-out) 0.12s both;
+}
+
+@keyframes atlas-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+.atlas-route path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.atlas-route { transition: opacity var(--dur-2) var(--ease-out); }
+.atlas-route-case { stroke: var(--surface); opacity: 0.95; }
+.atlas-route-line { stroke: var(--umber-800); }
+.atlas-route.is-past .atlas-route-case { opacity: 0.7; }
+.atlas-route.is-past .atlas-route-line { stroke: var(--text); opacity: 0.75; }
+.atlas-route.is-dim { opacity: 0.25; }
+
+.atlas-stop {
+  fill: var(--surface);
+  stroke: var(--umber-800);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+
+.atlas-stop.is-big { stroke-width: 2.2; }
+/* The one saffron point (decision 2): the next stop only. */
+.atlas-stop.is-sun { fill: var(--sun-400); stroke: var(--sun-800); }
+.atlas-stop.is-dim { opacity: 0.3; }
+
+.atlas-corner-ring {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Labels are HTML over the plate, never SVG text: 12 px at every size. */
+.atlas-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.atlas-ml {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+}
+
+.atlas-ml-name {
+  padding: 3px var(--space-2) 2px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  color: var(--text);
+}
+
+.atlas-ml-here { transform: translate(-50%, -125%); }
+
+.atlas-ml-corner {
+  transform: translate(-50%, -50%);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--atlas-land);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  color: var(--umber-800);
+}
+
+.atlas-floatchip.is-hint {
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Under the Your Europe map: the years as a filter, then the list. */
+.atlas-under {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.atlas-legend {
+  display: flex;
+  flex: 1;
+  gap: var(--space-1);
+  align-items: center;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.atlas-yr {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.atlas-yr.is-key { cursor: default; }
+
+.atlas-yr[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-1);
+}
+
+.atlas-yr i {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--umber-600);
+}
+
+.atlas-yr i.is-r0 { background: var(--umber-300); }
+.atlas-yr i.is-r1 { background: var(--umber-500); }
+.atlas-yr i.is-r2 { background: var(--umber-600); }
+.atlas-yr i.is-r3 { background: var(--umber-700); }
+.atlas-yr i.is-r4 { background: var(--umber-800); }
+
+.atlas-yr i.is-next {
+  width: 14px;
+  background: repeating-linear-gradient(-45deg, var(--umber-600) 0 2px, var(--atlas-land) 2px 5px);
+  outline: 1px solid var(--atlas-border);
+  outline-offset: -1px;
+}
+
+.atlas-lnk {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--umber-800);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.atlas-yr:focus-visible,
+.atlas-lnk:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-plate.is-draw .atlas-mk { animation: none; }
+  .atlas-route,
+  .atlas-stop { transition: none; }
 }

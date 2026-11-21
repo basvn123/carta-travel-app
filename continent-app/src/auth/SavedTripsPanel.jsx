@@ -61,6 +61,9 @@ import { SiteFooter } from '../components/SiteFooter.jsx';
 import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips/MyTripsTabs.jsx';
 import { BAND_CUTOFFS } from '../lib/rating.js';
 import { YourEurope } from './mytrips/YourEurope.jsx';
+import { AtlasSlot } from './mytrips/atlas/AtlasSlot.jsx';
+import { useEuropeMap } from './mytrips/atlas/plateData.js';
+import { tripsLayer, europeLayer } from './mytrips/atlas/layers.js';
 import { YearRecap } from './mytrips/YearRecap.jsx';
 import { AddBookingSheet } from './mytrips/AddBookingSheet.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
@@ -1060,6 +1063,44 @@ export function SavedTripsPanel({
       return { ...r, mem, spendPP: mem ? spendPerPerson(mem) : null, estDayPP: r.est, score: scoreOf(r.ids) };
     }).sort((a, b) => ((a.end || '') < (b.end || '') ? 1 : -1));
   }, [pastPlans, pastDayPlans, memories, destinations, journeyParts, dayJourneyParts, priceFor]);
+
+  // G12 Phase B: the one map of the panel. Trips in the plain shape
+  // atlas/layers.js reads; a stop is placed by its catalogue entry, or by the
+  // memory's own place when the trip was logged by hand.
+  const atlasGeo = useEuropeMap();
+  const [atlasYear, setAtlasYear] = useState(null);
+  const atlasStopsOf = (ids, cityOf) => ids.map((id, i) => {
+    const c = destCoords(id);
+    return c ? { id, city: cityOf(i) || destinations[id]?.city || '', ...c } : null;
+  }).filter(Boolean);
+  const atlasTrip = (p) => {
+    const st = tripStops(p);
+    const stops = st.length
+      ? atlasStopsOf(st.map((s) => s.id), (i) => st[i].city)
+      : atlasStopsOf(p.destination_ids || [], () => '');
+    return { id: p.id, title: journeyParts(p).title, start: p.start_date, countries: planCountries(p).map(isoOf).filter(Boolean), stops };
+  };
+  const tripsMap = tripsLayer({
+    today: happening && todayAt ? atlasTrip(happening) : null,
+    todayAt,
+    ahead: ahead.filter((p) => p.start_date).map(atlasTrip),
+  });
+  tripsMap.nextIso = new Set(happening ? [] : nextIsoAll);
+  const europeMap = useMemo(() => {
+    const trips = pastTrips.map((r) => {
+      const mine = (r.mem?.places || []).filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
+      const stops = mine.length ? mine.map((x) => ({ id: x.id, city: x.city, lat: x.lat, lon: x.lon })) : atlasStopsOf(r.ids, () => '');
+      const parts = r.kind === 'plan' ? journeyParts(r.item) : dayJourneyParts(r.item);
+      return {
+        id: r.id,
+        title: r.title,
+        start: r.kind === 'plan' ? r.item.start_date : r.item.startDate,
+        countries: parts.countries.map(isoOf).filter(Boolean),
+        stops,
+      };
+    });
+    return europeLayer({ trips, been: beenIso });
+  }, [pastTrips, beenIso]); // eslint-disable-line react-hooks/exhaustive-deps -- the helpers follow destinations, which pastTrips already follows
   const money = useMemo(() => europeMoney(pastTrips, { greatScore: BAND_CUTOFFS.excellent }), [pastTrips]);
   const milestones = useMemo(() => {
     const points = [];
@@ -1207,6 +1248,19 @@ export function SavedTripsPanel({
           {/* The section's name as the page's h2, for the heading outline; the
               tab above already shows it. */}
           <h2 className="sr-only" id="mytrips-panel-title">{t(tab === 'trips' ? 'mt.tabTrips' : tab === 'saved' ? 'mt.tabSaved' : 'mt.tabEurope')}</h2>
+          <div className={`atlas-body is-${tab}`}>
+          <AtlasSlot
+            tab={tab}
+            geo={atlasGeo}
+            trips={tripsMap}
+            europe={{ ...europeMap, been: beenIso, next: nextIso, viaTrip: viaTripIso, total: catalogueCountries }}
+            year={atlasYear}
+            onYear={setAtlasYear}
+            onToggleCountry={toggleIso}
+            onList={() => setCountriesOpen(true)}
+            listRef={countriesRef}
+          />
+          <div className="atlas-content"><div className="atlas-full atlas-col">
           {tab === 'trips' && (
             <TripsTab
               authed={authed}
@@ -1275,6 +1329,7 @@ export function SavedTripsPanel({
               onRecap={() => setRecapOpen(true)}
               onMark={() => setCountriesOpen(true)}
               markRef={countriesRef}
+              mapInSlot
               onAddPast={() => openPastForm(null)}
               pastForm={pastForm}
               error={tripPlansError}
@@ -1287,6 +1342,8 @@ export function SavedTripsPanel({
               <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
             </Suspense>
           )}
+          </div></div>
+          </div>
         </div>
 
         {countriesOpen && (
