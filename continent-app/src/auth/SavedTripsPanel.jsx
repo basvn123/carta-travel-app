@@ -353,6 +353,8 @@ export function SavedTripsPanel({
   // G12 Phase C: the unit sheet, example mode (never saved, never counted)
   // and the route a hovered or focused row lifts on the map.
   const [unitOpen, setUnitOpen] = useState(false);
+  // G12 Phase D: the slot's host for Saved's live map.
+  const [savedMapEl, setSavedMapEl] = useState(null);
   const [example, setExample] = useState(false);
   const [lift, setLift] = useState('');
   const [friends, setFriends] = useState([]);
@@ -1159,6 +1161,14 @@ export function SavedTripsPanel({
   };
   // Example mode only stands in for an empty tab; real trips end it.
   const showExample = example && !happening && !ahead.length;
+  // Saved's example: the catalogue's top places by Score, real figures,
+  // never saved or counted (G12 Phase D).
+  const exampleSaved = useMemo(() => (example && !shortRows.length ? Object.values(destinations || {})
+    .filter((d) => d?.id && Number.isFinite(d.rating) && costs?.get?.(d.id))
+    .sort((a, b) => b.rating - a.rating)
+    .slice(0, 10)
+    .map((d) => ({ key: `ex:${d.id}`, kind: 'dest', id: d.id, cc: d.iso2 || '', name: d.city || d.id, img: resolveImage({ ids: [d.id], cities: [d.city], countries: [d.country] }) }))
+    : []), [example, shortRows.length, destinations, costs, resolveImage]);
   const tripsMap = tripsLayer(showExample ? { ahead: [atlasTrip(examplePlans[0])] } : {
     today: happening && todayAt ? atlasTrip(happening) : null,
     todayAt,
@@ -1352,6 +1362,8 @@ export function SavedTripsPanel({
             onToggleCountry={toggleIso}
             onList={() => setCountriesOpen(true)}
             listRef={countriesRef}
+            savedEmpty={!shortRows.length && !example}
+            savedHost={setSavedMapEl}
           />
           <div className="atlas-content"><div className="atlas-full atlas-col">
           {tab === 'trips' && (
@@ -1399,6 +1411,13 @@ export function SavedTripsPanel({
               friends={SAVED_MOCK ? MOCK_FRIENDS : friends}
               sharedRows={sharedRowMap}
               heldKey={heldKey}
+              choices={choices}
+              setChoices={setChoices}
+              example={example && !shortRows.length}
+              onExample={() => setExample(true)}
+              onExampleClose={() => setExample(false)}
+              exampleRows={exampleSaved}
+              mapHost={savedMapEl}
               top={(
                 <>
                   {/* Kept trips from the trip finder (T806): planning one hands

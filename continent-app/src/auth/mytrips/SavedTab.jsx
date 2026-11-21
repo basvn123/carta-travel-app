@@ -1,13 +1,14 @@
 import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, ChipGroup, Field } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
-import { RowFormation } from '../../browse/explore/HouseParts.jsx';
-import { useSettledFigure } from '../../lib/figureChange.js';
-import { useDayView } from '../../hooks/useDayView.js';
+import { PriceControl, ExampleBar } from './TripParts.jsx';
+import { WatchRail, WatchSheet, MovePill, useWatched } from './Watch.jsx';
+import { inUnit, moveInUnit, basisOf } from '../../lib/price/priceView.js';
 import {
-  PlusIcon, RouteIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
+  PlusIcon, RouteIcon, EyeIcon, CloseIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
 } from '../../components/Icons.jsx';
 import { FAV_KIND_LABEL } from '../../lib/favorites.js';
 import { formatMoney } from '../../lib/money.js';
@@ -53,6 +54,10 @@ function sharedRow(it, resolved) {
   return { ...base, key: it.key, shared: it };
 }
 
+const sinceDay = (ms) => {
+  try { return new Date(ms).toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short' }); } catch { return ''; }
+};
+
 const monthName = (m) => {
   try { return new Date(Date.UTC(2026, m - 1, 15)).toLocaleDateString(activeLocale(), { month: 'long', timeZone: 'UTC' }); } catch { return ''; }
 };
@@ -71,23 +76,17 @@ function Mosaic({ rows }) {
 
 /** One saved thing: select box, photo, kind, name, today's price and its
  *  move since the save, the cheapest month, the traveller's note, a menu. */
-/** A saved place's price as Explore draws it (house style): the formation,
- *  getting there, bed and food coupled in front of the day figure. Same
- *  figures and settle behaviour as the DayPrice it replaces. */
-function SavedPrice({ cost, t }) {
-  const ref = useRef(null);
-  useSettledFigure(ref, cost?.dayEur ?? null);
-  return <RowFormation cost={cost} t={t} figRef={ref} />;
-}
-
 function SavedItem({
-  row, meta, cost, dest, lists, shared = [], me = null, onShared = null, selected, onSelect, onOpen, onRemove, active, itemRef,
+  row, meta, cost, choices, basis, dest, lists, shared = [], me = null, onShared = null, selected, onSelect, onOpen, onRemove, active, itemRef,
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
   const [picking, setPicking] = useState(false);
   const [draft, setDraft] = useState(meta?.note || '');
   const change = priceChange(meta, cost?.dayEur);
+  // The move in the chosen unit; hidden when the saved price stood on another month or stay style.
+  const move = change ? moveInUnit(meta.eur, cost.dayEur, choices, { sameBasis: !meta.basis || meta.basis === basis }) : null;
+  const fig = cost ? inUnit(cost.dayEur, choices) : null;
   const months = row.kind === 'dest' && dest ? cheapestStayMonths(dest) : null;
   const k = metaKey(row);
   const inShared = (l) => l.items.find((it) => it.key === k) || null;
@@ -113,16 +112,11 @@ function SavedItem({
         ) : (
           <Button variant="quiet" className="mt-item-name" onClick={() => onOpen(row)}>{row.name || row.id}</Button>
         )}
-        {cost && (
-          <span className="mt-item-price">
-            <SavedPrice cost={cost} t={t} />
-            {change && (
-              <Chip kind="status" tone={change.diff < 0 ? 'positive' : 'neutral'} className="mt-item-move">
-                {t(change.diff < 0 ? 'mt.fellSince' : 'mt.roseSince', { price: formatMoney(Math.abs(change.diff)) })}
-              </Chip>
-            )}
-          </span>
-        )}
+        {move ? (
+          <MovePill delta={move}>
+            {t(move < 0 ? 'mt.lowerSince' : 'mt.higherSince', { price: formatMoney(Math.abs(move)), date: sinceDay(change.at) })}
+          </MovePill>
+        ) : null}
         {months?.length > 0 && <span className="mt-item-meta">{t('mt.cheapestIn', { month: monthName(months[0]) })}</span>}
         {inLists.length > 0 && <span className="mt-item-meta">{inLists.map((l) => l.name).join(', ')}</span>}
         {editing ? (
@@ -154,6 +148,7 @@ function SavedItem({
           </div>
         )}
       </div>
+      {Number.isFinite(fig) ? <b className="mt-item-fig num">{formatMoney(fig)}</b> : <span className="mt-item-fig mt-muted">{t('saved.factNoPrice')}</span>}
       <CardMenu
         label={t('mt.itemMenu', { name: row.name || row.id })}
         actions={[
@@ -181,16 +176,17 @@ function SavedItem({
  *   onUndo      the panel's undo slot: ({ key, label, commit, restore })
  */
 export function SavedTab({
-  rows, saved, costs, destinations = {}, loading, onOpen, onRemove, onPlan, onBrowse, onUndo, top = null, mapLocale,
+  rows: ownRows, saved, costs, destinations = {}, loading, onOpen, onRemove, onPlan, onBrowse, onUndo, top = null, mapLocale,
   shared = null, friends = [], sharedRows = null, heldKey = '',
+  choices = null, setChoices = null, example = false, onExample = null, onExampleClose = null, exampleRows = [], mapHost = null,
 }) {
   const { t } = useI18n();
   // The rows' figures follow the traveller's price view, so their unit must too:
   // the house string in the day view, the view's own unit ("for 2 people, 7 nights") in a total view.
-  const dayView = useDayView();
-  const unitHead = dayView.total
-    ? dayView.unit.charAt(0).toLocaleUpperCase(activeLocale()) + dayView.unit.slice(1)
-    : t('mt.figDay');
+  const basis = basisOf(choices);
+  const watched = useWatched({ sync: !example });
+  const [watchOpen, setWatchOpen] = useState(null);
+  const [cc, setCc] = useState('');
   const [list, setList] = useState('all');
   const [kind, setKind] = useState('all');
   const [fell, setFell] = useState(false);
@@ -205,7 +201,9 @@ export function SavedTab({
   // The map is drawn only where it shows: beside the list, or when asked for.
   const wide = useWide();
 
-  const lists = saved.lists;
+  // Example mode: real catalogue places, never saved or counted.
+  const rows = example ? exampleRows : ownRows;
+  const lists = example ? [] : saved.lists;
   const current = lists.find((l) => l.id === list) || null;
   // T941: the lists shared with friends, from the server (none before 059).
   const me = shared?.me || null;
@@ -232,7 +230,12 @@ export function SavedTab({
   }, [inList]);
   const kindNow = kinds.some(([k]) => k === kind) ? kind : 'all';
   const anyFell = inList.some(fellOf);
-  const shown = inList.filter((r) => (kindNow === 'all' || r.kind === kindNow) && (!fell || fellOf(r)));
+  const shown = inList.filter((r) => (kindNow === 'all' || r.kind === kindNow) && (!fell || fellOf(r)) && (!cc || r.cc === cc));
+  const exWatch = useMemo(() => (example ? exampleRows.slice(0, 2).map((r) => {
+    const eur = costs?.get?.(r.id)?.dayEur;
+    return Number.isFinite(eur) ? { id: `day:${r.id}`, kind: 'day', ref: r.id, label: r.name, placeKey: `dest:${r.id}`, unitNote: 'day, each', source: t('watch.srcDay'), alert: false, pts: [{ at: new Date().toISOString(), eur: Math.round(eur) }] } : null;
+  }).filter(Boolean) : []), [example, exampleRows, costs, t]);
+  const watchItems = example ? exWatch : watched;
 
   const toggleSel = (k) => setSel((cur) => (cur.includes(k) ? cur.filter((x) => x !== k) : [...cur, k]));
   const allRows = [...rows, ...(currentShared ? inList.filter((r) => !rows.some((x) => metaKey(x) === metaKey(r))) : [])];
@@ -291,15 +294,17 @@ export function SavedTab({
     const d = r.kind === 'dest' ? destinations[r.id] : null;
     const lat = d ? (d.city_lat ?? d.lat) : r.lat;
     const lon = d ? (d.city_lon ?? d.lon) : r.lon;
-    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, city: r.name || '', plain: true, img: r.img, key: metaKey(r) } : null;
+    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, city: r.name || '', plain: true, img: r.img, key: metaKey(r), cc: r.cc } : null;
   }).filter(Boolean), [shown, destinations]);
   const mapProps = useMemo(() => ({
-    stops: points, showRoute: false, scrollZoom: true, zoomControls: true, mapLocale, photoZoom: 6,
+    stops: points, showRoute: false, scrollZoom: true, cooperativeGestures: true, zoomControls: true, mapLocale, photoZoom: 6, basemap: 'carta',
     easeToSelected: false, padBottom: 0, fitMaxZoom: 8, fitPadding: MAP_PAD,
     onSelectStop: (i) => {
       const k = points[i]?.key;
       if (!k) return;
       setActive(k);
+      // A tapped pin filters the rows to its country (a removable chip).
+      if (points[i].cc) setCc(points[i].cc);
       setView('list');
       requestAnimationFrame(() => itemRefs.current.get(k)?.scrollIntoView({ block: 'nearest', behavior: scrollBehavior() }));
     },
@@ -309,15 +314,36 @@ export function SavedTab({
     return (
       <>
         {top}
-        <Empty title={t('saved.shortlistEmpty')} tone="lagoon" icon={<BookmarkIcon size={28} />}
-          action={<Button variant="primary" iconEnd={<ArrowRightIcon size={18} />} onClick={onBrowse}>{t('saved.browseDestinations')}</Button>} />
+        <div className="atlas-empty">
+          <h2 className="atlas-empty-h">{t('mt.savedEmptyTitle')}</h2>
+          <div className="atlas-empty-acts">
+            <Button variant="primary" iconStart={<BookmarkIcon size={18} />} onClick={onBrowse}>{t('mt.discoverPlaces')}</Button>
+            {onExample && <Button variant="soft" iconStart={<EyeIcon size={18} />} onClick={onExample}>{t('mt.seeExample')}</Button>}
+          </div>
+        </div>
       </>
     );
   }
+  const liveMap = points.length > 0 ? (
+    <div className="mt-map is-saved">
+      <Suspense fallback={<div className="mt-map-wait" aria-hidden="true" />}>
+        <TripMap {...mapProps} />
+      </Suspense>
+    </div>
+  ) : null;
 
   return (
     <div className="mt-saved">
-      <div className="mt-lists" role="group" aria-label={t('mt.lists')}>
+      {example && <ExampleBar onClose={onExampleClose} />}
+      {mapHost && liveMap && createPortal(liveMap, mapHost)}
+      <WatchRail items={watchItems} onOpen={setWatchOpen} />
+      {watchOpen && (
+        <WatchSheet item={watchOpen} example={example} dest={destinations[String(watchOpen.placeKey || '').replace(/^dest:/, '')] || null}
+          onOpenPlace={(w) => { const id = String(w.placeKey || '').replace(/^dest:/, ''); const row = rows.find((x) => x.kind === 'dest' && x.id === id); if (row) onOpen(row); }}
+          onClose={() => setWatchOpen(null)} />
+      )}
+      <h3 className="atlas-sect-title">{t('mt.lists')}</h3>
+      <div className="mt-lists atlas-rail" role="group" aria-label={t('mt.lists')}>
         <Button className="mt-lcard" aria-pressed={list === 'all'} onClick={() => setList('all')}>
           <Mosaic rows={rows} />
           <span className="mt-lcard-name">{t('mt.allSaved')}</span>
@@ -422,7 +448,8 @@ export function SavedTab({
 
       {list === 'all' && top}
 
-      <div className="mt-saved-filters">
+      <PriceControl choices={choices} setChoices={setChoices} />
+      <div className="mt-saved-filters atlas-chips-scroll">
         {kinds.length > 1 && (
           <ChipGroup label={t('saved.kindLabel')} className="mt-chips">
             <Chip kind="choice" selected={kindNow === 'all'} onClick={() => setKind('all')}>{t('mt.kindAllN', { n: inList.length })}</Chip>
@@ -434,9 +461,12 @@ export function SavedTab({
         {(anyFell || fell) && (
           <Chip kind="filter" selected={fell} onClick={() => setFell((v) => !v)}>{t('mt.priceFell')}</Chip>
         )}
+        {cc && (
+          <Chip kind="filter" selected icon={<CloseIcon size={14} />} onClick={() => setCc('')} aria-label={t('mt.clearCountry', { country: cc })}>
+            <CountryFlag country={cc} size={14} />{cc}
+          </Chip>
+        )}
         <span className="mt-spacer" />
-        {/* The unit of the rows' day figures, said once (as Explore's column head). */}
-        <span className="mt-section-unit mt-saved-unit">{unitHead}</span>
         <Button size="sm" className="mt-view-toggle" onClick={() => setView((v) => (v === 'map' ? 'list' : 'map'))}>
           {t(view === 'map' ? 'mt.viewList' : 'mt.viewMap')}
         </Button>
@@ -471,6 +501,8 @@ export function SavedTab({
                     row={r}
                     meta={saved.meta[k]}
                     cost={costOf(r)}
+                    choices={choices}
+                    basis={basis}
                     dest={r.kind === 'dest' ? destinations[r.id] : null}
                     lists={lists}
                     shared={act ? sharedLists : []}
@@ -491,13 +523,7 @@ export function SavedTab({
           )}
         </div>
         <div className="mt-split-map">
-          {!(wide || view === 'map') ? null : points.length > 0 ? (
-            <div className="mt-map is-saved">
-              <Suspense fallback={<div className="mt-map-wait" aria-hidden="true" />}>
-                <TripMap {...mapProps} />
-              </Suspense>
-            </div>
-          ) : (
+          {mapHost || !(wide || view === 'map') ? null : liveMap || (
             <p className="mt-muted">{t('mt.noMapPoints')}</p>
           )}
         </div>

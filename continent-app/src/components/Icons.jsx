@@ -1026,6 +1026,30 @@ export function ArrowRightIcon({ size = 15, className = '', labelled = false }) 
   );
 }
 
+export function ArrowDownIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Lower">
+      <path d="M12 4.5v15M5.3 13.2 12 19.9l6.7-6.7" />
+    </Glyph>
+  );
+}
+
+export function ArrowUpIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Higher">
+      <path d="M12 19.5v-15M5.3 10.8 12 4.1l6.7 6.7" />
+    </Glyph>
+  );
+}
+
+export function BellIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Alert">
+      <path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15L6 16.5ZM10 20.5a2.2 2.2 0 0 0 4 0" />
+    </Glyph>
+  );
+}
+
 export function QuestionIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Questions">

@@ -7,6 +7,8 @@ import { tokenColour } from './tokenColors.js';
 import { useI18n } from '../i18n/index.jsx';
 import { durationMs } from '../lib/motion.js';
 import { houseBasemap } from './houseBasemap.js';
+import { cartaMapStyle } from '../lib/map/cartaMapStyle.js';
+import { registerPmtiles, basemapFallback } from '../lib/map/pmtilesProtocol.js';
 
 /* The route reveal (T398, DIRECTION 2.3 "Route reveal"): the first part of
    the lines, `frac` of their total length, in drawing order, so the route
@@ -310,9 +312,13 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
   // Initialise once.
   useEffect(() => {
     if (mapRef.current) return;
+    // G12 (Saved, decision 5): 'carta' is Explore's own basemap from our
+    // PMTiles, with CARTO only if the archive fails.
+    const carta = basemap === 'carta';
+    if (carta) registerPmtiles(maplibregl);
     const map = new maplibregl.Map({
       container: containerRef.current,
-      style: MAP_STYLES[basemap] || MAP_STYLE,
+      style: carta ? cartaMapStyle() : (MAP_STYLES[basemap] || MAP_STYLE),
       center: [10, 48],
       zoom: 3.6,
       attributionControl: { compact: true },
@@ -328,6 +334,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
       ...(mapLocale ? { locale: mapLocale } : {}),
     });
     houseBasemap(map);
+    if (carta) basemapFallback(map, { onFallback: () => { if (containerRef.current) containerRef.current.dataset.basemap = 'carto'; } });
     if (zoomControls) {
       map.addControl(new maplibregl.NavigationControl({ showCompass: false, showZoom: true }), 'top-right');
     }

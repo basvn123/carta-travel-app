@@ -15,7 +15,8 @@ import { landShare, plateColours, stateOf } from './plateData.js';
  * page. It mounts once; the plate inside changes with the tab, and the
  * routes draw in only when the tab changes, never at first paint.
  *
- * Saved draws nothing here yet: its live map comes in Phase D.
+ * Saved (Phase D): the whole plate when nothing is saved, else a host the
+ * Saved tab portals its live map into (savedHost), so MapLibre loads only there.
  *
  *   trips    tripsLayer() output
  *   europe   europeLayer() output plus { been, next, viaTrip, total }
@@ -23,7 +24,7 @@ import { landShare, plateColours, stateOf } from './plateData.js';
  *   onToggleCountry(iso)  a hand mark (T972, useVisitedCountries)
  *   onList, listRef       "Countries as a list" (VisitedCountriesSheet)
  */
-export function AtlasSlot({ tab, geo, trips, europe, year = null, onYear, onToggleCountry, onList, listRef, children }) {
+export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, year = null, onYear, onToggleCountry, onList, listRef, children }) {
   const { t } = useI18n();
   const [picked, setPicked] = useState('');
   const first = useRef(tab);
@@ -35,6 +36,19 @@ export function AtlasSlot({ tab, geo, trips, europe, year = null, onYear, onTogg
     setPicked('');
   }, [tab]);
   const share = useMemo(() => (europe ? landShare(geo, europe.been) : 0), [geo, europe]);
+  if (tab === 'saved') {
+    if (savedEmpty) {
+      const L = { whole: true, state: 'empty', summary: { key: 'mt.mapTripsEmpty' } };
+      return (
+        <div className="atlas-slot is-saved is-empty">
+          <div className="atlas-map" style={plateColours()}>
+            <AtlasPlate geo={geo} layer={L} label={t('mt.mapSavedEmpty')} drawKey={drawKey} cornerT={{ n: 'N', s: t('mt.compassS'), e: t('mt.compassE'), w: t('mt.compassW') }} />
+          </div>
+        </div>
+      );
+    }
+    return <div className="atlas-slot is-saved"><div className="atlas-map atlas-live" ref={savedHost} /></div>;
+  }
   if (tab !== 'trips' && tab !== 'europe') return null;
 
   const nf = (n, d = 0) => Number(n).toLocaleString(activeLocale(), { maximumFractionDigits: d });

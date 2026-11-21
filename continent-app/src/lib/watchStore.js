@@ -70,7 +70,7 @@ export const latest = (item) => (item?.pts?.length ? item.pts[item.pts.length - 
 
 /* ---- the device store ---- */
 
-const browserStorage = () => { try { return typeof window !== 'undefined' ? window.localStorage : null; } catch { return null; } };
+export const browserStorage = () => { try { return typeof window !== 'undefined' ? window.localStorage : null; } catch { return null; } };
 
 export function readWatchState(storage = browserStorage()) {
   try {

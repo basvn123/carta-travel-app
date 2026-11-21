@@ -66,3 +66,11 @@ export const stepNights = (delta) => (prev) => {
   const next = clampNights(now + delta);
   return next === now ? prev : withTripNights(next)(prev);
 };
+
+/** The basis a saved price stood on: the month and the stay style. A saved
+ *  row hides its move when today's basis differs (Revision 2). */
+export const basisOf = (choices) => {
+  const m = asModel(choices);
+  const month = m.month || String(m.start || '').slice(0, 7);
+  return `${month}|${choices?.stay_tier || m.stayTier || ''}`;
+};
