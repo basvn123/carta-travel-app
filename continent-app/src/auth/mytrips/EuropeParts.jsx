@@ -11,6 +11,7 @@ import { activeLocale } from '../../lib/localeState.js';
 import { EuropeMap } from './atlas/AtlasPlate.jsx';
 import { CardMenu } from './parts.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
+import { YearCard } from './YearStudio.jsx';
 
 /**
  * The parts of Your Europe with a record (G12 Phase E), drawn as the
@@ -265,35 +266,21 @@ export function Badges({ items }) {
   );
 }
 
-/** Jouw jaarkaart: a live preview of the year card, Aanpassen and Delen. */
-export function YearCardSection({ card, geo, onEdit, onShare, busy = false }) {
+/** Jouw jaarkaart: the studio's card as a live preview, Aanpassen and Delen.
+ *  The example card offers Download only (it is not the traveller's year). */
+export function YearCardSection({ model, geo, onEdit, onShare, busy = false, example = '' }) {
   const { t } = useI18n();
-  const mx = Math.max(1, ...card.months);
-  const nums = [
-    [card.countries.length, t(card.countries.length === 1 ? 'mt.ycLand1' : 'mt.ycLandN')],
-    [card.nights, t('mt.ycNights')],
-    [card.trips.length, t(card.trips.length === 1 ? 'mt.ycTrip1' : 'mt.ycTripN')],
-    ...(card.avgGrade != null ? [[nf(card.avgGrade, 1), t('mt.ycGrade')]] : []),
-  ];
-  const been = new Set(card.countries);
   return (
     <Sect id="mt-yc-h" full title={t('mt.yearCard')}>
       <div className="atlas-yc-wrap">
         <Pressable className="atlas-ycbtn" aria-label={t('mt.yearCardEdit')} onClick={onEdit}>
-          <span className="atlas-yc" aria-hidden="true">
-            <span className="atlas-yc-h"><small>Carta</small><b>{t('mt.ycIn', { year: card.year })}</b></span>
-            <span className="atlas-yc-map">
-              <EuropeMap geo={geo} been={been} next={new Set()} saved={new Set()} label="" viewBox="70 60 890 940" showSaved={false} />
-            </span>
-            <span className="atlas-yc-f">
-              <span className="atlas-yc-nums">{nums.map(([v, l]) => <span key={l}><b>{v}</b>{l}</span>)}</span>
-              <span className="atlas-yc-mo">{card.months.map((v, i) => <i key={i} className={v ? 'is-on' : ''} style={{ height: `${v ? Math.max(4, (20 * v) / mx) : 2}px` }} />)}</span>
-            </span>
-          </span>
+          <YearCard model={model} geo={geo} width={210} example={example} />
         </Pressable>
         <div className="atlas-yc-acts">
           <Pressable className="atlas-btn is-soft" onClick={onEdit}><PencilIcon size={16} />{t('mt.adjust')}</Pressable>
-          <Pressable className="atlas-btn is-primary" onClick={onShare} aria-busy={busy}><ShareIcon size={16} />{t('mt.share')}</Pressable>
+          <Pressable className="atlas-btn is-primary" onClick={onShare} aria-busy={busy}>
+            {example ? t('mt.download') : <><ShareIcon size={16} />{t('mt.share')}</>}
+          </Pressable>
         </div>
       </div>
     </Sect>
@@ -315,7 +302,7 @@ export function PastRow({ x }) {
           <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={160} ratio={[1, 1]} sizes="56px" />
         </span>
         <span className="atlas-prow-t">
-          <b>{x.title} {(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={14} />)}</b>
+          <b><span className="atlas-prow-name">{x.title}</span>{(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={14} />)}</b>
           <span className="atlas-prow-m">
             {meta}
             {x.vs != null && Math.round(x.vs) !== 0 && (

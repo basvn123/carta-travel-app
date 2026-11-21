@@ -187,7 +187,7 @@ function SavedItem({
 export function SavedTab({
   rows: ownRows, saved, costs, destinations = {}, loading, onOpen, onRemove, onPlan, onBrowse, onUndo, top = null, mapLocale,
   shared = null, friends = [], sharedRows = null, heldKey = '',
-  choices = null, setChoices = null, example = false, onExample = null, onExampleClose = null, exampleRows = [], mapHost = null,
+  choices = null, setChoices = null, example = false, onExample = null, onExampleClose = null, exampleRows = [], mapHost = null, initialCc = '', onCcUsed = null,
 }) {
   const { t } = useI18n();
   // The rows' figures follow the traveller's price view, so their unit must too:
@@ -195,7 +195,9 @@ export function SavedTab({
   const basis = basisOf(choices);
   const watched = useWatched({ sync: !example });
   const [watchOpen, setWatchOpen] = useState(null);
-  const [cc, setCc] = useState('');
+  const [cc, setCc] = useState(initialCc || '');
+  // A country handed in once (the country sheet's Show saved) is taken, then let go.
+  useEffect(() => { if (initialCc) { setCc(initialCc); onCcUsed?.(); } }, [initialCc]); // eslint-disable-line react-hooks/exhaustive-deps -- runs per hand-off
   const [list, setList] = useState('all');
   const [kind, setKind] = useState('all');
   const [fell, setFell] = useState(false);

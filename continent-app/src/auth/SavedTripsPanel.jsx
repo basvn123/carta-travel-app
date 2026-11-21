@@ -52,7 +52,7 @@ import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
   nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan, readinessSteps, tripStops,
-  isHappening, tripToday, europeMilestones, europeMoney, planBedNudge,
+  isHappening, tripToday, europeMilestones, planBedNudge,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
@@ -63,9 +63,11 @@ import { YourEurope } from './mytrips/YourEurope.jsx';
 import { AtlasSlot } from './mytrips/atlas/AtlasSlot.jsx';
 import { useEuropeMap, NAME_OF } from './mytrips/atlas/plateData.js';
 import { tripsLayer, europeLayer } from './mytrips/atlas/layers.js';
-import { YearRecap, shareRecap } from './mytrips/YearRecap.jsx';
+import { exportYearCard } from './mytrips/YearRecap.jsx';
+import { YearStudio } from './mytrips/YearStudio.jsx';
+import { defaultStudio, yearCardModel } from './mytrips/yearCardModel.js';
 import { CountrySheet } from './mytrips/EuropeParts.jsx';
-import { tripYear } from '../lib/atlasFacts.js';
+import { tripYear, yearCard } from '../lib/atlasFacts.js';
 import { publishTasteInputs } from './mytrips/tasteInputs.js';
 import { AddBookingSheet } from './mytrips/AddBookingSheet.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
@@ -362,7 +364,15 @@ export function SavedTripsPanel({
   const [friends, setFriends] = useState([]);
   const [friendTrips, setFriendTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
-  const [recapOpen, setRecapOpen] = useState(false);
+  // G12 Phase F: the year card studio's choices and the traveller's own
+  // upload (a data URL held in memory on this device, never sent).
+  const [yc, setYc] = useState(defaultStudio);
+  const [studioOpen, setStudioOpen] = useState(false);
+  const [ycUpload, setYcUpload] = useState('');
+  const [ycBusy, setYcBusy] = useState('');
+  const [ycNote, setYcNote] = useState('');
+  // "Toon bewaard" from a country sheet opens Saved filtered to that country.
+  const [savedCc, setSavedCc] = useState('');
   // T927: the Add a booking sheet, opened from the header or a trip's
   // readiness, with the trip it was opened from.
   const [book, setBook] = useState(null);
@@ -1163,8 +1173,10 @@ export function SavedTripsPanel({
   // Saved's example: the catalogue's top places by Score, real figures,
   // never saved or counted (G12 Phase D).
   const exampleSaved = useMemo(() => (example && !shortRows.length ? Object.values(destinations || {})
-    .filter((d) => d?.id && Number.isFinite(d.rating) && costs?.get?.(d.id))
-    .sort((a, b) => b.rating - a.rating)
+    // The Score lives in rating.score (an object), so the old number check
+    // never matched and the example stayed empty; a priced place goes first.
+    .filter((d) => d?.id && Number.isFinite(d.rating?.score))
+    .sort((a, b) => (costs?.get?.(b.id) ? 1 : 0) - (costs?.get?.(a.id) ? 1 : 0) || b.rating.score - a.rating.score)
     .slice(0, 10)
     .map((d) => ({ key: `ex:${d.id}`, kind: 'dest', id: d.id, cc: d.iso2 || '', name: d.city || d.id, img: resolveImage({ ids: [d.id], cities: [d.city], countries: [d.country] }) }))
     : []), [example, shortRows.length, destinations, costs, resolveImage]);
@@ -1244,18 +1256,6 @@ export function SavedTripsPanel({
     });
   }, [pastTrips, beenIso, nextIsoAll.join(','), destCoords, destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the codes
 
-  // The journal: each past trip with its cover, its photos, what a day cost
-  // a person against Carta's estimate, how it was, and the two invitations.
-  const journal = useMemo(() => {
-    const groups = [];
-    pastTrips.forEach((x) => {
-      const y = yearOf(x.end);
-      let g = groups.find((v) => v.year === y);
-      if (!g) { g = { year: y, items: [] }; groups.push(g); }
-      g.items.push(x);
-    });
-    return groups;
-  }, [pastTrips]);
   const journalItem = (x) => {
     const row = recordRow({ kind: x.kind, item: x.item });
     const mem = x.mem;
@@ -1276,32 +1276,6 @@ export function SavedTripsPanel({
     };
   };
 
-  // Your year in Europe: this year once it has a trip, else the latest one.
-  const recap = useMemo(() => {
-    const thisYear = Number(todayIso.slice(0, 4));
-    const years = journal.map((g) => g.year).filter(Boolean);
-    const year = years.includes(thisYear) ? thisYear : years[0];
-    if (!year) return null;
-    const trips = pastTrips.filter((x) => yearOf(x.end) === year);
-    const rec = visitedRecord({
-      pastPlans: trips.filter((x) => x.kind === 'plan').map((x) => x.item),
-      pastDayPlans: trips.filter((x) => x.kind === 'day').map((x) => x.item),
-      memories: Object.fromEntries(trips.filter((x) => x.mem).map((x) => [x.id, x.mem])),
-      destinations,
-    });
-    const m = europeMoney(trips, { greatScore: BAND_CUTOFFS.excellent });
-    const loved = trips.filter((x) => Number.isFinite(x.mem?.rating)).sort((a, b) => b.mem.rating - a.mem.rating)[0];
-    // Only the traveller's own photo can go on the image: a catalogue photo
-    // is another site's and would taint the canvas.
-    const own = trips.map((x) => coverPhoto(x.mem)).find((src) => src && (src.startsWith('data:') || src.startsWith('/')));
-    return {
-      year, trips: trips.length, countries: rec.countries.length, nights: rec.nights,
-      avgDay: m.avgDay, cheapestGreat: m.cheapestGreat ? { ...m.cheapestGreat } : null,
-      best: loved ? { title: loved.title, rating: loved.mem.rating } : null,
-      photo: own || null,
-      img: trips.map((x) => coverPhoto(x.mem)).find(Boolean) || resolveImage({ ids: trips[0]?.ids || [] }),
-    };
-  }, [journal, pastTrips, destinations, todayIso, resolveImage]);
 
   // G12 Phase E: the example record's milestones, the past trips as rows,
   // the country sheet and the year card's Delen.
@@ -1354,12 +1328,27 @@ export function SavedTripsPanel({
     if (!x) { openPastForm(null); return; }
     openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, x.mem) : editableFromDayPlan(x.item, x.mem));
   };
-  const [sharing, setSharing] = useState(false);
-  const shareYear = recap && !euExample ? async () => {
-    setSharing(true);
-    await shareRecap({ recap, t });
-    setSharing(false);
-  } : null;
+  // The year card (G12 Phase F): the studio's year, else the map's filter, else the latest.
+  const ycCard = useMemo(() => yearCard(euTrips, yc.year ?? atlasYear), [euTrips, yc.year, atlasYear]);
+  const ycModel = useMemo(() => {
+    const mf = new Intl.DateTimeFormat(activeLocale(), { month: 'long', timeZone: 'UTC' });
+    return yearCardModel(ycCard, yc, {
+      t,
+      nf: (n, d) => Number(n).toLocaleString(activeLocale(), { minimumFractionDigits: d, maximumFractionDigits: d }),
+      money: formatMoney,
+      month: (i) => mf.format(Date.UTC(2020, i, 1)),
+    });
+  }, [ycCard, yc, t]);
+  // Only the traveller's own photos: a catalogue photo is another site's and would taint the canvas.
+  const ycPhotos = useMemo(() => (euExample ? [] : [...new Set(pastTrips.map((x) => coverPhoto(x.mem))
+    .filter((src) => src && (src.startsWith('data:') || src.startsWith('/'))))].slice(0, 8)), [euExample, pastTrips]);
+  const ycExample = euExample ? t('mt.example') : '';
+  const ycExport = async (share) => {
+    setYcBusy(share ? 'share' : 'download');
+    const r = await exportYearCard({ model: ycModel, geo: atlasGeo, share, exampleLabel: ycExample });
+    setYcBusy('');
+    setYcNote(r === 'saved' ? t('mt.stSaved') : r === 'failed' ? t('mt.stFailed') : '');
+  };
   const [country, setCountry] = useState('');
   const countryInfo = useMemo(() => {
     if (!country) return null;
@@ -1531,6 +1520,8 @@ export function SavedTripsPanel({
               onExample={() => setExample(true)}
               onExampleClose={() => setExample(false)}
               exampleRows={exampleSaved}
+              initialCc={savedCc}
+              onCcUsed={() => setSavedCc('')}
               mapHost={savedMapEl}
               top={(
                 <>
@@ -1542,10 +1533,7 @@ export function SavedTripsPanel({
               )}
             />
           )}
-          {tab === 'europe' && recapOpen && recap && (
-            <YearRecap recap={recap} onBack={() => setRecapOpen(false)} />
-          )}
-          {tab === 'europe' && !(recapOpen && recap) && (
+          {tab === 'europe' && (
             <YourEurope
               trips={euTrips}
               year={atlasYear}
@@ -1557,9 +1545,11 @@ export function SavedTripsPanel({
               past={pastRows}
               onGrade={gradeTrip}
               onFill={fillSpend}
-              onRecap={recap && !euExample ? () => setRecapOpen(true) : null}
-              onShare={shareYear}
-              sharing={sharing}
+              ycModel={ycModel}
+              ycExample={ycExample}
+              onRecap={() => { setYcNote(''); setStudioOpen(true); }}
+              onShare={() => ycExport(!ycExample)}
+              sharing={!!ycBusy}
               onAddPast={() => openPastForm(null)}
               pastForm={pastForm}
               error={tripPlansError}
@@ -1578,13 +1568,33 @@ export function SavedTripsPanel({
             info={countryInfo}
             onClose={() => setCountry('')}
             onToggle={(cc) => { toggleIso(cc); setCountry(''); }}
-            onShowSaved={() => { setCountry(''); pickTab('saved'); }}
+            onShowSaved={() => { setSavedCc(countryInfo.cc); setCountry(''); pickTab('saved'); }}
             onPlan={() => {
               const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc).map((r) => r.id);
               setCountry('');
               if (stops.length && onPlanStops) onPlanStops(stops);
               else onGoToTab?.('planstart');
             }}
+          />
+        )}
+        {studioOpen && tab === 'europe' && ycCard.year != null && (
+          <YearStudio
+            model={ycModel}
+            geo={atlasGeo}
+            cfg={yc}
+            onCfg={(patch) => setYc((cur) => ({ ...cur, ...patch }))}
+            years={ycCard.years}
+            year={ycCard.year}
+            hasMoney={ycCard.hasMoney}
+            photos={ycPhotos}
+            upload={ycUpload}
+            onUpload={setYcUpload}
+            onClose={() => setStudioOpen(false)}
+            onDownload={() => ycExport(false)}
+            onShare={() => ycExport(true)}
+            busy={ycBusy}
+            note={ycNote}
+            example={ycExample}
           />
         )}
         {countriesOpen && (

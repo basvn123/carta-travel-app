@@ -3,7 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { EyeIcon, PlusIcon } from '../../components/Icons.jsx';
 import { countryName } from '../../lib/countryName.js';
-import { extremes, nightsPerMonth, nightsPerYear, tripLogOrder, tripYear, yearCard } from '../../lib/atlasFacts.js';
+import { extremes, nightsPerMonth, nightsPerYear, tripLogOrder, tripYear } from '../../lib/atlasFacts.js';
 import { NAME_OF } from './atlas/plateData.js';
 import { ExampleBar, RateTrip } from './TripParts.jsx';
 import {
@@ -51,7 +51,7 @@ function badgeOf(t, m, fmtMonth) {
  */
 export function YourEurope({
   trips = [], year = null, onYear, ramp = {}, geo, milestones = [], countries = 0, past = [],
-  onGrade, onFill, onRecap, onShare, sharing = false, onAddPast, pastForm, error, fmtMonth,
+  onGrade, onFill, onRecap, onShare, sharing = false, ycModel = null, ycExample = '', onAddPast, pastForm, error, fmtMonth,
   example = false, onExample, onExampleClose,
 }) {
   const { t } = useI18n();
@@ -63,7 +63,6 @@ export function YourEurope({
   const months = useMemo(() => nightsPerMonth(trips, { year }), [trips, year]);
   const ex = useMemo(() => (tv.length > 1 ? extremes(tv) : null), [tv]);
   const log = useMemo(() => tripLogOrder(trips), [trips]);
-  const card = useMemo(() => yearCard(trips, year), [trips, year]);
 
   if (!has && !pastForm && !error) {
     return (
@@ -109,8 +108,8 @@ export function YourEurope({
     </Sect>
   );
   const first = trips.length < 3;
-  const yc = card.year != null ? (
-    <YearCardSection card={card} geo={geo} onEdit={onRecap} onShare={onShare} busy={sharing} />
+  const yc = ycModel ? (
+    <YearCardSection model={ycModel} geo={geo} onEdit={onRecap} onShare={onShare} busy={sharing} example={ycExample} />
   ) : null;
   const logSect = <TripLog rated={rated} unrated={log.unrated} ask={ask} onAsk={setAskId} rate={rate} />;
   const cost = (
