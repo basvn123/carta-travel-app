@@ -69,7 +69,7 @@ export function SharedItem({
           {Number.isFinite(fig) && <b className="mt-item-fig num">{formatMoney(fig)}</b>}
         </span>
         {Number.isFinite(bed) && Number.isFinite(food) && (
-          <span className="mt-scard-sub">{t('mt.bedFood', { bed: formatMoney(bed), food: formatMoney(food) })}</span>
+          <span className="mt-scard-sub mt-scard-cost">{t('mt.bedFood', { bed: formatMoney(bed), food: formatMoney(food) })}</span>
         )}
         {by && (
           <span className="mt-scard-sub mt-shared-by">

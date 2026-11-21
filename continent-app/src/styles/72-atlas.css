@@ -1546,7 +1546,9 @@
 /* ==== G12 polish: four My trips lists in one row language (owner approved 2026-11-21) ==== */
 
 /* The People button and its menu (Voor 1 persoon / Voor N personen). */
-.mt-who { position: relative; flex: none; }
+/* The menu anchors to the control row, not the button, so it never runs off a phone. */
+.atlas-pricectl { position: relative; }
+.mt-who { position: static; flex: none; }
 .mt-whobtn {
   display: inline-flex;
   align-items: center;
@@ -1564,13 +1566,13 @@
 .mt-whobtn b { color: var(--umber-800); }
 .mt-who-menu {
   position: absolute;
-  inset-inline-end: 0;
+  inset-inline-start: 0;
   top: calc(100% + 6px);
   z-index: 5;
   display: grid;
   gap: 2px;
   min-width: 230px;
-  max-width: calc(100vw - 2 * var(--gutter));
+  max-width: 100%;
   padding: var(--space-2);
   border-radius: var(--radius-panel);
   background: var(--surface);
@@ -1717,11 +1719,13 @@
 .mt-scard-note > svg { flex: none; }
 form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 @media (min-width: 1100px) {
-  .mt-saved .mt-items.is-shared-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  /* Two cards a row in the 540 px column, so the vote, the faces and the menu keep one line. */
+  .mt-saved .mt-items.is-shared-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
   .mt-saved .mt-item.is-shared, .mt-saved .mt-item.is-shared.is-choosing {
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas: 'ph' 'tx' 'nt';
     padding: 0;
+    align-content: start;
     border-bottom: 0;
   }
   .mt-saved .mt-item.is-shared.is-choosing { grid-template-areas: 'ck' 'ph' 'tx' 'nt'; }
@@ -1781,3 +1785,53 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .atlas-prow-m .atlas-move { white-space: normal; }
 .atlas-prow-end .mt-menu { margin-inline-end: -10px; }
 .mt-scard-acts { flex-wrap: wrap; row-gap: var(--space-1); }
+
+/* Names are never cut short of two lines (owner review): past trips put the name on its own line,
+   the flags beside the nights, the estimate chip under them; Saved names wrap the same way. */
+.atlas-prow-t .atlas-prow-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.25;
+}
+.atlas-prow-m { gap: 6px; }
+.atlas-prow-est { display: flex; }
+.atlas-prow-end { align-self: center; }
+.mt-saved .btn.mt-item-name .btn-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+/* Desktop shared cards line up (owner review): each card spans six rows of the list's grid and takes them
+   as a subgrid, so the photo, name line, bed and food, "door", the vote row and the note sit at the same y
+   in every card of a row, and a card without a note ends at the same height as one with. */
+@media (min-width: 1100px) {
+  .mt-saved .mt-items.is-shared-grid { row-gap: 0; column-gap: 22px; align-items: stretch; }
+  .mt-saved .mt-items.is-shared-grid > .mt-item.is-shared,
+  .mt-saved .mt-items.is-shared-grid > .mt-item.is-shared.is-choosing {
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    grid-template-areas: none;
+    row-gap: var(--space-2);
+    align-content: normal;
+    padding-bottom: 22px;
+  }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-scard-tx { display: contents; }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-item-media { grid-area: auto; grid-row: 1; grid-column: 1; }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-item-check { grid-area: auto; grid-row: 1; grid-column: 1; align-self: start; justify-self: start; z-index: 1; margin: var(--space-2); border-radius: var(--radius-control); background: var(--surface); }
+  .mt-items.is-shared-grid .mt-scard-top { grid-row: 2; grid-column: 1; align-items: baseline; }
+  .mt-items.is-shared-grid .mt-scard-cost { grid-row: 3; grid-column: 1; }
+  .mt-items.is-shared-grid .mt-shared-by { grid-row: 4; grid-column: 1; }
+  .mt-items.is-shared-grid .mt-scard-acts { grid-row: 5; grid-column: 1; margin-top: 0; padding-top: var(--space-1); flex-wrap: nowrap; }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-scard-note { grid-area: auto; grid-row: 6; grid-column: 1; align-self: start; }
+}

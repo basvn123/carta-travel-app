@@ -64,6 +64,10 @@ const monthName = (m, style = 'long') => {
   try { return new Date(Date.UTC(2026, m - 1, 15)).toLocaleDateString(activeLocale(), { month: style, timeZone: 'UTC' }); } catch { return ''; }
 };
 
+/** A row's kind in the singular ("Plek"); the filter chips keep the plural. */
+const KIND_ONE = new Set(['dest', 'trip', 'journey', 'region', 'trail', 'beach', 'lake', 'mountain', 'cycle']);
+const kindOne = (t, kind) => (KIND_ONE.has(kind) ? t(`mt.kindOne.${kind}`) : FAV_KIND_LABEL[kind] ? t(FAV_KIND_LABEL[kind]) : '');
+
 /** A list's cover: its first four photos as a 2 x 2 mosaic. */
 function Mosaic({ rows }) {
   const four = rows.slice(0, 4);
@@ -123,7 +127,7 @@ function SavedItem({
         <span className="mt-item-line">
           {dest?.rating && <ScorePlate rating={dest.rating} />}
           {/* A place's sub is its country, which the flag already says. */}
-          <span className="mt-item-kind">{[FAV_KIND_LABEL[row.kind] ? t(FAV_KIND_LABEL[row.kind]) : '', row.kind === 'dest' ? '' : row.sub].filter(Boolean).join(', ')}</span>
+          <span className="mt-item-kind">{[kindOne(t, row.kind), row.kind === 'dest' ? '' : row.sub].filter(Boolean).join(', ')}</span>
           {move ? (
             <MovePill delta={move}>
               {t(move < 0 ? 'mt.lowerSince' : 'mt.higherSince', { price: formatMoney(Math.abs(move)), date: sinceDay(change.at) })}

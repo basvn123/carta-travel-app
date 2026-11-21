@@ -313,16 +313,19 @@ export function PastRow({ x, top = false, rating = false, onRateOpen, onRate }) 
           <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={240} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />
         </span>
         <span className="atlas-prow-t">
-          <b><span className="atlas-prow-name">{x.title}</span>{(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={16} />)}</b>
+          <b className="atlas-prow-name">{x.title}</b>
           <span className="atlas-prow-m">
+            {(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={16} />)}
             {meta}
-            {x.vs != null && Math.round(x.vs) !== 0 && (
+          </span>
+          {x.vs != null && Math.round(x.vs) !== 0 && (
+            <span className="atlas-prow-est">
               <span className={`atlas-move${x.vs > 0 ? ' is-up' : ''}`}>
                 {x.vs < 0 ? <ArrowDownIcon size={12} /> : <ArrowUpIcon size={12} />}
                 {t(x.vs < 0 ? 'mt.vsUnder' : 'mt.vsOver', { price: formatMoney(Math.abs(x.vs)) })}
               </span>
-            )}
-          </span>
+            </span>
+          )}
         </span>
       </Pressable>
       <span className="atlas-prow-end">
