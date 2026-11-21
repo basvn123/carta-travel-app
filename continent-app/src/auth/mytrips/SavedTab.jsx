@@ -2,6 +2,7 @@ import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'rea
 import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Chip, ChipGroup, Field, ScorePlate } from '../../components/ui/index.js';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { PriceControl, ExampleBar } from './TripParts.jsx';
@@ -79,7 +80,7 @@ function Mosaic({ rows }) {
  *  move since the save, the cheapest month when it is not the When month,
  *  the traveller's note, today's figure, a menu (lists, note, remove). */
 function SavedItem({
-  row, meta, cost, choices, basis, dest, lists, shared = [], me = null, onShared = null, selected, onSelect, onOpen, onRemove, active, itemRef,
+  row, meta, cost, choices, basis, dest, lists, shared = [], me = null, onShared = null, choosing = false, selected, onSelect, onOpen, onRemove, active, itemRef,
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
@@ -98,14 +99,17 @@ function SavedItem({
   const inLists = [...lists.filter((l) => l.keys.includes(k)), ...shared.filter(inShared)];
   const cbId = `mt-sel-${k.replace(/[^\w-]/g, '_')}`;
   return (
-    <li className={`mt-item${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}`} ref={itemRef}>
-      <span className="mt-item-check">
-        <input type="checkbox" id={cbId} checked={selected} onChange={() => onSelect(k)} disabled={row.missing} />
-        <label htmlFor={cbId} className="sr-only">{t('mt.selectItem', { name: row.name || row.id })}</label>
-      </span>
+    <li className={`mt-item${choosing ? ' is-choosing' : ''}${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}`} ref={itemRef}>
+      {/* The select box waits for Kiezen (G12 polish): the same function, behind one tap. */}
+      {choosing && (
+        <span className="mt-item-check">
+          <input type="checkbox" id={cbId} checked={selected} onChange={() => onSelect(k)} disabled={row.missing} />
+          <label htmlFor={cbId} className="sr-only">{t('mt.selectItem', { name: row.name || row.id })}</label>
+        </span>
+      )}
       {/* The photo opens the thing for a pointer; the keyboard has its name. */}
       <span className="mt-item-media" onClick={() => !row.missing && onOpen(row)} aria-hidden="true">
-        <HeroImage url={row.img} city={row.name || row.id} iso2={row.cc} className="mt-item-img" maxWidth={330} ratio={[1, 1]} sizes="88px" />
+        <HeroImage url={row.img} city={row.name || row.id} iso2={row.cc} className="mt-item-img" maxWidth={330} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />
       </span>
       <div className="mt-item-body">
         <span className="mt-item-title">
@@ -114,7 +118,7 @@ function SavedItem({
           ) : (
             <Button variant="quiet" className="mt-item-name" onClick={() => onOpen(row)}>{row.name || row.id}</Button>
           )}
-          {row.cc && <CountryFlag country={row.cc} size={14} />}
+          {row.cc && <CountryFlag country={row.cc} size={16} />}
         </span>
         <span className="mt-item-line">
           {dest?.rating && <ScorePlate rating={dest.rating} />}
@@ -205,6 +209,8 @@ export function SavedTab({
   const [fell, setFell] = useState(false);
   const [view, setView] = useState('list');
   const [sel, setSel] = useState([]);
+  // Choose mode (G12 polish): Kiezen shows the select boxes, Klaar hides them and lets the picks go.
+  const [choosing, setChoosing] = useState(false);
   const [naming, setNaming] = useState(null); // null, 'new' or a list id
   const [name, setName] = useState('');
   const [active, setActive] = useState('');
@@ -489,10 +495,19 @@ export function SavedTab({
         </Button>
       </div>
 
-      <div className={`mt-split is-${view}`}>
+      {shown.length > 0 && (
+        <div className="mt-listhead">
+          <b>{t(shown.length === 1 ? 'mt.saves1' : 'mt.savesN', { n: shown.length })}</b>
+          <Pressable className="mt-kies" aria-pressed={choosing}
+            onClick={() => { if (choosing) setSel([]); setChoosing((v) => !v); }}>
+            {t(choosing ? 'saved.done' : 'mt.choose')}
+          </Pressable>
+        </div>
+      )}
+      <div className={`mt-split is-${view}${mapHost ? ' is-hosted' : ''}`}>
         <div className="mt-split-list">
           {shown.length ? (
-            <ul className="mt-items">
+            <ul className={`mt-items${currentShared ? ' is-shared-grid' : ''}`}>
               {shown.map((r) => {
                 const k = metaKey(r);
                 if (r.shared) {
@@ -503,6 +518,8 @@ export function SavedTab({
                       item={r.shared}
                       row={r}
                       cost={costOf(r)}
+                      choices={choices}
+                      choosing={choosing}
                       me={me}
                       act={act}
                       selected={sel.includes(k)}
@@ -525,6 +542,7 @@ export function SavedTab({
                     shared={act ? sharedLists : []}
                     me={me}
                     onShared={onShared}
+                    choosing={choosing}
                     selected={sel.includes(k)}
                     active={active === k}
                     onSelect={toggleSel}
@@ -546,7 +564,7 @@ export function SavedTab({
         </div>
       </div>
 
-      {sel.length > 0 && (
+      {choosing && sel.length > 0 && (
         <div className="mt-selbar" role="region" aria-label={t('mt.selection')}>
           <span className="mt-selbar-text">
             <CheckIcon size={16} />

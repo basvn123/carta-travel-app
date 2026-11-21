@@ -174,13 +174,13 @@ export function whenText(t, when) {
 }
 
 /** Initials in rings, the people on a trip; nothing when there is nobody. */
-export function Faces({ people = [], max = 4 }) {
+export function Faces({ people = [], max = 4, me = null }) {
   if (!people.length) return null;
   const shown = people.slice(0, max);
   return (
     <span className="mt-faces" aria-hidden="true">
       {shown.map((p) => (
-        <span className="mt-face" key={p.id || p.name} title={p.name}>{p.initials || <PersonIcon size={12} />}</span>
+        <span className={`mt-face${me && p.id === me ? ' is-me' : ''}`} key={p.id || p.name} title={p.name}>{p.initials || <PersonIcon size={12} />}</span>
       ))}
       {people.length > shown.length && <span className="mt-face is-more">+{people.length - shown.length}</span>}
     </span>

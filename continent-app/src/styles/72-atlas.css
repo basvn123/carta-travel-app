@@ -1542,3 +1542,242 @@
   .atlas-body .maplibregl-ctrl,
   .atlas-body .maplibregl-ctrl-group { transition: none; }
 }
+
+/* ==== G12 polish: four My trips lists in one row language (owner approved 2026-11-21) ==== */
+
+/* The People button and its menu (Voor 1 persoon / Voor N personen). */
+.mt-who { position: relative; flex: none; }
+.mt-whobtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 var(--space-3) 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mt-whobtn b { color: var(--umber-800); }
+.mt-who-menu {
+  position: absolute;
+  inset-inline-end: 0;
+  top: calc(100% + 6px);
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+  min-width: 230px;
+  max-width: calc(100vw - 2 * var(--gutter));
+  padding: var(--space-2);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  animation: hs-settle-in var(--dur-paint) var(--ease-out);
+}
+.mt-who-h { padding: 6px 10px 4px; font-size: var(--text-caption); font-weight: 800; color: var(--text-3); }
+.mt-who-menu > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: 700 var(--text-body) / 1 var(--ui);
+  text-align: start;
+  cursor: pointer;
+}
+@media (hover: hover) { .mt-who-menu > button:hover { background: var(--surface-page); } }
+.mt-who-menu > button[aria-pressed="true"] { background: var(--umber-100); color: var(--umber-800); }
+.mt-who-menu > button small { margin-inline-start: auto; font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.mt-who-step { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); padding: var(--space-2) 10px 2px; border-top: 1px solid var(--border-soft); }
+.mt-who-step > span { flex: 1; font-size: var(--text-label); font-weight: 700; }
+.mt-who-step b { min-width: 2ch; text-align: center; }
+.mt-who-step button {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  cursor: pointer;
+}
+.mt-who-step button:disabled { color: var(--text-3); cursor: default; }
+.mt-whobtn:focus-visible, .mt-who-menu button:focus-visible, .mt-kies:focus-visible, .mt-vote:focus-visible,
+.mt-scard-note:focus-visible, .atlas-rateit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+
+/* The lists rail: 16 px between covers, 3 px between photos, starting on the gutter; the ring sits 3 px out. */
+.mt-saved .mt-lists.atlas-rail {
+  gap: var(--space-4);
+  margin-inline: calc(-1 * var(--gutter));
+  padding: 6px var(--gutter) 10px;
+  scroll-padding-inline: var(--gutter);
+}
+.mt-saved .btn.mt-lcard { width: 150px; }
+.mt-saved .mt-mosaic { gap: 3px; border-radius: var(--radius-card); }
+.mt-saved .btn.mt-lcard[aria-pressed="true"] .mt-mosaic { outline: 2.5px solid var(--umber-600); outline-offset: 3px; }
+.mt-saved .mt-lcard-name { font-weight: 800; }
+.mt-saved .mt-mosaic.is-new { border: 1.5px solid var(--border); color: var(--text-2); }
+
+/* The list head: the count and Kiezen / Klaar. */
+.mt-listhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: var(--space-2); }
+.mt-listhead b { font-size: var(--text-lead); }
+.mt-kies {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--umber-800);
+  font: 700 var(--text-label) / 1 var(--ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Saved rows: the shared media row, a 96 px photo (120 x 90 from 1100); no select box until Kiezen. */
+.mt-saved .mt-item:not(.is-shared) { grid-template-columns: 96px minmax(0, 1fr) auto auto; gap: 14px; }
+.mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 96px minmax(0, 1fr) auto auto; }
+.mt-saved .mt-item-media { width: 96px; height: 96px; border-radius: var(--radius-card); }
+.mt-saved .mt-item-check { width: 32px; height: auto; align-self: center; }
+.mt-saved .mt-item-check input { width: 22px; height: 22px; }
+.mt-saved .mt-item-fig:not(.mt-muted) { font-size: var(--text-title); }
+.mt-saved .mt-item-fig.mt-muted { font-weight: 700; color: var(--text-3); }
+@media (min-width: 1100px) {
+  .mt-saved .mt-item:not(.is-shared) { grid-template-columns: 120px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 120px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item:not(.is-shared) .mt-item-media { width: 120px; height: 90px; }
+}
+
+/* A shared list: a 120 px photo and one column; the vote at the photo's bottom edge; the note full width. */
+.mt-saved .mt-item.is-shared {
+  grid-template-columns: 120px minmax(0, 1fr);
+  grid-template-areas: 'ph tx' 'nt nt';
+  align-items: stretch;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4) 0;
+}
+.mt-saved .mt-item.is-shared.is-choosing { grid-template-columns: auto 120px minmax(0, 1fr); grid-template-areas: 'ck ph tx' 'nt nt nt'; }
+.mt-item.is-shared > .mt-item-check { grid-area: ck; }
+.mt-item.is-shared > .mt-item-media { grid-area: ph; width: 120px; height: 120px; border-radius: var(--radius-card); }
+.mt-item.is-shared > .mt-scard-tx { grid-area: tx; }
+.mt-item.is-shared > .mt-scard-note { grid-area: nt; }
+.mt-scard-tx { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.mt-scard-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; min-width: 0; }
+.mt-scard-top .mt-item-title { flex: 1; }
+.mt-saved .mt-item.is-shared .btn.mt-item-name { font-size: var(--text-lead); }
+.mt-scard-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: var(--text-label); line-height: 1.3; color: var(--text-2); }
+.mt-scard-acts { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 6px; }
+.mt-scard-acts .mt-menu { margin-inline-start: auto; margin-inline-end: -10px; }
+.mt-vote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 800 var(--text-body) / 1 var(--ui);
+  cursor: pointer;
+}
+/* 40 px tall: the 2 px around it in the row's flow round the hit area up to 44 px. */
+.mt-vote.is-on { background: var(--umber-600); color: var(--action-text); }
+.mt-vote.is-on svg path { fill: currentColor; }
+.mt-vote svg { transition: transform var(--dur-tick) var(--ease-out); }
+.mt-vote.is-on svg { transform: scale(1.15); }
+.mt-vfaces .mt-face { width: 26px; height: 26px; margin-left: -6px; border-color: var(--surface-page); font-size: var(--text-micro); font-weight: 800; }
+.mt-vfaces .mt-face:first-child { margin-left: 0; }
+.mt-face.is-me { background: var(--surface); outline: 1.5px solid var(--text); outline-offset: -3.5px; }
+.mt-scard-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: var(--tap);
+  padding: var(--space-2) 10px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--umber-50);
+  border: 1px solid var(--umber-200);
+  color: var(--text-2);
+  font: 500 var(--text-label) / 1.3 var(--ui);
+  text-align: start;
+  cursor: pointer;
+}
+.mt-scard-note > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mt-scard-note > svg { flex: none; }
+form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
+@media (min-width: 1100px) {
+  .mt-saved .mt-items.is-shared-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; }
+  .mt-saved .mt-item.is-shared, .mt-saved .mt-item.is-shared.is-choosing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'ph' 'tx' 'nt';
+    padding: 0;
+    border-bottom: 0;
+  }
+  .mt-saved .mt-item.is-shared.is-choosing { grid-template-areas: 'ck' 'ph' 'tx' 'nt'; }
+  .mt-item.is-shared > .mt-item-media { align-self: start; width: 100%; height: auto; aspect-ratio: 4 / 3; }
+}
+
+/* Past trips: the same media row, a 56 px grade badge or "Geef een cijfer", and quiet year heads. */
+.atlas-pyear-h { display: flex; justify-content: space-between; gap: var(--space-3); padding: 18px 0 2px; }
+.atlas-pyear-h span { font-weight: 600; }
+.atlas-prow-wrap, .atlas-prow-wrap.mt-jcard { grid-template-columns: minmax(0, 1fr) auto; border-bottom: 0; border-top: 1px solid var(--border); }
+.atlas-prows > .atlas-prow-wrap:first-child { border-top: 0; }
+.atlas-prow { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: var(--space-3) 0; }
+.atlas-prow > svg { display: none; }
+.atlas-th { width: 96px; height: 96px; border-radius: var(--radius-card); }
+.atlas-prow-t b { gap: 7px; font-size: var(--text-lead); font-weight: 800; }
+.atlas-prow-m { font-size: var(--text-label); }
+.atlas-prow-end { display: inline-flex; align-items: center; gap: var(--space-1); }
+.atlas-prow-wrap > .atlas-prow-end > .mt-menu { align-self: center; }
+.atlas-grade.is-big {
+  display: inline-grid;
+  justify-items: center;
+  align-content: center;
+  gap: 3px;
+  min-width: 56px;
+  height: 56px;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-card);
+  line-height: 1;
+}
+.atlas-grade.is-big b { font-size: var(--text-plate); font-weight: 800; letter-spacing: -0.02em; }
+.atlas-grade.is-big small { font-size: var(--text-micro); font-weight: 800; color: var(--umber-700); }
+.atlas-grade.is-big.is-top small { color: var(--umber-100); }
+.atlas-rateit {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1.5px dashed var(--umber-500);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--umber-800);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.atlas-ratebox { grid-column: 1 / -1; margin-bottom: var(--space-3); }
+.atlas-ratebox .mt-rate-scale { grid-template-columns: repeat(5, minmax(var(--tap), 1fr)); }
+@media (min-width: 1100px) {
+  .atlas-th { width: 120px; height: 90px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-who-menu { animation: none; }
+  .mt-vote svg { transition: none; }
+}
+
+/* With the live map in the atlas pane, the rows take the whole column (no empty second column). */
+.mt-saved .mt-split.is-hosted { grid-template-columns: minmax(0, 1fr); }
+.mt-saved .mt-split.is-hosted .mt-split-map { display: none; }
+.atlas-prow-m .atlas-move { white-space: normal; }
+.atlas-prow-end .mt-menu { margin-inline-end: -10px; }
+.mt-scard-acts { flex-wrap: wrap; row-gap: var(--space-1); }

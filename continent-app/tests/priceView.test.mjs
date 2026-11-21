@@ -3,7 +3,7 @@
 // Run: npm test (continent-app/).
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { priceUnit, unitFactor, inUnit, moveInUnit, unitKey, setSpan, setWho, stepNights, basisOf, sameBasis } from '../src/lib/price/priceView.js';
+import { priceUnit, unitFactor, inUnit, moveInUnit, unitKey, setSpan, setWho, stepNights, basisOf, sameBasis, setPeople, MAX_PEOPLE } from '../src/lib/price/priceView.js';
 import { grandTotal } from '../src/lib/settings/prices.js';
 import { MAX_TRIP_NIGHTS } from '../src/lib/settings/model.js';
 
@@ -75,4 +75,17 @@ test('the move follows the unit: whole trip for 2 is the day move times the unit
   assert.equal(moveInUnit(100, 88, trip), Math.round(-12 * unitFactor(trip)));
   assert.ok(unitFactor(trip) > unitFactor(day));
   assert.equal(Math.sign(moveInUnit(80, 95, trip)), 1, 'a rise stays a rise in any unit');
+});
+
+test('Voor N personen writes the People setting and the unit together (G12 polish)', () => {
+  const two = setPeople(2)({ group_size: 1, price_view: 'pp', price_span: 'day', children: 0 });
+  assert.equal(two.group_size, 2);
+  assert.equal(two.price_view, 'total');
+  assert.equal(priceUnit(two).n, 2);
+  assert.equal(unitFactor(two), 2);
+  const one = setPeople(1)({ group_size: 4, price_view: 'total', children: 2 });
+  assert.deepEqual([one.group_size, one.price_view, one.children], [1, 'pp', 0]);
+  assert.equal(priceUnit(one).n, 1);
+  assert.equal(setPeople(999)({}).group_size, MAX_PEOPLE);
+  assert.equal(setPeople(3)({ children: 5 }).children, 2);
 });

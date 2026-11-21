@@ -1296,7 +1296,7 @@ export function SavedTripsPanel({
   })), [euExample, euBeen, exampleEurope]);
   const pastRows = euExample
     ? exampleEurope.map((x) => ({
-      id: x.id, year: tripYear(x), title: x.title, nights: x.nights, grade: x.grade, vs: null,
+      id: x.id, year: tripYear(x), title: x.title, nights: x.nights, grade: x.grade, vs: null, start: x.start,
       img: resolveImage({ ids: x.ids }), flags: x.countries, iso2: x.countries[0],
     }))
     : pastTrips.map((x) => {
@@ -1309,6 +1309,7 @@ export function SavedTripsPanel({
       return {
         ...row,
         year: tripYear(plain) ?? yearOf(x.end),
+        start: plain?.start || null,
         flags: plain?.countries || [],
         nights: x.nights,
         grade: Number.isFinite(mem?.rating) ? mem.rating : null,
@@ -1331,8 +1332,16 @@ export function SavedTripsPanel({
     });
   const gradeTrip = (id, n) => {
     if (euExample) { setExGrades((g) => ({ ...g, [id]: n })); return; }
-    saveMemory(id, { ...(loadMemory(id) || emptyMemory()), rating: n }, spendLabels);
+    const before = loadMemory(id) || emptyMemory();
+    saveMemory(id, { ...before, rating: n }, spendLabels);
     setMemTick((k) => k + 1);
+    // One tap saves the grade, so it gets the house undo like the Trips tab's.
+    const title = pastTrips.find((v) => v.id === id)?.title || '';
+    removeWithUndo({
+      key: `rate:${id}`,
+      text: t('mt.ratedUndo', { trip: title, n }),
+      restore: () => { saveMemory(id, before, spendLabels); setMemTick((k) => k + 1); },
+    });
   };
   const fillSpend = (id) => {
     const x = pastTrips.find((v) => v.id === id) || pastTrips.find((v) => !(v.spendPP > 0));

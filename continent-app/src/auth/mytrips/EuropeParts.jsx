@@ -7,6 +7,7 @@ import {
   ArrowDownIcon, ArrowUpIcon, CalendarIcon, ChevronRightIcon, GlobeIcon, MountainIcon, PencilIcon, ShareIcon, TrainIcon,
 } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
+import { RateTrip } from './TripParts.jsx';
 import { activeLocale } from '../../lib/localeState.js';
 import { EuropeMap } from './atlas/AtlasPlate.jsx';
 import { CardMenu } from './parts.jsx';
@@ -190,11 +191,11 @@ export function Extremes({ ex }) {
 }
 
 /** "9/10": the traveller's own grade as a badge; the top one on umber 600. */
-export function GradeBadge({ n, top = false }) {
+export function GradeBadge({ n, top = false, big = false }) {
   const { t } = useI18n();
   return (
-    <span className={`atlas-grade${top ? ' is-top' : ''}`} role="img" aria-label={t('mt.gradeAria', { n })}>
-      {n}<small>/10</small>
+    <span className={`atlas-grade${top ? ' is-top' : ''}${big ? ' is-big' : ''}`} role="img" aria-label={t('mt.gradeAria', { n })}>
+      {big ? <b>{n}</b> : n}<small>/10</small>
     </span>
   );
 }
@@ -293,22 +294,26 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
   );
 }
 
-/** One past trip on the ground: photo or the house tile, nights, the grade
- *  and the move against Carta's estimate; a tap opens its memory. */
-export function PastRow({ x }) {
+/** One past trip on the ground (G12 polish): the media row Saved uses, a
+ *  photo, name and flags, "{n} nachten, {month}" and the move against
+ *  Carta's estimate; on the right the grade badge (the best trip on umber
+ *  600), or "Geef een cijfer", which opens the ten taps in the row. A tap on
+ *  the row opens its memory. */
+export function PastRow({ x, top = false, rating = false, onRateOpen, onRate }) {
   const { t } = useI18n();
+  const month = monthShort(x.start);
   const meta = [
     x.nights > 0 ? t(x.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: x.nights }) : '',
-    x.grade != null ? t('mt.yourGradeN', { n: x.grade }) : '',
+    month,
   ].filter(Boolean).join(', ');
   return (
     <div className="atlas-prow-wrap mt-jcard">
       <Pressable className="atlas-prow mt-jcard-title" onClick={x.onOpen} aria-expanded={x.open}>
         <span className="atlas-th">
-          <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={160} ratio={[1, 1]} sizes="56px" />
+          <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={240} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />
         </span>
         <span className="atlas-prow-t">
-          <b><span className="atlas-prow-name">{x.title}</span>{(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={14} />)}</b>
+          <b><span className="atlas-prow-name">{x.title}</span>{(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={16} />)}</b>
           <span className="atlas-prow-m">
             {meta}
             {x.vs != null && Math.round(x.vs) !== 0 && (
@@ -319,15 +324,28 @@ export function PastRow({ x }) {
             )}
           </span>
         </span>
-        <ChevronRightIcon size={18} />
       </Pressable>
-      {(x.menuActions?.length > 0 || x.onRemove) && (
-        <CardMenu actions={x.menuActions || []} onRemove={x.onRemove} removeLabel={x.removeLabel} />
+      <span className="atlas-prow-end">
+        {x.grade != null ? <GradeBadge n={x.grade} top={top} big /> : onRate ? (
+          <Pressable className="atlas-rateit" aria-expanded={rating} onClick={onRateOpen}>{t('mt.giveGrade')}</Pressable>
+        ) : null}
+        {(x.menuActions?.length > 0 || x.onRemove) && (
+          <CardMenu actions={x.menuActions || []} onRemove={x.onRemove} removeLabel={x.removeLabel} />
+        )}
+      </span>
+      {rating && x.grade == null && onRate && (
+        <div className="atlas-ratebox"><RateTrip title={x.title} onRate={onRate} /></div>
       )}
       {x.below}
     </div>
   );
 }
+
+/** "sep": a trip's start month, short, in the traveller's language. */
+const monthShort = (iso) => {
+  if (!iso) return '';
+  try { return new Date(`${String(iso).slice(0, 10)}T00:00:00Z`).toLocaleDateString(activeLocale(), { month: 'short', timeZone: 'UTC' }).replace(/\.$/, ''); } catch { return ''; }
+};
 
 /**
  * The country sheet (tap a country on the plate): the years and the nights

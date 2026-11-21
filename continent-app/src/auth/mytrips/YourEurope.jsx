@@ -58,6 +58,8 @@ export function YourEurope({
   const { t } = useI18n();
   const [per, setPer] = useState('day');
   const [askId, setAskId] = useState('');
+  // The past trip whose ten taps are open in its row (G12 polish).
+  const [rowRate, setRowRate] = useState('');
   const has = trips.length > 0;
   const tv = useMemo(() => (year == null ? trips : trips.filter((x) => tripYear(x) === year)), [trips, year]);
   const bars = useMemo(() => nightsPerYear(trips), [trips]);
@@ -89,6 +91,8 @@ export function YourEurope({
     { id: 'ten', key: 'ten', label: t('mt.badge10'), earned: countries >= 10 },
     ...(milestones.some((m) => m.key === 'nightTrain') ? [] : [{ id: 'train', key: 'nightTrain', label: t('mt.badgeNightTrain'), earned: false }]),
   ];
+  // The best trip's badge takes the umber fill; ties share it.
+  const bestGrade = past.reduce((m, x) => (x.grade != null && x.grade > m ? x.grade : m), -1);
   const years = [...new Set(past.map((x) => x.year))].sort((a, b) => b - a)
     .filter((y) => year == null || y === year);
   const pastSect = (
@@ -100,12 +104,30 @@ export function YourEurope({
     >
       {pastForm}
       {error && <p className="mt-error" role="alert">{error}</p>}
-      {years.map((y) => (
-        <div className="atlas-pyear" key={y}>
-          <h4 className="atlas-pyear-h">{y}</h4>
-          {past.filter((x) => x.year === y).map((x) => <PastRow key={x.id} x={x} />)}
-        </div>
-      ))}
+      {years.map((y) => {
+        const rows = past.filter((x) => x.year === y);
+        const nights = rows.reduce((n, x) => n + (x.nights > 0 ? x.nights : 0), 0);
+        return (
+          <div className="atlas-pyear" key={y}>
+            <h4 className="atlas-pyear-h">
+              {y}
+              {nights > 0 && <span>{t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights })}</span>}
+            </h4>
+            <div className="atlas-prows">
+              {rows.map((x) => (
+                <PastRow
+                  key={x.id}
+                  x={x}
+                  top={x.grade != null && x.grade === bestGrade}
+                  rating={rowRate === x.id}
+                  onRateOpen={() => setRowRate((v) => (v === x.id ? '' : x.id))}
+                  onRate={onGrade ? (n) => { onGrade(x.id, n); setRowRate(''); } : undefined}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </Sect>
   );
   const first = trips.length < 3;

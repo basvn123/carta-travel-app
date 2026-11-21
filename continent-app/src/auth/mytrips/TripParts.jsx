@@ -7,7 +7,7 @@ import {
   CalendarIcon, PlaneIcon, BedIcon, SunIcon, CheckIcon, ChevronRightIcon, ChevronDownIcon, EyeIcon, CloseIcon,
   PersonIcon, FriendsIcon, PlusIcon, ShareIcon, LinkIcon, DownloadIcon, MoonIcon, GlobeIcon, CameraIcon,
 } from '../../components/Icons.jsx';
-import { priceUnit, setSpan, setWho, stepNights } from '../../lib/price/priceView.js';
+import { priceUnit, setSpan, setPeople, stepNights, MAX_PEOPLE } from '../../lib/price/priceView.js';
 import { formatMoney } from '../../lib/money.js';
 
 /* Reizen (G12, Phase C): the parts of the approved reference's Trips tab
@@ -36,10 +36,63 @@ export function unitWords(t, choices, party = null) {
   return u.group ? t('mt.unitDayGroup', { n }) : t('mt.unitDayPp');
 }
 
+/** Closes a small popover on an outside press or Escape. */
+function useDismiss(open, setOpen, box) {
+  useEffect(() => {
+    if (!open) return undefined;
+    const off = (e) => { if (box.current && !box.current.contains(e.target)) setOpen(false); };
+    const key = (e) => { if (e.key === 'Escape') { e.stopPropagation(); setOpen(false); } };
+    document.addEventListener('pointerdown', off, true);
+    document.addEventListener('keydown', key, true);
+    return () => { document.removeEventListener('pointerdown', off, true); document.removeEventListener('keydown', key, true); };
+  }, [open, setOpen, box]);
+}
+
 /**
- * The compact price control (the owner's last tweak): [Per dag | Hele reis]
- * [1 | N] and, for Hele reis, the nights stepper. It writes the one
- * "Prijzen tonen" setting Explore writes, through lib/price/priceView.
+ * "Voor 1 persoon" / "Voor N personen" (G12 polish): one button and a short
+ * menu, 1 to 4 and a stepper for more. It writes the People setting and the
+ * unit together (priceView.setPeople), the setting Explore reads, so 1 reads
+ * per person and N reads the group of N everywhere.
+ */
+export function PeopleButton({ choices, setChoices }) {
+  const { t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const box = useRef(null);
+  useDismiss(open, setOpen, box);
+  const n = priceUnit(choices).n;
+  const set = (k, close = true) => { setChoices?.(setPeople(k)); if (close) setOpen(false); };
+  const label = n === 1 ? t('mt.forOne') : t('mt.forN', { n });
+  return (
+    <span className="mt-who" ref={box}>
+      <Pressable className="mt-whobtn" aria-expanded={open} onClick={() => setOpen((v) => !v)}>
+        {n === 1 ? <PersonIcon size={16} /> : <FriendsIcon size={16} />}<b>{label}</b><ChevronDownIcon size={14} />
+      </Pressable>
+      {open && (
+        <span className="mt-who-menu" role="group" aria-label={t('mt.pricesFor')}>
+          <span className="mt-who-h" aria-hidden="true">{t('mt.pricesFor')}</span>
+          {[1, 2, 3, 4].map((k) => (
+            <Pressable key={k} aria-pressed={n === k} onClick={() => set(k)}>
+              {k === 1 ? <PersonIcon size={16} /> : <FriendsIcon size={16} />}
+              {k === 1 ? t('mt.onePerson') : t('mt.nPeople', { n: k })}
+              <small>{t(k === 1 ? 'mt.unitEach' : 'mt.unitGroup')}</small>
+            </Pressable>
+          ))}
+          <span className="mt-who-step">
+            <span>{t('mt.morePeople')}</span>
+            <Pressable aria-label={t('mt.oneLess')} disabled={n <= 1} onClick={() => set(n - 1, false)}><span className="atlas-minus" aria-hidden="true" /></Pressable>
+            <b aria-live="polite">{n}</b>
+            <Pressable aria-label={t('mt.oneMore')} disabled={n >= MAX_PEOPLE} onClick={() => set(n + 1, false)}><PlusIcon size={14} /></Pressable>
+          </span>
+        </span>
+      )}
+    </span>
+  );
+}
+
+/**
+ * The compact price control: [Per dag | Hele reis], the People button and,
+ * for Hele reis, the nights stepper. It writes the one "Prijzen tonen"
+ * setting Explore writes, through lib/price/priceView.
  */
 export function PriceControl({ choices, setChoices, withNights = true }) {
   const { t } = useI18n();
@@ -51,14 +104,7 @@ export function PriceControl({ choices, setChoices, withNights = true }) {
         <Pressable aria-pressed={u.span === 'day'} onClick={() => set(setSpan('day'))}>{t('mt.perDay')}</Pressable>
         <Pressable aria-pressed={u.span === 'trip'} onClick={() => set(setSpan('trip'))}>{t('mt.wholeTrip')}</Pressable>
       </span>
-      <span className="atlas-seg2">
-        <Pressable aria-pressed={!u.group} aria-label={t('mt.onePerson')} onClick={() => set(setWho('pp'))}>
-          <PersonIcon size={16} />1
-        </Pressable>
-        <Pressable aria-pressed={u.group} aria-label={t('mt.nPeople', { n: u.seats })} onClick={() => set(setWho('group'))}>
-          <FriendsIcon size={16} />{u.seats}
-        </Pressable>
-      </span>
+      <PeopleButton choices={choices} setChoices={setChoices} />
       {withNights && u.span === 'trip' && (
         <span className="atlas-nights" role="group" aria-label={t('mt.nightsGroup')}>
           <span>{t('mt.nightsShort', { n: u.nights })}</span>
@@ -198,14 +244,7 @@ export function ShareMenu({ onImage, onShare }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const box = useRef(null);
-  useEffect(() => {
-    if (!open) return undefined;
-    const off = (e) => { if (box.current && !box.current.contains(e.target)) setOpen(false); };
-    const key = (e) => { if (e.key === 'Escape') { e.stopPropagation(); setOpen(false); } };
-    document.addEventListener('pointerdown', off, true);
-    document.addEventListener('keydown', key, true);
-    return () => { document.removeEventListener('pointerdown', off, true); document.removeEventListener('keydown', key, true); };
-  }, [open]);
+  useDismiss(open, setOpen, box);
   const pick = (fn) => () => { setOpen(false); fn?.(); };
   return (
     <span className="mt-share" ref={box}>

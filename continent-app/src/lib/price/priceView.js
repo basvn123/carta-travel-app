@@ -14,6 +14,10 @@
  */
 import { asModel } from '../settings/prices.js';
 import { withPriceSpan, withPriceView, withTripNights, clampNights, DEFAULT_TRIP_NIGHTS } from '../settings/model.js';
+import { rule } from './config.js';
+
+/** The most people the People setting takes (config party.limits, as partyOf). */
+export const MAX_PEOPLE = rule('party.limits').max_seats;
 
 const cents = (v) => Math.round(v * 100) / 100;
 
@@ -60,6 +64,15 @@ export const unitKey = (choices) => {
 /* The control's three writes, as updaters for App's setChoices. */
 export const setSpan = (span) => withPriceSpan(span === 'trip' ? 'trip' : 'day');
 export const setWho = (who) => withPriceView(who === 'group' ? 'total' : 'pp');
+/** "Voor N personen" (G12 polish): the People setting and the unit in one
+ *  write. One person reads per person; N people read the group of N, so the
+ *  control never shows a group figure for a party it does not name. Children
+ *  stay within the seats, as partyOf keeps them. */
+export const setPeople = (n) => (prev) => {
+  const seats = Math.max(1, Math.min(MAX_PEOPLE, Math.round(Number(n) || 1)));
+  const children = Math.min(Math.max(0, Math.round(Number(prev?.children) || 0)), seats - 1);
+  return { ...prev, group_size: seats, children, price_view: seats === 1 ? 'pp' : 'total' };
+};
 /** One night more or less, from the nights the figures use now. */
 export const stepNights = (delta) => (prev) => {
   const now = asModel(prev).tripNights;
