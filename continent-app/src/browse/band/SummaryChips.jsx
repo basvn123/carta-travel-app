@@ -57,7 +57,10 @@ export function useSummaryItems() {
 // one line like its neighbours; the no-style door says it short, a long
 // style name ends in a fade (`is-cut`), the whole name in its title and its
 // accessible name.
-export function SummaryChips({ items, className = '', lead = null, pinStyle = false }) {
+// Judgement-6: `short` says every item that has fewer words in them (the
+// no-style door, the basis) for the tablet's line (769 to 1023 px), so it
+// fits; the whole words stay in the title and the name.
+export function SummaryChips({ items, className = '', lead = null, pinStyle = false, short = false }) {
   const { t } = useI18n();
   const s = useSettings();
   const ts = s?.travelStyles;
@@ -85,20 +88,20 @@ export function SummaryChips({ items, className = '', lead = null, pinStyle = fa
     ro?.observe(el);
     document.fonts?.ready?.then(read);
     return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
-  }, [items, pinStyle]);
+  }, [items, pinStyle, short]);
 
   const pinRef = React.useRef(null);
   const [pinCut, setPinCut] = React.useState(false);
   const chip = (it, pin = false) => {
     const Ico = glyphOf(it.icon);
     const isStyle = it.key === 'style';
-    const text = pin && it.short ? it.short : it.text;
+    const text = (pin || short) && it.short ? it.short : it.text;
     const name = t('band.chipAria', { text: it.text }) + (isStyle && changed ? `. ${t('styles.kickerChanged')}` : '');
     return (
       <Pressable key={it.key}
         className={`band-chip${isStyle ? ' is-style' : ''}${pin && pinCut ? ' is-cut' : ''}`}
         data-band-step={isStyle ? 'style' : it.step || 'overview'}
-        aria-label={name} title={pin ? it.text : undefined}
+        aria-label={name} title={text !== it.text || pin ? it.text : undefined}
         onClick={() => (isStyle ? openStudio(ts) : openSettings({ step: it.step || 'overview' }))}>
         {Ico && <span className="band-chip-ic" aria-hidden="true"><Ico size={18} /></span>}
         <span className="band-chip-text" ref={pin ? pinRef : undefined}>{text}</span>

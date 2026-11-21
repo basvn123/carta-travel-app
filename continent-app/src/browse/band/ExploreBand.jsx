@@ -1,6 +1,7 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { useIsDesktop } from '../../hooks/useIsDesktop.js';
+import { useMedia } from '../settings/settingsBits.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
@@ -79,6 +80,8 @@ function usePresence(open, token = '--dur-1') {
 export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
+  // From 769 to 1023 px the settings line says the short words (judgement-6).
+  const wide = useMedia('(min-width: 1024px)');
   const dock = useSearchDock();
   const ask = useAskChat();
   const sheet = useSettingsSheet();
@@ -154,8 +157,11 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   // The hint is whole or it is the short one (owner: no cut text): on a
   // desktop the long hint shows only while it fits the field, which from
   // 769 to 1023 px (and with Back and Share in it) it often does not.
+  // Judgement-6: with a filter on, the Filters count narrows the field
+  // again ("Chercher un li…" at 769), so a one-word hint is the last step.
   const longHint = t('band.searchPh');
-  const [hintFits, setHintFits] = React.useState(true);
+  const shortHint = t('band.searchPhShort');
+  const [hint, setHint] = React.useState('long');
   React.useLayoutEffect(() => {
     const el = inputRef.current;
     if (!isDesktop || !el) return undefined;
@@ -166,15 +172,16 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
       const cs = getComputedStyle(el);
       ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
       const room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
-      const fits = ctx.measureText(longHint).width <= room - 1;
-      setHintFits((f) => (f === fits ? f : fits));
+      const fits = (text) => ctx.measureText(text).width <= room - 1;
+      const next = fits(longHint) ? 'long' : fits(shortHint) ? 'short' : 'tiny';
+      setHint((h) => (h === next ? h : next));
     };
     read();
     document.fonts?.ready?.then(read);
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(el);
     return () => { gone = true; ro?.disconnect(); };
-  }, [isDesktop, longHint]);
+  }, [isDesktop, longHint, shortHint]);
   const panelId = React.useId();
   const close = React.useCallback(() => {
     setOpen(false);
@@ -313,7 +320,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                   </IconButton>
                 )}
                 <input ref={inputRef} type="search" className="band-input"
-                  value={value} placeholder={isDesktop && hintFits ? longHint : t('band.searchPhShort')} aria-label={t('band.searchPh')}
+                  value={value} placeholder={!isDesktop ? shortHint : hint === 'long' ? longHint : hint === 'short' ? shortHint : t('band.searchPhTiny')} aria-label={t('band.searchPh')}
                   autoComplete="off" enterKeyHint="search" spellCheck={false}
                   role="combobox"
                   aria-expanded={open}
@@ -372,7 +379,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
           a phone keeps the strip in place under an open search (the panel
           covers it), so nothing below moves. */}
       {isDesktop ? (
-        <div className="band-line">{showChips && <SummaryChips items={items} />}</div>
+        <div className="band-line">{showChips && <SummaryChips items={items} short={!wide} />}</div>
       ) : ((showChips || mapView) && (
         // The strip's own ground: the chips fade at their ends (a mask),
         // and the list must not show through there when the strip is pinned.

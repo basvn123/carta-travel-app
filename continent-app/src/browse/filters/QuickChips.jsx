@@ -22,12 +22,22 @@ const GLYPH = {
  * follow, the camera stays. The row is one line at every width and
  * scrolls sideways, a soft fade on a side that has more (judgement-4: on a
  * tablet or desktop it wrapped to a second line over the map).
+ * `onClearAll`: Clear all at the row's end, given when the map's applied
+ * row is not drawn because every filter on is a quick chip (judgement-6:
+ * Clear all has one home).
  */
-export function QuickChips({ className = '', withFilters = true }) {
+export function QuickChips({ className = '', withFilters = true, onClearAll = null }) {
   const { t } = useI18n();
   const f = useFilters();
   const count = f.count || 0;
   const rowRef = React.useRef(null);
+  const hasClear = Boolean(onClearAll);
+  const [said, setSaid] = React.useState('');
+  React.useEffect(() => {
+    if (!said) return undefined;
+    const h = setTimeout(() => setSaid(''), 2600);
+    return () => clearTimeout(h);
+  }, [said]);
   const [edges, setEdges] = React.useState({ start: false, end: false });
   React.useEffect(() => {
     const el = rowRef.current;
@@ -45,7 +55,7 @@ export function QuickChips({ className = '', withFilters = true }) {
     const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
     ro?.observe(el);
     return () => { el.removeEventListener('scroll', read); ro?.disconnect(); };
-  }, [f.quick.length]);
+  }, [f.quick.length, hasClear]);
   // A chip turned on moves to the front: the row swipes back to its start,
   // so the chip and Filters are in view (a far chip left both off screen).
   const toFront = () => {
@@ -75,6 +85,18 @@ export function QuickChips({ className = '', withFilters = true }) {
           </Pressable>
         );
       })}
+      {onClearAll && (
+        <Pressable className="xquick-chip xquick-clear" onClick={() => {
+          setSaid(t('filters.cleared'));
+          onClearAll();
+          // The button leaves with the last filter: focus stays in the row.
+          requestAnimationFrame(() => rowRef.current?.querySelector('.xquick-chip')?.focus({ preventScroll: true }));
+        }}>
+          <HouseIcon.close size={16} />
+          <span className="xquick-word">{t('filters.clearAll')}</span>
+        </Pressable>
+      )}
+      <p className="sr-only" role="status">{said}</p>
     </div>
   );
 }

@@ -86,6 +86,8 @@ export function settingsSummary(choices, style, t, { lang = activeLocale(), data
     },
     { key: 'when', icon: 'calendar', text: whenText(m, t, lang), step: 'when' },
     { key: 'way', icon: WAY_ICON[m.way] || 'route', text: t(`settingsSum.way.${m.way}`), step: 'way' },
-    { key: 'prices', icon: 'euro', text: t(`settingsSum.prices.${spanKey}${viewKey}`), step: 'prices' },
+    // `short` also for the prices: the tablet's settings line (769 to 1023
+    // px) says the basis in fewer words so the line fits (judgement-6).
+    { key: 'prices', icon: 'euro', text: t(`settingsSum.prices.${spanKey}${viewKey}`), short: t(`settingsSum.pricesShort.${spanKey}${viewKey}`), step: 'prices' },
   ];
 }

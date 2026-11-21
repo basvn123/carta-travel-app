@@ -1,7 +1,7 @@
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { AppliedRow, SavedToggle } from '../filters/AppliedRow.jsx';
-import { deskChips, phoneChips } from './chipRules.js';
+import { deskChips, mapRowChips, phoneChips } from './chipRules.js';
 import { countKey } from '../../lib/plural.js';
 
 /**
@@ -19,11 +19,14 @@ import { countKey } from '../../lib/plural.js';
  * each control once), and Share stands beside List | Map from 1024 px (ExploreTab)
  * or sits in the search field below it (ExploreBand). From 769 px on the map
  * with no filter on, the row would be an empty band above the map, so it is
- * not drawn (judgement-5).
+ * not drawn (judgement-5). A filter on there that the map's quick row shows
+ * checked is not drawn twice: the row lists only what the quick row cannot
+ * show (a month, an area), and with only quick filters on it is not drawn
+ * and Clear all ends the quick row (judgement-6).
  */
 export function ExploreToolbar({
   TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang, mapView = false,
-  resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
+  quick = [], resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
 }) {
   const tools = isDesktop && !mapView ? (
     <>
@@ -34,7 +37,7 @@ export function ExploreToolbar({
       </IconButton>
     </>
   ) : null;
-  const shown = isDesktop ? deskChips(chips) : phoneChips(chips);
+  const shown = !isDesktop ? phoneChips(chips) : mapView ? mapRowChips(chips, quick) : deskChips(chips);
   const bare = isDesktop && mapView && shown.length === 0;
   return (
     <div className={`xhead${bare ? ' is-bare' : ''}`}>

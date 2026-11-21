@@ -751,7 +751,7 @@ export function ExploreTab({
         {!railsIdle && (
         <ExploreToolbar
           TitleTag={TitleTag} chips={chips} filterCount={filterCount} gridTotal={gridTotal}
-          isDesktop={isDesktop} isMock={isMock} lang={lang} mapView={view === 'map'}
+          isDesktop={isDesktop} isMock={isMock} lang={lang} mapView={view === 'map'} quick={quickList}
           setShowFavOnly={setShowFavOnly} shareView={shareView}
           showFavOnly={showFavOnly} sortMenu={sortMenu} t={t}
           resetAll={resetAll}
@@ -807,7 +807,7 @@ export function ExploreTab({
           setLocationQuery={setLocationQuery} setPickedId={setPickedId}
           setShowFavOnly={setShowFavOnly} setView={setView} showFavOnly={showFavOnly}
           shownRows={shownRows} t={t} taxRows={taxRows} view={view} viewSwitch={viewSwitch}
-          mapSort={mapSort}
+          mapSort={mapSort} quick={quickList}
           viewportMode={viewportMode} visible={visible} xf={xf}
         />
       </div>

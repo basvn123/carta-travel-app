@@ -47,6 +47,13 @@
 //              languages at 769, 820, 900, 1023, map and list) the search
 //              hint is whole and the six tabs fit or slide with a fade, the
 //              chosen tab in view (--e-only)
+//   round F    judgement-6's fixes: the tablet's settings line (six languages
+//              at 769, 820, 900, 1023, map and list) shows every item whole
+//              or fades where it has more; from 769 px a quick filter shows
+//              once on the map (no applied row for quick filters alone, the
+//              map within 16 px of the tabs, Clear all once at the quick
+//              row's end); the column names no basis; Tab reaches the column
+//              before the map's pins (in --e-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -1025,6 +1032,11 @@ const headJs = `(() => {
     chips: document.querySelectorAll('.xap-chip').length, tools: document.querySelectorAll('.xap-tools').length,
     shares: [...document.querySelectorAll('button[aria-label="Share"]')].filter(vis).map((b) => b.className.replace(/icon-btn(-plain)?/g, '').trim()),
     tabsOver: row ? row.scrollWidth - row.clientWidth : null,
+    clears: [...document.querySelectorAll('.xap-clear, .xquick-clear')].filter(vis).map((b) => b.className.includes('xquick') ? 'quick' : 'row'),
+    xapKeys: [...document.querySelectorAll('.xap-chip')].map((c) => c.dataset.chip),
+    checked: [...document.querySelectorAll('.xmap-quick .xquick-chip.is-on')].map((c) => c.dataset.quick),
+    basis: document.querySelectorAll('.mpp .xsheet-basis').length,
+    lineBasis: [...document.querySelectorAll('.band-line .band-chip[data-band-step="prices"]')].filter(vis).length,
   };
 })()`;
 const tabletJs = `(() => {
@@ -1039,13 +1051,24 @@ const tabletJs = `(() => {
   const on = row.querySelector('[aria-selected="true"]').getBoundingClientRect();
   const fade = (line.classList.contains('has-start') ? 32 : 0);
   const fadeE = (line.classList.contains('has-end') ? 32 : 0);
+  // Round F: the settings line above the tabs, every item whole in view or
+  // the line fades at the end it has more (judgement-6: "Al giorn").
+  const bl = document.querySelector('.band.is-desk .band-line .band-chips');
+  const br = bl?.getBoundingClientRect();
+  const bm = bl ? getComputedStyle(bl) : null;
+  const band = bl ? {
+    over: bl.scrollWidth - bl.clientWidth, end: bl.classList.contains('has-end'),
+    masked: (bm.maskImage || bm.webkitMaskImage || 'none') !== 'none',
+    cut: [...bl.querySelectorAll('.band-chip')].filter((c) => { const b = c.getBoundingClientRect(); return b.left < br.left - 1 || b.right > br.right + 1; }).map((c) => c.textContent),
+    texts: [...bl.querySelectorAll('.band-chip-text')].map((e) => e.textContent),
+  } : null;
   const labels = [...row.querySelectorAll('.xcats-tab-label')].map((e) => e.scrollWidth > e.clientWidth + 1);
   return {
     hint: inp.placeholder, hintW: Math.round(c.measureText(inp.placeholder).width), room: Math.round(room),
     over, start: line.classList.contains('has-start'), end: line.classList.contains('has-end'),
     masked: (getComputedStyle(row).maskImage || getComputedStyle(row).webkitMaskImage || 'none') !== 'none',
     activeIn: on.left >= rr.left + fade - 1 && on.right <= rr.right - fadeE + 1,
-    labelCut: labels.some(Boolean), sideways: document.documentElement.scrollWidth - innerWidth,
+    labelCut: labels.some(Boolean), sideways: document.documentElement.scrollWidth - innerWidth, band,
   };
 })()`;
 async function tabletPass() {
@@ -1057,10 +1080,14 @@ async function tabletPass() {
           check(`${tag}: the search hint is whole`, s.hintW <= s.room, `"${s.hint}" ${s.hintW} in ${s.room}`);
           check(`${tag}: the six tabs fit, or slide with a fade and the chosen tab in view`,
             !s.labelCut && s.sideways <= 0 && s.activeIn && (s.over <= 1 || (s.masked && (s.start || s.end))), JSON.stringify(s));
+          check(`${tag}: the settings line shows every item whole, or fades at its end`,
+            s.band && (s.band.over <= 1 ? s.band.cut.length === 0 : s.band.end && s.band.masked), JSON.stringify(s.band));
         };
         judge(`roundE ${w} ${lang} map`, await page.evaluate(tabletJs));
         await page.locator('.xmap-quick [data-quick="water"]').click();
         await page.waitForTimeout(1200);
+        // Round F: the Filters count narrows the field; the hint stays whole.
+        judge(`roundF ${w} ${lang} map, a filter on`, await page.evaluate(tabletJs));
         await page.locator('.xcats-view .seg-item').first().click();
         await page.waitForSelector('.xrow:not(.xmr)', { timeout: 30000 }).catch(() => {});
         await page.waitForTimeout(1200);
@@ -1090,14 +1117,65 @@ async function roundEPass() {
       await page.locator('.xmap-quick [data-quick="score8"]').click();
       await page.waitForTimeout(1500);
       const on = await page.evaluate(headJs);
-      check(`roundE ${w}: two filters on, the row shows their chips between the tabs and the map, no tools of its own`,
-        on.xap && on.chips === 2 && on.tools === 0 && on.xap.top >= 8 && on.xap.bottom >= 8, JSON.stringify(on));
+      // Judgement-6: two quick filters show once, checked in the quick row;
+      // no applied row above the map, Clear all once at the quick row's end.
+      check(`roundF ${w}: two quick filters on, shown once (checked in the quick row, no applied row); the map within 16 px of the tabs`,
+        !on.xap && on.chips === 0 && on.checked.includes('water') && on.checked.includes('score8') && on.gap != null && on.gap >= 0 && on.gap <= 16, JSON.stringify(on));
+      check(`roundF ${w}: Clear all once, at the quick row's end`, on.clears.length === 1 && on.clears[0] === 'quick', JSON.stringify(on.clears));
+      if (w >= 1024) check(`roundF ${w}: the column names no basis; the settings line does`, on.basis === 0 && on.lineBasis === 1, JSON.stringify({ basis: on.basis, line: on.lineBasis }));
       check(`roundE ${w}: Share still once with filters on`, on.shares.length === 1 && on.shares[0] === where, JSON.stringify(on.shares));
       if (SHOTS) await page.screenshot({ path: path.join(SHOTS, `e-head-${w}-chips.png`) });
+      await page.locator('.xmap-quick .xquick-clear').click();
+      await page.waitForTimeout(1500);
+      const cleared = await page.evaluate(headJs);
+      check(`roundF ${w}: Clear all on the quick row turns every filter off and leaves`, cleared.checked.length === 0 && cleared.clears.length === 0 && !cleared.xap, JSON.stringify(cleared));
       check(`roundE ${w}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
       await ctx.close();
     });
+    // A filter the quick row cannot show (No car needed) and a quick one:
+    // the row lists only the first, with Clear all; the quick row has none.
+    await guard(`roundF mixed ${w}`, async () => {
+      const { ctx, page, errors } = await boot(w, h, '?tab=map&xw=map&xp=c');
+      await page.locator('.xmap-quick [data-quick="water"]').click();
+      await page.waitForTimeout(1500);
+      const mix = await page.evaluate(headJs);
+      check(`roundF ${w}: a quick and another filter on, the applied row holds only the other; Clear all once, in that row`,
+        mix.xap && mix.xapKeys.join() === 'nocar' && mix.checked.includes('water') && mix.clears.join() === 'row', JSON.stringify(mix));
+      check(`roundF ${w} mixed: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+      await ctx.close();
+    });
   }
+  // Tab from List | Map reaches the column's controls before any of the
+  // map's own (judgement-6: the pins came first at 1440).
+  await guard('roundF tab order 1440', async () => {
+    const { ctx, page } = await boot(1440, 900, '?tab=map&xw=map');
+    await page.locator('.xcats-view .seg-item[aria-checked="true"], .xcats-view .seg-item.is-on, .xcats-view .seg-item').last().focus();
+    const where = () => page.evaluate(() => {
+      const a = document.activeElement;
+      if (a?.closest('.mpp')) return 'column';
+      if (a?.closest('.xmap-quick')) return 'quick';
+      if (a?.closest('.xmap')) return 'map';
+      return 'other';
+    });
+    await page.keyboard.press('Tab');
+    const first = await where();
+    // The column's rows are many stops: from its last one, Tab goes on to
+    // the quick row and then into the map, never back above it.
+    await page.evaluate(() => {
+      const all = [...document.querySelectorAll('.mpp a[href], .mpp button:not([disabled]), .mpp [tabindex]:not([tabindex="-1"])')]
+        .filter((e) => e.getClientRects().length > 0);
+      all[all.length - 1]?.focus();
+    });
+    const after = [];
+    for (let i = 0; i < 20 && !after.includes('map'); i += 1) {
+      await page.keyboard.press('Tab');
+      after.push(await where());
+    }
+    const q = after.indexOf('quick'); const m = after.indexOf('map');
+    check('roundF 1440: Tab reaches the column first, then the quick row, then the map',
+      first === 'column' && q >= 0 && m > q && !after.slice(0, m).includes('other'), `first ${first}, then ${after.join(' ')}`);
+    await ctx.close();
+  });
   // The picked row keeps its content where it was (it moved 8 px left).
   await guard('roundE pick 1440', async () => {
     const { ctx, page } = await boot(1440, 900, '?tab=map&xw=map');

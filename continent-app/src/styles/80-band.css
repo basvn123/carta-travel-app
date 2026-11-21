@@ -272,6 +272,24 @@
   padding: 9px var(--page-inset) 0;
 }
 .band.is-desk .band-chip { min-height: 32px; }
+/* A line that still does not fit (fr at 769 px, a long style name) slides
+   and fades on a side that has more, like the phone's strip, so a last item
+   never ends in a hard cut (judgement-6). SummaryChips reads the edges. */
+.band.is-desk .band-line .band-chips {
+  --fade-s: 0px;
+  --fade-e: 0px;
+}
+.band.is-desk .band-line .band-chips:is(.has-start, .has-end) {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.band.is-desk .band-line .band-chips.has-start { --fade-s: var(--space-6); }
+.band.is-desk .band-line .band-chips.has-end { --fade-e: var(--space-6); }
+/* From 769 to 1023 px the items stand 12 px apart (16 from 1024), so the
+   short line fits whole in nl and es at 769 too. */
+@media (max-width: 1023px) {
+  .band.is-desk .band-line .band-chips { gap: var(--space-3); }
+}
 /* Hover paints a soft ground past the item's edge without moving it. */
 @media (hover: hover) {
   /* An outline of the same colour is the halo (no shadow token fits a

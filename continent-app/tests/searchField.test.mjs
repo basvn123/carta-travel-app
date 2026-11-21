@@ -18,8 +18,9 @@ test('the band field names itself; Ask Carta stands outside it (round 2)', () =>
   // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
   // The long hint on a desktop only while it fits the field, else the
   // short one, never cut (judgement-5 follow-up); the name stays whole.
-  assert.match(band, /placeholder=\{isDesktop && hintFits \? longHint : t\('band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
-  assert.match(band, /const fits = ctx\.measureText\(longHint\)\.width <= room - 1;/);
+  // Judgement-6: a one-word hint when even the short one would be cut.
+  assert.match(band, /placeholder=\{!isDesktop \? shortHint : hint === 'long' \? longHint : hint === 'short' \? shortHint : t\('band\.searchPhTiny'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
+  assert.match(band, /const next = fits\(longHint\) \? 'long' : fits\(shortHint\) \? 'short' : 'tiny';/);
   // The search button closes the field at its right end; no magnifier on the left.
   assert.match(band, /<Pressable type="submit" className="band-go"/);
   assert.match(band, /type="search"[\s\S]*enterKeyHint="search"/);
@@ -40,7 +41,7 @@ test('the field is a combobox whose aria-controls names the panel listbox', () =
 test('the band strings, in six languages, the old dock pill strings gone', () => {
   assert.equal(value('en', 'band.searchPh'), 'Search a place, region or country');
   for (const l of LANGS) {
-    for (const k of ['band.searchPh', 'band.searchPhShort', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
+    for (const k of ['band.searchPh', 'band.searchPhShort', 'band.searchPhTiny', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
     for (const k of ['dock.choose', 'dock.openAria', 'explore.chooseOrAsk']) assert.equal(value(l, k), null, `${l} ${k}`);
   }
 });

@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
-  DESK_SHOWN, badgeCount, deskChips, lensCount, phoneChips,
+  DESK_SHOWN, QUICK_OF, badgeCount, deskChips, lensCount, mapRowChips, phoneChips,
 } from '../src/browse/explore/chipRules.js';
 
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -104,4 +104,22 @@ test('the chips are capped with an ellipsis; the phone row never wraps', () => {
   assert.ok(scroller.lastIndexOf('</div>') > scroller.indexOf('xap-chip"'), 'Clear all stands after the scroller, outside it');
   // The remove's 44 px box spills over the 32 px chip.
   assert.match(css, /margin: calc\(\(32px - var\(--tap\)\) \/ 2\)/);
+});
+
+test('the map from 769 px: a quick filter that is on shows once, in the quick row (judgement-6)', () => {
+  const quick = [{ id: 'water', on: true }, { id: 'score8', on: true }, { id: 'budget', on: false }, { id: 'saved', on: true }];
+  const on = ['p:water', 'minScore', 'budget', 'nocar', 'month', 'fav', 'q'].map(chip);
+  const keys = (list) => list.map((c) => c.key);
+  // Water and Score 8+ are checked quick chips; a budget the quick chip does
+  // not hold stays; Saved and the search are never in the desktop row.
+  assert.deepEqual(keys(mapRowChips(on, quick)), ['budget', 'nocar', 'month']);
+  assert.deepEqual(mapRowChips([chip('p:water'), chip('minScore')], quick), []);
+  assert.deepEqual(keys(mapRowChips(on, [])), keys(deskChips(on)));
+  for (const id of Object.values(QUICK_OF)) assert.ok(['score8', 'budget', 'warm', 'water', 'hiking', 'gems', 'match', 'saved'].includes(id), id);
+  const bar = read('src/browse/explore/ExploreToolbar.jsx');
+  assert.match(bar, /mapView \? mapRowChips\(chips, quick\)/);
+  // Clear all has one home: the quick row's end when the row is not drawn.
+  const content = read('src/browse/explore/ExploreContent.jsx');
+  assert.match(content, /onClearAll=\{clearOnQuick \? resetAll : null\}/);
+  assert.match(read('src/browse/filters/QuickChips.jsx'), /xquick-clear/);
 });

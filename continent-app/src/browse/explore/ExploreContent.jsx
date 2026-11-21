@@ -11,6 +11,7 @@ import { Blaze, Button } from '../../components/ui/index.js';
 import { ExploreCard } from './ExploreCard.jsx';
 import { MapAnchorCard } from './MapAnchorCard.jsx';
 import { QuickChips } from '../filters/QuickChips.jsx';
+import { badgeCount, mapRowChips } from './chipRules.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { useSummaryItems } from '../band/SummaryChips.jsx';
 import { useMedia } from '../settings/settingsBits.jsx';
@@ -93,7 +94,7 @@ export function ExploreContent({
   pageOver, pending, pickedId, pickedRow, pinLinkId, pins, railLead, railMonth, rails,
   railsIdle, reachMinutes, resetAll, roleFor, searchHits, selectedId, sentinelRef,
   setCardLinkId, setLocationQuery, setPickedId, setShowFavOnly, setView, showFavOnly,
-  shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf, mapSort = null,
+  shownRows, t, taxRows, view, viewSwitch, viewportMode, visible, xf, mapSort = null, quick = [],
 }) {
   useRouteIn(contentRef, view);
   // G12 map view round 2: the best value in view (its row says so, as its
@@ -128,18 +129,49 @@ export function ExploreContent({
       onOpen={openPlace} onClose={() => onPick(null)} />
   ) : null;
   useReflowGlide(contentRef, listed.map((p) => p.id));
+  // Judgement-6: with only quick filters on, the applied row above the map
+  // is not drawn (they show checked in the quick row), so Clear all ends the
+  // quick row instead; with any other filter on it stays in that row.
+  const clearOnQuick = isDesktop && view === 'map' && badgeCount(chips) > 0 && mapRowChips(chips, quick).length === 0;
   return (
     <div className={`xcontent ${view === 'map' ? 'xcontent--split' : ''}`.trim()} ref={contentRef}
       style={mapTop != null ? { '--xmap-top': `${mapTop}px` } : undefined}>
-      {/* The map comes first in the DOM and CSS puts it in the right
-          column (T190): the keyboard reaches the map the reader just
-          asked for straight after the control bar, instead of after
-          every card of an infinitely scrolling list, which on a long
-          list meant never. */}
+      {/* The map comes before the endless list in the DOM and CSS puts
+          it in the right column (T190): the keyboard reaches the map the
+          reader just asked for straight after the control bar, instead of
+          after every card of an infinitely scrolling list, which on a long
+          list meant never. Inside the map's frame the column (at most
+          DRAWER_MAX rows) and the quick row come first (judgement-6). */}
       {/* Kept mounted after its first open (T441), hidden while the list
           shows, so switching back is instant instead of a rebuild. */}
       {mapOpened && (
         <div className="xcontent-map" hidden={view !== 'map'}>
+          {/* T592 (owner decision 6): the map the Kayak way. On a
+              desktop the panel floats on the left over the map: the
+              places on the map, or the picked one with its trip box.
+              G12 map view: a 400 px column of compact cards beside the
+              map, a card under the pointer lifting its pin and a pin
+              under the pointer outlining its card. Its head names no
+              basis: the settings line above says it, every row too.
+              It comes before the map in the DOM, the grid
+              placing it, so Tab reaches the list before the pins
+              (judgement-6). */}
+          {mapSplit && view === 'map' && (
+            <MapPlacePanel t={t}
+              rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
+              allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
+              sort={mapSort} bestId={bestId}
+              picked={null} overviewOf={overviewOf}
+              onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
+              favSet={favSet} onToggleFav={onToggleFav}
+              linkedId={pinLinkId} onLink={setCardLinkId} pickedId={pickedId} />
+          )}
+          {/* G12 map view round 2: the quick filters on the map's top edge
+              (desktop); on a phone they are the band's third row. */}
+          {isDesktop && view === 'map' && (
+            <QuickChips className="xmap-quick" withFilters={false}
+              onClearAll={clearOnQuick ? resetAll : null} />
+          )}
           {/* While maplibre downloads, the frame the map will fill is
               already drawn at its final size: a skeleton, not the app's
               full-screen pulse, so nothing jumps when the canvas lands. */}
@@ -166,25 +198,6 @@ export function ExploreContent({
               zoomAt="bottom-right" fitKey={searchHits != null ? locationQuery || '' : ''}
               chrome={MAP_CHROME} cornerInMap pickCard={anchorCard} />
           </React.Suspense>
-          {/* G12 map view round 2: the quick filters on the map's top edge
-              (desktop); on a phone they are the band's third row. */}
-          {isDesktop && view === 'map' && <QuickChips className="xmap-quick" withFilters={false} />}
-          {/* T592 (owner decision 6): the map the Kayak way. On a
-              desktop the panel floats on the left over the map: the
-              places on the map, or the picked one with its trip box.
-              G12 map view: a 400 px column of compact cards beside the
-              map, a card under the pointer lifting its pin and a pin
-              under the pointer outlining its card. */}
-          {mapSplit && view === 'map' && (
-            <MapPlacePanel t={t}
-              rows={shownRows.slice(0, DRAWER_MAX)} count={shownRows.length}
-              allRows={mapList.slice(0, ALL_MAX)} allCount={mapList.length}
-              sort={mapSort} basis={basis} bestId={bestId}
-              picked={null} overviewOf={overviewOf}
-              onPick={onPick} onBack={() => setPickedId(null)} onOpen={openPlace}
-              favSet={favSet} onToggleFav={onToggleFav}
-              linkedId={pinLinkId} onLink={setCardLinkId} pickedId={pickedId} />
-          )}
           {/* G12 map view (phone, and a tablet under 1024): the map is the page; the list is a
               sheet the List pill opens, a picked place a card over the
               map. Both mount only while this tab shows the map. */}
