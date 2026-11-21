@@ -809,7 +809,44 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
     box-shadow: var(--elev-2);
   }
   .band.is-map .band-chips-pin > .band-chips.is-swipe { flex: 1; padding-left: 0; }
-  .band.is-phone.is-map > .band-quick { padding-top: 0; }
+  /* A scroller clips at its box, so the chips' --elev-2 shadow (12 px above
+     the chip, 36 below) stopped on a hard edge and read as a pale box on
+     the map (judgement-9). Both rows reach past their chips by the shadow's
+     room and give it back as negative margin, so the band keeps its height;
+     the end fade (mask) still fades chips and shadow together. */
+  .band.is-map .band-chips-pin > .band-chips.is-swipe,
+  .band.is-map .band-quick > .xquick.is-swipe {
+    padding-block: var(--space-2) var(--space-6);
+    margin-block: calc(var(--space-2) * -1) calc(var(--space-6) * -1);
+    background: transparent;
+  }
+  /* Row 2 starts beside the pinned style chip: it reaches 24 px under that
+     chip for the shadow's side room and fades it in there, so the first
+     settings chip's shadow has no hard left edge; the style chip stays on
+     top and keeps its taps. */
+  .band.is-map .band-chips-pin > .band-chips.is-swipe {
+    padding-left: var(--space-5);
+    margin-left: calc(var(--space-5) * -1);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black calc(var(--space-5) + var(--fade-s)), black calc(100% - var(--fade-e)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, black calc(var(--space-5) + var(--fade-s)), black calc(100% - var(--fade-e)), transparent 100%);
+  }
+  .band.is-map .band-chips-pin > .band-chip.is-style { z-index: 2; }
+  /* Row 3 stands over row 2's shadow room, so its chips keep their taps;
+     its own room reaches over the map, so only its controls take presses
+     there and a drag below the band still moves the map. */
+  .band.is-phone.is-map > .band-quick { z-index: 2; padding-top: 0; }
+  .band.is-map .band-quick > .xquick.is-swipe { pointer-events: none; }
+  .band.is-map .band-quick > .xquick.is-swipe > * { pointer-events: auto; }
+  /* Clear all on the chips' paper, as on the map's top edge from 769 px
+     (judgement-9): bare words read muddled over map labels. Still no edge
+     and no shadow, so it is not a chip; the row's 8 px gaps either side. */
+  .band.is-map .band-quick .xquick-clear {
+    align-self: center;
+    min-height: 28px;
+    padding: 0 var(--space-2);
+    background: var(--surface);
+  }
+  .band.is-map .band-quick .xquick-clear::after { inset: -8px 0; }
   .band.is-map .band-quick .xquick-chip { box-shadow: var(--elev-2); border-color: transparent; }
   .band.is-map .band-quick .xquick-chip.is-on { border-color: var(--select-border); }
   .band.is-map .band-quick .xquick-chip.xquick-filters { border-color: var(--action); }

@@ -73,3 +73,15 @@ test('the phone fold slides the band with a transform; the list never moves', ()
   assert.match(band, /band\.style\.setProperty\('--fold-a'/);
   assert.match(band, /root\.classList\.add\('has-phone-band'\)/);
 });
+
+// G12 judgement-9: the desktop tab row was overflow hidden (the phone rule),
+// so its end fade hid a tab nobody could slide to; and the phone map's chip
+// rows clipped their chips' shadows into a pale box on the map.
+test('the tab row scrolls when over; the phone map rows keep their shadows whole', () => {
+  const css = read('src/styles/80-band.css');
+  assert.match(css, /\.xcats-line \.ui-tabs\.xcats-row \{[^}]*overflow-x: auto;[^}]*scrollbar-width: none;/);
+  assert.match(css, /max-width: 799px\) \{\s*\.xcats-line \{ gap: var\(--space-3\); \}/);
+  const map = read('src/styles/86-map-view.css');
+  assert.match(map, /\.band\.is-map \.band-quick > \.xquick\.is-swipe \{\s*padding-block: var\(--space-2\) var\(--space-6\);\s*margin-block: calc\(var\(--space-2\) \* -1\) calc\(var\(--space-6\) \* -1\);\s*background: transparent;/);
+  assert.match(map, /\.band\.is-map \.band-quick > \.xquick\.is-swipe \{ pointer-events: none; \}/);
+});

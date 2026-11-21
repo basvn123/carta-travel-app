@@ -45,7 +45,8 @@
 //              picked row in the column does not move; the phone map's
 //              settings row fades where it has more; on a tablet (six
 //              languages at 769, 820, 900, 1023, map and list) the search
-//              hint is whole and the six tabs fit or slide with a fade, the
+//              hint is whole and the six tabs fit whole or the row scrolls
+//              (overflow-x auto) with a fade, the
 //              chosen tab in view (--e-only)
 //   round F    judgement-6's fixes: the tablet's settings line (six languages
 //              at 769, 820, 900, 1023, map and list) shows every item whole
@@ -67,7 +68,10 @@
 //              1024 it floats with no words or control under it at rest
 //              and at the end (judgement-8); the phone's applied chips
 //              whole (their own line when they do not fit) and the phone
-//              map's Clear all 8 px from its neighbours (--g-only)
+//              map's Clear all 8 px from its neighbours; the phone map's two
+//              chip rows paint no ground and do not cut their chips'
+//              shadows, row 3 keeps its taps and the map below the band
+//              its drags, Clear all on paper (judgement-9) (--g-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -676,7 +680,13 @@ async function whyPass() {
       const box = sheet ? '.xsheet-body' : '.mpp--float';
       const marks = page.locator(`${sheet ? '.xsheet' : '.mpp'} .xmatch-mark`);
       check(`${tag}: marks in the list`, await marks.count() > 0, `${await marks.count()}`);
-      const open = async (i = 0) => { await marks.nth(i).click(); await page.waitForTimeout(500); };
+      // The popover scales in (xwhy-in-up); measure once it has ended, not
+      // on its first frame under load (judgement-9: 349 of 360 px).
+      const open = async (i = 0) => {
+        await marks.nth(i).click();
+        await page.waitForTimeout(500);
+        await page.waitForFunction(() => !document.querySelector('.xwhy-float')?.getAnimations({ subtree: true }).some((a) => a.playState === 'running'), null, { timeout: 5000 }).catch(() => {});
+      };
       const state = () => page.evaluate(() => {
         const p = document.querySelector('.xwhy-float');
         const sh = document.querySelector('.fsheet.xwhy-pop');
@@ -1079,7 +1089,11 @@ const tabletJs = `(() => {
     texts: [...bl.querySelectorAll('.band-chip-text')].map((e) => e.textContent),
   } : null;
   const labels = [...row.querySelectorAll('.xcats-tab-label')].map((e) => e.scrollWidth > e.clientWidth + 1);
+  // Judgement-9: a row that is over must really scroll (overflow-x auto),
+  // not only fade; one that is not over shows every tab whole in its box.
+  const tabsWhole = [...row.querySelectorAll('.ui-tab')].every((t) => { const b = t.getBoundingClientRect(); return b.left >= rr.left - 0.5 && b.right <= rr.right + 0.5; });
   return {
+    tabsWhole, scrollable: /auto|scroll/.test(getComputedStyle(row).overflowX),
     hint: inp.placeholder, hintW: Math.round(c.measureText(inp.placeholder).width), room: Math.round(room),
     over, start: line.classList.contains('has-start'), end: line.classList.contains('has-end'),
     masked: (getComputedStyle(row).maskImage || getComputedStyle(row).webkitMaskImage || 'none') !== 'none',
@@ -1095,7 +1109,7 @@ async function tabletPass() {
         const judge = (tag, s) => {
           check(`${tag}: the search hint is whole`, s.hintW <= s.room, `"${s.hint}" ${s.hintW} in ${s.room}`);
           check(`${tag}: the six tabs fit, or slide with a fade and the chosen tab in view`,
-            !s.labelCut && s.sideways <= 0 && s.activeIn && (s.over <= 1 || (s.masked && (s.start || s.end))), JSON.stringify(s));
+            !s.labelCut && s.sideways <= 0 && s.activeIn && ((s.over <= 1 && s.tabsWhole) || (s.scrollable && s.masked && (s.start || s.end))), JSON.stringify(s));
           check(`${tag}: the settings line shows every item whole, or fades at its end`,
             s.band && (s.band.over <= 1 ? s.band.cut.length === 0 : s.band.end && s.band.masked), JSON.stringify(s.band));
         };
@@ -1482,6 +1496,31 @@ async function roundGPass() {
         });
         check(`roundG ${w} ${lang}: the phone map's Clear all stands 8 px from Filters and the next chip, both whole`,
           q.clear && q.before === 8 && (q.after == null || q.after === 8) && q.whole && q.nextWhole, JSON.stringify(q));
+        // Judgement-9: the rows are transparent on the map and reach 30 px
+        // or more past their chips' ground (the --elev-2 shadow's room), so
+        // no pale box and no hard line; row 3's chips and the map just below
+        // the band still take their presses; Clear all stands on paper.
+        const g = await page.evaluate(() => {
+          const s2 = document.querySelector('.band.is-map .band-chips-pin > .band-chips');
+          const s3 = document.querySelector('.band.is-map .band-quick > .xquick');
+          const ground = (sc, q) => Math.max(...[...sc.querySelectorAll(q)].map((c) => c.getBoundingClientRect().bottom));
+          const b2 = s2.getBoundingClientRect(); const b3 = s3.getBoundingClientRect();
+          const chip = s3.querySelector('.xquick-chip:not(.xquick-filters)').getBoundingClientRect();
+          const cx = Math.min(chip.left + chip.width / 2, innerWidth - 40);
+          const hit = document.elementFromPoint(cx, chip.top + chip.height / 2);
+          const band = document.querySelector('.band.is-map').getBoundingClientRect();
+          const below = document.elementFromPoint(innerWidth / 2, band.bottom + 12);
+          const clear = s3.querySelector('.xquick-clear');
+          return {
+            bg2: getComputedStyle(s2).backgroundColor, bg3: getComputedStyle(s3).backgroundColor,
+            room2: Math.round(b2.bottom - (ground(s2, '.band-chip') - 6)), room3: Math.round(b3.bottom - ground(s3, '.xquick-chip')),
+            chipTap: !!hit?.closest('.xquick-chip'), mapDrag: !!below?.closest('.xmap'),
+            clearPaper: clear ? getComputedStyle(clear).backgroundColor : null,
+          };
+        });
+        const clearBg = (c) => c === 'rgba(0, 0, 0, 0)' || c === 'transparent';
+        check(`roundG ${w} ${lang}: the phone map's chip rows are transparent and keep their chips' shadows whole, row 3 and the map keep their presses, Clear all on paper`,
+          clearBg(g.bg2) && clearBg(g.bg3) && g.room2 >= 30 && g.room3 >= 30 && g.chipTap && g.mapDrag && g.clearPaper && !clearBg(g.clearPaper), JSON.stringify(g));
         if (SHOTS && (lang === 'fr' || lang === 'en')) await page.screenshot({ path: path.join(SHOTS, `g-quick-${w}-${lang}.png`) });
         await ctx.close();
       });

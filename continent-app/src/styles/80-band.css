@@ -319,11 +319,18 @@
     min-width: 0;
     border-bottom: var(--stroke-hair) solid var(--border-soft);
   }
+  /* The row really scrolls when six tabs do not fit (judgement-9): the
+     phone rule in 84-explore-overview.css sets overflow hidden, so the end
+     fade hid a word that no finger or wheel could slide into view. */
   .xcats-line .ui-tabs.xcats-row {
     flex: 1 1 auto;
     gap: var(--space-6);
     min-width: 0;
     border-bottom: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
   }
   .xcats-line .xcats-row .ui-tab,
   .explore-shell.is-map .xcats-line .xcats-row .ui-tab {
@@ -383,6 +390,13 @@
 @media (min-width: 769px) and (max-width: 1023px) {
   .xcats-line { gap: var(--space-4); }
   .xcats-line .ui-tabs.xcats-row { gap: var(--space-4); }
+}
+/* Below 800 px the tabs and the switch close up one more step, so all six
+   fit whole at 769 in es ("Ciclismo") and it ("Bicicletta"), which were 2
+   and 19 px over (judgement-9). */
+@media (min-width: 769px) and (max-width: 799px) {
+  .xcats-line { gap: var(--space-3); }
+  .xcats-line .ui-tabs.xcats-row { gap: var(--space-3); }
 }
 
 /* --- Phone -------------------------------------------------------------- */
