@@ -1,0 +1,322 @@
+/* G12 My trips as "your atlas" (run 2026-11-21-my-trips-tab, Phase A): the
+   parts every tab shares. The map slot and its pane, the band, the fade into
+   the ground on a phone, the floating count chip, the one Example pill, the
+   two-way switch (seg2) of the compact price control, and the milestone
+   badges. Tokens only. The plate's own land, sea and border come from
+   src/map/tokenColors.js BASEMAP_COLOURS (so it matches Explore); the
+   component hands the sea in as --atlas-sea, as CSS cannot read that module. */
+
+/* ---- layout: content pane plus a sticky map pane from 1100 (on the breakpoint scale) ---- */
+.atlas-body {
+  display: block;
+}
+
+.atlas-content {
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-2) var(--space-4) var(--space-8);
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .atlas-body {
+    padding: var(--space-5) var(--space-7) var(--space-8);
+  }
+
+  .atlas-content {
+    padding: var(--space-6) 0 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  .atlas-full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1100px) {
+  .atlas-body {
+    display: grid;
+    grid-template-columns: 540px minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .atlas-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0;
+    order: 1;
+  }
+
+  .atlas-slot {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+    order: 2;
+  }
+}
+
+/* ---- the map slot ---- */
+.atlas-slot {
+  position: relative;
+}
+
+.atlas-map {
+  position: relative;
+  overflow: hidden;
+  background: var(--atlas-sea, var(--map-water));
+  /* A phone's map is full-bleed and fades into the ground (Revision 1). */
+  -webkit-mask-image: linear-gradient(var(--mask-solid) 80%, transparent);
+  mask-image: linear-gradient(var(--mask-solid) 80%, transparent);
+}
+
+.atlas-map svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .atlas-map {
+    border-radius: var(--radius-card);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* ---- the band: content sits on the stone ground, tiles on the band ---- */
+.atlas-band {
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  padding: var(--space-4);
+}
+
+/* ---- what floats on the map: paper (Revision 1) ---- */
+.atlas-floatchip {
+  position: absolute;
+  left: var(--space-3);
+  top: var(--space-3);
+  z-index: var(--z-float);
+  display: grid;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  pointer-events: none;
+}
+
+.atlas-floatchip b {
+  font-size: var(--text-title);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--umber-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.atlas-floatchip span {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+@media (min-width: 1100px) {
+  .atlas-floatchip {
+    left: var(--space-4);
+    top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .atlas-floatchip b {
+    font-size: var(--text-display);
+  }
+}
+
+/* ---- the one Example pill a screen carries (Revision 1) ---- */
+.atlas-example {
+  position: sticky;
+  top: var(--space-3);
+  z-index: var(--z-sticky);
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--umber-800);
+  color: var(--action-text);
+  box-shadow: var(--elev-2);
+  font-weight: 800;
+}
+
+.atlas-example button {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--umber-700);
+  color: var(--action-text);
+  font: 700 var(--text-label) / 1 var(--ui);
+  cursor: pointer;
+}
+
+.atlas-example button:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus-on-dark);
+  outline-offset: 2px;
+}
+
+/* ---- seg2: one of two, the compact price control's switches ---- */
+.atlas-pricectl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.atlas-seg2 {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+}
+
+/* 36 px pills; the 3 px well and the gap round each up to the 44 px hit
+   area the spec asks for (decision: compact control). */
+.atlas-seg2 button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-2);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+
+.atlas-seg2 button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-1);
+}
+
+.atlas-seg2 button:focus-visible,
+.atlas-nights button:focus-visible,
+.atlas-badge:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+.atlas-nights {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 3px 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  font: 700 var(--text-label) / 1 var(--ui);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.atlas-nights button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+/* ---- badges: milestones and the trip log grade ---- */
+.atlas-badges {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--space-4) * -1);
+  padding: 0 var(--space-4) 2px;
+}
+
+@media (min-width: 768px) {
+  .atlas-badges {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.atlas-badge {
+  flex: none;
+  width: 72px;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font: 700 var(--text-caption) / 1.2 var(--ui);
+  text-align: center;
+  cursor: pointer;
+}
+
+.atlas-badge i {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--umber-600);
+  color: var(--action-text);
+}
+
+.atlas-badge.is-locked {
+  color: var(--text-3);
+}
+
+.atlas-badge.is-locked i {
+  box-sizing: border-box;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--text-3);
+}
+
+/* The grade on the trip log: "9/10" on umber 100, the top trip on umber 600. */
+.atlas-grade {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--umber-100);
+  color: var(--umber-800);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.atlas-grade small {
+  font-size: var(--text-caption);
+  font-weight: 700;
+}
+
+.atlas-grade.is-top {
+  background: var(--umber-600);
+  color: var(--action-text);
+}
+
+/* Nothing moves at first paint; reduced motion shows the end state. */
+@media (prefers-reduced-motion: reduce) {
+  .atlas-seg2 button {
+    transition: none;
+  }
+}
