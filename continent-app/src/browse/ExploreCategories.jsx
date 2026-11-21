@@ -65,6 +65,38 @@ export function ExploreCategories({ current, onPick, columns = 3, panelId, class
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
   const movedAt = React.useRef(0);
+  const lineRef = React.useRef(null);
+  const [more, setMore] = React.useState({ start: false, end: false });
+  // A narrow window (769 to about 900 px, a long language) can hold fewer
+  // tabs than six: the row then slides sideways, fades on a side that has
+  // more, and brings the chosen tab into view, so no tab is cut without a
+  // cue (owner: no cut text).
+  React.useLayoutEffect(() => {
+    const el = row && isDesktop ? lineRef.current?.querySelector('.xcats-row') : null;
+    if (!el) return undefined;
+    let gone = false;
+    const read = () => {
+      if (gone) return;
+      const x = Math.abs(el.scrollLeft);
+      const max = el.scrollWidth - el.clientWidth;
+      setMore((m) => (m.start === x > 1 && m.end === max - x > 1 ? m : { start: x > 1, end: max - x > 1 }));
+    };
+    const reveal = () => {
+      const tab = el.querySelector('[aria-selected="true"]');
+      if (!tab || el.scrollWidth <= el.clientWidth + 1) { read(); return; }
+      const a = tab.offsetLeft - el.offsetLeft; const b = a + tab.offsetWidth;
+      const fade = 32;
+      if (a - fade < el.scrollLeft) el.scrollLeft = Math.max(0, a - fade);
+      else if (b + fade > el.scrollLeft + el.clientWidth) el.scrollLeft = b + fade - el.clientWidth;
+      read();
+    };
+    reveal();
+    document.fonts?.ready?.then(reveal);
+    el.addEventListener('scroll', read, { passive: true });
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(reveal) : null;
+    ro?.observe(el);
+    return () => { gone = true; el.removeEventListener('scroll', read); ro?.disconnect(); };
+  }, [row, isDesktop, current, t]);
   if (row) {
     const tabs = (
       // Listens to the kit Tabs' own keys; the tabs are the controls.
@@ -96,7 +128,7 @@ export function ExploreCategories({ current, onPick, columns = 3, panelId, class
     // map's Share, judgement-5) stands just before the switch, so the switch
     // keeps its place between the list and the map.
     return (
-      <div className="xcats-line">
+      <div ref={lineRef} className={`xcats-line${more.start ? ' has-start' : ''}${more.end ? ' has-end' : ''}`}>
         {tabs}
         {(onView || end) && (
           <span className="xcats-end">

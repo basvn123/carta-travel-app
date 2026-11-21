@@ -16,7 +16,10 @@ const value = (lang, key) => {
 test('the band field names itself; Ask Carta stands outside it (round 2)', () => {
   const band = read('src/browse/band/ExploreBand.jsx');
   // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
-  assert.match(band, /placeholder=\{t\(isDesktop \? 'band\.searchPh' : 'band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
+  // The long hint on a desktop only while it fits the field, else the
+  // short one, never cut (judgement-5 follow-up); the name stays whole.
+  assert.match(band, /placeholder=\{isDesktop && hintFits \? longHint : t\('band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
+  assert.match(band, /const fits = ctx\.measureText\(longHint\)\.width <= room - 1;/);
   // The search button closes the field at its right end; no magnifier on the left.
   assert.match(band, /<Pressable type="submit" className="band-go"/);
   assert.match(band, /type="search"[\s\S]*enterKeyHint="search"/);

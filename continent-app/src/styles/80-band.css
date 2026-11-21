@@ -320,6 +320,16 @@
   }
   .xcats-line .xcats-row .ui-tab:focus-visible { outline-offset: 2px; }
 }
+/* A row that cannot hold six tabs slides sideways and fades on a side that
+   has more (ExploreCategories reads the edges), like the chip rows. */
+.xcats-line:is(.has-start, .has-end) .ui-tabs.xcats-row {
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.xcats-line.has-start .ui-tabs.xcats-row { --fade-s: var(--space-6); }
+.xcats-line.has-end .ui-tabs.xcats-row { --fade-e: var(--space-6); }
 /* The List | Map switch: a 32 px segment, each half a 44 px target. On the
    map Share stands just before it (judgement-5), so the switch keeps its
    place when the view changes. */
@@ -348,6 +358,13 @@
   .xcats-row .xcats-tab { gap: var(--space-1); }
   .xcats-line .ui-tabs.xcats-row { gap: var(--space-5); }
   .xcats-line .xcats-row .ui-tab::after { left: calc(20px + var(--space-1) * 2); right: var(--space-1); }
+}
+/* A tablet (769 to 1023 px): the tabs and the switch sit closer, so six
+   tabs fit whole in more languages; where they still do not, the row
+   slides with its end fade (above). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .xcats-line { gap: var(--space-4); }
+  .xcats-line .ui-tabs.xcats-row { gap: var(--space-4); }
 }
 
 /* --- Phone -------------------------------------------------------------- */

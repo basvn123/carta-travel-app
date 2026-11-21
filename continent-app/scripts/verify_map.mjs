@@ -43,7 +43,10 @@
 //   round E    judgement-5's fixes: from 769 px the map starts under the tabs
 //              with no empty row, Share once (with and without filters); the
 //              picked row in the column does not move; the phone map's
-//              settings row fades where it has more (--e-only)
+//              settings row fades where it has more; on a tablet (six
+//              languages at 769, 820, 900, 1023, map and list) the search
+//              hint is whole and the six tabs fit or slide with a fade, the
+//              chosen tab in view (--e-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -1024,7 +1027,53 @@ const headJs = `(() => {
     tabsOver: row ? row.scrollWidth - row.clientWidth : null,
   };
 })()`;
+const tabletJs = `(() => {
+  const inp = document.querySelector('.band-input');
+  const cs = getComputedStyle(inp);
+  const c = document.createElement('canvas').getContext('2d');
+  c.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+  const room = inp.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+  const line = document.querySelector('.xcats-line'); const row = line.querySelector('.xcats-row');
+  const over = row.scrollWidth - row.clientWidth;
+  const rr = row.getBoundingClientRect();
+  const on = row.querySelector('[aria-selected="true"]').getBoundingClientRect();
+  const fade = (line.classList.contains('has-start') ? 32 : 0);
+  const fadeE = (line.classList.contains('has-end') ? 32 : 0);
+  const labels = [...row.querySelectorAll('.xcats-tab-label')].map((e) => e.scrollWidth > e.clientWidth + 1);
+  return {
+    hint: inp.placeholder, hintW: Math.round(c.measureText(inp.placeholder).width), room: Math.round(room),
+    over, start: line.classList.contains('has-start'), end: line.classList.contains('has-end'),
+    masked: (getComputedStyle(row).maskImage || getComputedStyle(row).webkitMaskImage || 'none') !== 'none',
+    activeIn: on.left >= rr.left + fade - 1 && on.right <= rr.right - fadeE + 1,
+    labelCut: labels.some(Boolean), sideways: document.documentElement.scrollWidth - innerWidth,
+  };
+})()`;
+async function tabletPass() {
+  for (const lang of LANGS) {
+    for (const w of [769, 820, 900, 1023]) {
+      await guard(`roundE tablet ${w} ${lang}`, async () => {
+        const { ctx, page, errors } = await boot(w, 1000, '?tab=map&xw=map', lang);
+        const judge = (tag, s) => {
+          check(`${tag}: the search hint is whole`, s.hintW <= s.room, `"${s.hint}" ${s.hintW} in ${s.room}`);
+          check(`${tag}: the six tabs fit, or slide with a fade and the chosen tab in view`,
+            !s.labelCut && s.sideways <= 0 && s.activeIn && (s.over <= 1 || (s.masked && (s.start || s.end))), JSON.stringify(s));
+        };
+        judge(`roundE ${w} ${lang} map`, await page.evaluate(tabletJs));
+        await page.locator('.xmap-quick [data-quick="water"]').click();
+        await page.waitForTimeout(1200);
+        await page.locator('.xcats-view .seg-item').first().click();
+        await page.waitForSelector('.xrow:not(.xmr)', { timeout: 30000 }).catch(() => {});
+        await page.waitForTimeout(1200);
+        judge(`roundE ${w} ${lang} list`, await page.evaluate(tabletJs));
+        if (SHOTS && (w === 769 || w === 900) && (lang === 'it' || lang === 'en')) await page.screenshot({ path: path.join(SHOTS, `e-tablet-${w}-${lang}-list.png`) });
+        check(`roundE ${w} ${lang}: no page errors`, errors.length === 0, errors.slice(0, 2).join(' | '));
+        await ctx.close();
+      });
+    }
+  }
+}
 async function roundEPass() {
+  await tabletPass();
   for (const [w, h] of [[820, 1180], [1180, 820], [1440, 900]]) {
     await guard(`roundE head ${w}`, async () => {
       const { ctx, page, errors } = await boot(w, h, '?tab=map&xw=map');

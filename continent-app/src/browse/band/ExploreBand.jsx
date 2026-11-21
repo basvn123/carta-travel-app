@@ -151,6 +151,30 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   }, [instant, kind]);
 
   const inputRef = React.useRef(null);
+  // The hint is whole or it is the short one (owner: no cut text): on a
+  // desktop the long hint shows only while it fits the field, which from
+  // 769 to 1023 px (and with Back and Share in it) it often does not.
+  const longHint = t('band.searchPh');
+  const [hintFits, setHintFits] = React.useState(true);
+  React.useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (!isDesktop || !el) return undefined;
+    let gone = false;
+    const ctx = document.createElement('canvas').getContext('2d');
+    const read = () => {
+      if (gone || !ctx) return;
+      const cs = getComputedStyle(el);
+      ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const fits = ctx.measureText(longHint).width <= room - 1;
+      setHintFits((f) => (f === fits ? f : fits));
+    };
+    read();
+    document.fonts?.ready?.then(read);
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
+    ro?.observe(el);
+    return () => { gone = true; ro?.disconnect(); };
+  }, [isDesktop, longHint]);
   const panelId = React.useId();
   const close = React.useCallback(() => {
     setOpen(false);
@@ -289,7 +313,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                   </IconButton>
                 )}
                 <input ref={inputRef} type="search" className="band-input"
-                  value={value} placeholder={t(isDesktop ? 'band.searchPh' : 'band.searchPhShort')} aria-label={t('band.searchPh')}
+                  value={value} placeholder={isDesktop && hintFits ? longHint : t('band.searchPhShort')} aria-label={t('band.searchPh')}
                   autoComplete="off" enterKeyHint="search" spellCheck={false}
                   role="combobox"
                   aria-expanded={open}
