@@ -488,7 +488,7 @@ def main(argv=None):
             print(f"  {kind}: no reference file, skipped")
             continue
         if a.handoff and kind in HANDOFF_KINDS:
-            n = handoff(kind, res)
+            n = handoff(kind, res, Path(a.refs) / f"seed_{kind}.json")
             print(f"  {kind} hand-off: {n} famous item(s) to seed")
         res.pop("_refs", None)
         res.pop("_covered", None)

@@ -192,6 +192,15 @@
   "lakes": {
    "Q1234240": "Lake Copais: drained in the 1880s, farmland today (hand check 2026-11-21)",
    "Q914789": "Fucine Lake: drained in the 1870s, farmland today (hand check 2026-11-21)"
+  },
+  "beaches": {
+   "Q4411923": "Porvarinlahti: a bay, not a beach (hand check 2026-11-21)",
+   "Q16040906": "Dunkerque LNG terminal: an industrial port terminal, not a beach (hand check 2026-11-21)",
+   "Q2467550": "Vallon des Auffes: a fishing harbour in Marseille, not a beach (hand check 2026-11-21)",
+   "Q7331108": "Richtis Gorge: a gorge walk, not a beach (hand check 2026-11-21)",
+   "Q879340": "Bjarnarfjörður: a fjord, not a beach (hand check 2026-11-21)",
+   "Q2144963": "Kollafjörður (Strandir): a fjord, not a beach (hand check 2026-11-21)",
+   "Q11187007": "Nedstrandsfjorden: a fjord, not a beach (hand check 2026-11-21)"
   }
  }
 }
