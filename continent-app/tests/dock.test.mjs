@@ -162,6 +162,18 @@ test('the corners are two fixed slots that nothing measures or moves', () => {
   assert.match(css, /@media \(min-width: 769px\) \{\s+\.corner-map \{ display: none; \}/);
 });
 
+// Judgement-8 (G12): the Explore foot bar only from 769 to 1023 px, 80 px,
+// one ending; from 1024 px the disc floats again (the dock rule).
+test('the Explore list ends on an 80 px foot bar from 769 to 1023 px only', () => {
+  const css = src('styles/89-dock.css');
+  const bar = css.match(/@media \(min-width: 769px\) and \(max-width: 1023px\) \{\s+html:not\(\.has-map-corner\) \.explore-shell \{[^}]*\}\s+html:not\(\.has-map-corner\) \.explore-shell \.explore-tab \{([^}]*)\}/);
+  assert.ok(bar, 'scoped to 769 to 1023 px');
+  assert.match(bar[0], /\.explore-shell \{ background: var\(--surface-page\); \}/, "the top band's ground");
+  assert.match(bar[1], /margin-bottom: calc\(var\(--corner-size\) \+ var\(--corner-gap\) \+ var\(--space-2\)\);/, '48 + 24 + 8');
+  assert.match(bar[1], /padding-bottom: 0;/, 'the footer ends on the hairline');
+  assert.doesNotMatch(css, /@media \(min-width: 769px\) \{\s+html:not\(\.has-map-corner\) \.explore-shell \.explore-tab/, 'no band from 1024 px');
+});
+
 // Judge 1 (G12 round 2): at 360x640 the corners covered the phone search
 // panel and its Filters and Ask ran under the nav.
 test('the corners fade out while the phone search is open; the panel ends above the nav and the keyboard', () => {

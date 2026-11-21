@@ -51,15 +51,18 @@ export function AppliedRow({ chips, count, onClearAll, desktop, tools = null, t 
     if (!el) return;
     const start = el.scrollLeft > 1;
     const end = el.scrollLeft + el.clientWidth < el.scrollWidth - 1;
-    // G12 (Explore clean, open item): a first chip wider than the room left
-    // between Filters and Clear all ("Am besten bewertet" at 360 px) takes
-    // a line of its own under them, so it is never cut. Read against the
-    // fixed widths, not the scroller's, so the row cannot flip back.
+    // G12: chips wider together than the room left between Filters and
+    // Clear all take a line of their own under them, so no chip is cut ("Am
+    // besten bewertet" at 360 px) or half faded right before Clear all
+    // ("Good" at 390, judgement-8). Read against the fixed widths and the
+    // chips' own width, not the scroller's, so the row cannot flip back.
     const row = rowRef.current;
-    const first = el.firstElementChild;
     const side = (q) => row?.querySelector(q)?.offsetWidth || 0;
     const room = (row?.clientWidth || 0) - side('.xap-filters') - side('.xap-clear') - 16;
-    const stacked = !!first && first.offsetWidth > room + 1;
+    const first = el.firstElementChild;
+    const last = el.lastElementChild;
+    const chipsW = first ? last.offsetLeft + last.offsetWidth - first.offsetLeft : 0;
+    const stacked = !!first && chipsW > room + 1;
     setMore((m) => (m.start === start && m.end === end && m.stacked === stacked ? m : { start, end, stacked }));
   }, []);
   React.useLayoutEffect(() => {

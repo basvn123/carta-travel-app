@@ -61,9 +61,13 @@
 //              Filters count disc 6 px or more from its word; Clear all on
 //              the map's top edge on paper, 8 px from its neighbours, its
 //              words 4.5:1 on that paper; a list row under the "Good in
-//              July" chip does not say it again (1440 list); the
-//              style disc clear of the list's cards and rows from 769 to
-//              1440, rails and list (--g-only)
+//              July" chip does not say it again (1440 list); the style
+//              disc on the rails and the list in six languages: 769 to
+//              1023 the list ends on an 80 px foot bar holding it, from
+//              1024 it floats with no words or control under it at rest
+//              and at the end (judgement-8); the phone's applied chips
+//              whole (their own line when they do not fit) and the phone
+//              map's Clear all 8 px from its neighbours (--g-only)
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -1310,7 +1314,41 @@ const discJs = `(() => {
   const tr = tab.getBoundingClientRect();
   const hit = (r) => r.width > 0 && r.left < disc.right && r.right > disc.left && Math.max(r.top, tr.top) < disc.bottom && Math.min(r.bottom, tr.bottom) > disc.top;
   const under = [...tab.querySelectorAll('.xrc, .xrow, .xrc-head, .xrow-name')].filter((e) => hit(e.getBoundingClientRect())).length;
-  return { disc: true, under, listBottom: Math.round(tr.bottom), discTop: Math.round(disc.top), left: Math.round(disc.left), fromFoot: Math.round(innerHeight - disc.bottom) };
+  // What the disc covers (judgement-8): words (a name, a figure) or a shown
+  // control. A card's own link may pass under it, as its photo does.
+  const shown = (el) => { for (let e = el; e && e !== tab; e = e.parentElement) { const s = getComputedStyle(e); if (s.visibility === 'hidden' || +s.opacity === 0) return false; } return true; };
+  const words = [];
+  const walk = document.createTreeWalker(tab, NodeFilter.SHOW_TEXT);
+  for (let t = walk.nextNode(); t; t = walk.nextNode()) {
+    if (!t.textContent.trim() || !t.parentElement?.getClientRects().length || !shown(t.parentElement)) continue;
+    const r = document.createRange(); r.selectNodeContents(t);
+    if ([...r.getClientRects()].some(hit)) words.push(t.textContent.trim().slice(0, 24));
+  }
+  const controls = [...tab.querySelectorAll('button, a[href], input, select, [role="button"]')]
+    .filter((e) => !e.matches('.hs-rcard-link, .xrow-hit') && hit(e.getBoundingClientRect()) && shown(e))
+    .map((e) => String(e.className || e.tagName).slice(0, 32));
+  // The foot bar's ground (769 to 1023): the first painted ground under its
+  // middle, against the top band's.
+  const paint = (el) => { for (let e = el; e; e = e.parentElement) { const c = getComputedStyle(e).backgroundColor; if (!/rgba\\(0, 0, 0, 0\\)|transparent/.test(c)) return c; } return ''; };
+  const foot = tab.querySelector('.site-footer')?.getBoundingClientRect();
+  return {
+    disc: true, under, words, controls, listBottom: Math.round(tr.bottom), discTop: Math.round(disc.top), left: Math.round(disc.left),
+    fromFoot: Math.round(innerHeight - disc.bottom), barGround: paint(document.elementFromPoint(innerWidth / 2, innerHeight - 4)),
+    bandGround: paint(document.querySelector('.band')), footGap: foot ? Math.round(tr.bottom - parseFloat(getComputedStyle(tab).borderBottomWidth) - foot.bottom) : null,
+    scroll: Math.round(tab.scrollTop), end: Math.round(tab.scrollHeight - tab.clientHeight),
+  };
+})()`;
+const scrollTab = (page, to) => page.evaluate((y) => {
+  const t = [...document.querySelectorAll('.explore-shell .explore-tab')].find((e) => e.getClientRects().length);
+  t.scrollTop = y < 0 ? t.scrollHeight : y;
+}, to);
+// The list draws 48 more rows as it nears its end, a frame or more later:
+// "the end" is read in the same task as the scroll, the site footer then
+// the scroller's last box.
+const endJs = `(() => {
+  const t = [...document.querySelectorAll('.explore-shell .explore-tab')].find((e) => e.getClientRects().length);
+  t.scrollTop = t.scrollHeight;
+  return ${discJs};
 })()`;
 async function roundGPass() {
   // 1. The search hint on a phone: whole, or none at all.
@@ -1363,24 +1401,95 @@ async function roundGPass() {
       await ctx.close();
     });
   }
-  // 4. The style disc clear of the list's cards and rows from 769 px, on
-  // the rails (en, fr) and on the list with a filter on (en).
-  for (const [lang, url, wait] of [['en', '?tab=explore', '.xrc'], ['fr', '?tab=explore', '.xrc'], ['en', '?tab=explore&xm=7', '.xrow']]) {
-    for (const [w, h] of [[769, 1024], [820, 1180], [900, 1000], [1023, 768], [1180, 820], [1440, 900]]) {
-      await guard(`roundG disc ${w} ${lang} ${url}`, async () => {
-        const { ctx, page } = await boot(w, h, url, lang, '', wait);
-        const rest = await page.evaluate(discJs);
-        await page.evaluate(() => { const t = [...document.querySelectorAll('.explore-shell .explore-tab')].find((e) => e.getClientRects().length); t.scrollTop = 420; });
-        await page.waitForTimeout(600);
-        const moved = await page.evaluate(discJs);
-        check(`roundG ${w} ${lang} ${wait === '.xrow' ? 'list' : 'rails'}: the style disc sits clear of every card, at rest and scrolled, 24 px from its corner`,
-          rest.disc && rest.under === 0 && moved.under === 0 && rest.listBottom <= rest.discTop && rest.left === 24 && rest.fromFoot === 24, JSON.stringify({ rest, moved }));
-        if (SHOTS && (w === 769 || w === 1440)) await page.screenshot({ path: path.join(SHOTS, `g-disc-${w}-${lang}${wait === '.xrow' ? '-list' : ''}.png`) });
+  // 4. The style disc on the Explore rails and list, six languages
+  // (judgement-8). 769 to 1023 px: the list ends on an 80 px foot bar, its
+  // hairline 8 px above the disc, the bar on the top band's ground, the site
+  // footer's end on the hairline (one ending), no card under the disc at
+  // rest or scrolled. From 1024 px the disc floats (the dock rule): at rest
+  // and at the scroll's end no words and no control under it, only a
+  // photo's corner. Mid scroll, words pass under a floating disc on the
+  // rails (they start 32 to 48 px in); counted in the note, not failed.
+  for (const lang of LANGS) {
+    for (const [kind, url, wait] of [['rails', '?tab=explore', '.xrc'], ['list', '?tab=explore&xm=7', '.xrow']]) {
+      for (const [w, h] of [[769, 1024], [820, 1180], [900, 1000], [1023, 768], [1024, 768], [1180, 820], [1440, 900]]) {
+        await guard(`roundG disc ${w} ${lang} ${kind}`, async () => {
+          const { ctx, page } = await boot(w, h, url, lang, '', wait);
+          const rest = await page.evaluate(discJs);
+          if (w < 1024) {
+            await scrollTab(page, 420);
+            await page.waitForTimeout(400);
+            const moved = await page.evaluate(discJs);
+            const end = await page.evaluate(endJs);
+            check(`roundG ${w} ${lang} ${kind}: the list ends on the foot bar (80 px, the band's ground, its line 8 px above the disc, the footer ending on it once), no card under the disc`,
+              rest.disc && rest.under === 0 && moved.under === 0 && end.under === 0 && rest.discTop - rest.listBottom === 8 && innerFoot(h, rest) === 80
+                && rest.barGround === rest.bandGround && Math.abs(end.footGap) <= 1 && rest.left === 24 && rest.fromFoot === 24,
+              JSON.stringify({ rest: pick(rest), moved: moved.under, end: pick(end) }));
+          } else {
+            const passing = [];
+            for (let y = 0; y < rest.end; y += 90) {
+              await scrollTab(page, y);
+              const s = await page.evaluate(discJs);
+              if (s.words.length) passing.push(y);
+            }
+            const end = await page.evaluate(endJs);
+            check(`roundG ${w} ${lang} ${kind}: the disc floats 24 px from its corner, at rest and at the end no words or control under it`,
+              rest.disc && rest.left === 24 && rest.fromFoot === 24 && !rest.words.length && !rest.controls.length && !end.words.length && !end.controls.length,
+              JSON.stringify({ rest: pick(rest), end: pick(end), midScrollWithWords: `${passing.length} of ${Math.ceil(rest.end / 90)}` }));
+          }
+          if (SHOTS && lang === 'en' && (w === 1023 || w === 1440)) {
+            await scrollTab(page, 0);
+            await page.waitForTimeout(400);
+            await page.screenshot({ path: path.join(SHOTS, `g-disc-${w}-${kind}-rest.png`) });
+            await scrollTab(page, -1);
+            await page.waitForTimeout(150);
+            await page.screenshot({ path: path.join(SHOTS, `g-disc-${w}-${kind}-end.png`) });
+          }
+          await ctx.close();
+        });
+      }
+    }
+  }
+  // 5. The phone's applied row (judgement-8): chips that do not all fit
+  // between Filters and Clear all take their own line, so no chip is half
+  // faded beside Clear all. 6. The phone
+  // map's quick row: Clear all 8 px from Filters and from the next chip,
+  // both whole in view.
+  for (const lang of LANGS) {
+    for (const [w, h] of [[360, 780], [390, 844]]) {
+      await guard(`roundG phone rows ${w} ${lang}`, async () => {
+        for (const url of ['?tab=explore&xq=8&xk=water&xm=7', '?tab=explore&xq=8']) {
+          const { ctx, page } = await boot(w, h, url, lang, '', '.xrow');
+          const a = await page.evaluate(() => {
+            const row = [...document.querySelectorAll('.xap.is-phone')].find((e) => e.getClientRects().length);
+            if (!row) return { row: false };
+            const sc = row.querySelector('.xap-scroll').getBoundingClientRect();
+            const chips = [...row.querySelectorAll('.xap-chip')].map((c) => { const q = c.getBoundingClientRect(); return q.left >= sc.left - 0.5 && q.right <= sc.right + 0.5; });
+            const top = (q) => Math.round(row.querySelector(q).getBoundingClientRect().top);
+            return { row: true, stacked: row.classList.contains('is-stacked'), chips: chips.length, whole: chips.filter(Boolean).length, sameLine: top('.xap-filters') === top('.xap-clear') };
+          });
+          check(`roundG ${w} ${lang} ${url.includes('xm=') ? 'two chips' : 'one chip'}: every applied chip whole, Clear all on Filters' line`,
+            a.row && a.chips > 0 && a.whole === a.chips && a.sameLine, JSON.stringify(a));
+          await ctx.close();
+        }
+        const { ctx, page } = await boot(w, h, '?tab=map&xw=map&xq=8&xk=water');
+        const q = await page.evaluate(() => {
+          const c = [...document.querySelectorAll('.band-quick .xquick-clear')].find((e) => e.getClientRects().length);
+          if (!c) return { clear: false };
+          const row = c.parentElement.getBoundingClientRect(); const r = c.getBoundingClientRect();
+          const p = c.previousElementSibling.getBoundingClientRect(); const n = c.nextElementSibling?.getBoundingClientRect();
+          return { clear: true, before: Math.round(r.left - p.right), after: n ? Math.round(n.left - r.right) : null,
+            whole: r.left >= row.left && r.right <= row.right + 0.5, nextWhole: !n || n.right <= row.right + 0.5 };
+        });
+        check(`roundG ${w} ${lang}: the phone map's Clear all stands 8 px from Filters and the next chip, both whole`,
+          q.clear && q.before === 8 && (q.after == null || q.after === 8) && q.whole && q.nextWhole, JSON.stringify(q));
+        if (SHOTS && (lang === 'fr' || lang === 'en')) await page.screenshot({ path: path.join(SHOTS, `g-quick-${w}-${lang}.png`) });
         await ctx.close();
       });
     }
   }
 }
+const innerFoot = (h, s) => h - s.listBottom;
+const pick = (s) => ({ under: s.under, words: s.words, controls: s.controls, listBottom: s.listBottom, discTop: s.discTop, bar: s.barGround, band: s.bandGround, footGap: s.footGap });
 
 const perf = {};
 // --layout-only skips the speed runs (a quick rerun of the layout checks).

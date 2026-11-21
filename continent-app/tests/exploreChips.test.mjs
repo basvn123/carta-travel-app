@@ -104,6 +104,12 @@ test('the chips are capped with an ellipsis; the phone row never wraps', () => {
   assert.ok(scroller.lastIndexOf('</div>') > scroller.indexOf('xap-chip"'), 'Clear all stands after the scroller, outside it');
   // The remove's 44 px box spills over the 32 px chip.
   assert.match(css, /margin: calc\(\(32px - var\(--tap\)\) \/ 2\)/);
+  // Chips that do not all fit take their own line, so none is half faded
+  // beside Clear all (judgement-8); read from the chips, not the scroller.
+  assert.match(src, /const chipsW = first \? last\.offsetLeft \+ last\.offsetWidth - first\.offsetLeft : 0;/);
+  assert.match(src, /const stacked = !!first && chipsW > room \+ 1;/);
+  // The phone band's Clear all keeps the row's 8 px gaps (judgement-8).
+  assert.match(read('src/styles/86-map-view.css'), /\.band-quick \.xquick-clear \{ margin: 0; \}/);
 });
 
 test('the map from 769 px: a quick filter that is on shows once, in the quick row (judgement-6)', () => {

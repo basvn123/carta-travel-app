@@ -767,9 +767,10 @@ html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
   pointer-events: none;
 }
 .explore-shell .xmap-quick .xquick-chip { pointer-events: auto; margin: 0; }
-/* On the phone band's row no box, so it sits 4 px nearer its neighbours: a
-   chip turned on at 360 px in fr stays in view beside Filters and it. */
-.band-quick .xquick-clear { margin: 0 calc(-1 * var(--space-1)); }
+/* On the phone band's row no box, with the row's own 8 px gap either side
+   (judgement-8: 4 px read tight); a chip turned on at 360 px in fr still
+   stands whole in view beside Filters and it (verify_map round G). */
+.band-quick .xquick-clear { margin: 0; }
 /* On the map it stands on the chips' paper, the row's 8 px gaps either side,
    so it reads over sea and land alike and not jammed between two chips
    (judgement-7); no edge and no shadow, so it is still not a chip. */

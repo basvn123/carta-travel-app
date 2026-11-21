@@ -58,7 +58,8 @@
    higher", audit-visual.md). Only the nav's own height moves the slots,
    with a transition. Content that passes under them is the honest cost of
    "never moves"; the scrollers end with --corner-room and pad focus clear
-   of them instead (end of this file). */
+   of them instead (end of this file). One exception: the Explore list from
+   769 to 1023 px ends on a foot bar that holds the disc (end of this file). */
 :root {
   --corner-size: var(--tap-main);
   --corner-gap: var(--space-3);
@@ -280,16 +281,22 @@ body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { opacity: 0; visibil
   padding-bottom: var(--corner-room);
   scroll-padding-bottom: var(--corner-room);
 }
-/* From 769 px the list starts 24 to 48 px in, beside or under the disc,
-   so a card's name (769, "La♡omo") or a row's photo (1440) sat under it
-   at rest (judgement-7). There the Explore list ends above the disc's own
-   band (the disc 24 px from its edges), a hairline over it; the map keeps
-   its corner (has-map-corner). */
-@media (min-width: 769px) {
+/* The one exception, the Explore list from 769 to 1023 px: its cards start
+   24 px in, so a card's name sat under the disc at rest (769, "La♡omo",
+   judgement-7). There the list ends on a foot bar: a hairline 8 px above
+   the disc and the top band's ground under it, so the page is framed at
+   its top and its foot, with the disc in the bar. 80 px, and the list ends
+   once: the site footer's end meets the hairline (judgement-8: 96 px with
+   24 px of ground after the footer read as dead space and a double end).
+   From 1024 px the cards start 32 to 48 px in and the disc floats again:
+   at most a photo's corner passes under it, never a name, a figure or a
+   control (verify_map round G). The map keeps its corner (has-map-corner). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  html:not(.has-map-corner) .explore-shell { background: var(--surface-page); }
   html:not(.has-map-corner) .explore-shell .explore-tab {
-    margin-bottom: var(--corner-room);
+    margin-bottom: calc(var(--corner-size) + var(--corner-gap) + var(--space-2));
     border-bottom: var(--stroke-hair) solid var(--border-soft);
-    padding-bottom: var(--space-5);
+    padding-bottom: 0;
     scroll-padding-bottom: 0;
   }
 }
