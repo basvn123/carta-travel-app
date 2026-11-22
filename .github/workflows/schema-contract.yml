@@ -153,6 +153,7 @@ jobs:
             /continent-app/public/entry_rules.json
             /continent-app/tests/wire-contract.test.mjs
             /pipeline/
+            /src/
             /tests/test_provenance.py
             /tests/conftest.py
             /tests/needs_master.txt
