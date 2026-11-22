@@ -2307,3 +2307,41 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .mt-today.is-draw .mt-invite-path, .atlas-plate.is-draw .atlas-here { animation: none; clip-path: none; }
   .jl.is-spend .jl-bead, .mt-spend-door > svg:last-child { transition: none; }
 }
+
+/* ==== G12 wow, phase B: the rest of Reizen. The next trip carries its
+   journey line (every day to come) under the photo; the countdown stays the
+   loudest figure. The grade is a map scale bar on the ground, with the
+   country's silhouette from the plate's own geometry. ==== */
+.mt-next-line { margin-top: calc(-1 * var(--space-1)); }
+.mt-panel .mt-rate { gap: var(--space-3); padding: 0; border-radius: 0; background: none; }
+.mt-rate-h { display: flex; align-items: center; gap: var(--space-3); }
+.mt-panel .mt-rate b { font-size: var(--text-lead); font-weight: 800; color: var(--text); }
+.mt-rate-shape { flex: none; width: 40px; height: 40px; }
+.mt-rate-shape path { fill: var(--umber-600); }
+.mt-panel .mt-rate-scale {
+  gap: 0;
+  overflow: hidden;
+  border: 1.5px solid var(--umber-800);
+  border-radius: var(--radius-sm);
+}
+.mt-panel .mt-rate-scale button {
+  min-height: var(--tap-main);
+  border-right: 1px solid var(--umber-300);
+  border-radius: 0;
+  background: var(--surface);
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+.mt-panel .mt-rate-scale button:nth-child(even) { background: var(--umber-50); }
+.mt-panel .mt-rate-scale button:last-child { border-right: 0; }
+.mt-panel .mt-rate-scale button.is-pre { background: var(--umber-600); color: var(--on-plate); }
+.mt-panel .mt-rate-scale button:active { scale: 0.94; transition: scale var(--dur-tick) var(--ease-tick); }
+/* A phone: two bars of five, each segment still a full target. */
+@media (max-width: 599px) {
+  .mt-panel .mt-rate-scale button:nth-child(5) { border-right: 0; }
+  .mt-panel .mt-rate-scale button:nth-child(-n+5) { border-bottom: 1px solid var(--umber-300); }
+}
+.atlas-ratebox .mt-rate-scale button:nth-child(5) { border-right: 0; }
+.atlas-ratebox .mt-rate-scale button:nth-child(-n+5) { border-bottom: 1px solid var(--umber-300); }
+@media (prefers-reduced-motion: reduce) {
+  .mt-panel .mt-rate-scale button { transition: none; }
+}

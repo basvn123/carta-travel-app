@@ -7,6 +7,7 @@ import { CheckIcon, ChevronRightIcon, PersonIcon, ListDayIcon, UploadIcon } from
 import { formatMoney } from '../../lib/money.js';
 import { CardMenu, Faces, whenText } from './parts.jsx';
 import { MarkPlate, ReadyTiles, AfterTrip, ShareMenu } from './TripParts.jsx';
+import { JourneyLine } from './atlas/JourneyLine.jsx';
 
 /** A step's state as a drawn mark: done, part done, not yet. */
 function StepMark({ state }) {
@@ -67,7 +68,7 @@ export function NextTripCard({
   people = [], crewLine = '', party = null, readiness = null, nudge = null,
   onOpen, onPlanDays, nextStep = null, coplanBy = '', menuActions = [], onRemove, removeLabel, onAddBooking = null,
   plateValue = null, plateLabel = '', onUnit = null, onStep = null, onImage = null, onShare = null,
-  onEurope = null, countryLabel = '', example = false,
+  onEurope = null, countryLabel = '', example = false, lineStops = [],
 }) {
   const { t } = useI18n();
   const head = Math.max(party || 0, people.length + 1);
@@ -77,6 +78,14 @@ export function NextTripCard({
         <HeroImage url={img} city={title} iso2={iso2} className="mt-next-img" maxWidth={960} ratio={[16, 9]}
           sizes="(min-width: 1100px) 540px, 100vw" eager />
       </div>
+      {lineStops.length > 0 && (
+        <JourneyLine
+          variant="card"
+          stops={lineStops}
+          className="mt-next-line"
+          label={lineStops.map((s) => `${s.city} ${t(s.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: s.nights })}`).join(', ')}
+        />
+      )}
       <div className="mt-thead">
         <div className="mt-thead-t">
           <h3 className="mt-next-title" id={`mt-next-${id}`}>

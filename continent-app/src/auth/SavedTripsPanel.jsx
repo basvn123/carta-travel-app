@@ -775,6 +775,8 @@ export function SavedTripsPanel({
         ...common,
         countries: parts.countries,
         countdown: n != null && n > 0 ? { n, place: firstTown(p) } : null,
+        // G12 atlas: the journey line under the photo, every day still to come.
+        lineStops: tripStops(p).map((s, i) => ({ ...s, city: destinations[s.id]?.city || s.city || planCities(p)[i] || '' })),
         when,
         dates: fmtRange(p.start_date, p.end_date),
         nights,
@@ -1194,9 +1196,11 @@ export function SavedTripsPanel({
   // "Hoe was {trip}?" (decision 8): the latest ended trip without a grade,
   // until it is graded; the grade is memory.rating, Je cijfer.
   const toRate = pastTrips.find((x) => x.kind === 'plan' && (x.mem?.rating ?? null) == null) || null;
+  const rateIso = toRate ? journeyParts(toRate.item).countries.map(isoOf).filter(Boolean)[0] || '' : '';
   const rateNode = toRate && !showExample ? (
     <RateTrip
       title={toRate.title}
+      shape={rateIso ? atlasGeo?.countries?.find((c) => c.cc === rateIso)?.d || '' : ''}
       onRate={(n) => {
         const before = loadMemory(toRate.id) || emptyMemory();
         saveMemory(toRate.id, { ...before, rating: n }, spendLabels);
