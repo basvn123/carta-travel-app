@@ -1427,6 +1427,25 @@
       "date": "2026-11-12",
       "review": "2027-05-12",
       "test": "tests/footprint.test.mjs"
+    },
+    "budget.search": {
+      "value": {
+        "buffer_default": 0.1,
+        "buffer_steps": [0, 0.05, 0.1, 0.15, 0.2],
+        "days_min": 2,
+        "days_max": 21,
+        "days_default": 5,
+        "adults_default": 2,
+        "near_over": 0.15,
+        "more_step_eur": 50,
+        "budget_max_eur": 999999
+      },
+      "unit": "share, days, people, EUR",
+      "kind": "estimate",
+      "source": "The budget search's own inputs (T518, ROADMAP A-11 / RC16): a buffer of 10 percent on the priced parts in steps up to 20, 2 to 21 days (5 default), 2 adults, a place is 'just over' up to 15 percent above the budget, the 'with more' figure rounds up to 50 EUR, a typed budget caps at 999,999. They were constants in lib/budgetSearch.js; now here so the one guard (tests/priceConfig.test.mjs) covers all of lib/",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/budgetSearch.test.mjs"
     }
   }
 }

@@ -1,0 +1,867 @@
+{
+ "_about": "RC16 guard (tests/priceConfig.test.mjs): top-level numeric constants in src/lib/ that are NOT price rules, each file with why. A new numeric constant in lib/ fails the guard until it moves to config/pricing.json (or config/*.json) or is added here with a reason. The price modules are not listed: they are held to the stricter list in the test.",
+ "files": {
+  "ask/context.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "PROMPT_VERSION",
+    "MAX_NOTES",
+    "MAX_NOTE_CHARS",
+    "MAX_QUESTION_CHARS",
+    "MAX_ANSWER_TOKENS"
+   ]
+  },
+  "ask/generate.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "FIRST_TOKEN_MS"
+   ]
+  },
+  "ask/intent.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "BUDGET_STEPS",
+    "LINK_MIN"
+   ]
+  },
+  "ask/rank.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "WARM_C",
+    "PICKS"
+   ]
+  },
+  "ask/reply.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "SHOWN_PLACES",
+    "MAX_SENTENCES",
+    "MIN_TYPING_MS",
+    "SLOW_MS"
+   ]
+  },
+  "ask/retrieve.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "RRF_K",
+    "DENSE_TIMEOUT_MS"
+   ]
+  },
+  "ask/sessions.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "MAX_CHATS",
+    "MAX_TURNS",
+    "TITLE_MAX"
+   ]
+  },
+  "ask/verify.js": {
+   "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); no price",
+   "names": [
+    "WITHDRAW"
+   ]
+  },
+  "asOf.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DAY_MS"
+   ]
+  },
+  "atlasFacts.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DAY_MS"
+   ]
+  },
+  "beforeGo.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "BEFORE_GO_MAX"
+   ]
+  },
+  "bootIndex.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "BOOT_VERSION",
+    "SHARD_BYTES",
+    "TILE_DEGREES",
+    "RANK_VERSION"
+   ]
+  },
+  "bootSplash.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "INTRO_MS",
+    "SLOW_MS",
+    "LIFT_MS"
+   ]
+  },
+  "cardFillings.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "VALUE_COUNT",
+    "ICON_MAX",
+    "HOOK_MAX"
+   ]
+  },
+  "cartaRoute.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "ROAD_FACTOR",
+    "LEG_KMH",
+    "LEG_FIXED_H"
+   ]
+  },
+  "catalogue.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "CELL"
+   ]
+  },
+  "cityResearch.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "RADIUS_M",
+    "RADIUS_BIG_M",
+    "BIG_POP",
+    "WIKI_GEO_LIMIT",
+    "WIKI_EXTRACT_BATCH",
+    "OVERPASS_LIMIT",
+    "POI_CAP",
+    "MIN_POIS",
+    "REQUEST_MS",
+    "OVERPASS_MS",
+    "FAR_HINT_KM",
+    "KIND_QUOTA",
+    "KIND_MUST_QUOTA"
+   ]
+  },
+  "countryBrief.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "GROUP_ROWS"
+   ]
+  },
+  "countryCompare.js": {
+   "why": "limit or tuning number; not a price",
+   "names": [
+    "MAX_COMPARE"
+   ]
+  },
+  "countryMatch.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MIN_PLACE_SCORE",
+    "MAX_TRIP_TYPES",
+    "SHORT_HOP_KM",
+    "MAX_DRIVE_H",
+    "MIN_TAGGED",
+    "HOT_C"
+   ]
+  },
+  "coverageCases.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "FAR_KM"
+   ]
+  },
+  "crowdMonth.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "QUIET_MAX_TIER"
+   ]
+  },
+  "cycleStory.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "SURFACE_MIN_KNOWN"
+   ]
+  },
+  "dayRoute.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "STEP_FREE_LEG_KM",
+    "DETOUR_RATIO",
+    "DETOUR_EXTRA_KM",
+    "FAR_KM",
+    "OFF_PATH_M"
+   ]
+  },
+  "daySpread.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "R"
+   ]
+  },
+  "derivedModules.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "UNSWEPT_SHORE",
+    "REASON_MAX"
+   ]
+  },
+  "destOverview.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "AROUND_CAP"
+   ]
+  },
+  "detailSkeleton.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "KEY_FACTS_MIN",
+    "KEY_FACTS_MAX",
+    "CHEAPER_BY"
+   ]
+  },
+  "errorEvent.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX_MESSAGE",
+    "MAX_FRAMES"
+   ]
+  },
+  "errorReporter.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX_PER_LOAD"
+   ]
+  },
+  "firstRun.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "DEFAULT_LEAD_DAYS",
+    "SATURDAY",
+    "OWN_FARES_MAX"
+   ]
+  },
+  "flashcards.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "CARD_WORD_LIMIT",
+    "SHORT_SENTENCE"
+   ]
+  },
+  "flights/fareDays.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "DAY_MS",
+    "AHEAD_DAYS",
+    "EXACT_SPREAD",
+    "GAP_DAYS"
+   ]
+  },
+  "flights/pairs.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DAY_MS",
+    "HOUR_MS"
+   ]
+  },
+  "flights/useLiveFlights.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "HOLD_MS",
+    "RETRY_MS",
+    "RATE_WAIT_MAX_S"
+   ]
+  },
+  "gateway.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_DETAIL"
+   ]
+  },
+  "gpxPrivacy.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "PRIVACY_RADIUS_M",
+    "PRIVACY_JITTER_M",
+    "R"
+   ]
+  },
+  "guidedSearch.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "VIBE_MIN",
+    "NEAR_KM"
+   ]
+  },
+  "haptics.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "GAP_MS"
+   ]
+  },
+  "heroImage.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "WIKI_WIDTHS",
+    "LADDER_RUNGS",
+    "LADDER_WEBP",
+    "SOURCE_WIDTH",
+    "KEY_LEN",
+    "SAME_PLACE_KM"
+   ]
+  },
+  "homeDemo.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "CLIP_SIZE",
+    "WEEK_NIGHTS",
+    "SLOVENIA"
+   ]
+  },
+  "imageLadder.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "AVIF_RUNGS",
+    "WEBP_RUNGS"
+   ]
+  },
+  "journeys.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX_LINE"
+   ]
+  },
+  "journeySaves.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX"
+   ]
+  },
+  "lakeStory.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "GEM_CUTOFF"
+   ]
+  },
+  "launchEvents.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "DEDUPE_MS"
+   ]
+  },
+  "mapDrawerState.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "STRIP_PX"
+   ]
+  },
+  "mountainStory.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "GEM_CUTOFF"
+   ]
+  },
+  "myTrips.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "PLAN_NUDGE_MIN_SHARE",
+    "PLAN_NUDGE_MIN_EUR"
+   ]
+  },
+  "nearby.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "R_KM",
+    "MAX_KM",
+    "MIN_KM",
+    "MIN_RATING"
+   ]
+  },
+  "notFor.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX_LINES"
+   ]
+  },
+  "openingScreen.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "ICON_MAX",
+    "ICON_MIN",
+    "ICON_FLOOR",
+    "ICON_PER_COUNTRY",
+    "RAIL_MIN",
+    "RAIL_CAP",
+    "RAIL_MAX"
+   ]
+  },
+  "overrides.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DEFAULT_REVIEW_DAYS",
+    "MAX_REVIEW_DAYS",
+    "MIN_REASON_CHARS",
+    "DAY_MS",
+    "OVERDUE_GRACE_DAYS"
+   ]
+  },
+  "packGrid.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "PACK_MIN",
+    "PACK_MAX"
+   ]
+  },
+  "packing.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "T_HIGH",
+    "T_LOW",
+    "PRECIP"
+   ]
+  },
+  "parkingTruth.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "RIDE_MIN_M",
+    "SPOT_MIN_CAP"
+   ]
+  },
+  "passwordStrength.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MIN_PASSWORD_LENGTH"
+   ]
+  },
+  "paywallEvents.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "DEDUPE_MS"
+   ]
+  },
+  "pdfKit.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "PAGE_W",
+    "PAGE_H",
+    "M",
+    "FOOT"
+   ]
+  },
+  "placeStory.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "KIND_LAST",
+    "MIN_NAME_LEN"
+   ]
+  },
+  "plan/doors.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DAY_MS"
+   ]
+  },
+  "plan/parseTrip.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DAY_MS"
+   ]
+  },
+  "price/priceSheet.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "INSIGHT_SHARE"
+   ]
+  },
+  "price/styleDay.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "KNOWN_MAX"
+   ]
+  },
+  "priceAlerts.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "SHARES",
+    "DEFAULT_SHARE"
+   ]
+  },
+  "priceDrop.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "DROP_MIN_EUR",
+    "DROP_MIN_SHARE",
+    "ASK_GAP_MS",
+    "MAX_ITEMS"
+   ]
+  },
+  "priceMonths.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_KM",
+    "CHEAP_BELOW",
+    "DEAR_ABOVE"
+   ]
+  },
+  "railAlternative.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "RAIL_MAX_HOURS"
+   ]
+  },
+  "rating.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "RATING_MIN",
+    "RATING_MAX",
+    "CLASS_RANK_MIN_PCT",
+    "LEGACY_TIER_BAND"
+   ]
+  },
+  "recommend/adapters/flight.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "OPTIONS_PER_GROUP"
+   ]
+  },
+  "recommend/candidates.js": {
+   "why": "milliseconds in a day or an owner-review window; time, not a price",
+   "names": [
+    "DAY_MS"
+   ]
+  },
+  "recommend/compare.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_COMPARE"
+   ]
+  },
+  "recommend/keptStore.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_KEPT",
+    "MAX_SKIP_SETS",
+    "HOLD_MS"
+   ]
+  },
+  "recommend/persona.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "CELL"
+   ]
+  },
+  "recommend/rank.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "FLIGHT_PULL",
+    "TASTE_STEP",
+    "TASTE_CAP"
+   ]
+  },
+  "recommend/together.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_TRIPS",
+    "MAX_PEOPLE",
+    "VERSION"
+   ]
+  },
+  "recommend/trips.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MEMO_SIZE"
+   ]
+  },
+  "regions.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "ROAD_FACTOR",
+    "LEG_KMH",
+    "LEG_FIXED_H",
+    "EARTH_KM"
+   ]
+  },
+  "routeEffort.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "BREAK_MIN_PER_HOUR",
+    "SLOPE_WARN_DEG"
+   ]
+  },
+  "routing.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "MAX_GMAPS_WAYPOINTS",
+    "GMAPS_STOPS_PHONE"
+   ]
+  },
+  "savedLists.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "REVIVE_MS",
+    "MAX_LISTS",
+    "MAX_NOTE"
+   ]
+  },
+  "savedPlan.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "BASE_NIGHTS",
+    "MAX_NIGHTS"
+   ]
+  },
+  "search/picked.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "MAX"
+   ]
+  },
+  "search/places.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "R"
+   ]
+  },
+  "search/recent.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "MAX_RECENT"
+   ]
+  },
+  "search/resolve.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "NEAR_KM",
+    "NEAR_MIN",
+    "NEAR_MAX_KM"
+   ]
+  },
+  "search/startNames.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "NEAR_KM"
+   ]
+  },
+  "search/suggest.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "MAX_PLACES",
+    "MAX_CARTA",
+    "MAX_TOWNS",
+    "MAX_AREAS",
+    "SAME_TOWN_KM"
+   ]
+  },
+  "settings/model.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MIN_TRIP_NIGHTS",
+    "MAX_TRIP_NIGHTS"
+   ]
+  },
+  "settings/start.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_COUNTRY_AIRPORTS"
+   ]
+  },
+  "settings/ways.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "GROUND_STARTS"
+   ]
+  },
+  "share/receipt.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "RECEIPT_W",
+    "RECEIPT_H"
+   ]
+  },
+  "sharedElement.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "WAIT_MS"
+   ]
+  },
+  "shareKeys.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "HOME_POINT_DP"
+   ]
+  },
+  "signature.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "SLOPE_STEPS",
+    "TEMP_SCALE_C",
+    "ALT_SCALE_M",
+    "WEDGE_SIDE_KM",
+    "WEDGE_DEPTH_M"
+   ]
+  },
+  "statusFile.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "STATUS_TIMEOUT_MS"
+   ]
+  },
+  "staysData.js": {
+   "why": "limit or tuning number; not a price",
+   "names": [
+    "PUBLISH_IDLE_MS",
+    "PUBLISH_MAX_MS"
+   ]
+  },
+  "steps.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "STEPS_PER_KM",
+    "SHORT_WALK_KM",
+    "WALK_KMH"
+   ]
+  },
+  "taste/counts.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MIN_DECISIONS",
+    "TASTE_BUCKETS"
+   ]
+  },
+  "taste/profile.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "ALPHA",
+    "MIN_LIFT",
+    "MIN_EVIDENCE",
+    "MIN_ITEMS",
+    "MIN_ITEMS_WITH_TRIP",
+    "SHOWN",
+    "SHOWN_MAX",
+    "PER_FACET",
+    "REJECT_WEIGHT",
+    "ACCEPT_WEIGHT",
+    "ROLLUP_SHARE",
+    "DAY_MS"
+   ]
+  },
+  "taste.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_LIKES"
+   ]
+  },
+  "trailCards.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "ASSOC_MAX_KM"
+   ]
+  },
+  "trailGeo.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "R"
+   ]
+  },
+  "trailPhoto.js": {
+   "why": "geodesy or a distance cut for places and maps; not a price",
+   "names": [
+    "FEATURE_KM",
+    "TOWN_KM",
+    "NEAR_KM"
+   ]
+  },
+  "trailStory.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "DOWNHILL_MIN_M",
+    "LONG_MIN_DAYS",
+    "COMFORT_MAX_CLIMB_M",
+    "COMFORT_MAX_MIN"
+   ]
+  },
+  "transport.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "DETOUR",
+    "RAIL_DETOUR",
+    "LONG_HAUL_KM",
+    "VALUE_OF_TIME_EUR_H"
+   ]
+  },
+  "travelStyles.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "STYLES_VERSION",
+    "MAX_STYLES"
+   ]
+  },
+  "travelWay.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_GROUND_HOURS"
+   ]
+  },
+  "tripDates.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "MAX_TRIP_NIGHTS"
+   ]
+  },
+  "tripTags.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "TAG_MIN",
+    "TAG_MAX"
+   ]
+  },
+  "urlScheme.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX_SLUG",
+    "LIST_PAGE_MAX"
+   ]
+  },
+  "urlState.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "BROWSE_QUERY_MAX"
+   ]
+  },
+  "watchStore.js": {
+   "why": "screen, layout, image, storage or protocol size or timing; not a price",
+   "names": [
+    "MAX_POINTS"
+   ]
+  },
+  "waterFacts.js": {
+   "why": "outdoor story cut-off (a score, grade or distance for wording); not a price",
+   "names": [
+    "LAPSE_C_PER_KM",
+    "MIN_ALTITUDE_GAIN_M",
+    "BASE_CLIMATE_MAX_KM",
+    "WET_DAY_MM",
+    "WARN_DAYS"
+   ]
+  },
+  "weekShape.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "LAND_TO_ROAD_MIN",
+    "AIRPORT_BEFORE_MIN",
+    "LATE_ARRIVAL"
+   ]
+  },
+  "why.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "STRONG",
+    "LIKELY",
+    "MAPPED_WEIGHT",
+    "CARD_MAX",
+    "KNOWN_MAX"
+   ]
+  },
+  "wizardTransit.js": {
+   "why": "a routing estimate, product threshold, limit or scoring cut that is not a price in euros; the ones that are estimates move into config with their engine wave (E4 way there, E6 ranker, E7 selection; ROADMAP G4)",
+   "names": [
+    "AIRPORT_SEARCH_KM",
+    "MAX_AIRPORTS"
+   ]
+  }
+ }
+}

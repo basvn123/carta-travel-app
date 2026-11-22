@@ -5,7 +5,7 @@
 // Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PRICING_RULES, rule } from "../src/lib/price/config.js";
@@ -63,17 +63,66 @@ const NOT_A_PRICE = new Set([
 ]);
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
 
+// The guard's scanner: the top-level constants whose value is a bare number or
+// a table of numbers (RC16: the same rule now covers all of lib/).
+export function numericConsts(source) {
+  const out = [];
+  for (const m of strip(source).matchAll(/^(?:export )?const ([A-Z][A-Z0-9_]*) = ([^;\n]+)/gm)) {
+    const [, name, rhs] = m;
+    if (/^-?\d/.test(rhs.trim()) || /^[[{][^a-zA-Z'"`]*\d/.test(rhs.trim())) out.push([name, rhs.trim().slice(0, 40)]);
+  }
+  return out;
+}
+
 test("V13: no price module keeps a number of its own", () => {
   const found = [];
   for (const rel of PRICE_MODULES) {
-    const src = strip(readFileSync(join(APP, rel), "utf8"));
-    for (const m of src.matchAll(/^(?:export )?const ([A-Z][A-Z0-9_]*) = ([^;\n]+)/gm)) {
-      const [, name, rhs] = m;
-      if (NOT_A_PRICE.has(name)) continue;
-      if (/^-?\d/.test(rhs.trim()) || /^[[{][^a-zA-Z'"`]*\d/.test(rhs.trim())) found.push(`${rel}: ${name} = ${rhs.trim().slice(0, 40)}`);
+    for (const [name, rhs] of numericConsts(readFileSync(join(APP, rel), "utf8"))) {
+      if (!NOT_A_PRICE.has(name)) found.push(`${rel}: ${name} = ${rhs}`);
     }
   }
   assert.deepEqual(found, []);
+});
+
+// RC16 (A-11): the same rule over all of src/lib/. A number that is not a price
+// is listed in tests/fixtures/libNumberAllowlist.json with a reason per file;
+// a new one fails here until it moves into config or is listed with a reason.
+const libFiles = (dir) => readdirSync(dir).flatMap((f) => {
+  const p = join(dir, f);
+  return statSync(p).isDirectory() ? libFiles(p) : p.endsWith(".js") ? [p] : [];
+});
+const ALLOW = JSON.parse(readFileSync(join(APP, "tests/fixtures/libNumberAllowlist.json"), "utf8")).files;
+
+test("RC16: no number outside config anywhere in lib/ unless the allowlist says why", () => {
+  const found = [];
+  const seen = {};
+  for (const abs of libFiles(join(APP, "src/lib"))) {
+    const rel = abs.slice(join(APP, "src/lib").length + 1).replace(/\\/g, "/");
+    if (PRICE_MODULES.includes(`src/lib/${rel}`)) continue; // held to the stricter list above
+    for (const [name, rhs] of numericConsts(readFileSync(abs, "utf8"))) {
+      (seen[rel] ||= []).push(name);
+      if (!ALLOW[rel]?.names.includes(name)) found.push(`src/lib/${rel}: ${name} = ${rhs} (move it to config/pricing.json, or list it in tests/fixtures/libNumberAllowlist.json with a reason)`);
+    }
+  }
+  assert.deepEqual(found, []);
+  // A stale entry hides nothing today but would let a future constant of that name through.
+  const stale = Object.entries(ALLOW).flatMap(([rel, v]) => v.names.filter((n) => !seen[rel]?.includes(n)).map((n) => `${rel}: ${n}`));
+  assert.deepEqual(stale, [], "remove the allowlist entries for constants that are gone");
+  for (const [rel, v] of Object.entries(ALLOW)) assert.ok(v.why && v.why.length > 20, `${rel}: a reason`);
+});
+
+test("RC16: the budget search keeps its numbers in config/pricing.json budget.search (A-11)", () => {
+  assert.equal(ALLOW["budgetSearch.js"], undefined);
+  assert.deepEqual(numericConsts(readFileSync(join(APP, "src/lib/budgetSearch.js"), "utf8")), []);
+  assert.equal(rule("budget.search").days_default, 5);
+});
+
+test("RC16: a planted literal fails the guard", () => {
+  assert.deepEqual(numericConsts("export const CLEANING_FEE = 25;\n"), [["CLEANING_FEE", "25"]]);
+  assert.deepEqual(numericConsts("const RATES = [0.1, 0.2];\n"), [["RATES", "[0.1, 0.2]"]]);
+  assert.deepEqual(numericConsts("const A = rule('x.y');\n// const B = 3;\n"), []);
+  // and a file the allowlist does not know has no entry, so the loop above would report it:
+  assert.equal(ALLOW["plantedNewFile.js"], undefined);
 });
 
 test("T691: one group cap and one baby cap", () => {
