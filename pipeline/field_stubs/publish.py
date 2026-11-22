@@ -13,7 +13,15 @@ What it does, in order:
   1. snapshots every file of each --layer (gate.py LAYERS) and every --keep
      path into logs/publish_prev/<name>/, laid out like the repo;
   2. runs the commands after `--`, one after the other (`::` separates them);
-  3. runs gate.py for each layer with the snapshot as the previous wire;
+  2b. for a layer that carries the v5 rating (RATED_LAYERS), runs
+     pipeline/nature_tiers.py after them (D25, 2026-11-22). The exporters
+     write the rows without `v5`; nature_tiers adds it. Without this step
+     every gated beach, lake or mountain export failed on "coverage fell:
+     v5 ... -> 0" against a wire the weekly rating had already filled
+     (beach_context, 2026-11-21), and an ungated one shipped rows the app
+     shows without their badge until the next weekly run. --no-rate skips it;
+  3. runs gate.py for each layer with the snapshot as the previous wire
+     (--max-row-loss PCT judges lost rows over the whole layer, gate.run);
   4. on a failed command or a failed gate, puts the snapshot back (files the
      run created are deleted, files it changed are copied back), says why,
      and exits 1. On a pass it deletes the snapshot and exits 0.
@@ -43,6 +51,9 @@ sys.path.insert(0, str(HERE))
 import gate  # noqa: E402
 
 SNAP_ROOT = ROOT / "logs" / "publish_prev"
+# The layers whose rows carry `v5` (pipeline/nature_tiers.py writes it).
+RATED_LAYERS = {"beaches", "lakes", "peaks", "trails", "cycling"}
+RATE_CMD = [sys.executable, "pipeline/nature_tiers.py"]
 
 
 def layer_paths(layer):
@@ -124,12 +135,19 @@ def main(argv=None):
     ap.add_argument("--keep", action="append", default=[],
                     help="another repo path to snapshot and restore with the layer")
     ap.add_argument("--allow-row-loss", action="store_true")
+    ap.add_argument("--max-row-loss", type=float, default=None,
+                    help="percent of the layer's rows that may disappear, over the layer")
+    ap.add_argument("--no-rate", action="store_true",
+                    help="do not run nature_tiers.py before the gate")
     ap.add_argument("--name", help="snapshot folder name (default: the layers)")
     a = ap.parse_args(argv[:i])
     cmds = split_cmds(argv[i + 1:])
     if not cmds:
         print("publish.py: no command after --", file=sys.stderr)
         return 2
+    if not a.no_rate and RATED_LAYERS & set(a.layer) \
+            and not any("nature_tiers.py" in " ".join(c) for c in cmds):
+        cmds.append(list(RATE_CMD))
 
     rels = []
     for layer in a.layer:
@@ -148,7 +166,8 @@ def main(argv=None):
 
     failed = []
     for layer in a.layer:
-        rc = gate.run(layer, "HEAD", None, a.allow_row_loss, False, prev_dir=snap)
+        rc = gate.run(layer, "HEAD", None, a.allow_row_loss, False, prev_dir=snap,
+                      max_row_loss=a.max_row_loss)
         if rc != 0:
             failed.append(layer)
     if failed:

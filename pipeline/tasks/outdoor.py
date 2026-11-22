@@ -3,7 +3,14 @@
 Part of the task registry (pipeline/tasks/__init__.py, ROADMAP A2, T1207).
 List order is run order; run_pipeline.py runs the domains in DOMAINS order."""
 
-from pipeline.tasks._base import APP_DATA, CACHE, PY, ROOT, guard_trailslab_up
+from pipeline.tasks._base import APP_DATA, CACHE, PUBLISH, PY, ROOT, guard_trailslab_up
+
+# D25, 2026-11-22: the three quarterly rebuilds publish through the gate,
+# which rates the rows first (publish.py runs nature_tiers.py) and allows a
+# rebuild to lose at most this share of the layer's rows. They wrote the wire
+# directly before; a rebuild from thin stage files would have replaced 6,619
+# beaches with 3,243 (the beach_context gate caught the same rebuild).
+REBUILD_GATE = ["--max-row-loss", "2"]
 
 
 def guard_regions(ctx=None):
@@ -166,7 +173,8 @@ TASKS = [
         "writes_app_data": False,
         "writes_wire": True,
         "soft": True,
-        "cmds": [[PY, "pipeline/beaches/build_beaches.py"]],
+        "cmds": [[PY, PUBLISH, "--layer", "beaches", *REBUILD_GATE, "--",
+                  PY, "pipeline/beaches/build_beaches.py"]],
         "guard": guard_beaches,
         "note": ("the Beaches category on the Destinations tab. Three stages "
                  "in one command (harvest -> enrich -> export), each cached "
@@ -189,7 +197,8 @@ TASKS = [
         "writes_app_data": False,
         "writes_wire": True,
         "soft": True,
-        "cmds": [[PY, "pipeline/lakes/build_lakes.py"]],
+        "cmds": [[PY, PUBLISH, "--layer", "lakes", *REBUILD_GATE, "--",
+                  PY, "pipeline/lakes/build_lakes.py"]],
         "guard": guard_lakes,
         "note": ("the Lakes category on the Destinations tab: lakes, "
                  "reservoirs, lagoons, tarns and crater lakes, each with three "
@@ -228,7 +237,8 @@ TASKS = [
             [PY, "pipeline/mountains/build_peaks.py", "--skip-export"],
             [PY, "pipeline/mountains/terrain.py", "--workers", "4"],
             [PY, "pipeline/mountains/season.py"],
-            [PY, "pipeline/mountains/export_peaks.py"],
+            [PY, PUBLISH, "--layer", "peaks", *REBUILD_GATE, "--",
+             PY, "pipeline/mountains/export_peaks.py"],
         ],
         "guard": guard_mountains,
         "note": ("the Mountains category on the Destinations tab: summits, "
