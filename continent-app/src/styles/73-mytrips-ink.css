@@ -131,13 +131,13 @@
 .mt-panel .mt-saved .mt-saved-filters,
 .mt-panel .atlas-chips-scroll,
 .mt-panel .atlas-chips-scroll .mt-chips { flex-wrap: wrap; overflow: visible; }
-.mt-panel .atlas-chips-scroll > .ui-chip-group { flex: 0 1 auto; min-width: 0; max-width: 100%; }
+/* The kind group flows with Prijs gedaald as one wrapping row (the group keeps its role). */
+.mt-panel .atlas-chips-scroll > .ui-chip-group { display: contents; }
 
 /* ---- the heads in place ---- */
 .mt-panel .mt-section > .ink-sh,
 .mt-panel .atlas-sect > .ink-sh { margin-bottom: calc(-1 * var(--space-1)); }
 .mt-panel .mt-saved-lists > .ink-sh { margin-bottom: var(--space-1); }
-.mt-saved-head { margin-top: var(--space-2); }
 /* Past trips: the switch and Add share the head's end; on a phone they take
    their own line under it, so the title stays on one line. */
 @media (max-width: 599px) {
@@ -147,3 +147,200 @@
 @media (min-width: 1100px) {
   .mt-saved-head .mt-kies.is-head { display: none; }
 }
+
+/* ==== Bewaard (block 2): the photo card grid, Gevolgd, the lists, the tools ==== */
+
+/* The photo card: two across on a phone, three from 820 px (and beside the
+   map from 1100 px). Every row function stays on the card. */
+.mt-panel .mt-items.mt-pgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 14px;
+  align-items: start;
+}
+@media (min-width: 820px) {
+  .mt-panel .mt-items.mt-pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
+}
+.mt-pcard { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
+.mt-pcard > * { max-width: 100%; }
+.mt-pcard-ph { position: relative; display: block; align-self: stretch; }
+.mt-pcard-img {
+  display: block;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  cursor: pointer;
+}
+.mt-pcard-imgel, .mt-pcard-img .hero-blank { display: block; width: 100%; height: 100%; object-fit: cover; transition: scale var(--dur-4) var(--ease-out); }
+@media (hover: hover) { .mt-pcard:hover .mt-pcard-imgel { scale: 1.03; } }
+.mt-pcard.is-selected .mt-pcard-img { outline: var(--stroke-focus) solid var(--action); outline-offset: 2px; }
+.mt-pcard.is-active:not(.is-selected) .mt-pcard-img { outline: var(--stroke-edge) solid var(--umber-800); outline-offset: 2px; }
+/* A control on a photo is a paper disc: a 32 px disc inside the 44 px target. */
+.mt-pcard-ph > .mt-menu { position: absolute; top: 2px; right: 2px; }
+.mt-pcard-ph > .mt-menu > .icon-btn { position: relative; isolation: isolate; background: transparent; color: var(--text); }
+.mt-pcard-ph > .mt-menu > .icon-btn::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  z-index: -1;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.mt-pcard-ph > .mt-menu .mt-menu-pop { right: 0; }
+.mt-pcard-sel {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--action-text);
+  cursor: pointer;
+  isolation: isolate;
+}
+.mt-pcard-sel::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  z-index: -1;
+  border: 2px solid var(--umber-800);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.mt-pcard-sel[aria-pressed="true"]::before { background: var(--action); border-color: var(--action); }
+.mt-pcard-sel:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; border-radius: var(--radius-pill); }
+.mt-pcard-sel:disabled { cursor: not-allowed; opacity: 0.5; }
+.btn.mt-pcard-name {
+  display: block;
+  min-height: 24px;
+  padding: 0;
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.22;
+  color: var(--text);
+  text-align: start;
+  white-space: normal;
+}
+.btn.mt-pcard-name .btn-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.btn.mt-pcard-name .country-flag { display: inline-block; vertical-align: -1px; }
+@media (hover: hover) { .btn.mt-pcard-name:hover { background: none; text-decoration: underline; text-underline-offset: 3px; } }
+.mt-pcard-name.is-missing { font-size: var(--text-lead); font-weight: 700; color: var(--text-3); }
+.mt-pcard-kind { align-self: stretch; min-width: 0; overflow: hidden; font-size: var(--text-label); font-weight: 600; color: var(--text-3); white-space: nowrap; text-overflow: ellipsis; }
+.mt-pcard-fig { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); min-height: 24px; }
+.mt-pcard-sum { display: inline-flex; align-items: baseline; gap: 5px; line-height: 1.2; }
+.mt-pcard-sum > b { font-size: var(--text-figure); font-weight: 800; font-variant-numeric: tabular-nums; }
+.mt-pcard-sum > small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.btn.mt-pcard-note { min-height: 32px; padding: 0; font-size: var(--text-label); font-weight: 600; color: var(--text-2); text-align: start; white-space: normal; }
+.btn.mt-pcard-note .btn-icon { color: var(--umber-700); }
+.mt-pcard > .mt-note-form, .mt-pcard > .mt-pick-lists { align-self: stretch; }
+
+/* Gevolgd: a tile on the ground with a hairline edge; the chart in ink. */
+.mt-panel .atlas-watch {
+  width: 240px;
+  gap: 6px;
+  padding: 14px;
+  border: var(--stroke-edge) solid var(--border);
+  border-radius: var(--radius-panel);
+  background: transparent;
+}
+.mt-panel .atlas-watch-k { color: var(--umber-700); }
+.mt-panel .atlas-watch-n { font-size: var(--text-body); font-weight: 700; }
+.mt-panel .atlas-watch-p { display: grid; gap: var(--space-1); }
+.mt-panel .atlas-watch-p b { font-size: var(--text-figure-lg); line-height: 1; }
+.mt-panel .atlas-watch-wait { border-color: var(--edge); }
+@media (hover: hover) { .mt-panel .atlas-watch:hover { border-color: var(--edge); } }
+.atlas-chart-line { stroke: var(--text); stroke-width: 1.5; }
+.atlas-chart rect { fill: var(--text); }
+.atlas-chart rect.is-now { fill: var(--umber-800); }
+
+/* Je lijsten: each cover one framed 2 x 2 mosaic, paper rules between the
+   photos; the chosen list a 3 px umber ring and the tick before its name. */
+.mt-panel .mt-saved .btn.mt-lcard { width: 128px; }
+.mt-panel .mt-saved .mt-mosaic {
+  gap: 1px;
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+}
+.mt-panel .mt-saved .mt-mosaic.is-new { border: var(--stroke-edge) dashed var(--edge); background: transparent; color: var(--text-2); }
+.mt-panel .mt-saved .btn.mt-lcard[aria-pressed="true"] .mt-mosaic { outline: var(--stroke-focus) solid var(--action); outline-offset: 2px; }
+.mt-panel .mt-saved .mt-lcard-name { display: flex; align-items: center; gap: var(--space-1); font-weight: 800; }
+.mt-panel .mt-saved .mt-lcard-name > svg { flex: none; color: var(--umber-700); }
+.mt-panel .mt-saved .btn.mt-lcard[aria-pressed="true"] .mt-lcard-name { color: var(--umber-800); }
+
+/* The tools: Per dag | Hele reis, the people as a frame button, Hele reis's
+   nights as a framed stepper, and on a phone Kaart as an icon frame. */
+.mt-whobtn,
+.mt-panel .mt-saved-tools .mt-whobtn,
+.mt-panel .mt-saved-tools .mt-view-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 10px 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  font: 700 var(--text-body) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mt-panel .mt-saved-tools .mt-view-toggle,
+.mt-panel .mt-saved-head .mt-view-toggle { width: var(--tap); padding: 0; color: var(--umber-800); }
+.mt-panel .mt-saved-head .mt-view-toggle {
+  display: inline-grid;
+  place-items: center;
+  min-height: var(--tap);
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+@media (min-width: 1024px) { .mt-panel .mt-saved-head .mt-view-toggle { display: none; } }
+.mt-panel .mt-saved-tools .mt-whobtn::after,
+.mt-panel .mt-saved-tools .mt-view-toggle::after { content: none; }
+.mt-panel .mt-saved-tools { gap: var(--space-2); }
+.mt-panel .mt-saved-tools .ink-frame > button { padding: 0 10px; }
+.mt-who-menu > button[aria-pressed="true"] { background: transparent; color: var(--umber-800); font-weight: 800; outline: var(--stroke-edge) solid var(--umber-800); outline-offset: calc(-1 * var(--stroke-edge)); }
+.mt-who-step button { border: var(--stroke-edge) solid var(--edge); background: transparent; }
+.atlas-nights,
+.mt-panel .mt-saved-tools .atlas-nights {
+  min-height: var(--tap);
+  padding: 0 0 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+.atlas-nights button,
+.mt-panel .mt-saved-tools .atlas-nights button {
+  width: 40px;
+  height: calc(var(--tap) - 2 * var(--stroke-edge));
+  border: 0;
+  border-inline-start: var(--stroke-hair) solid var(--umber-300);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+.mt-panel .mt-saved-tools .atlas-nights button::after { content: none; }
+
+/* The country picked on the map: its silhouette and name head the list. */
+.mt-saved-head.is-country .ink-sh-icon { width: 30px; height: 30px; }
+.mt-kies.is-clear { padding-inline: 0; }
+/* The lists rail ends on its captions; the section gap alone separates the tools. */
+.mt-panel .mt-saved .mt-lists.atlas-rail { margin-bottom: 0; padding-bottom: var(--space-1); }

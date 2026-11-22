@@ -7624,6 +7624,7 @@ export const nl = {
   "mt.deleteList": "Lijst {name} verwijderen",
   "mt.kindAllN": "Alle {n}",
   "mt.kindN": "{kind} {n}",
+  "mt.unitWhole": "hele reis",
   "mt.kindAll": "Alle",
   "mt.showAll": "Toon alles",
   "mt.spanGroup": "Prijs per dag of voor de hele reis",

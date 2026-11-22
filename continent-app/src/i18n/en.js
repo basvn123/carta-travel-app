@@ -8247,6 +8247,7 @@ export const en = {
   "mt.deleteList": "Delete list {name}",
   "mt.kindAllN": "All {n}",
   "mt.kindN": "{kind} {n}",
+  "mt.unitWhole": "whole trip",
   "mt.kindAll": "All",
   "mt.showAll": "Show all",
   "mt.spanGroup": "Price per day or for the whole trip",

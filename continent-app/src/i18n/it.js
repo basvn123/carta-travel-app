@@ -7613,6 +7613,7 @@ export const it = {
   "mt.deleteList": "Elimina la lista {name}",
   "mt.kindAllN": "Tutti {n}",
   "mt.kindN": "{kind} {n}",
+  "mt.unitWhole": "tutto il viaggio",
   "mt.kindAll": "Tutti",
   "mt.showAll": "Mostra tutto",
   "mt.spanGroup": "Prezzo al giorno o per tutto il viaggio",

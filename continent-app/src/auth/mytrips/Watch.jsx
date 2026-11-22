@@ -47,15 +47,17 @@ export function WatchChart({ pts, w, h, axis = false, label }) {
   const vals = pts.map((p) => p.eur);
   const g = chartGeometry(vals, w, h, { axis });
   if (!g) return null;
-  const { d, area, last, min, foot, pad, X, Y } = g;
+  const { d, last, min, foot, pad, X, Y } = g;
   const mi = g.lowest;
   return (
     <svg className="atlas-chart" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="img" aria-label={label}>
-      <path className="atlas-chart-area" d={area} />
+      {/* Ink (decision 0016): the line and a square per measured week, the
+          latest the larger umber square; no area under the line. */}
       <path className="atlas-chart-line" d={d} />
-      {g.dots.map((p, i) => (
-        <circle key={i} className={p.now ? 'is-now' : ''} cx={p.x} cy={p.y} r={p.now ? 4.5 : 2.6} />
-      ))}
+      {g.dots.map((p, i) => {
+        const r = (p.now ? 6 : 4) / 2;
+        return <rect key={i} className={p.now ? 'is-now' : ''} x={p.x - r} y={p.y - r} width={r * 2} height={r * 2} />;
+      })}
       {axis && (
         <>
           <line className="atlas-chart-axis" x1={pad} x2={w - pad} y1={h - foot} y2={h - foot} />
@@ -91,7 +93,7 @@ function WatchCard({ item, onOpen }) {
       </span>
       <span className="atlas-watch-n">{item.label}</span>
       {item.pts.length > 1 ? (
-        <WatchChart pts={item.pts} w={222} h={54} label={t('watch.chartAria', { name: item.label, from: formatMoney(first), to: formatMoney(now) })} />
+        <WatchChart pts={item.pts} w={208} h={44} label={t('watch.chartAria', { name: item.label, from: formatMoney(first), to: formatMoney(now) })} />
       ) : (
         // One measurement is no line and no move: the empty frame says when
         // the next point comes instead of "gelijk" (never an invented point).
