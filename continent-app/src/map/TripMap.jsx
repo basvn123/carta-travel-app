@@ -107,10 +107,23 @@ const POI_EVENT_ICON = S('<path d="M4 8h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z
 
 // The pushpin for places that are marked rather than sequenced (the travel
 // record). Colours live in the stylesheet so it stays on the palette.
-const PUSHPIN_SVG = '<svg class="trip-pin-push" viewBox="0 0 24 30" aria-hidden="true">'
-  + '<path class="trip-pin-needle" d="M10.5 16h3L12 29.6z"/>'
-  + '<circle class="trip-pin-head" cx="12" cy="9.6" r="8.4"/>'
-  + '<circle class="trip-pin-dot" cx="12" cy="9.6" r="3.1"/></svg>';
+// Built with DOM calls rather than innerHTML, so no markup string reaches the
+// page (semgrep carta-dom-inner-html, docs/security/static-analysis.md).
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const svgEl = (tag, attrs) => {
+  const n = document.createElementNS(SVG_NS, tag);
+  for (const [k, v] of Object.entries(attrs)) n.setAttribute(k, v);
+  return n;
+};
+function pushpinSvg() {
+  const svg = svgEl('svg', { class: 'trip-pin-push', viewBox: '0 0 24 30', 'aria-hidden': 'true' });
+  svg.append(
+    svgEl('path', { class: 'trip-pin-needle', d: 'M10.5 16h3L12 29.6z' }),
+    svgEl('circle', { class: 'trip-pin-head', cx: '12', cy: '9.6', r: '8.4' }),
+    svgEl('circle', { class: 'trip-pin-dot', cx: '12', cy: '9.6', r: '3.1' }),
+  );
+  return svg;
+}
 
 /**
  * Town and village labels of the basemap that sit centred on their point may
@@ -665,7 +678,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         if (p.plain) {
           // A pushpin, not a numbered teardrop: a round head on a needle
           // whose tip is the coordinate (the marker is anchored bottom).
-          shape.innerHTML = PUSHPIN_SVG;
+          shape.append(pushpinSvg());
           // Zoomed in, the head lifts into a photo of the place with its name
           // under the needle. The needle never moves: the pin still points.
           if (withPhoto) {
@@ -689,7 +702,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
         } else if (p.stay) {
           // House style (G1, integration T7): the stay is the house pin, an
           // ink head on a post whose tip is the address.
-          shape.innerHTML = PUSHPIN_SVG;
+          shape.append(pushpinSvg());
         } else {
           const num = document.createElement('span');
           num.className = 'trip-pin-no';
