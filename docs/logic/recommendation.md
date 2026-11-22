@@ -31,12 +31,12 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Test: `continent-app/tests/match.test.mjs` :: "a conflict multiplies F and is listed on its own"
 - Test: `continent-app/tests/match.test.mjs` :: "heat: only with avoidHeat and a hot month from the profile"
 
-### REC-004 Show and Strong match thresholds
-- Decides: when a match figure appears and what the Strong match filter keeps.
-- Rule: a match shows from F = 0.55; Strong match needs F at least 0.70.
+### REC-004 Show match threshold
+- Decides: when a match figure appears.
+- Rule: a match shows from F = 0.55. The Strong match filter and its `strongMatch` were removed in G12 (commit 6d285b0875, only tests read them); `strong_min` stays in the config but no code reads it.
 - Constant: `match.show_min` / `strong_min` in `continent-app/config/rating.json:47` = 0.55 / 0.70
-- Constant: `showMatch` / `strongMatch` in `continent-app/src/lib/match.js:113` and `:118`
-- Test: `continent-app/tests/match.test.mjs` :: "the 55% floor: below it no match shows; 70% is strong"
+- Constant: `showMatch` in `continent-app/src/lib/match.js:177`
+- Test: `continent-app/tests/match.test.mjs` :: "the 55% floor: below it no match shows"
 
 ### REC-005 Quality Q a match is ordered by
 - Decides: the quality side of For you and of a trip's score.

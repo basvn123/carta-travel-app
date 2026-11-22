@@ -1461,6 +1461,7 @@ Gazetteer: Europe's towns, regions and countries from GeoNames -> public/search/
 
 - Cadence: backfill
 - Writes: the wire files in `continent-app/public/`
+- Wire files: `search/places/`
 - Note: G12. Explore search finds any place in Europe: cities500 towns, admin1 regions and countries, with en, nl, de, fr, es and it names from alternateNamesV2 (CC BY 4.0). --fetch downloads the three extra GeoNames files into cache/geonames/ once (about 200 MB). About 20 prefix shards, 6 MB raw and 2.5 MB gzip in all, fetched one or two at a time as the traveller types. Static geography: run it by hand when GeoNames is worth refreshing.
 - Reads and runs: `pipeline/gazetteer_layer.py`
 - Commands:
