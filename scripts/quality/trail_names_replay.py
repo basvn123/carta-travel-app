@@ -17,7 +17,9 @@ and cap_title, then dedupe_names over each country) and counts:
 
 Accepts (exit 0, prints ACCEPT) when unclean <= MAX_UNCLEAN (1,312, the
 research's after-value on the 2026-11-17 wire), no end loss other than
-those over the cap, and new dup groups == 0; otherwise exit 1 and FAIL. Run it before the trails rebuild
+those over the cap (still printed: end_losses_over_cap), head_cut == 0 (the
+start A of a two-part name whose end alone is over the cap stays whole) and
+new dup groups == 0; otherwise exit 1 and FAIL. Run it before the trails rebuild
 (T1092-a) reaches the box; the owner deadline is 2027-01-16
 (docs/owner/data-and-pipeline-runs.md).
 
@@ -71,11 +73,27 @@ def end_lost(n0: str, n1: str, cc: str | None = None) -> bool:
     return names.squash(end) not in names.squash(n1)
 
 
+def head_cut(n0: str, n1: str, cc: str | None = None) -> bool:
+    """A two-part name whose end B alone is over TITLE_MAX and whose start A
+    fits a title: A must stand whole in the new name. Cutting inside A and
+    then adding a piece of B's code ("Il Cammino di santa, CSG-T002_V26
+    Valle") is worse than dropping B."""
+    tail = names.readable(n0, cc).split(": ", 1)[-1]
+    segs = names._DASH_SEP_RE.split(tail)
+    if len(segs) != 2:
+        return False
+    start = names.split_code(segs[0].strip())[0] or segs[0].strip()
+    end = segs[-1].strip()      # as written, code included (cap_title measures it so)
+    if len(end) <= names.TITLE_MAX or len(start) > names.TITLE_MAX or names.is_code(start):
+        return False
+    return names.squash(start) not in names.squash(n1)
+
+
 def end_too_long(n0: str, cc: str | None = None) -> bool:
     """The end segment alone is longer than a title may be, so no 42
     character title can hold it whole. Counted apart; still a loss."""
     segs = names._DASH_SEP_RE.split(names.readable(n0, cc).split(": ", 1)[-1])
-    end = names.split_code(segs[-1])[0] or segs[-1]
+    end = segs[-1].strip()
     return len(segs) == 2 and len(end) > names.TITLE_MAX
 
 
@@ -101,8 +119,8 @@ def replay(rows: list[dict]) -> dict:
     before, after = collections.Counter(), collections.Counter()
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
-           "end_segment_losses": 0, "end_losses_over_cap": 0}
-    residual, end_ex = collections.defaultdict(list), []
+           "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0}
+    residual, end_ex, head_ex = collections.defaultdict(list), [], []
     for r in hikes:
         n0, n1 = originals[r["id"]], r["name"] or ""
         p0, p1 = names.name_problems(n0), names.name_problems(n1)
@@ -114,6 +132,10 @@ def replay(rows: list[dict]) -> dict:
         res["unclean_before"] += bool(p0)
         res["unclean_after"] += bool(p1)
         res["changed"] += n1 != n0
+        if head_cut(n0, n1, r.get("country")):
+            res["head_cut"] += 1
+            if len(head_ex) < 25:
+                head_ex.append([r["id"], n0, n1])
         if end_lost(n0, n1, r.get("country")):
             res["end_segment_losses"] += 1
             res["end_losses_over_cap"] += end_too_long(n0, r.get("country"))
@@ -130,12 +152,14 @@ def replay(rows: list[dict]) -> dict:
                before=dict(before), after=dict(after))
     # A loss whose end segment alone is longer than TITLE_MAX cannot be
     # avoided by any 42 character title; it is counted and shown, and the
-    # acceptance asks for zero of the others (deviation recorded in the
-    # wave 1 report).
+    # acceptance asks for zero of the others, and for head_cut == 0: the start
+    # of a name is never cut (judge fix 1; the over-cap deviation is recorded
+    # in the wave 1 report and printed with every run).
     res["accept"] = (res["unclean_after"] <= MAX_UNCLEAN
                      and res["end_segment_losses"] == res["end_losses_over_cap"]
+                     and res["head_cut"] == 0
                      and not new and res["walks"] > 0)
-    res["examples"] = {"residual": residual, "end_losses": end_ex,
+    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}
     return res
 

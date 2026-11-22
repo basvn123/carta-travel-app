@@ -17,9 +17,13 @@ The staged tree has no app_data.json (stage-data.mjs cuts it into dest/
 shards), so steps 1 and 2 read public/, the tree this run's build staged
 from, and step 3 reads both.
 
-    python -I scripts/quality/publish_guard.py [--public DIR] [--staged DIR]
-    python -I scripts/quality/publish_guard.py --override "stopgap 0.2"
-    CARTA_PUBLISH_SEED_BREAK=beds python -I scripts/quality/publish_guard.py   # must FAIL
+    python scripts/quality/publish_guard.py [--public DIR] [--staged DIR]
+    python scripts/quality/publish_guard.py --override "stopgap 0.2"
+    CARTA_PUBLISH_SEED_BREAK=beds python scripts/quality/publish_guard.py   # must FAIL
+
+No `-I`: the guard imports yaml, and on the laptop yaml lives in the user
+site-packages, which -I skips (ModuleNotFoundError). On the box the venv has
+it, so `-I` works there too.
 
 Exit 0 pass (or failed with --override, which prints every failure and the
 reason), 1 refused, 2 configuration error. CARTA_PUBLISH_SEED_BREAK=beds|dorm

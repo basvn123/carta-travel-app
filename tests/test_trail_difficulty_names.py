@@ -366,3 +366,47 @@ def test_dedupe_falls_back_to_distance_then_id():
             {"id": 8, "country": "MK", "name": "Korab"}]
     names.dedupe_names(same, {})
     assert [r["name"] for r in same] == ["Korab, no. 7", "Korab, no. 8"]
+
+
+# Judge fix 1 (D7): the start A of a two-part name whose end B alone is over
+# the cap stays whole. Inputs are rows of the 2026-11-17 trails wire.
+HEAD_ROWS = [
+    (194178, "IT", "Il Cammino di santa Giulia - CSG-T002_V26 Valle-Benedetta_Parrana-San-Martino_Collesalvetti-Loc-le-Badie",
+     "Il Cammino di santa Giulia"),
+    (194858, "IT", "Il Cammino di santa Giulia - CSG-T025_V24 Canneto-sull'Oglio_Fontanella-Grazioli_Isola-Dovarese_Monticelli-Ripa-d'Oglio",
+     "Il Cammino di santa Giulia"),
+    (199440, "IT", "Il Cammino di santa Giulia - CSG-T028_V24 San-Gervasio-Bresciano_Cigole_Pavone-del-Mella_Leno",
+     "Il Cammino di santa Giulia"),
+    (36137, "FR", "Grande Traversée des Alpes - variante Montchavin (ancien tracé principal)",
+     "Grande Traversée des Alpes"),
+    (191970, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Fiorano Canavese",
+     "Alta Via dell’Anfiteatro Morenico di Ivrea"),
+    (218204, "DE", "[B4] - Rundwanderweg des Verkehrs- und Verschönerungsvereins Marburg",
+     "Rundwanderweg des Verkehrs"),
+]
+
+
+def test_a_long_end_never_cuts_the_start_or_leaves_a_code_behind():
+    for rid, cc, src, want in HEAD_ROWS:
+        got = shipped(src, cc)
+        assert got == want, (rid, got)
+        assert not names.name_problems(got), rid
+
+
+def test_a_stage_code_is_a_code_fragment_and_goes_to_the_chip():
+    assert "code_fragment" in names.name_problems("Il Cammino di santa Giulia, CSG-T030_V24 Valle")
+    name, code = names.split_code("CSG-T002_V26 Valle-Benedetta_Parrana-San-Martino_Collesalvetti")
+    assert code == "CSG-T002_V26"
+    assert name.startswith("Valle-Benedetta")
+
+
+def test_dedupe_keeps_the_start_whole_and_falls_to_the_id():
+    # Three stages of one path: the stage's end does not fit beside the whole
+    # name, so the id tells them apart, never "Il Cammino di santa, CSG-...".
+    rows = [{"id": rid, "country": cc, "name": shipped(src, cc)}
+            for rid, cc, src, _w in HEAD_ROWS[:3]]
+    originals = {rid: src for rid, _cc, src, _w in HEAD_ROWS[:3]}
+    names.dedupe_names(rows, originals)
+    assert [r["name"] for r in rows] == ["Il Cammino di santa Giulia, no. 194178",
+                                         "Il Cammino di santa Giulia, no. 194858",
+                                         "Il Cammino di santa Giulia, no. 199440"]

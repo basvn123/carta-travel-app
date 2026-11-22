@@ -120,7 +120,8 @@ _CODE_THEN_NAME_RE = re.compile(r"^(\S{1,12})\s*[\(\[]\s*(.+?)\s*[\)\]]\s*$")
 # Sois". One or two bare digits before a word are left alone ("5 Elemente
 # Weg" is a name).
 _LEAD_CODE_RE = re.compile(
-    r"^(?:[A-Za-z]{1,4}[\s\-]?\d+[A-Za-z]?|\d{3,}|\d+[\-/.]\d+[A-Za-z]?)"
+    r"^(?:[A-Za-z]{1,4}[\s\-]?\d+[A-Za-z]?|\d{3,}|\d+[\-/.]\d+[A-Za-z]?|"
+    r"[A-Z]{2,5}-[A-Z]\d{2,4}(?:_[A-Z]?\d+)?)"
     r"(?:\s*[:\-\u2013]\s*|\s+)(?=\S)")
 # A one or two digit stage number before a spaced dash: "08 - Roosteren".
 _BARE_NUM_LEAD_RE = re.compile(r"^\d{1,2}\s+[-\u2013]\s+(?=\S)")
@@ -272,6 +273,38 @@ def _keep_the_end(s, limit):
     return None if is_code(b) else b
 
 
+def _keep_the_start(s, limit):
+    """D7 (judge fix 1): a two-part name "A - B" whose end B alone is over the
+    limit keeps its start A whole, never cut and never followed by a piece of
+    B's code ("Il Cammino di santa, CSG-T002_V26 Valle"). A leading part of B
+    rides along only when it is two or more words and fits; otherwise B is
+    dropped, a loss no title can avoid. None when A does not fit or the name
+    is not two parts: the plain cut decides."""
+    m = _HEAD_RE.match(s)
+    body = s[m.end():] if m else s
+    if len(_DASH_SEP_RE.findall(body)) != 1:
+        return None
+    a, b = (x.strip() for x in _DASH_SEP_RE.split(body))
+    # B is measured as written, code included: "CSG-T022_V24 Cicognara_..."
+    # is 47 characters whatever chip the code later rides on.
+    raw_b = b
+    a, b = split_code(a)[0] or a, split_code(b)[0] or b
+    if not a or is_code(a) or len(a) > limit or len(raw_b) <= limit:
+        return None
+    sep = _DASH_SEP_RE.search(body).group(0)
+    if b.endswith(")") and b.count("(") == b.count(")"):
+        # A note in brackets goes before the place does: "Lorrach Bahnhof -
+        # Rohrberg (Westweg ...)" fits once the note is gone, so it is no
+        # case for dropping B.
+        note_less = b[:b.rfind("(")].rstrip(_TRAIL_PUNCT)
+        if note_less and len(a) + len(sep) + len(note_less) <= limit:
+            return None
+    head = _head_words(b, limit - len(a) - len(sep))
+    if head and len(head.split()) >= 2 and len(a) + len(sep) + len(head) <= limit:
+        return a + sep + head
+    return a
+
+
 def cap_title(text, limit=TITLE_MAX):
     """Shorten to `limit` on a word boundary, trailing separators dropped.
 
@@ -288,7 +321,9 @@ def cap_title(text, limit=TITLE_MAX):
     m = _CODE_THEN_NAME_RE.match(s)
     if m and is_code(m.group(1)) and not is_code(m.group(2)):
         return cap_title(m.group(2), limit)
-    kept = _keep_the_end(s, limit)
+    # The start is kept before the end is: when B alone is over the limit,
+    # shortening A to make room for a B that is cut anyway loses both.
+    kept = _keep_the_start(s, limit) or _keep_the_end(s, limit)
     if kept:
         return kept
     cut = s[:limit + 1]
@@ -713,7 +748,8 @@ _COLOUR_ONLY_RE = re.compile(r"(?i)^(blue|red|green|yellow|black|blau|rot|gelb|g
                              r"(bar|trail|route|weg)?\s*\d*$")
 _NETWORK_CODE_RE = re.compile(r"(?i)\bE\s?\d{1,2}\b|^(GR|GRP|PR|HRP)\s?\d")
 _CODE_FRAGMENT_RE = re.compile(r"[\(\[]\s*[A-Za-z]{0,4}[\s\-/.]?\d[\w\s\-/.]*[\)\]]|"
-                               r"^\s*[A-Za-z]{0,4}[\s\-]?\d+[A-Za-z]?\s")
+                               r"^\s*[A-Za-z]{0,4}[\s\-]?\d+[A-Za-z]?\s|"
+                               r"\b[A-Z]{2,5}-[A-Z]\d{2,4}(?:_[A-Z]?\d+)?\b")
 
 
 def name_problems(name):
@@ -759,8 +795,13 @@ def _sfx_end(row, original):
         return m.group(0)
     segs = _DASH_SEP_RE.split(original)
     end = segs[-1].strip() if len(segs) > 1 else ""
+    end = split_code(end)[0] if end else ""     # a code rides the chip, not the name
     if end and squash(end) not in squash(row.get("name")):
-        return cap_title(end, 20)
+        room = min(20, TITLE_MAX - len(row.get("name") or "") - 2)
+        capped = cap_title(end, room) if room >= 8 else ""
+        # Squeezed beside a whole name, a cut end reads as noise
+        # ("Cicognara_Casa"): whole, or the next level.
+        return capped if room >= 20 or capped == end else ""
     return ""
 
 
@@ -797,13 +838,20 @@ def dedupe_names(rows, originals=None):
     changed = {}
 
     def named(r, x):
-        return cap_title(r["name"], TITLE_MAX - len(x) - 2) + ", " + x
+        # The row's own name stays whole: a suffix too long for it is not a
+        # suffix (the id is the last resort and may run past TITLE_MAX).
+        return r["name"] + ", " + x if len(r["name"]) + len(x) + 2 <= TITLE_MAX             or x.startswith("no. ") else cap_title(r["name"], TITLE_MAX - len(x) - 2) + ", " + x
+
+    def fits(r, x):
+        return len(r["name"]) + len(x) + 2 <= TITLE_MAX
 
     for (cc, _key), rs in groups.items():
         if len(rs) < 2:
             continue
         for level in (_sfx_code, _sfx_end, _sfx_km, _sfx_id):
             sfx = [level(r, readable(originals.get(r.get("id")) or r["name"], cc)) for r in rs]
+            if level is not _sfx_id and not all(x and fits(r, x) for r, x in zip(rs, sfx)):
+                continue
             new = {(cc, squash(named(r, x))) for r, x in zip(rs, sfx) if x}
             if all(sfx) and len(new) == len(rs) and not new & taken:
                 break
