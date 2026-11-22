@@ -884,6 +884,18 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 Status (2026-11-22): code fixed, on the wire after the next box run. The task used to read only `climate.m`, which the wire has and the master does not, so on the box it changed nothing; `_rows()` now reads both shapes and `lib/wireClimate.mjs` (used by `sync-data.mjs`) keeps `heat`, `fire` and `risk` on the wire. The three keys are optional in `docs/wire.schema.json`, schema version stays 20. Run on a copy of the 2026-11-10 box master: 61 places with heat months and 669 with fire months (dry-heat proxy).
 
+**Bed prices, measured and clean (D10, wave 1).** `pipeline/stays/bed_rules.py` is the one rule: a place has measured beds when its `accommodation.q` is measured, the beds are non-empty and `captured` is set (`is_measured`); a dorm priced above the same place's hotel3 is dropped (`clean_beds`). `apply_stays.apply_build` writes the stays build into the master and refuses, exit 1, when the measured share would fall more than 2 points (`--override "reason"` to force). The box runs it after its stays publish (`box_stays.py`). Status: code only; the live wire gets it after the owner steps in `docs/owner/data-and-pipeline-runs.md`.
+
+**Publish guard (D1, D2, D10, wave 1).** `scripts/quality/publish_guard.py` runs before `push-data.mjs --live` in step 9 of the box's `run_pipeline.sh`, also in a dry run: the wire contract (`contract.mjs --check`), the D2 engine, and the bed checks (measured share against the `rules.yaml` floor, dorm above hotel3, wire age). Exit 1 refuses the publish; `--override "reason"` logs the reason and passes. `CARTA_PUBLISH_SEED_BREAK=beds|dorm` breaks the wire in memory to prove the refusal. `scripts/ship.mjs` has no guard step yet (request to the orchestrator).
+
+**Trail names (D7, wave 1).** `pipeline/trails/names.py` strips network prefixes, fixme text and ALL CAPS, keeps the last of two segments, splits repeated or one-letter codes, and `dedupe_names` separates same-name walks in `export_wire.py`; `name_problems` is the one classifier. `scripts/quality/trail_names_replay.py` replays the rules on a wire and prints ACCEPT or REFUSE (unclean at most 1,312, end losses 0, new duplicate groups 0). Status: in code; names change on the next trails rebuild.
+
+**Launch gate (D2, D9, wave 1).** `scripts/quality/launch_gate.py` measures the ROADMAP section 4 table on a wire tree: the top 300 places (`TOP300_RULE`) and the top-band trails, one row per bar, passing when it has items and the share meets its target. Read only; `--strict` exits 1 when a row fails.
+
+**Lake and beach lead sentence (D9, wave 1).** `lib/lakeStory.js` `chooseLead(highlights, { neverLead, leadOrder })` picks the first highlight that is not a class, a swim verdict, `designated`, `wikiFame` or `blueFlag`, so the page leads with what is particular to the place; `beachStory.js` uses it. `scripts/quality/editorial_hooks.mjs --max-lead 25` measures the share of pages with the same lead.
+
+**Activities merge (D9, V-4 / I-17).** `harvest_activities.patch()` merges the cache into the master through `merge_items`: an item is the same when its Wikidata id matches, else its folded name and lat/lon rounded to 4 decimals; old items keep their index and their image, description and article, new items append, and an empty fetch keeps the old list. The Day Planner's saved stops can key on the same id.
+
 **Limits.** Month initials on the strip are English only (T1022-a). Elevation still comes from the Open-Meteo API, non-commercial tier (T470-b). An i18n string still says 30 years of normals (T469-i).
 
 ---
