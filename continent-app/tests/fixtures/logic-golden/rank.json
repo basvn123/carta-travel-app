@@ -1,0 +1,515 @@
+{
+ "_about": "Ranking, engine E6. Persona cases: P@k of the For you order against hand-picked relevant places (nDCG@k reported). Order cases: the exact top order of a tie group. Real places from places.json; every case names its source.",
+ "cases": [
+  {
+   "id": "family-toddler",
+   "expect": "target",
+   "persona": "family-toddler",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "gem:annecy",
+    "gem:bled",
+    "gem:lagos-pt",
+    "gem:sorrento",
+    "DBV",
+    "gem:interlaken",
+    "gem:lucerne",
+    "SPU"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "family-toddler"
+   },
+   "source": "persona family-toddler of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "hiking-couple",
+   "expect": "current",
+   "persona": "hiking-couple",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "gem:zermatt",
+    "gem:chamonix",
+    "gem:interlaken",
+    "gem:bled",
+    "gem:garmisch",
+    "gem:hallstatt",
+    "gem:annecy",
+    "gem:canazei",
+    "INN"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "hiking-couple"
+   },
+   "source": "persona hiking-couple of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "friends-out",
+   "expect": "current",
+   "persona": "friends-out",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "BCN",
+    "PRG",
+    "BUD",
+    "BER",
+    "AMS",
+    "LIS",
+    "OPO",
+    "JMK",
+    "SPU"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "friends-out"
+   },
+   "source": "persona friends-out of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "slow-culture",
+   "expect": "target",
+   "persona": "slow-culture",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "gem:granada",
+    "gem:matera",
+    "VRN",
+    "FLR",
+    "gem:bruges",
+    "gem:ghent",
+    "SZG",
+    "gem:colmar",
+    "KRK",
+    "gem:york"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "slow-culture"
+   },
+   "source": "persona slow-culture of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "backpacker",
+   "expect": "current",
+   "persona": "backpacker",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "BUD",
+    "KRK",
+    "PRG",
+    "BER",
+    "LJU",
+    "TLL",
+    "RIX",
+    "LIS",
+    "OPO",
+    "SPU"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "backpacker"
+   },
+   "source": "persona backpacker of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "beach-family",
+   "expect": "current",
+   "persona": "beach-family",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "gem:lagos-pt",
+    "gem:sorrento",
+    "gem:taormina",
+    "DBV",
+    "SPU",
+    "JTR",
+    "JMK",
+    "gem:albufeira",
+    "HER",
+    "VLC"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "beach-family"
+   },
+   "source": "persona beach-family of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "cyclist",
+   "expect": "current",
+   "persona": "cyclist",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "gem:bruges",
+    "AMS",
+    "gem:ghent",
+    "gem:lucerne",
+    "gem:bled",
+    "gem:annecy",
+    "gem:colmar",
+    "SZG",
+    "CPH",
+    "gem:garmisch"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "cyclist"
+   },
+   "source": "persona cyclist of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "foodie",
+   "expect": "target",
+   "persona": "foodie",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "BCN",
+    "LIS",
+    "OPO",
+    "BLQ",
+    "FLR",
+    "VRN",
+    "gem:sorrento",
+    "gem:granada",
+    "MAD",
+    "SVQ",
+    "gem:colmar"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "foodie"
+   },
+   "source": "persona foodie of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "skier",
+   "expect": "current",
+   "persona": "skier",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "gem:zermatt",
+    "gem:st-anton",
+    "gem:chamonix",
+    "gem:garmisch",
+    "INN",
+    "gem:canazei",
+    "gem:interlaken"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "skier"
+   },
+   "source": "persona skier of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "wellness",
+   "expect": "current",
+   "persona": "wellness",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "BUD",
+    "gem:bled",
+    "gem:lucerne",
+    "gem:hallstatt",
+    "gem:garmisch",
+    "SZG",
+    "gem:annecy",
+    "gem:interlaken"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "wellness"
+   },
+   "source": "persona wellness of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "island-hopper",
+   "expect": "current",
+   "persona": "island-hopper",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "JTR",
+    "JMK",
+    "gem:taormina",
+    "HER",
+    "SPU",
+    "DBV"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "island-hopper"
+   },
+   "source": "persona island-hopper of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "no-car-rail",
+   "expect": "current",
+   "persona": "no-car-rail",
+   "k": 5,
+   "min_p_at_k": 0.4,
+   "relevant": [
+    "PRG",
+    "VIE",
+    "BUD",
+    "AMS",
+    "FLR",
+    "VRN",
+    "KRK",
+    "LJU",
+    "BRU",
+    "gem:bruges",
+    "gem:ghent",
+    "LIS",
+    "OPO",
+    "CPH"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "no-car-rail"
+   },
+   "source": "persona no-car-rail of tests/personas_v5.json (gate 7); relevant places judged by hand"
+  },
+  {
+   "id": "AT-skier",
+   "expect": "target",
+   "persona": "skier",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "gem:st-anton",
+    "INN"
+   ],
+   "slices": {
+    "country": "AT",
+    "class": "all",
+    "persona": "skier"
+   },
+   "source": "AT places only, persona skier; relevant places judged by hand",
+   "iso2": "AT"
+  },
+  {
+   "id": "IT-island-hopper",
+   "expect": "current",
+   "persona": "island-hopper",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "gem:taormina",
+    "gem:sorrento",
+    "gem:cinque-terre"
+   ],
+   "slices": {
+    "country": "IT",
+    "class": "all",
+    "persona": "island-hopper"
+   },
+   "source": "IT places only, persona island-hopper; relevant places judged by hand",
+   "iso2": "IT"
+  },
+  {
+   "id": "ES-foodie",
+   "expect": "current",
+   "persona": "foodie",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "BCN",
+    "SVQ",
+    "gem:granada",
+    "MAD"
+   ],
+   "slices": {
+    "country": "ES",
+    "class": "all",
+    "persona": "foodie"
+   },
+   "source": "ES places only, persona foodie; relevant places judged by hand",
+   "iso2": "ES"
+  },
+  {
+   "id": "PT-beach-family",
+   "expect": "target",
+   "persona": "beach-family",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "gem:lagos-pt",
+    "FAO",
+    "gem:albufeira"
+   ],
+   "slices": {
+    "country": "PT",
+    "class": "all",
+    "persona": "beach-family"
+   },
+   "source": "PT places only, persona beach-family; relevant places judged by hand",
+   "iso2": "PT"
+  },
+  {
+   "id": "FR-hiking-couple",
+   "expect": "current",
+   "persona": "hiking-couple",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "gem:chamonix",
+    "gem:annecy"
+   ],
+   "slices": {
+    "country": "FR",
+    "class": "all",
+    "persona": "hiking-couple"
+   },
+   "source": "FR places only, persona hiking-couple; relevant places judged by hand",
+   "iso2": "FR"
+  },
+  {
+   "id": "DE-wellness",
+   "expect": "target",
+   "persona": "wellness",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "gem:garmisch"
+   ],
+   "slices": {
+    "country": "DE",
+    "class": "all",
+    "persona": "wellness"
+   },
+   "source": "DE places only, persona wellness; relevant places judged by hand",
+   "iso2": "DE"
+  },
+  {
+   "id": "GR-island-hopper",
+   "expect": "current",
+   "persona": "island-hopper",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "JTR",
+    "JMK",
+    "HER"
+   ],
+   "slices": {
+    "country": "GR",
+    "class": "all",
+    "persona": "island-hopper"
+   },
+   "source": "GR places only, persona island-hopper; relevant places judged by hand",
+   "iso2": "GR"
+  },
+  {
+   "id": "HR-beach-family",
+   "expect": "current",
+   "persona": "beach-family",
+   "k": 3,
+   "min_p_at_k": 0.34,
+   "relevant": [
+    "DBV",
+    "SPU"
+   ],
+   "slices": {
+    "country": "HR",
+    "class": "all",
+    "persona": "beach-family"
+   },
+   "source": "HR places only, persona beach-family; relevant places judged by hand",
+   "iso2": "HR"
+  },
+  {
+   "id": "tie-9.6-by-fame",
+   "expect": "target",
+   "pool": [
+    "gem:taormina",
+    "gem:hallstatt",
+    "DBV",
+    "SZG"
+   ],
+   "taste": {},
+   "month": null,
+   "order": [
+    "SZG",
+    "DBV",
+    "gem:hallstatt",
+    "gem:taormina"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "mixed",
+    "persona": "no-taste"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/E-month.out.txt: four 9.6 places tie and follow catalogue order; fame 1,284, 1,106, 621, 335"
+  },
+  {
+   "id": "tie-9.6-reversed-input",
+   "expect": "target",
+   "pool": [
+    "DBV",
+    "gem:taormina",
+    "SZG",
+    "gem:hallstatt"
+   ],
+   "taste": {},
+   "month": null,
+   "order": [
+    "SZG",
+    "DBV",
+    "gem:hallstatt",
+    "gem:taormina"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "mixed",
+    "persona": "no-taste"
+   },
+   "source": "same four places in another input order must give the same order (a tiebreak, not file order)"
+  },
+  {
+   "id": "rating-order-no-ties",
+   "expect": "current",
+   "pool": [
+    "FAO",
+    "gem:bruges",
+    "NCE",
+    "BRU"
+   ],
+   "taste": {},
+   "month": null,
+   "order": [
+    "gem:bruges",
+    "NCE"
+   ],
+   "slices": {
+    "country": "all",
+    "class": "mixed",
+    "persona": "no-taste"
+   },
+   "source": "by score alone: Bruges 9.7, Nice 8.7 first and second"
+  }
+ ]
+}

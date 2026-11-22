@@ -1,0 +1,667 @@
+{
+ "_about": "Month fit, engine E5. want = is the place fine in the month. Coverage cases: at least coverage.min fixture places fine in the month. Every case names its source; \"current\" is a regression guard, \"target\" the audit-named right answer that fails today.",
+ "cases": [
+  {
+   "id": "FAO-m10",
+   "expect": "target",
+   "place": "FAO",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "PT",
+    "class": "city",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Faro Oct comfort 78 great, not in best"
+  },
+  {
+   "id": "FAO-m8",
+   "expect": "current",
+   "place": "FAO",
+   "month": 8,
+   "want": true,
+   "slices": {
+    "country": "PT",
+    "class": "city",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Faro Aug comfort 93"
+  },
+  {
+   "id": "FAO-m7",
+   "expect": "current",
+   "place": "FAO",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "PT",
+    "class": "city",
+    "persona": "beach"
+   },
+   "source": "climate.best holds May to Sep: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "lagos-pt-m10",
+   "expect": "target",
+   "place": "gem:lagos-pt",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "PT",
+    "class": "town",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Lagos Oct comfort 78 great"
+  },
+  {
+   "id": "albufeira-m10",
+   "expect": "target",
+   "place": "gem:albufeira",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "PT",
+    "class": "town",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Albufeira Oct comfort 78 great"
+  },
+  {
+   "id": "HER-m10",
+   "expect": "target",
+   "place": "HER",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "GR",
+    "class": "city",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Heraklion Oct comfort 84 great"
+  },
+  {
+   "id": "HER-m8",
+   "expect": "current",
+   "place": "HER",
+   "month": 8,
+   "want": true,
+   "slices": {
+    "country": "GR",
+    "class": "city",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Heraklion Aug comfort 91"
+  },
+  {
+   "id": "JTR-m7",
+   "expect": "current",
+   "place": "JTR",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "GR",
+    "class": "area",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Santorini Jul comfort 100"
+  },
+  {
+   "id": "JTR-m1",
+   "expect": "current",
+   "place": "JTR",
+   "month": 1,
+   "want": false,
+   "slices": {
+    "country": "GR",
+    "class": "area",
+    "persona": "beach"
+   },
+   "source": "Santorini in January: cold, ferries thin (comfort poor)"
+  },
+  {
+   "id": "JTR-m10",
+   "expect": "target",
+   "place": "JTR",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "GR",
+    "class": "area",
+    "persona": "beach"
+   },
+   "source": "Santorini Oct: warm sea, quieter streets (comfort great)"
+  },
+  {
+   "id": "st-anton-m1",
+   "expect": "target",
+   "place": "gem:st-anton",
+   "month": 1,
+   "want": true,
+   "slices": {
+    "country": "AT",
+    "class": "village",
+    "persona": "ski"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: ski in January, best lists Jun to Aug only"
+  },
+  {
+   "id": "st-anton-m2",
+   "expect": "target",
+   "place": "gem:st-anton",
+   "month": 2,
+   "want": true,
+   "slices": {
+    "country": "AT",
+    "class": "village",
+    "persona": "ski"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: ski season"
+  },
+  {
+   "id": "st-anton-m7",
+   "expect": "current",
+   "place": "gem:st-anton",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "AT",
+    "class": "village",
+    "persona": "hiking"
+   },
+   "source": "climate.best holds Jun to Aug: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "st-anton-m5",
+   "expect": "current",
+   "place": "gem:st-anton",
+   "month": 5,
+   "want": false,
+   "slices": {
+    "country": "AT",
+    "class": "village",
+    "persona": "hiking"
+   },
+   "source": "May: lifts closed, snow on the paths, not in best"
+  },
+  {
+   "id": "zermatt-m2",
+   "expect": "target",
+   "place": "gem:zermatt",
+   "month": 2,
+   "want": true,
+   "slices": {
+    "country": "CH",
+    "class": "village",
+    "persona": "ski"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Zermatt ski"
+  },
+  {
+   "id": "chamonix-m1",
+   "expect": "target",
+   "place": "gem:chamonix",
+   "month": 1,
+   "want": true,
+   "slices": {
+    "country": "FR",
+    "class": "town",
+    "persona": "ski"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Chamonix ski in January"
+  },
+  {
+   "id": "canazei-m1",
+   "expect": "target",
+   "place": "gem:canazei",
+   "month": 1,
+   "want": true,
+   "slices": {
+    "country": "IT",
+    "class": "village",
+    "persona": "ski"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Canazei ski in January"
+  },
+  {
+   "id": "SVQ-m8",
+   "expect": "current",
+   "place": "SVQ",
+   "month": 8,
+   "want": false,
+   "slices": {
+    "country": "ES",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Seville Aug hi 38, comfort 39 poor"
+  },
+  {
+   "id": "SVQ-m8-guard",
+   "expect": "current",
+   "place": "SVQ",
+   "month": 8,
+   "want": false,
+   "guard": true,
+   "slices": {
+    "country": "ES",
+    "class": "metro",
+    "persona": "family"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Seville Aug, heat guard on"
+  },
+  {
+   "id": "SVQ-m4",
+   "expect": "current",
+   "place": "SVQ",
+   "month": 4,
+   "want": true,
+   "slices": {
+    "country": "ES",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Seville Apr: in best: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "SVQ-m10",
+   "expect": "current",
+   "place": "SVQ",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "ES",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Seville Oct: in best: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "ATH-m8",
+   "expect": "current",
+   "place": "ATH",
+   "month": 8,
+   "want": false,
+   "slices": {
+    "country": "GR",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Athens Aug hi 32, best Apr and May"
+  },
+  {
+   "id": "ATH-m5",
+   "expect": "current",
+   "place": "ATH",
+   "month": 5,
+   "want": true,
+   "slices": {
+    "country": "GR",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Athens May: in best: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "NCE-m7",
+   "expect": "current",
+   "place": "NCE",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "FR",
+    "class": "metro",
+    "persona": "beach"
+   },
+   "source": "Nice Jul: in best: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "NCE-m1",
+   "expect": "current",
+   "place": "NCE",
+   "month": 1,
+   "want": false,
+   "slices": {
+    "country": "FR",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Nice Jan: comfort poor: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "NCE-m10",
+   "expect": "target",
+   "place": "NCE",
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "FR",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Nice Oct: comfort good, 23 C, quieter"
+  },
+  {
+   "id": "PRG-m7",
+   "expect": "current",
+   "place": "PRG",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "CZ",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Prague Jul: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "PRG-m1",
+   "expect": "current",
+   "place": "PRG",
+   "month": 1,
+   "want": false,
+   "slices": {
+    "country": "CZ",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Prague Jan: cold, poor comfort"
+  },
+  {
+   "id": "DBV-m7",
+   "expect": "current",
+   "place": "DBV",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "HR",
+    "class": "town",
+    "persona": "beach"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Dubrovnik Jul comfort 86"
+  },
+  {
+   "id": "DBV-m11",
+   "expect": "current",
+   "place": "DBV",
+   "month": 11,
+   "want": false,
+   "slices": {
+    "country": "HR",
+    "class": "town",
+    "persona": "city-break"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/probes/F-personas.out.txt: Dubrovnik Nov quieter but not a best month"
+  },
+  {
+   "id": "bruges-m5",
+   "expect": "target",
+   "place": "gem:bruges",
+   "month": 5,
+   "want": true,
+   "slices": {
+    "country": "BE",
+    "class": "city",
+    "persona": "city-break"
+   },
+   "source": "Bruges May: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "bruges-m12",
+   "expect": "current",
+   "place": "gem:bruges",
+   "month": 12,
+   "want": false,
+   "slices": {
+    "country": "BE",
+    "class": "city",
+    "persona": "city-break"
+   },
+   "source": "Bruges Dec: poor comfort: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "hallstatt-m7",
+   "expect": "current",
+   "place": "gem:hallstatt",
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "AT",
+    "class": "village",
+    "persona": "hiking"
+   },
+   "source": "Hallstatt Jul: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "hallstatt-m1",
+   "expect": "current",
+   "place": "gem:hallstatt",
+   "month": 1,
+   "want": false,
+   "slices": {
+    "country": "AT",
+    "class": "village",
+    "persona": "hiking"
+   },
+   "source": "Hallstatt Jan: poor comfort: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "RVN-m1",
+   "expect": "target",
+   "place": "RVN",
+   "month": 1,
+   "want": true,
+   "slices": {
+    "country": "FI",
+    "class": "city",
+    "persona": "winter"
+   },
+   "source": "Rovaniemi in January: the season for lights and snow (winter-tagged place)"
+  },
+  {
+   "id": "BGO-m6",
+   "expect": "current",
+   "place": "BGO",
+   "month": 6,
+   "want": true,
+   "slices": {
+    "country": "NO",
+    "class": "city",
+    "persona": "city-break"
+   },
+   "source": "Bergen Jun: the wire's climate.best and monthly comfort"
+  },
+  {
+   "id": "HEL-m12",
+   "expect": "current",
+   "place": "HEL",
+   "month": 12,
+   "want": false,
+   "slices": {
+    "country": "FI",
+    "class": "metro",
+    "persona": "city-break"
+   },
+   "source": "Helsinki Dec: dark and cold, no winter tag"
+  },
+  {
+   "id": "coverage-m1",
+   "expect": "target",
+   "coverage": {
+    "min": 5
+   },
+   "month": 1,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m2",
+   "expect": "target",
+   "coverage": {
+    "min": 5
+   },
+   "month": 2,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m3",
+   "expect": "target",
+   "coverage": {
+    "min": 5
+   },
+   "month": 3,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m4",
+   "expect": "current",
+   "coverage": {
+    "min": 5
+   },
+   "month": 4,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m5",
+   "expect": "current",
+   "coverage": {
+    "min": 5
+   },
+   "month": 5,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m6",
+   "expect": "current",
+   "coverage": {
+    "min": 5
+   },
+   "month": 6,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m7",
+   "expect": "current",
+   "coverage": {
+    "min": 5
+   },
+   "month": 7,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m8",
+   "expect": "current",
+   "coverage": {
+    "min": 5
+   },
+   "month": 8,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m9",
+   "expect": "current",
+   "coverage": {
+    "min": 5
+   },
+   "month": 9,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m10",
+   "expect": "target",
+   "coverage": {
+    "min": 5
+   },
+   "month": 10,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m11",
+   "expect": "target",
+   "coverage": {
+    "min": 5
+   },
+   "month": 11,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  },
+  {
+   "id": "coverage-m12",
+   "expect": "target",
+   "coverage": {
+    "min": 5
+   },
+   "month": 12,
+   "want": true,
+   "slices": {
+    "country": "all",
+    "class": "all",
+    "persona": "any-month"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/proposal-simplify.md E5 test: every month has at least 300 of 3,855 places fine (7.8%); 5 of this 60-place fixture; today Jan, Feb, Nov and Dec have 0"
+  }
+ ]
+}
