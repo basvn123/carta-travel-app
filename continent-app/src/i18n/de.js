@@ -10978,4 +10978,5 @@ export const de = {
   "mt.nightsLeft": "Noch {n} Nächte",
   "mt.lastNight": "Letzte Nacht",
   "mt.dayOf": "Tag {n} von {m}",
+  "mt.wishCount": "{p} Orte in {c} Ländern",
 };

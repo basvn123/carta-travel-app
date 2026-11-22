@@ -85,6 +85,7 @@ function Mosaic({ rows }) {
  *  the traveller's note, today's figure, a menu (lists, note, remove). */
 function SavedItem({
   row, meta, cost, choices, basis, dest, lists, shared = [], me = null, onShared = null, choosing = false, selected, onSelect, onOpen, onRemove, active, itemRef,
+  onHot = null,
 }) {
   const { t } = useI18n();
   const [editing, setEditing] = useState(false);
@@ -103,7 +104,15 @@ function SavedItem({
   const inLists = [...lists.filter((l) => l.keys.includes(k)), ...shared.filter(inShared)];
   const cbId = `mt-sel-${k.replace(/[^\w-]/g, '_')}`;
   return (
-    <li className={`mt-item${choosing ? ' is-choosing' : ''}${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}`} ref={itemRef}>
+    <li
+      className={`mt-item${choosing ? ' is-choosing' : ''}${selected ? ' is-selected' : ''}${active ? ' is-active' : ''}`}
+      ref={itemRef}
+      // G12 atlas: pointing at a row raises its pin on the map as a small plate.
+      onMouseEnter={onHot ? () => onHot(k) : undefined}
+      onMouseLeave={onHot ? () => onHot('') : undefined}
+      onFocus={onHot ? () => onHot(k) : undefined}
+      onBlur={onHot ? (e) => { if (!e.currentTarget.contains(e.relatedTarget)) onHot(''); } : undefined}
+    >
       {/* The select box waits for Kiezen (G12 polish): the same function, behind one tap. */}
       {choosing && (
         <span className="mt-item-check">
@@ -317,8 +326,11 @@ export function SavedTab({
     const d = r.kind === 'dest' ? destinations[r.id] : null;
     const lat = d ? (d.city_lat ?? d.lat) : r.lat;
     const lon = d ? (d.city_lon ?? d.lon) : r.lon;
-    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: r.name || '', img: r.img, key: metaKey(r), cc: r.cc } : null;
-  }).filter(Boolean), [shown, destinations]);
+    const c = costOf(r);
+    const fig = c ? inUnit(c.dayEur, choices) : null;
+    return Number.isFinite(lat) && Number.isFinite(lon) ? { lat, lon, name: r.name || '', img: r.img, key: metaKey(r), cc: r.cc, fig } : null;
+  }).filter(Boolean), [shown, destinations, costs, choices]); // eslint-disable-line react-hooks/exhaustive-deps -- costOf reads costs
+  const [hot, setHot] = useState('');
   // A pin opens its row: the list filters to the pin's country (a removable
   // chip) and scrolls the row into view.
   const pickPin = (pin) => {
@@ -344,7 +356,7 @@ export function SavedTab({
   }
   // G12 round 4: the Your Europe plate with the saved places, not a street map.
   const liveMap = points.length > 0 && geo ? (
-    <SavedPlate geo={geo} europe={europe} points={points} cc={cc} onCountry={setCc} onPin={pickPin} />
+    <SavedPlate geo={geo} europe={europe} points={points} cc={cc} hot={hot} onCountry={setCc} onPin={pickPin} />
   ) : null;
 
   return (
@@ -542,6 +554,7 @@ export function SavedTab({
                     choosing={choosing}
                     selected={sel.includes(k)}
                     active={active === k}
+                    onHot={setHot}
                     onSelect={toggleSel}
                     onOpen={onOpen}
                     onRemove={onRemove}

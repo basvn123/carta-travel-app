@@ -2345,3 +2345,70 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 @media (prefers-reduced-motion: reduce) {
   .mt-panel .mt-rate-scale button { transition: none; }
 }
+
+/* ==== G12 wow, phase C: Bewaard as the wish map. The countries that hold a
+   saved place are hatched at 45 degrees (hatched is want, filled is been on
+   Your Europe); a chip counts places and countries; pointing at a row raises
+   its pin as a small umber plate; rows are compacter; a list's cover fans
+   its first three photos on hover or focus. ==== */
+.atlas-plate .mt-eumap-wish-bg { fill: var(--umber-50); }
+.atlas-plate .mt-eumap-wish { fill: var(--umber-300); }
+.atlas-plate .mt-eumap-land.is-wish { stroke: var(--umber-500); stroke-width: 1; }
+.atlas-floatchip.is-wish b { font-size: var(--text-body); font-weight: 800; color: var(--umber-800); }
+.atlas-pinplate {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-3) 6px 6px;
+  border-radius: var(--radius-control);
+  background: var(--umber-800);
+  color: var(--on-plate);
+  font-size: var(--text-label);
+  white-space: nowrap;
+  box-shadow: var(--elev-2);
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 14px));
+  animation: atlas-pinplate-in var(--dur-2) var(--ease-out) both;
+}
+.atlas-pinplate::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--umber-800);
+}
+.atlas-pinplate-img, .atlas-pinplate .hero-blank { width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover; }
+.atlas-pinplate span { color: var(--on-plate-2); font-weight: 700; }
+@keyframes atlas-pinplate-in { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+
+/* Compacter rows: a 72 px photo on a phone, 96 x 72 from 1100. */
+.mt-saved .mt-item:not(.is-shared) { grid-template-columns: 72px minmax(0, 1fr) auto auto; padding-block: var(--space-2); }
+.mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 72px minmax(0, 1fr) auto auto; }
+.mt-saved .mt-item:not(.is-shared) .mt-item-media { width: 72px; height: 64px; border-radius: var(--radius-panel); }
+@media (min-width: 1100px) {
+  .mt-saved .mt-item:not(.is-shared) { grid-template-columns: 96px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 96px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item:not(.is-shared) .mt-item-media { width: 96px; height: 72px; }
+}
+
+/* The cover fan: at rest the 2 x 2 mosaic; pointed at, its first three photos fan out. */
+.btn.mt-lcard .mt-mosaic > * { transition: transform var(--dur-3) var(--ease-out); }
+@media (hover: hover) {
+  .btn.mt-lcard:hover .mt-mosaic { overflow: visible; }
+  .btn.mt-lcard:hover .mt-mosaic > :nth-child(1) { transform: rotate(-6deg) translate(-4px, 2px); }
+  .btn.mt-lcard:hover .mt-mosaic > :nth-child(2) { transform: rotate(5deg) translate(5px, -3px); }
+  .btn.mt-lcard:hover .mt-mosaic > :nth-child(3) { transform: rotate(-3deg) translate(-3px, 4px); }
+}
+.btn.mt-lcard:focus-visible .mt-mosaic { overflow: visible; }
+.btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(1) { transform: rotate(-6deg) translate(-4px, 2px); }
+.btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(2) { transform: rotate(5deg) translate(5px, -3px); }
+.btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(3) { transform: rotate(-3deg) translate(-3px, 4px); }
+@media (prefers-reduced-motion: reduce) {
+  .atlas-pinplate { animation: none; }
+  .btn.mt-lcard .mt-mosaic > * { transition: none; }
+}

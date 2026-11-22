@@ -22,7 +22,7 @@ import { WHOLE } from './layers.js';
  */
 export function EuropeMap({
   geo, been, next, saved, label, picked, onPick,
-  viewBox, classOf, hatchW = 9, dotR = 7, showSaved = true, className = '', preserveAspectRatio, children,
+  viewBox, classOf, hatchW = 9, dotR = 7, showSaved = true, className = '', preserveAspectRatio, wish = null, children,
 }) {
   const pid = useId().replace(/:/g, '');
   if (!geo) return <div className={`mt-eumap is-loading ${className}`} aria-hidden="true" />;
@@ -42,6 +42,10 @@ export function EuropeMap({
           <rect width={hatchW} height={hatchW} className="mt-eumap-hatch-bg" />
           <rect width={hatchW * 0.4} height={hatchW} className="mt-eumap-hatch" />
         </pattern>
+        <pattern id={`${pid}-wish`} width={hatchW} height={hatchW} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width={hatchW} height={hatchW} className="mt-eumap-wish-bg" />
+          <rect width={hatchW * 0.25} height={hatchW} className="mt-eumap-wish" />
+        </pattern>
       </defs>
       <path className="mt-eumap-context" d={geo.context} />
       {geo.countries.map((c) => {
@@ -49,9 +53,9 @@ export function EuropeMap({
         return (
           <path
             key={c.cc}
-            className={`mt-eumap-land is-${st}${picked === c.cc ? ' is-picked' : ''}${cls(c)}`}
+            className={`mt-eumap-land is-${st}${picked === c.cc ? ' is-picked' : ''}${cls(c)}${wish?.has(c.cc) ? ' is-wish' : ''}`}
             d={c.d}
-            style={st === 'next' ? { fill: `url(#${pid}-hatch)` } : undefined}
+            style={st === 'next' ? { fill: `url(#${pid}-hatch)` } : wish?.has(c.cc) ? { fill: `url(#${pid}-wish)` } : undefined}
             onClick={pick(c.cc)}
           />
         );
@@ -116,7 +120,7 @@ const WHOLE_LAYER = { whole: true };
  *   overlay(vb, k)  HTML drawn over the plate on the shown frame (Saved pins)
  */
 export function AtlasPlate({
-  geo, layer, been = EMPTY, next = EMPTY, label, year = null, drawKey = 0, picked, onPick, cornerT = {}, zoom = null, overlay = null, children,
+  geo, layer, been = EMPTY, next = EMPTY, label, year = null, drawKey = 0, picked, onPick, cornerT = {}, zoom = null, overlay = null, wish = null, children,
 }) {
   const box = useRef(null);
   const [size, setSize] = useState(null);
@@ -191,6 +195,7 @@ export function AtlasPlate({
         hatchW={6 * k}
         dotR={3.4 * k}
         className={onPick ? 'is-tappable' : ''}
+        wish={wish}
       >
         {size && (
           <g key={drawKey} className="atlas-overlay">

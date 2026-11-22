@@ -3,6 +3,7 @@ import { useI18n } from '../../../i18n/index.jsx';
 import { PlusIcon } from '../../../components/Icons.jsx';
 import { HeroImage } from '../../../components/HeroImage.jsx';
 import { Pressable } from '../../../components/ui/Pressable.jsx';
+import { formatMoney } from '../../../lib/money.js';
 import { countryName } from '../../../lib/countryName.js';
 import { AtlasPlate } from './AtlasPlate.jsx';
 import { NAME_OF } from './plateData.js';
@@ -44,7 +45,7 @@ function MinusIcon({ size = 20 }) {
  *   onCountry(iso or '')   a country or pill tap
  *   onPin(point)           a pin tap
  */
-export function SavedPlate({ geo, europe, points, cc = '', onCountry, onPin }) {
+export function SavedPlate({ geo, europe, points, cc = '', hot = '', onCountry, onPin }) {
   const { t } = useI18n();
   const box = useRef(null);
   const vbRef = useRef(null);
@@ -205,6 +206,13 @@ export function SavedPlate({ geo, europe, points, cc = '', onCountry, onPin }) {
           }
           return <span key={p.key} className={`atlas-pin-dot${dim}`} style={at} onClick={() => onPin?.(p)} aria-hidden="true" />;
         })}
+        {pins.filter((p) => p.key === hot).map((p) => (
+          <span key={`hot-${p.key}`} className="atlas-pinplate" style={pct(vb, p.x, p.y)} aria-hidden="true">
+            {p.img && <HeroImage url={p.img} city={p.name} iso2={p.cc} className="atlas-pinplate-img" maxWidth={120} ratio={[1, 1]} sizes="28px" />}
+            <b>{p.name}</b>
+            <span>{Number.isFinite(p.fig) ? formatMoney(p.fig) : t('saved.factNoPrice')}</span>
+          </span>
+        ))}
         {pills.map(([c, n]) => (
           <Pressable
             key={c}
@@ -223,6 +231,8 @@ export function SavedPlate({ geo, europe, points, cc = '', onCountry, onPin }) {
   };
 
   const nCountries = Object.keys(per).length;
+  // The countries that hold a saved place are hatched: hatched is "want", filled is "been".
+  const wish = useMemo(() => new Set(Object.keys(per)), [per]);
   return (
     <div
       ref={box}
@@ -244,7 +254,11 @@ export function SavedPlate({ geo, europe, points, cc = '', onCountry, onPin }) {
         onPick={(c) => onCountry?.(c || '')}
         zoom={mz}
         overlay={overlay}
-      />
+        wish={wish}
+      >
+        {/* G12 atlas: the count is counted from the list, places and their countries. */}
+        <span className="atlas-floatchip is-wish"><b>{t('mt.wishCount', { p: pins.length, c: nCountries })}</b></span>
+      </AtlasPlate>
       <div className="atlas-zoomctl">
         <Pressable haptic="tick" aria-label={t('mt.zoomIn')} disabled={mz.z >= MAX_Z} onClick={() => zoomBy(1.7)}><PlusIcon size={20} /></Pressable>
         <Pressable haptic="tick" aria-label={t('mt.zoomOut')} disabled={mz.z <= 1} onClick={() => zoomBy(1 / 1.7)}><MinusIcon size={20} /></Pressable>
