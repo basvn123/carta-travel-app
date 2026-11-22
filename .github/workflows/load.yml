@@ -40,7 +40,7 @@ jobs:
           case "$SCRIPT" in ask|flights|stays|static|all) ;; *) echo "bad script"; exit 2;; esac
           k6 run -e BASE_URL="$BASE_URL" -e SPOOF_IP=0 -e MULT="$MULT" -e DURATION="$DURATION" \
             --summary-export=summary.json "tests/load/$SCRIPT.js"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: k6-summary
