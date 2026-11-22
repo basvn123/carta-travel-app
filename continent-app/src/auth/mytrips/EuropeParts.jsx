@@ -283,7 +283,7 @@ export function Badges({ items }) {
               aria-pressed={open === b.id}
               onClick={() => setOpen(open === b.id ? '' : b.id)}
             >
-              <i aria-hidden="true"><Icon size={24} /></i>{b.label}
+              <i aria-hidden="true"><Icon size={24} /></i><span className="atlas-badge-l">{b.label}</span>
             </Pressable>
           );
         })}
