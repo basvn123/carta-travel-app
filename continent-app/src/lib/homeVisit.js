@@ -11,6 +11,11 @@
 // which is the old behaviour, never a loop of home pages.
 export const HOME_SEEN_KEY = 'continent.homeSeen.v1';
 
+// Temporarily off (owner, 2026-11-22): no visit opens on the home page and
+// `?tab=home` or a link to it opens Explore. App.jsx reads this. Set it back
+// to false to bring the home page back; nothing else changed.
+export const HOME_OFF = true;
+
 export function readFirstVisit(storage, search, hash) {
   if (search || hash) return false;
   try {

@@ -90,7 +90,7 @@ import { loadSweptOrigins } from './lib/flights/flightData.js';
 import { useAppData } from './hooks/useAppData.js';
 import { Button } from './components/Button.jsx';
 import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
-import { readFirstVisit, markHomeSeen } from './lib/homeVisit.js';
+import { readFirstVisit, markHomeSeen, HOME_OFF } from './lib/homeVisit.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
@@ -123,6 +123,7 @@ const GUEST_KEY = 'continent.guestMode.v1';
 // StrictMode and the dossier reader strips the hash between the two passes,
 // so a hash link would read as a first visit on the second pass.
 const FIRST_VISIT = (() => {
+  if (HOME_OFF) return false;
   try { return readFirstVisit(window.localStorage, window.location.search, window.location.hash); } catch { return false; }
 })();
 
@@ -446,6 +447,7 @@ function TravelApp() {
   // press on the section already showing change nothing on screen, so they
   // commit at once.
   const goToTab = useCallback((key, opts = {}) => {
+    if (HOME_OFF && key === 'home') key = 'map';
     const from = activeTabRef.current;
     const commit = () => {
       setSavedTripsOpen(false);
@@ -519,7 +521,8 @@ function TravelApp() {
   // (owner decision 2026-10-07); a first visit with no link opens on it (T194).
   // T496: the places are Explore, Plan, My trips and Account; Explore opens
   // on Places (owner T489-h), so a return visit with no link lands there.
-  const urlTab = bootRoute && VIEW_KEYS.includes(bootRoute.view) ? bootRoute.view : null;
+  // While the home page is off (lib/homeVisit.js HOME_OFF) a link to it opens Explore.
+  const urlTab = bootRoute && VIEW_KEYS.includes(bootRoute.view) ? (HOME_OFF && bootRoute.view === 'home' ? 'map' : bootRoute.view) : null;
   const [activeTab, setActiveTab] = useState(urlTab || (firstVisit ? 'home' : 'map'));
   if (activeTabRef.current === null) activeTabRef.current = activeTab;
 
