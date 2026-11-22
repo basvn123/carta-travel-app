@@ -26,11 +26,18 @@ export function loadGuidedData() {
 /** The data once it has arrived, else null. Starts the load when the
  *  browser is idle, so it never competes with the first paint. */
 export function useGuidedData(enabled = true) {
-  const [data, setData] = React.useState(null);
+  return useGuidedState(enabled).data;
+}
+
+/** The data and whether its load has ended (`done`, also when it failed and
+ *  `data` stays null): Explore holds its footer until the rails are
+ *  complete, and a missing file must not hold it for ever (G12, D10). */
+export function useGuidedState(enabled = true) {
+  const [state, setState] = React.useState({ data: null, done: false });
   React.useEffect(() => {
     if (!enabled) return undefined;
     let live = true;
-    const start = () => loadGuidedData().then((d) => { if (live) setData(d); });
+    const start = () => loadGuidedData().then((d) => { if (live) setState({ data: d, done: true }); });
     const idle = typeof window !== 'undefined' && window.requestIdleCallback;
     const handle = idle ? idle(start, { timeout: 2500 }) : setTimeout(start, 600);
     return () => {
@@ -38,7 +45,7 @@ export function useGuidedData(enabled = true) {
       if (idle) window.cancelIdleCallback?.(handle); else clearTimeout(handle);
     };
   }, [enabled]);
-  return data;
+  return state;
 }
 
 /** A destination's vibe score (0 when it has none or the data is absent). */

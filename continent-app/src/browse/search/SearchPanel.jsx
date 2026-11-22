@@ -1,53 +1,33 @@
 import React from 'react';
+import { countKey } from '../../lib/plural.js';
 import { useI18n } from '../../i18n/index.jsx';
-import { HeartIcon } from '../../components/Icons.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
+import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { countryName } from '../../lib/countryName.js';
 import { loadSearchIndex } from '../../lib/searchIndex.js';
-import { settingsSummary } from '../../lib/settings/index.js';
 import {
   cartaPlaces, cartaRegionsFrom, extractTokens, hitsFor, loadAreas, loadTownsFor, prefetchFor, readRecent,
   addRecent, rememberPick, removeFeature, resolveIds, suggest, nearLabel, rememberLocalName,
 } from '../../lib/search/index.js';
 import { isQuestion } from '../searchDockStore.js';
 import { openAskChat } from '../ask/askChatStore.js';
-import { openSettings, settingsSheetState } from '../settings/settingsSheetStore.js';
-import { openStudio } from '../styles/studioDoors.js';
 import '../../styles/82-search-panel.css';
 
-// lib/settings/summary.js names a few glyphs by what they show; the house
-// set draws them under its own names (the band does the same).
-const ALIAS = { plane: 'flight', flag: 'from' };
 const FEATURE_ICON = { beach: 'beaches', lake: 'lakes', hiking: 'trails', ski: 'mountains', oldtown: 'places', islands: 'water' };
-const TYPE_ICON = { place: 'places', near: 'pin', region: 'map', country: 'from', ask: 'ask' };
+const TYPE_ICON = { place: 'places', near: 'pin', region: 'map', country: 'from', ask: 'ask', text: 'search' };
+// The Browse shortcuts' glyphs, by filtersStore id.
+const SHORTCUT_ICON = { top: 'star', hiking: 'trails', oldtown: 'places', sea: 'beaches', island: 'water', lake: 'lakes', gems: 'signpost' };
 const MAX_TOKENS_SHOWN = 2;
 
 function Glyph({ name, size = 20 }) {
-  if (name === 'heart') return <HeartIcon size={size} />;
-  const G = HouseIcon[ALIAS[name] || name];
+  const G = HouseIcon[name];
   return G ? <G size={size} /> : null;
 }
 
-/** The settings items, or none while the engine is missing or throws:
- *  the search must work without them. */
-function useSummary(t) {
-  const s = useSettings();
-  const style = s?.travelStyles?.active || null;
-  return React.useMemo(() => {
-    if (!s) return [];
-    try {
-      const out = settingsSummary(s.model ?? s, style, t, { data: s.data || null });
-      return Array.isArray(out) ? out.filter((it) => it?.text) : [];
-    } catch {
-      return [];
-    }
-  }, [s, style, t]);
-}
-
 /** Sets a React-controlled field's value as typing would, so the band's
- *  own state follows (the field belongs to Lane 1's band). */
+ *  own state follows (the field belongs to the band). */
 function setFieldValue(field, value) {
   if (!field) return;
   const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
@@ -55,51 +35,42 @@ function setFieldValue(field, value) {
   field.dispatchEvent(new Event('input', { bubbles: true }));
 }
 
-/** Back to the search once Settings or the Style Studio closes, so Change
- *  "opens that step and returns" (decision.md APPROVED). Both live outside
- *  this panel, which closes while they are open, so this watches from
- *  outside React and gives up after ten minutes. */
-function returnAfterClose(input, isOpen) {
-  if (!input) return;
-  const started = Date.now();
-  let seenOpen = false;
-  const timer = setInterval(() => {
-    const open = isOpen();
-    if (open) seenOpen = true;
-    if ((seenOpen && !open) || Date.now() - started > 600000) {
-      clearInterval(timer);
-      if (seenOpen && !open && input.isConnected) input.focus();
-    }
-  }, 200);
-}
-
 /**
- * The search panel under Explore's search field (G12, decision.md 3 and the
- * APPROVED block). Lane 1's band mounts it while the field has focus.
+ * The search panel under Explore's search field (G12; round 2, decision.md
+ * APPROVED 2026-11-19, sections 1 and 3). The band mounts it while the
+ * field has focus.
  *
- *   empty    "You search as": the style and the four settings, each with
- *            Change, then Recent searches
- *   typing   the settings in one line with Change (phone; a desktop keeps the
- *            rows beside the suggestions), feature tokens, then suggestions
- *            in two groups, Places and Ask
+ *   Browse   the shortcuts (Top rated, Hiking bases, Old towns, By the sea,
+ *            Islands, Lakes, Hidden gems) on Places, as the tab publishes
+ *            them (filtersStore); each applies in place, stays lit while
+ *            applied and takes itself off when picked again
+ *   Recent   the last searches, before anything is typed
+ *   Places   suggestions as you type: a name and its place (the country,
+ *            a region and its country, "Country"), no counts (owner O4, O5)
+ *   desktop  Places (or Recent) on the left, Browse on the right; a typed
+ *            text ends the list with "Ask Carta about ..."
+ *   phone    Browse, then Recent or Places; Filters and Ask Carta stand
+ *            apart under a rule as two buttons, never rows in the list (O3)
  *
- * The field is the combobox (Lane 1); this panel holds its listbox and
+ * The field is the combobox (the band's); this panel holds its listbox and
  * drives `aria-activedescendant` and the arrow keys on it, so the band needs
- * no keyboard code of its own. A pick keeps today's flow: it runs the band's
- * search with the result's label, and lib/search/picked.js makes the list
- * show the places the label stands for.
+ * no keyboard code of its own. The shortcuts are options too, so the arrow
+ * keys reach every part from the field. A pick keeps today's flow: it runs
+ * the band's search with the result's label, and lib/search/picked.js makes
+ * the list show the places the label stands for.
  *
  * Props: query, kind ('places' | a layer), id (the field's aria-controls),
- * onSubmit(text), onClose(), onPick(result) optional (replaces onSubmit),
- * inputRef optional (else the field is found by aria-controls).
+ * filters (useFilters() on Places, else null), onSubmit(text), onClose(),
+ * onOpenFilters(opener), onAsk(opener, text), onPick(result) optional
+ * (replaces onSubmit), inputRef optional (else the field is found by
+ * aria-controls).
  */
-export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose, onPick, inputRef }) {
+export function SearchPanel({ query = '', kind = 'places', id, filters = null, onSubmit, onClose, onOpenFilters, onAsk, onPick, inputRef }) {
   const { t, lang } = useI18n();
+  const isDesktop = useIsDesktop();
   const s = useSettings();
   const places = React.useMemo(() => cartaPlaces(s?.data), [s?.data]);
-  const summary = useSummary(t);
   const isPlaces = kind === 'places';
-  const showSettings = isPlaces && summary.length > 0;
   const listId = `${id || 'search'}-list`;
 
   const [allTokens, setAllTokens] = React.useState(false);
@@ -144,6 +115,7 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
 
   const featureName = (k) => t(`search.feature.${k}`);
   const labelOf = (it) => {
+    if (it.type === 'browse') return it.name;
     const fx = (it.tokens || []).map(featureName).join(', ');
     if (it.type === 'feature') return fx;
     // A region carries its country, so the region Porto and the place
@@ -153,24 +125,32 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     if (!fx || it.type === 'place') return base;
     return it.type === 'near' ? nearLabel(t, lang, it.name, fx) : t('search.featuresIn', { features: fx, place: it.name });
   };
+  // The second line says where a suggestion is, nothing else: no counts, no
+  // "in Carta", no "not covered yet" (owner O4, O5).
   const subOf = (it) => {
     const country = it.cc ? countryName(it.cc, '', lang) : '';
-    if (it.type === 'place') return country ? t('search.subPlace', { country }) : t('search.subPlaceAny');
-    if (it.type === 'near') return t('search.subNear', { country });
+    if (it.type === 'place' || it.type === 'near') return country;
     if (it.type === 'region') return country ? t('search.subRegion', { country }) : t('search.subRegionAny');
     if (it.type === 'country') return t('search.subCountry');
     if (it.type === 'feature') return t('search.subFeature');
     if (it.type === 'ask') return t('search.askSub');
     return '';
   };
-  const countOf = (it) => (typeof it.count === 'number' && it.type !== 'place'
-    ? t(it.count === 1 ? 'search.onePlace' : 'search.nPlaces', { n: it.count })
-    : '');
 
   const typing = typed.length > 0;
-  const askItem = typing ? { type: 'ask', key: 'ask', name: t('search.askAbout', { q: typed }) } : null;
+  // Browse needs the tab that applies it (Places publishes its shortcuts,
+  // with the label an applied chip wears too).
+  const browse = isPlaces && filters?.shortcuts?.length
+    ? filters.shortcuts.map((b) => ({ type: 'browse', key: `b:${b.id}`, shortcut: b.id, on: !!b.on, icon: SHORTCUT_ICON[b.id] || 'star', name: b.label }))
+    : [];
+  // A phone asks from its own button group under the list (O3).
+  const askItem = typing && isDesktop ? { type: 'ask', key: 'ask', name: t('search.askAbout', { q: typed }) } : null;
   const placeItems = typing ? result.items : recent;
-  const options = [...placeItems, ...(askItem ? [askItem] : [])];
+  // DOM order is the arrow keys' order: the reading order of each layout.
+  const options = isDesktop
+    ? [...placeItems, ...(askItem ? [askItem] : []), ...browse]
+    : [...browse, ...placeItems];
+  const indexOf = new Map(options.map((it, i) => [it.key, i]));
   const optId = (i) => `${listId}-o${i}`;
 
   React.useEffect(() => { setActive(-1); }, [typed]);
@@ -179,12 +159,21 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
   const fieldOf = React.useCallback(() => inputRef?.current
     || (typeof document !== 'undefined' && id ? document.querySelector(`[aria-controls="${id}"], [aria-controls="${listId}"]`) : null),
   [inputRef, id, listId]);
+  // Ask closes back to the band's Ask button: the field would open this
+  // panel again on focus.
+  const askDoor = () => (typeof document !== 'undefined' ? document.querySelector('.band-ask') : null);
+  const askAbout = React.useCallback((text) => {
+    if (onAsk) onAsk(askDoor(), text);
+    else { openAskChat(askDoor(), text ? { text } : null); onClose?.(); }
+  }, [onAsk, onClose]);
 
   const pick = React.useCallback((it) => {
     if (!it) return;
-    const field = fieldOf();
-    if (it.type === 'ask') {
-      openAskChat(field, { text: typed });
+    if (it.type === 'ask') { askAbout(typed); return; }
+    // A recent search sent as typed words searches those words again.
+    if (it.type === 'text') { setRecent(addRecent(it)); onSubmit?.(it.name); return; }
+    if (it.type === 'browse') {
+      filters?.applyShortcut(it.shortcut, !it.on);
       onClose?.();
       return;
     }
@@ -203,9 +192,9 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     else onSubmit?.(label);
     // labelOf reads t; it is rebuilt with the panel, as is this callback.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fieldOf, typed, isPlaces, places, lang, onPick, onSubmit, onClose]);
+  }, [askAbout, filters, typed, isPlaces, places, lang, onPick, onSubmit, onClose]);
 
-  // The combobox's keys live on Lane 1's field; this panel owns the list.
+  // The combobox's keys live on the band's field; this panel owns the list.
   const optionsRef = React.useRef(options);
   optionsRef.current = options;
   const activeRef = React.useRef(active);
@@ -237,33 +226,31 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     field.setAttribute('aria-autocomplete', 'list');
     if (active >= 0) field.setAttribute('aria-activedescendant', optId(active));
     else field.removeAttribute('aria-activedescendant');
-    if (active >= 0) document.getElementById(optId(active))?.scrollIntoView?.({ block: 'nearest' });
+    if (active >= 0) document.getElementById(optId(active))?.scrollIntoView?.({ block: 'nearest', inline: 'nearest' });
     return () => field.removeAttribute('aria-activedescendant');
     // optId is derived from listId
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, fieldOf, listId]);
 
-  const change = (it) => {
-    const field = fieldOf();
-    if (it.step === 'style' || it.key === 'style') {
-      openStudio(s?.travelStyles);
-      returnAfterClose(field, () => !!document.querySelector('.sst-status'));
-    } else {
-      openSettings({ step: it.step || 'overview' });
-      returnAfterClose(field, () => settingsSheetState().isOpen);
-    }
+  const optionProps = (it) => {
+    const i = indexOf.get(it.key);
+    return {
+      id: optId(i),
+      role: 'option',
+      'aria-selected': i === active,
+      onMouseDown: (e) => e.preventDefault(),
+      onMouseMove: () => { if (activeRef.current !== i) setActive(i); },
+      onClick: () => pick(it),
+    };
   };
 
-  const option = (it, i) => {
+  const option = (it) => {
     const icon = it.type === 'feature' ? FEATURE_ICON[it.tokens?.[0]] || 'search' : TYPE_ICON[it.type] || 'pin';
-    const count = countOf(it);
     const tokens = it.type !== 'place' && it.type !== 'feature' ? it.tokens || [] : [];
+    const sub = subOf(it);
+    const p = optionProps(it);
     return (
-      <div key={it.key} id={optId(i)} role="option" aria-selected={i === active}
-        className={`sp-opt${i === active ? ' is-active' : ''}`}
-        onMouseDown={(e) => e.preventDefault()}
-        onMouseMove={() => { if (activeRef.current !== i) setActive(i); }}
-        onClick={() => pick(it)}>
+      <div key={it.key} {...p} className={`sp-opt${p['aria-selected'] ? ' is-active' : ''}`}>
         <span className="sp-opt-ic" aria-hidden="true"><Glyph name={icon} /></span>
         <span className="sp-opt-text">
           <span className="sp-opt-name">
@@ -271,47 +258,23 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
             {/* With tokens the marks say the features, so the words carry only the place. */}
             {tokens.length ? (it.type === 'near' ? nearLabel(t, lang, it.name) : it.name) : labelOf(it)}
           </span>
-          <span className="sp-opt-sub">{subOf(it)}</span>
+          {sub && <span className="sp-opt-sub">{sub}</span>}
         </span>
-        {count && <span className="sp-opt-count">{count}</span>}
       </div>
     );
   };
 
-  const rows = showSettings && (
-    <section className="sp-as" aria-labelledby={`${listId}-as`}>
-      <h3 className="sp-head" id={`${listId}-as`}>{t('search.youSearchAs')}</h3>
-      <ul className="sp-rows">
-        {summary.map((it) => (
-          <li key={it.key} className={`sp-row${it.key === 'style' ? ' is-style' : ''}`}>
-            <span className="sp-row-ic" aria-hidden="true"><Glyph name={it.icon} /></span>
-            <span className="sp-row-text">{it.text}</span>
-            <Pressable className="sp-change" aria-label={t('search.changeAria', { what: it.text })}
-              onClick={() => change(it)}>
-              {t('search.change')}
-            </Pressable>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-
-  const line = showSettings && typing && (
-    <div className="sp-line">
-      <span className="sp-line-items" aria-label={t('search.summaryAria', { text: summary.map((x) => x.text).join(', ') })} role="note">
-        {summary.map((it) => (
-          <span key={it.key} className="sp-line-item" aria-hidden="true">
-            <Glyph name={it.icon} size={16} />
-            <span>{it.text}</span>
-          </span>
-        ))}
-      </span>
-      <Pressable className="sp-change" aria-label={t('search.changeAria', { what: t('search.youSearchAs') })}
-        onClick={() => change({ step: 'overview' })}>
-        {t('search.change')}
-      </Pressable>
-    </div>
-  );
+  const chip = (it) => {
+    const p = optionProps(it);
+    const on = it.on;
+    return (
+      <div key={it.key} {...p} className={`sp-chip${p['aria-selected'] ? ' is-active' : ''}${on ? ' is-on' : ''}`}>
+        <span className="sp-chip-ic" aria-hidden="true"><Glyph name={it.icon} size={18} /></span>
+        <span>{it.name}</span>
+        {on && <span className="sr-only">{`, ${t('search.browseOn')}`}</span>}
+      </div>
+    );
+  };
 
   const tokens = typing && !question ? result.tokens : [];
   const shown = allTokens ? tokens : tokens.slice(0, MAX_TOKENS_SHOWN);
@@ -340,36 +303,64 @@ export function SearchPanel({ query = '', kind = 'places', id, onSubmit, onClose
     </div>
   );
 
-  const nPlaces = placeItems.length;
+  const group = (key, head, children, className = '') => (
+    <div role="group" aria-labelledby={`${listId}-${key}`} className={`sp-group ${className}`.trim()}>
+      <div className="sp-head" id={`${listId}-${key}`} role="presentation">{head}</div>
+      {children}
+    </div>
+  );
+  const placesGroup = placeItems.length > 0
+    && group('g1', typing ? t('search.groupPlaces') : t('search.recent'), placeItems.map(option));
+  const askGroup = askItem && group('g2', t('search.groupAsk'), option(askItem));
+  const browseGroup = browse.length > 0
+    && group('g3', t('search.browse'), <div className="sp-chips" role="presentation">{browse.map(chip)}</div>, 'sp-browse');
+  const left = placesGroup || askGroup;
+
+  const filterCount = filters?.count || 0;
+  // O3: on a phone Filters and Ask Carta are a group of their own, apart
+  // from the suggestions, as buttons.
+  const actions = !isDesktop && (
+    <div className="sp-actions" role="group" aria-label={t('search.moreWays')}>
+      {isPlaces && filters && (
+        <Pressable className="sp-action" aria-label={filterCount ? t(countKey(lang, filterCount, 'band.filtersOnOne', 'band.filtersOn'), { n: filterCount }) : t('band.filters')}
+          onClick={() => onOpenFilters?.(null)}>
+          <HouseIcon.filter size={20} />
+          <span className="sp-action-word" aria-hidden="true">{t('band.filters')}</span>
+          {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
+        </Pressable>
+      )}
+      <Pressable className="sp-action sp-action--ask" aria-haspopup="dialog" onClick={() => askAbout(typing ? typed : '')}>
+        <HouseIcon.ask size={20} />
+        <span className="sp-action-word">{typing ? t('search.askAbout', { q: typed }) : t('dock.ask')}</span>
+      </Pressable>
+    </div>
+  );
+
   const status = typing
     ? t(options.length === 1 ? 'search.oneSuggestion' : 'search.nSuggestions', { n: options.length })
     : '';
+  // Nothing to offer yet (a desktop layer tab, no recent search): no empty box.
+  if (!options.length && !tokenRow && !actions) return null;
 
   return (
-    <div className={`sp${typing ? ' is-typing' : ' is-empty'}${showSettings ? ' has-settings' : ''}${options.length ? ' has-list' : ''}`}>
+    <div className={`sp${typing ? ' is-typing' : ' is-empty'}${isDesktop ? ' is-desk' : ' is-phone'}${left && browseGroup ? ' is-two' : ''}`}>
       <p className="sr-only" role="status" aria-live="polite">{status}</p>
-      <div className="sp-main">
-        {line}
-        {tokenRow}
-        <div role="listbox" id={listId} aria-label={t('search.listAria')} className="sp-list"
-          hidden={options.length === 0}>
-          {nPlaces > 0 && (
-            <div role="group" aria-labelledby={`${listId}-g1`}>
-              <div className="sp-head" id={`${listId}-g1`} role="presentation">
-                {typing ? t('search.groupPlaces') : t('search.recent')}
-              </div>
-              {placeItems.map((it, i) => option(it, i))}
-            </div>
-          )}
-          {askItem && (
-            <div role="group" aria-labelledby={`${listId}-g2`}>
-              <div className="sp-head" id={`${listId}-g2`} role="presentation">{t('search.groupAsk')}</div>
-              {option(askItem, nPlaces)}
-            </div>
-          )}
-        </div>
+      {tokenRow}
+      <div role="listbox" id={listId} aria-label={t('search.listAria')} className="sp-list"
+        hidden={options.length === 0}>
+        {isDesktop ? (
+          <>
+            {left && <div className="sp-col" role="presentation">{placesGroup}{askGroup}</div>}
+            {browseGroup && <div className="sp-col sp-col--side" role="presentation">{browseGroup}</div>}
+          </>
+        ) : (
+          <>
+            {browseGroup}
+            {placesGroup}
+          </>
+        )}
       </div>
-      {rows}
+      {actions}
     </div>
   );
 }

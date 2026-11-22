@@ -27,6 +27,7 @@ How to use it:
 | `docs/owner/search-console.md` | Google Search Console setup | procedure, 1 step |
 | `docs/owner/scraper-health.md` | scraper health on the box (no steps left) | procedure |
 | `docs/owner/stays-box.md` | the monthly stay-price rebuild on the box | 1 |
+| `docs/owner/maps-refresh.md` | the basemap the box refreshes monthly; check its log (G12) | procedure, 2 steps |
 | `docs/owner/explore-data-runs.md` | what the Monday explore data run does (no steps left) | procedure |
 | `docs/owner/uploads.md` | switching on the upload path | procedure |
 | `docs/owner/pass-subscription.md` | switching on the 12-month pass and the Trip Pass | procedure |

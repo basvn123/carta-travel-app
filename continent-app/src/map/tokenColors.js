@@ -50,6 +50,10 @@ export const TOKEN_COLOURS = {
   '--map-route': '#8c5a2b',
   '--plate': '#1e2421',
   '--action': '#8c5a2b',
+  // The airline badge's house colour and its two inks (lib/flights/airlineColours.js).
+  '--umber-800': '#5a3716',
+  '--neutral-0': '#ffffff',
+  '--neutral-900': '#1e2421',
 };
 
 /**
@@ -63,6 +67,34 @@ export const MAP_ONLY_COLOURS = {
   tier2: '#59625c',
   tier1: '#8f978f',
   tier0: '#b4bcb3',
+};
+
+/**
+ * The Carta basemap (G12, .work/2026-11-20-map-view/decision.md "Base map"):
+ * the Protomaps tiles drawn by src/lib/map/cartaMapStyle.js. Map-only, like
+ * the ramp above: a warm paper land so the pins read first, and a dark
+ * equivalent. `label` on `land` is 7:1 light and 8:1 dark; `waterLabel` on
+ * `water` passes 4.5:1 in both.
+ */
+export const BASEMAP_COLOURS = {
+  light: {
+    land: '#f4efe6',
+    water: '#dfe6e6',
+    border: '#d9c6ae',
+    road: '#e8dccb',
+    park: '#d6dccd',
+    label: '#465049',
+    waterLabel: '#4f6468',
+  },
+  dark: {
+    land: '#232a26',
+    water: '#1a2428',
+    border: '#6e5a44',
+    road: '#343c37',
+    park: '#28322b',
+    label: '#c9cec7',
+    waterLabel: '#93a7ab',
+  },
 };
 
 /**

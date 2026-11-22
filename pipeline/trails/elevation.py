@@ -676,7 +676,7 @@ def select_derive_ids(conn, countries, refresh, curated):
     with conn.cursor() as cur:
         cur.execute(f"""
             SELECT id FROM trips
-            WHERE source IN ('osm', 'osm_ways') AND country = ANY(%s)
+            WHERE source IN ('osm', 'osm_ways', 'seed_routed') AND country = ANY(%s)
               AND elevation->>'status' = 'ok'
               AND (%s OR NOT (elevation ? %s))
               {where_curated}
@@ -728,10 +728,11 @@ def select_ids(conn, countries, refresh, limit, ids, curated=False):
     # route needs a profile exactly as much as a relation does: without one it
     # has no ascent, no climb band, and no DEM fallback for its grade, which is
     # the whole reason the five thin countries got them. Filtering on
-    # `source = 'osm'` silently left all 290 of them flat.
+    # `source = 'osm'` silently left all 290 of them flat. The same holds for
+    # the routed seeds of famous walks (seed_routes.py, 2026-11-20).
     sql = f"""
         SELECT id FROM trips
-        WHERE source IN ('osm', 'osm_ways') AND country = ANY(%s)
+        WHERE source IN ('osm', 'osm_ways', 'seed_routed') AND country = ANY(%s)
           AND (%s OR elevation IS NULL
                OR elevation->>'geom_md5'
                   IS DISTINCT FROM md5(ST_AsBinary(ST_Force2D(geom))))

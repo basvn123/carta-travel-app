@@ -15,6 +15,9 @@
  * step is the one already showing.
  */
 import { useSyncExternalStore } from 'react';
+// One side panel at a time: opening Settings closes Ask (askChatStore
+// closes Settings the other way). Settings moves focus to its own title.
+import { closeAskChat } from '../ask/askChatStore.js';
 
 export const SETTINGS_STEPS = Object.freeze(['overview', 'start', 'when', 'way', 'prices']);
 
@@ -29,6 +32,7 @@ export function stepOf(step) {
 }
 
 export function openSettings({ step } = {}) {
+  closeAskChat({ restoreFocus: false });
   state = { isOpen: true, step: stepOf(step), nonce: state.nonce + 1 };
   emit();
 }

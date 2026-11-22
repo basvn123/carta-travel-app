@@ -1,0 +1,289 @@
+/* The flights screen (G12, D10; components/price/FlightTab.jsx, decision
+   2026-11-19 section 3). Roles and tokens only. Every control is a kit
+   Pressable drawn here, so no button style leaks in (the grey blocks behind
+   the old strip's rings were the kit's disabled fill). One signature moment:
+   the bars rise once when a way is shown. */
+
+.fls { display: flex; flex-direction: column; gap: var(--space-5); min-width: 0; color: var(--text); }
+.fls-sub { margin: 0; font-size: var(--text-caption); line-height: var(--leading-ui); color: var(--text-3); overflow-wrap: anywhere; }
+.fls-lead { margin: 0; font-size: var(--text-body); color: var(--text-2); }
+
+/* Shared focus ring: 3 px umber with an offset, on every drawn control. */
+.fls-leg:focus-visible, .fls-day:focus-visible, .fls-row:focus-visible, .fls-chip:focus-visible,
+.fls-textbtn:focus-visible, .fls-info-btn:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* The head: the return a person, the loudest thing on the screen. */
+.fls-head { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-1); }
+.fls-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-1) var(--space-2); margin: 0; }
+.fls-eur { font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; line-height: var(--leading-tight); }
+.fls-eur.money { animation: fls-roll var(--dur-3) var(--ease-settle); }
+@keyframes fls-roll { from { opacity: 0; transform: translateY(30%); } to { opacity: 1; transform: none; } }
+.fls-unit { font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+.fls-delta {
+  align-self: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.fls-delta.is-up { background: var(--danger-bg); color: var(--danger); }
+.fls-delta.is-down { background: var(--select-bg); color: var(--select-ink); }
+
+/* A text action: umber words, a 44 px target. */
+.fls-textbtn {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--action-hover);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* The two legs: a switch of two plates side by side. */
+.fls-legs { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+.fls-leg {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  min-height: var(--tap);
+  padding: var(--space-2) var(--space-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-paint) var(--ease-out), border-color var(--dur-paint) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.fls-leg:active { transform: scale(var(--press-scale)); }
+.fls-leg.is-on { background: var(--select-bg); border-color: var(--select-border); }
+.fls-leg.is-empty { visibility: hidden; }
+.fls-leg-top { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.fls-leg-dir { font-size: var(--text-caption); font-weight: 700; color: var(--text-2); }
+.fls-leg.is-on .fls-leg-dir { color: var(--select-ink); }
+.fls-leg-fare { font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; }
+.fls-leg-date { font-size: var(--text-caption); color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fls-leg-date.is-moved { color: var(--umber-700); font-weight: 600; }
+.fls-leg-flight { display: flex; align-items: center; gap: var(--space-2); margin-top: 2px; min-width: 0; }
+
+.fls-times { display: inline-flex; align-items: center; gap: var(--space-1); font-size: var(--text-label); font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.fls-arrow { flex: none; color: var(--text-3); }
+.fls-plus1 { font-size: var(--text-micro); font-weight: 700; color: var(--umber-700); }
+
+/* A section label and its unit on one line. */
+.fls-label-row { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 0 var(--space-2); }
+.fls-label { margin: 0; font-size: var(--text-label); font-weight: 800; color: var(--text); }
+.fls-label-unit { font-size: var(--text-caption); color: var(--text-3); }
+
+/* The day bars: only checked days; a break over a long gap; the cheapest in
+   saffron (the owner's choice for this screen), the shown day in umber. */
+.fls-days { display: flex; flex-direction: column; gap: var(--space-2); }
+.fls-strip {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x proximity;
+  scrollbar-width: thin;
+  scrollbar-color: var(--umber-300) transparent;
+  margin-inline: calc(-1 * var(--space-2));
+  -webkit-mask-image: linear-gradient(90deg, transparent, var(--mask-solid) var(--space-3), var(--mask-solid) calc(100% - var(--space-3)), transparent);
+  mask-image: linear-gradient(90deg, transparent, var(--mask-solid) var(--space-3), var(--mask-solid) calc(100% - var(--space-3)), transparent);
+}
+.fls-strip-row { display: flex; align-items: stretch; width: max-content; min-width: 100%; padding-inline: var(--space-2); }
+.fls-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text-2);
+  font: inherit;
+  scroll-snap-align: center;
+  cursor: pointer;
+}
+.fls-bar-zone { position: relative; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; width: 100%; height: 88px; }
+.fls-bar {
+  display: block;
+  width: 24px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  background: var(--umber-200);
+  border-top: 2px solid var(--umber-500);
+  transform-origin: bottom center;
+  animation: fls-rise var(--dur-3) var(--ease-settle) both;
+  animation-delay: calc(min(var(--i, 0), 20) * 16ms);
+  transition: background-color var(--dur-paint) var(--ease-out), border-color var(--dur-paint) var(--ease-out);
+}
+@keyframes fls-rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@media (hover: hover) {
+  .fls-day:hover .fls-bar { background: var(--umber-300); }
+}
+.fls-day.is-cheap .fls-bar { background: var(--sun-400); border-top-color: var(--sun-800); }
+.fls-day.is-on .fls-bar { background: var(--umber-600); border-top-color: var(--umber-800); }
+.fls-day:active .fls-bar { transform: scaleY(0.94); transition: transform var(--dur-press) var(--ease-tick); }
+.fls-bar-price {
+  position: absolute;
+  top: 0;
+  font-size: var(--text-micro);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--sun-800);
+  white-space: nowrap;
+}
+.fls-day.is-on .fls-bar-price { color: var(--umber-800); }
+.fls-day-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding-top: var(--space-1);
+  border-top: 1px solid var(--border);
+  font-size: var(--text-micro);
+  line-height: 1.25;
+}
+.fls-day-num { font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.fls-day-mon { color: var(--text-3); min-height: 1.25em; }
+.fls-day.is-on .fls-day-num, .fls-day.is-on .fls-day-wkd { color: var(--umber-800); }
+/* Your own day carries a small umber tick under its number. */
+.fls-day.is-wanted .fls-day-num { text-decoration: underline 2px var(--umber-600); text-underline-offset: 3px; }
+/* A long gap: a narrow column with the break mark on the baseline. */
+.fls-gap { position: relative; display: block; width: var(--space-5); flex: none; }
+.fls-gap::after { content: ''; position: absolute; left: 0; right: 0; top: 88px; border-top: 1px solid var(--border); }
+.fls-gap-mark {
+  position: absolute;
+  left: 50%;
+  top: 80px;
+  width: 10px;
+  height: 16px;
+  transform: translateX(-50%) skewX(-20deg);
+  border-inline: 1.5px solid var(--text-3);
+  background: var(--surface);
+  z-index: 1;
+}
+
+/* The day's flights. */
+.fls-list { display: flex; flex-direction: column; gap: var(--space-2); }
+.fls-list .seg { display: flex; width: 100%; }
+.fls-list .seg-item { flex: 1 1 0; min-width: 0; padding: 0 var(--space-1); white-space: normal; line-height: 1.1; text-align: center; }
+.fls-skel { display: flex; flex-direction: column; }
+.fls-skel-row { display: grid; grid-template-columns: 36px minmax(0, 1fr) auto; align-items: center; gap: var(--space-3); min-height: 60px; border-top: 1px solid var(--border-soft); }
+.fls-skel-lines { display: flex; flex-direction: column; gap: 6px; }
+.fls-error { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); padding: var(--space-3); border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.fls-error .fls-sub { color: var(--text-2); }
+.fls-rows { display: flex; flex-direction: column; animation: fls-in var(--dur-2) var(--ease-out); }
+@keyframes fls-in { from { opacity: 0; } to { opacity: 1; } }
+.fls-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 60px;
+  padding: var(--space-2);
+  margin-inline: calc(-1 * var(--space-2));
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-paint) var(--ease-out);
+}
+@media (hover: hover) {
+  .fls-row:hover { background: var(--surface-hover); }
+}
+.fls-row.is-on { background: var(--select-row); outline: 1.5px solid var(--select-border); outline-offset: -1.5px; border-radius: var(--radius-control); }
+.fls-row-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.fls-row .fls-times { font-size: var(--text-body); }
+.fls-row-meta { font-size: var(--text-caption); color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fls-row-fare { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; }
+.fls-tag { padding: 1px var(--space-2); border-radius: var(--radius-pill); font-size: var(--text-micro); font-weight: 700; background: var(--sun-100); color: var(--sun-800); white-space: nowrap; }
+.fls-tag.is-list { background: var(--select-bg); color: var(--select-ink); }
+
+/* The other home airports. */
+.fls-homes { display: flex; flex-direction: column; gap: var(--space-2); }
+.fls-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.fls-chip {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: background-color var(--dur-paint) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.fls-chip:active { transform: scale(var(--press-scale)); }
+.fls-chip.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.fls-chip[aria-disabled="true"] { color: var(--text-3); cursor: default; }
+
+.fls-notes { display: flex; flex-direction: column; gap: 2px; margin-top: calc(-1 * var(--space-3)); }
+
+/* The foot: the link out and its info, then the quiet change; stays in reach. */
+.fls-foot {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) 0 var(--space-3);
+  background: var(--surface);
+  z-index: 1;
+}
+.fls-book { display: flex; flex-direction: column; gap: var(--space-2); }
+.fls-book-row { display: flex; align-items: stretch; gap: var(--space-2); }
+.fls-book-link { flex: 1; min-height: 48px; }
+.fls-book-link.btn, .fls-book-link.btn:hover { text-decoration: none; }
+.fls-info-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background-color var(--dur-paint) var(--ease-out), color var(--dur-paint) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.fls-info-btn:active { transform: scale(var(--press-scale)); }
+.fls-info-btn.is-open { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.fls-info {
+  margin: 0;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-control);
+  background: var(--surface-sunken);
+  font-size: var(--text-caption);
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+  animation: fls-in var(--dur-2) var(--ease-out);
+}
+.fls-info[hidden] { display: none; }
+/* No colour here: the variant sets it, so the primary keeps its on-fill label. */
+.fls-change.btn { min-height: var(--tap); }
+
+@media (prefers-reduced-motion: reduce) {
+  .fls-eur.money, .fls-bar, .fls-rows, .fls-info { animation: none; }
+  .fls-leg, .fls-bar, .fls-row, .fls-chip, .fls-info-btn { transition: none; }
+  .fls-leg:active, .fls-chip:active, .fls-info-btn:active, .fls-day:active .fls-bar { transform: none; }
+}

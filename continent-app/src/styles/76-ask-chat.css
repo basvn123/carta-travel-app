@@ -25,21 +25,52 @@
 }
 :root { --chat-w: 420px; }
 @keyframes ac-in { from { opacity: 0; transform: translateX(var(--space-5)); } }
+@keyframes ac-out { to { opacity: 0; transform: translateX(var(--space-5)); } }
+.ac.is-leaving { animation: ac-out var(--dur-2) var(--ease-in) both; }
+/* G12 round 2: a phone opens Ask as a sheet over Explore (the page dimmed
+   above it, a press there closes), rising on the house sheet curve. */
 .ac.is-phone {
-  top: 0;
-  width: 100vw;
-  height: 100dvh;
+  top: calc(env(safe-area-inset-top, 0px) + var(--space-7));
+  left: 0;
+  right: 0;
+  width: auto;
   z-index: var(--z-modal);
   border-left: 0;
-  padding-top: env(safe-area-inset-top);
-  animation-name: ac-up;
+  border-radius: var(--radius-sheet) var(--radius-sheet) 0 0;
+  box-shadow: var(--elev-3);
+  overflow: hidden;
+  animation: hs-sheet-in var(--dur-sheet) var(--ease-sheet) both;
 }
-@keyframes ac-up { from { opacity: 0; transform: translateY(var(--space-6)); } }
+.ac.is-phone.is-leaving { animation: hs-sheet-out var(--dur-2) var(--ease-in) both; }
+.ac-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  background: var(--scrim);
+  animation: hs-fade-in var(--dur-2) var(--ease-out) both;
+}
+.ac-scrim.is-leaving { animation: hs-fade-out var(--dur-2) var(--ease-in) both; }
 
 /* From 1024 px the list makes room, so the answer sits beside the places. */
 @media (min-width: 1024px) {
   html.ac-open .places-shell,
   html.ac-open .explore-shell:not(.ask-picks) { right: var(--chat-w); }
+  /* The rail cards keep their width without the panel (05-house.css
+     .hs-rail against the column plus the panel's room): the strip shows
+     fewer instead of every rail reflowing as Ask comes and goes (G12 round
+     2: closing it shifted 0.18 of the screen). */
+  html.ac-open .places-shell .hs-rail,
+  html.ac-open .explore-shell:not(.ask-picks) .hs-rail {
+    grid-auto-columns: max(256px, calc((100% + var(--chat-w) - 4 * var(--space-5)) / 4.25));
+  }
+}
+/* The rail arrows follow with their own top, never an inherited property
+   (restyling every card, see 81-settings.css). */
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  html.ac-open .places-shell .hs-rail-frame > .hs-rail-arrow,
+  html.ac-open .explore-shell:not(.ask-picks) .hs-rail-frame > .hs-rail-arrow {
+    top: calc(2px + max(256px, calc((100cqi + var(--chat-w) - 4 * var(--space-5)) / 4.25)) * 0.375 - var(--tap) / 2);
+  }
 }
 
 /* The head: chats, the title, a new chat, close. T584: it stands on the
@@ -493,6 +524,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ac,
+  .ac-scrim,
   .ac-start,
   .ac-q p,
   .ac-step,

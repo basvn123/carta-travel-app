@@ -4,16 +4,15 @@ import { ratingWords } from '../../lib/rating.js';
 import { formatApprox, formatMoney } from '../../lib/money.js';
 import { useDayView } from '../../hooks/useDayView.js';
 import { Money } from '../../components/ui/Money.jsx';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { ScorePlate } from '../../components/ui/Plate.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
+import NotYet from '../../components/NotYet.jsx';
 import { isNational } from '../../components/CostSummary.jsx';
 import { PriceItems } from '../../components/PriceItems.jsx';
-import { closePriceSheet, getPriceSheet, openPriceSheet, usePriceSheet } from '../../components/price/priceSheetStore.js';
-import { tabForPart } from '../../lib/price/priceSheet.js';
-import { seatsOf } from '../../lib/price/request.js';
-import { bedIsThin } from '../../lib/price/display.js';
-import { rowFigures, rowUnit } from '../../lib/price/rowFigures.js';
-import { partyText } from '../../lib/party.js';
+import {
+  closePriceSheet, getPriceSheet, openPriceSheet, refreshPriceSheet, usePriceSheetAnchor,
+} from '../../components/price/priceSheetStore.js';
 import { priceFigure } from '../../lib/settings/prices.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 
@@ -24,6 +23,9 @@ import { useSettings } from '../../components/SettingsLine.jsx';
  * PlaceScore    the Score as the dark plate after a name: the kit's
  *               ScorePlate with a `rating` (K1): "about 8.1", "Not yet", and
  *               the band word in the accessible name.
+ * PlaceFigure   a place's one figure and its basis (G12, D10, place-prices
+ *               card option A): the figure in the Settings' basis, the
+ *               basis words under it, one button that opens the receipt.
  * RowFormation  the price row as the house formation (getting there
  *               outlined, the bed solid umber, food and drink beige, then the
  *               day figure, loudest). Every figure, unit and switch is the
@@ -55,25 +57,11 @@ function wayOf(cost) {
   return way && way.perPerson > 0 && WAY_ICON[way.mode] ? way : null;
 }
 
-/** The way a row has no figure for (G12, decision.md "Layout stability"):
- *  its mode, so the slot says "Train price not known yet" instead of
- *  going empty. */
-function wayNotKnown(cost) {
-  const way = cost?.way;
-  if (!way || way.perPerson > 0) return null;
-  return way.mode && (WAY_ICON[way.mode] || way.mode === 'any') ? way.mode : null;
-}
-
-/** The price parts as the house formation. `weighted` sizes the bed and food
- *  wagons by their euros (rail cards); rows keep them content-sized.
- *  `pressable` (G12, D10, Explore's list and rails only): the figure says its
- *  unit, every wagon is its own button, bed and food sit joined. Opt-in so
- *  My trips and the home story keep the formation they were judged with.
- *  `slot` (pressable only; Explore rails, owner 2026-11-18): 'figure' draws
- *  the day figure alone, 'parts' everything but it, so a rail card can set
- *  the figure on the name's line and the parts under the country. */
-export function RowFormation({ cost, t, figRef = null, weighted = false, className = '', pressable = false, place = null, slot = 'all' }) {
-  if (pressable) return <ListFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} place={place} slot={slot} />;
+/** The price parts as the house formation (My trips' saved list). `weighted`
+ *  sizes the bed and food wagons by their euros; rows keep them
+ *  content-sized. Explore's cards and rows draw PlaceFigure instead (G12,
+ *  D10: one figure, its basis, the receipt behind it). */
+export function RowFormation({ cost, t, figRef = null, weighted = false, className = '' }) {
   return <PlainFormation cost={cost} t={t} figRef={figRef} weighted={weighted} className={className} />;
 }
 
@@ -144,149 +132,100 @@ function PlainFormation({ cost, t, figRef, weighted, className }) {
   );
 }
 
+
+// The map's rows and cards say the basis short (proposal.md section 9).
+const SHORT_BASIS = {
+  'price.basis.day': 'price.basisShort.day',
+  'price.basis.trip': 'price.basisShort.trip',
+  'price.basis.tripOne': 'price.basisShort.tripOne',
+};
+
 /**
- * Explore's list formation (G12, D10; explore-polish decision changes 3, 5
- * and 6). The owner read the old row as loose numbers with a unit said once
- * far away, so here:
- *   - the figure carries its unit ("/day", or "/day for 2" in the group
- *     view, never "total": the flight and local transport are not in it);
- *   - bed and food sit joined, with a "+" only when the whole euros on screen
- *     add up to the figure (rowFigures), so the sum shown is never wrong;
- *   - the way there stands apart with the return mark, the word "return"
- *     from a 600 px list;
- *   - the figure and each wagon are buttons that open the price sheet on
- *     the tab that explains them (components/price/PriceSheet.jsx);
- *   - a bed on few listings gets a dot, said in the name and the title too,
- *     since colour alone is no message.
+ * A place's figure in the Settings' basis (G12, D10, place-prices decision
+ * section 1): priceFigure over the Settings model, the same call the
+ * receipt makes, so a card and its receipt cannot disagree. Explore's
+ * Settings context holds the model the figures were priced with.
+ *   -> { model, f, basis, short, missing }  basis: the words; short: the
+ *      same basis abbreviated for a row or card beside the sheet head that
+ *      says it in full ("a day, each", "pro Tag, p. P."); missing: the
+ *      spoken name of a way with no figure yet when the figure leaves it out
  */
-function ListFormation({ cost, t, figRef, weighted, className, place, slot = 'all' }) {
-  const view = useDayView();
-  const req = view.request;
-  const way = wayOf(cost);
-  const shownWay = req.excluded?.includes('flight') ? null : way;
-  const missingMode = req.excluded?.includes('flight') ? null : wayNotKnown(cost);
-  const day = rowFigures(cost, { group: view.total, seats: seatsOf(req) });
-  // G12 (D10): under "The whole trip" the figure is the Settings model's
-  // (lib/settings grandTotal: nights x day + the way there), with the bed
-  // and food over the nights; a way with no figure leaves the stay part
-  // marked "+". A day keeps the row's own figures (rowFigures).
+// eslint-disable-next-line react-refresh/only-export-components -- shared with the rail card (ExploreRails.jsx)
+export function usePlaceFigure(cost) {
+  const { t } = useI18n();
   const model = useSettings()?.model || null;
-  const pf = model && model.priceSpan === 'trip' ? priceFigure({ cost }, model) : null;
-  const fig = pf
-    ? { ...day, day: pf.eur, bed: pf.parts.bed, food: pf.parts.food, plus: false, open: pf.notKnown && pf.eur != null }
-    : day;
-  if (fig.day == null && !shownWay && !missingMode) return null;
-  if (slot === 'figure' && fig.day == null) return null;
-  const withFigure = slot !== 'parts';
-  const withParts = slot !== 'figure';
-  const g = fig.group;
-  const people = g ? partyText(t, req.group) : '';
-  const say = (eur, est) => (est ? t('money.estSpoken', { price: formatMoney(eur) }) : formatMoney(eur));
-  const [unitKey, unitArgs] = pf ? pf.unit : rowUnit(fig);
+  return React.useMemo(() => {
+    const f = priceFigure({ cost }, model || {});
+    const [key, args] = f.basis;
+    const mode = f.parts.wayMode || cost?.way?.mode || 'any';
+    const missing = f.notKnown && f.eur != null ? t(`settingsSum.notKnown.${mode}`) : '';
+    // A group basis ("a day for 2") is short already.
+    const shortKey = SHORT_BASIS[key];
+    return { model, f, basis: t(key, args), short: t(shortKey || key, args), missing };
+  }, [cost, model, t]);
+}
 
-  let go = null;
-  if (shownWay) {
-    const Icon = WAY_ICON[shownWay.mode];
-    const plane = shownWay.mode === 'plane';
-    const eur = view.way(shownWay.perPerson);
-    const spoken = plane
-      ? t(g ? 'card.flightSpokenGroup' : 'card.flightSpoken', { price: formatMoney(eur), people })
-      : t(g ? 'card.waySpokenGroup' : 'card.waySpoken', { mode: t(`way.${shownWay.mode}`), price: say(eur, true), people });
-    go = (
-      <SheetTrigger place={place} cost={cost} className="xform-item" triggerClass="hs-wagon is-go pparts-part xform-btn"
-        label={spoken} title={spoken} part="way">
-        <Icon size={13} />
-        <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
-        {plane && <HouseIcon.ret size={12} className="xform-ret" />}
-        {plane && <span className="xform-ret-word" aria-hidden="true">{t('card.unitReturn')}</span>}
-      </SheetTrigger>
-    );
-  }
+/** The words a screen reader hears for a figure: the amount, its basis and
+ *  the way still missing from it. */
+// eslint-disable-next-line react-refresh/only-export-components -- shared with the rail card (ExploreRails.jsx)
+export function figureSpoken(t, place, fig) {
+  const price = fig.f.eur == null ? t('price.notMeasured') : formatMoney(fig.f.eur);
+  const base = t('card.priceAria', { place: place?.city || place?.name || '', price, basis: fig.f.eur == null ? '' : fig.basis }).trim();
+  return fig.missing ? `${base}. ${fig.missing}` : base;
+}
 
-  // No figure for the way: the slot stays, dashed, "Not yet", its full name
-  // "Train price not known yet" (never an empty slot or a bare "+").
-  const missingSpoken = missingMode ? t(`settingsSum.notKnown.${missingMode}`) : '';
-  if (!go && missingMode) {
-    const Icon = WAY_ICON[missingMode] || HouseIcon.route;
-    go = (
-      <SheetTrigger place={place} cost={cost} className="xform-item" triggerClass="hs-wagon is-none pparts-part xform-btn"
-        label={missingSpoken} title={missingSpoken} part="way">
-        <Icon size={13} />
-        <span className="pparts-fig" aria-hidden="true">{t('price.notMeasured')}</span>
-      </SheetTrigger>
-    );
-  }
-
-  const thin = bedIsThin(cost);
-  const wagon = (key, kind, eur, est, Icon, personKey, groupKey) => {
-    if (eur == null) return null;
-    const isThin = key === 'bed' && thin;
-    const base = t(g ? groupKey : personKey, { price: say(eur, est), people });
-    const spoken = isThin ? `${base}. ${t('price.bedThin')}` : base;
-    return (
-      <SheetTrigger place={place} cost={cost} className="xform-item" triggerClass={`hs-wagon is-${kind} pparts-part xform-btn`}
-        label={spoken} title={spoken} part={key}
-        style={weighted ? { '--ww': Math.max(1, Math.round(eur)) } : undefined}>
-        <Icon size={13} />
-        <span className="pparts-fig money" aria-hidden="true">{formatMoney(eur)}</span>
-        {isThin && <span className="xform-thin" aria-hidden="true" />}
-      </SheetTrigger>
-    );
+/**
+ * The door to a place's receipt (components/price/PriceSheet.jsx). A card
+ * is one stretched link, so the button keeps its press to itself: opening
+ * the receipt never opens the place. A second press closes it. While the
+ * receipt is open it follows this card's figures, so a lever or a Settings
+ * step shows its effect there at once.
+ */
+export function ReceiptButton({ place, cost, model, label, className = '', children }) {
+  const ref = React.useRef(null);
+  const anchor = usePriceSheetAnchor();
+  const id = place?.id ?? null;
+  React.useEffect(() => {
+    if (id != null) refreshPriceSheet(id, { cost, model });
+  }, [id, cost, model]);
+  const onClick = (e) => {
+    e.stopPropagation();
+    const button = e.currentTarget;
+    if (getPriceSheet()?.anchor === button) { closePriceSheet(); return; }
+    openPriceSheet({ place: place || { id: null }, cost, model, anchor: button });
   };
-  const bed = wagon('bed', 'bed', fig.bed, cost?.stayLevel !== 'city', HouseIcon.bed, 'card.bedSpoken', 'card.bedSpokenGroup');
-  const food = wagon('food', 'food', fig.food, cost?.foodLevel !== 'city', HouseIcon.food, 'card.foodSpoken', 'card.foodSpokenGroup');
-  const est = isNational(cost);
-
   return (
-    <span className={`hs-formation xprice xform is-pressable${weighted ? ' is-weighted' : ''}${className ? ` ${className}` : ''}`}>
-      {withFigure && fig.day != null && (
-        <span className="hs-formation-day pparts-total" ref={figRef}>
-          <SheetTrigger place={place} cost={cost} triggerClass="xform-fig" part="day"
-            label={(pf ? `${say(fig.day, est)} ${t(unitKey, unitArgs)}` : t(g ? 'card.dayFigSpokenGroup' : 'card.dayFigSpoken', { price: say(fig.day, est), people }))
-              + (fig.open && missingSpoken ? `. ${missingSpoken}` : '')}>
-            <Money value={fig.day} est={est} />
-            {fig.open && <span className="xform-open" aria-hidden="true">+</span>}
-            <span className="xform-unit" aria-hidden="true">{t(unitKey, unitArgs)}</span>
-          </SheetTrigger>
-        </span>
-      )}
-      {withParts && (go || bed || food) && (
-        <span className="xform-parts pparts-list">
-          {/* On a rail card the figure stands on the name's line, so the
-              two parts it is made of come first and the return fare,
-              outside it, after them (slot 'parts'). */}
-          {slot !== 'parts' && go}
-          {(bed || food) && (
-            <span className="hs-formation-train hs-wagon-pair">
-              {bed}
-              {bed && food && fig.plus && <span className="xform-plus" aria-hidden="true">+</span>}
-              {food}
-            </span>
-          )}
-          {slot === 'parts' && go}
-        </span>
-      )}
+    <Pressable ref={ref} className={`xreceipt-btn ${className}`.trim()} aria-label={label}
+      aria-haspopup="dialog" aria-expanded={!!anchor && anchor === ref.current} onClick={onClick}>
+      {children}
+    </Pressable>
+  );
+}
+
+/** The figure itself: loudest, whole euros, "Not yet" without one. No sign
+ *  after it (owner, 2026-11-20: the "+" went): the price chain completes the
+ *  figure (lib/settings/prices.js), a stay-only trip is said in words in the
+ *  receipt and in the accessible name, never on the card. */
+export function FigureAmount({ fig, figRef = null, className = '' }) {
+  const { f } = fig;
+  return (
+    <span className={`xfig-amount ${className}`.trim()} ref={figRef}>
+      {f.eur == null ? <NotYet /> : <Money value={f.eur} est={false} />}
     </span>
   );
 }
 
-/**
- * One part of a list row as the door to the price sheet (D10). A card is one
- * stretched link, so the button keeps its click to itself: opening the price
- * never opens the place. A second press on the same part closes the sheet.
- */
-function SheetTrigger({ place, cost, part, children, className = '', triggerClass = '', label, title, style }) {
-  const sheet = usePriceSheet();
-  const [el, setEl] = React.useState(null);
-  const onOpen = (button) => {
-    if (!el) setEl(button);
-    if (getPriceSheet()?.anchor === button) { closePriceSheet(); return; }
-    openPriceSheet({ place: place || { id: null }, cost, tab: tabForPart(part), anchor: button });
-  };
+/** Explore's list row's price (PlaceRow): the figure over its basis, one
+ *  button to the receipt, in the row's day column. `short` draws the
+ *  abbreviated basis (the map's rows and cards, under a head that says it
+ *  in full); the spoken name keeps the whole basis. */
+export function PlaceFigure({ place, t, figRef = null, className = '', short = false }) {
+  const fig = usePlaceFigure(place?.cost);
   return (
-    <PriceItems cost={cost} className={className} triggerClass={triggerClass} label={label} title={title}
-      part={part} style={style} onOpen={onOpen} expanded={!!sheet && !!el && sheet.anchor === el}>
-      {children}
-    </PriceItems>
+    <ReceiptButton place={place} cost={place?.cost} model={fig.model} label={figureSpoken(t, place, fig)}
+      className={`xprice xfig hs-formation-day ${className}`.trim()}>
+      <FigureAmount fig={fig} figRef={figRef} />
+      {fig.f.eur != null && <span className="xfig-basis" aria-hidden="true">{short ? fig.short : fig.basis}</span>}
+    </ReceiptButton>
   );
 }

@@ -324,8 +324,17 @@ def judge(prev_rows, new_rows, allow_row_loss=False, label="", layer=None):
     return fails, info
 
 
-def run(layer, ref, countries, allow_row_loss, verbose, base=None, prev_dir=None):
+def run(layer, ref, countries, allow_row_loss, verbose, base=None, prev_dir=None,
+        max_row_loss=None):
+    """max_row_loss (D25, 2026-11-22): a percentage. Rows that disappear stop
+    failing file by file and are judged once, over the whole layer: the gate
+    fails when more than this share of the previous rows is gone. A quarterly
+    rebuild drops a handful of rows (a closed lido, a merged duplicate); a
+    rebuild from thin stage files drops thousands, and that is what this
+    still catches (beach_context, 2026-11-21: 6,619 rows -> 3,243)."""
     rel, keys, kind = LAYERS[layer]
+    bounded = max_row_loss is not None
+    lost_total = 0
     base = Path(base) if base else ROOT
     all_fail, all_info = [], []
     if kind == "dict":
@@ -355,11 +364,21 @@ def run(layer, ref, countries, allow_row_loss, verbose, base=None, prev_dir=None
             if n_bad:
                 all_fail.append(f"{f}: {n_bad} value(s) out of range, e.g. " + "; ".join(bad[:5]))
             continue
-        fl, inf = judge(prev_rows, new_rows, allow_row_loss, label=f"{f}: ", layer=layer)
+        lost_total += len(set(prev_rows) - set(new_rows))
+        fl, inf = judge(prev_rows, new_rows, allow_row_loss or bounded,
+                        label=f"{f}: ", layer=layer)
         all_fail += fl
         all_info += inf
     print(f"[gate:{layer}] {len(files)} file(s), rows {tot_prev} -> {tot_new}, "
           + (f"previous from {prev_dir}" if prev_dir else f"ref {ref}"))
+    if bounded and not allow_row_loss:
+        share = 100.0 * lost_total / tot_prev if tot_prev else 0.0
+        line = (f"rows lost over the layer: {lost_total} of {tot_prev} "
+                f"({share:.1f}%, the bound is {max_row_loss:g}%)")
+        if share > max_row_loss:
+            all_fail.append(line)
+        else:
+            print(f"[gate:{layer}] {line}")
     if verbose:
         for line in all_info:
             print("  info:", line)
@@ -421,6 +440,9 @@ def main():
     ap.add_argument("--prev-dir", help="read the previous wire from this snapshot "
                     "(laid out like the repo) instead of --ref")
     ap.add_argument("--allow-row-loss", action="store_true")
+    ap.add_argument("--max-row-loss", type=float, default=None,
+                    help="percent of the layer's rows that may disappear (judged over the "
+                         "whole layer instead of failing each lost row)")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--self-test", action="store_true")
     a = ap.parse_args()
@@ -429,7 +451,8 @@ def main():
     if not a.layer:
         ap.error("--layer is required")
     cc = set(a.countries.split(",")) if a.countries else None
-    sys.exit(run(a.layer, a.ref, cc, a.allow_row_loss, a.verbose, a.base, a.prev_dir))
+    sys.exit(run(a.layer, a.ref, cc, a.allow_row_loss, a.verbose, a.base, a.prev_dir,
+                 max_row_loss=a.max_row_loss))
 
 
 if __name__ == "__main__":

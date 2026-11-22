@@ -29,7 +29,7 @@ function useNarrow() {
  * cards (tap to switch), each card's own menu, the hold on the card in use,
  * and the one way to make a new one.
  */
-export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, onEdit }) {
+export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, onEdit, taste = null }) {
   const { t } = useI18n();
   const [menuFor, setMenuFor] = React.useState('');
   const [confirmFor, setConfirmFor] = React.useState('');
@@ -191,6 +191,7 @@ export function StyleOverview({ ts, figures, fresh, escRef, onClose, onCreate, o
             )}
           </>
         )}
+        {taste}
       </div>
     </>
   );

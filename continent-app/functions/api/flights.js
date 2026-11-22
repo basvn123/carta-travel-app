@@ -6,7 +6,9 @@
  *
  * Answers { checked, link, flights: [{price, airline, airlineName, flightNo,
  * dep, arr, stops, min, via}] } cheapest first, prices in EUR for one adult.
- * An empty list is a real answer: no flight that day.
+ * An empty list is a real answer: no flight that day. G12 (D10): every flight
+ * of the day, up to LIVE_MAX, so the flights screen's "Show all" is all; the
+ * sweep keeps its own cap of 12.
  *
  * Caching: the answer is held at the edge for an hour (Cache API, keyed on
  * the query), so travellers on the same route and day share one search; the
@@ -23,6 +25,9 @@ import { withTracking } from '../_lib/track.js';
 
 const EDGE_HOLD = 3600;
 const BROWSER_HOLD = 600;
+// Google's page holds every flight of the day (about 100 bytes each); 60
+// covers the busiest European routes with room to spare.
+export const LIVE_MAX = 60;
 // A live search is the one call here that spends paid CPU, so a miss in the
 // edge cache is limited per address (T1079); a hit is free and never counted.
 const limiter = createLimiter({ max: 20 });
@@ -34,14 +39,15 @@ async function handleGet({ request, env, waitUntil }) {
   if (!parsed) return fail(400, 'bad_request');
   const { o, d, date } = parsed;
 
-  const key = new Request(`https://flights.carta.internal/${o}/${d}/${date}`);
+  // v2: answers cached before LIVE_MAX held only the 12 cheapest.
+  const key = new Request(`https://flights.carta.internal/v2/${o}/${d}/${date}`);
   const cache = caches.default;
   const hit = await cache.match(key);
   if (hit) return hit;
 
   if (await overLimit(env, request, limiter, 'flights')) return rateRefusal();
   let r;
-  try { r = await searchDay({ from: o, to: d, date }); } catch { r = { ok: false }; }
+  try { r = await searchDay({ from: o, to: d, date, max: LIVE_MAX }); } catch { r = { ok: false }; }
   if (!r.ok) return fail(502, 'upstream');
   const res = new Response(JSON.stringify({
     checked: new Date().toISOString().replace(/\.\d+Z$/, 'Z'),

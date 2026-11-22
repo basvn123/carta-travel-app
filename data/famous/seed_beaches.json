@@ -1,0 +1,313 @@
+{
+ "schema": "carta-famous-seed/1",
+ "kind": "beaches",
+ "generated_by": "pipeline/famous/coverage.py --handoff",
+ "rows": [
+  {
+   "n": "Kakome Bay",
+   "cc": "AL",
+   "wd": "Q65309791",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 39.9263,
+   "lon": 19.9383
+  },
+  {
+   "n": "Bolata",
+   "cc": "BG",
+   "wd": "Q4938959",
+   "why": "famous",
+   "note": "famous coverage: 10 Wikipedia languages, missing from the wire",
+   "lat": 43.3819,
+   "lon": 28.4708
+  },
+  {
+   "n": "Strandbad Wannsee",
+   "cc": "DE",
+   "wd": "Q1545614",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 52.4386,
+   "lon": 13.1789
+  },
+  {
+   "n": "Bellevue Beach",
+   "cc": "DK",
+   "wd": "Q3375957",
+   "why": "famous",
+   "note": "famous coverage: 9 Wikipedia languages, missing from the wire",
+   "lat": 55.778,
+   "lon": 12.5923
+  },
+  {
+   "n": "Dueodde",
+   "cc": "DK",
+   "wd": "Q2189435",
+   "why": "famous",
+   "note": "famous coverage: 9 Wikipedia languages, missing from the wire",
+   "lat": 54.9877,
+   "lon": 15.0794
+  },
+  {
+   "n": "Moesgård Beach",
+   "cc": "DK",
+   "wd": "Q23753270",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 56.0879,
+   "lon": 10.2489
+  },
+  {
+   "n": "Svanemølle Beach",
+   "cc": "DK",
+   "wd": "Q3966675",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 55.7206,
+   "lon": 12.5831
+  },
+  {
+   "n": "As Catedrais beach",
+   "cc": "ES",
+   "wd": "Q2561808",
+   "why": "famous",
+   "note": "famous coverage: 15 Wikipedia languages, missing from the wire",
+   "lat": 43.5539,
+   "lon": -7.1572
+  },
+  {
+   "n": "Playa El Tarajal",
+   "cc": "ES",
+   "wd": "Q4806593",
+   "why": "famous",
+   "note": "famous coverage: 9 Wikipedia languages, missing from the wire",
+   "lat": 35.8718,
+   "lon": -5.3435
+  },
+  {
+   "n": "Playa de Gulpiyuri",
+   "cc": "ES",
+   "wd": "Q3753808",
+   "why": "famous",
+   "note": "famous coverage: 16 Wikipedia languages, missing from the wire",
+   "lat": 43.4476,
+   "lon": -4.8861
+  },
+  {
+   "n": "Playa de la Caleta",
+   "cc": "ES",
+   "wd": "Q24022072",
+   "why": "famous",
+   "note": "famous coverage: 8 Wikipedia languages, missing from the wire",
+   "lat": 36.5303,
+   "lon": -6.3058
+  },
+  {
+   "n": "Playa del Inglés",
+   "cc": "ES",
+   "wd": "Q1929363",
+   "why": "famous",
+   "note": "famous coverage: 26 Wikipedia languages, missing from the wire",
+   "lat": 27.75,
+   "lon": -15.5806
+  },
+  {
+   "n": "San Lorenzo Beach",
+   "cc": "ES",
+   "wd": "Q9060729",
+   "why": "famous",
+   "note": "famous coverage: 8 Wikipedia languages, missing from the wire",
+   "lat": 43.5405,
+   "lon": -5.6549
+  },
+  {
+   "n": "Calanques de Piana",
+   "cc": "FR",
+   "wd": "Q1026237",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire",
+   "lat": 42.3252,
+   "lon": 8.6288
+  },
+  {
+   "n": "Dune of Pilat",
+   "cc": "FR",
+   "wd": "Q501726",
+   "why": "famous",
+   "note": "famous coverage: None Wikipedia languages, missing from the wire",
+   "lat": 44.59,
+   "lon": -1.2117
+  },
+  {
+   "n": "Bedruthan Steps",
+   "cc": "GB",
+   "wd": "Q813950",
+   "why": "famous",
+   "note": "famous coverage: 9 Wikipedia languages, missing from the wire",
+   "lat": 50.481,
+   "lon": -5.032
+  },
+  {
+   "n": "Chesil Beach",
+   "cc": "GB",
+   "wd": "Q1070604",
+   "why": "famous",
+   "note": "famous coverage: 12 Wikipedia languages, missing from the wire",
+   "lat": 50.604,
+   "lon": -2.516
+  },
+  {
+   "n": "Red Wharf Bay",
+   "cc": "GB",
+   "wd": "Q3405755",
+   "why": "famous",
+   "note": "famous coverage: 7 Wikipedia languages, missing from the wire",
+   "lat": 53.2965,
+   "lon": -4.2071
+  },
+  {
+   "n": "Rhossili Bay",
+   "cc": "GB",
+   "wd": "Q15126091",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 51.5872,
+   "lon": -4.2989
+  },
+  {
+   "n": "Vault Beach",
+   "cc": "GB",
+   "wd": "Q7917408",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 50.2319,
+   "lon": -4.7944
+  },
+  {
+   "n": "Agios Ioannis Peristeron",
+   "cc": "GR",
+   "wd": "Q21555199",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 39.5076,
+   "lon": 19.924
+  },
+  {
+   "n": "Ftelia",
+   "cc": "GR",
+   "wd": "Q1472325",
+   "why": "famous",
+   "note": "famous coverage: 8 Wikipedia languages, missing from the wire",
+   "lat": 37.461,
+   "lon": 25.3754
+  },
+  {
+   "n": "Leptokarya",
+   "cc": "GR",
+   "wd": "Q3491767",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire",
+   "lat": 40.0603,
+   "lon": 22.5612
+  },
+  {
+   "n": "Nugal Beach",
+   "cc": "HR",
+   "wd": "Q7068729",
+   "why": "famous",
+   "note": "famous coverage: 8 Wikipedia languages, missing from the wire",
+   "lat": 43.2789,
+   "lon": 17.0328
+  },
+  {
+   "n": "Sahara Beach",
+   "cc": "HR",
+   "wd": "Q16899579",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 44.8408,
+   "lon": 14.7511
+  },
+  {
+   "n": "Keem Bay",
+   "cc": "IE",
+   "wd": "Q6382837",
+   "why": "famous",
+   "note": "famous coverage: 7 Wikipedia languages, missing from the wire",
+   "lat": 53.9425,
+   "lon": -9.9784
+  },
+  {
+   "n": "Cala Burantino",
+   "cc": "IT",
+   "wd": "Q123182940",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 40.5083,
+   "lon": 8.3376
+  },
+  {
+   "n": "Scala dei Turchi",
+   "cc": "IT",
+   "wd": "Q3951389",
+   "why": "famous",
+   "note": "famous coverage: None Wikipedia languages, missing from the wire",
+   "lat": 37.2899,
+   "lon": 13.4727
+  },
+  {
+   "n": "Velika Plaža",
+   "cc": "ME",
+   "wd": "Q5659361",
+   "why": "famous",
+   "note": "famous coverage: 13 Wikipedia languages, missing from the wire",
+   "lat": 41.8925,
+   "lon": 19.2958
+  },
+  {
+   "n": "Praia da Arrifana",
+   "cc": "PT",
+   "wd": "Q7237764",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 37.2928,
+   "lon": -8.865
+  },
+  {
+   "n": "Praia de Vale Figueira",
+   "cc": "PT",
+   "wd": "Q7237780",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 37.2522,
+   "lon": -8.8658
+  },
+  {
+   "n": "Santo André Beach",
+   "cc": "PT",
+   "wd": "Q7420473",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 41.4167,
+   "lon": -8.7872
+  },
+  {
+   "n": "Lido",
+   "cc": "RS",
+   "wd": "Q3081007",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 44.8394,
+   "lon": 20.4247
+  },
+  {
+   "n": "Štrand",
+   "cc": "RS",
+   "wd": "Q3445520",
+   "why": "famous",
+   "note": "famous coverage: 8 Wikipedia languages, missing from the wire",
+   "lat": 45.2361,
+   "lon": 19.8481
+  }
+ ]
+}

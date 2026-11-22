@@ -1,0 +1,837 @@
+{
+ "schema": "carta-famous-seed/1",
+ "kind": "lakes",
+ "generated_by": "pipeline/famous/coverage.py --handoff",
+ "rows": [
+  {
+   "n": "Faaker See",
+   "cc": "AT",
+   "kind": "lake",
+   "lat": 46.5778,
+   "lon": 13.925,
+   "wd": "Q595522",
+   "why": "famous",
+   "note": "famous coverage: 23 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Toplitz",
+   "cc": "AT",
+   "kind": "lake",
+   "lat": 47.6441,
+   "lon": 13.9281,
+   "wd": "Q605796",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Millstätter See",
+   "cc": "AT",
+   "kind": "lake",
+   "lat": 46.795,
+   "lon": 13.5797,
+   "wd": "Q220241",
+   "why": "famous",
+   "note": "famous coverage: 34 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Jablaničko Lake",
+   "cc": "BA",
+   "kind": "lake",
+   "lat": 43.6922,
+   "lon": 17.8275,
+   "wd": "Q1541439",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Burgas",
+   "cc": "BG",
+   "kind": "lake",
+   "lat": 42.5,
+   "lon": 27.4,
+   "wd": "Q1014783",
+   "why": "famous",
+   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Varna",
+   "cc": "BG",
+   "kind": "lake",
+   "lat": 43.1903,
+   "lon": 27.825,
+   "wd": "Q1070423",
+   "why": "famous",
+   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Greifensee",
+   "cc": "CH",
+   "kind": "lake",
+   "lat": 47.35,
+   "lon": 8.6833,
+   "wd": "Q14497",
+   "why": "famous",
+   "note": "famous coverage: 25 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Thun",
+   "cc": "CH",
+   "kind": "lake",
+   "lat": 46.6833,
+   "lon": 7.7167,
+   "wd": "Q14426",
+   "why": "famous",
+   "note": "famous coverage: 44 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Zurich",
+   "cc": "CH",
+   "kind": "lake",
+   "lat": 47.2475,
+   "lon": 8.6775,
+   "wd": "Q14407",
+   "why": "famous",
+   "note": "famous coverage: 63 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Walensee",
+   "cc": "CH",
+   "kind": "lake",
+   "lat": 47.1167,
+   "lon": 9.2,
+   "wd": "Q14444",
+   "why": "famous",
+   "note": "famous coverage: 35 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Chiemsee",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 47.89,
+   "lon": 12.47,
+   "wd": "Q4138",
+   "why": "famous",
+   "note": "famous coverage: 58 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Großer Wannsee",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 52.4275,
+   "lon": 13.1731,
+   "wd": "Q3908364",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kummerower See",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 53.8,
+   "lon": 12.8667,
+   "wd": "Q688154",
+   "why": "famous",
+   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Müggelsee",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 52.4333,
+   "lon": 13.65,
+   "wd": "Q694789",
+   "why": "famous",
+   "note": "famous coverage: 25 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Plauer See",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 53.4658,
+   "lon": 12.3075,
+   "wd": "Q704793",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Schaalsee",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 53.5903,
+   "lon": 10.9144,
+   "wd": "Q704782",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Steinhuder Meer",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 52.4667,
+   "lon": 9.3333,
+   "wd": "Q165782",
+   "why": "famous",
+   "note": "famous coverage: 26 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Titisee",
+   "cc": "DE",
+   "kind": "lake",
+   "lat": 47.8933,
+   "lon": 8.1461,
+   "wd": "Q700097",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Arresø",
+   "cc": "DK",
+   "kind": "lake",
+   "lat": 55.9747,
+   "lon": 12.1042,
+   "wd": "Q699572",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Esrum",
+   "cc": "DK",
+   "kind": "lake",
+   "lat": 56.0078,
+   "lon": 12.3792,
+   "wd": "Q1368515",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kaali crater",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 58.3728,
+   "lon": 22.6694,
+   "wd": "Q595341",
+   "why": "famous",
+   "note": "famous coverage: 34 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Karujärv",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 58.3797,
+   "lon": 22.2156,
+   "wd": "Q6373614",
+   "why": "famous",
+   "note": "famous coverage: 28 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Ermistu",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 58.3667,
+   "lon": 23.975,
+   "wd": "Q3234121",
+   "why": "famous",
+   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Harku",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 59.4167,
+   "lon": 24.6167,
+   "wd": "Q621853",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Vagula",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 57.8461,
+   "lon": 26.9128,
+   "wd": "Q3736634",
+   "why": "famous",
+   "note": "famous coverage: 29 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Ülemiste",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 59.3993,
+   "lon": 24.7689,
+   "wd": "Q334761",
+   "why": "famous",
+   "note": "famous coverage: 47 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mullutu-Suurlaht",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 58.2458,
+   "lon": 22.3792,
+   "wd": "Q3367282",
+   "why": "famous",
+   "note": "famous coverage: 27 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Narva Reservoir",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 59.3333,
+   "lon": 28.1667,
+   "wd": "Q2458214",
+   "why": "famous",
+   "note": "famous coverage: 30 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Saadjärv",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 58.5333,
+   "lon": 26.6667,
+   "wd": "Q1456246",
+   "why": "famous",
+   "note": "famous coverage: 30 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Veisjärv",
+   "cc": "EE",
+   "kind": "lake",
+   "lat": 58.0967,
+   "lon": 25.7561,
+   "wd": "Q1717706",
+   "why": "famous",
+   "note": "famous coverage: 30 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kallavesi",
+   "cc": "FI",
+   "kind": "lake",
+   "lat": 62.8167,
+   "lon": 27.7833,
+   "wd": "Q890532",
+   "why": "famous",
+   "note": "famous coverage: 25 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Bodom",
+   "cc": "FI",
+   "kind": "lake",
+   "lat": 60.2564,
+   "lon": 24.6667,
+   "wd": "Q826447",
+   "why": "famous",
+   "note": "famous coverage: 30 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Puula",
+   "cc": "FI",
+   "kind": "lake",
+   "lat": 61.8101,
+   "lon": 26.6938,
+   "wd": "Q1318014",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Vesijärvi",
+   "cc": "FI",
+   "kind": "lake",
+   "lat": 61.0418,
+   "lon": 25.585,
+   "wd": "Q1784076",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Fjallavatn",
+   "cc": "FO",
+   "kind": "lake",
+   "lat": 62.1225,
+   "lon": -7.2992,
+   "wd": "Q476699",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Awe",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 56.2915,
+   "lon": -5.2311,
+   "wd": "Q1368230",
+   "why": "famous",
+   "note": "famous coverage: 27 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Ericht",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 56.8323,
+   "lon": -4.3741,
+   "wd": "Q1851127",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Katrine",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 56.2544,
+   "lon": -4.5156,
+   "wd": "Q1867269",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Lochy",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 56.9686,
+   "lon": -4.9106,
+   "wd": "Q684231",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Maree",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 57.6897,
+   "lon": -5.4575,
+   "wd": "Q1310646",
+   "why": "famous",
+   "note": "famous coverage: 26 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Morar",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 56.95,
+   "lon": -5.6722,
+   "wd": "Q1444264",
+   "why": "famous",
+   "note": "famous coverage: 29 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Oich",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 57.0695,
+   "lon": -4.7708,
+   "wd": "Q1444214",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Loch Shin",
+   "cc": "GB",
+   "kind": "lake",
+   "lat": 58.1,
+   "lon": -4.5333,
+   "wd": "Q430478",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Koroneia",
+   "cc": "GR",
+   "kind": "lake",
+   "lat": 40.6856,
+   "lon": 23.1483,
+   "wd": "Q1472501",
+   "why": "famous",
+   "note": "famous coverage: 25 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Pamvotida",
+   "cc": "GR",
+   "kind": "lake",
+   "lat": 39.6625,
+   "lon": 20.885,
+   "wd": "Q776956",
+   "why": "famous",
+   "note": "famous coverage: 27 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Volvi",
+   "cc": "GR",
+   "kind": "lake",
+   "lat": 40.6819,
+   "lon": 23.4672,
+   "wd": "Q132099",
+   "why": "famous",
+   "note": "famous coverage: 26 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Plitvice Lakes",
+   "cc": "HR",
+   "kind": "lake",
+   "lat": 44.8804,
+   "lon": 15.616,
+   "wd": "Q189849",
+   "why": "famous",
+   "note": "famous coverage: 71 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Red Lake",
+   "cc": "HR",
+   "kind": "lake",
+   "lat": 43.455,
+   "lon": 17.1983,
+   "wd": "Q2143020",
+   "why": "famous",
+   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lough Allen",
+   "cc": "IE",
+   "kind": "lake",
+   "lat": 54.1069,
+   "lon": -8.0392,
+   "wd": "Q1366974",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lough Corrib",
+   "cc": "IE",
+   "kind": "lake",
+   "lat": 53.4667,
+   "lon": -9.2833,
+   "wd": "Q848917",
+   "why": "famous",
+   "note": "famous coverage: 37 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lough Derg",
+   "cc": "IE",
+   "kind": "lake",
+   "lat": 52.9833,
+   "lon": -8.3167,
+   "wd": "Q918349",
+   "why": "famous",
+   "note": "famous coverage: 30 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lough Mask",
+   "cc": "IE",
+   "kind": "lake",
+   "lat": 53.6219,
+   "lon": -9.3822,
+   "wd": "Q1768048",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Apavatn",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.1749,
+   "lon": -20.6561,
+   "wd": "Q388709",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Blöndulón",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 65.1804,
+   "lon": -19.5854,
+   "wd": "Q887140",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Hvítárvatn",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.6046,
+   "lon": -19.8442,
+   "wd": "Q1429607",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Hóp",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 65.5333,
+   "lon": -20.5,
+   "wd": "Q1124746",
+   "why": "famous",
+   "note": "famous coverage: 25 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Jökulsárlón",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.0703,
+   "lon": -16.2117,
+   "wd": "Q511933",
+   "why": "famous",
+   "note": "famous coverage: 37 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kerið",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.0408,
+   "lon": -20.8847,
+   "wd": "Q1435393",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kleifarvatn",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 63.9268,
+   "lon": -21.9702,
+   "wd": "Q574165",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lagarfljót",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 65.1833,
+   "lon": -14.6,
+   "wd": "Q1344692",
+   "why": "famous",
+   "note": "famous coverage: 26 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Langisjór",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.1744,
+   "lon": -18.3019,
+   "wd": "Q283536",
+   "why": "famous",
+   "note": "famous coverage: 23 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Laugarvatn",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.2095,
+   "lon": -20.7017,
+   "wd": "Q1413838",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Sigöldulón",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.1522,
+   "lon": -19.0553,
+   "wd": "Q1503138",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Sultartangalón",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.2094,
+   "lon": -19.48,
+   "wd": "Q555119",
+   "why": "famous",
+   "note": "famous coverage: 22 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Tjörnin",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.1445,
+   "lon": -21.9426,
+   "wd": "Q945753",
+   "why": "famous",
+   "note": "famous coverage: 33 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Þórisvatn",
+   "cc": "IS",
+   "kind": "lake",
+   "lat": 64.282,
+   "lon": -18.8729,
+   "wd": "Q335940",
+   "why": "famous",
+   "note": "famous coverage: 32 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Garda",
+   "cc": "IT",
+   "kind": "lake",
+   "lat": 45.6333,
+   "lon": 10.6667,
+   "wd": "Q6414",
+   "why": "famous",
+   "note": "famous coverage: 88 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Burtnieks",
+   "cc": "LV",
+   "kind": "lake",
+   "lat": 57.7333,
+   "lon": 25.2333,
+   "wd": "Q1017107",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mavrovo Lake",
+   "cc": "MK",
+   "kind": "lake",
+   "lat": 41.6833,
+   "lon": 20.75,
+   "wd": "Q1785612",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lauwersmeer",
+   "cc": "NL",
+   "kind": "lake",
+   "lat": 53.377,
+   "lon": 6.173,
+   "wd": "Q525364",
+   "why": "famous",
+   "note": "famous coverage: 20 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Hornindalsvatnet",
+   "cc": "NO",
+   "kind": "lake",
+   "lat": 61.9333,
+   "lon": 6.35,
+   "wd": "Q200003",
+   "why": "famous",
+   "note": "famous coverage: 39 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mjøsa",
+   "cc": "NO",
+   "kind": "lake",
+   "lat": 60.6667,
+   "lon": 11.0,
+   "wd": "Q212209",
+   "why": "famous",
+   "note": "famous coverage: 45 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Randsfjorden",
+   "cc": "NO",
+   "kind": "lake",
+   "lat": 60.3903,
+   "lon": 10.3942,
+   "wd": "Q545033",
+   "why": "famous",
+   "note": "famous coverage: 29 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Røssvatnet",
+   "cc": "NO",
+   "kind": "lake",
+   "lat": 65.7841,
+   "lon": 14.0083,
+   "wd": "Q1352298",
+   "why": "famous",
+   "note": "famous coverage: 27 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Tinnsjå",
+   "cc": "NO",
+   "kind": "lake",
+   "lat": 59.9,
+   "lon": 8.9167,
+   "wd": "Q861703",
+   "why": "famous",
+   "note": "famous coverage: 23 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Palić Lake",
+   "cc": "RS",
+   "kind": "lake",
+   "lat": 46.07,
+   "lon": 19.7475,
+   "wd": "Q7127675",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Bolmen",
+   "cc": "SE",
+   "kind": "lake",
+   "lat": 56.9167,
+   "lon": 13.6667,
+   "wd": "Q891521",
+   "why": "famous",
+   "note": "famous coverage: 28 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Hornavan",
+   "cc": "SE",
+   "kind": "lake",
+   "lat": 66.2333,
+   "lon": 17.5,
+   "wd": "Q845880",
+   "why": "famous",
+   "note": "famous coverage: 32 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mälaren",
+   "cc": "SE",
+   "kind": "lake",
+   "lat": 59.5,
+   "lon": 17.2,
+   "wd": "Q184492",
+   "why": "famous",
+   "note": "famous coverage: 64 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Siljan",
+   "cc": "SE",
+   "kind": "lake",
+   "lat": 60.85,
+   "lon": 14.8,
+   "wd": "Q217430",
+   "why": "famous",
+   "note": "famous coverage: 34 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Uddjaure",
+   "cc": "SE",
+   "kind": "lake",
+   "lat": 65.9667,
+   "lon": 17.8333,
+   "wd": "Q953206",
+   "why": "famous",
+   "note": "famous coverage: 26 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lake Cerknica",
+   "cc": "SI",
+   "kind": "lake",
+   "lat": 45.7522,
+   "lon": 14.385,
+   "wd": "Q205836",
+   "why": "famous",
+   "note": "famous coverage: 27 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Zemplínska šírava",
+   "cc": "SK",
+   "kind": "lake",
+   "lat": 48.7833,
+   "lon": 22.0367,
+   "wd": "Q189395",
+   "why": "famous",
+   "note": "famous coverage: 21 Wikipedia languages, missing from the wire"
+  }
+ ]
+}

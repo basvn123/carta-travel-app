@@ -32,6 +32,17 @@ export function addRecent(result, storage = globalThis.localStorage) {
   return list;
 }
 
+/** A search sent with Enter or the search button (flow-search F4): kept
+ *  as typed text, picked again it searches the same words. A recent pick of
+ *  the same name moves to the top instead of being listed twice. */
+export function addRecentText(text, storage = globalThis.localStorage) {
+  const name = String(text || '').trim();
+  if (!name) return readRecent(storage);
+  const fold = name.toLocaleLowerCase();
+  const same = readRecent(storage).find((r) => String(r.name || '').toLocaleLowerCase() === fold);
+  return addRecent(same || { type: 'text', key: `q:${fold}`, name }, storage);
+}
+
 export function clearRecent(storage = globalThis.localStorage) {
   try { storage?.removeItem(KEY); } catch { /* storage off */ }
   return [];

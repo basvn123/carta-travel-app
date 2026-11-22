@@ -93,7 +93,7 @@ OSM_ID = ("CASE WHEN t.source = 'osm' AND t.source_ref ~ '^[0-9]+$' "
 
 IDS_SQL = f"""
     SELECT t.id FROM {{table}} t
-    WHERE t.country = %(cc)s AND t.source IN ('osm', 'osm_ways')
+    WHERE t.country = %(cc)s AND t.source IN ('osm', 'osm_ways', 'seed_routed')
     UNION
     SELECT t.id FROM {{table}} t
     JOIN route_relations r ON r.activity = %(activity)s

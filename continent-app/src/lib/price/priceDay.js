@@ -23,7 +23,7 @@
  *             internal views only (rule 5); a traveller sees the amount.
  *   request   the request the row was priced for
  */
-import { costContext, costRow } from '../costIndex.js';
+import { COST_SLICE, costContext, costContextSteps, costRow, runSteps } from '../costIndex.js';
 import { groundSpendPerPerson } from '../runtime_pricing.js';
 import { foodShare, ticketShare } from '../party.js';
 import { DEFAULT_PRICE_REQUEST, carSeatsOf, costChoices, seatsOf } from './request.js';
@@ -161,11 +161,56 @@ function answer(row, req, iso2 = null, dest = null) {
  * once per request (useMemo) and hand around.
  */
 export function priceDays(destinations, req = DEFAULT_PRICE_REQUEST) {
+  return runSteps(priceDaysSteps(destinations, req));
+}
+
+/** priceDays as steps, yielding every COST_SLICE places (beds first, then
+ *  the rows). The one implementation: priceDays runs it straight through. */
+function* priceDaysSteps(destinations, req) {
   const r = req || DEFAULT_PRICE_REQUEST;
-  const ctx = costContext(destinations, costChoices(r));
+  const ctx = yield* costContextSteps(destinations, costChoices(r));
   const out = new Map();
-  for (const [id, d] of Object.entries(destinations || {})) out.set(id, answer(costRow(d, ctx), r, d.iso2, d));
+  let n = 0;
+  for (const [id, d] of Object.entries(destinations || {})) {
+    if (++n % COST_SLICE === 0) yield;
+    out.set(id, answer(costRow(d, ctx), r, d.iso2, d));
+  }
   return out;
+}
+
+// A slice of main-thread work before the browser gets a turn: well under the
+// 50 ms of a long task even at 4x CPU, so a tap during a re-price is answered.
+const SLICE_MS = 12;
+const nextTask = () => new Promise((resolve) => {
+  if (typeof globalThis.scheduler?.yield === 'function') { globalThis.scheduler.yield().then(resolve); return; }
+  if (typeof MessageChannel === 'function') {
+    const ch = new MessageChannel();
+    ch.port1.onmessage = () => { ch.port1.close(); resolve(); };
+    ch.port2.postMessage(0);
+    return;
+  }
+  setTimeout(resolve, 0);
+});
+
+/**
+ * G12, D10 (explore-top-2): priceDays spread over short tasks, so pricing the
+ * catalogue (about 0.7 s at 4x CPU) never blocks input. Resolves to exactly
+ * what priceDays returns, or null when `signal` aborts first (a newer
+ * request took over; its caller keeps showing the last whole answer).
+ */
+export async function priceDaysSliced(destinations, req = DEFAULT_PRICE_REQUEST, { signal = null } = {}) {
+  const gen = priceDaysSteps(destinations, req);
+  const now = () => (globalThis.performance?.now ? performance.now() : Date.now());
+  let t0 = now();
+  for (;;) {
+    if (signal?.aborted) return null;
+    const r = gen.next();
+    if (r.done) return r.value;
+    if (now() - t0 > SLICE_MS) {
+      await nextTask();
+      t0 = now();
+    }
+  }
 }
 
 /**

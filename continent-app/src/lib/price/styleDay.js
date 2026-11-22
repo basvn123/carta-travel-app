@@ -7,7 +7,7 @@
  * Lifestyle. No flight, no getting around, no guess: a style the engine
  * cannot price returns null and shows no figure.
  */
-import { priceDays } from './priceDay.js';
+import { priceDays, priceDaysSliced } from './priceDay.js';
 import { priceRequest } from './request.js';
 import { choicesFromStyle } from '../travelStyles.js';
 
@@ -37,10 +37,37 @@ export function styleDayEur(style, destinations) {
   return v;
 }
 
+/**
+ * The same median day at the app's current choices (party, bed, table), so
+ * the place receipt (G12, D10) compares a place with the traveller's usual
+ * day as priced now: with the style not held, these are the style's own
+ * choices and the figure is styleDayEur's. Shares its memo. Sliced over
+ * short tasks (priceDaysSliced), since a receipt asks for it as it opens;
+ * resolves null when `signal` aborts first.
+ */
+export async function usualDayEur(choices, destinations, { signal = null } = {}) {
+  if (!choices || !destinations || !Object.keys(destinations).length) return null;
+  const key = pricedKey(choices);
+  let byKey = KNOWN.get(destinations);
+  if (!byKey) { byKey = new Map(); KNOWN.set(destinations, byKey); }
+  if (byKey.has(key)) return byKey.get(key);
+  const req = priceRequest({ choices: { ...choices, price_view: 'pp', price_excluded: [] } });
+  const days = await priceDaysSliced(destinations, req, { signal });
+  if (!days) return null;
+  const v = medianOf(days);
+  if (byKey.size >= KNOWN_MAX) byKey.delete(byKey.keys().next().value);
+  byKey.set(key, v);
+  return v;
+}
+
 function medianDay(choices, destinations) {
   const req = priceRequest({ choices: { ...choices, price_view: 'pp', price_excluded: [] } });
+  return medianOf(priceDays(destinations, req));
+}
+
+function medianOf(answers) {
   const days = [];
-  for (const a of priceDays(destinations, req).values()) {
+  for (const a of answers.values()) {
     // A place that cannot price this bed falls back to another tier
     // (tierFallback); counting it priced a dorm at a hotel's rate, so a
     // hostel read dearer than a 3-star (flow-1 M1). Left out, as

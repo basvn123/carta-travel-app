@@ -42,6 +42,7 @@ import { returnKg, kgText, methodUrl } from '../lib/footprint/footprint.js';
 import { useDayView } from '../hooks/useDayView.js';
 import { PriceItems } from '../components/PriceItems.jsx';
 import { PriceAlertControl } from '../components/PriceAlertControl.jsx';
+import { WatchChips } from './WatchChips.jsx';
 import { placeSpec } from '../lib/priceAlerts.js';
 
 /**
@@ -89,6 +90,8 @@ export function DestPriceCard({
   // T912: a number the page bumps when its foot bar asks for the inputs;
   // the card then opens its dates and takes the focus.
   openSignal = 0,
+  // G12: the page's save mark, so Volgen saves the place too.
+  saved = false, onSave = null,
 }) {
   const { t, lang, languages } = useI18n();
   const ctx = useFirstRun();
@@ -330,6 +333,20 @@ export function DestPriceCard({
                 food={Number.isFinite(costRow?.foodEur) ? view.day(costRow.foodEur) : undefined} />
             )}
           </div>
+          {/* G12 (decision 6): Volgen on the day figure, the stay and the swept fare. */}
+          <WatchChips
+            placeKey={`dest:${dest.id}`}
+            saved={saved}
+            onSave={onSave}
+            items={[
+              { kind: 'day', ref: dest.id, label: city || dest.city || dest.id, eur: price.dayEur, unitNote: 'day, each', source: t('watch.srcDay') },
+              { kind: 'stay', ref: dest.id, label: city || dest.city || dest.id, eur: costRow?.stayEur, unitNote: 'day, each', source: t('watch.srcStay') },
+              ...(carta?.perSeat > 0 && carta.from ? [{
+                kind: 'flight', ref: `${carta.from}-${airport}`, label: t('watch.flightLabel', { from: carta.from, to: city || airport }),
+                eur: carta.perSeat, unitNote: 'return', source: t('watch.srcFlight'),
+              }] : []),
+            ]}
+          />
           <div className="tcard-total" ref={linesRef}>
             <Plate
               name={t('place.tripName', { nights: nightsText, people: peopleText })}

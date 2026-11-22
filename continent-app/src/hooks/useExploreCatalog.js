@@ -75,12 +75,14 @@ export function useExploreCatalog({
     [data],
   );
 
-  const all = useMemo(() => {
+  // G12, D10 (lane 1, explore-top-2 profile): the price-free part of each
+  // row is built once per catalogue; a re-price only attaches the new cost
+  // row, which cost a full rebuild of about 3,000 rows before.
+  const bases = useMemo(() => {
     if (!data) return [];
     const rows = [];
     for (const [destId, d] of Object.entries(data.destinations)) {
       if (d.lat == null || d.lon == null) continue;
-      const ix = indices.get(destId) || {};
       rows.push({
         id: destId,
         tier: d.tier,
@@ -106,7 +108,7 @@ export function useExploreCatalog({
         climate: d.climate || null,
         // T765: the place taste profile the "For you" sort and the match read.
         taste: d.taste || null,
-        cost: ix,
+        cost: null,
         // The card's one line is composed from these, not shipped ready-made:
         // most of the catalogue's blurbs are category counts (placeStory.js).
         // Both are passed by reference, so the grid copies no strings.
@@ -115,7 +117,8 @@ export function useExploreCatalog({
       });
     }
     return dedupeGateways(rows);
-  }, [data, indices, dupHeroes]);
+  }, [data, dupHeroes]);
+  const all = useMemo(() => bases.map((b) => ({ ...b, cost: indices.get(b.id) || {} })), [bases, indices]);
 
   const availableCountries = useMemo(() => {
     const map = new Map();

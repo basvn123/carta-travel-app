@@ -1,0 +1,2786 @@
+{
+ "schema": "carta-famous-seed/1",
+ "kind": "cycling",
+ "generated_by": "pipeline/famous/coverage.py --handoff",
+ "rows": [
+  {
+   "n": "Ciclopista della valle dell'Adige",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "IT"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Adige bike path",
+    "Ciclopista della valle dell'Adige",
+    "Etsch-Radweg",
+    "ciclopista della Valle dell'Adige"
+   ],
+   "wd": "Q3676522",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "EuroVelo 14 – Waters of Central Europe",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "HU"
+   ],
+   "osm_rel": 10997256,
+   "osm_rels": [
+    10997256
+   ],
+   "length_km": 1150.0,
+   "names": [
+    "EV 14",
+    "EV14 Meren en rivieren van Midden-Europa",
+    "EV14 Sentraleuropeiske sjøer og elver",
+    "EuroVelo 14",
+    "EuroVelo 14 - Lacs et Rivières d'Europe Centrale",
+    "EuroVelo 14 – Gewässer von Mitteleuropa",
+    "EuroVelo 14 – Közép-Európa vizei",
+    "EuroVelo 14 – Waters of Central Europe"
+   ],
+   "wd": "Q103159272",
+   "why": "famous",
+   "note": "famous coverage: 7 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "EuroVelo 15 – Rhine Cycle Route",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "CH",
+    "DE",
+    "FR",
+    "NL"
+   ],
+   "osm_rel": 2171555,
+   "osm_rels": [
+    2171555
+   ],
+   "length_km": 1450.0,
+   "names": [
+    "EV 15",
+    "EV15",
+    "EV15 Rhinen sykkelrute",
+    "EuroVelo 15",
+    "EuroVelo 15 - Itinerario del Reno",
+    "EuroVelo 15 - Rijnfietsroute",
+    "EuroVelo 15 - Rínarleiðin",
+    "EuroVelo 15 - Szlak Renu",
+    "EuroVelo 15 - Véloroute Rhin",
+    "EuroVelo 15 – Rheinradweg",
+    "EuroVelo 15 – Rhine Cycle Route",
+    "EuroVelo 15 – Rýnská stezka",
+    "Рейнська велосипедна доріжка"
+   ],
+   "wd": "Q869924",
+   "why": "famous",
+   "note": "famous coverage: 14 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "EuroVelo 6 – The Rivers Route",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "BG",
+    "CH",
+    "DE",
+    "FR",
+    "HR",
+    "HU",
+    "RO",
+    "RS",
+    "SK"
+   ],
+   "osm_rel": 2938,
+   "osm_rels": [
+    2938
+   ],
+   "length_km": 4700.0,
+   "names": [
+    "EV 6",
+    "EV6 Atlanterhavet–Svartehavet",
+    "EV6 Atlantische kust naar de Zwarte Zee",
+    "EV6 Fljótaleiðin",
+    "EuroVelo 6",
+    "EuroVelo 6 - Atlantic-Marea Neagră",
+    "EuroVelo 6 - Atlantico-Mar Nero",
+    "EuroVelo 6 - Atlantik-Crno More",
+    "EuroVelo 6 - Atlantique-Mer Noire",
+    "EuroVelo 6 - Atlantyk-Morze Czarne",
+    "EuroVelo 6 – Atlantic-Black Sea",
+    "EuroVelo 6 – Atlantik – Schwarzes Meer",
+    "EuroVelo 6 – Atlantik – Čierne more",
+    "EuroVelo 6 – Od Atlantiku k Černému moři",
+    "EuroVelo 6 – The Rivers Route",
+    "the Rivers route"
+   ],
+   "wd": "Q3060537",
+   "why": "famous",
+   "note": "famous coverage: 16 Wikipedia languages, missing from the wire",
+   "lat": 48.4008,
+   "lon": 9.9872
+  },
+  {
+   "n": "Greenways Praha-Wien",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "CZ"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Greenways Praag-Wenen",
+    "Greenways Praha-Wien",
+    "Greenways Praha–Vídeň"
+   ],
+   "wd": "Q12018458",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Sultans Trail",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "BG",
+    "HR",
+    "HU",
+    "RS",
+    "SK",
+    "TR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Sultanens rute",
+    "Sultanlar Yolu",
+    "Sultanov put",
+    "Sultans Trail",
+    "Sultāna taka",
+    "sentier des Sultans",
+    "Патеката Султанови"
+   ],
+   "wd": "Q699630",
+   "why": "famous",
+   "note": "famous coverage: 11 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Via Claudia Augusta",
+   "cc": "AT",
+   "countries": [
+    "AT",
+    "DE",
+    "IT"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Via Claudia Augusta",
+    "Via Cláudia Augusta",
+    "Виа Клавдия Августа",
+    "Дорога Клавдія Августа"
+   ],
+   "wd": "Q685132",
+   "why": "famous",
+   "note": "famous coverage: 24 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "EuroVelo 8 – Mediterranean Route",
+   "cc": "BA",
+   "countries": [
+    "BA",
+    "CY",
+    "ES",
+    "FR",
+    "GR",
+    "HR",
+    "IT",
+    "ME",
+    "SI",
+    "TR"
+   ],
+   "osm_rel": 9191828,
+   "osm_rels": [
+    9191828
+   ],
+   "length_km": 7350.0,
+   "names": [
+    "EV 8",
+    "EV8",
+    "EV8 Middelhavsruten",
+    "EV8 Middellandse Zeeroute",
+    "EV8 The Mediterranean Route",
+    "EuroVelo 8",
+    "EuroVelo 8 - Akdeniz Rotası",
+    "EuroVelo 8 - Itinerario del Mediterraneo",
+    "EuroVelo 8 - Miðjarðarhafsleiðin",
+    "EuroVelo 8 - Szlak śródziemnomorski",
+    "EuroVelo 8 - Véloroute de la méditerranée",
+    "EuroVelo 8 – Mediterranean Route",
+    "EuroVelo 8 – Mittelmeer-Route",
+    "EuroVelo 8 – Středomořská trasa",
+    "the Mediterranean Route"
+   ],
+   "wd": "Q3060538",
+   "why": "famous",
+   "note": "famous coverage: 12 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "EuroVelo 19 – Meuse Cycle Route",
+   "cc": "BE",
+   "countries": [
+    "BE",
+    "FR"
+   ],
+   "osm_rel": 7298586,
+   "osm_rels": [
+    7298586
+   ],
+   "length_km": 1050.0,
+   "names": [
+    "EV 19",
+    "EV19",
+    "EV19 Maas sykkelrute",
+    "EuroVelo 19",
+    "EuroVelo 19 - Maasfietsroute",
+    "EuroVelo 19 - Meuse à Vélo",
+    "EuroVelo 19 – Meuse Cycle Route",
+    "EuroVelo 19 – Mázská stezka",
+    "Radroute Maas"
+   ],
+   "wd": "Q14540313",
+   "why": "famous",
+   "note": "famous coverage: 8 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "EuroVelo 4 – Central Europe Route",
+   "cc": "BE",
+   "countries": [
+    "BE",
+    "CZ",
+    "DE",
+    "FR",
+    "NL",
+    "PL",
+    "UA"
+   ],
+   "osm_rel": 2521076,
+   "osm_rels": [
+    2521076
+   ],
+   "length_km": 5050.0,
+   "names": [
+    "EV 4",
+    "EV4",
+    "EV4 Sentraleuropeiske rute",
+    "EuroVelo 4",
+    "EuroVelo 4 - Centraal-Europese route",
+    "EuroVelo 4 - Itinerario l'Europa centrale",
+    "EuroVelo 4 - Véloroute de l'Europe centrale",
+    "EuroVelo 4 – Central Europe Route",
+    "EuroVelo 4 – Centraleuroparuten",
+    "EuroVelo 4 – Centraleuroparutten",
+    "EuroVelo 4 – Mitteleuropa-Route",
+    "EuroVelo 4 – Orta Avrupa Rotası",
+    "EuroVelo 4 – Rota da Europa Central",
+    "EuroVelo 4 – Szlak Europy Centralnej",
+    "EuroVelo 4 – Trasa střední Evropou",
+    "EuroVelo 4 – közép-európai útvonal",
+    "EuroVelo 4 – ruta Europei Centrale",
+    "EuroVelo 4 – ruta d'Europa Central",
+    "EuroVelo 4 – trasa strednou Európou",
+    "EuroVelo 4 – Централноевропейски маршрут",
+    "EuroVelo 4 – Центральноєвропейський маршрут"
+   ],
+   "wd": "Q1940135",
+   "why": "famous",
+   "note": "famous coverage: 13 Wikipedia languages, missing from the wire",
+   "lat": 50.0583,
+   "lon": 12.0315
+  },
+  {
+   "n": "Euroroute R1",
+   "cc": "BE",
+   "countries": [
+    "BE",
+    "DE",
+    "EE",
+    "FR",
+    "LT",
+    "LV",
+    "NL",
+    "PL"
+   ],
+   "osm_rel": 1626371,
+   "osm_rels": [
+    1626371
+   ],
+   "length_km": 3616.0,
+   "names": [
+    "Europaradweg R1",
+    "Europese fietsroute R1",
+    "Euroroute R1",
+    "Trasa rowerowa R1"
+   ],
+   "wd": "Q1375670",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "LF Kustroute",
+   "cc": "BE",
+   "countries": [
+    "BE",
+    "NL"
+   ],
+   "osm_rel": 11290783,
+   "osm_rels": [
+    11290783
+   ],
+   "length_km": 698.0,
+   "names": [
+    "Kustroute",
+    "LF Kustroute"
+   ],
+   "wd": "Q106097253",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Noordzeeroute",
+   "cc": "BE",
+   "countries": [
+    "BE",
+    "FR",
+    "NL"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 280.0,
+   "names": [
+    "LF1",
+    "Landelijke fietsroute 1",
+    "Noordzee-Route",
+    "Noordzeeroute"
+   ],
+   "wd": "Q2090784",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "RAVeL network",
+   "cc": "BE",
+   "countries": [
+    "BE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "RAVeL",
+    "RAVeL network",
+    "RAVeL-Netz",
+    "Réseau RAVeL"
+   ],
+   "wd": "Q918250",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "RurUfer cycling route",
+   "cc": "BE",
+   "countries": [
+    "BE",
+    "DE",
+    "NL"
+   ],
+   "osm_rel": 13404,
+   "osm_rels": [
+    13404
+   ],
+   "length_km": null,
+   "names": [
+    "RurUfer cycling route",
+    "RurUfer-Radweg",
+    "Rurufer-Radweg"
+   ],
+   "wd": "Q2176751",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 50.5019,
+   "lon": 6.0934
+  },
+  {
+   "n": "Südschwarzwald-Radweg",
+   "cc": "CH",
+   "countries": [
+    "CH",
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Südschwarzwald-Radweg",
+    "cyklotrasa Jihem Černého lesa"
+   ],
+   "wd": "Q507891",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Cycling routes in the Czech Republic",
+   "cc": "CZ",
+   "countries": [
+    "CZ"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Cycling routes in the Czech Republic",
+    "Cyklistické trasy v Česku",
+    "Nationale fietsroutes van Tsjechië",
+    "Radwege in Tschechien"
+   ],
+   "wd": "Q11773819",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Cyklistická trasa Vlčí Důl",
+   "cc": "CZ",
+   "countries": [
+    "CZ"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Cyklistická trasa Vlčí Důl",
+    "Cyklostezka Vlčí Důl"
+   ],
+   "wd": "Q11773832",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 50.6791,
+   "lon": 14.5892
+  },
+  {
+   "n": "Elster-Radweg",
+   "cc": "CZ",
+   "countries": [
+    "CZ",
+    "DE"
+   ],
+   "osm_rel": 13027,
+   "osm_rels": [
+    13027
+   ],
+   "length_km": null,
+   "names": [
+    "Elster-Radweg"
+   ],
+   "wd": "Q1333876",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Moldaufietsroute",
+   "cc": "CZ",
+   "countries": [
+    "CZ"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Moldaufietsroute",
+    "Moldauradweg"
+   ],
+   "wd": "Q1552676",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Oder-Neiße-Radweg",
+   "cc": "CZ",
+   "countries": [
+    "CZ",
+    "DE"
+   ],
+   "osm_rel": 9697,
+   "osm_rels": [
+    9697
+   ],
+   "length_km": null,
+   "names": [
+    "Międzynarodowy szlak rowerowy Odra - Nysa",
+    "Oder-Neiße-Radweg",
+    "cyklotrasa Odra-Nisa"
+   ],
+   "wd": "Q159890",
+   "why": "famous",
+   "note": "famous coverage: 7 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Paneuropa-Radweg",
+   "cc": "CZ",
+   "countries": [
+    "CZ",
+    "DE",
+    "FR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Paneuropa-Radweg",
+    "Paneurópska cyklotrasa",
+    "Panevropská cyklostezka",
+    "Véloroute paneuropéenne"
+   ],
+   "wd": "Q2049383",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Ahr Cycleway",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 12696,
+   "osm_rels": [
+    12696
+   ],
+   "length_km": null,
+   "names": [
+    "Ahr Cycleway",
+    "Ahr-Radweg",
+    "Szlak rowerowy doliny rzeki Ahr"
+   ],
+   "wd": "Q402624",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 50.4363,
+   "lon": 6.6509
+  },
+  {
+   "n": "Aischtal cycling route",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 39032,
+   "osm_rels": [
+    39032
+   ],
+   "length_km": null,
+   "names": [
+    "Aischtal cycling route",
+    "Aischtal-Radweg"
+   ],
+   "wd": "Q14510827",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Altmark circuit",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 110524,
+   "osm_rels": [
+    110524
+   ],
+   "length_km": 505.8,
+   "names": [
+    "Altmark circuit",
+    "Altmarkrundkurs"
+   ],
+   "wd": "Q442692",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Altmühltal-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 7655,
+   "osm_rels": [
+    7655
+   ],
+   "length_km": null,
+   "names": [
+    "Altmühltal-Radweg",
+    "Altmühltalradweg"
+   ],
+   "wd": "Q442954",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 48.9008,
+   "lon": 11.1707
+  },
+  {
+   "n": "Berlin-Copenhagen Cycle Route",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 15887498,
+   "osm_rels": [
+    15887498
+   ],
+   "length_km": null,
+   "names": [
+    "Berlin-Copenhagen Cycle Route",
+    "Berlin–Copenhagen Cycle Route",
+    "Radweg Berlin–Kopenhagen",
+    "Szlak Rowerowy Berlin-Kopenhaga"
+   ],
+   "wd": "Q2126817",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 52.5164,
+   "lon": 13.3778
+  },
+  {
+   "n": "Berliner Mauerweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Berlin Wall Trail",
+    "Berliner Mauerweg",
+    "Parcours du mur de Berlin"
+   ],
+   "wd": "Q20827135",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Bocklradweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Bocklradweg"
+   ],
+   "wd": "Q889221",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Cycling route Berlin–Leipzig",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 13320,
+   "osm_rels": [
+    13320
+   ],
+   "length_km": null,
+   "names": [
+    "..",
+    "Bikeway Berlin–Leipzig",
+    "Cycling route Berlin–Leipzig",
+    "Leipzig–Berlin cycling route",
+    "Radweg Berlin–Leipzig"
+   ],
+   "wd": "Q14378572",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Dahme-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 156492,
+   "osm_rels": [
+    156492
+   ],
+   "length_km": null,
+   "names": [
+    "Dahme-Radweg"
+   ],
+   "wd": "Q14513070",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Deutsche Fußball Route NRW",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 2013834,
+   "osm_rels": [
+    2013834
+   ],
+   "length_km": null,
+   "names": [
+    "Deutsche Fußball Route NRW",
+    "Fußballroute NRW"
+   ],
+   "wd": "Q1478415",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 51.2337,
+   "lon": 7.05
+  },
+  {
+   "n": "Deutscher Limes-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 191316,
+   "osm_rels": [
+    191316
+   ],
+   "length_km": null,
+   "names": [
+    "Deutscher Limes-Radweg"
+   ],
+   "wd": "Q1205080",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 50.5035,
+   "lon": 7.3182
+  },
+  {
+   "n": "Emsradweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 2073122,
+   "osm_rels": [
+    2073122
+   ],
+   "length_km": null,
+   "names": [
+    "Emsradweg"
+   ],
+   "wd": "Q1339758",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 52.5676,
+   "lon": 7.2665
+  },
+  {
+   "n": "EuroVelo 10 in Germany",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "EuroVelo 10 in Germany",
+    "Ostseeküstenroute"
+   ],
+   "wd": "Q1647178",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Fürst-Pückler-Weg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Fürst-Pückler-Weg"
+   ],
+   "wd": "Q1482823",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Garte Valley Railway",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 35.6,
+   "names": [
+    "Garte Valley Railway",
+    "Göttinger Kleinbahn"
+   ],
+   "wd": "Q1559811",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Gaubahn-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 12755,
+   "osm_rels": [
+    12755
+   ],
+   "length_km": null,
+   "names": [
+    "Gaubahn-Radweg"
+   ],
+   "wd": "Q26836593",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 49.587,
+   "lon": 10.0082
+  },
+  {
+   "n": "Gera-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Gera-Radweg"
+   ],
+   "wd": "Q1320028",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "German Ferry Road",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 373660,
+   "osm_rels": [
+    373660
+   ],
+   "length_km": null,
+   "names": [
+    "Deutsche Fährstraße",
+    "German Ferry Road"
+   ],
+   "wd": "Q668119",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 53.7948,
+   "lon": 9.403
+  },
+  {
+   "n": "Glan-Blies Way",
+   "cc": "DE",
+   "countries": [
+    "DE",
+    "FR"
+   ],
+   "osm_rel": 143959,
+   "osm_rels": [
+    143959
+   ],
+   "length_km": null,
+   "names": [
+    "Glan-Blies Cycle Path",
+    "Glan-Blies Way",
+    "Glan-Blies-Weg",
+    "Sentier Glan-Blies"
+   ],
+   "wd": "Q1529165",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 49.4581,
+   "lon": 7.4537
+  },
+  {
+   "n": "Harzrundweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Harzrundweg"
+   ],
+   "wd": "Q1588045",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Heidelberg-Schwarzwald-Bodensee-Weg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 22527,
+   "osm_rels": [
+    22527
+   ],
+   "length_km": null,
+   "names": [
+    "Heidelberg-Schwarzwald-Bodensee-Weg"
+   ],
+   "wd": "Q1593987",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Hessian long-distance cycle route R5",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 109427,
+   "osm_rels": [
+    109427
+   ],
+   "length_km": null,
+   "names": [
+    "Hessian long-distance cycle route R5",
+    "Hessischer Radfernweg R5"
+   ],
+   "wd": "Q1284047",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 51.1835,
+   "lon": 10.1656
+  },
+  {
+   "n": "Hessian long-distance cycle route R7",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 903812,
+   "osm_rels": [
+    903812
+   ],
+   "length_km": null,
+   "names": [
+    "Hessian long-distance cycle route R7",
+    "Hessischer Radfernweg R7"
+   ],
+   "wd": "Q1615946",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 50.371,
+   "lon": 8.0042
+  },
+  {
+   "n": "Hessian long-distance cycle route R9",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 23307,
+   "osm_rels": [
+    23307
+   ],
+   "length_km": null,
+   "names": [
+    "Hessian long-distance cycle route R9",
+    "Hessischer Radfernweg R9"
+   ],
+   "wd": "Q1615951",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 49.6315,
+   "lon": 8.3747
+  },
+  {
+   "n": "Hessischer Radfernweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 2073121,
+   "osm_rels": [
+    2073121
+   ],
+   "length_km": null,
+   "names": [
+    "Ederauenradweg",
+    "Hessischer Radfernweg"
+   ],
+   "wd": "Q1283650",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 50.9673,
+   "lon": 8.1749
+  },
+  {
+   "n": "Hiwwel-Route",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Hiwwel-Route"
+   ],
+   "wd": "Q14543727",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 49.9693,
+   "lon": 7.8903
+  },
+  {
+   "n": "Hofjagdweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 2196978,
+   "osm_rels": [
+    2196978
+   ],
+   "length_km": 68.0,
+   "names": [
+    "Hofjagdweg"
+   ],
+   "wd": "Q14543728",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Internationale Dollardroute",
+   "cc": "DE",
+   "countries": [
+    "DE",
+    "NL"
+   ],
+   "osm_rel": 1020243,
+   "osm_rels": [
+    1020243
+   ],
+   "length_km": 361.4,
+   "names": [
+    "Dollard Route",
+    "Dollardroute",
+    "Internationale Dollardroute"
+   ],
+   "wd": "Q883273",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Lahn Valley Cycle Path",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 245.0,
+   "names": [
+    "Lahn Valley Cycle Path",
+    "Lahnradweg",
+    "Lahntalradweg"
+   ],
+   "wd": "Q1253784",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 50.4738,
+   "lon": 8.2638
+  },
+  {
+   "n": "Maare-Mosel-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 21934,
+   "osm_rels": [
+    21934
+   ],
+   "length_km": null,
+   "names": [
+    "Maare-Mosel-Radweg",
+    "Maare-Moselradweg"
+   ],
+   "wd": "Q1882266",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 50.1978,
+   "lon": 6.8353
+  },
+  {
+   "n": "Main-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 7277,
+   "osm_rels": [
+    7277
+   ],
+   "length_km": 600.0,
+   "names": [
+    "Main-Radweg",
+    "Mainradweg"
+   ],
+   "wd": "Q1885499",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 50.0295,
+   "lon": 11.8238
+  },
+  {
+   "n": "Main-Werra-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Main-Werra-Radweg"
+   ],
+   "wd": "Q1885510",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mosel-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE",
+    "FR"
+   ],
+   "osm_rel": 4281,
+   "osm_rels": [
+    4281
+   ],
+   "length_km": null,
+   "names": [
+    "Mosel-Radweg",
+    "Moselradweg"
+   ],
+   "wd": "Q1949067",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 49.4667,
+   "lon": 6.3716
+  },
+  {
+   "n": "Mulderadweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 30259,
+   "osm_rels": [
+    30259
+   ],
+   "length_km": null,
+   "names": [
+    "Mulderadweg"
+   ],
+   "wd": "Q1952105",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mönchsweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Mönchsweg"
+   ],
+   "wd": "Q1958028",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Nahe-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 21623,
+   "osm_rels": [
+    21623
+   ],
+   "length_km": null,
+   "names": [
+    "Nahe-Radweg",
+    "Naheradweg"
+   ],
+   "wd": "Q1963661",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Neckartalradweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 6320776,
+   "osm_rels": [
+    6320776
+   ],
+   "length_km": null,
+   "names": [
+    "Neckartal-Radweg",
+    "Neckartalradweg"
+   ],
+   "wd": "Q1769622",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 48.058,
+   "lon": 8.4649
+  },
+  {
+   "n": "NiederRheinroute",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "NiederRheinroute",
+    "Нижньорейнська велосипедна доріжка"
+   ],
+   "wd": "Q1987564",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Old Salt Route",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 1252364,
+   "osm_rels": [
+    1252364
+   ],
+   "length_km": null,
+   "names": [
+    "Alte Salzstraße",
+    "Antigua ruta de la sal",
+    "Old Salt Route",
+    "Vanha suolatie",
+    "ancienne route du sel"
+   ],
+   "wd": "Q436177",
+   "why": "famous",
+   "note": "famous coverage: 13 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Pilgerweg Loccum - Volkenroda",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Pilgerweg Loccum - Volkenroda",
+    "Pilgerweg Loccum–Volkenroda"
+   ],
+   "wd": "Q2094971",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Queich Valley Cycleway",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 27851,
+   "osm_rels": [
+    27851
+   ],
+   "length_km": 50.0,
+   "names": [
+    "Queich Valley Cycleway",
+    "Queichtalradweg"
+   ],
+   "wd": "Q1029259",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 49.1685,
+   "lon": 7.847
+  },
+  {
+   "n": "Radfernweg Berlin–Usedom",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Radfernweg Berlin–Usedom",
+    "cyklotrasa Berlín-Uznojem"
+   ],
+   "wd": "Q2125620",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 52.5183,
+   "lon": 13.401
+  },
+  {
+   "n": "Radfernweg Hamburg-Bremen",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Radfernweg Hamburg-Bremen",
+    "Radfernweg Hamburg–Bremen"
+   ],
+   "wd": "Q2125615",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Radfernweg Thüringer Städtekette",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 2243619,
+   "osm_rels": [
+    2243619
+   ],
+   "length_km": 228.0,
+   "names": [
+    "Radfernweg Thüringer Städtekette"
+   ],
+   "wd": "Q2125609",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Radrunde Allgäu",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 2908449,
+   "osm_rels": [
+    2908449
+   ],
+   "length_km": null,
+   "names": [
+    "Radrunde Allgäu",
+    "Szlak rowerowy Allgäu"
+   ],
+   "wd": "Q18560320",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Rhön Cycleway",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Rhön Cycleway",
+    "Rhönradweg"
+   ],
+   "wd": "Q2148433",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 50.8146,
+   "lon": 10.231
+  },
+  {
+   "n": "Ruhr-Sieg-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 11286321,
+   "osm_rels": [
+    11286321
+   ],
+   "length_km": null,
+   "names": [
+    "Ruhr-Sieg-Radweg"
+   ],
+   "wd": "Q65952678",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "RuhrtalRadweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "RuhrtalRadweg",
+    "Ruhrtalradweg"
+   ],
+   "wd": "Q1273242",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Römer-Lippe-Route",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Römer-Lippe-Route",
+    "Römer-Lippe-route"
+   ],
+   "wd": "Q15957675",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Saar-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE",
+    "FR"
+   ],
+   "osm_rel": 107338,
+   "osm_rels": [
+    107338
+   ],
+   "length_km": null,
+   "names": [
+    "Saar-Radweg",
+    "Vallée de Sarre"
+   ],
+   "wd": "Q2209081",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Sauertalradweg",
+   "cc": "DE",
+   "countries": [
+    "DE",
+    "LU"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Sauer-Radweg",
+    "Sauertal-Radweg",
+    "Sauertalradweg"
+   ],
+   "wd": "Q1642850",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 49.7169,
+   "lon": 6.5039
+  },
+  {
+   "n": "Schwarze-Elster-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Schwarze-Elster-Radweg"
+   ],
+   "wd": "Q1435497",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Tauber Valley Cycleway",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 101.0,
+   "names": [
+    "Tauber Valley Cycleway",
+    "Taubertalradweg"
+   ],
+   "wd": "Q1312127",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 49.3775,
+   "lon": 10.1789
+  },
+  {
+   "n": "Unstrut-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Unstrut-Radweg"
+   ],
+   "wd": "Q1323775",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Unstrut-Werra-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 391590,
+   "osm_rels": [
+    391590
+   ],
+   "length_km": 113.0,
+   "names": [
+    "Unstrut-Werra-Radweg"
+   ],
+   "wd": "Q14535760",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Veloroute SaarLorLux",
+   "cc": "DE",
+   "countries": [
+    "DE",
+    "FR",
+    "LU"
+   ],
+   "osm_rel": 20618,
+   "osm_rels": [
+    20618
+   ],
+   "length_km": 473.0,
+   "names": [
+    "Veloroute SaarLorLux",
+    "Véloroute SaarLorLux",
+    "Vëlospist SaarLorLux"
+   ],
+   "wd": "Q14535893",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Vogelsberger Südbahnradweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Vogelsberger Südbahnradweg"
+   ],
+   "wd": "Q2530088",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 50.4693,
+   "lon": 9.2755
+  },
+  {
+   "n": "Weiltalweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": 92673,
+   "osm_rels": [
+    92673
+   ],
+   "length_km": null,
+   "names": [
+    "Weiltalweg"
+   ],
+   "wd": "Q1666564",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 50.2258,
+   "lon": 8.4365
+  },
+  {
+   "n": "Werratal-Radweg",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Werratal-Radweg"
+   ],
+   "wd": "Q2563316",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 50.499,
+   "lon": 10.9635
+  },
+  {
+   "n": "Weser-Harz-Heide Cycle Route",
+   "cc": "DE",
+   "countries": [
+    "DE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Szlak rowerowy Weser-Harz-Heide",
+    "Weser-Harz-Heide Cycle Route",
+    "Weser-Harz-Heide-Radweg"
+   ],
+   "wd": "Q2563833",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Baltic Cycle Route",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 20828,
+   "osm_rels": [
+    20828
+   ],
+   "length_km": 840.0,
+   "names": [
+    "Baltic Cycle Route",
+    "N8 - Baltische Route",
+    "Ostseeroute",
+    "Østersøruten"
+   ],
+   "wd": "Q52658870",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 55.0512,
+   "lon": 10.5971
+  },
+  {
+   "n": "Bornholm circular route",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 105.0,
+   "names": [
+    "Bornholm Rundt",
+    "Bornholm Rundweg",
+    "Bornholm circular route",
+    "N10 - Rond Bornholm"
+   ],
+   "wd": "Q52667013",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Danish National Cycle Route 5",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 61628,
+   "osm_rels": [
+    61628
+   ],
+   "length_km": 650.0,
+   "names": [
+    "Danish National Cycle Route 5",
+    "N5 - Oostkustroute",
+    "Nordseeküsten-Radweg Dänemark",
+    "Østkystruten"
+   ],
+   "wd": "Q22665853",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire",
+   "lat": 56.1584,
+   "lon": 10.2121
+  },
+  {
+   "n": "Den Grønne Sti",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 367981,
+   "osm_rels": [
+    367981
+   ],
+   "length_km": null,
+   "names": [
+    "Den Grønne Sti"
+   ],
+   "wd": "Q12308062",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Esbjerg - Copenhagen",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 18524,
+   "osm_rels": [
+    18524
+   ],
+   "length_km": 330.0,
+   "names": [
+    "Esbjerg - Copenhagen",
+    "Esbjerg - Kopenhagen",
+    "Esbjerg - København",
+    "N6 - Esbjerg-Kopenhagen"
+   ],
+   "wd": "Q52666028",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Green Cycle Routes",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Green Cycle Routes",
+    "Grønne Cykelruter",
+    "Grønne cykelruter",
+    "Grüne Radwege Kopenhagen"
+   ],
+   "wd": "Q3525046",
+   "why": "famous",
+   "note": "famous coverage: 5 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Helsingør - Gedser",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 36778,
+   "osm_rels": [
+    36778
+   ],
+   "length_km": 290.0,
+   "names": [
+    "Helsingör - Gedser",
+    "Helsingør - Gedser",
+    "N9 - Gedser-Helsingør"
+   ],
+   "wd": "Q52666542",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kulturringen",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 9282401,
+   "osm_rels": [
+    9282401
+   ],
+   "length_km": null,
+   "names": [
+    "Kulturringen"
+   ],
+   "wd": "Q63477110",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 56.1341,
+   "lon": 10.22
+  },
+  {
+   "n": "Søndervig - København",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 28714,
+   "osm_rels": [
+    28714
+   ],
+   "length_km": 310.0,
+   "names": [
+    "N4 - Kopenhagen-Søndervig",
+    "Sondervig - Kopenhagen",
+    "Søndervig - København"
+   ],
+   "wd": "Q25044237",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire",
+   "lat": 56.1581,
+   "lon": 10.212
+  },
+  {
+   "n": "The Limfjord route",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 1633510,
+   "osm_rels": [
+    1633510
+   ],
+   "length_km": 610.0,
+   "names": [
+    "Die Limfjordroute",
+    "Limfjordsruten",
+    "N12 - Limfjordroute",
+    "The Limfjord route"
+   ],
+   "wd": "Q52666777",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "West Coast Route",
+   "cc": "DK",
+   "countries": [
+    "DK"
+   ],
+   "osm_rel": 162016,
+   "osm_rels": [
+    162016
+   ],
+   "length_km": null,
+   "names": [
+    "N1 - Westkustroute",
+    "Vestkystruten",
+    "West Coast Route"
+   ],
+   "wd": "Q5219846",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 56.3718,
+   "lon": 8.121
+  },
+  {
+   "n": "EuroVelo 11 – East Europe Route",
+   "cc": "EE",
+   "countries": [
+    "EE",
+    "FI",
+    "GR",
+    "HU",
+    "LT",
+    "LV",
+    "MK",
+    "NO",
+    "PL",
+    "RS",
+    "SK"
+   ],
+   "osm_rel": 2766981,
+   "osm_rels": [
+    2766981
+   ],
+   "length_km": 6750.0,
+   "names": [
+    "EV 11",
+    "EV11",
+    "EV11 Oost-Europaroute",
+    "EV11 Østeuropeiske rute",
+    "EuroVelo 11",
+    "EuroVelo 11 - Itinerario dell'Europa orientale",
+    "EuroVelo 11 - Szlak Europy Wschodniej",
+    "EuroVelo 11 - Véloroute de l'Europe de l'Est",
+    "EuroVelo 11 – East Europe Route",
+    "EuroVelo 11 – Východoevropská trasa",
+    "EuroVelo 11: East Europe Route"
+   ],
+   "wd": "Q3060533",
+   "why": "famous",
+   "note": "famous coverage: 11 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "La Loire à vélo",
+   "cc": "FR",
+   "countries": [
+    "FR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 800.0,
+   "names": [
+    "La Loire à vélo"
+   ],
+   "wd": "Q3210116",
+   "why": "famous",
+   "note": "famous coverage: 2 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "La Régalante",
+   "cc": "FR",
+   "countries": [
+    "FR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 275.0,
+   "names": [
+    "La Régalante"
+   ],
+   "wd": "Q133839373",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "La Seine à Vélo",
+   "cc": "FR",
+   "countries": [
+    "FR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "La Seine à Vélo",
+    "La Seine à vélo"
+   ],
+   "wd": "Q129419583",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Vélo Francette",
+   "cc": "FR",
+   "countries": [
+    "FR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "V43",
+    "Vélo Francette"
+   ],
+   "wd": "Q28493478",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Véloroute du Calavon",
+   "cc": "FR",
+   "countries": [
+    "FR"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Véloroute du Calavon"
+   ],
+   "wd": "Q16683024",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Sea to Sea Cycle Route",
+   "cc": "GB",
+   "countries": [
+    "GB"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Coast to Coast",
+    "Coast to Coast Cycleway",
+    "Sea to Sea Cycle Route"
+   ],
+   "wd": "Q7440138",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Balatoni kerékpárút",
+   "cc": "HU",
+   "countries": [
+    "HU"
+   ],
+   "osm_rel": 2518726,
+   "osm_rels": [
+    2518726
+   ],
+   "length_km": 205.0,
+   "names": [
+    "Balaton-Radweg",
+    "Balatoni kerékpárút"
+   ],
+   "wd": "Q789285",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Beara Way",
+   "cc": "IE",
+   "countries": [
+    "IE"
+   ],
+   "osm_rel": 2989585,
+   "osm_rels": [
+    2989585
+   ],
+   "length_km": null,
+   "names": [
+    "Beara Way",
+    "Slí Bhéara"
+   ],
+   "wd": "Q4876619",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Beara-Breifne Way",
+   "cc": "IE",
+   "countries": [
+    "IE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Beara-Breifne Way"
+   ],
+   "wd": "Q17380386",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Bikeway 3",
+   "cc": "IT",
+   "countries": [
+    "IT"
+   ],
+   "osm_rel": 12102048,
+   "osm_rels": [
+    12102048
+   ],
+   "length_km": 76.0,
+   "names": [
+    "Bikeway 3",
+    "Bikeway 3 Pustertal",
+    "Bikeway 3 Val Pusteria",
+    "Percorso ciclabile 3 Val Pusteria",
+    "Radroute 3 „Pustertal“"
+   ],
+   "wd": "Q3676408",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire",
+   "lat": 46.777,
+   "lon": 11.95
+  },
+  {
+   "n": "cycleway of the Sun",
+   "cc": "IT",
+   "countries": [
+    "IT"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Ciclovia del Sole",
+    "ciclovia del Sole",
+    "cycleway of the Sun"
+   ],
+   "wd": "Q3676520",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC1 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 31623,
+   "osm_rels": [
+    31623
+   ],
+   "length_km": 43.0,
+   "names": [
+    "PC1 Centrumfietsroute",
+    "PC1 Cycle Route",
+    "Vëlospist PC1",
+    "itinéraire cyclable PC1"
+   ],
+   "wd": "Q13105398",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC10 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 22170,
+   "osm_rels": [
+    22170
+   ],
+   "length_km": 6.9,
+   "names": [
+    "PC10 Cycle Route",
+    "PC10 François Faber",
+    "Vëlospist PC10",
+    "itinéraire cyclable PC10"
+   ],
+   "wd": "Q64506385",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC11 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 14.6,
+   "names": [
+    "PC11 Charly Gaul",
+    "PC11 Cycle Route",
+    "Vëlospist PC11",
+    "itinéraire cyclable PC11"
+   ],
+   "wd": "Q64510133",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC12 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 30356,
+   "osm_rels": [
+    30356
+   ],
+   "length_km": 52.86,
+   "names": [
+    "PC12 Attert-Radweg",
+    "PC12 Cycle Route",
+    "Vëlospist PC12",
+    "itinéraire cyclable PC12"
+   ],
+   "wd": "Q16764997",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC14 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 58239,
+   "osm_rels": [
+    58239
+   ],
+   "length_km": 17.7,
+   "names": [
+    "PC14 Cycle Route",
+    "PC14 Eisch-Mamerfietsroute",
+    "Vëlospist PC14",
+    "itinéraire cyclable PC14"
+   ],
+   "wd": "Q64526237",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC15 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 36295,
+   "osm_rels": [
+    36295
+   ],
+   "length_km": 30.67,
+   "names": [
+    "PC15",
+    "PC15 Alzette-Radweg",
+    "PC15 Cycle Route",
+    "Vëlospist PC15",
+    "itinéraire cyclable PC15"
+   ],
+   "wd": "Q64526302",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC17 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 31802,
+   "osm_rels": [
+    31802
+   ],
+   "length_km": 47.8,
+   "names": [
+    "PC17 Cycle Route",
+    "PC17 Westen-Radweg",
+    "Vëlospist PC17",
+    "itinéraire cyclable PC17"
+   ],
+   "wd": "Q16764415",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC18 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 31814,
+   "osm_rels": [
+    31814
+   ],
+   "length_km": 12.31,
+   "names": [
+    "PC18 Cycle Route",
+    "PC18 Schieferbrüche-Radweg",
+    "Vëlospist PC18",
+    "itinéraire cyclable PC18"
+   ],
+   "wd": "Q64532934",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC2 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 20351,
+   "osm_rels": [
+    20351
+   ],
+   "length_km": null,
+   "names": [
+    "PC2 Cycle Route",
+    "PC2 Luxemburg-Echternach",
+    "Vëlospist PC2",
+    "itinéraire cyclable PC2"
+   ],
+   "wd": "Q13105401",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC20 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 50440,
+   "osm_rels": [
+    50440
+   ],
+   "length_km": 20.9,
+   "names": [
+    "PC20",
+    "PC20 Cycle Route",
+    "PC20 Wiltzfietsroute",
+    "Vëlospist PC20",
+    "itinéraire cyclable PC20"
+   ],
+   "wd": "Q64667052",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC21 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 61492,
+   "osm_rels": [
+    61492
+   ],
+   "length_km": 47.0,
+   "names": [
+    "PC21 Cycle Route",
+    "PC21 Nord-Radweg",
+    "Vëlospist PC21",
+    "itinéraire cyclable PC21"
+   ],
+   "wd": "Q64667633",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC22 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 17417888,
+   "osm_rels": [
+    17417888
+   ],
+   "length_km": 24.62,
+   "names": [
+    "PC22 Ardennenfietsroute",
+    "PC22 Cycle Route",
+    "Vëlospist PC22",
+    "itinéraire cyclable PC22"
+   ],
+   "wd": "Q64670858",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC23 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 12877183,
+   "osm_rels": [
+    12877183
+   ],
+   "length_km": null,
+   "names": [
+    "PC23 Benny",
+    "PC23 Cycle Route",
+    "Vëlospist PC23",
+    "itinéraire cyclable PC23"
+   ],
+   "wd": "Q64676399",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC3 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 12969,
+   "osm_rels": [
+    12969
+   ],
+   "length_km": 89.0,
+   "names": [
+    "PC3 Cycle Route",
+    "PC3 Drei Rivieren-Radweg",
+    "Vëlospist PC3",
+    "itinéraire cyclable PC3"
+   ],
+   "wd": "Q16764998",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC4 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 55854,
+   "osm_rels": [
+    55854
+   ],
+   "length_km": 19.4,
+   "names": [
+    "PC4 Cycle Route",
+    "PC4 Syre-Radweg",
+    "Vëlospist PC4",
+    "itinéraire cyclable PC4"
+   ],
+   "wd": "Q64490725",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC5 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 51027,
+   "osm_rels": [
+    51027
+   ],
+   "length_km": 32.4,
+   "names": [
+    "PC5 Cycle Route",
+    "PC5 Weisse Ernz-Radweg",
+    "Vëlospist PC5",
+    "itinéraire cyclable PC5"
+   ],
+   "wd": "Q64490956",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC6 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 22176,
+   "osm_rels": [
+    22176
+   ],
+   "length_km": 54.0,
+   "names": [
+    "PC6 Cycle Route",
+    "PC6 Drei Länder-Radweg",
+    "Vëlospist PC6",
+    "itinéraire cyclable PC6"
+   ],
+   "wd": "Q64495444",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC8 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 17760,
+   "osm_rels": [
+    17760
+   ],
+   "length_km": 21.97,
+   "names": [
+    "PC8 Cycle Route",
+    "PC8 Rote Erde-Radweg",
+    "Vëlospist PC8",
+    "itinéraire cyclable PC8"
+   ],
+   "wd": "Q64504516",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "PC9 Cycle Route",
+   "cc": "LU",
+   "countries": [
+    "LU"
+   ],
+   "osm_rel": 30376,
+   "osm_rels": [
+    30376
+   ],
+   "length_km": 22.79,
+   "names": [
+    "PC9 Cycle Route",
+    "PC9 Fietsroute Faubourg Minier",
+    "Vëlospist PC9",
+    "itinéraire cyclable PC9"
+   ],
+   "wd": "Q64505952",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Mergellandroute",
+   "cc": "NL",
+   "countries": [
+    "NL"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Mergellandroute"
+   ],
+   "wd": "Q3946399",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Waddenzeeroute",
+   "cc": "NL",
+   "countries": [
+    "NL"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 270.0,
+   "names": [
+    "LF10",
+    "Landelijke fietsroute 10",
+    "Waddenzee-Route",
+    "Waddenzeeroute"
+   ],
+   "wd": "Q2409323",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Bicycle Trail of the former Borderland",
+   "cc": "PL",
+   "countries": [
+    "PL"
+   ],
+   "osm_rel": 3328696,
+   "osm_rels": [
+    3328696
+   ],
+   "length_km": 14.5,
+   "names": [
+    "Bicycle Trail of the Old Borderland in Sosnowiec",
+    "Bicycle Trail of the former Borderland",
+    "Radweg des ehemaligen Borderlands",
+    "Szlak Rowerowy Dawnego Pogranicza"
+   ],
+   "wd": "Q28673022",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Blue Velo",
+   "cc": "PL",
+   "countries": [
+    "PL"
+   ],
+   "osm_rel": 8463573,
+   "osm_rels": [
+    8463573
+   ],
+   "length_km": null,
+   "names": [
+    "Blue Velo"
+   ],
+   "wd": "Q60170312",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Green Velo – East of Poland Cycling Trail",
+   "cc": "PL",
+   "countries": [
+    "PL"
+   ],
+   "osm_rel": 5141547,
+   "osm_rels": [
+    5141547
+   ],
+   "length_km": null,
+   "names": [
+    "East of Poland Cycling Trail",
+    "East of Poland Cycling Trail Green Velo",
+    "Green Velo",
+    "Green Velo – East of Poland Cycling Trail",
+    "Wschodni Szlak Rowerowy Green Velo",
+    "Східний Велосипедний Шлях Green Velo"
+   ],
+   "wd": "Q25407118",
+   "why": "famous",
+   "note": "famous coverage: 10 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Pierścień Rowerowy dookoła Poznania",
+   "cc": "PL",
+   "countries": [
+    "PL"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Pierścień Rowerowy dookoła Poznania"
+   ],
+   "wd": "Q11816794",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Vistula River Cycling Route",
+   "cc": "PL",
+   "countries": [
+    "PL"
+   ],
+   "osm_rel": 14548364,
+   "osm_rels": [
+    14548364
+   ],
+   "length_km": null,
+   "names": [
+    "Ciclovia della Vistola",
+    "Ciclovia do rio Vístula",
+    "Ruta Ciclista del Vístula",
+    "Vislianska cyklotrasa",
+    "Vistula Cycle Route",
+    "Vistula Cycling Route",
+    "Vistula River Cycling Route",
+    "Vistulafietsroute",
+    "Véloroute de la Vistule",
+    "WTR",
+    "Weichsel-Radweg",
+    "Wisła-cykelruten",
+    "Wiślana Trasa Rowerowa",
+    "Віслінська велосипедна траса"
+   ],
+   "wd": "Q9376094",
+   "why": "famous",
+   "note": "famous coverage: 6 Wikipedia languages, missing from the wire",
+   "lat": 52.6137,
+   "lon": 19.188
+  },
+  {
+   "n": "cycling in Gdańsk",
+   "cc": "PL",
+   "countries": [
+    "PL"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": null,
+   "names": [
+    "Gdańsk cycling",
+    "Trasy rowerowe w Gdańsku",
+    "cycling in Gdańsk",
+    "cyklistika v Gdaňsku"
+   ],
+   "wd": "Q17066263",
+   "why": "famous",
+   "note": "famous coverage: 3 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Dão line",
+   "cc": "PT",
+   "countries": [
+    "PT"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 49.3,
+   "names": [
+    "Dão line",
+    "Ferrovia del Dão",
+    "Linha do Dão",
+    "Línea del Dão",
+    "ligne de Dão",
+    "Železniční trať Dão"
+   ],
+   "wd": "Q559327",
+   "why": "famous",
+   "note": "famous coverage: 7 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Kattegattleden",
+   "cc": "SE",
+   "countries": [
+    "SE"
+   ],
+   "osm_rel": null,
+   "osm_rels": [],
+   "length_km": 370.0,
+   "names": [
+    "Kattegattleden"
+   ],
+   "wd": "Q10544439",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  },
+  {
+   "n": "Klarälvsbanan",
+   "cc": "SE",
+   "countries": [
+    "SE"
+   ],
+   "osm_rel": 199161,
+   "osm_rels": [
+    199161
+   ],
+   "length_km": 120.0,
+   "names": [
+    "Klarälvsbanan"
+   ],
+   "wd": "Q10546074",
+   "why": "famous",
+   "note": "famous coverage: 4 Wikipedia languages, missing from the wire"
+  }
+ ]
+}

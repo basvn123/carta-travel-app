@@ -20,9 +20,12 @@ export const DRAWER_MAX = 60;
 // T441: fetch the map's code before it is asked for, when the browser is idle
 // after the first paint and again the moment a pointer or focus reaches the
 // Map switch, unless the reader saves data or sits on a slow line. The
-// basemap's two hosts are warmed at the same moment (here, not in index.html,
-// so a visit that never reaches Explore opens no connection to them).
-const MAP_HOSTS = ['https://basemaps.cartocdn.com', 'https://tiles.basemaps.cartocdn.com'];
+// basemap's host is warmed at the same moment (here, not in index.html, so a
+// visit that never reaches Explore opens no connection to it). G12: the
+// Carta basemap's tiles, glyphs and style live on the data host
+// (src/lib/map/cartaMapStyle.js); CARTO is only the fallback, so it is not
+// warmed.
+const MAP_HOSTS = ['https://data.carta-europetravel.com'];
 
 let mapPrefetched = false;
 

@@ -3,16 +3,22 @@ import React from 'react';
 import { resolveWhen } from '../../lib/when.js';
 import { partyOf } from '../../lib/party.js';
 import { homePoint } from '../../lib/travelWay.js';
-import { wayRowsFor, wayKey, flightFiles } from '../../lib/settings/ways.js';
+import { wayRowsFor, wayKey, flightFiles, waysReady, wayRowsPending, warmWays } from '../../lib/settings/ways.js';
 import { makeLabels, whyFacts, noCarOk, underOk, quietOk, matchGuided, guidedComparator } from '../../lib/guidedSearch.js';
-import { overviewRegion, overviewScore, reasonText, overviewReason } from '../../lib/placeOverview.js';
+import { overviewRegion, overviewScore, reasonText, overviewReason, rowReason } from '../../lib/placeOverview.js';
 import { fmtMonthRanges } from '../ClimateStrip.jsx';
 import { buildNearbyIndex, roleOf } from '../../lib/taxonomy.js';
 import { bandAtLeast, minVerdict } from '../../lib/rating.js';
+import { EXTRA_SORTS, matchOk, picksOk, rankVibe, scoreOk, sortExtra, tempOk } from '../filters/filterModel.js';
+import { fit } from '../../lib/match.js';
+import { sortByPrice } from '../../lib/settings/prices.js';
+
+// The sort keys the catalogue orders by price (hooks/useExploreCatalog.js).
+const PRICE_SORTS = new Set(['cost', 'stay', 'food']);
 
 export function useExploreRows({
   availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
-  lang, sortKey, t, travelMonth, view, visible, xf,
+  lang, sortKey, t, travelMonth, view, visible, xf, taste = null, matchMonth = null,
 }) {
   // How the traveller gets there (T518, T582): under the settings line's
   // way, each place carries `cost.way`, { mode, perPerson, airline?, hours? }:
@@ -56,14 +62,30 @@ export function useExploreRows({
   // a price view or span change reprices nothing here; the figure itself is
   // lib/settings priceFigure at render.
   const wKey = wayKey(request, wayMode, home, party);
+  // G12, D10 (round 7): ways not yet kept for these inputs (App warms them
+  // ahead of a re-price, but not for inputs Explore holds while the start
+  // town is still unknown) are worked out in slices here; until then every
+  // row shows its way as not known yet, never a guessed figure.
+  const [waysTick, setWaysTick] = React.useState(0);
   const wayRows = React.useMemo(() => {
     if (!data?.destinations) return null;
-    return wayRowsFor({ rows: catAllRows, destinations: data.destinations, files, request, mode: wayMode, home, party });
+    const args = { rows: catAllRows, destinations: data.destinations, files, request, mode: wayMode, home, party };
+    if (!waysReady(args)) return { pending: true, map: wayRowsPending(args) };
+    return { pending: false, map: wayRowsFor(args) };
     // `request` is read through wKey: only a change that moves a way reprices.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [catAllRows, files, wKey, data]);
+  }, [catAllRows, files, wKey, data, waysTick]);
+  const waysPending = !!wayRows?.pending;
+  React.useEffect(() => {
+    if (!waysPending || !data?.destinations) return undefined;
+    const ctl = new AbortController();
+    warmWays({ destinations: data.destinations, files, request, mode: wayMode, home, party, signal: ctl.signal })
+      .then((done) => { if (done && !ctl.signal.aborted) React.startTransition(() => setWaysTick((n) => n + 1)); });
+    return () => ctl.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [waysPending, wKey, data, files]);
   const withWay = React.useCallback(
-    (list) => (wayRows ? list.map((p) => (wayRows.has(p.id) ? wayRows.get(p.id) : p)) : list),
+    (list) => (wayRows ? list.map((p) => (wayRows.map.has(p.id) ? wayRows.map.get(p.id) : p)) : list),
     [wayRows],
   );
   const allRows = React.useMemo(() => withWay(catAllRows), [catAllRows, withWay]);
@@ -100,6 +122,24 @@ export function useExploreRows({
       { monthName: gLabels.monthInline, monthRanges: (ms) => fmtMonthRanges(ms, t) },
     ),
   }), [guided, lang, ovMonth, whyOn, whyOf, t, gLabels]);
+  // The same for a row under the applied chips: it drops the words a chip
+  // already says (the month, a vibe, an area, No car, Not crowded) and
+  // keeps what differs by place (judgement-7: "Good in July" on every row
+  // at 1440). The list's rows use it; the map's rows draw no reason and
+  // the picked card stands alone, so they keep overviewOf.
+  const rowWhyOf = React.useCallback(
+    (p) => whyFacts(p, dxf, { ...gctx, t, lang, labels: gLabels, placeOnly: true }).join(', ') || null,
+    [dxf, gctx, t, lang, gLabels],
+  );
+  const rowOverviewOf = React.useCallback((p) => ({
+    region: overviewRegion(guided, p.id, lang),
+    rating: overviewScore(p, ovMonth),
+    reason: reasonText(
+      rowReason(overviewReason(p, { month: ovMonth, why: whyOn ? rowWhyOf(p) : null }), { month: dxf.month }),
+      t,
+      { monthName: gLabels.monthInline, monthRanges: (ms) => fmtMonthRanges(ms, t) },
+    ),
+  }), [guided, lang, ovMonth, whyOn, rowWhyOf, dxf.month, t, gLabels]);
 
   // C1's role needs the neighbour count; built once per catalogue.
   const nearby = React.useMemo(
@@ -115,27 +155,73 @@ export function useExploreRows({
   // count shown in the control bar is THIS list's length (or, while the map
   // is up, the part of it inside the viewport), so it can never disagree
   // with what renders.
-  const taxRows = React.useMemo(() => rows.filter((p) => {
-    if (dxf.verdicts.length && !bandAtLeast(p.rating, minVerdict(dxf.verdicts))) return false;
-    if (dxf.month && !(p.climate?.best || []).includes(dxf.month)) return false;
-    if (dxf.nocar && !noCarOk(p)) return false;
-    if (dxf.budget && !underOk(dxf.budget)(p)) return false;
-    if (dxf.quiet && !quietOk(p, quietWhen)) return false;
-    // The guided facets (vibe, area, near, close by) hold only once the
-    // guided data has landed; until then the list waits empty rather than
-    // showing places that may not match (T442).
-    if ((dxf.vibe || dxf.area || dxf.near || dxf.nb.length) && !matchGuided(p, dxf, gctx)) return false;
+  // One predicate for the list (deferred xf) and the sheet's live count
+  // (xf as tapped): the count reads the rows already priced, so "Show n
+  // places" follows a tap at once while the list follows after (owner: the
+  // count lagged 0.5 to 1 s behind a tap).
+  // G12 map view round 2: Score 8+ and Match 70%+ (filterModel.js); the
+  // match reads the same fit the rows' mark shows.
+  const fitOf = React.useMemo(
+    () => (taste ? (p) => fit(taste, p.taste, matchMonth) : null), [taste, matchMonth]);
+  const keepFor = React.useCallback((f, when) => (p) => {
+    if (f.minScore && !scoreOk(p, f.minScore)) return false;
+    if (f.minMatch && !matchOk(p, f.minMatch, fitOf)) return false;
+    if (f.verdicts.length && !bandAtLeast(p.rating, minVerdict(f.verdicts))) return false;
+    if (f.month && !(p.climate?.best || []).includes(f.month)) return false;
+    if (f.nocar && !noCarOk(p)) return false;
+    if (f.budget && !underOk(f.budget)(p)) return false;
+    if (f.quiet && !quietOk(p, when)) return false;
+    if ((f.vibe || f.area || f.near || f.nb.length) && !matchGuided(p, f, gctx)) return false;
+    if (f.temps.length && travelMonth && !tempOk(p, travelMonth, f.temps)) return false;
+    if (f.picks.length && !picksOk(p, f.picks, guided)) return false;
     return true;
-  }), [rows, dxf, gctx, quietWhen]);
+  }, [gctx, travelMonth, guided, fitOf]);
+  const liveWhen = React.useMemo(
+    () => (xf.month ? resolveWhen({ xm: xf.month }) : (settingsLine?.when || null)),
+    [xf.month, settingsLine?.when],
+  );
+  // The count for any filter state, for the sheet to show before React
+  // renders the tab: one cheap pass over the rows already priced.
+  const countFor = React.useCallback((f, extra = null) => {
+    const keep = keepFor(f, f.month ? resolveWhen({ xm: f.month }) : (settingsLine?.when || null));
+    let n = 0;
+    for (const p of rows) if (keep(p) && (!extra || extra(p))) n += 1;
+    return n;
+  }, [rows, keepFor, settingsLine?.when]);
+  const liveTotal = React.useMemo(() => {
+    if (xf === dxf) return null;
+    let n = 0;
+    const keep = keepFor(xf, liveWhen);
+    for (const p of rows) if (keep(p)) n += 1;
+    return n;
+  }, [rows, xf, dxf, keepFor, liveWhen]);
+  // The guided facets and the sheet's picks hold only once the guided data
+  // has landed (T442); the day high reads Settings' When month and waits
+  // without one (decision.md section 2). See keepFor above.
+  const taxRows = React.useMemo(() => rows.filter(keepFor(dxf, quietWhen)), [rows, dxf, keepFor, quietWhen]);
   // A guided question ranks its answer: nearest first around a place, the
   // strongest vibe first otherwise, while the reader keeps the default sort.
+  const priceModel = settingsLine?.model || null;
   const guidedRows = React.useMemo(() => {
+    // G12, D10: under "the whole trip" the price sort follows the figure
+    // the cards show (stay plus the way there), and a trip figure that is
+    // the stay alone sorts after every complete one (priceSortValue). The
+    // catalogue's day order stays the tie-break (a stable sort).
+    if (PRICE_SORTS.has(sortKey) && priceModel?.priceSpan === 'trip') return sortByPrice(taxRows, priceModel);
+    // G12 map view round 2: price high to low follows the same rule.
+    if (sortKey === 'costDesc' && priceModel?.priceSpan === 'trip') return sortByPrice(taxRows, priceModel, { desc: true });
+    // G12 map view round 2: price high to low, distance from the From place
+    // and hidden gems first, over the catalogue's Score order.
+    if (EXTRA_SORTS.includes(sortKey)) return sortExtra(taxRows, sortKey, { home });
     if (sortKey && sortKey !== 'beauty') return taxRows;
     // (T444: under a guided question "beauty" reads "Best match"; picking
     // "Rating" sets "rating", which the catalogue sorts by rating.)
-    const cmp = guidedComparator(dxf, gctx);
+    // A pick with a vibe behind it (Hiking bases, Islands) orders its list
+    // the way the same typed word does, strongest first.
+    const rank = !dxf.vibe && !dxf.near ? rankVibe(dxf.picks) : null;
+    const cmp = guidedComparator(rank ? { ...dxf, vibe: rank } : dxf, gctx);
     return cmp ? [...taxRows].sort(cmp) : taxRows;
-  }, [taxRows, dxf, gctx, sortKey]);
+  }, [taxRows, dxf, gctx, sortKey, home, priceModel]);
 
   // C7: what the map's viewport holds, counted live while the map is shown.
   const shownRows = React.useMemo(() => {
@@ -153,5 +239,5 @@ export function useExploreRows({
     () => (view === 'map' ? shownRows : guidedRows).slice(0, visible),
     [guidedRows, shownRows, view, visible],
   );
-  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, roleFor, taxRows, guidedRows, shownRows, listed };
+  return { settingsLine, setCountryNot, oneCountry, request, flightLimitAvailable, allRows, rows, nearRow, gLabels, overviewOf, rowOverviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed, home, keepFor, fitOf };
 }

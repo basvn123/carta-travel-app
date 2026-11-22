@@ -91,3 +91,34 @@ test('tripDates: own dates, a month, or nothing', async () => {
   assert.equal(tripDates({ ...own, dateFlex: 'any' }, t, 'en-GB'), null);
   assert.equal(tripDates(null, t), null);
 });
+
+// Judgement-7 (G12): a list row under the applied chips does not repeat a
+// chip's own words; what differs by place stays.
+test("rowReason drops only the month chip's own words", async () => {
+  const { rowReason } = await import('../src/lib/placeOverview.js');
+  const good = { kind: 'goodIn', month: 7 };
+  assert.equal(rowReason(good, { month: 7 }), null);
+  assert.equal(rowReason(good, { month: '7' }), null);
+  // The month of the traveller's dates has no chip: the row says it.
+  assert.deepEqual(rowReason(good, { month: null }), good);
+  assert.deepEqual(rowReason(good, { month: 8 }), good);
+  // A month's own sentence and the best months differ by place.
+  const own = { kind: 'monthWhy', text: 'Warm sea' };
+  assert.deepEqual(rowReason(own, { month: 7 }), own);
+  const best = { kind: 'bestIn', months: [5, 6, 9] };
+  assert.deepEqual(rowReason(best, { month: 7 }), best);
+  assert.equal(rowReason(null, { month: 7 }), null);
+});
+
+test("whyFacts placeOnly keeps the distances and drops the chips' words", async () => {
+  const { whyFacts } = await import('../src/lib/guidedSearch.js');
+  const tt = (k, v = {}) => `${k}${v.km ? ` ${v.km}` : ''}`;
+  const g = { d: { A: { nb: { beach: 2 } } } };
+  const labels = { vibe: (v) => `vibe ${v}`, area: (a) => `area ${a}`, monthInline: (m) => `m${m}` };
+  const f = { month: 7, vibe: 'food', area: 'tuscany', nb: ['beach'], nocar: true };
+  const ctx = { guided: g, nearRow: null, t: tt, lang: 'en', labels };
+  const all = whyFacts({ id: 'A' }, f, ctx);
+  assert.deepEqual(all, ['gs.whyBeach 2', 'vibe food', 'area tuscany']);
+  assert.deepEqual(whyFacts({ id: 'A' }, f, { ...ctx, placeOnly: true }), ['gs.whyBeach 2']);
+  assert.deepEqual(whyFacts({ id: 'A' }, { month: 7, nb: [] }, { ...ctx, placeOnly: true }), []);
+});

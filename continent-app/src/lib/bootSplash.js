@@ -100,11 +100,25 @@ function drawRelief(el) {
   const animate = !drawnFor;
   drawnFor = key;
   const p = drawn.paths;
-  const path = (cls, d) => (d ? `<path class="${cls}" d="${d}"/>` : '');
-  zone.innerHTML = `<svg class="boot-art" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" focusable="false">${
-    path('relief-shade relief-faint', p.sh2)}${path('relief-shade', p.sh1)}${
-    path('relief-lit relief-faint', p.lit2)}${path('relief-lit', p.lit1)}${
-    path('relief-shade relief-index', p.is)}${path('relief-lit relief-index', p.il)}</svg>`;
+  // DOM calls, not innerHTML: no markup string reaches the page (semgrep
+  // carta-dom-inner-html, docs/security/static-analysis.md).
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = doc.createElementNS(NS, 'svg');
+  svg.setAttribute('class', 'boot-art');
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('preserveAspectRatio', 'none');
+  svg.setAttribute('focusable', 'false');
+  const path = (cls, d) => {
+    if (!d) return;
+    const n = doc.createElementNS(NS, 'path');
+    n.setAttribute('class', cls);
+    n.setAttribute('d', d);
+    svg.append(n);
+  };
+  path('relief-shade relief-faint', p.sh2); path('relief-shade', p.sh1);
+  path('relief-lit relief-faint', p.lit2); path('relief-lit', p.lit1);
+  path('relief-shade relief-index', p.is); path('relief-lit relief-index', p.il);
+  zone.replaceChildren(svg);
   // One height only, the highest: the line a reader can check.
   const top = drawn.spots[0];
   if (top) {

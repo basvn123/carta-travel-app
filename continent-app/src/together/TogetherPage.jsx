@@ -301,7 +301,11 @@ export function TogetherPage({
           </Block>
         )}
 
-        <div className="tg-grid">
+        {/* G12, D10 (lane 1, round 4): the one-column case is a class, not
+            a :has() rule: that rule alone made every element inserted
+            anywhere on a desktop page restyle the whole document (about
+            1 s at 4x CPU on Explore). */}
+        <div className={`tg-grid${meets.length === 0 && shelf.length === 0 ? ' is-wide-empty' : ''}`}>
           <div className="tg-col">
             {meets.length > 0 && (
               <Block id="tg-meet-h" title={t('tg.plansMeet')} className="tg-o-meet">

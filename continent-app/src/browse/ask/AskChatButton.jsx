@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '../../components/ui/index.js';
 import { AiTag } from '../../components/AiTag.jsx';
 import { openAskChat, closeAskChat, useAskChat } from './askChatStore.js';
+import { durationMs } from '../../lib/motion.js';
 import '../../styles/76-ask-door.css';
 
 /**
@@ -34,10 +35,20 @@ export function AskChatHost({ seed = null, openRequest = false, onOpenRequested,
     openAskChat(null, seed);
     onOpenRequested?.();
   }, [openRequest, seed, onOpenRequested]);
-  if (!open) return null;
+  // G12 round 2: the chat stays mounted for its exit (the side panel slides
+  // out, the phone sheet drops), so closing animates as opening does.
+  const [shown, setShown] = React.useState(open);
+  if (open && !shown) setShown(true);
+  const leaving = shown && !open;
+  React.useEffect(() => {
+    if (!leaving) return undefined;
+    const id = setTimeout(() => setShown(false), durationMs('--dur-2'));
+    return () => clearTimeout(id);
+  }, [leaving]);
+  if (!shown) return null;
   return (
     <React.Suspense fallback={null}>
-      <AskChat {...chat} seed={storeSeed} onClose={closeAskChat} />
+      <AskChat {...chat} seed={storeSeed} leaving={leaving} onClose={closeAskChat} />
     </React.Suspense>
   );
 }

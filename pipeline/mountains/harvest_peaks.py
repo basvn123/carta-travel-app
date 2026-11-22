@@ -666,6 +666,16 @@ def resolve_seed(cc, rows):
     resolved, missing = 0, []
     for entry in entries:
         hit = seed_match(entry, rows)
+        if hit is None and entry.get("wd") and entry["wd"] not in by_qid:
+            # An explicit id the spine did not hold (a generated famous
+            # entry): fetch that item, nothing else.
+            found = [r for r in entities_for([entry["wd"]], cc)
+                     if in_europe(r)]
+            hit = seed_match(entry, found)
+            if hit is not None:
+                hit["src"] = "seed-wd"
+                rows.append(hit)
+                by_qid[hit["wd"]] = hit
         if hit is None:
             # Ask Wikidata's own index, qualified by the country so "First"
             # and "Monte" mean the mountain rather than the ordinal or the word.

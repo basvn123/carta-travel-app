@@ -8,7 +8,6 @@ import { useIsDesktop } from '../../hooks/useIsDesktop.js';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { prefersReducedMotion } from '../../lib/motion.js';
 import { clearDockFocus, closeDock, getDock, toggleDock, useDock } from './dockStore.js';
-import { useDiscClear } from './discClear.js';
 import '../../styles/89-dock.css';
 
 /**
@@ -18,10 +17,11 @@ import '../../styles/89-dock.css';
  *
  *   anchor="under-tabs"  the Trip dock, a 44 px pill at the right end of the
  *                        row under the category tabs; the card grows down
- *   anchor="corner"      the Style dock, a disc in the bottom-left corner.
- *                        It passes onActivate and has no card: a tap opens
- *                        the Style Studio, the one place a style is edited
- *                        (Style Studio, G12)
+ *   anchor="corner"      the Style dock, a disc in the fixed bottom-left
+ *                        slot (89-dock.css, .corner-slot; it never moves on
+ *                        its own, G12 round 2). It passes onActivate and has
+ *                        no card: a tap opens the Style Studio, the one
+ *                        place a style is edited (Style Studio, G12)
  *
  * Below 769 px the card is a real modal: aria-modal, the rest of the app
  * inert, a scrim, Tab kept inside, and it spans the full width of the screen
@@ -67,9 +67,6 @@ export function Dock({
   const triggerRef = useRef(null);
   const cardRef = useRef(null);
   const backRef = useRef(null);
-
-  // The corner disc keeps off a card's name and price (discClear.js).
-  useDiscClear(wrapRef, anchor === 'corner' && !hidden);
 
   const close = useCallback(() => closeDock(id), [id]);
   // Escape walks back out of a drilled row first, then closes.
@@ -176,11 +173,11 @@ export function Dock({
   if (hidden) return null;
   return (
     <DockContext.Provider value={{ close, backRef, isOpen }}>
-      <div ref={wrapRef} className={`dock dock--${anchor} ${className}`.trim()} onBlur={onBlur}>
+      <div ref={wrapRef} className={`dock dock--${anchor}${anchor === 'corner' ? ' corner-slot corner-slot--left' : ''} ${className}`.trim()} onBlur={onBlur}>
         <Button
           ref={triggerRef}
           variant="quiet"
-          className={`dock-trigger dock-trigger--${anchor}${changed ? ' is-changed' : ''}`}
+          className={`dock-trigger dock-trigger--${anchor}${anchor === 'corner' ? ' corner-btn' : ''}${changed ? ' is-changed' : ''}`}
           aria-haspopup="dialog"
           aria-expanded={onActivate ? undefined : isOpen}
           aria-controls={onActivate ? undefined : cardId}

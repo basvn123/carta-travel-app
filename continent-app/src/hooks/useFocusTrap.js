@@ -72,7 +72,11 @@ const tabbable = (root) => [...(root?.querySelectorAll(FOCUSABLE) || [])].filter
 const openTraps = [];
 
 export function useFocusTrap(panelRef, onClose, options = {}) {
-  const { initialFocusRef = null, skipEscapeWhen = null, enabled = true } = options;
+  // afterPaint (G12, D10 round 7, the phone Settings sheet): focus moves in
+  // after the overlay's first frame, without scrolling, so the tap that
+  // opens it does not also pay a forced style and layout of the new sheet
+  // (about 0.3 s at 4x CPU).
+  const { initialFocusRef = null, skipEscapeWhen = null, enabled = true, afterPaint = false } = options;
   // Read at keypress time, so a caller's inline predicate never re-runs the
   // trap (which would pull focus back to the first control on every render).
   const skipRef = useRef(skipEscapeWhen);
@@ -99,19 +103,27 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
     // check whether it actually took focus, and fall back to the first
     // element in the panel that will.
     const quiet = (el) => { if (lastInput !== 'keyboard') el.setAttribute('data-focus-quiet', ''); };
+    const focusOpts = afterPaint ? { preventScroll: true } : undefined;
     const focusFirst = () => {
+      if (!panelRef.current) return;
       const named = initialFocusRef?.current;
       if (named) quiet(named);
-      named?.focus?.();
+      named?.focus?.(focusOpts);
       if (named && document.activeElement === named) return;
       for (const el of tabbable(panelRef.current)) {
         quiet(el);
-        el.focus();
+        el.focus(focusOpts);
         if (document.activeElement === el) return;
         el.removeAttribute('data-focus-quiet');
       }
     };
-    focusFirst();
+    let focusFrame = 0;
+    let focusTimer = 0;
+    if (afterPaint && typeof requestAnimationFrame === 'function') {
+      focusFrame = requestAnimationFrame(() => { focusTimer = setTimeout(focusFirst, 0); });
+    } else {
+      focusFirst();
+    }
 
     const token = {};
     const onKey = (e) => {
@@ -155,6 +167,8 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
     openTraps.push(token);
     document.addEventListener('keydown', onKey, true);
     return () => {
+      if (focusFrame) cancelAnimationFrame(focusFrame);
+      clearTimeout(focusTimer);
       document.removeEventListener('keydown', onKey, true);
       openTraps.splice(openTraps.indexOf(token), 1);
       // Only restore if the opener is still in the document: the overlay may
@@ -163,5 +177,5 @@ export function useFocusTrap(panelRef, onClose, options = {}) {
     };
     // panelRef and initialFocusRef are ref objects, stable for the overlay's
     // life; onClose is read through closeRef at keypress time.
-  }, [enabled, panelRef, initialFocusRef]);
+  }, [enabled, panelRef, initialFocusRef, afterPaint]);
 }

@@ -1738,6 +1738,20 @@ export function DestinationsTab({
     </div>
   ) : null;
 
+  // G12 round 2 (owner: "really check if everything still switches
+  // smoothly"): a section at rest opens on its rails, which come with the
+  // layer's top file. Until that lands a hold the height of the screen
+  // stands where they will be, so the list, the sources line and the footer
+  // wait below the fold and nothing on screen moves when the rails arrive
+  // (a tab change shifted 0.66 of a phone's screen before).
+  const openingPending = atRest && !mapOn && !opening && !country && (
+    isBeachCat ? facetsOff(beachFacets) && topBeaches == null && !layerError.beaches
+      : isLakeCat ? facetsOff(lakeFacets) && topLakes == null && !layerError.lakes
+        : isMountainCat ? facetsOff(mtnFacets) && topMountains == null && !layerError.mountains
+          : isCycleCat ? facetsOff(cycleFacets) && cycleTop == null && !layerError.cycling
+            : cat === 'trails' ? !trailChipsOn && topTrails === undefined && !layerError.trails
+              : false);
+
   const pickCountry = (cc) => {
     setCountry(cc);
     setNearPlace(null);
@@ -1895,6 +1909,19 @@ export function DestinationsTab({
                 follow. In the Full list view the head names the list. */}
             {!opening.europe && !mapOn && <h2 className="open-gridhead dtab-gridhead" id="dtab-fulllist">{t('open.gridHead')}</h2>}
           </>
+        )}
+
+        {openingPending && (
+          <div className="dtab-hold" aria-hidden="true">
+            <span className="hs-skeleton dtab-hold-title" />
+            <span className="dtab-hold-row">
+              {[0, 1, 2, 3, 4].map((i) => <span key={i} className="hs-skeleton dtab-hold-card" />)}
+            </span>
+            <span className="hs-skeleton dtab-hold-title" />
+            <span className="dtab-hold-row">
+              {[0, 1, 2, 3, 4].map((i) => <span key={i} className="hs-skeleton dtab-hold-card" />)}
+            </span>
+          </div>
         )}
 
         {!isJourneyBrowse && !mapOn && refineRow}

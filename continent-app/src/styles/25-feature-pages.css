@@ -1262,7 +1262,6 @@
   margin: 4px 0 14px;
   padding: 0;
 }
-.xbar-lead { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .xbar-title {
   margin: 0;
   font-family: var(--display);

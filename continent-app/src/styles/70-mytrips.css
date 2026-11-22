@@ -39,6 +39,14 @@
 .mt-tabs .ui-tabs::-webkit-scrollbar { display: none; }
 .mt-tabs .ui-tab { flex: none; min-height: var(--tap); font-size: var(--text-lead); font-weight: 600; white-space: nowrap; }
 .mt-tabs .ui-tab-count { margin-left: 6px; font-size: var(--text-label); }
+/* At 360 the third tab was cut beside the add-booking icon in every language ("Dein Europa" in German):
+   on narrow phones the tabs step down to body text with a tighter gap, so all three show whole
+   (measured: de, nl, es, it, en fit at 360; fr still scrolls about 20 px there and fits from 390). */
+@media (max-width: 420px) {
+  .mt-tabs .ui-tabs { gap: var(--space-3); }
+  .mt-tabs .ui-tab { font-size: var(--text-body); }
+  .mt-tabs .ui-tab-count { margin-left: var(--space-1); }
+}
 .mt-filter-label {
   display: block;
   margin-bottom: var(--space-2);
@@ -234,14 +242,7 @@
 .mt-section-unit + .mt-section-action { margin-left: var(--space-3); }
 /* The moderation statement under a trip is its own row, a full gap below
    the card (not a half-joined panel hanging off it). */
-.mt-next .modnote, .mt-row-wrap .modnote {
-  margin: var(--space-3) 0 0;
-  padding: var(--space-4);
-  border: 0;
-  border-radius: var(--radius-panel);
-  background: var(--surface);
-  box-shadow: var(--elev-1);
-}
+/* The statement's look (G12 round 4, no card) is in 72-atlas.css. */
 /* Face stacks in My trips overlap lightly so no initial is clipped. */
 .mytrips .frn-stack .frn-face + .frn-face { margin-left: -2px; }
 /* Saved's list tiles: a hairline edge like every other panel here, the
@@ -458,7 +459,6 @@
   box-shadow: var(--elev-1);
 }
 .mt-today-main, .mt-today-side { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
-.mt-today-kicker { margin: calc(-1 * var(--space-2)) 0 0; font-size: var(--text-body); font-weight: 700; color: var(--text-2); }
 .mt-today-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); }
 .mt-today-facts { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-4); margin: 0; font-size: var(--text-body); color: var(--text-2); }
 .mt-today-facts span { display: inline-flex; align-items: center; gap: 6px; }
@@ -500,29 +500,31 @@
 .mt-tl-next { font-weight: 600; color: var(--select-ink); }
 .mt-tl-ticket { display: inline-flex; align-items: center; gap: 4px; color: var(--text); }
 
-/* Spent today: the figure, the plan line, the bar by category. */
-/* Spent today: a column of the card with a hairline, not a sunken card. */
-.mt-spend { display: flex; flex-direction: column; gap: var(--space-2); padding: var(--space-3) 0 0; border-top: 1px solid var(--border-soft); }
-.mt-spend-h { margin: 0; font-size: var(--text-body); font-weight: 600; color: var(--text); }
-.mt-spend-fig { display: flex; align-items: baseline; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
-.mt-spend-fig .money { font-size: var(--text-title); font-weight: 700; color: var(--text); }
-.mt-spend-plan, .mt-spend-none, .mt-spend-help { margin: 0; font-size: var(--text-label); line-height: var(--leading-body); color: var(--text-2); }
-.mt-spend-bar { display: flex; gap: 1px; height: 8px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface); }
-.mt-spend-bar i { display: block; min-width: 4px; }
-.mt-spend-legend { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); margin: 0; padding: 0; list-style: none; font-size: var(--text-caption); color: var(--text-2); }
-.mt-spend-legend li { display: inline-flex; align-items: center; gap: 6px; }
-.mt-spend-legend li .money { color: var(--text); }
-.mt-spend-legend i { width: 8px; height: 8px; border-radius: var(--radius-pill); }
-/* Money groups in the formation's paint: food beige with its edge, getting
-   around umber, the rest ink tints; the legend always names them. */
-.mt-spend .is-food { background: var(--wagon-food); outline: 1px solid var(--wagon-food-edge); outline-offset: -1px; }
-.mt-spend .is-transport { background: var(--action); }
-.mt-spend .is-activities { background: var(--umber-300); }
-.mt-spend .is-other, .mt-spend .is-stay, .mt-spend .is-flights { background: var(--edge); }
-.mt-spend .btn { align-self: flex-start; }
-.mt-spend-form { display: flex; flex-direction: column; gap: var(--space-2); }
-.mt-spend-fields { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-2); }
-.mt-spend-foot { display: flex; gap: var(--space-2); }
+/* Uitgaven (G15): one quiet row that opens the spending page; no figures
+   here (owner, 2026-11-21). The page's own styles are in 72-spend.css. */
+.mt-spend-door {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 56px;
+  padding: 0 var(--space-1);
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: none;
+  color: var(--text);
+  font-family: var(--ui);
+  font-size: var(--text-lead);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+.mt-spend-door:hover { background: var(--select-row); }
+.mt-spend-door-ico { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--radius-control); background: var(--surface-sunken); color: var(--action-press); }
+.mt-spend-door-t { flex: 1; min-width: 0; }
+.mt-spend-door > svg { color: var(--text-3); }
 
 /* Quick tiles: kit secondary buttons laid out as an icon over two lines. */
 .mt-quick { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-2); }
@@ -942,7 +944,7 @@
 .mt-story-body { position: relative; z-index: 1; display: flex; flex-direction: column; gap: var(--space-3); padding: var(--space-5); }
 .mt-story-title { margin: 0; font-size: var(--text-headline); font-weight: 700; line-height: var(--leading-tight); }
 .mt-story-cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; }
-.mt-story-cells div { display: flex; flex-direction: column-reverse; }
+.mt-story-cell { display: flex; flex-direction: column-reverse; }
 .mt-story-cells dt { font-size: var(--text-label); }
 .mt-story-cells dd { margin: 0; font-size: var(--text-display); font-weight: 700; line-height: 1.1; }
 .mt-story-line { margin: 0; font-size: var(--text-body); }
@@ -1062,8 +1064,6 @@
    what floats (sheets, menus, toasts) casts a shadow; plates stay plates. */
 .mt-empty,
 .mt-next-card,
-.mt-next .modnote,
-.mt-row-wrap .modnote,
 .mt-crew,
 .mytrips .tshare,
 .mt-today,

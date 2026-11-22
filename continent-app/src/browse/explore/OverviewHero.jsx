@@ -14,7 +14,8 @@ import { Button } from '../../components/ui/index.js';
  */
 export function OverviewHero({ t, TitleTag, viewToggle, quick, docked = false }) {
   if (docked) {
-    return <TitleTag className="xov-title sr-only" id="xov-title">{t('explore.heroTitle')}</TitleTag>;
+    // tabIndex -1: the applied row hands focus here when it empties.
+    return <TitleTag className="xov-title sr-only" id="xov-title" tabIndex={-1}>{t('explore.heroTitle')}</TitleTag>;
   }
   return (
     <section className="xov-hero xov-hero--hs" aria-labelledby="xov-title">

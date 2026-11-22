@@ -140,9 +140,12 @@ const WHY_NB = { beach: 'gs.whyBeach', trail: 'gs.whyTrail', lake: 'gs.whyLake',
  * The "why" line under a result: at most three short facts, each one a
  * thing the query asked for, read from the data (never a built sentence,
  * so the grammar holds in six languages). Empty when nothing guided is on.
+ * `placeOnly` keeps only what differs by place (the distances): a row
+ * under the applied chips does not repeat a chip's own words ("Good in
+ * July" on every row under the "Good in July" chip, judgement-7).
  */
 export function whyFacts(p, f, ctx) {
-  const { guided, nearRow, t, lang, labels } = ctx;
+  const { guided, nearRow, t, lang, labels, placeOnly = false } = ctx;
   const km = kmFmt(lang);
   const out = [];
   if (f.near && nearRow) out.push(t('gs.whyNear', { km: km(kmBetween(p, nearRow)), place: nearRow.city }));
@@ -152,6 +155,7 @@ export function whyFacts(p, f, ctx) {
     const d = nbKm(guided, p.id, k);
     if (d != null) out.push(t(WHY_NB[k], { km: km(d) }));
   }
+  if (placeOnly) return out.slice(0, 3);
   if (f.vibe && !VIBE_NB[f.vibe] && labels?.vibe) out.push(labels.vibe(f.vibe));
   if (f.area && labels?.area) out.push(labels.area(f.area));
   if (f.month && labels?.monthInline) out.push(t('gs.whyMonth', { month: labels.monthInline(f.month) }));

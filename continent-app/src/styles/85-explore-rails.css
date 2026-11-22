@@ -28,18 +28,67 @@
   gap: var(--space-5);
   margin: var(--space-5) 0 var(--space-7);
 }
-.explore-shell .xsub { margin: var(--space-2) 0 0; }
 .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-3); }
 /* Twenty rails: the ones off screen skip layout and paint until the
-   traveller nears them. The height they hold until then is a rail's own
-   (measured 2026-11-18: 361 px at 390, 348 at 1440), and once drawn the
-   browser remembers the real one, so nothing jumps under the reader. */
+   traveller nears them. The height they hold until then is a rail's own,
+   exact since every card has one height (round 6): the photo, 3/4 of a
+   card's width (05-house.css .hs-rail columns, read against .xrails, a
+   container), plus the head, the text lines and the strip's padding,
+   156.5 px under 1024 and 162.5 px from 1024 (measured 2026-11-19 at 390,
+   820, 1280 and 1440: 360.5, 421.6, 357.5 and 380.1 px). Once drawn the
+   browser remembers the real one, so nothing jumps under the reader. A
+   rail whose cards are not drawn yet (ExploreRails.jsx useNearView) holds
+   the same height, so its cards arriving move nothing either. */
 .explore-shell .xrails-rail {
+  /* The name's room against two lines (the Score plate's 24 px when the
+     strip's names take one line), as .xrc-top holds it. */
+  --xname-extra: calc(max(var(--xrc-name-lines, 2) * 1.25 * var(--text-lead) + 1px, 24px) - 2.5 * var(--text-lead) - 1px);
+  /* Explore clean (2026-11-20): the figure and its basis took their own
+     lines at the card's foot, so the text block is the figure's line
+     (1.1 x --text-title) and about 147 px of the rest (measured 2026-11-20
+     at 390, 820, 1280 and 1440: drawn and held within 0.5 px). */
+  --xrail-h: calc(147px + 1.1 * var(--text-title) + var(--xname-extra) + 100cqi * 0.76 * 0.75);
   content-visibility: auto;
-  contain-intrinsic-size: auto 360px;
+  contain-intrinsic-size: auto var(--xrail-h);
+}
+.explore-shell .xrails-rail.is-waiting { min-height: var(--xrail-h); }
+@media (min-width: 600px) {
+  .explore-shell .xrails-rail { --xrail-h: calc(147px + 1.1 * var(--text-title) + var(--xname-extra) + (100cqi - var(--space-3)) / 2.15 * 0.75); }
+}
+/* The list's rows (G12, D10, lane 1 round 5): a row off screen skips layout
+   and paint, so a change of the list's width (the docked Settings panel, a
+   resize) lays out only the rows in view. The height a row holds until it
+   is first drawn is the median row's (measured 2026-11-19: 80 px at 390,
+   73 px at 1280 and 1440); once drawn the browser keeps its real one. A row showing its preview popover or holding
+   focus is never contained: containment clips what spills out of the box
+   (the popover, the save button's focus ring). */
+.explore-shell .xrows > .xrow-hs:not(.previewing):not(:focus-within) {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 80px;
+}
+@media (min-width: 769px) {
+  .explore-shell .xrows > .xrow-hs:not(.previewing):not(:focus-within) { contain-intrinsic-size: auto 73px; }
+}
+
+/* Scrolling on a 1x desktop screen (G12, D10, round 6): Chrome left the
+   Explore column and the rail strips unpromoted there (to keep subpixel
+   text), so every scroll frame re-layerized the page: 4.2 s of Layerize
+   in eight scroll gestures at 1280 without CPU throttling, 0.4 s with both
+   promoted. The cost is greyscale text antialiasing inside them on 1x
+   screens; phones and 2x screens promote them anyway. */
+.explore-shell .explore-tab,
+.explore-shell .xrails-rail .hs-rail { will-change: scroll-position; }
+
+/* The docked Settings panel's width (81-settings.css .set-dock), as one
+   constant the Explore rules read while html.has-settings-dock is on. It
+   was written on the root by SettingsSheet at each open, and a custom
+   property changed on the root restyles every element of the page (1 to
+   1.5 s at 4x CPU on a desktop Explore; G12, D10 lane 1 round 4). */
+@media (min-width: 1100px) {
+  :root { --settings-dock-w: min(400px, 34vw); }
 }
 @media (min-width: 1024px) {
-  .explore-shell .xrails-rail { contain-intrinsic-size: auto 350px; }
+  .explore-shell .xrails-rail { --xrail-h: calc(153px + 1.1 * var(--text-title) + var(--xname-extra) + max(256px, (100cqi - 4 * var(--space-5)) / 4.25) * 0.75); }
   .explore-shell .xrails.xrails { gap: var(--space-6); margin-top: var(--space-4); }
   /* The Map button's row sits between the tabs and the first title: 16
      on each side of it, so the tabs and the first rail read as one page
@@ -48,74 +97,112 @@
   .explore-shell .xrails-rail .hs-rail-head { margin-bottom: var(--space-4); }
 }
 
-/* ---- The phone row under the tabs ------------------------------------- */
-/* The rails' doors as one sideways row of chips, the Trip dock pinned at
-   its right end (owner 2026-11-18: the dock no longer stands alone on a row
-   of its own). Chips and dock share one shape: paper, the soft edge, a
-   40 px pill with a 44 px hit area. The chip strip runs out to the screen's
-   left edge and fades out before the dock, so a cut chip reads as more. */
-.explore-shell .xsub.xsub--rails {
-  justify-content: flex-start;
-  gap: 0;
-  margin: var(--space-2) 0 0;
-}
-.xsub-chips {
-  display: flex;
-  flex: 1 1 auto;
-  align-items: center;
-  gap: var(--space-2);
-  min-width: 0;
-  margin-left: calc(var(--page-gutter) * -1);
-  padding: 2px var(--space-6) 2px var(--page-gutter);
-  overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
-  scroll-padding-inline: var(--page-gutter);
-  mask-image: linear-gradient(to right, var(--text) calc(100% - var(--space-6)), transparent);
-}
-.xsub-chips::-webkit-scrollbar { display: none; }
-.xsub-chips > * { flex: none; }
-.xsub--rails .btn.xsub-chip,
-.xsub--rails .btn.dock-trigger {
-  min-height: 40px;
-  border: var(--stroke-edge) solid var(--border-soft);
-  border-radius: var(--radius-pill);
-  background: var(--surface);
-}
-.xsub--rails .btn.xsub-chip {
-  padding: 0 var(--space-4);
-  color: var(--text);
-  font-size: var(--text-body);
-  font-weight: 600;
-  white-space: nowrap;
-}
-.xsub--rails .btn.xsub-chip::after,
-.xsub--rails .btn.dock-trigger::after { content: ""; position: absolute; inset: -2px 0; }
-@media (hover: hover) {
-  .xsub--rails .btn.xsub-chip:hover { border-color: var(--edge); background: var(--surface); }
-}
-.xsub--rails > .dock { flex: none; margin-left: var(--space-1); }
-
 /* ---- The rail card --------------------------------------------------- */
 /* The photo is the card's link, stretched over the whole card (the list
    row's pattern), so a press on the name or the country opens the place
    and the figure and the parts stay buttons of their own. */
-.xrc { display: grid; grid-template-columns: minmax(0, 1fr); align-content: start; }
+/* A column: the strip stretches every card to its row's height, so the
+   figure (margin-top: auto) stands on one line across the strip. */
+.xrc { display: flex; flex-direction: column; --xrc-where-h: 20px; --xrc-basis-h: 16px; --xrc-mark-w: 58px; }
 .xrc > .hs-rcard-link { display: block; }
 .xrc > .hs-rcard-link::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
-.xrc > :is(.xrc-head, .xrc-parts) :is(a, button),
-.xrc .pitems { position: relative; z-index: 1; }
+.xrc > .xrc-body { position: relative; z-index: 1; }
 .xrc > .hs-rcard-save { z-index: 2; }
 
-/* Line 1: the name, its Score, and the day figure at the right end. */
-/* A long name ("Saint-Jean-Pied-de-Port") wraps to a second line rather
-   than lose its end; the Score and the figure stay on the first line. */
+/* The text (G12, D10, Explore clean 2026-11-20): one button to the
+   receipt. The name and its Score, the flag and country, then at the foot
+   the figure with its basis right under it, one unit. The room a strip
+   keeps for its longest name sits between the country and the figure, so
+   a short name ("Rome") never leaves a gap between the figure and its
+   basis (owner shot 32). */
+.xrc .xrc-text {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: var(--tap);
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: scale var(--dur-1) var(--ease-out);
+}
+.xrc .xrc-text:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
+.xrc .xrc-text:active { scale: var(--press-scale-lg); }
+.xrc .xrc-top {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  min-width: 0;
+  /* The name's lines (or the 24 px Score plate, when taller), the 2 px
+     gap and the country line: one height for every card of a strip. */
+  min-height: calc(max(var(--xrc-name-lines, 2) * 1.25 * var(--text-lead) + 1px, 24px) + 2px + var(--xrc-where-h));
+}
+.xrc .xrc-foot {
+  display: grid;
+  justify-items: start;
+  align-content: start;
+  gap: 2px;
+  margin-top: auto;
+  padding-top: var(--space-2);
+  /* The basis line's room is held when a card has none ("Not available
+     yet"), so its figure stands on the strip's line with the others. */
+  min-height: calc(var(--space-2) + 1.1 * var(--text-title) + 2px + var(--xrc-basis-h));
+}
+.xrc .xrc-fig {
+  font-size: var(--text-title);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.xrc .xrc-fig .money { font-weight: inherit; }
+.xrc .xrc-basis {
+  font-size: var(--text-caption);
+  line-height: var(--xrc-basis-h);
+  font-weight: 600;
+  color: var(--text-2);
+  white-space: nowrap;
+  text-decoration: underline dotted var(--umber-300);
+  text-underline-offset: 3px;
+}
+/* The match mark (G12 map view round 2): the text button and the mark
+   share one grid cell, the mark at the foot's end and level with the
+   figure line, so a card with a mark is as tall as one without and its
+   figure keeps the strip's line. The figure leaves the mark its room. */
+.xrc .xrc-body { display: grid; flex: 1 0 auto; min-width: 0; }
+.xrc .xrc-body > * { grid-area: 1 / 1; }
+.xrc .xrc-body > .xrc-match {
+  z-index: 1;
+  align-self: end;
+  justify-self: end;
+  margin: 0 0 calc(var(--xrc-basis-h) + 2px + (1.1 * var(--text-title) - 24px) / 2);
+}
+.xrc .xrc-body:has(> .xrc-match) .xrc-fig { padding-inline-end: calc(var(--xrc-mark-w) + var(--space-2)); }
+/* A country is never cut: a long one wraps (the stretched strip keeps the
+   figures in line). */
+.xrc .xrc-country { min-width: 0; overflow-wrap: break-word; }
+@media (hover: hover) {
+  .xrc .xrc-text:hover .xrc-fig { color: var(--action-hover); }
+  .xrc .xrc-text:hover .xrc-basis { text-decoration-color: var(--action); }
+}
+@media (prefers-reduced-motion: reduce) { .xrc .xrc-text { transition: none; } .xrc .xrc-text:active { scale: none; } }
+/* The name and its Score. A long name ("Saint-Jean-Pied-de-Port") wraps
+   rather than lose its end; the Score stays beside its first line. */
 .xrc .xrc-head {
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
   min-width: 0;
-  margin-top: 10px;
 }
 .xrc .xrc-head .hs-rcard-name {
   flex: 0 1 auto;
@@ -128,25 +215,26 @@
   hyphens: auto;
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: var(--xrc-name-lines, 2);
+  line-clamp: var(--xrc-name-lines, 2);
+  /* G12, D10: every card of a strip has one height, so a strip can draw
+     only the cards near its view (ExploreRails.jsx useStripReach). The
+     strip sets --xrc-name-lines to what its longest name needs, 1 to 4
+     (useNameLines); that room is held by .xrc-top, above the figure, not
+     under the name (Explore clean 2026-11-20). */
 }
+/* A slot a strip has not drawn yet (ExploreRails.jsx): the width of a card,
+   the strip's height, nothing painted. */
+.xrc-spacer { pointer-events: none; }
 .xrc .xrc-head > :not(.hs-rcard-name) { flex: none; }
-.xrc .xrc-fig.hs-formation { margin: 1px 0 0 auto; padding-left: var(--space-1); }
-.xrc .xrc-fig .hs-formation-day { margin: 0; padding: 0; }
 
 /* Line 2: the flag and the country, one quiet line. */
-.xrc .hs-rcard-where { margin-top: 2px; font-size: var(--text-label); }
+.xrc .hs-rcard-where { align-items: baseline; min-height: var(--xrc-where-h); font-size: var(--text-label); line-height: var(--xrc-where-h); }
 
-/* Line 3: the parts. Bed plus food, joined, are the figure above; the
-   return fare stands apart after them, outlined because it is outside it. */
-.xrc .xrc-parts.hs-formation { --wh: 28px; margin-top: 10px; }
-.xrc .xrc-parts .xform-parts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px var(--space-2); }
-.xrc .xrc-parts .hs-wagon { padding-inline: 8px; }
 .xrc .tg-sig { margin-top: 6px; }
 
 @media (min-width: 1024px) {
-  .xrc .xrc-head { margin-top: var(--space-3); }
+  .xrc .xrc-text { margin-top: var(--space-3); }
 }
 
 /* ---- The See all tile ------------------------------------------------ */

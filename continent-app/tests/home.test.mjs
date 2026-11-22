@@ -291,7 +291,10 @@ test('the retired home strings are gone', () => {
     'filter.month', 'filter.nearSea', 'filter.paneAny', 'filter.paneCount', 'filter.paneCountOne',
     'filter.paneHours', 'filter.pricedForCreate', 'filter.pricedForHeld', 'filter.pricedForList',
     'filter.size', 'filter.tripType', 'fit.strong', 'settings.fromStyle', 'why.place.cardAria',
-    'why.place.chipLikely', 'places.allFilters'];
+    'why.place.chipLikely', 'places.allFilters',
+    // G12 Explore top round 2: the old sort menu's words, the region hint and
+    // the toolbar's group name left with the toolbar.
+    'explore.sortCost', 'explore.regionFilter', 'sort.match', 'explore.toolsAria'];
   for (const [lang, cat] of Object.entries(CATALOGS)) {
     for (const k of retired) assert.equal(cat[k], undefined, `${lang} ${k}`);
     assert.deepEqual(Object.keys(cat).filter((k) => k.startsWith('landing.')), [], lang);

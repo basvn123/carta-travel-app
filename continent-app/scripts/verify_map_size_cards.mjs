@@ -158,41 +158,46 @@ try {
     await page.waitForTimeout(2500);
   };
   await zoomTo(8);
-  const labels = page.locator('.xmap-kpin.is-label');
-  const nLabels = await labels.count();
-  if (!nLabels) fail('no price labels at zoom 8');
-  else pass(`${nLabels} pins are labels`);
-  if (nLabels > 30) fail(`${nLabels} labels is more than the cap of 30`);
-  else pass('the cap holds');
-  const figures = await page.locator('.xmap-kpin.is-label .xmap-kpin-eur').allInnerTexts();
-  if (figures.length !== nLabels || figures.some((f) => !/^€\d+$/.test(f.trim()))) fail(`labels without a day cost: ${nLabels - figures.length}`);
-  else pass('every label carries a mono day cost');
-  const cheapest = page.locator('.xmap-kpin.is-cheapest');
-  if ((await cheapest.count()) !== 1) fail(`${await cheapest.count()} pins are emphasised, not one`);
-  else {
-    const fig = Number((await cheapest.locator('.xmap-kpin-eur').innerText()).replace(/\D/g, ''));
-    const min = Math.min(...figures.map((f) => Number(f.replace(/\D/g, ''))));
-    if (fig !== min) fail(`the emphasised pin is €${fig}, the cheapest label is €${min}`);
-    else pass(`exactly one pin is emphasised, the cheapest (€${fig})`);
-  }
-  const offEdge = await page.evaluate(() => {
-    const m = document.querySelector('.xmap').getBoundingClientRect();
-    return [...document.querySelectorAll('.xmap-kpin.is-label')]
-      .map((e) => e.getBoundingClientRect())
-      .filter((r) => r.right < m.left || r.left > m.right).length;
+  // G12 map view: the pills are map layers (explore/mapPins.js), read
+  // through the map, not the DOM.
+  const drawn = await page.evaluate(() => {
+    const map = document.querySelector('.xmap-canvas')._cartaMap;
+    const W = map.getCanvas().clientWidth; const H = map.getCanvas().clientHeight;
+    const q = (l) => (map.getLayer(l) ? map.queryRenderedFeatures({ layers: [l] }) : []);
+    const one = (f) => { const p = map.project(f.geometry.coordinates); return { fig: f.properties.fig, eur: f.properties.eur, x: p.x, y: p.y }; };
+    return { pills: q('xpin').map(one), best: q('xpin-best').map(one), W, H, dom: document.querySelectorAll('.xmap-kpin-label').length };
   });
-  if (offEdge) fail(`${offEdge} labels sit outside the map`);
-  else pass('every label is on the map');
+  const all = [...drawn.pills, ...drawn.best];
+  const nLabels = all.length;
+  if (!nLabels) fail('no price pills at zoom 8');
+  else pass(`${nLabels} pins are price pills`);
+  if (nLabels > 40) fail(`${nLabels} pills is more than the cap of 40`);
+  else pass('the cap holds');
+  if (drawn.dom) fail(`${drawn.dom} DOM labels left over the map`);
+  if (all.some((p) => !/^€\d+$/.test(String(p.fig).trim()))) fail('a pill without a day cost');
+  else pass('every pill carries a whole-euro day cost');
+  if (drawn.best.length !== 1) fail(`${drawn.best.length} pins carry the best-value dot, not one`);
+  else {
+    const min = Math.min(...all.map((p) => p.eur));
+    if (drawn.best[0].eur !== min) fail(`the best-value pin is €${drawn.best[0].eur}, the cheapest pill €${min}`);
+    else pass(`exactly one pin is the best value, the cheapest (€${min})`);
+  }
+  const offEdge = all.filter((p) => p.x < 0 || p.y < 0 || p.x > drawn.W || p.y > drawn.H).length;
+  if (offEdge) fail(`${offEdge} pills sit outside the map`);
+  else pass('every pill is on the map');
   const sx = await scrollX(page);
   if (sx) fail(`the shell scrolled ${sx}px sideways`);
   else pass('the shell did not scroll sideways');
   await page.screenshot({ path: `${SHOTS}/map-price-pins.png` });
 
-  console.log('\n4. ...and back to dots and clusters when you zoom out');
+  console.log('\n4. ...and count bubbles for the crowds when you zoom out');
   await zoomTo(5);
-  const left = await page.locator('.xmap-kpin.is-label').count();
-  if (left) fail(`${left} labels are still on the map at zoom 5`);
-  else pass('every label went back to a dot or a cluster');
+  const bubbles = await page.evaluate(() => {
+    const map = document.querySelector('.xmap-canvas')._cartaMap;
+    return map.getLayer('xcluster') ? map.queryRenderedFeatures({ layers: ['xcluster'] }).length : 0;
+  });
+  if (!bubbles) fail('no count bubbles at zoom 5');
+  else pass(`${bubbles} count bubbles at zoom 5`);
   }
   await ctx.close();
 

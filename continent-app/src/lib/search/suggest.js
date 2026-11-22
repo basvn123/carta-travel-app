@@ -16,7 +16,7 @@
  */
 import { foldName } from '../searchIndex.js';
 import { extractTokens, hasFeatures } from './features.js';
-import { kmBetween } from './places.js';
+import { inBox, kmBetween } from './places.js';
 import { placesNear, resolveIds } from './resolve.js';
 
 export const MAX_PLACES = 8;
@@ -145,11 +145,19 @@ export function suggest(query, ctx = {}) {
   // so "porto" does not offer Portugal through the Italian "Portogallo".
   // Carta's own boxes come first, so a GeoNames region of the same name
   // ("Tuscany") is not offered twice; the list filter has always used them.
+  // A Carta box speaks the reader's language through its GeoNames twin
+  // ("Toskana", "Toscane"), so the twin is not offered as a second row in
+  // English (flow-search F2).
+  const geoRegions = ctx.areas?.regions || [];
   const areaList = [
-    ...(ctx.cartaRegions || []).map((r) => ({
-      kind: 'region', code: `carta:${foldName(r.label)}`, cc: '', names: [r.label], l: {},
-      folds: [foldName(r.label), ...(r.keys || [])], bbox: r.bbox, pop: 1e12,
-    })),
+    ...(ctx.cartaRegions || []).map((r) => {
+      const folds = [foldName(r.label), ...(r.keys || [])];
+      const twin = geoRegions.find((g) => g.folds.some((f) => folds.includes(f)));
+      return {
+        kind: 'region', code: `carta:${foldName(r.label)}`, cc: '', names: [r.label], l: twin?.l || {},
+        folds: twin ? [...folds, ...twin.folds] : folds, bbox: r.bbox, pop: 1e12, carta: true,
+      };
+    }),
     ...(ctx.areas?.regions || []),
     ...(ctx.areas?.countries || []),
   ];
@@ -166,6 +174,13 @@ export function suggest(query, ctx = {}) {
     const item = {
       type: a.kind, key: `a:${a.code}`, code: a.code, name: shown, match: shown, cc: a.cc, bbox: a.bbox, tokens, nameKey: key,
     };
+    // A Carta box has no country of its own: it gets the one its places all
+    // share, so its second line says "Region, Italy". A box over several
+    // countries (the Alps) keeps none and still lists every place in it.
+    if (a.carta) {
+      const ccs = new Set(places.filter((p) => inBox(p, a.bbox)).map((p) => p.iso2).filter(Boolean));
+      if (ccs.size === 1) item.cc = [...ccs][0];
+    }
     // A region with no Carta place inside lists the places near its middle
     // (resolve.js), so its count is what a pick shows; none at all: left out.
     item.count = resolveIds(item, places).length;

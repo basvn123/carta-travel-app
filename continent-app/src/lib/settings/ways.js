@@ -75,13 +75,51 @@ export function wayKey(request, mode, home, party) {
  * @returns {Map<string, object>} id -> the row with cost.way set and fmin
  *   (the outbound flight's minutes, null without a dated flight)
  */
-export function wayRowsFor({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
-  const m = new Map();
+// G12, D10 (lane 1, explore-top-2 profile): a re-price of the day figures
+// gives every row a new object, and working out each place's way again cost
+// about 0.3 s at 4x CPU though the way had not moved. A place's way depends
+// only on the place and wayKey's inputs (and the hour, for which flights are
+// still ahead), so it is kept per catalogue under that key.
+const WAYS = new WeakMap();
+function waysKept(destinations, files, key) {
+  if (!destinations || typeof destinations !== 'object') return null;
+  let byKey = WAYS.get(destinations);
+  if (!byKey) { byKey = new Map(); WAYS.set(destinations, byKey); }
+  const k = `${key}|${files?.length || 0}`;
+  let kept = byKey.get(k);
+  // The same files in the same order count as the same (each caller builds its own list).
+  const same = kept && kept.files.length === (files?.length || 0) && kept.files.every((f, i) => f === files[i]);
+  if (!same) {
+    if (byKey.size > 8) byKey.clear();
+    kept = { files: files || [], ids: new Map() };
+    byKey.set(k, kept);
+  }
+  return kept.ids;
+}
+
+/**
+ * The price chain's third step (G12, D10, Explore clean 2026-11-20; owner:
+ * no "+" after a figure, complete it instead). The chain: the dated fare,
+ * the route's typical fare (both in cheapestFlight), then this: the chosen
+ * way has no figure at all, so the trip takes the best train, coach or car
+ * estimate that reaches the place, flagged `estimated` so the receipt names
+ * it. 'any' already weighed every ground way, so it has nothing to add.
+ * Null when no ground way reaches the place (an island, a ride over 20
+ * hours): the trip is then the stay alone, notKnown, and sorts last.
+ */
+export function groundEstimate(dest, mode, { home, party, ground = null } = {}) {
+  if (mode === 'any' || !home) return null;
+  const est = wayFor(dest, 'any', { home, party, flight: null, ground });
+  return est ? { ...est, estimated: true } : null;
+}
+
+// One place's way and outbound minutes, with the flight per anchor shared.
+function wayMaker({ destinations, files, request, mode, home, party, now }) {
   const flies = mode === 'plane' || mode === 'any';
   const byAnchor = new Map();
   const ground = groundFor(destinations, home, party);
-  for (const p of rows || []) {
-    const d = destinations?.[p.id];
+  return (id, p) => {
+    const d = destinations?.[id];
     const anchor = destAnchor(d);
     let flight = null;
     if (flies && anchor && files?.length) {
@@ -100,14 +138,80 @@ export function wayRowsFor({ rows, destinations, files, request, mode, home, par
       }
       flight = byAnchor.get(anchor);
     }
-    const way = wayFor(d || p, mode, { home, party, flight, ground: ground && ground(d || p, p.id) });
-    m.set(p.id, {
-      ...p,
-      cost: { ...p.cost, way: way || notKnownWay(mode) },
-      fmin: flight && !flight.typical ? flight.minutes : null,
-    });
+    const g = ground && ground(d || p, id);
+    const way = wayFor(d || p, mode, { home, party, flight, ground: g })
+      || groundEstimate(d || p, mode, { home, party, ground: g })
+      || notKnownWay(mode);
+    const fmin = flight && !flight.typical ? flight.minutes : null;
+    return { way, fmin };
+  };
+}
+
+const keptFor = ({ destinations, files, request, mode, home, party, now }) => waysKept(
+  destinations, files, `${wayKey(request, mode, home, party)}|${Math.floor(now / 3600000)}`);
+
+export function wayRowsFor({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
+  const m = new Map();
+  const args = { destinations, files, request, mode, home, party, now };
+  const kept = keptFor(args);
+  let one = null;
+  for (const p of rows || []) {
+    let hit = kept?.get(p.id);
+    if (!hit) {
+      one = one || wayMaker(args);
+      hit = one(p.id, p);
+      kept?.set(p.id, hit);
+    }
+    m.set(p.id, { ...p, cost: { ...p.cost, way: hit.way }, fmin: hit.fmin });
   }
   return m;
+}
+
+/**
+ * G12, D10 (round 7): whether every row's way is already kept for these
+ * inputs, so a caller can show the rows with their way "not known yet"
+ * (notKnownWay) while warmWays works the rest out in slices, instead of
+ * working out thousands of ways in one render (2.7 to 3.7 s at 4x CPU on
+ * a desktop load, before the start town was known).
+ */
+export function waysReady({ rows, destinations, files, request, mode, home, party, now = Date.now() }) {
+  const kept = keptFor({ destinations, files, request, mode, home, party, now });
+  if (!kept) return true;
+  for (const p of rows || []) if (!kept.has(p.id)) return false;
+  return true;
+}
+
+/** The rows with their way not known yet (the same state a place with no
+ *  figure shows), while warmWays runs. */
+export function wayRowsPending({ rows, mode }) {
+  const m = new Map();
+  const way = notKnownWay(mode);
+  for (const p of rows || []) m.set(p.id, { ...p, cost: { ...p.cost, way }, fmin: null });
+  return m;
+}
+
+/**
+ * G12, D10 (lane 1, round 3): the same ways worked out ahead, in short
+ * slices, into the cache wayRowsFor reads, so the render that shows a new
+ * start town or catalogue finds every place's way already known. Same
+ * inputs as wayRowsFor; resolves false when `signal` aborts first.
+ */
+export async function warmWays({ destinations, files, request, mode, home, party, now = Date.now(), signal = null, sliceMs = 12 }) {
+  const args = { destinations, files, request, mode, home, party, now };
+  const kept = keptFor(args);
+  if (!kept) return true;
+  const one = wayMaker(args);
+  const clock = () => (globalThis.performance?.now ? performance.now() : Date.now());
+  let t0 = clock();
+  for (const id of Object.keys(destinations || {})) {
+    if (signal?.aborted) return false;
+    if (!kept.has(id)) kept.set(id, one(id, null));
+    if (clock() - t0 > sliceMs) {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      t0 = clock();
+    }
+  }
+  return true;
 }
 
 /**

@@ -1,0 +1,2628 @@
+/* G12 My trips as "your atlas" (run 2026-11-21-my-trips-tab, Phase A): the
+   parts every tab shares. The map slot and its pane, the band, the fade into
+   the ground on a phone, the floating count chip, the one Example pill, the
+   two-way switch (seg2) of the compact price control, and the milestone
+   badges. Tokens only. The plate's own land, sea and border come from
+   src/map/tokenColors.js BASEMAP_COLOURS (so it matches Explore); the
+   component hands the sea in as --atlas-sea, as CSS cannot read that module. */
+
+/* ---- layout: content pane plus a sticky map pane from 1100 (on the breakpoint scale) ---- */
+.atlas-body {
+  display: block;
+}
+
+.atlas-content {
+  display: grid;
+  gap: var(--space-6);
+  padding: var(--space-2) var(--space-4) var(--space-8);
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .atlas-body {
+    padding: var(--space-5) var(--space-7) var(--space-8);
+  }
+
+  .atlas-content {
+    padding: var(--space-6) 0 0;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: var(--space-6);
+    align-items: start;
+  }
+
+  .atlas-full {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (min-width: 1100px) {
+  .atlas-body {
+    display: grid;
+    grid-template-columns: 540px minmax(0, 1fr);
+    gap: var(--space-7);
+    align-items: start;
+  }
+
+  .atlas-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: 0;
+    order: 1;
+  }
+
+  .atlas-slot {
+    position: sticky;
+    top: calc(var(--header-h) + var(--space-4));
+    order: 2;
+  }
+}
+
+/* ---- the map slot ---- */
+.atlas-slot {
+  position: relative;
+}
+
+.atlas-map {
+  position: relative;
+  overflow: hidden;
+  background: var(--atlas-sea, var(--map-water));
+  /* A phone's map is full-bleed and fades into the ground (Revision 1). */
+  -webkit-mask-image: linear-gradient(var(--mask-solid) 80%, transparent);
+  mask-image: linear-gradient(var(--mask-solid) 80%, transparent);
+}
+
+.atlas-map .mt-eumap {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .atlas-map {
+    border-radius: var(--radius-card);
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* ---- the band: content sits on the stone ground, tiles on the band ---- */
+.atlas-band {
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  padding: var(--space-4);
+}
+
+/* ---- what floats on the map: paper (Revision 1) ---- */
+.atlas-floatchip {
+  position: absolute;
+  left: var(--space-3);
+  top: var(--space-3);
+  z-index: var(--z-float);
+  display: grid;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  pointer-events: none;
+}
+
+.atlas-floatchip b {
+  font-size: var(--text-title);
+  line-height: 1;
+  font-weight: 800;
+  color: var(--umber-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.atlas-floatchip span {
+  font-size: var(--text-caption);
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+@media (min-width: 1100px) {
+  .atlas-floatchip {
+    left: var(--space-4);
+    top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .atlas-floatchip b {
+    font-size: var(--text-headline);
+  }
+}
+
+/* ---- the one Example pill a screen carries (Revision 1) ---- */
+.atlas-example {
+  position: sticky;
+  top: var(--space-3);
+  z-index: var(--z-sticky);
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-1) var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--umber-800);
+  color: var(--action-text);
+  box-shadow: var(--elev-2);
+  font-weight: 800;
+}
+
+.atlas-example button {
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--umber-700);
+  color: var(--action-text);
+  font: 700 var(--text-label) / 1 var(--ui);
+  cursor: pointer;
+}
+
+.atlas-example button:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus-on-dark);
+  outline-offset: 2px;
+}
+
+/* ---- seg2: one of two, the compact price control's switches ---- */
+.atlas-pricectl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.atlas-seg2 {
+  display: inline-flex;
+  flex: none;
+  gap: 2px;
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+}
+
+/* 36 px pills; the 3 px well and the gap round each up to the 44 px hit
+   area the spec asks for (decision: compact control). */
+.atlas-seg2 button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 38px;
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--text-2);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+
+.atlas-seg2 button[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-1);
+}
+
+.atlas-seg2 button:focus-visible,
+.atlas-nights button:focus-visible,
+.atlas-badge:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+.atlas-nights {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 3px 0 var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  font: 700 var(--text-label) / 1 var(--ui);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.atlas-nights button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--border-soft);
+  border-radius: 50%;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-1);
+  cursor: pointer;
+}
+
+/* The minus drawn as a bar the width of the plus icon, so both read as buttons. */
+.atlas-minus { display: block; width: 12px; height: 2px; border-radius: var(--radius-pill); background: currentColor; }
+
+/* ---- badges: milestones and the trip log grade ---- */
+.atlas-badges {
+  display: flex;
+  gap: var(--space-4);
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(var(--space-4) * -1);
+  padding: 0 var(--space-4) 2px;
+}
+
+@media (min-width: 768px) {
+  .atlas-badges {
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.atlas-badge {
+  flex: none;
+  width: 72px;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  border: 0;
+  background: none;
+  color: var(--text-2);
+  font: 700 var(--text-caption) / 1.2 var(--ui);
+  text-align: center;
+  cursor: pointer;
+}
+
+.atlas-badge i {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--umber-600);
+  color: var(--action-text);
+}
+
+.atlas-badge.is-locked {
+  color: var(--text-3);
+}
+
+.atlas-badge.is-locked i {
+  box-sizing: border-box;
+  border: 2px solid var(--border);
+  background: transparent;
+  color: var(--text-3);
+}
+
+/* The grade (owner review 2026-11-21): "8" and a small "/10" on one baseline,
+   under it a blaze-style meter (a white halo, a hairline, umber 600 paint to
+   the grade). No pill. The best trip: the number in umber 700, the meter
+   fully painted in umber 800. Right-aligned, centred, 44 px tall. */
+.atlas-grade {
+  display: inline-grid;
+  justify-items: end;
+  align-content: center;
+  gap: 5px;
+  min-width: var(--tap);
+  min-height: var(--tap);
+  color: var(--text);
+  line-height: 1;
+}
+.atlas-grade-n { display: inline-flex; align-items: baseline; gap: 1px; font-variant-numeric: tabular-nums; }
+.atlas-grade-n b { font-size: var(--text-plate); font-weight: 800; letter-spacing: -0.02em; }
+.atlas-grade-n small { font-size: var(--text-caption); font-weight: 700; color: var(--text-3); }
+.atlas-grade-m {
+  position: relative;
+  display: block;
+  box-sizing: content-box;
+  width: 44px;
+  height: 6px;
+  padding: 2px;
+  border-radius: calc(var(--radius-sm) / 3);
+  background: var(--neutral-0);
+  outline: var(--stroke-hair) solid var(--blaze-edge);
+  outline-offset: -1px;
+}
+.atlas-grade-m i { display: block; height: 100%; background: var(--umber-600); }
+.atlas-grade.is-top .atlas-grade-n b { color: var(--umber-700); }
+.atlas-grade.is-top .atlas-grade-m i { background: var(--umber-800); }
+
+/* Nothing moves at first paint; reduced motion shows the end state. */
+@media (prefers-reduced-motion: reduce) {
+  .atlas-seg2 button {
+    transition: none;
+  }
+}
+
+/* ==== Phase B: the plate in its slot ==== */
+
+/* Inside the My trips panel the panel already pads; the slot goes full-bleed
+   on a phone and the tab bodies keep the panel's own column rhythm. */
+.mt-panel > .atlas-body {
+  padding: 0;
+}
+
+.mt-panel .atlas-content {
+  padding: 0;
+}
+
+.atlas-col {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.mt-panel .atlas-slot {
+  margin: calc(-1 * var(--space-4)) calc(-1 * var(--gutter)) var(--space-2);
+}
+
+.mt-panel .atlas-slot .mt-atlas-pick,
+.mt-panel .atlas-under {
+  padding: 0 var(--gutter);
+}
+
+/* The height is reserved per tab and state before the plate loads, so a
+   tab switch does not shift the page (CLS under 0.05). */
+.atlas-slot.is-trips .atlas-map { height: 250px; }
+.atlas-slot.is-trips.is-empty .atlas-map { height: 340px; }
+.atlas-slot.is-europe .atlas-map { height: 400px; }
+.atlas-slot.is-europe.is-empty .atlas-map { height: 460px; }
+
+@media (min-width: 768px) {
+  .mt-panel .atlas-slot {
+    margin: 0 0 var(--space-2);
+  }
+
+  .mt-panel .atlas-slot .mt-atlas-pick,
+  .mt-panel .atlas-under {
+    padding: 0;
+  }
+
+  .atlas-slot.is-trips .atlas-map,
+  .atlas-slot.is-trips.is-empty .atlas-map { height: 380px; }
+
+  .atlas-slot.is-europe .atlas-map,
+  .atlas-slot.is-europe.is-empty .atlas-map { height: 520px; }
+}
+
+@media (min-width: 1100px) {
+  .mt-panel .atlas-slot {
+    top: var(--space-4);
+    margin: 0;
+  }
+
+  /* The pane fills the window under the tabs. */
+  .atlas-slot.is-trips .atlas-map,
+  .atlas-slot.is-trips.is-empty .atlas-map,
+  .atlas-slot.is-europe .atlas-map,
+  .atlas-slot.is-europe.is-empty .atlas-map {
+    height: max(480px, calc(100dvh - var(--header-h) - 176px));
+  }
+
+  .atlas-slot.is-europe .atlas-map {
+    height: max(440px, calc(100dvh - var(--header-h) - 236px));
+  }
+}
+
+.atlas-plate {
+  position: absolute;
+  inset: 0;
+}
+
+.atlas-plate .mt-eumap,
+.atlas-plate .mt-eumap.is-loading {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  background: var(--atlas-sea);
+}
+
+.atlas-plate .mt-eumap-context {
+  fill: var(--atlas-land);
+  opacity: 0.7;
+}
+
+.atlas-plate .mt-eumap-land,
+.atlas-plate .mt-eumap-dot {
+  fill: var(--atlas-land);
+  stroke: var(--atlas-border);
+  stroke-width: 0.8;
+  cursor: default;
+}
+
+.atlas-plate .mt-eumap-dot { fill: var(--umber-200); stroke: var(--surface); }
+.atlas-plate .is-tappable .mt-eumap-land,
+.atlas-plate .is-tappable .mt-eumap-dot { cursor: pointer; }
+.atlas-plate .mt-eumap-land.is-been,
+.atlas-plate .mt-eumap-dot.is-been,
+.atlas-plate .mt-eumap .is-hand { fill: var(--umber-600); }
+.atlas-plate .mt-eumap .is-r0 { fill: var(--umber-300); }
+.atlas-plate .mt-eumap .is-r1 { fill: var(--umber-500); }
+.atlas-plate .mt-eumap .is-r2 { fill: var(--umber-600); }
+.atlas-plate .mt-eumap .is-r3 { fill: var(--umber-700); }
+.atlas-plate .mt-eumap .is-r4 { fill: var(--umber-800); }
+.atlas-plate .mt-eumap .is-off { fill: var(--umber-200); }
+.atlas-plate .mt-eumap-land.is-picked { stroke: var(--text); stroke-width: 2; }
+.atlas-plate .mt-eumap-hatch-bg { fill: var(--atlas-land); }
+.atlas-plate .mt-eumap-hatch { fill: var(--umber-600); }
+
+/* The ramp and the filter outrank is-been (three classes, later). */
+
+/* Routes: a white casing under the line; the mask draws them in. */
+.atlas-plate mask { mask-type: alpha; }
+
+.atlas-mk {
+  fill: none;
+  stroke: var(--mask-solid);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1 1;
+  stroke-dashoffset: 0;
+}
+
+.atlas-plate.is-draw .atlas-mk {
+  animation: atlas-draw var(--dur-reveal) var(--ease-out) var(--dur-1) both;
+}
+
+@keyframes atlas-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+
+.atlas-route path {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.atlas-route { transition: opacity var(--dur-2) var(--ease-out); }
+.atlas-route-case { stroke: var(--surface); opacity: 0.95; }
+.atlas-route-line { stroke: var(--umber-800); }
+.atlas-route.is-past .atlas-route-case { opacity: 0.7; }
+.atlas-route.is-past .atlas-route-line { stroke: var(--text); opacity: 0.75; }
+.atlas-route.is-dim { opacity: 0.25; }
+
+.atlas-stop {
+  fill: var(--surface);
+  stroke: var(--umber-800);
+  stroke-width: 1.6;
+  vector-effect: non-scaling-stroke;
+  transition: opacity var(--dur-2) var(--ease-out);
+}
+
+.atlas-stop.is-big { stroke-width: 2.2; }
+/* The one saffron point (decision 2): the next stop only. */
+.atlas-stop.is-sun { fill: var(--sun-400); stroke: var(--sun-800); }
+.atlas-stop.is-dim { opacity: 0.3; }
+
+.atlas-corner-ring {
+  fill: none;
+  stroke: var(--text);
+  stroke-width: 1.5;
+  vector-effect: non-scaling-stroke;
+}
+
+/* Labels are HTML over the plate, never SVG text: 12 px at every size. */
+.atlas-labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.atlas-ml {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  white-space: nowrap;
+}
+
+.atlas-ml-name {
+  padding: 3px var(--space-2) 2px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  color: var(--text);
+}
+
+.atlas-ml-here { transform: translate(-50%, -125%); }
+
+.atlas-ml-corner {
+  transform: translate(-50%, -50%);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--atlas-land);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  color: var(--umber-800);
+}
+
+.atlas-floatchip.is-hint {
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* Under the Your Europe map: the years as a filter, then the list. */
+.atlas-under {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.atlas-legend {
+  display: flex;
+  flex: 1;
+  gap: var(--space-1);
+  align-items: center;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.atlas-yr {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  font-variant-numeric: tabular-nums;
+}
+
+.atlas-yr.is-key { cursor: default; }
+
+/* At 360 a five-year record pushed 2025 and 2026 under "Länder als Liste" (the strip scrolled with no
+   sign of it): on narrow phones the years take the whole line and wrap, the list link goes under them. */
+@media (max-width: 420px) {
+  .atlas-under { flex-wrap: wrap; justify-content: flex-end; }
+  .atlas-legend { flex: 1 1 100%; flex-wrap: wrap; overflow-x: visible; }
+  .atlas-legend .atlas-yr { padding: 0 var(--space-1); }
+}
+
+.atlas-yr[aria-pressed="true"] {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--elev-1);
+}
+
+.atlas-yr i {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: var(--umber-600);
+}
+
+.atlas-yr i.is-r0 { background: var(--umber-300); }
+.atlas-yr i.is-r1 { background: var(--umber-500); }
+.atlas-yr i.is-r2 { background: var(--umber-600); }
+.atlas-yr i.is-r3 { background: var(--umber-700); }
+.atlas-yr i.is-r4 { background: var(--umber-800); }
+
+.atlas-yr i.is-next {
+  width: 14px;
+  /* The legend sits outside .atlas-map, where the plate colours are not
+     set, so the swatch falls back to the ground (it showed nothing). */
+  background: repeating-linear-gradient(-45deg, var(--umber-600) 0 2px, var(--atlas-land, var(--surface)) 2px 5px);
+  outline: 1px solid var(--atlas-border, var(--border));
+  outline-offset: -1px;
+}
+
+.atlas-lnk {
+  flex: none;
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--umber-800);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.atlas-yr:focus-visible,
+.atlas-lnk:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-plate.is-draw .atlas-mk { animation: none; }
+  .atlas-route,
+  .atlas-stop { transition: none; }
+}
+
+/* ---- G12 Phase C: Reizen (the approved reference's Trips states) ----
+   Content sits on the stone ground (Revision 1): the trip, the ledgers and
+   Today carry no paper card; paper is only for what floats (the share
+   menu, sheets). */
+.mt-panel.is-trips .mt-next-card.mt-trip,
+.mt-panel.is-trips .mt-today {
+  display: grid;
+  gap: var(--space-4);
+  overflow: visible;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.mt-panel.is-trips .mt-next-card.mt-trip {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.mt-trip .mt-next-media {
+  width: 100%;
+  min-width: 0;
+  max-height: none;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-card);
+}
+
+.mt-thead {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+}
+
+.mt-thead-t {
+  flex: 1;
+  min-width: 0;
+}
+
+.mt-trip .mt-next-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.mt-trip .mt-next-dates {
+  margin: var(--space-1) 0 0;
+  color: var(--text-2);
+}
+
+/* The countdown beside the plate: one figure each, side by side. */
+.mt-duo {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: stretch;
+  gap: var(--space-3);
+}
+
+.mt-cd {
+  display: grid;
+  align-content: center;
+  margin: 0;
+  padding: 0 var(--space-4) 0 2px;
+  border-right: 1px solid var(--border);
+}
+
+.mt-cd b {
+  font-size: var(--text-display);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--umber-800);
+  font-variant-numeric: tabular-nums;
+}
+
+.mt-cd span {
+  max-width: 12ch;
+  margin-top: var(--space-1);
+  font-size: var(--text-label);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  color: var(--text-2);
+}
+
+.mt-cd.is-when span {
+  margin: 0;
+  font-size: var(--text-body);
+}
+
+/* The umber mark plate (Revision 2): "you chose this", the figure only. */
+.mt-mark-plate {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 72px;
+  padding: var(--space-2) 38px var(--space-2) var(--space-4);
+  border: 0;
+  background: none;
+  color: var(--action-text);
+  font-family: var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-mark-plate::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: var(--radius-sm);
+  background: var(--umber-600);
+  clip-path: polygon(0 0, calc(100% - 24px) 0, 100% 50%, calc(100% - 24px) 100%, 0 100%);
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+
+.mt-mark-plate:hover::before {
+  background: var(--umber-700);
+}
+
+.mt-mark-plate:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+.mt-mark-fig {
+  font-size: var(--text-headline);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+.mt-mark-plate svg {
+  color: var(--umber-100);
+}
+
+/* Ready for the trip as four tiles: band tint, done is an umber 100 wash. */
+.mt-ready4 {
+  display: grid;
+  gap: var(--space-2);
+  padding: 0;
+  border-top: 0;
+  background: none;
+  border: 0;
+}
+
+.mt-tiles4 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-2);
+}
+
+.mt-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: var(--space-2) var(--space-3);
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 700 var(--text-body) / var(--leading-tight) var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-tile i {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--surface-page);
+  color: var(--text-2);
+}
+
+.mt-tile small {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-caption);
+  font-weight: 600;
+  color: var(--text-3);
+}
+
+.mt-tile.is-done {
+  background: var(--umber-100);
+  color: var(--umber-800);
+}
+
+.mt-tile.is-done i {
+  background: var(--umber-600);
+  color: var(--action-text);
+}
+
+.mt-tile:focus-visible,
+.mt-disc button:focus-visible,
+.mt-disc-row:focus-visible,
+.mt-rate button:focus-visible,
+.mt-unit-btn:focus-visible,
+.mt-share-pop button:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
+
+.mt-add-booking {
+  justify-self: start;
+}
+
+.mt-trip .mt-next-actions {
+  display: grid;
+  gap: 10px;
+}
+
+.mt-acts-two {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mt-trip .mt-next-actions .btn {
+  min-height: 50px;
+}
+
+/* "Na deze reis", collapsed to one row; open, four one-line rows. */
+.mt-disc {
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+}
+
+.mt-disc > button,
+.mt-disc-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 58px;
+  padding: var(--space-2) 14px;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 800 15px / var(--leading-tight) var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-disc-chev {
+  margin-left: auto;
+  transition: transform var(--dur-2) var(--ease-out);
+}
+
+.mt-disc.is-open .mt-disc-chev {
+  transform: rotate(90deg);
+}
+
+.mt-disc ul {
+  margin: 0;
+  padding: 0 14px 6px;
+  list-style: none;
+}
+
+.mt-disc li {
+  border-top: 1px solid var(--border);
+}
+
+.mt-disc li button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-1) 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 700 var(--text-body) / var(--leading-tight) var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-disc li button > span {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-control);
+  background: var(--surface-page);
+  color: var(--umber-800);
+}
+
+.mt-disc-row {
+  width: 100%;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+}
+
+.mt-disc-row-s {
+  margin-left: auto;
+  font-size: var(--text-label);
+  font-weight: 700;
+  color: var(--text-2);
+}
+
+/* The share icon's two ways: the route image and the share panel. */
+.mt-share {
+  position: relative;
+}
+
+.mt-share-pop {
+  position: absolute;
+  top: calc(100% + var(--space-1));
+  right: 0;
+  z-index: var(--z-sticky);
+  display: grid;
+  min-width: 220px;
+  padding: var(--space-1);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+
+.mt-share-pop button {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: 600 var(--text-body) / 1 var(--ui);
+  text-align: left;
+  cursor: pointer;
+}
+
+.mt-share-pop button:hover {
+  background: var(--surface-hover);
+}
+
+/* The unit, said once by the control (not under each row). */
+.mt-unit-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap);
+  padding: 0 var(--space-1);
+  border: 0;
+  background: none;
+  color: var(--umber-800);
+  font: 700 var(--text-label) / 1 var(--ui);
+  cursor: pointer;
+}
+
+/* Ledgers on the ground: rows with hairlines, no white cards. */
+.mt-panel.is-trips .mt-rows {
+  gap: 0;
+}
+
+.mt-panel.is-trips .mt-rows .mt-row.card {
+  min-height: 72px;
+  padding: 10px 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  transition: background-color var(--dur-2) var(--ease-out);
+}
+
+.mt-panel.is-trips .mt-rows .mt-row-wrap:first-child .mt-row.card {
+  border-top: 0;
+}
+
+.mt-panel.is-trips .mt-rows .mt-row-wrap:hover .mt-row.card,
+.mt-panel.is-trips .mt-rows .mt-row-wrap:focus-within .mt-row.card {
+  background: var(--umber-50);
+}
+
+.mt-panel.is-trips .mt-rows .mt-row .card-media {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-control);
+}
+
+.atlas-route.is-lift .atlas-route-line {
+  stroke: var(--umber-800);
+}
+
+/* "Hoe was {trip}?": ten taps on an umber 100 wash. */
+.mt-rate {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border-radius: var(--radius-card);
+  background: var(--umber-100);
+}
+
+.mt-rate b {
+  font-size: var(--text-lead);
+  color: var(--umber-800);
+}
+
+.mt-rate-scale {
+  display: grid;
+  /* Two rows of five on a phone, so every number is a full 44 px target. */
+  grid-template-columns: repeat(5, minmax(var(--tap), 1fr));
+  gap: var(--space-1);
+}
+
+@media (min-width: 600px) {
+  .mt-rate-scale { grid-template-columns: repeat(10, minmax(var(--tap), 1fr)); }
+}
+
+.mt-rate-scale button {
+  min-height: var(--tap);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--text);
+  font: 800 15px / 1 var(--ui);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.mt-rate-scale button:hover {
+  background: var(--umber-200);
+}
+
+/* The empty tab: one action plus "Bekijk een voorbeeld". */
+.mt-first {
+  display: grid;
+  gap: 18px;
+  padding-top: var(--space-1);
+}
+
+.mt-first-title {
+  margin: 0;
+  font-size: var(--text-headline);
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+
+.mt-first-acts {
+  display: grid;
+  gap: 10px;
+}
+
+.mt-first-acts .btn {
+  min-height: 50px;
+}
+
+/* "Bekijk een voorbeeld" has one look on all three tabs (judgement 1). */
+.btn.mt-soft {
+  border-color: transparent;
+  background: var(--surface-sunken);
+}
+
+@media (min-width: 768px) {
+  .mt-first-acts {
+    grid-template-columns: auto auto;
+    justify-content: start;
+  }
+}
+
+.mt-device-says {
+  margin: 0;
+  color: var(--text-2);
+  font-size: var(--text-body);
+}
+
+.mt-exbar {
+  top: var(--space-2);
+  width: max-content;
+}
+
+/* Today on the ground: the title with the flag, the timeline as rows,
+   spend as a bar with its words, the quick tiles in a row of three. */
+.mt-panel.is-trips .mt-today .mt-today-title {
+  font-weight: 800;
+}
+
+.mt-panel.is-trips .mt-quick {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.mt-panel.is-trips .btn.mt-qk {
+  align-items: center;
+  min-height: 72px;
+  border: 0;
+  border-radius: var(--radius-panel);
+  background: var(--surface-sunken);
+  text-align: center;
+}
+
+.mt-panel.is-trips .mt-qk-s {
+  font-size: var(--text-caption);
+  color: var(--text-2);
+}
+
+/* ---- Phase D: Bewaard ---- */
+.atlas-slot.is-saved .atlas-map { height: 300px; }
+.atlas-slot.is-saved.is-empty .atlas-map { height: 340px; }
+/* The Saved plate keeps its pins: on a phone only the last 24 px fade into the ground. */
+@media (max-width: 767px) {
+  .atlas-slot.is-saved .atlas-map.atlas-saved-host {
+    -webkit-mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);
+    mask-image: linear-gradient(var(--mask-solid) calc(100% - 24px), transparent);
+  }
+}
+@media (min-width: 768px) {
+  .atlas-slot.is-saved .atlas-map,
+  .atlas-slot.is-saved.is-empty .atlas-map { height: 420px; }
+}
+.atlas-empty { display: grid; gap: var(--space-4); padding: var(--space-4) 0 var(--space-6); }
+.atlas-empty-h { margin: 0; font-size: var(--text-headline); line-height: 1.2; }
+.atlas-empty-acts { display: grid; gap: var(--space-2); }
+.atlas-sect { display: grid; gap: var(--space-3); margin-bottom: var(--space-5); }
+.atlas-sect-h { display: flex; align-items: baseline; justify-content: space-between; }
+.atlas-sect-h h3, .atlas-sect-title { margin: 0; font-size: var(--text-title); }
+.atlas-sect-title { margin-bottom: var(--space-3); }
+.atlas-sect-n { font-size: var(--text-caption); font-weight: 700; color: var(--text-2); }
+.atlas-rail {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+  padding-bottom: var(--space-1);
+}
+.atlas-rail > * { flex: none; scroll-snap-align: start; }
+.mt-saved .mt-lists.atlas-rail { margin-bottom: var(--space-5); }
+.atlas-watch {
+  width: 250px;
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--radius-card);
+  background: var(--surface-sunken);
+  text-align: start;
+}
+.atlas-watch:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.atlas-watch-k { display: flex; align-items: center; gap: 6px; font-size: var(--text-caption); font-weight: 800; color: var(--umber-800); }
+.atlas-watch-bell { margin-inline-start: auto; color: var(--text-2); display: inline-flex; }
+.atlas-watch-n { font-weight: 800; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.atlas-watch-p { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-2); }
+.atlas-watch-p b { font-size: var(--text-headline); font-weight: 800; }
+.atlas-watch-wait { display: grid; place-items: center; height: 54px; padding: 0 var(--space-2); border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); text-align: center; }
+.atlas-chart { display: block; max-width: 100%; height: auto; overflow: visible; }
+.atlas-chart-area { fill: var(--umber-100); opacity: 0.55; }
+.atlas-chart-line { fill: none; stroke: var(--umber-600); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.atlas-chart circle { fill: var(--surface); stroke: var(--umber-600); stroke-width: 1.6; }
+.atlas-chart circle.is-now { fill: var(--umber-800); }
+.atlas-chart-axis { stroke: var(--border); }
+.atlas-chart text { font-size: var(--text-caption); font-weight: 700; fill: var(--text-2); }
+.atlas-chart text.is-v { fill: var(--text); font-weight: 800; }
+.atlas-move {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--umber-800);
+  background: var(--umber-100);
+}
+.atlas-move.is-up { color: var(--text-2); background: var(--surface-sunken); }
+.atlas-watch-src { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); font-size: var(--text-caption); color: var(--text-2); }
+.atlas-kv { display: grid; margin: var(--space-4) 0; }
+.atlas-kv > div { display: flex; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--border); }
+.atlas-kv > div:last-child { border-bottom: 1px solid var(--border); }
+.atlas-kv dt { color: var(--text-2); }
+.atlas-kv dd { margin: 0; font-weight: 800; text-align: end; }
+.atlas-kv dd span { font-weight: 600; color: var(--text-2); }
+.atlas-two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); margin-top: var(--space-4); }
+.atlas-chips-scroll { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-top: var(--space-2); }
+.atlas-chips-scroll .mt-chips { flex-wrap: nowrap; }
+.atlas-chips-scroll > *, .atlas-chips-scroll .chip { flex: none; }
+.mt-saved .mt-item {
+  grid-template-columns: auto 64px minmax(0, 1fr) auto auto;
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--border);
+  border-radius: 0;
+  padding: var(--space-3) 0;
+}
+.mt-saved .mt-item-check { height: var(--tap); }
+.mt-saved .mt-item-media { width: 64px; height: 64px; }
+.mt-item-fig { font-size: var(--text-title); font-weight: 800; white-space: nowrap; }
+/* The row as in the reference (p06): name and flag, then Score, kind, the
+   move and the quiet cheapest-month tag on one line that wraps. */
+.mt-item-title { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; max-width: 100%; }
+.mt-saved .btn.mt-item-name { min-width: 0; max-width: 100%; overflow: hidden; font-size: var(--text-lead); font-weight: 800; }
+/* A long name ends in an ellipsis on one line; the flag beside it never shrinks. */
+.mt-saved .btn.mt-item-name .btn-label { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mt-item-title > :not(.mt-item-name) { flex: none; }
+/* A whole-trip figure is twice as long: on a phone it steps down so the name keeps its word. */
+@media (max-width: 480px) { .mt-saved .mt-item-fig:not(.mt-muted) { font-size: var(--text-lead); } }
+.mt-item-line { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); }
+.mt-item-line .mt-item-kind { font-size: var(--text-caption); color: var(--text-2); }
+/* No price yet: quiet words that wrap in a narrow column, never squeezing the name. */
+.mt-saved .mt-item-fig.mt-muted { max-width: 9ch; font-size: var(--text-caption); font-weight: 600; white-space: normal; text-align: end; }
+
+/* The kind chips, Price fell, the country and the Map pill on one scrolling line. */
+.mt-saved .mt-saved-filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+
+/* The selection bar: a dark ink bar floating over the list (p06). */
+.mt-saved .mt-selbar {
+  position: sticky;
+  bottom: calc(var(--space-3) + env(safe-area-inset-bottom));
+  background: var(--plate);
+  color: var(--on-plate);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-3);
+}
+.mt-saved .mt-selbar-text { color: var(--on-plate); font-weight: 700; }
+.mt-saved .mt-selbar-note { color: var(--on-plate-2); }
+.mt-saved .mt-selbar .btn-quiet { color: var(--on-plate-2); }
+.watch-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+
+
+
+/* ==== G12 Phase E: Your Europe (the reference's .under .legend .chart .cost
+   .extremes .log .badges .yc-wrap and the country sheet), tokens only ==== */
+.atlas-eu { display: grid; gap: var(--space-2); padding-top: var(--space-3); }
+.atlas-eu.is-empty { padding-bottom: var(--space-6); }
+.atlas-eu .atlas-sect { margin-bottom: var(--space-4); }
+.atlas-nx { display: inline-flex; align-items: center; gap: var(--space-2); min-width: 0; font-size: var(--text-label); font-weight: 700; color: var(--text-2); }
+.atlas-hatch {
+  flex: none;
+  width: 14px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  background: repeating-linear-gradient(-45deg, var(--umber-600) 0 2px, var(--atlas-land) 2px 5px);
+  outline: 1px solid var(--atlas-border);
+  outline-offset: -1px;
+}
+.atlas-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font: 700 var(--text-body) / 1 var(--ui);
+  cursor: pointer;
+}
+.atlas-btn.is-soft { border-color: transparent; background: var(--umber-100); color: var(--umber-800); }
+.atlas-btn.is-primary { border-color: transparent; background: var(--action); color: var(--action-text); }
+.atlas-btn:focus-visible, .atlas-prow:focus-visible, .atlas-ycbtn:focus-visible, .atlas-bar:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.atlas-softbtn { justify-self: start; min-height: var(--tap); padding: 0 var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); font: 700 var(--text-body) / 1 var(--ui); cursor: pointer; }
+.atlas-lnk.is-start { justify-self: start; text-align: start; }
+.atlas-sect-h .atlas-lnk { display: inline-flex; align-items: center; gap: var(--space-1); }
+
+/* charts: drawn at the column's measured width, 12 px text */
+.atlas-chartbox { width: 100%; min-width: 0; }
+.atlas-chart text { font-family: var(--ui); }
+.atlas-chart rect.is-off { fill: var(--umber-100); }
+.atlas-chart rect.is-on { fill: var(--umber-600); }
+.atlas-chart rect.is-r0 { fill: var(--umber-300); }
+.atlas-chart rect.is-r1 { fill: var(--umber-500); }
+.atlas-chart rect.is-r2 { fill: var(--umber-600); }
+.atlas-chart rect.is-r3 { fill: var(--umber-700); }
+.atlas-chart rect.is-r4 { fill: var(--umber-800); }
+.atlas-bars .atlas-bar { cursor: pointer; }
+.atlas-bars .atlas-bar-hit { fill: transparent; }
+.atlas-bars .atlas-bar.is-on .atlas-bar-y { fill: var(--text); font-weight: 800; }
+.atlas-bars rect:not(.atlas-bar-hit) { transition: fill var(--dur-2) var(--ease-out); }
+
+/* what the trips cost: logged spend per person, bars on the band */
+.atlas-costkey { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2) var(--space-3); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); }
+.atlas-costkey i { display: inline-block; width: 16px; height: 8px; margin-inline-end: 5px; border-radius: var(--radius-sm); background: var(--umber-600); }
+.atlas-costkey b { margin-inline-start: auto; color: var(--umber-800); font-weight: 800; }
+.atlas-cost { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.atlas-crow { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 5px var(--space-2); align-items: baseline; }
+.atlas-cname { overflow: hidden; font-size: var(--text-body); font-weight: 700; white-space: nowrap; text-overflow: ellipsis; }
+.atlas-cname small, .atlas-lt b small { color: var(--text-3); font-size: inherit; font-weight: 600; }
+.atlas-cval { font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.atlas-ctrack { grid-column: 1 / -1; position: relative; height: 10px; border-radius: var(--radius-sm); background: var(--surface-sunken); }
+.atlas-cbar { position: absolute; inset: 0 auto 0 0; border-radius: var(--radius-sm); background: var(--umber-600); }
+
+/* the four extremes */
+/* Two tiles a row where they fit, one under the other in a narrow column
+   (the 1440 side column), so a place name never breaks into four lines. */
+.atlas-extremes { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--space-2); }
+/* The cost rows need the width: from the two-column layout they span it. */
+.atlas-eu > .atlas-sect.is-full { grid-column: 1 / -1; }
+.atlas-ext { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px 10px; align-items: center; padding: 10px var(--space-3); border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.atlas-ext i { grid-row: span 2; display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--radius-sm); background: var(--umber-800); color: var(--action-text); font-size: var(--text-body); font-style: normal; font-weight: 800; }
+.atlas-ext b { overflow: hidden; font-size: var(--text-body); white-space: nowrap; text-overflow: ellipsis; }
+.atlas-ext span { font-size: var(--text-caption); font-weight: 700; color: var(--text-3); }
+
+/* the trip log */
+.atlas-log { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.atlas-lrow { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 10px; align-items: center; }
+.atlas-rk { font-size: var(--text-label); font-weight: 800; color: var(--text-3); text-align: end; font-variant-numeric: tabular-nums; }
+.atlas-lt { display: grid; gap: 5px; min-width: 0; }
+.atlas-lt b { overflow: hidden; font-size: var(--text-body); white-space: nowrap; text-overflow: ellipsis; }
+.atlas-badge-sub { margin: 0; font-size: var(--text-label); color: var(--text-2); }
+.atlas-badge { min-height: var(--tap); }
+.atlas-badge[aria-pressed="true"] { color: var(--text); }
+
+/* the year card preview: umber, the year's countries in sand */
+.atlas-yc-wrap { display: grid; justify-items: center; gap: var(--space-3); }
+.atlas-ycbtn { padding: 0; border: 0; border-radius: var(--radius-card); background: none; cursor: pointer; }
+.atlas-yc {
+  display: flex;
+  flex-direction: column;
+  width: 210px;
+  aspect-ratio: 9 / 16;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--umber-700);
+  color: var(--action-text);
+  text-align: start;
+  box-shadow: var(--elev-2);
+}
+.atlas-yc-h { display: grid; gap: 2px; padding: var(--space-3) var(--space-3) var(--space-2); }
+.atlas-yc-h small { font-size: var(--text-caption); font-weight: 800; opacity: 0.85; }
+.atlas-yc-h b { font-size: var(--text-title); line-height: 1.1; }
+.atlas-yc-map { flex: 1; min-height: 0; padding: 0 var(--space-2); }
+.atlas-yc-map .mt-eumap { width: 100%; height: 100%; }
+.atlas-yc-map .mt-eumap path { fill: var(--umber-600); stroke: var(--umber-700); }
+.atlas-yc-map .mt-eumap path.is-been { fill: var(--umber-100); }
+.atlas-yc-f { display: grid; gap: var(--space-2); padding: var(--space-2) var(--space-3) var(--space-3); }
+.atlas-yc-nums { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); }
+.atlas-yc-nums span { display: grid; font-size: var(--text-caption); font-weight: 700; }
+.atlas-yc-nums b { font-size: var(--text-figure); font-weight: 800; font-variant-numeric: tabular-nums; }
+.atlas-yc-mo { display: flex; align-items: flex-end; gap: 3px; height: 20px; }
+.atlas-yc-mo i { flex: 1; border-radius: var(--radius-sm); background: var(--umber-600); }
+.atlas-yc-mo i.is-on { background: var(--umber-100); }
+.atlas-yc-acts { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); width: 100%; max-width: 300px; }
+
+/* past trips: rows on the ground */
+.atlas-pyear { display: grid; }
+.atlas-pyear-h { margin: 0; padding: 6px 0 2px; font-size: var(--text-label); font-weight: 800; color: var(--text-3); }
+.atlas-prow-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; border-bottom: 1px solid var(--border-soft); }
+.atlas-prow-wrap > :nth-child(n + 3) { grid-column: 1 / -1; }
+.atlas-prow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; min-height: 64px; padding: var(--space-2) 0; border: 0; background: none; color: var(--text); font: inherit; text-align: start; cursor: pointer; }
+.atlas-th { width: 52px; height: 52px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
+.atlas-th .atlas-th-img, .atlas-th img { width: 100%; height: 100%; object-fit: cover; }
+.atlas-prow-t { display: grid; gap: 3px; min-width: 0; }
+.atlas-prow-t b { display: flex; align-items: center; gap: 5px; min-width: 0; font-size: var(--text-body); }
+/* The name keeps one line and gives way first: the flags, the figure and the menu never squeeze it into a wrap. */
+.atlas-prow-name { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.atlas-prow-t b > :not(.atlas-prow-name) { flex: none; }
+.atlas-prow-wrap.mt-jcard { display: grid; overflow: visible; background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; }
+.atlas-prow-wrap > .atlas-prow { min-width: 0; }
+.atlas-prow-wrap > .mt-menu { align-self: start; margin-top: var(--space-3); }
+.atlas-prow-m { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.atlas-prow > svg { color: var(--text-3); }
+.atlas-prow-open { display: grid; gap: var(--space-2); padding-bottom: var(--space-3); }
+
+/* the country sheet */
+.atlas-cty { display: grid; gap: var(--space-4); }
+.atlas-kv { display: grid; margin: 0; }
+.atlas-kv > div { display: flex; justify-content: space-between; gap: var(--space-3); padding: 10px 0; border-bottom: 1px solid var(--border-soft); }
+.atlas-kv dt { color: var(--text-2); font-weight: 600; }
+.atlas-kv dd { margin: 0; font-weight: 800; font-variant-numeric: tabular-nums; text-align: end; }
+.atlas-two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+
+/* Jouw smaak in the Style Studio */
+.sst-taste { margin-top: var(--space-6); }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-bars rect:not(.atlas-bar-hit) { transition: none; }
+}
+
+/* ── G12 Phase F: the year card and its studio ──────────────────────────
+   The card is drawn in the PNG's own 240 unit grid (YearRecap.drawYearCard)
+   and scaled as a whole, so the preview and the image keep one layout. Its
+   colours are the chosen style's tokens, handed in as --yc-* by YearCard. */
+.atlas-ycbox { position: relative; display: block; overflow: hidden; border-radius: var(--radius-card); box-shadow: var(--elev-2); }
+.atlas-yc3 {
+  /* The card's own type and corners in its 240 unit grid; the canvas uses the same numbers. */
+  --yc-fs-mk: 11px; --yc-fs-tag: 10px; --yc-fs-title: 24px; --yc-fs-ins: 12px; --yc-fs-num: 24px; --yc-fs-lab: 11px;
+  --yc-r-photo: 12px; --yc-r-inset: 10px; --yc-r-bar: 1px; --yc-r-mark: 2px;
+  position: absolute; top: 0; left: 0; display: flex; flex-direction: column; overflow: hidden; background: var(--yc-bg); color: var(--yc-fg); text-align: start; transform-origin: top left; }
+.atlas-yc3-h { display: grid; gap: 3px; padding: 14px 16px 8px; }
+.atlas-yc3-mk { display: flex; align-items: center; gap: 5px; font-size: var(--yc-fs-mk); font-weight: 800; line-height: 1; opacity: 0.9; }
+.atlas-yc3-mk i { width: 13px; height: 9px; border-radius: var(--yc-r-mark); background: linear-gradient(var(--yc-fg) 0 35%, var(--yc-bg) 35% 57%, var(--yc-fg) 57%); }
+.atlas-yc3-mk em { margin-inline-start: auto; padding: 3px 7px; border-radius: var(--radius-pill); background: var(--yc-fg); color: var(--yc-bg); font-size: var(--yc-fs-tag); font-style: normal; }
+.atlas-yc3-h b { font-size: var(--yc-fs-title); font-weight: 800; line-height: 1.05; overflow-wrap: anywhere; }
+.atlas-yc3-ins { font-size: var(--yc-fs-ins); font-weight: 700; opacity: 0.82; }
+.atlas-yc3-map, .atlas-yc3-gap { position: relative; flex: 1; min-height: 0; }
+.atlas-yc3 svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.atlas-yc3 svg path { fill: var(--yc-land); stroke: var(--yc-bg); stroke-width: 0.7px; vector-effect: non-scaling-stroke; }
+.atlas-yc3 svg path.is-been { fill: var(--yc-been); }
+.atlas-yc3-photo { position: relative; flex: 1; min-height: 0; margin: 0 10px; overflow: hidden; border-radius: var(--yc-r-photo); }
+.atlas-yc3-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+/* 36 percent of the photo's width, never taller than the photo: the square format has a short middle. */
+.atlas-yc3-inset { position: absolute; right: 8px; bottom: 8px; height: min(79px, calc(100% - 16px)); aspect-ratio: 1; overflow: hidden; border-radius: var(--yc-r-inset); background: var(--yc-bg); }
+.atlas-yc3-f { display: grid; gap: 8px; padding: 10px 16px 14px; }
+.atlas-yc3-nums { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.atlas-yc3-nums span { display: grid; font-size: var(--yc-fs-lab); font-weight: 700; line-height: 1.1; }
+.atlas-yc3-nums b { font-size: var(--yc-fs-num); font-weight: 800; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.atlas-yc3-mo { display: grid; grid-template-columns: repeat(12, 1fr); align-items: end; gap: 2px; height: 20px; }
+.atlas-yc3-mo i { border-radius: var(--yc-r-bar); background: var(--yc-off); }
+.atlas-yc3-mo i.is-on { background: var(--yc-mo); }
+
+/* The studio: a sheet on a phone, a wide dialog from 1100 px with the
+   preview on the left. */
+.atlas-studio-grid { display: grid; gap: var(--space-4); }
+.atlas-studio-prev { display: grid; place-items: center; padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface-sunken); }
+.atlas-studio { display: grid; gap: var(--space-4); min-width: 0; padding-bottom: var(--space-4); }
+.atlas-studio-f { display: grid; gap: var(--space-2); min-width: 0; font-size: var(--text-caption); font-weight: 800; color: var(--text-3); }
+.atlas-studio-f input[type="text"] { width: 100%; min-height: 46px; padding: 0 var(--space-3); border: 1.5px solid var(--border-strong, var(--neutral-500)); border-radius: var(--radius-control); background: var(--surface); color: var(--text); font: inherit; font-size: var(--text-lead); font-weight: 700; line-height: 1; }
+.atlas-studio-f input[type="text"]:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 1px; }
+.atlas-seg2.is-wide { width: 100%; overflow-x: auto; scrollbar-width: none; }
+.atlas-swatches { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.atlas-sw { display: grid; justify-items: center; gap: 5px; padding: 0; border: 0; background: none; color: var(--text-2); font: inherit; font-size: var(--text-caption); font-weight: 700; line-height: 1; cursor: pointer; }
+.atlas-sw i { display: grid; place-items: center; width: 46px; height: 46px; border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); }
+.atlas-sw i b { width: 18px; height: 18px; border-radius: var(--radius-sm); }
+.atlas-sw[aria-pressed="true"] i { outline: var(--stroke-focus) solid var(--umber-600); }
+.atlas-thumbs { display: flex; gap: var(--space-2); overflow-x: auto; scrollbar-width: none; padding: 3px; }
+.atlas-thumbs > button { display: grid; flex: none; place-items: center; width: 56px; height: 56px; padding: 0; overflow: hidden; border: 0; border-radius: var(--radius-panel); background: var(--surface-sunken); color: var(--text-2); cursor: pointer; }
+.atlas-thumbs img { width: 100%; height: 100%; object-fit: cover; }
+.atlas-thumbs > button[aria-pressed="true"] { outline: var(--stroke-focus) solid var(--umber-600); outline-offset: -3px; }
+.atlas-studio-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.atlas-chip { min-height: 40px; padding: 0 var(--space-3); border: 1.5px solid transparent; border-radius: var(--radius-pill); background: var(--surface-sunken); color: var(--text); font: inherit; font-size: var(--text-label); font-weight: 700; line-height: 1; cursor: pointer; }
+.atlas-chip[aria-pressed="true"] { border-color: var(--umber-600); background: var(--umber-100); color: var(--umber-800); }
+.atlas-chip:disabled { color: var(--text-3); cursor: not-allowed; }
+.atlas-studio .atlas-two { margin-top: 0; }
+.atlas-studio-note { min-height: 1.4em; margin: 0; font-size: var(--text-caption); color: var(--text-2); }
+.atlas-sw:focus-visible, .atlas-thumbs > button:focus-visible, .atlas-chip:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+@media (min-width: 1100px) {
+  .fsheet.atlas-studio-sheet { max-width: 980px; }
+  .atlas-studio-grid { grid-template-columns: 340px minmax(0, 1fr); align-items: start; }
+  .atlas-studio-prev { position: sticky; top: 0; }
+}
+
+/* The lists rail: the mosaic sits on the ground, no white panel (p06); the chosen list is marked by its cover ring. */
+.mt-saved .btn.mt-lcard,
+.mt-saved .btn.mt-lcard:not([aria-pressed="true"]),
+.mt-saved .btn.mt-lcard[aria-pressed="true"] { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.mt-saved .btn.mt-lcard[aria-pressed="true"] .mt-mosaic { outline: var(--stroke-focus) solid var(--select-border); outline-offset: 2px; }
+
+/* The live Saved map's controls fade in as MapLibre mounts; with reduced motion they just appear. */
+@media (prefers-reduced-motion: reduce) {
+  .atlas-body .maplibregl-ctrl,
+  .atlas-body .maplibregl-ctrl-group { transition: none; }
+}
+
+/* ==== G12 polish: four My trips lists in one row language (owner approved 2026-11-21) ==== */
+
+/* The People button and its menu (Voor 1 persoon / Voor N personen). */
+/* The menu anchors to the control row, not the button, so it never runs off a phone. */
+.atlas-pricectl { position: relative; }
+.mt-who { position: static; flex: none; }
+.mt-whobtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  padding: 0 var(--space-3) 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mt-whobtn b { color: var(--umber-800); }
+.mt-who-menu {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 6px);
+  z-index: 5;
+  display: grid;
+  gap: 2px;
+  min-width: 230px;
+  max-width: 100%;
+  padding: var(--space-2);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  animation: hs-settle-in var(--dur-paint) var(--ease-out);
+}
+.mt-who-h { padding: 6px 10px 4px; font-size: var(--text-caption); font-weight: 800; color: var(--text-3); }
+.mt-who-menu > button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--tap);
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: 700 var(--text-body) / 1 var(--ui);
+  text-align: start;
+  cursor: pointer;
+}
+@media (hover: hover) { .mt-who-menu > button:hover { background: var(--surface-page); } }
+.mt-who-menu > button[aria-pressed="true"] { background: var(--umber-100); color: var(--umber-800); }
+.mt-who-menu > button small { margin-inline-start: auto; font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.mt-who-step { display: flex; align-items: center; gap: var(--space-2); margin-top: var(--space-1); padding: var(--space-2) 10px 2px; border-top: 1px solid var(--border-soft); }
+.mt-who-step > span { flex: 1; font-size: var(--text-label); font-weight: 700; }
+.mt-who-step b { min-width: 2ch; text-align: center; }
+.mt-who-step button {
+  display: grid;
+  place-items: center;
+  width: var(--tap);
+  height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  cursor: pointer;
+}
+.mt-who-step button:disabled { color: var(--text-3); cursor: default; }
+.mt-whobtn:focus-visible, .mt-who-menu button:focus-visible, .mt-kies:focus-visible, .mt-vote:focus-visible,
+.mt-scard-note:focus-visible, .atlas-rateit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+
+/* The lists rail: 16 px between covers, 3 px between photos, starting on the gutter; the ring sits 3 px out. */
+.mt-saved .mt-lists.atlas-rail {
+  gap: var(--space-4);
+  margin-inline: calc(-1 * var(--gutter));
+  padding: 6px var(--gutter) 10px;
+  scroll-padding-inline: var(--gutter);
+}
+.mt-saved .btn.mt-lcard { width: 150px; }
+.mt-saved .mt-mosaic { gap: 3px; border-radius: var(--radius-card); }
+.mt-saved .btn.mt-lcard[aria-pressed="true"] .mt-mosaic { outline: 2.5px solid var(--umber-600); outline-offset: 3px; }
+.mt-saved .mt-lcard-name { font-weight: 800; }
+.mt-saved .mt-mosaic.is-new { border: 1.5px solid var(--border); color: var(--text-2); }
+
+/* The list head: the count and Kiezen / Klaar. */
+.mt-listhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: var(--space-2); }
+.mt-listhead b { font-size: var(--text-lead); }
+.mt-kies {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--umber-800);
+  font: 700 var(--text-label) / 1 var(--ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Saved rows: the shared media row, a 96 px photo (120 x 90 from 1100); no select box until Kiezen. */
+.mt-saved .mt-item:not(.is-shared) { grid-template-columns: 96px minmax(0, 1fr) auto auto; gap: 14px; }
+.mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 96px minmax(0, 1fr) auto auto; }
+.mt-saved .mt-item-media { width: 96px; height: 96px; border-radius: var(--radius-card); }
+.mt-saved .mt-item-check { width: 32px; height: auto; align-self: center; }
+.mt-saved .mt-item-check input { width: 22px; height: 22px; }
+.mt-saved .mt-item-fig:not(.mt-muted) { font-size: var(--text-title); }
+.mt-saved .mt-item-fig.mt-muted { font-weight: 700; color: var(--text-3); }
+@media (min-width: 1100px) {
+  .mt-saved .mt-item:not(.is-shared) { grid-template-columns: 120px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 120px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item:not(.is-shared) .mt-item-media { width: 120px; height: 90px; }
+}
+
+/* A shared list: a 120 px photo and one column; the vote at the photo's bottom edge; the note full width. */
+.mt-saved .mt-item.is-shared {
+  grid-template-columns: 120px minmax(0, 1fr);
+  grid-template-areas: 'ph tx' 'nt nt';
+  align-items: stretch;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4) 0;
+}
+.mt-saved .mt-item.is-shared.is-choosing { grid-template-columns: auto 120px minmax(0, 1fr); grid-template-areas: 'ck ph tx' 'nt nt nt'; }
+.mt-item.is-shared > .mt-item-check { grid-area: ck; }
+.mt-item.is-shared > .mt-item-media { grid-area: ph; width: 120px; height: 120px; border-radius: var(--radius-card); }
+.mt-item.is-shared > .mt-scard-tx { grid-area: tx; }
+.mt-item.is-shared > .mt-scard-note { grid-area: nt; }
+.mt-scard-tx { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.mt-scard-top { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; min-width: 0; }
+.mt-scard-top .mt-item-title { flex: 1; }
+.mt-saved .mt-item.is-shared .btn.mt-item-name { font-size: var(--text-lead); }
+.mt-scard-sub { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; font-size: var(--text-label); line-height: 1.3; color: var(--text-2); }
+.mt-scard-acts { display: flex; align-items: center; gap: 10px; margin-top: auto; padding-top: 6px; }
+.mt-scard-acts .mt-menu { margin-inline-start: auto; margin-inline-end: -10px; }
+.mt-vote {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 800 var(--text-body) / 1 var(--ui);
+  cursor: pointer;
+}
+/* 40 px tall: the 2 px around it in the row's flow round the hit area up to 44 px. */
+.mt-vote.is-on { background: var(--umber-600); color: var(--action-text); }
+.mt-vote.is-on svg path { fill: currentColor; }
+.mt-vote svg { transition: transform var(--dur-tick) var(--ease-out); }
+.mt-vote.is-on svg { transform: scale(1.15); }
+.mt-vfaces .mt-face { width: 26px; height: 26px; margin-left: -6px; border-color: var(--surface-page); font-size: var(--text-micro); font-weight: 800; }
+.mt-vfaces .mt-face:first-child { margin-left: 0; }
+.mt-face.is-me { background: var(--surface); outline: 1.5px solid var(--text); outline-offset: -3.5px; }
+.mt-scard-note {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: var(--tap);
+  padding: var(--space-2) 10px;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: var(--umber-50);
+  border: 1px solid var(--umber-200);
+  color: var(--text-2);
+  font: 500 var(--text-label) / 1.3 var(--ui);
+  text-align: start;
+  cursor: pointer;
+}
+.mt-scard-note > span { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.mt-scard-note > svg { flex: none; }
+form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
+@media (min-width: 1100px) {
+  /* Two cards a row in the 540 px column, so the vote, the faces and the menu keep one line. */
+  .mt-saved .mt-items.is-shared-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  .mt-saved .mt-item.is-shared, .mt-saved .mt-item.is-shared.is-choosing {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'ph' 'tx' 'nt';
+    padding: 0;
+    align-content: start;
+    border-bottom: 0;
+  }
+  .mt-saved .mt-item.is-shared.is-choosing { grid-template-areas: 'ck' 'ph' 'tx' 'nt'; }
+  .mt-item.is-shared > .mt-item-media { align-self: start; width: 100%; height: auto; aspect-ratio: 4 / 3; }
+}
+
+/* Past trips: the same media row, a 56 px grade badge or "Geef een cijfer", and quiet year heads. */
+.atlas-pyear-h { display: flex; justify-content: space-between; gap: var(--space-3); padding: 18px 0 2px; }
+.atlas-pyear-h span { font-weight: 600; }
+.atlas-prow-wrap, .atlas-prow-wrap.mt-jcard { grid-template-columns: minmax(0, 1fr) auto; border-bottom: 0; border-top: 1px solid var(--border); }
+.atlas-prows > .atlas-prow-wrap:first-child { border-top: 0; }
+.atlas-prow { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: var(--space-3) 0; }
+.atlas-prow > svg { display: none; }
+.atlas-th { width: 96px; height: 96px; border-radius: var(--radius-card); }
+.atlas-prow-t b { gap: 7px; font-size: var(--text-lead); font-weight: 800; }
+.atlas-prow-m { font-size: var(--text-label); }
+.atlas-prow-end { display: inline-flex; align-items: center; gap: var(--space-1); }
+.atlas-prow-wrap > .atlas-prow-end > .mt-menu { align-self: center; }
+.atlas-rateit {
+  min-height: var(--tap);
+  padding: 0 var(--space-3);
+  border: 1.5px dashed var(--umber-500);
+  border-radius: var(--radius-pill);
+  background: none;
+  color: var(--umber-800);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.atlas-ratebox { grid-column: 1 / -1; margin-bottom: var(--space-3); }
+.atlas-ratebox .mt-rate-scale { grid-template-columns: repeat(5, minmax(var(--tap), 1fr)); }
+@media (min-width: 1100px) {
+  .atlas-th { width: 120px; height: 90px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .mt-who-menu { animation: none; }
+  .mt-vote svg { transition: none; }
+}
+
+/* With the live map in the atlas pane, the rows take the whole column (no empty second column). */
+.mt-saved .mt-split.is-hosted { grid-template-columns: minmax(0, 1fr); }
+.mt-saved .mt-split.is-hosted .mt-split-map { display: none; }
+.atlas-prow-m .atlas-move { white-space: normal; }
+.atlas-prow-end .mt-menu { margin-inline-end: -10px; }
+.mt-scard-acts { flex-wrap: wrap; row-gap: var(--space-1); }
+
+/* Names are never cut short of two lines (owner review): past trips put the name on its own line,
+   the flags beside the nights, the estimate chip under them; Saved names wrap the same way. */
+.atlas-prow-t .atlas-prow-name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.25;
+}
+.atlas-prow-m { gap: 6px; }
+.atlas-prow-est { display: flex; }
+.atlas-prow-end { align-self: center; }
+.mt-saved .btn.mt-item-name .btn-label {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  line-height: 1.25;
+}
+
+/* Desktop shared cards line up (owner review): each card spans six rows of the list's grid and takes them
+   as a subgrid, so the photo, name line, bed and food, "door", the vote row and the note sit at the same y
+   in every card of a row, and a card without a note ends at the same height as one with. */
+@media (min-width: 1100px) {
+  .mt-saved .mt-items.is-shared-grid { row-gap: 0; column-gap: 22px; align-items: stretch; }
+  .mt-saved .mt-items.is-shared-grid > .mt-item.is-shared,
+  .mt-saved .mt-items.is-shared-grid > .mt-item.is-shared.is-choosing {
+    grid-row: span 6;
+    grid-template-rows: subgrid;
+    grid-template-areas: none;
+    row-gap: var(--space-2);
+    align-content: normal;
+    padding-bottom: 22px;
+  }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-scard-tx { display: contents; }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-item-media { grid-area: auto; grid-row: 1; grid-column: 1; }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-item-check { grid-area: auto; grid-row: 1; grid-column: 1; align-self: start; justify-self: start; z-index: 1; margin: var(--space-2); border-radius: var(--radius-control); background: var(--surface); }
+  .mt-items.is-shared-grid .mt-scard-top { grid-row: 2; grid-column: 1; align-items: baseline; }
+  .mt-items.is-shared-grid .mt-scard-cost { grid-row: 3; grid-column: 1; }
+  .mt-items.is-shared-grid .mt-shared-by { grid-row: 4; grid-column: 1; }
+  .mt-items.is-shared-grid .mt-scard-acts { grid-row: 5; grid-column: 1; margin-top: 0; padding-top: var(--space-1); flex-wrap: nowrap; }
+  .mt-items.is-shared-grid > .mt-item.is-shared > .mt-scard-note { grid-area: auto; grid-row: 6; grid-column: 1; align-self: start; }
+}
+
+/* Reizen rows (owner review 2026-11-21): Komend, In planning and Dagplannen take the Saved media row,
+   a 96 px photo (120 x 90 from 1100), the name in two lines at most, the meta under it and the figure
+   on the right; the menu, JoinsLine, the content below and the route lift are unchanged. */
+.mt-panel.is-trips .mt-rows .mt-row.card { gap: 14px; min-height: 0; padding: var(--space-3) 0; align-items: center; }
+.mt-panel.is-trips .mt-rows .mt-row .card-media { width: 96px; height: 96px; border-radius: var(--radius-card); }
+.mt-panel.is-trips .mt-rows .mt-row .card-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas: 't f' 'm f';
+  align-content: center;
+  align-items: center;
+  gap: var(--space-1) 10px;
+}
+.mt-panel.is-trips .mt-rows .mt-row .card-title {
+  grid-area: t;
+  align-self: end;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 1.25;
+}
+.mt-panel.is-trips .mt-rows .mt-row .card-meta { grid-area: m; align-self: start; font-size: var(--text-label); color: var(--text-2); }
+.mt-panel.is-trips .mt-rows .mt-row .card-figures { grid-area: f; justify-content: flex-end; margin: 0; text-align: end; }
+.mt-panel.is-trips .mt-rows .mt-row .card-price { font-size: var(--text-title); font-weight: 800; white-space: nowrap; }
+.mt-panel.is-trips .mt-rows .mt-row .card-price .mt-muted { display: block; max-width: 9ch; font-size: var(--text-caption); font-weight: 700; color: var(--text-3); white-space: normal; }
+.mt-panel.is-trips .mt-rows .mt-row .card-actions { align-self: center; }
+@media (max-width: 480px) { .mt-panel.is-trips .mt-rows .mt-row .card-price { font-size: var(--text-lead); } }
+@media (min-width: 1100px) {
+  .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 120px; height: 90px; }
+  /* The 540 px content pane holds one media row a line, as Saved does; two columns left the name no room. */
+  .atlas-content .mt-two, .atlas-content .mt-rows.is-wide { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* The grade in a past row and the reislog sits right and centred. */
+.atlas-prow-end > .atlas-grade, .atlas-lrow > .atlas-grade { align-self: center; justify-self: end; }
+
+/* The Saved toolbar (owner review): Per dag | Hele reis, Voor N personen, the nights only with Hele reis,
+   and List / Map at the end of the same row; 36 px pills with 13 px text. Each pill's hit area reaches
+   44 px through an invisible ::after above and below, inside the 8 px row gap. The People menu now
+   anchors to this row (the price control's own box is display: contents here). */
+.mt-saved-tools { position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.mt-saved-tools > .atlas-pricectl { display: contents; }
+.mt-saved-tools + .mt-saved-filters { margin-top: calc(var(--space-3) - var(--space-4)); }
+.mt-saved-tools .atlas-seg2 { padding: 2px; }
+.mt-saved-tools .atlas-seg2 button { position: relative; min-height: 32px; padding: 0 10px; font-size: var(--text-label); }
+.mt-saved-tools .mt-whobtn,
+.mt-saved-tools .mt-view-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 10px 0 var(--space-3);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font: 700 var(--text-label) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mt-saved-tools .mt-view-toggle { margin-inline-start: auto; padding: 0 var(--space-3) 0 10px; color: var(--umber-800); }
+.mt-saved-tools .atlas-nights { min-height: 36px; padding: 0 2px 0 var(--space-3); }
+.mt-saved-tools .atlas-nights button { position: relative; width: 32px; height: 32px; }
+.mt-saved-tools .atlas-seg2 button::after,
+.mt-saved-tools .atlas-nights button::after { content: ''; position: absolute; inset: -6px 0; }
+.mt-saved-tools .mt-whobtn::after,
+.mt-saved-tools .mt-view-toggle::after { content: ''; position: absolute; inset: -4px 0; }
+.mt-view-toggle:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* From 1024 the list and the map show side by side, so the switch stays hidden (70-mytrips.css). */
+@media (min-width: 1024px) { .mt-saved-tools .mt-view-toggle { display: none; } }
+
+/* ==== G12 owner fixes round 4 ==== */
+
+/* The statement of reasons (DSA) under a trip: no card. Closed it is one line
+   on the ground (mark, title, date, chevron), the whole line the button;
+   open, a ledger of hairline rows in place. */
+.mt-next .modnote,
+.mt-row-wrap .modnote,
+.saved-trips-panel .modnote {
+  display: block;
+  margin: var(--space-2) 0 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--border-soft);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.modnote-h { margin: 0; font: inherit; }
+.modnote-head {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-height: var(--tap);
+  padding: var(--space-2) 0;
+  border: 0;
+  background: none;
+  color: var(--umber-700);
+  font: inherit;
+  text-align: start;
+  cursor: pointer;
+}
+.modnote-head > svg:first-child { flex: none; }
+.modnote-head .modnote-title { flex: 1 1 auto; min-width: 0; font-size: var(--text-label); font-weight: 700; line-height: 1.3; color: var(--text); }
+.modnote-head .modnote-date { flex: none; color: var(--text-2); }
+.modnote-chev { flex: none; color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
+.modnote.is-open .modnote-chev { transform: rotate(180deg); }
+.modnote-head:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.saved-trips-panel .modnote-body { gap: 0; padding-bottom: var(--space-2); }
+.saved-trips-panel .modnote-line { padding-bottom: var(--space-2); font-size: var(--text-label); color: var(--text-2); }
+.saved-trips-panel .modnote-facts > div { display: grid; gap: 2px; padding: var(--space-2) 0; border-top: 1px solid var(--border-soft); }
+.saved-trips-panel .modnote-facts dt { font-size: var(--text-caption); font-weight: 700; color: var(--text-2); }
+.saved-trips-panel .modnote-facts dd { margin: 0; font-size: var(--text-label); line-height: 1.45; color: var(--text); }
+.saved-trips-panel .modnote-facts + .modnote-toggle,
+.saved-trips-panel .modnote-form { margin-top: var(--space-2); }
+.modnote-hide { min-height: var(--tap); margin-top: var(--space-1); }
+@media (min-width: 600px) {
+  .saved-trips-panel .modnote-facts > div { grid-template-columns: minmax(0, 10rem) minmax(0, 1fr); gap: var(--space-3); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .modnote-chev { transition: none; }
+}
+
+/* The Saved plate (atlas/SavedPlate.jsx): the Your Europe plate with the saved
+   places. Zoom redraws the viewBox; a drag pans once zoomed. */
+.atlas-zoom { position: absolute; inset: 0; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.atlas-zoom.is-zoomed { cursor: grab; touch-action: none; }
+.atlas-zoom.is-dragging { cursor: grabbing; }
+.atlas-pins { position: absolute; inset: 0; pointer-events: none; }
+.atlas-pin-dot {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  box-sizing: content-box;
+  border: 1.5px solid var(--surface);
+  background: var(--umber-600);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.atlas-pin-dot.is-dim { opacity: 0.3; }
+.atlas-pin-photo {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  overflow: hidden;
+  border-radius: 50%;
+  border: 2.5px solid var(--surface);
+  background: var(--surface-sunken);
+  box-shadow: var(--elev-2);
+  pointer-events: auto;
+  cursor: pointer;
+}
+.atlas-pin-photo.is-big { width: 54px; height: 54px; }
+.atlas-pin-photo .atlas-pin-img,
+.atlas-pin-photo img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.atlas-pin-cap {
+  position: absolute;
+  transform: translate(-50%, 24px);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  white-space: nowrap;
+  color: var(--text);
+}
+.atlas-pin-photo.is-big + .atlas-pin-cap { transform: translate(-50%, 31px); }
+.atlas-pill {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font: 700 var(--text-caption) / 1 var(--ui);
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+}
+/* The pill's hit area reaches 44 px. */
+.atlas-pill::after { content: ''; position: absolute; inset: -8px -2px; }
+.atlas-pill b { color: var(--umber-800); font-weight: 800; }
+.atlas-pill[aria-pressed="true"] { background: var(--umber-800); color: var(--action-text); }
+.atlas-pill[aria-pressed="true"] b { color: var(--action-text); }
+.atlas-zoomctl {
+  position: absolute;
+  top: var(--space-3);
+  right: var(--space-3);
+  z-index: 2;
+  display: grid;
+  overflow: hidden;
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+}
+.atlas-zoomctl button { display: grid; place-items: center; width: var(--tap); height: var(--tap); border: 0; background: none; color: var(--text); cursor: pointer; }
+.atlas-zoomctl button + button { border-top: 1px solid var(--border-soft); }
+.atlas-zoomctl button:disabled { color: var(--text-3); cursor: default; }
+.atlas-zoomctl button:focus-visible,
+.atlas-pill:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
+
+/* Past rows, a strict grid (owner fixes round 4): photo | text minmax(0, 1fr) |
+   grade or Geef een cijfer | menu. The estimate chip wraps inside the text
+   column, so the button never sits over it. */
+.atlas-prow-wrap, .atlas-prow-wrap.mt-jcard { column-gap: var(--space-2); }
+.atlas-prow-t, .atlas-prow-est { min-width: 0; max-width: 100%; }
+.atlas-prow-est .atlas-move { min-width: 0; max-width: 100%; white-space: normal; }
+.atlas-prow-end { min-width: 0; }
+@media (max-width: 599px) {
+  .atlas-rateit { max-width: 88px; padding: var(--space-1) var(--space-2); line-height: 1.15; white-space: normal; text-align: center; }
+}
+
+/* ==== Desktop placement (owner review 2026-11-22, G12): from 1100 the column beside the map is a
+   reading column, not a squeezed phone. It grows with the window (540 to 620 px) and starts on the
+   map's top line; Today stacks (the day, then one aligned list of what the trip holds); Saved names
+   keep their flag on the first line and "Nog geen prijs" on one; Your Europe's extremes take the
+   column; an empty Your Europe shows the shape of its three charts. The phone is unchanged. ==== */
+.atlas-ghost, .mt-disc-row-ico { display: none; }
+@media (min-width: 1100px) {
+  .atlas-body { grid-template-columns: minmax(0, clamp(540px, 42vw, 620px)) minmax(0, 1fr); gap: var(--space-7); }
+  .mt-panel .atlas-content { padding-top: var(--space-4); }
+  .atlas-slot.is-saved .atlas-map,
+  .atlas-slot.is-saved.is-empty .atlas-map { height: max(480px, calc(100dvh - var(--header-h) - 176px)); }
+
+  /* Today: the day on top, full width; its title and flag share the first line. */
+  .mt-panel.is-trips .mt-today { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding: 0; }
+  .mt-today-main { gap: var(--space-3); }
+  .mt-today-acts .btn { min-height: 48px; }
+
+  /* What the trip holds: one list, one icon column, one value column, one chevron column. */
+  .mt-panel.is-trips .mt-today-side { gap: 0; border-top: 1px solid var(--border); }
+  .mt-today-side > .mt-spend-door,
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk,
+  .mt-today-side > .mt-disc-row {
+    display: grid;
+    grid-template-columns: 36px minmax(0, max-content) minmax(0, 1fr) 18px;
+    align-items: center;
+    column-gap: var(--space-3);
+    width: 100%;
+    min-height: 60px;
+    padding: var(--space-2) var(--space-1);
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: none;
+    color: var(--text);
+    font: 700 var(--text-lead) / var(--leading-tight) var(--ui);
+    text-align: start;
+    transition: background-color var(--dur-1) var(--ease-out);
+  }
+  .mt-today-side > .mt-spend-door { grid-template-columns: 36px minmax(0, 1fr) 18px; border-top: 0; }
+  @media (hover: hover) {
+    .mt-today-side > .mt-spend-door:hover,
+    .mt-panel.is-trips .mt-quick > .btn.mt-qk:hover,
+    .mt-today-side > .mt-disc-row:hover { background: var(--select-row); }
+  }
+  .mt-panel.is-trips .mt-quick { display: contents; }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk .btn-label { display: contents; }
+  /* The tile's own icon becomes the 36 px square every row starts with. */
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk svg,
+  .mt-today-side > .mt-disc-row > .mt-disc-row-ico {
+    display: block;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 8px;
+    border-radius: var(--radius-control);
+    background: var(--surface-sunken);
+    color: var(--action-press);
+  }
+  .mt-panel.is-trips .mt-qk-t { font-size: var(--text-lead); font-weight: 700; color: var(--text); white-space: nowrap; }
+  .mt-panel.is-trips .mt-qk-s,
+  .mt-today-side > .mt-disc-row > .mt-disc-row-s {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: end;
+  }
+  /* The quick rows carry no chevron in the markup; draw the same one the other rows hold. */
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk::after {
+    content: '';
+    justify-self: center;
+    width: 7px;
+    height: 7px;
+    margin-inline-end: 3px;
+    border-top: 1.75px solid var(--text-3);
+    border-right: 1.75px solid var(--text-3);
+    transform: rotate(45deg);
+  }
+  .mt-today-side > .mt-spend-door > svg:last-child,
+  .mt-today-side > .mt-disc-row > svg:last-child { justify-self: center; color: var(--text-3); }
+  .mt-today-side > .mt-disc-row > .mt-disc-row-t { white-space: nowrap; }
+  .mt-today-side > .mt-today-note { padding: var(--space-2) var(--space-1); }
+
+  /* Saved rows: the flag sits on the name's first line; "Nog geen prijs" on one line. */
+  .mt-saved .mt-item-title { align-items: flex-start; }
+  .mt-saved .mt-item-title > .country-flag { margin-top: 4px; }
+  .mt-saved .mt-item-fig.mt-muted,
+  .mt-panel.is-trips .mt-rows .mt-muted { max-width: none; white-space: nowrap; }
+  .mt-saved .mt-item:not(.is-shared) { column-gap: var(--space-4); }
+
+  /* Saved lists: four covers a row that fill the column, no ragged gap at the right. */
+  .mt-saved .mt-lists.atlas-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); margin-inline: 0; padding-inline: 3px; }
+  .mt-saved .btn.mt-lcard { width: auto; min-width: 0; }
+
+  /* Your Europe starts on the map's top line too. */
+  .atlas-eu { padding-top: 0; }
+
+  /* Your Europe: the extremes take the column, two by two. */
+  .atlas-eu > .atlas-sect:has(.atlas-extremes) { grid-column: 1 / -1; }
+  .atlas-extremes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* An empty Your Europe: the two ways in side by side, then the shape of the three charts. */
+  .mt-europe.atlas-eu.is-empty { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  .atlas-eu.is-empty .atlas-empty-acts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .atlas-ghost { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-6); }
+  .atlas-ghost-b { display: grid; gap: var(--space-4); align-content: start; }
+  .atlas-ghost-b.is-full { grid-column: 1 / -1; }
+  .atlas-ghost-h { margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text-3); }
+  .atlas-ghost-years, .atlas-ghost-months { display: flex; align-items: flex-end; height: 104px; border-bottom: 1px solid var(--border); }
+  .atlas-ghost-years { justify-content: space-around; }
+  .atlas-ghost-years i { width: 44px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--umber-100); }
+  .atlas-ghost-months { gap: 5px; }
+  .atlas-ghost-months i { flex: 1; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--border-soft); }
+  .atlas-ghost-months i.is-on { background: var(--umber-100); }
+  .atlas-ghost-cost { display: grid; gap: var(--space-4); }
+  .atlas-ghost-cost span { display: grid; gap: var(--space-2); }
+  .atlas-ghost-cost b { width: 34%; height: 10px; border-radius: var(--radius-pill); background: var(--border-soft); }
+  .atlas-ghost-cost i { height: 8px; border-radius: var(--radius-pill); background: var(--umber-100); }
+}
+
+/* ==== G12 wow, phase A (owner approved 2026-11-22): the journey line and the
+   Today header. One authored moment on a tab change: the plate route draws
+   to today while the journey line's done beads wipe in and today's saffron
+   bead lands. Nothing moves at first paint; reduced motion shows the end. ==== */
+
+/* The journey line (atlas/JourneyLine.jsx). Its height is held before it
+   measures, so nothing shifts. */
+.jl { display: grid; gap: var(--space-1); min-width: 0; min-height: 44px; }
+.jl.is-spend { min-height: 64px; }
+.jl-svg { display: block; overflow: visible; }
+.jl-pill { fill: var(--umber-100); }
+.jl-ln { stroke: var(--umber-800); stroke-width: 2; }
+.jl-bead.is-done, .jl-bead.is-spend { fill: var(--umber-600); }
+.jl-bead.is-later, .jl-bead.is-none { fill: var(--surface-page); stroke: var(--umber-500); stroke-width: 2; }
+/* The one saffron mark; the 2 px umber ring carries the 3:1 on stone. */
+.jl-bead.is-today, .jl-tick { fill: var(--sun-400); stroke: var(--umber-800); stroke-width: 2; }
+.jl.is-spend .jl-bead.is-none, .jl.is-spend .jl-bead.is-later { stroke-width: 1.5; }
+/* On the Uitgaven page the saffron is the plan bar: today keeps only its ring. */
+.jl.is-spend .jl-bead.is-today { fill: var(--umber-600); stroke-width: 2.5; }
+.jl.is-spend .jl-bead.is-today.is-zero { fill: var(--surface-page); }
+.jl.is-spend .jl-bead { transition: r var(--dur-settle) var(--ease-settle); }
+.jl-labs, .jl-days { position: relative; height: 16px; }
+.jl-labs span, .jl-days span {
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--umber-700);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.jl-labs span.is-strong { color: var(--text); font-weight: 800; }
+.jl-days span { transform: translateX(-50%); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.jl-days span.is-today { color: var(--text); font-weight: 800; }
+.jl.is-draw .jl-done { animation: jl-wipe var(--dur-reveal) var(--ease-out) both; }
+.jl.is-draw .jl-bead.is-today {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-reveal) - var(--dur-1)) both;
+}
+@keyframes jl-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes jl-land { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* The signpost plate: the place in the plate face on umber, a pointed end,
+   the flag on a paper disc. On a phone it floats over the map band's fade. */
+.mt-sign {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-self: start;
+  align-self: flex-start;
+  max-width: 100%;
+  min-height: 56px;
+  padding: var(--space-2) calc(var(--plate-tip) + var(--space-5)) var(--space-2) var(--space-2);
+  border-radius: var(--radius-control) 0 0 var(--radius-control);
+  background: var(--umber-600);
+  color: var(--on-plate);
+  clip-path: polygon(0 0, calc(100% - var(--plate-tip) - 8px) 0, 100% 50%, calc(100% - var(--plate-tip) - 8px) 100%, 0 100%);
+}
+.mt-sign-disc { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--surface); }
+.mt-panel .mt-today .mt-sign .mt-today-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-3);
+  min-width: 0;
+  margin: 0;
+  color: var(--on-plate);
+  font-weight: 800;
+  line-height: 1;
+}
+.mt-sign-name {
+  padding-top: 3px;
+  font-family: var(--plate-face);
+  font-size: var(--text-signpost);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.mt-sign-words { font-size: var(--text-lead); font-weight: 600; color: var(--on-plate); }
+.mt-today.is-draw .mt-sign { animation: mt-sign-rise var(--dur-3) var(--ease-settle) both; }
+@keyframes mt-sign-rise { from { translate: 0 6px; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@media (max-width: 767px) {
+  /* Over the bottom of the 250 px band, inside its fade into the ground. */
+  .mt-panel.is-trips .atlas-col > .mt-next:first-child .mt-sign { margin-top: calc(-1 * var(--space-8)); }
+}
+@media (min-width: 1024px) {
+  .mt-sign { min-height: 68px; }
+  .mt-sign-disc { width: 48px; height: 48px; }
+}
+
+/* The day row: the journey line, "Dag 4 van 6" at its right. */
+.mt-dayrow { display: flex; align-items: flex-end; gap: var(--space-4); min-width: 0; }
+.mt-dayrow .jl { flex: 1; }
+.mt-dayn { flex: none; margin: 0; padding-bottom: 22px; font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
+.mt-dayn b { font-size: var(--text-title); }
+.mt-panel.is-trips .mt-today-facts { gap: var(--space-1) var(--space-5); font-size: var(--text-lead); font-weight: 600; color: var(--text-2); }
+.mt-today-facts svg { color: var(--umber-700); }
+
+/* Nothing planned: an invitation, a dotted path from the bed into Plan vandaag. */
+.mt-invite { display: grid; gap: var(--space-2); padding-top: var(--space-2); }
+.mt-panel .mt-invite .mt-today-empty { font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.mt-invite-row { display: grid; grid-template-columns: 40px minmax(24px, 1fr) auto auto; align-items: center; gap: var(--space-2) 10px; }
+.mt-invite-bed { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); }
+.mt-invite-path { display: block; width: 100%; height: 4px; overflow: visible; }
+.mt-invite-path line { stroke: var(--umber-500); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0.1 9; }
+.mt-today.is-draw .mt-invite-path { animation: jl-wipe var(--dur-4) var(--ease-out) var(--dur-2) both; }
+@media (max-width: 599px) {
+  .mt-invite-row { grid-template-columns: 40px minmax(24px, 1fr) auto; }
+  .mt-invite-open { grid-column: 1 / -1; justify-self: start; }
+}
+
+/* A planned day as a drawn route: done beads filled, the next ringed, later outlined. */
+.mt-panel .mt-today .mt-tl::before { left: 8px; background: var(--umber-600); }
+.mt-panel .mt-today .mt-tl-dot { width: 14px; height: 14px; margin-left: 2px; border: 2px solid var(--umber-500); background: var(--surface-page); }
+.mt-panel .mt-today .mt-tl-item.is-done .mt-tl-dot { border-color: var(--umber-600); background: var(--umber-600); }
+.mt-panel .mt-today .mt-tl-item.is-next .mt-tl-dot { width: 18px; height: 18px; margin-left: 0; border: 4px solid var(--umber-800); background: var(--surface-page); }
+.mt-panel .mt-today .mt-tl-item.is-done .mt-tl-name { color: var(--text-3); text-decoration-color: var(--umber-300); }
+.mt-panel .mt-today .mt-tl-item.is-next .mt-tl-name { font-weight: 700; }
+.mt-panel .mt-today .mt-tl-next { color: var(--umber-700); }
+
+/* The Uitgaven door stays one quiet row: a line icon, no grey square; the
+   chevron nudges on hover and press. */
+.mt-panel .mt-spend-door-ico { width: 22px; height: 22px; background: none; color: var(--umber-700); }
+.mt-spend-door > svg:last-child { transition: translate var(--dur-1) var(--ease-out); }
+.mt-spend-door:active > svg:last-child { translate: 4px 0; }
+@media (hover: hover) { .mt-spend-door:hover > svg:last-child { translate: 4px 0; } }
+.mt-panel.is-trips .mt-quick .btn.mt-qk svg { color: var(--umber-700); }
+
+/* Desktop: the ledger in two columns of ruled rows with line icons; the
+   memory page across both. */
+@media (min-width: 1100px) {
+  .mt-panel.is-trips .mt-today-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); }
+  .mt-today-side > .mt-spend-door,
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk,
+  .mt-today-side > .mt-disc-row { grid-template-columns: 20px minmax(0, max-content) minmax(0, 1fr) 18px; min-height: 56px; font-size: var(--text-body); }
+  .mt-today-side > .mt-spend-door { grid-template-columns: 20px minmax(0, 1fr) 18px; border-bottom: 1px solid var(--border); }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk svg,
+  .mt-today-side > .mt-disc-row > .mt-disc-row-ico { width: 20px; height: 20px; padding: 0; border-radius: 0; background: none; color: var(--umber-700); }
+  .mt-panel.is-trips .mt-qk-t, .mt-today-side > .mt-disc-row > .mt-disc-row-t { font-size: var(--text-body); }
+  .mt-panel.is-trips .mt-qk-s, .mt-today-side > .mt-disc-row > .mt-disc-row-s { font-size: var(--text-label); }
+  .mt-today-side > .mt-disc-row, .mt-today-side > .mt-today-note { grid-column: 1 / -1; }
+}
+
+/* Today's trip map: the legs travelled thick, the legs to come thin and
+   dashed, and the umber "here" mark on today's stop. */
+.atlas-route.is-done .atlas-route-line { stroke: var(--umber-600); }
+.atlas-route.is-ahead .atlas-route-line { stroke: var(--umber-500); }
+.atlas-route.is-ahead .atlas-route-case { opacity: 0.6; }
+.atlas-here-halo { fill: none; stroke: var(--umber-800); stroke-width: 1.5; opacity: 0.5; vector-effect: non-scaling-stroke; }
+.atlas-here-dot { fill: var(--umber-800); stroke: var(--surface); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.atlas-plate.is-draw .atlas-here {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-reveal) - var(--dur-1)) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jl.is-draw .jl-done, .jl.is-draw .jl-bead.is-today, .mt-today.is-draw .mt-sign,
+  .mt-today.is-draw .mt-invite-path, .atlas-plate.is-draw .atlas-here { animation: none; clip-path: none; }
+  .jl.is-spend .jl-bead, .mt-spend-door > svg:last-child { transition: none; }
+}
+
+/* ==== G12 wow, phase B: the rest of Reizen. The next trip carries its
+   journey line (every day to come) under the photo; the countdown stays the
+   loudest figure. The grade is a map scale bar on the ground, with the
+   country's silhouette from the plate's own geometry. ==== */
+.mt-next-line { margin-top: calc(-1 * var(--space-1)); }
+.mt-panel .mt-rate { gap: var(--space-3); padding: 0; border-radius: 0; background: none; }
+.mt-rate-h { display: flex; align-items: center; gap: var(--space-3); }
+.mt-panel .mt-rate b { font-size: var(--text-lead); font-weight: 800; color: var(--text); }
+.mt-rate-shape { flex: none; width: 40px; height: 40px; }
+.mt-rate-shape path { fill: var(--umber-600); }
+.mt-panel .mt-rate-scale {
+  gap: 0;
+  overflow: hidden;
+  border: 1.5px solid var(--umber-800);
+  border-radius: var(--radius-sm);
+}
+.mt-panel .mt-rate-scale button {
+  min-height: var(--tap-main);
+  border-right: 1px solid var(--umber-300);
+  border-radius: 0;
+  background: var(--surface);
+  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+}
+.mt-panel .mt-rate-scale button:nth-child(even) { background: var(--umber-50); }
+.mt-panel .mt-rate-scale button:last-child { border-right: 0; }
+.mt-panel .mt-rate-scale button.is-pre { background: var(--umber-600); color: var(--on-plate); }
+.mt-panel .mt-rate-scale button:active { scale: 0.94; transition: scale var(--dur-tick) var(--ease-tick); }
+/* A phone: two bars of five, each segment still a full target. */
+@media (max-width: 599px) {
+  .mt-panel .mt-rate-scale button:nth-child(5) { border-right: 0; }
+  .mt-panel .mt-rate-scale button:nth-child(-n+5) { border-bottom: 1px solid var(--umber-300); }
+}
+.atlas-ratebox .mt-rate-scale button:nth-child(5) { border-right: 0; }
+.atlas-ratebox .mt-rate-scale button:nth-child(-n+5) { border-bottom: 1px solid var(--umber-300); }
+@media (prefers-reduced-motion: reduce) {
+  .mt-panel .mt-rate-scale button { transition: none; }
+}
+
+/* ==== G12 wow, phase C: Bewaard as the wish map. The countries that hold a
+   saved place are hatched at 45 degrees (hatched is want, filled is been on
+   Your Europe); a chip counts places and countries; pointing at a row raises
+   its pin as a small umber plate; rows are compacter; a list's cover fans
+   its first three photos on hover or focus. ==== */
+.atlas-plate .mt-eumap-wish-bg { fill: var(--umber-50); }
+.atlas-plate .mt-eumap-wish { fill: var(--umber-300); }
+.atlas-plate .mt-eumap-land.is-wish { stroke: var(--umber-500); stroke-width: 1; }
+.atlas-floatchip.is-wish b { font-size: var(--text-body); font-weight: 800; color: var(--umber-800); }
+.atlas-pinplate {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 6px var(--space-3) 6px 6px;
+  border-radius: var(--radius-control);
+  background: var(--umber-800);
+  color: var(--on-plate);
+  font-size: var(--text-label);
+  white-space: nowrap;
+  box-shadow: var(--elev-2);
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 14px));
+  animation: atlas-pinplate-in var(--dur-2) var(--ease-out) both;
+}
+.atlas-pinplate::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  margin-left: -6px;
+  border: 6px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--umber-800);
+}
+.atlas-pinplate-img, .atlas-pinplate .hero-blank { width: 28px; height: 28px; border-radius: var(--radius-sm); object-fit: cover; }
+.atlas-pinplate span { color: var(--on-plate-2); font-weight: 700; }
+@keyframes atlas-pinplate-in { from { opacity: 0; translate: 0 4px; } to { opacity: 1; translate: 0 0; } }
+
+/* Compacter rows: a 72 px photo on a phone, 96 x 72 from 1100. */
+.mt-saved .mt-item:not(.is-shared) { grid-template-columns: 72px minmax(0, 1fr) auto auto; padding-block: var(--space-2); }
+.mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 72px minmax(0, 1fr) auto auto; }
+.mt-saved .mt-item:not(.is-shared) .mt-item-media { width: 72px; height: 64px; border-radius: var(--radius-panel); }
+@media (min-width: 1100px) {
+  .mt-saved .mt-item:not(.is-shared) { grid-template-columns: 96px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item.is-choosing:not(.is-shared) { grid-template-columns: auto 96px minmax(0, 1fr) auto auto; }
+  .mt-saved .mt-item:not(.is-shared) .mt-item-media { width: 96px; height: 72px; }
+}
+
+/* The cover fan: at rest the 2 x 2 mosaic; pointed at, its first three photos fan out. */
+.mt-saved .mt-lists .btn.mt-lcard .mt-mosaic > * { transition: transform var(--dur-3) var(--ease-out); }
+@media (hover: hover) {
+  .btn.mt-lcard:hover .mt-mosaic { overflow: visible; }
+  .btn.mt-lcard:hover .mt-mosaic > :nth-child(1) { transform: rotate(-6deg) translate(-4px, 2px); }
+  .btn.mt-lcard:hover .mt-mosaic > :nth-child(2) { transform: rotate(5deg) translate(5px, -3px); }
+  .btn.mt-lcard:hover .mt-mosaic > :nth-child(3) { transform: rotate(-3deg) translate(-3px, 4px); }
+}
+.btn.mt-lcard:focus-visible .mt-mosaic { overflow: visible; }
+.btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(1) { transform: rotate(-6deg) translate(-4px, 2px); }
+.btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(2) { transform: rotate(5deg) translate(5px, -3px); }
+.btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(3) { transform: rotate(-3deg) translate(-3px, 4px); }
+@media (prefers-reduced-motion: reduce) {
+  .atlas-pinplate { animation: none; }
+  .mt-saved .mt-lists .btn.mt-lcard .mt-mosaic > * { transition: none; }
+}
+
+/* ==== G12 wow, phase D: Jouw Europa. Europe fills year by year on the tab
+   change (once a session, at most 1200 ms; the chip shows its final figure
+   at once); the past trips stand under the map from 1100 x 720; one-line
+   costs; the extremes as a compass; the milestones as ink stamps. ==== */
+.atlas-plate.is-fill .mt-eumap .mt-eumap-land[class*=' is-f'], .atlas-plate.is-fill .mt-eumap .mt-eumap-dot[class*=' is-f'] {
+  animation-name: atlas-fill;
+  animation-duration: var(--fill-step, var(--dur-fill-step));
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+}
+.atlas-plate.is-fill .mt-eumap .is-f0 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 0); }
+.atlas-plate.is-fill .mt-eumap .is-f1 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 1); }
+.atlas-plate.is-fill .mt-eumap .is-f2 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 2); }
+.atlas-plate.is-fill .mt-eumap .is-f3 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 3); }
+.atlas-plate.is-fill .mt-eumap .is-f4 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 4); }
+.atlas-plate.is-fill .mt-eumap .is-f5 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 5); }
+.atlas-plate.is-fill .mt-eumap .is-f6 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 6); }
+.atlas-plate.is-fill .mt-eumap .is-f7 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 7); }
+.atlas-plate.is-fill .mt-eumap .is-f8 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 8); }
+.atlas-plate.is-fill .mt-eumap .is-f9 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 9); }
+@keyframes atlas-fill { from { fill-opacity: 0; } to { fill-opacity: 1; } }
+
+/* The past trips under the map: the slot is a column no taller than the
+   window, the map a fixed height, the list its own focusable scroll region.
+   No overscroll containment, so the page scrolls on at the list's end. */
+@media (min-width: 1100px) and (min-height: 720px) {
+  .atlas-body.is-europe.has-past .atlas-slot {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - var(--header-h) - 2 * var(--space-4));
+  }
+  .atlas-body.is-europe.has-past .atlas-slot .atlas-map { flex: none; height: clamp(340px, 46dvh, 440px); }
+  .atlas-body.is-europe.has-past .atlas-under { flex: none; }
+  .atlas-past {
+    flex: 1 1 auto;
+    min-height: 220px;
+    margin-top: var(--space-3);
+    padding-right: var(--space-2);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--umber-300) transparent;
+  }
+  .atlas-past:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+  .atlas-past .atlas-pyear-h { position: sticky; top: 0; z-index: 2; background: var(--surface-page); }
+}
+
+/* A past row pointed at: its route lifts, the others step back. */
+.atlas-route.is-lift .atlas-route-line { stroke: var(--umber-800); opacity: 1; }
+
+/* One line per trip: the name and year, the bar in the middle, the figure. */
+.atlas-crow { grid-template-columns: minmax(0, 1fr) 34% minmax(64px, auto); align-items: center; gap: var(--space-3); min-height: 36px; border-bottom: 1px solid var(--border-soft); }
+.atlas-crow .atlas-ctrack { grid-column: 2; grid-row: 1; height: 8px; }
+.atlas-crow .atlas-cval { grid-column: 3; grid-row: 1; text-align: end; }
+
+/* The extremes as a compass: N on top, W and O beside the rose, Z under it. */
+.atlas-extremes { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); grid-template-rows: auto 76px auto; gap: var(--space-2); align-items: center; }
+.atlas-rose { grid-column: 2; grid-row: 2; width: 76px; height: 76px; }
+.atlas-rose circle { fill: none; stroke: var(--umber-300); stroke-width: 1.5; }
+.atlas-rose path { fill: var(--umber-700); }
+.atlas-rose path.is-l { fill: var(--umber-300); }
+.atlas-ext.is-n { grid-column: 1 / -1; grid-row: 1; justify-self: center; }
+.atlas-ext.is-s { grid-column: 1 / -1; grid-row: 3; justify-self: center; }
+.atlas-ext.is-w { grid-column: 1; grid-row: 2; }
+.atlas-ext.is-e { grid-column: 3; grid-row: 2; }
+@media (min-width: 1100px) {
+  .atlas-extremes { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); }
+}
+
+/* Milestones as ink stamps: earned, a double umber ring at a fixed tilt;
+   not yet, one plain light ring, no progress. */
+.atlas-badges { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.atlas-badge {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  width: 84px;
+  height: 84px;
+  padding: var(--space-2);
+  border: 2.5px solid var(--umber-700);
+  border-radius: var(--radius-pill);
+  outline: 1.5px solid var(--umber-700);
+  outline-offset: -8px;
+  background: none;
+  color: var(--umber-800);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  rotate: var(--tilt, 0deg);
+  transition: scale var(--dur-tick) var(--ease-tick);
+}
+.atlas-badge:active { scale: 0.96; }
+.atlas-badge i { width: auto; height: auto; background: none; color: inherit; }
+.atlas-badge.is-locked { border: 2px solid var(--umber-200); outline-color: transparent; color: var(--text-3); rotate: 0deg; }
+.atlas-badge.is-locked i { background: none; color: var(--text-3); }
+.atlas-badge:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-plate.is-fill .mt-eumap .mt-eumap-land[class*=' is-f'], .atlas-plate.is-fill .mt-eumap .mt-eumap-dot[class*=' is-f'] { animation: none; }
+  .atlas-badge { transition: none; }
+}
+@media (min-width: 1100px) and (min-height: 720px) {
+  .atlas-past .atlas-th { width: 56px; height: 56px; }
+  .atlas-past .atlas-prow { min-height: 64px; padding: var(--space-2) 0; }
+}
+
+/* ==== G12 wow, phase F: the four open items. Kiezen ends Saved's tools row
+   from 1100 px; the hatch sweeps in on a list switch; a past row's grade is
+   an ink stamp (a 10 filled); a past trip without a photo shows its route on
+   a small piece of the plate. ==== */
+.mt-kies.is-tools { display: none; }
+@media (min-width: 1100px) {
+  .mt-saved-tools .mt-kies.is-tools { display: inline-flex; align-items: center; min-height: var(--tap); margin-inline-start: auto; }
+  .mt-saved-tools .mt-kies.is-tools ~ .mt-view-toggle, .mt-saved-tools .mt-view-toggle + .mt-kies.is-tools { margin-inline-start: var(--space-2); }
+  .mt-listhead .mt-kies.is-head { display: none; }
+}
+.atlas-zoom.is-sweep-0 .mt-eumap-land.is-wish { animation: atlas-sweep-a var(--dur-3) var(--ease-out) both; }
+.atlas-zoom.is-sweep-1 .mt-eumap-land.is-wish { animation: atlas-sweep-b var(--dur-3) var(--ease-out) both; }
+@keyframes atlas-sweep-a { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes atlas-sweep-b { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+.atlas-gstamp {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--umber-700);
+  border-radius: var(--radius-pill);
+  outline: 1.5px solid var(--umber-700);
+  outline-offset: -6px;
+  color: var(--umber-800);
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  rotate: var(--tilt, 0deg);
+}
+.atlas-gstamp.is-ten { background: var(--umber-800); border-color: var(--umber-800); outline-color: var(--on-plate); color: var(--on-plate); }
+.atlas-prow-end > .atlas-gstamp { align-self: center; justify-self: end; }
+
+.atlas-mini { display: block; width: 100%; height: 100%; }
+.atlas-mini path { fill: var(--atlas-land, var(--map-land)); stroke: var(--atlas-border, var(--map-border)); stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.atlas-mini path.is-own { fill: var(--umber-500); }
+.atlas-mini .atlas-mini-sea { fill: var(--atlas-sea, var(--map-water)); stroke: none; }
+.atlas-mini .atlas-mini-route { fill: none; stroke: var(--surface); stroke-linecap: round; vector-effect: none; }
+.atlas-mini-stop { fill: var(--surface); stroke: var(--umber-800); }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-zoom.is-sweep-0 .mt-eumap-land.is-wish, .atlas-zoom.is-sweep-1 .mt-eumap-land.is-wish { animation: none; clip-path: none; }
+}
+
+/* ==== G12 wow, judge round 1 fixes: the wish hatch lies over a been
+   country's fill instead of hiding it; on a phone the compass is a 2 x 2
+   grid without the rose, the stamps one 64 px row that scrolls sideways,
+   and Open reis stays quiet on the invite row, so no tab grows. ==== */
+.atlas-plate .mt-eumap-wishover { stroke: var(--umber-500); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.atlas-zoom.is-sweep-0 .mt-eumap-wishover { animation: atlas-sweep-a var(--dur-3) var(--ease-out) both; }
+.atlas-zoom.is-sweep-1 .mt-eumap-wishover { animation: atlas-sweep-b var(--dur-3) var(--ease-out) both; }
+@media (max-width: 599px) {
+  .atlas-extremes { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; }
+  .atlas-rose { display: none; }
+  /* North and south on the rows, west and east on the columns: N | E over W | S (judge round 2). */
+  .atlas-ext.is-n { grid-column: 1; grid-row: 1; justify-self: stretch; }
+  .atlas-ext.is-e { grid-column: 2; grid-row: 1; }
+  .atlas-ext.is-w { grid-column: 1; grid-row: 2; }
+  .atlas-ext.is-s { grid-column: 2; grid-row: 2; justify-self: stretch; }
+  .atlas-badges { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--space-1)); padding: var(--space-1); scrollbar-width: none; }
+  .mt-invite-row { grid-template-columns: 40px minmax(16px, 1fr) auto auto; gap: var(--space-2); }
+  .mt-invite-open { grid-column: auto; }
+  .mt-invite-row .btn.mt-invite-open { padding-inline: var(--space-2); border-color: transparent; background: none; text-decoration: underline; text-underline-offset: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atlas-zoom.is-sweep-0 .mt-eumap-wishover, .atlas-zoom.is-sweep-1 .mt-eumap-wishover { animation: none; clip-path: none; }
+}
+@media (max-width: 599px) {
+  /* Phone lengths at or under the base (judge round 1): the plate sits 8 px
+     deeper in the band fade, the invitation drops its top pad, the next
+     trip's photo is 16:7 and its journey line tucks under it. */
+  .mt-panel.is-trips .atlas-col > .mt-next:first-child .mt-sign { margin-top: calc(-1 * var(--space-9)); }
+  .mt-invite { gap: var(--space-1); padding-top: 0; }
+  .mt-trip .mt-next-media { aspect-ratio: 16 / 7; }
+  .mt-next-line { min-height: 0; gap: 2px; margin-top: calc(-1 * var(--space-3)); }
+  .mt-next-line .jl-labs { height: 14px; }
+  .mt-next-line .jl-labs span { line-height: 14px; }
+}
+
+/* ==== Stamps, judge round 3 (G12): the ink ring holds only the icon; the name sits under it at the
+   12 px caption size and wraps there, so no language ever runs across the ring. ==== */
+.atlas-badge { width: 96px; height: auto; padding: var(--space-1) 0; border: 0; outline: 0; border-radius: var(--radius-control); display: grid; justify-items: center; align-content: start; gap: 6px; color: var(--text-2); font: 700 var(--text-caption) / 1.2 var(--ui); rotate: 0deg; }
+.atlas-badge i { box-sizing: border-box; display: grid; place-items: center; width: 64px; height: 64px; border: 2.5px solid var(--umber-700); border-radius: 50%; outline: 1.5px solid var(--umber-700); outline-offset: -8px; background: none; color: var(--umber-800); rotate: var(--tilt, 0deg); transition: scale var(--dur-tick) var(--ease-tick); }
+.atlas-badge:active { scale: 1; }
+.atlas-badge:active i { scale: 0.96; }
+.atlas-badge.is-locked i { border: 2px solid var(--umber-200); outline-color: transparent; color: var(--text-3); rotate: 0deg; }
+.atlas-badge[aria-pressed="true"] { color: var(--text); }
+.atlas-badge-l { display: block; max-width: 100%; white-space: normal; overflow-wrap: break-word; hyphens: manual; text-align: center; }
+.atlas-badge:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+@media (max-width: 599px) {
+  .atlas-badge { width: 96px; padding: 0; }
+  .atlas-badge i { width: 52px; height: 52px; outline-offset: -7px; }
+  .atlas-badge i svg { width: 20px; height: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .atlas-badge i { transition: none; } }
+
+/* The invite row wraps only when a language needs it (fr "Ouvrir le voyage" at 390): flex, the
+   path takes what is left, and Open reis drops under the row instead of pushing past the edge. */
+@media (max-width: 599px) {
+  .mt-invite-row { display: flex; flex-wrap: wrap; }
+  .mt-invite-bed { flex: none; }
+  .mt-invite-path { flex: 1 1 16px; width: auto; min-width: 16px; }
+  .mt-invite-row > .btn { flex: none; }
+}

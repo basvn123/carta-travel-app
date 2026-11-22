@@ -197,7 +197,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 ### SEASON-029 In-season filters and rails
 - Decides: which places the Explore month filter keeps, the "now", "beach" and cost rails, and the card line "good in <month>".
 - Rule: a place is in season when the month is in its `climate.best`. The month filter drops places outside; "now" also needs a Very good rating, the cost rail a Good rating and a day cost under the ceiling. The card preview says "good in <month>" when in season, else lists its best months.
-- Constant: `inSeason` in `continent-app/src/browse/explore/useExploreRails.js:22`; month filter at `continent-app/src/browse/explore/useExploreRows.js:133`; `CardPreview` at `continent-app/src/browse/explore/ExploreCard.jsx:52`; `inMonth` in `continent-app/src/browse/ExploreRails.jsx:78`
+- Constant: `inSeason` in `continent-app/src/browse/explore/useExploreRails.js:22`; month filter at `continent-app/src/browse/explore/useExploreRows.js:133`; `CardPreview` at `continent-app/src/browse/explore/ExploreCard.jsx:52` (the rail card's month status line left with card option A, G12 D10, 2026-11-20)
 - Test: no test
 
 ### SEASON-030 Best months of a region

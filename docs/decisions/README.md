@@ -23,4 +23,7 @@ Each file here records one decision that still matters, so nobody has to guess l
 | [0010](0010-legal-posture-diy.md) | Legal posture: digital-service pass, self-review instead of a lawyer | accepted | 2026-11-12 |
 | [0011](0011-travel-styles.md) | Travel styles: one switchable "how you travel" for the whole app | accepted | 2026-11-13 |
 | [0012](0012-house-style.md) | The house style: Waymark, in Line's colours, rounder | accepted | 2026-11-15 |
-| [0013](0013-ai-cheapest-layer-first.md) | AI: cheapest layer first, proven by paired tests | accepted | 2026-11-19 |
+| [0013](0013-my-trips-atlas.md) | My trips as one atlas: examples behind a button, prices you follow | accepted | 2026-11-21 |
+| [0014](0014-spend-on-device.md) | Uitgaven: one page, a Reiskas split, capture on the device without AI | accepted | 2026-11-22 |
+| [0015](0015-my-trips-journey-line.md) | My trips speaks the map's language: the journey line, the wish hatch, past trips under the map | accepted | 2026-11-22 |
+| [0016](0016-ai-cheapest-layer-first.md) | AI: cheapest layer first, proven by paired tests | accepted | 2026-11-19 |

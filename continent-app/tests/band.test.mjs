@@ -58,3 +58,48 @@ test('the frozen order keeps known rows in place and new ones after', () => {
   assert.deepEqual(reorder(rows, snap).map((r) => r.id), ['a', 'b', 'c', 'x']);
   assert.equal(reorder(rows, null), rows);
 });
+
+// G12 round 2, m1: the phone fold resized its rows, so the top bar and the
+// list's column moved with it (CLS 0.42 at 360 de over one scroll).
+test('the phone fold slides the band with a transform; the list never moves', () => {
+  const css = read('src/styles/80-band.css');
+  assert.doesNotMatch(css, /grid-template-rows: 0fr/);
+  assert.match(css, /\.band\.is-phone\.is-tucked > \* \{ transform: translateY\(calc\(var\(--fold-a, 0px\) \* -1\)\); \}/);
+  assert.match(css, /transition: transform var\(--dur-2\) var\(--ease-out\), opacity var\(--dur-2\) var\(--ease-out\);/);
+  // The lists scroll under the band, its height their top padding and scroll padding.
+  assert.match(css, /html\.has-phone-band \.places-tab \{\s*top: 0;\s*padding-top: var\(--filter-h\);\s*scroll-padding-top: var\(--filter-h\);/);
+  assert.match(css, /prefers-reduced-motion: reduce\) \{[\s\S]*?\.band\.is-phone > \*,/);
+  const band = read('src/browse/band/ExploreBand.jsx');
+  assert.match(band, /band\.style\.setProperty\('--fold-a'/);
+  assert.match(band, /root\.classList\.add\('has-phone-band'\)/);
+});
+
+// G12 judgement-9: the desktop tab row was overflow hidden (the phone rule),
+// so its end fade hid a tab nobody could slide to; and the phone map's chip
+// rows clipped their chips' shadows into a pale box on the map.
+test('the tab row scrolls when over; the phone map rows keep their shadows whole', () => {
+  const css = read('src/styles/80-band.css');
+  assert.match(css, /\.xcats-line \.ui-tabs\.xcats-row \{[^}]*overflow-x: auto;[^}]*scrollbar-width: none;/);
+  assert.match(css, /max-width: 799px\) \{\s*\.xcats-line \{ gap: var\(--space-3\); \}/);
+  const map = read('src/styles/86-map-view.css');
+  assert.match(map, /\.band\.is-map \.band-quick > \.xquick\.is-swipe \{\s*padding-block: var\(--space-2\) var\(--space-6\);\s*margin-block: calc\(var\(--space-2\) \* -1\) calc\(var\(--space-6\) \* -1\);\s*background: transparent;/);
+  assert.match(map, /\.band\.is-map \.band-quick > \.xquick\.is-swipe \{ pointer-events: none; \}/);
+});
+
+// Owner 2026-11-21: an icon beside a word sits on the word's capitals, and
+// the word's box keeps one line height (so no chip changes height).
+test('every chip word is trimmed to its capitals and padded back to one line', () => {
+  const css = read('src/styles/03-button.css');
+  const block = css.match(/@supports \(text-box: trim-both cap alphabetic\) \{([\s\S]*?)\n\}/)[1];
+  const [list] = block.split('{');
+  // Judgement-10: Settings, the List/Map switch, Together and the applied
+  // row's Clear all joined the list.
+  for (const sel of ['.band-chip-text', '.band-filters-word', '.band-ask-word', '.band-settings-word', '.xquick-word', '.xap-text',
+    '.xap-clear > .btn-label', '.seg-icon + .seg-word', '.tg-door-word']) assert.ok(list.includes(sel), sel);
+  assert.match(block, /^\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/m);
+  // The tabs and the header nav only where the icon stands beside the word.
+  assert.match(block, /@media \(min-width: 769px\) \{\s*\.xcats-tab-label \{\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/);
+  assert.match(block, /@media \(min-width: 1280px\) \{\s*\.header-nav-label \{\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/);
+  assert.match(read('src/components/ui/Segmented.jsx'), /<span className="seg-word">\{o\.label\}<\/span>/);
+  assert.match(read('src/browse/filters/QuickChips.jsx'), /<span className="xquick-word">\{t\('filters\.clearAll'\)\}<\/span>/);
+});

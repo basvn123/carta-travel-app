@@ -18,20 +18,20 @@ test('the row keeps its link, its price items and the save outside the link', ()
   assert.match(row, /className="xrow-hit"/);
   assert.match(row, /href=\{`#dest=\$\{encodeURIComponent\(p\.id\)\}`\}/);
   // G12, D10: the formation (buttons) left the link, then the save.
-  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<RowFormation cost=\{p\.cost\} t=\{t\} figRef=\{figRef\} pressable place=\{p\} \/>\s*\{onToggleFav && \(\s*<SaveButton/);
+  assert.match(row, /<\/a>\s*\{\/\*[\s\S]*?\*\/\}\s*<PlaceFigure place=\{p\} t=\{t\} figRef=\{figRef\} \/>\s*\{onToggleFav && \(\s*<SaveButton/);
   const parts = read('src/browse/explore/HouseParts.jsx');
   // My trips and the home story keep the plain formation.
   assert.match(parts, /<PriceItems cost=\{cost\} way=\{wayOf\(cost\)\}>/);
   assert.match(parts, /className="sr-only"> \{view\.unit\}/);
   assert.match(parts, /view\.request\.excluded\?\.includes\('flight'\)/);
   assert.match(parts, /est=\{isNational\(cost\)\}/);
-  // The list formation: the unit on the figure, every part a dialog button.
-  assert.match(parts, /className="xform-unit" aria-hidden="true">\{t\(unitKey, unitArgs\)\}/);
-  assert.match(parts, /t\(g \? 'card\.dayFigSpokenGroup' : 'card\.dayFigSpoken'/);
-  assert.match(parts, /bed && food && fig\.plus && <span className="xform-plus" aria-hidden="true">\+<\/span>/);
-  assert.match(parts, /<HouseIcon\.ret size=\{12\}/);
-  assert.match(read('src/components/PriceItems.jsx'), /aria-haspopup="dialog"/);
-  assert.match(read('src/auth/mytrips/SavedTab.jsx'), /<RowFormation cost=\{cost\} t=\{t\} figRef=\{ref\} \/>/);
+  // G12, D10 (place-prices card A): the figure over its basis is one
+  // button to the receipt.
+  assert.match(parts, /aria-haspopup="dialog"/);
+  assert.match(parts, /className="xfig-basis"/);
+  // G12 (My trips atlas): a Saved row shows one figure in the chosen unit,
+  // so the formation wagons stay on Explore rows only.
+  assert.doesNotMatch(read('src/auth/mytrips/SavedTab.jsx'), /<RowFormation /);
 });
 
 test('the row is the grid: the formation and the save sit in its areas, beside the link subgrid', () => {
@@ -47,9 +47,11 @@ test('the row is the grid: the formation and the save sit in its areas, beside t
   assert.doesNotMatch(css, /\.xrow-hs \.xrow-hit \{\s*grid-template/);
 });
 
-test('the list, the map column and the drawer draw the same row', () => {
+test('the list draws the house row; the map column and the sheet draw the map row', () => {
   assert.match(read('src/browse/explore/ExploreCard.jsx'), /<PlaceRow/);
-  assert.match(read('src/browse/MapPlacePanel.jsx'), /<PlaceRow key=\{p\.id\}/);
+  // G12 map view round 2: one map row (MapRow) in the column and the sheet.
+  assert.match(read('src/browse/MapPlacePanel.jsx'), /<MapRow key=\{p\.id\}/);
+  assert.match(read('src/browse/explore/MapSheet.jsx'), /<MapRow key=\{p\.id\}/);
 });
 
 test('rails are the house rail and keep See all and the arrows', () => {
@@ -64,15 +66,23 @@ test('the overview top has no photo under text; Ask and search live in the band'
   assert.doesNotMatch(hero, /xov-photo/);
   // G12 (Explore top): the band in the top bar holds the search and Ask.
   const band = read('src/browse/band/ExploreBand.jsx');
-  assert.match(band, /openAskChat\(e\.currentTarget\)/);
+  // Round 2: Ask stands beside the field and never opens on its own.
+  assert.match(band, /openAsk\(e\.currentTarget\)/);
   assert.match(band, /role="search"/);
-  assert.match(band, /isQuestion\(text\)\) openAskChat/);
+  assert.doesNotMatch(band, /isQuestion\(text\)\) openAskChat/);
 });
 
-test('the chosen pin is the umber mark and nothing overshoots', () => {
-  const css = read('src/styles/81-map-panel.css');
-  assert.match(css, /\.xmap-kpin\.is-label\.is-picked \{[^}]*background: var\(--action\)/);
-  assert.match(css, /animation: xpin-settle var\(--dur-settle\) var\(--ease-settle\)/);
+test('the chosen pin is the umber mark with its name, drawn by the map', () => {
+  // G12 map view: the pins are map layers (explore/mapPins.js), the picked
+  // one an umber pill with the place's name before its figure.
+  const pins = read('src/browse/explore/mapPins.js');
+  assert.match(pins, /fillStyle = kind === 'p' \? action : surface/);
+  // Round 2: the picked pin's image says its name (a named photo pin or the
+  // umber pill), worked out per place (oneImage).
+  assert.match(pins, /symbol\('xpin-picked', 'dests-pick'/);
+  assert.match(pins, /role === 'pick' \? \['xp', 'p', pr\.city, pr\.fig\]/);
+  const map = read('src/browse/ExploreMap.jsx');
+  assert.doesNotMatch(map, /className=\{`xmap-kpin-label/);
 });
 
 test('a row shows the region with the country, the country never shrinks', () => {
@@ -95,12 +105,10 @@ test('the rails carry no head or note line; each figure says its unit', () => {
   const rails = read('src/browse/ExploreRails.jsx');
   assert.doesNotMatch(rails, /<ListHead\b/);
   assert.doesNotMatch(rails, /<PriceNotes\b/);
-  // The price row (its figure and wagons are buttons) sits outside the card
-  // link: since Explore rails (2026-11-18) as two slots, the figure on the
-  // name's line and the parts after the country, both after the link.
+  // G12, D10 (place-prices card A): the two lines under the photo are one
+  // button to the receipt, after the card link.
   const afterLink = rails.slice(rails.indexOf('</a>'));
-  assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="figure"/);
-  assert.match(afterLink, /<RowFormation cost=\{p\.cost\} t=\{t\} pressable place=\{p\} slot="parts"/);
+  assert.match(afterLink, /<ReceiptButton place=\{p\} cost=\{p\.cost\}/);
 });
 
 test('save wears the bookmark with one fixed name; the ticket is My trips', () => {
@@ -114,8 +122,9 @@ test('save wears the bookmark with one fixed name; the ticket is My trips', () =
   assert.match(cards, /if \(!fav\) bumpTripsOnce\(\)/);
   assert.match(read('src/components/AppHeader.jsx'), /key: 'trips', labelKey: 'nav\.myTrips', Icon: HouseIcon\.ticket/);
   for (const f of ['src/components/AppHeader.jsx', 'src/components/BottomNav.jsx']) assert.match(read(f), /data-nav=\{key\}/, f);
-  const bar = read('src/browse/explore/ExploreToolbar.jsx');
-  assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{18\} \/>\} aria-pressed=\{showFavOnly\}/);
+  // G12 round 2: Saved is the applied row's toggle (filters/AppliedRow.jsx).
+  const bar = read('src/browse/filters/AppliedRow.jsx');
+  assert.match(bar, /iconStart=\{<HouseIcon\.bookmark size=\{16\} \/>\} aria-pressed=\{on\}/);
   const css = read('src/styles/62-v6-explore.css');
   assert.match(css, /\.xsave\[aria-pressed="true"\] \.bm-fill \{ fill: var\(--select-ink\); \}/);
   // The visible word from 1100 px rides inside the same button, so the
@@ -123,8 +132,10 @@ test('save wears the bookmark with one fixed name; the ticket is My trips', () =
   assert.match(cards, /\{word && <span className="xsave-word">\{fav \? t\('detail\.saved'\) : t\('explore\.save'\)\}<\/span>\}/);
   assert.match(read('src/browse/explore/PlaceRow.jsx'), /className="xrow-save" word \/>/);
   assert.match(css, /\.xsave-word \{ display: none; \}/);
-  assert.match(css, /animation: xsave-tick 240ms/);
-  assert.match(css, /animation: xsave-ring 240ms/);
+  // Both read --dur-save, 240 ms in 01-tokens.css.
+  assert.match(css, /animation: xsave-tick var\(--dur-save\)/);
+  assert.match(css, /animation: xsave-ring var\(--dur-save\)/);
+  assert.match(read('src/styles/01-tokens.css'), /--dur-save:\s*240ms;/);
   // No star left in the save copy, in any language.
   for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) {
     const cat = read(`src/i18n/${lang}.js`);
