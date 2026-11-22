@@ -32,7 +32,9 @@ test('Dutch: vijftien or vijftig is asked, not guessed', () => {
   const d = say('vijftien euro lunch met Sam', 'nl');
   assert.deepEqual(d.which, [15, 50]);
   assert.deepEqual(say('vijftig euro diner', 'nl').which, [15, 50]);
-  assert.deepEqual(say('15 euro koffie', 'nl').which, [15, 50]);
+  // Digits are what the recogniser settled on: no question for "30 euro".
+  assert.equal(say('15 euro koffie', 'nl').which, null);
+  assert.equal(say('30 euro taxi', 'nl').which, null);
   assert.equal(say('12,50 koffie', 'nl').which, null);
 });
 
@@ -129,3 +131,44 @@ test('parseReceipt: no total word takes the largest amount; empty text is empty'
   const sub = parseReceipt('Subtotal 20,00\nTotaal 22,50\nWisselgeld 2,50');
   assert.equal(sub.lines[sub.total].cents, 2250);
 });
+
+test('The amount: cents first, then next to the currency, never a count', () => {
+  assert.equal(say('3 koffies 7,50', 'nl').amount, 7.5);
+  assert.equal(say('lunch voor 4 personen 40 euro', 'nl').amount, 40);
+  assert.equal(say('lunch voor 4 personen 40 euro', 'nl').which, null);
+  assert.equal(say('1.250 euro hotel', 'nl').amount, 1250);
+  assert.equal(say('hotel 1,250.00 pounds', 'en').amount, 1250);
+  assert.equal(say('2 nights 180 euro', 'en').amount, 180);
+});
+
+test('A named payer stays among the sharers', () => {
+  const d = say('Sam betaalde 30 euro taxi met Jo', 'nl');
+  assert.equal(d.payer, 'p0');
+  assert.deepEqual(d.sharers, ['me', 'p0', 'p1']);
+  assert.equal(d.amount, 30);
+  // A payer alone says who paid, not who it was for.
+  assert.equal(say('Sam betaalde 30 euro taxi', 'nl').mode, null);
+});
+
+const receipt = (...lines) => parseReceipt(lines.join('\n'));
+
+test('parseReceipt: cash handed over is not the total (DE, IT, NL)', () => {
+  const de = receipt('Bäckerei Müller', 'Brezel 2,40', 'Kaffee 3,20', 'SUMME EUR 8,00', 'BAR 20,00', 'Rückgeld 12,00');
+  assert.equal(de.lines[de.total].cents, 800);
+  const it = receipt('Bar Roma', 'Caffe 1,20', 'Cornetto 1,50', 'TOTALE 2,70', 'CONTANTI 5,00', 'RESTO 2,30');
+  assert.equal(it.lines[it.total].cents, 270);
+  const nl = receipt('Albert Heijn', 'Brood 2,49', 'Totaal 2,49', 'Pin 2,49');
+  assert.equal(nl.lines[nl.total].label, 'Totaal');
+});
+
+test('parseReceipt: thousands, and the last total line wins', () => {
+  const uk = receipt('Hotel Bristol', 'Room 3 nights 1,200.00', 'City tax 34.56', 'Total 1,234.56', 'Card 1,234.56');
+  const t = uk.lines[uk.total];
+  assert.equal(t.cents, 123456);
+  assert.equal(t.label, 'Total');
+  const eu = receipt('Hôtel', 'Total 1.234,56');
+  assert.equal(eu.lines[eu.total].cents, 123456);
+  const two = receipt('Groep A totaal 10,00', 'Groep B totaal 12,00', 'Totaal 22,00');
+  assert.equal(two.lines[two.total].cents, 2200);
+});
+

@@ -47,15 +47,18 @@ export const toCentsEur = (eur) => int(Number(eur) * 100);
 export const eurOf = (cents) => int(cents) / 100;
 
 /**
- * The people a kas splits between: you first, then the trip's named crew.
- * With nobody named and a group bigger than one, the unnamed seats (their
- * crew ids, `name` empty) stand in, so a spend still splits over the group
- * size the old form used.
+ * The people a kas splits between: you first, then the trip's named crew,
+ * then unnamed seats (their crew ids, `name` empty) up to the party size,
+ * so a spend splits over the group size the old form used.
  */
 export function kasPeople(extras, { groupSize = 1 } = {}) {
-  const named = namedCrew(readCrew(extras));
-  const others = named.length ? named
-    : readCrew({ people: [] }, { groupSize: Math.max(0, int(groupSize) - 1) });
+  // The named crew first, then unnamed seats up to the party size, so an
+  // old row and Iedereen split over the real group even when only some of
+  // it is named (group 4 with only Sam named: you, Sam and two seats).
+  const seats = readCrew(extras, { groupSize: Math.max(0, int(groupSize) - 1) });
+  const named = namedCrew(seats);
+  const want = Math.max(0, int(groupSize) - 1 - named.length);
+  const others = [...named, ...seats.filter((c) => !c.name.trim() && !c.userId).slice(0, want)];
   return [{ id: ME, name: '', me: true }, ...others.map((c) => ({ id: c.id, name: c.name.trim(), me: false }))];
 }
 

@@ -87,7 +87,9 @@ export const draftAmount = (d) => {
   const n = Number(String(d?.amount || '').replace(',', '.'));
   return Number.isFinite(n) ? n : 0;
 };
-const draftRate = (d) => EUR_RATES[d?.currency] ?? 1;
+// The stored rate of a spend being edited while its currency is unchanged;
+// else today's static rate for the chosen currency.
+const draftRate = (d) => (d?.rate > 0 && d.rateCur === d.currency ? d.rate : EUR_RATES[d?.currency] ?? 1);
 
 /** The split the draft would save, in euro cents ({} when it does not add up). */
 export function draftSplit(d, people) {
@@ -204,14 +206,19 @@ export function AddSheet({ draft, setDraft, people, faces, last, onAgain, onNext
       </div>
       {shared && (
         <>
-          <p className="sp-lbl" id="sp-payer-l">{t('sp.paidBy')}</p>
-          <div className="sp-chips" role="group" aria-labelledby="sp-payer-l">
-            {people.map((p) => (
-              <Pressable key={p.id} type="button" aria-pressed={draft.payer === p.id} onClick={() => setDraft((d) => ({ ...d, payer: p.id }))}>
-                <Face person={p} people={people} faces={faces} size="xs" />{personName(t, p, people)}
-              </Pressable>
-            ))}
-          </div>
+          {/* Alleen ik is always paid by you, so the payer row steps aside. */}
+          {draft.mode !== 'me' && (
+            <>
+              <p className="sp-lbl" id="sp-payer-l">{t('sp.paidBy')}</p>
+              <div className="sp-chips" role="group" aria-labelledby="sp-payer-l">
+                {people.map((p) => (
+                  <Pressable key={p.id} type="button" aria-pressed={draft.payer === p.id} onClick={() => setDraft((d) => ({ ...d, payer: p.id }))}>
+                    <Face person={p} people={people} faces={faces} size="xs" />{personName(t, p, people)}
+                  </Pressable>
+                ))}
+              </div>
+            </>
+          )}
           <p className="sp-lbl" id="sp-for-l">{t('sp.forWho')}</p>
           <div className="sp-chips sp-voor" role="group" aria-labelledby="sp-for-l">
             <Pressable type="button" aria-pressed={draft.mode === 'all'} onClick={() => setMode('all')}>{t('sp.everyone')}</Pressable>

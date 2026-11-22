@@ -9,7 +9,7 @@ import { Pressable } from '../../../components/ui/Pressable.jsx';
 import { useI18n } from '../../../i18n/index.jsx';
 import { formatMoney } from '../../../lib/money.js';
 import { activeLocale } from '../../../lib/localeState.js';
-import { CAT_GLYPH, LockGlyph } from './icons.jsx';
+import { CAT_GLYPH, LockGlyph, MeGlyph } from './icons.jsx';
 
 /** Cents as a euro figure with cents. */
 export const eur = (cents) => formatMoney((Number(cents) || 0) / 100, { precision: 'cents' });
@@ -41,7 +41,9 @@ function initials(t, p, people) {
   return `${w[0][0] || ''}${w.length > 1 ? w[w.length - 1][0] : ''}`.toUpperCase();
 }
 
-/** A face: the photo kept on this device, else the initials. Decorative:
+const ME_GLYPH = { dot: 11, xs: 12, md: 18, lg: 24 };
+
+/** A face: the photo kept on this device, else the initials (you: a mark). Decorative:
  *  the name always stands next to it or in the control's label. */
 export function Face({ person, people, faces = {}, size = 'md', className = '' }) {
   const { t } = useI18n();
@@ -49,7 +51,7 @@ export function Face({ person, people, faces = {}, size = 'md', className = '' }
   const cls = `sp-face is-${size}${person?.me ? ' is-me' : ''}${src ? ' has-photo' : ''} ${className}`.trim();
   return (
     <span className={cls} aria-hidden="true">
-      {src ? <img src={src} alt="" /> : initials(t, person, people)}
+      {src ? <img src={src} alt="" /> : person?.me ? <MeGlyph size={ME_GLYPH[size] || 12} /> : initials(t, person, people)}
     </span>
   );
 }

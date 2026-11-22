@@ -143,9 +143,11 @@ function numberGroups(tokens, lang) {
   let i = 0;
   while (i < tokens.length) {
     const w = tokens[i];
-    const dig = w.match(/^\u20ac?(\d{1,6})(?:[.,](\d{1,2}))?\u20ac?$/);
+    // Digits as the recogniser writes them, thousands grouped or not:
+    // "12,50", "12.5", "1.250", "1,250.00", "\u20ac12".
+    const dig = w.match(/^\u20ac?(\d{1,3}(?:[.,]\d{3})+|\d{1,6})(?:[.,](\d{1,2}))?\u20ac?$/);
     if (dig) {
-      const value = Number(dig[1]) + (dig[2] ? Number(dig[2].padEnd(2, '0')) / 100 : 0);
+      const value = Number(dig[1].replace(/[.,]/g, '')) + (dig[2] ? Number(dig[2].padEnd(2, '0')) / 100 : 0);
       out.push({ value, from: i, to: i + 1, digits: true, decimals: !!dig[2] });
       i += 1;
       continue;
@@ -247,6 +249,9 @@ const FILLER = new Set([
   'speso', 'gastado', 'dépensé', 'ausgegeben', 'uitgegeven', 'betaald', 'betaalde', 'bezahlt', 'payé', 'pagó', 'pagato',
 ]);
 
+// A number followed by one of these counts things; it is not the amount.
+const COUNT_NOUN = /^(x|personen|persoon|people|persons|person|personnes|personne|personas|persona|persone|mensen|leute|keer|times|mal|fois|veces|volte|nachten|nacht|nights|night|nächte|nuits|nuit|noches|noche|notti|notte|dagen|dag|days|day|tage|tag|jours|jour|días|día|giorni|giorno|stuks|stück|pieces|pièces|piezas|pezzi)$/;
+
 const norm = (s) => String(s || '').toLowerCase().normalize('NFC');
 const tokenize = (s) => norm(s)
   .replace(/(\d)\s*\u20ac/g, '$1 \u20ac').replace(/\u20ac\s*(\d)/g, '\u20ac $1')
@@ -271,28 +276,32 @@ export function parseSpeech(text, lang = 'en', people = []) {
   const used = new Set();
   let amount = null;
   let unsure = false;
-  if (groups.length) {
-    const g = groups[0];
+  // Which number is the amount: one with cents, else one next to a currency
+  // word or sign, else the first; never a count ("4 personen", "3 nachten").
+  const counted = (g) => COUNT_NOUN.test(tokens[g.to] || '');
+  const nearCurrency = (g) => isCurrencyWord(tokens[g.to] || '', L) || isCurrencyWord(tokens[g.from - 1] || '', L);
+  const pool = groups.filter((g) => !counted(g));
+  const pick = pool.find((g) => g.decimals) || pool.find(nearCurrency) || pool[0] || null;
+  if (pick) {
+    const g = pick;
     for (let k = g.from; k < g.to; k += 1) used.add(k);
     amount = g.value;
-    const second = groups[1];
+    const second = groups[groups.indexOf(g) + 1];
     // "twaalf vijftig", "twelve euro fifty", "12 komma 5": euros, then cents.
     const between = second ? tokens.slice(g.to, second.from) : [];
     const joins = between.every((w) => isCurrencyWord(w, L) || (JOINT[L] || []).includes(w) || (POINT[L] || []).includes(w) || ['en', 'and', 'und', 'et', 'y', 'e', 'con'].includes(w));
     const afterSecond = second ? tokens[second.to] : null;
     if (second && !g.decimals && second.value < 100 && Number.isInteger(second.value) && joins && between.length <= 2
-        && !(afterSecond && /^(personen|people|persons|personnes|personas|persone|mensen|leute)$/.test(afterSecond))) {
+        && !(afterSecond && COUNT_NOUN.test(afterSecond))) {
       const point = between.some((w) => (POINT[L] || []).includes(w));
       const cents = point && second.value < 10 && second.to - second.from === 1 && !second.digits ? second.value * 10 : second.value;
       amount = Math.round((g.value + cents / 100) * 100) / 100;
       for (let k = g.to; k < second.to; k += 1) used.add(k);
       if (tokens[second.to] && isCentWord(tokens[second.to], L)) used.add(second.to);
     } else if (!g.decimals && !g.digits) {
+      // Only a number heard as words is in doubt; digits are what the
+      // recogniser settled on, and asking about "30 euro" costs a tap.
       unsure = confusable(g.value, L) != null;
-    } else if (g.digits && !g.decimals) {
-      // The recogniser wrote the digits itself; a teen and its tens still
-      // sound alike in English, Dutch and German.
-      unsure = confusable(g.value, L) != null && ['en', 'nl', 'de'].includes(L);
     }
   }
   const which = unsure ? [amount, confusable(amount, L)].sort((a, b) => a - b) : null;
@@ -330,8 +339,10 @@ export function parseSpeech(text, lang = 'en', people = []) {
   if (ONLY_ME.some((re) => re.test(spaced))) mode = 'me';
   else if (tokens.some((w) => FOR_ALL.includes(w))) mode = 'all';
   else {
+    // "Sam betaalde taxi met Jo": Sam, Jo and you. A payer alone says who
+    // paid, not who it was for.
     const withIds = heard.filter((h) => h.id !== payer).map((h) => h.id);
-    if (withIds.length) { mode = 'each'; sharers = ['me', ...withIds]; }
+    if (withIds.length) { mode = 'each'; sharers = ['me', ...(payer ? [payer] : []), ...withIds]; }
   }
 
   // The name: what is left, without numbers, names, joining and filler words.
@@ -353,9 +364,18 @@ export function parseSpeech(text, lang = 'en', people = []) {
 
 /* ───────────── Receipts ───────────── */
 
-const TOTAL_WORDS = /\b(total|totaal|totale|totaal bedrag|summe|gesamt|gesamtbetrag|endsumme|zu zahlen|te betalen|a pagar|importe|montant|net a payer|net à payer|à payer|ttc|totale euro|tot\.?|suma|sum|amount due|balance due|bar|contanti|pagato)\b/i;
-const NOT_TOTAL = /\b(subtotal|sub total|subtotaal|zwischensumme|sous total|sous-total|btw|vat|mwst|iva|tva|ust|tax|change|wisselgeld|rückgeld|retour|cambio|resto|rendu|korting|discount|rabatt|remise|descuento|sconto)\b/i;
-const MONEY_AT_END = /(-?\d{1,5}(?:[ .]\d{3})*[.,]\d{2})\s*(?:\u20ac|eur|euro|[a-z]{1,2})?\s*$/i;
+const TOTAL_WORDS = /\b(total|totaal|totale|totaal bedrag|summe|gesamt|gesamtbetrag|endsumme|zu zahlen|te betalen|a pagar|importe|montant|net a payer|net à payer|à payer|ttc|totale euro|tot\.?|suma|sum|amount due|balance due)\b/i;
+const NOT_TOTAL = /\b(subtotal|sub total|subtotaal|zwischensumme|sous total|sous-total|btw|vat|mwst|iva|tva|ust|tax|change|wisselgeld|rückgeld|retour|cambio|resto|rendu|korting|discount|rabatt|remise|descuento|sconto|bar|contanti|contant|cash|espèces|efectivo|entregado|gegeben|pin|karte|carta|card|multibanco|pagato|tendered)\b/i;
+// A tender line (what was handed over or charged to a card) is never the
+// total, even with a total word on it: NOT_TOTAL wins.
+// An amount at the end of a line, thousands grouped by a space, a dot or a
+// comma ("1.234,56", "1,234.56", "1 234,56") or not ("1234,56").
+const MONEY_AT_END = /(-?\d{1,3}(?:[ .,]\d{3})+[.,]\d{2}|-?\d{1,6}[.,]\d{2})\s*(?:\u20ac|eur|euro|[a-z]{1,2})?\s*$/i;
+/** "1.234,56" or "1,234.56" as a number: the last separator is the decimal one. */
+const moneyNumber = (t) => {
+  const m = String(t).match(/^(-?[\d ,.]*?)[.,](\d{2})$/);
+  return m ? Number(`${m[1].replace(/[ ,.]/g, '')}.${m[2]}`) : NaN;
+};
 
 /**
  * A receipt's text as
@@ -369,15 +389,16 @@ export function parseReceipt(text) {
   raw.forEach((l) => {
     const m = l.match(MONEY_AT_END);
     if (!m) return;
-    const num = m[1].replace(/[ .](?=\d{3}\b)/g, '').replace(',', '.');
-    const cents = Math.round(Number(num) * 100);
+    const cents = Math.round(moneyNumber(m[1]) * 100);
     if (!Number.isFinite(cents) || cents <= 0) return;
     const label = l.slice(0, m.index).replace(/[\u20ac*:]+\s*$/, '').trim() || '';
     lines.push({ label, cents, isTotal: TOTAL_WORDS.test(l) && !NOT_TOTAL.test(l) });
   });
   let total = null;
   const totals = lines.map((x, i) => ({ ...x, i })).filter((x) => x.isTotal);
-  if (totals.length) total = totals.reduce((a, b) => (b.cents > a.cents ? b : a)).i;
+  // The last total line: a receipt prints its total after the items; a
+  // "total" further up is a running or a group total.
+  if (totals.length) total = totals[totals.length - 1].i;
   else if (lines.length) total = lines.reduce((best, x, i) => (x.cents > lines[best].cents ? i : best), 0);
   const place = raw.find((l) => /[a-zà-ÿ]{3}/i.test(l) && !MONEY_AT_END.test(l) && !/\d{4,}/.test(l)) || '';
   const dm = String(text || '').match(/\b(\d{1,2})[./-](\d{1,2})[./-](\d{2,4})\b/);

@@ -64,5 +64,11 @@ export const ShareGlyph = (p) => (
   <Glyph {...p}><path d="M12 15V3M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" /></Glyph>
 );
 
+/** You, in a face: a head and shoulders, so your mark never reads as a
+ *  crew member's initial (Jij and Jo were both "J", judge round 1). */
+export const MeGlyph = (p) => (
+  <Glyph {...p}><circle cx="12" cy="8.5" r="3.5" /><path d="M5 20a7 7 0 0 1 14 0" /></Glyph>
+);
+
 /** The category glyph, by the ledger's own category. */
 export const CAT_GLYPH = { food: FoodGlyph, transport: TramGlyph, activities: TicketGlyph, other: DotsGlyph };

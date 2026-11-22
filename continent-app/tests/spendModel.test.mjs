@@ -25,6 +25,18 @@ test('kasPeople: nobody named, the group size still splits', () => {
   assert.deepEqual(kasPeople({ people: [] }, { groupSize: 1 }).map((p) => p.id), [ME]);
 });
 
+test('kasPeople: a partly named crew is padded to the party size', () => {
+  const extras = { people: [{ name: 'Sam' }] };
+  const people = kasPeople(extras, { groupSize: 4 });
+  assert.deepEqual(people.map((p) => p.id), [ME, 'p0', 'p1', 'p2']);
+  assert.deepEqual(people.map((p) => p.name), ['', 'Sam', '', '']);
+  // An old 40 EUR row reads as 10,00 a person, as the old Today showed.
+  const old = readSpend({ id: '1', amount: 40, currency: 'EUR', paidBy: 0, sharers: null }, people, toEur);
+  assert.equal(old.mine, 1000);
+  // More named than the group size: everyone named counts.
+  assert.equal(kasPeople(EXTRAS, { groupSize: 2 }).length, 4);
+});
+
 test('splitEqual: the odd cents go to the payer, the sum is exact', () => {
   const s = splitEqual(1000, [ME, 'p0', 'p1'], 'p1');
   assert.deepEqual(s, { me: 333, p0: 333, p1: 334 });

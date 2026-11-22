@@ -67,6 +67,8 @@ function draftOf(row, people, lang) {
   if (mode === 'each') people.forEach((p) => { shares[p.id] = asText((row.split[p.id] || 0) / 100 / rate, lang); });
   return newDraft({
     amount: String(row.amount), currency: row.currency, cat: row.cat, payer: row.payer || ME, mode, shares,
+    // Aanpassen keeps the rate the spend was logged at while its currency stays.
+    rate, rateCur: row.currency,
     desc: row.desc, noteOpen: !!row.desc, src: row.src, photoId: row.photoId, editId: row.id, date: row.date,
   });
 }
@@ -142,17 +144,27 @@ export function SpendPage({
   useFocusTrap(pageRef, close, { initialFocusRef: backRef });
 
   // Toast: one at a time, six seconds, Undo. Its timer only clears it.
-  const showToast = useCallback((text, undo = null, expire = null) => {
+  // The toast in hand lives in a ref too, so its expiry (deleting a receipt
+  // for good) runs once, outside any state updater (StrictMode runs those
+  // twice).
+  const toastRef = useRef(null);
+  const endToast = useCallback((runExpire) => {
     clearTimeout(toastTimer.current);
-    setToast((prev) => { if (prev?.expire) prev.expire(); return { id: Date.now(), text, undo, expire }; });
-    toastTimer.current = setTimeout(() => {
-      setToast((cur) => { if (cur?.expire) cur.expire(); return null; });
-    }, UNDO_MS);
+    const cur = toastRef.current;
+    toastRef.current = null;
+    if (runExpire && cur?.expire) cur.expire();
+    return cur;
   }, []);
-  useEffect(() => () => clearTimeout(toastTimer.current), []);
+  const showToast = useCallback((text, undo = null, expire = null) => {
+    endToast(true);
+    const next = { id: Date.now(), text, undo, expire };
+    toastRef.current = next;
+    setToast(next);
+    toastTimer.current = setTimeout(() => { endToast(true); setToast(null); }, UNDO_MS);
+  }, [endToast]);
+  useEffect(() => () => endToast(true), [endToast]);
   const undoToast = () => {
-    clearTimeout(toastTimer.current);
-    const cur = toast;
+    const cur = endToast(false);
     setToast(null);
     cur?.undo?.();
   };
