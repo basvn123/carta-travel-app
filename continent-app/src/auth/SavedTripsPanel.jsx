@@ -13,7 +13,7 @@ import { shareReceiptOn } from '../lib/share/flag.js';
 const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
 // T1215 (T1152-g): the taste card, its profile code and the taxonomy map load
 // with the Your Europe tab, not with My trips.
-import { Button, Chip } from '../components/ui/index.js';
+import { Button } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
@@ -834,7 +834,7 @@ export function SavedTripsPanel({
       img: resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries }),
       iso2: isoFor(parts.countries),
       meta: [t('saved.noDatesYet'), nights > 0 ? t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights }) : ''].filter(Boolean).join(', '),
-      chip: <Chip kind="status" tone="neutral">{t('mt.draft')}</Chip>,
+      chip: <span className="ink-tag">{t('mt.draft')}</span>,
       onOpen: p.device ? () => onOpenDeviceTrip?.() : () => onLoadTripPlan?.(p.id),
     };
   };
@@ -848,7 +848,7 @@ export function SavedTripsPanel({
       img: x.meta.cover || resolveImage({ ids }),
       iso2: destinations[ids[0]]?.iso2 || '',
       meta: [t('saved.noDatesYet'), nights > 0 ? t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights }) : ''].filter(Boolean).join(', '),
-      chip: <Chip kind="status" tone="neutral">{t('mt.draft')}</Chip>,
+      chip: <span className="ink-tag">{t('mt.draft')}</span>,
       onOpen: () => { tripsStore.open(x.id); onGoToTab?.('trip'); },
     };
   };

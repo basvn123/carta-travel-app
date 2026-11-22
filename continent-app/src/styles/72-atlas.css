@@ -1044,13 +1044,10 @@
   stroke: var(--umber-800);
 }
 
-/* "Hoe was {trip}?": ten taps on an umber 100 wash. */
+/* "Hoe was {trip}?": ten taps in one framed scale (no panel since decision 0016). */
 .mt-rate {
   display: grid;
   gap: 10px;
-  padding: 14px;
-  border-radius: var(--radius-card);
-  background: var(--umber-100);
 }
 
 .mt-rate b {
@@ -1081,8 +1078,8 @@
   cursor: pointer;
 }
 
-.mt-rate-scale button:hover {
-  background: var(--umber-200);
+@media (hover: hover) {
+  .mt-rate-scale button:hover { background: var(--umber-600); color: var(--action-text); }
 }
 
 /* The empty tab: one action plus "Bekijk een voorbeeld". */
@@ -2331,7 +2328,7 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   background: var(--surface);
   transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
 }
-.mt-panel .mt-rate-scale button:nth-child(even) { background: var(--umber-50); }
+.mt-panel .mt-rate-scale button:nth-child(even) { background: transparent; }
 .mt-panel .mt-rate-scale button:last-child { border-right: 0; }
 .mt-panel .mt-rate-scale button.is-pre { background: var(--umber-600); color: var(--on-plate); }
 .mt-panel .mt-rate-scale button:active { scale: 0.94; transition: scale var(--dur-tick) var(--ease-tick); }

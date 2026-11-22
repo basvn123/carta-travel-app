@@ -344,3 +344,134 @@
 .mt-kies.is-clear { padding-inline: 0; }
 /* The lists rail ends on its captions; the section gap alone separates the tools. */
 .mt-panel .mt-saved .mt-lists.atlas-rail { margin-bottom: 0; padding-bottom: var(--space-1); }
+
+/* ==== Reizen (block 3): ruled rows with 4:3 photos, the doors as rows, the
+   grade and the readiness tiles without beige ==== */
+
+/* Komend, In planning and Dagplannen: a 4:3 photo, the name, the date line
+   under it and the figure right. Pointed at, the name underlines; no wash. */
+.mt-panel.is-trips .mt-rows .mt-row .card-media { width: 120px; height: 90px; border-radius: var(--radius-panel); }
+@media (min-width: 820px) { .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 144px; height: 108px; } }
+@media (min-width: 1100px) { .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 160px; height: 120px; } }
+.mt-panel.is-trips .mt-rows .mt-row-wrap:hover .mt-row.card,
+.mt-panel.is-trips .mt-rows .mt-row-wrap:focus-within .mt-row.card { background: none; }
+@media (hover: hover) {
+  .mt-panel.is-trips .mt-rows .mt-row-wrap:hover .card-title { text-decoration: underline; text-underline-offset: 3px; }
+}
+.mt-panel.is-trips .mt-rows .mt-row .card-price .ink-noprice { font-size: var(--text-label); font-weight: 600; }
+.mt-panel.is-trips .mt-rows .mt-row .card-title { overflow-wrap: break-word; }
+/* A phone gives the name and date the width: the figure sits under the date line. */
+@media (max-width: 599px) {
+  .mt-panel.is-trips .mt-rows .mt-row .card-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: 't' 'm' 'f'; }
+  .mt-panel.is-trips .mt-rows .mt-row .card-figures { justify-content: flex-start; text-align: start; }
+  .mt-panel.is-trips .mt-rows .mt-row .card-price { font-size: var(--text-figure); }
+}
+/* "Concept": an outlined tag, not a chip. */
+.ink-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 var(--space-2);
+  border: var(--stroke-hair) solid var(--edge);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-2);
+  font: 700 var(--text-caption) / 1 var(--ui);
+  white-space: nowrap;
+}
+
+/* Today's doors (Uitgaven, Boekingen, Morgen, Foto's, Wie gaat er mee, Je
+   herinneringspagina): ruled rows on a phone too, one icon, value and chevron
+   column; two columns from 1100 px stay as they were. No tiles, no orphan. */
+@media (max-width: 1099px) {
+  .mt-panel.is-trips .mt-today-side { gap: 0; }
+  .mt-panel.is-trips .mt-quick { display: contents; }
+  .mt-panel .mt-today-side > .mt-spend-door,
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk,
+  .mt-panel .mt-today-side > .mt-disc-row {
+    display: grid;
+    grid-template-columns: 22px minmax(0, max-content) minmax(0, 1fr) 18px;
+    align-items: center;
+    column-gap: var(--space-3);
+    width: 100%;
+    min-height: 54px;
+    padding: 0 var(--space-1);
+    border: 0;
+    border-bottom: var(--stroke-hair) solid var(--border);
+    border-radius: 0;
+    background: none;
+    color: var(--text);
+    font: 700 var(--text-body) / var(--leading-tight) var(--ui);
+    text-align: start;
+  }
+  .mt-panel .mt-today-side > .mt-spend-door { grid-template-columns: 22px minmax(0, 1fr) 18px; border-top: var(--stroke-hair) solid var(--border); }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk .btn-label { display: contents; }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk svg,
+  .mt-panel .mt-today-side > .mt-disc-row > .mt-disc-row-ico {
+    display: block;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    padding: 0;
+    background: none;
+    color: var(--umber-700);
+  }
+  .mt-panel.is-trips .mt-qk-t,
+  .mt-panel .mt-today-side > .mt-disc-row > .mt-disc-row-t { font-size: var(--text-body); font-weight: 700; color: var(--text); white-space: nowrap; }
+  .mt-panel.is-trips .mt-qk-s,
+  .mt-panel .mt-today-side > .mt-disc-row > .mt-disc-row-s {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: var(--text-label);
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: end;
+  }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk::after {
+    content: '';
+    justify-self: center;
+    width: 7px;
+    height: 7px;
+    margin-inline-end: 3px;
+    border-top: 1.75px solid var(--text-3);
+    border-right: 1.75px solid var(--text-3);
+    transform: rotate(45deg);
+  }
+  .mt-panel .mt-today-side > .mt-spend-door > svg:last-child,
+  .mt-panel .mt-today-side > .mt-disc-row > svg:last-child { justify-self: center; color: var(--text-3); }
+}
+/* No wash on a door under the pointer: its name underlines. */
+.mt-panel .mt-spend-door:hover,
+.mt-panel.is-trips .mt-quick > .btn.mt-qk:hover,
+.mt-panel .mt-today-side > .mt-disc-row:hover { background: none; }
+@media (hover: hover) {
+  .mt-panel .mt-spend-door:hover .mt-spend-door-t,
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk:hover .mt-qk-t,
+  .mt-panel .mt-today-side > .mt-disc-row:hover .mt-disc-row-t { text-decoration: underline; text-underline-offset: 3px; }
+}
+/* Nothing planned: the bed in an umber ring, no beige disc. */
+.mt-panel .mt-invite-bed { background: transparent; box-sizing: border-box; border: var(--stroke-edge) solid var(--umber-800); }
+
+/* Ready for the trip: outlined cells on the ground; a done step is the
+   action paint with a paper tick; no beige bar. */
+.mt-panel .mt-tile {
+  border: var(--stroke-edge) solid var(--edge);
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+.mt-panel .mt-tile i { box-sizing: border-box; border: var(--stroke-edge) solid var(--edge); background: transparent; color: var(--text-2); }
+.mt-panel .mt-tile.is-done { border-color: var(--umber-800); background: transparent; color: var(--umber-800); }
+.mt-panel .mt-tile.is-done i { border-color: var(--action); background: var(--action); color: var(--action-text); }
+@media (hover: hover) { .mt-panel .mt-tile:hover { border-color: var(--text); } }
+.mt-panel .mt-ready-bar i { background: transparent; outline: var(--stroke-hair) solid var(--edge); outline-offset: calc(-1 * var(--stroke-hair)); }
+.mt-panel .mt-ready-bar i.is-done { background: var(--action); outline-color: var(--action); }
+
+/* The next trip's photo ground and "Na deze reis": no sunken fill. */
+.mt-panel .mt-next-media { background: transparent; }
+.mt-panel .mt-disc { border-top: var(--stroke-hair) solid var(--border); border-bottom: var(--stroke-hair) solid var(--border); border-radius: 0; background: transparent; }
+.mt-panel .mt-disc > button { padding-inline: var(--space-1); }
+/* A step marked done: its check in the action paint, not the kit's beige. */
+.mt-panel .mt-tl .icon-btn.is-pressed { background: var(--action); color: var(--action-text); }

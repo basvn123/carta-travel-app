@@ -153,8 +153,9 @@ export function NextTripCard({
 }
 
 /**
- * A later trip, a draft or a day plan: a ledger row on the ground (56 px
- * photo, name, when, figure), the whole row one button, its menu beside it.
+ * A later trip, a draft or a day plan: a ruled row on the ground (a 4:3
+ * photo, 120 x 90 on a phone to 160 x 120 from 1100 px; name, when,
+ * figure), the whole row one button, its menu beside it.
  * `onLift` tells the map which route to lift while the row is hovered or
  * focused.
  */
@@ -171,7 +172,7 @@ export function TripRow({
         layout="row"
         as="div"
         className="mt-row"
-        media={<HeroImage url={img} city={title} iso2={iso2} className="mt-row-img" maxWidth={330} ratio={[1, 1]} sizes="72px" />}
+        media={<HeroImage url={img} city={title} iso2={iso2} className="mt-row-img" maxWidth={330} ratio={[4, 3]} sizes="(min-width: 1100px) 160px, (min-width: 820px) 144px, 120px" />}
         title={title}
         onOpen={onOpen}
         meta={meta}
