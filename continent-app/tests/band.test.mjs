@@ -90,6 +90,16 @@ test('the tab row scrolls when over; the phone map rows keep their shadows whole
 // the word's box keeps one line height (so no chip changes height).
 test('every chip word is trimmed to its capitals and padded back to one line', () => {
   const css = read('src/styles/03-button.css');
-  assert.match(css, /@supports \(text-box: trim-both cap alphabetic\) \{[\s\S]*?\.band-chip-text, \.band-filters-word, \.band-ask-word, \.xquick-word, \.xap-text \{\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/);
+  const block = css.match(/@supports \(text-box: trim-both cap alphabetic\) \{([\s\S]*?)\n\}/)[1];
+  const [list] = block.split('{');
+  // Judgement-10: Settings, the List/Map switch, Together and the applied
+  // row's Clear all joined the list.
+  for (const sel of ['.band-chip-text', '.band-filters-word', '.band-ask-word', '.band-settings-word', '.xquick-word', '.xap-text',
+    '.xap-clear > .btn-label', '.seg-icon + .seg-word', '.tg-door-word']) assert.ok(list.includes(sel), sel);
+  assert.match(block, /^\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/m);
+  // The tabs and the header nav only where the icon stands beside the word.
+  assert.match(block, /@media \(min-width: 769px\) \{\s*\.xcats-tab-label \{\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/);
+  assert.match(block, /@media \(min-width: 1280px\) \{\s*\.header-nav-label \{\s*text-box: trim-both cap alphabetic;\s*padding-block: calc\(\(1lh - 1cap\) \/ 2\);/);
+  assert.match(read('src/components/ui/Segmented.jsx'), /<span className="seg-word">\{o\.label\}<\/span>/);
   assert.match(read('src/browse/filters/QuickChips.jsx'), /<span className="xquick-word">\{t\('filters\.clearAll'\)\}<\/span>/);
 });

@@ -884,7 +884,11 @@ async function round2Pass() {
         // From 1024 the anchored card stands inside the map's frame (at 1180
         // it once ran past the right edge), once the camera has moved it in.
         if (w >= 1024) {
-          await page.waitForTimeout(900);
+          // Read once the camera has stopped: a fixed 900 ms read the card
+          // mid-move on a loaded machine (judgement-10).
+          await page.waitForTimeout(300);
+          await page.waitForFunction(`!${MAP}.isMoving()`, null, { timeout: 8000 }).catch(() => {});
+          await page.waitForTimeout(200);
           const out = await page.evaluate(`(() => { const a = document.querySelector('.xmap-anchor-card')?.getBoundingClientRect(); const c = ${MAP}.getCanvas().getBoundingClientRect();
             if (!a) return 'no anchored card'; return a.left >= c.left - 0.5 && a.right <= c.right + 0.5 ? '' : 'card ' + Math.round(a.left) + '-' + Math.round(a.right) + ' outside the map ' + Math.round(c.left) + '-' + Math.round(c.right); })()`);
           if (out) bad.push(`${id.slice(4)} ${out}`);
@@ -1543,12 +1547,50 @@ async function roundGPass() {
           const off = rows.filter((r) => Math.abs(r.dCap) > 1);
           check(`roundG ${w} ${lang} ${where}: every icon level with its word's capitals (1 px or less)`, rows.length >= 6 && off.length === 0,
             `${rows.length} chips, worst ${Math.max(...rows.map((r) => Math.abs(r.dCap)))} px${off.length ? `: ${JSON.stringify(off.slice(0, 3))}` : ''}`);
+          // Judgement-10: in the applied row every control's words share
+          // one baseline (Clear all, untrimmed, sat 2.3 px above Filters).
+          // Explore always shows the row with these filters; the map only
+          // from 769 px.
+          const lines = await page.evaluate(XAP_BASELINES_JS);
+          if (where === 'explore' || lines.length) {
+            const spread = Math.max(0, ...lines.map((l) => l.spread));
+            check(`roundG ${w} ${lang} ${where}: every control in the applied row on one baseline (0.5 px or less)`,
+              lines.some((l) => l.n >= 2) && spread <= 0.5, JSON.stringify(lines));
+          }
           await ctx.close();
         });
       }
     }
   }
 }
+// The applied row's controls grouped by line: per line, how far apart
+// their text baselines are (Range top plus the font's ascent).
+const XAP_BASELINES_JS = `(() => {
+  const cv = document.createElement('canvas').getContext('2d');
+  const lines = [];
+  for (const row of document.querySelectorAll('.xap')) {
+    if (!row.getClientRects().length) continue;
+    for (const el of row.querySelectorAll('.xap-filters, .xap-chip, .xap-clear')) {
+      if (!el.getClientRects().length) continue;
+      const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
+        acceptNode: (n) => (n.textContent.trim() && n.parentElement.getClientRects().length && !n.parentElement.closest('.sr-only, .xap-n') ? 1 : 2),
+      });
+      const tn = walk.nextNode();
+      if (!tn) continue;
+      const r = document.createRange(); r.selectNodeContents(tn);
+      const rr = r.getClientRects()[0];
+      if (!rr) continue;
+      const cs = getComputedStyle(tn.parentElement);
+      cv.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      const base = rr.top + cv.measureText('Hx').fontBoundingBoxAscent;
+      const b = el.getBoundingClientRect(); const mid = (b.top + b.bottom) / 2;
+      let line = lines.find((l) => Math.abs(l.mid - mid) < 8);
+      if (!line) { line = { mid, bases: [] }; lines.push(line); }
+      line.bases.push(base);
+    }
+  }
+  return lines.map((l) => ({ n: l.bases.length, spread: Math.round((Math.max(...l.bases) - Math.min(...l.bases)) * 10) / 10 }));
+})()`;
 const innerFoot = (h, s) => h - s.listBottom;
 const pick = (s) => ({ under: s.under, words: s.words, controls: s.controls, listBottom: s.listBottom, discTop: s.discTop, bar: s.barGround, band: s.bandGround, footGap: s.footGap });
 

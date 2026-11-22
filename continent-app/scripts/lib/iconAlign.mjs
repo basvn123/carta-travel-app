@@ -11,8 +11,14 @@
 //
 //   const rows = await page.evaluate(ICON_ALIGN_JS);
 //   rows.every((r) => Math.abs(r.dCap) <= 1)
+//
+// Judgement-10 widened the list to the band's Settings, the List/Map
+// switch, the category tabs, the header nav and Together. An item whose
+// icon stands above its word (the tabs on a phone, the nav from 769 to
+// 1279 px) is skipped: there the word has no icon beside it to level with.
 export const ICON_ALIGN_JS = `(() => {
-  const SEL = '.xquick-chip, .xquick-clear, .band-chip, .band-filters, .band-ask, .xap-chip, .xap-filters, .xap-clear, .btn';
+  const SEL = '.xquick-chip, .xquick-clear, .band-chip, .band-filters, .band-ask, .band-settings, .xap-chip, .xap-filters, .xap-clear, .btn, '
+    + '.seg-item, .ui-tab, .header-nav-item, .tg-door';
   const out = [];
   const cv = document.createElement('canvas').getContext('2d');
   for (const el of document.querySelectorAll(SEL)) {
@@ -21,7 +27,8 @@ export const ICON_ALIGN_JS = `(() => {
     if (!el.getClientRects().length || el.closest('[inert], [aria-hidden="true"]') || el.getBoundingClientRect().height > 56) continue;
     const svg = [...el.querySelectorAll('svg')].find((s) => s.getClientRects().length && !s.closest('.band-count'));
     const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, {
-      acceptNode: (n) => (n.textContent.trim() && !n.parentElement.closest('.band-count, .sr-only') ? 1 : 2),
+      acceptNode: (n) => (n.textContent.trim() && n.parentElement.getClientRects().length
+        && !n.parentElement.closest('.band-count, .sr-only, .nav-count, .tg-door-n') ? 1 : 2),
     });
     const tn = walker.nextNode();
     if (!svg || !tn) continue;
@@ -29,7 +36,7 @@ export const ICON_ALIGN_JS = `(() => {
     const range = document.createRange();
     range.selectNodeContents(tn);
     const rr = [...range.getClientRects()][0];
-    if (!rr || !s.width || rr.bottom < 0 || rr.top > innerHeight) continue;
+    if (!rr || !s.width || rr.bottom < 0 || rr.top > innerHeight || s.bottom <= rr.top + 1) continue;
     const cs = getComputedStyle(tn.parentElement);
     cv.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
     const base = rr.top + cv.measureText('Hx').fontBoundingBoxAscent;

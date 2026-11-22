@@ -37,14 +37,31 @@
    every icon looked low. The word's box is trimmed to its cap height and
    padded back to one line height, so the row's height and the clip room
    for accents and descenders stay as they were. Every chip and button that
-   puts an icon beside its word: the kit Button, the band's chips, Filters
-   and Ask, the quick chips, the applied chips and the rails' See all. Without text-box the old
-   centring stays. */
+   puts an icon beside its word: the kit Button, the band's chips, Filters,
+   Ask and Settings, the quick chips, the applied chips, the rails' See all,
+   the List/Map switch and Together. Clear all in the applied row has no
+   icon but is trimmed too, so its words sit on the same baseline as the
+   trimmed chips beside it (judgement-10). The category tabs and the header
+   nav are trimmed only where the icon stands beside the word, not above
+   it. Without text-box the old centring stays. */
 @supports (text-box: trim-both cap alphabetic) {
-  .btn:has(> .btn-icon) > .btn-label, .hs-see-all-word,
-  .band-chip-text, .band-filters-word, .band-ask-word, .xquick-word, .xap-text {
+  .btn:has(> .btn-icon) > .btn-label, .xap-clear > .btn-label, .hs-see-all-word,
+  .band-chip-text, .band-filters-word, .band-ask-word, .band-settings-word, .xquick-word, .xap-text,
+  .seg-icon + .seg-word, .tg-door-word {
     text-box: trim-both cap alphabetic;
     padding-block: calc((1lh - 1cap) / 2);
+  }
+  @media (min-width: 769px) {
+    .xcats-tab-label {
+      text-box: trim-both cap alphabetic;
+      padding-block: calc((1lh - 1cap) / 2);
+    }
+  }
+  @media (min-width: 1280px) {
+    .header-nav-label {
+      text-box: trim-both cap alphabetic;
+      padding-block: calc((1lh - 1cap) / 2);
+    }
   }
 }
 @media (hover: hover) {
