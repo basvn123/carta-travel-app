@@ -85,6 +85,12 @@ async function runOne(browser, v, w) {
     const ax = await axe(page);
     const row = { v, w, tab: TABS[i], overflow: ov, axe: ax, errors: [...errors] };
     row.ok = ov <= 1 && !ax.length && !errors.length;
+    // Stamps (G12 judge round 3): a milestone's name never runs past its stamp, in any language.
+    const stampSpill = await page.evaluate(() => [...document.querySelectorAll('.atlas-badge-l')].filter((l) => {
+      const b = l.closest('.atlas-badge').getBoundingClientRect(), r = l.getBoundingClientRect();
+      return l.scrollWidth > l.clientWidth + 1 || r.left < b.left - 1 || r.right > b.right + 1;
+    }).map((l) => l.textContent));
+    if (stampSpill.length) { row.stampSpill = stampSpill; row.ok = false; }
     // statement (G12 round 4): the DSA statement starts as one closed line
     // and its chevron opens every row of the ledger in place.
     if (v === 'statement' && i === 0) {

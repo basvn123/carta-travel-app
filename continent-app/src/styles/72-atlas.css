@@ -2582,10 +2582,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .atlas-ext.is-w { grid-column: 1; grid-row: 2; }
   .atlas-ext.is-s { grid-column: 2; grid-row: 2; justify-self: stretch; }
   .atlas-badges { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--space-1)); padding: var(--space-1); scrollbar-width: none; }
-  .atlas-badge { flex: none; width: 72px; height: 72px; padding: 6px; font-size: var(--text-micro); outline-offset: -6px; }
-  /* A long name ("Iberisch Schiereiland", "Beneluxstaaten") wraps inside the ring, never across it. */
-  .atlas-badge-l { display: block; max-width: 56px; line-height: 1.05; white-space: normal; overflow-wrap: anywhere; hyphens: auto; text-align: center; font-size: 9px; }
-  .atlas-badge i svg { width: 18px; height: 18px; }
   .mt-invite-row { grid-template-columns: 40px minmax(16px, 1fr) auto auto; gap: var(--space-2); }
   .mt-invite-open { grid-column: auto; }
   .mt-invite-row .btn.mt-invite-open { padding-inline: var(--space-2); border-color: transparent; background: none; text-decoration: underline; text-underline-offset: 3px; }
@@ -2603,4 +2599,30 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .mt-next-line { min-height: 0; gap: 2px; margin-top: calc(-1 * var(--space-3)); }
   .mt-next-line .jl-labs { height: 14px; }
   .mt-next-line .jl-labs span { line-height: 14px; }
+}
+
+/* ==== Stamps, judge round 3 (G12): the ink ring holds only the icon; the name sits under it at the
+   12 px caption size and wraps there, so no language ever runs across the ring. ==== */
+.atlas-badge { width: 96px; height: auto; padding: var(--space-1) 0; border: 0; outline: 0; border-radius: var(--radius-control); display: grid; justify-items: center; align-content: start; gap: 6px; color: var(--text-2); font: 700 var(--text-caption) / 1.2 var(--ui); rotate: 0deg; }
+.atlas-badge i { box-sizing: border-box; display: grid; place-items: center; width: 64px; height: 64px; border: 2.5px solid var(--umber-700); border-radius: 50%; outline: 1.5px solid var(--umber-700); outline-offset: -8px; background: none; color: var(--umber-800); rotate: var(--tilt, 0deg); transition: scale var(--dur-tick) var(--ease-tick); }
+.atlas-badge:active { scale: 1; }
+.atlas-badge:active i { scale: 0.96; }
+.atlas-badge.is-locked i { border: 2px solid var(--umber-200); outline-color: transparent; color: var(--text-3); rotate: 0deg; }
+.atlas-badge[aria-pressed="true"] { color: var(--text); }
+.atlas-badge-l { display: block; max-width: 100%; white-space: normal; overflow-wrap: break-word; hyphens: manual; text-align: center; }
+.atlas-badge:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+@media (max-width: 599px) {
+  .atlas-badge { width: 96px; padding: 0; }
+  .atlas-badge i { width: 52px; height: 52px; outline-offset: -7px; }
+  .atlas-badge i svg { width: 20px; height: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .atlas-badge i { transition: none; } }
+
+/* The invite row wraps only when a language needs it (fr "Ouvrir le voyage" at 390): flex, the
+   path takes what is left, and Open reis drops under the row instead of pushing past the edge. */
+@media (max-width: 599px) {
+  .mt-invite-row { display: flex; flex-wrap: wrap; }
+  .mt-invite-bed { flex: none; }
+  .mt-invite-path { flex: 1 1 16px; width: auto; min-width: 16px; }
+  .mt-invite-row > .btn { flex: none; }
 }

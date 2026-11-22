@@ -7708,7 +7708,7 @@ export const de = {
   "mt.discoverPlaces": "Orte entdecken",
   "mt.mapSavedEmpty": "Karte von Europa, noch nichts gespeichert",
   "mt.mapSaved": "Karte: {n} gespeicherte Orte in {c} Ländern.",
-  "mt.mapSavedPill": "Gespeichertes in {country} zeigen, {n}",
+  "mt.mapSavedPill": "Gespeichertes zeigen: {country}, {n}",
   "mt.zoomIn": "Vergrößern",
   "mt.zoomOut": "Verkleinern",
   "mt.lowerSince": "{price} günstiger seit {date}",
