@@ -171,3 +171,30 @@ test("F-16: the priced month and the When default read the local day, not UTC", 
     assert.ok(!read(rel).includes("new Date().toISOString().slice(0"), rel);
   }
 });
+
+test("G-20 and G-10: no template answers how to get around, and a couple fits two adults only", async () => {
+  const { TEMPLATES, kindFits } = await import("../src/lib/travelStyles.js");
+  for (const [id, t] of Object.entries(TEMPLATES)) assert.ok(t.explore.around !== "public" && t.explore.around !== "taxi", `${id} would mark no car unasked`);
+  assert.equal(kindFits("couple", { adults: 5 }), false);
+  assert.equal(kindFits("couple", { adults: 2 }), true);
+  assert.equal(kindFits("family", { adults: 2, kids: 1 }), true);
+  assert.equal(kindFits("family", { adults: 2 }), false);
+  assert.equal(kindFits("solo", { adults: 1 }), true);
+  assert.equal(kindFits("group", { adults: 7 }), true);
+});
+
+test("G-16 and J-13 (pull half): an address language is not overridden by the account's", async () => {
+  const { langToPull } = await import("../src/lib/langPath.js");
+  const shipped = [{ code: "en" }, { code: "nl" }, { code: "de" }];
+  assert.equal(langToPull("de", shipped, "nl"), null, "/nl/ wins");
+  assert.equal(langToPull("de", shipped, null), "de");
+  assert.equal(langToPull("xx", shipped, null), null, "a language the app does not ship");
+  assert.equal(langToPull(undefined, shipped, null), null);
+});
+
+test("G-12: the dead handleSaveTrip is gone; handleLoadTrip is live and stays", () => {
+  const hook = read("src/hooks/useAccountSync.js");
+  assert.ok(!hook.includes("handleSaveTrip"));
+  assert.ok(hook.includes("handleLoadTrip"));
+  assert.ok(read("src/shell/AppOverlays.jsx").includes("handleLoadTrip(trip)"));
+});

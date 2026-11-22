@@ -21,6 +21,16 @@ export function langFromPath(pathname) {
   return m ? m[1] : null;
 }
 
+/**
+ * G-16, J-13 (pull half): the language to take from the account at sign-in, or
+ * null. A visit the address named (/nl/...) keeps its language; the account's
+ * only fills in where the address said nothing, and only if the app ships it.
+ */
+export function langToPull(accountLang, shipped, addressLang) {
+  if (addressLang) return null;
+  return accountLang && shipped.some((l) => l.code === accountLang) ? accountLang : null;
+}
+
 /** The pathname without its language prefix, always starting with `/`. */
 export function stripLang(pathname) {
   const p = String(pathname || '/');

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { saveTrip, fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
+import { fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
 import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 import { readFavList, writeFavList } from '../lib/favorites.js';
 import { useI18n } from '../i18n/index.jsx';
@@ -7,6 +7,7 @@ import { mergeVisitedCountries, useVisitedCountries } from '../lib/visitedCountr
 import { mergeSavedListsIntoDevice, useSavedLists } from '../lib/savedLists.js';
 import { mergeAccountChoices, mergeTaste, tasteNeedsWriteBack } from '../lib/taste.js';
 import { mergeStyles } from '../lib/travelStyles.js';
+import { langFromPath, langToPull } from '../lib/langPath.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
  *  account: pulls saved settings once right after login (never when a shared
@@ -36,6 +37,9 @@ export function useAccountSync({
   // traveller who chose Nederlands on the phone reads Nederlands on the laptop
   // too. Origin, party, stay tier and Lifestyle already sync inside `choices`.
   const { lang, setLang, languages } = useI18n();
+  // G-16: the language the address named when this visit began (/nl/...), kept here
+  // because the prefix is rewritten as soon as the language changes.
+  const addressLangRef = useRef(typeof location === 'undefined' ? null : langFromPath(location.pathname));
   // Countries marked visited by hand on My trips (T434), synced with the rest.
   const visitedCountries = useVisitedCountries();
   // T925: the traveller's saved lists and the price each save was made at,
@@ -125,8 +129,9 @@ export function useAccountSync({
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
       if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
-      // Only a language the app ships; anything else keeps this device's.
-      if (settings.lang && languages.some((l) => l.code === settings.lang)) setLang(settings.lang);
+      // Only a language the app ships, and never over one the address named.
+      const pulled = langToPull(settings.lang, languages, addressLangRef.current);
+      if (pulled) setLang(pulled);
       // The shortlist MERGES rather than replaces. Every other setting here
       // is a single current value, so the account's copy can simply win; a
       // shortlist is an accumulating list, and letting the account's copy win
@@ -175,17 +180,6 @@ export function useAccountSync({
     // writeBack (T764): one push after a sign-in merge that added to the account's taste.
   }, [user, choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, favorites, lang, visitedCountries, savedLists, writeBack]);
 
-  const handleSaveTrip = useCallback(async (destination) => {
-    if (!user) { setAuthModalOpen(true); throw new Error('Sign in to save trips'); }
-    await saveTrip(user.id, {
-      destinationId: selectedId,
-      city: destination.city,
-      country: destination.country,
-      // The travel styles are the traveller's, not this trip's.
-      departDate, returnDate, choices: { ...choices, travel_styles: undefined },
-    });
-  }, [user, selectedId, departDate, returnDate, choices, setAuthModalOpen]);
-
   const handleLoadTrip = useCallback((trip) => {
     setSelectedId(trip.destination_id);
     if (trip.depart_date) setDepartDate(trip.depart_date);
@@ -202,5 +196,5 @@ export function useAccountSync({
     setAccountOpen(false);
   }, [setSelectedId, setDepartDate, setReturnDate, setChoices, setAccountOpen]);
 
-  return { handleSaveTrip, handleLoadTrip };
+  return { handleLoadTrip };
 }
