@@ -218,7 +218,6 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
     // v18 (T534): how the bed was found, measured | nearby | modelled.
     accom_level:        bedLine.quality,
     accom_source:       bedLine.provenance?.from || null,
-    accom_entire_home_night_eur: dest.accommodation?.beds?.bnb_home?.['4'] ?? null,
     accom_per_person:   round2(accomPerPerson),
     accom_total:        round2(accomTotal),
     // Stay tier actually priced ('home' when no tier chosen or none measured)

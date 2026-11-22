@@ -236,7 +236,7 @@ function levelOf(raw, repaired) {
   if (repaired) return 'region';
   // 'live' (T540): tonight's prices for the traveller's own nights.
   return raw === 'city' || raw === 'measured' || raw === 'live' ? 'city'
-    : raw === 'nearby' ? 'region' : 'country';
+    : raw === 'nearby' || raw === 'region' ? 'region' : 'country'; // A-21: the pipeline writes `region` too
 }
 
 /**

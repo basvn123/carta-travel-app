@@ -11,7 +11,7 @@ import { useSettledFigure } from '../lib/figureChange.js';
 import {
   Button, Money, Segmented, Plate, PlateGroup, Formation, Figure, CostRow, CostSum,
 } from '../components/ui/index.js';
-import { formatMoney } from '../lib/money.js';
+import { formatMoney, receiptRounding } from '../lib/money.js';
 import { doPriceOf } from '../lib/price/doPrice.js';
 import { Switch } from '../components/ui/Switch.jsx';
 import '../styles/86-price-items.css';
@@ -293,8 +293,7 @@ export function DestPriceCard({
   // G1 (house style): the receipt's lines print in whole euros; when they
   // do not add up to the engine's own total, a Rounding line says by how
   // much (decision 0012, must-fix 3). Display only: the total is never changed.
-  const printedSum = price.lines.reduce((sum, l) => sum + Math.round(l.eur), 0);
-  const rounding = Math.round(price.total) - printedSum;
+  const rounding = receiptRounding(price.lines, price.total);
   const lineKind = (l) => (l.key === 'flight' ? 'flight' : l.key === 'way' ? (l.mode === 'plane' ? 'flight' : l.mode)
     : l.key === 'stay' ? 'bed' : l.key === 'ground' ? 'food' : l.key === 'car' ? 'car'
       : l.key === 'transport' ? 'local' : 'tickets');

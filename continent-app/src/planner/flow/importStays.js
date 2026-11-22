@@ -12,11 +12,11 @@
  *
  * Plain JS, node testable.
  */
-import { cityKeyName } from '../../lib/placeName.js';
+import { cityFold } from '../../lib/placeName.js';
 import { haversineKm } from '../../lib/nearby.js';
 import { MAX_TRIP_NIGHTS } from '../../lib/tripDates.js';
 
-const norm = (s) => cityKeyName(String(s || '')).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+const norm = cityFold;
 
 const DAY = 86400000;
 const daysBetween = (a, b) => Math.round((Date.parse(`${b}T12:00:00Z`) - Date.parse(`${a}T12:00:00Z`)) / DAY);
@@ -53,10 +53,11 @@ export function staysFromImports(imports, destinations, when = {}) {
     const gap = s.date && nextDate ? daysBetween(s.date, nextDate) : 0;
     const nights = Math.max(1, Math.min(MAX_TRIP_NIGHTS, gap > 0 ? gap : share));
     const same = rows.find((r) => r.id === s.id);
-    const eur = Number(s.eur) > 0 ? Math.round(Number(s.eur)) : 0;
+    // H-12: to the cent, as the booking printed it.
+    const eur = Number(s.eur) > 0 ? Math.round(Number(s.eur) * 100) / 100 : 0;
     if (same) {
       same.nights = Math.min(MAX_TRIP_NIGHTS, same.nights + nights);
-      same.eur += eur;
+      same.eur = Math.round((same.eur + eur) * 100) / 100;
     } else {
       rows.push({ id: s.id, nights, eur });
     }

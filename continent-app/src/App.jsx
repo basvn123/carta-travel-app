@@ -611,7 +611,6 @@ function TravelApp() {
     babies: init.babies ?? 0,
     trip_days: 7,
     baggage_key: init.baggage_key ?? 'priority_10kg',
-    baggage_per_direction_eur: 25,
     // 'any' | 'plane' | 'train' | 'bus' | 'car' (T582: the settings line's
     // way button; any way prices the cheapest that reaches a place).
     transport_mode: init.transport_mode ?? 'any',
@@ -1247,7 +1246,7 @@ function TravelApp() {
   const pricingChoices = useMemo(
     () => choices,
     // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: the fields composeTrip reads, so a trip_days write does not reprice the catalogue
-    [choices.group_size, choices.baggage_key, choices.baggage_per_direction_eur,
+    [choices.group_size, choices.baggage_key,
       choices.transport_mode, choices.stay_tier, choices.origin, choices.home, choices.lifestyle,
       choices.children, choices.babies,
       choices.origin_pref, choices.car_model, choices.accommodation_model, choices.drive_home],

@@ -99,8 +99,6 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
               ? prev.trip_days
               : (def?.trip_length_days ?? prev.trip_days),
             baggage_key: baggageKey,
-            baggage_per_direction_eur:
-              j.meta.baggage_options?.[baggageKey]?.per_direction_eur ?? prev.baggage_per_direction_eur,
             transport_mode: init.transport_mode ?? prev.transport_mode,
             // An active travel style already set the Lifestyle (hooks/
             // useTravelStyles.js); the data's default must not undo it.
