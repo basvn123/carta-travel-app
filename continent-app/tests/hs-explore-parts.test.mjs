@@ -130,8 +130,10 @@ test('save wears the bookmark with one fixed name; the ticket is My trips', () =
   assert.match(cards, /\{word && <span className="xsave-word">\{fav \? t\('detail\.saved'\) : t\('explore\.save'\)\}<\/span>\}/);
   assert.match(read('src/browse/explore/PlaceRow.jsx'), /className="xrow-save" word \/>/);
   assert.match(css, /\.xsave-word \{ display: none; \}/);
-  assert.match(css, /animation: xsave-tick 240ms/);
-  assert.match(css, /animation: xsave-ring 240ms/);
+  // Both read --dur-save, 240 ms in 01-tokens.css.
+  assert.match(css, /animation: xsave-tick var\(--dur-save\)/);
+  assert.match(css, /animation: xsave-ring var\(--dur-save\)/);
+  assert.match(read('src/styles/01-tokens.css'), /--dur-save:\s*240ms;/);
   // No star left in the save copy, in any language.
   for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) {
     const cat = read(`src/i18n/${lang}.js`);
