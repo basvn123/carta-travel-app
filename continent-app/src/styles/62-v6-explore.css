@@ -659,7 +659,7 @@
 .xsave .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
 .xsave[aria-pressed="true"] .hs-icon-bookmark { color: var(--select-ink); }
 .xsave[aria-pressed="true"] .bm-fill { fill: var(--select-ink); }
-.xsave.is-ticking .hs-icon-bookmark { animation: xsave-tick 240ms var(--ease-out); }
+.xsave.is-ticking .hs-icon-bookmark { animation: xsave-tick var(--dur-save) var(--ease-out); }
 .xsave.is-ticking::after {
   content: "";
   position: absolute;
@@ -670,7 +670,7 @@
   border-radius: 50%;
   background: var(--select-bg);
   pointer-events: none;
-  animation: xsave-ring 240ms var(--ease-out) forwards;
+  animation: xsave-ring var(--dur-save) var(--ease-out) forwards;
 }
 @keyframes xsave-tick { 50% { scale: 1.14; } }
 @keyframes xsave-ring { from { scale: 0.6; opacity: 0.9; } to { scale: 1.4; opacity: 0; } }
@@ -691,7 +691,7 @@
 .xtool-saved[aria-pressed="true"] .bm-fill { fill: currentColor; }
 .xov-quick [aria-pressed="true"] .bm-fill { fill: currentColor; }
 /* The first save of a session: My trips in the nav bumps once. */
-.hs-nav-bump { animation: hs-nav-bump 200ms var(--ease-out); }
+.hs-nav-bump { animation: hs-nav-bump var(--dur-2) var(--ease-out); }
 @keyframes hs-nav-bump { 50% { translate: 0 -3px; } }
 @media (prefers-reduced-motion: reduce) {
   .xsave.is-ticking .hs-icon-bookmark, .hs-nav-bump { animation: none; }

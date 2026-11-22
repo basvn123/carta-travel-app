@@ -67,6 +67,7 @@
  * Not part of `npm run ci`; it runs from .github/workflows/design-lint.yml.
  */
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -111,7 +112,10 @@ const stripCssComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(
 
 function scanFile(abs, rel) {
   const found = [];
-  const raw = fs.readFileSync(abs, 'utf8');
+  // Normalise CRLF: a Windows checkout (core.autocrlf) ends every line in a
+  // CR, JS '.' stops at it, so the line-anchored rules (motion-literal's
+  // `(.*)$`) matched nothing locally and CI alone saw the violations.
+  const raw = fs.readFileSync(abs, 'utf8').replace(/\r\n/g, '\n');
   const isCss = rel.endsWith('.css');
   const isEnStrings = /(^|\/)i18n\/en\.js$/.test(rel);
   const rawLines = raw.split('\n');
@@ -258,6 +262,13 @@ function selfTest() {
   let ok = true;
   if (missing.length) { console.error('self-test: rules that did not fire on the seeded fixture: ' + missing.join(', ')); ok = false; }
   if (good.fresh.length) { console.error('self-test: the clean fixture produced violations: ' + good.fresh.map((v) => v.rule).join(', ')); ok = false; }
+  // A CRLF file must be judged like its LF twin (the Windows checkout case).
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'design-lint-'));
+  const crlf = path.join(tmp, 'crlf.css');
+  fs.writeFileSync(crlf, '.a { animation: spin 240ms var(--ease-out); }\r\n.b { transition: opacity 200ms; }\r\n');
+  const crlfRules = scanFile(crlf, 'crlf.css').filter((v) => v.rule === 'motion-literal').length;
+  fs.rmSync(tmp, { recursive: true, force: true });
+  if (crlfRules !== 2) { console.error(`self-test: a CRLF stylesheet gave ${crlfRules} motion-literal, expected 2`); ok = false; }
   if (ok) console.log(`self-test ok: ${bad.fresh.length} seeded violations across ${rules.size} rules caught, clean fixture silent`);
   process.exit(ok ? 0 : 1);
 }

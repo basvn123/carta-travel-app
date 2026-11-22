@@ -476,6 +476,7 @@ Character: **painted and placed**. Rules:
 | `--dur-pop`, `--ease-pop` | 550 ms, spring 260 ms, bounce 0.45 | The Add icon only |
 | `--dur-settle`, `--ease-settle` | 400 ms, spring 200 ms, no bounce | Figures rolling, plates arriving, the chosen pin, rows gliding, the nav marker |
 | `--dur-paint` | 220 ms | A blaze stripe or the tab paint bar stroking in |
+| `--dur-save` | 240 ms | A save on Explore: the bookmark ticks (1, 1.14, 1) and sends one ring out |
 | `--dur-couple` | 420 ms | A wagon coupling into the formation (add a cost part) |
 | `--dur-sheet`, `--ease-sheet` | 420 ms, `cubic-bezier(0.32, 0.72, 0, 1)` | A sheet rising |
 | `--dur-1` to `--dur-4` | 120, 200, 320, 480 ms | Colour changes, routine changes, surfaces, one authored movement |
