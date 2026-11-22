@@ -4,7 +4,7 @@ date: 2026-11-19
 decided-by: Bas (approved the AI north-star plan, 2026-11-17)
 ---
 
-# 0013 · AI: cheapest layer first, proven by paired tests
+# 0016 · AI: cheapest layer first, proven by paired tests
 
 ## Context
 Two research runs reviewed Carta's AI in November 2026: `.work/2026-11-17-gemini-rag/` (Gemini and Ask Carta: models, cost, accuracy, revenue) and `.work/2026-11-17-ai-north-star/` (the plan for every AI surface, approved by the owner). They found that model choice is not where the money is (a day plan costs about EUR 0.003 in tokens, a Trip Pass nets about EUR 5.40), but the setup leaked money and trust: live chains on `-latest` aliases and an uncontrolled thinking model, telemetry that mis-priced calls and missed thinking tokens, and a shared 200-a-day ceiling that counted cache hits and could refuse paying travellers. Several "1.0" eval scores tested the reference planner or hand-written answers, not Gemini.

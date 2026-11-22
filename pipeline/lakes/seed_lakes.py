@@ -1324,10 +1324,29 @@ NO_WATER = {
 }
 
 
+# The famous lakes the famous coverage report found missing from the wire
+# (pipeline/famous/coverage.py --handoff, D25, 2026-11-20): generated, keyed
+# by Wikidata id, why "famous". export_lakes.py never leaves them out.
+FAMOUS_FILE = (__import__("pathlib").Path(__file__).resolve().parents[2]
+               / "data" / "famous" / "seed_lakes.json")
+
+
+def famous_entries():
+    """Generated seed entries, or [] when the file is absent or broken."""
+    import json
+    try:
+        rows = json.loads(FAMOUS_FILE.read_text(encoding="utf-8"))["rows"]
+    except (OSError, ValueError, KeyError):
+        return []
+    hand = {e.get("wd") for e in SEED if e.get("wd")}
+    return [r for r in rows if r.get("wd") and r["wd"] not in hand]
+
+
 def by_country():
-    """{cc: [entry, ...]} in file order, which is the order a tie breaks in."""
+    """{cc: [entry, ...]} in file order, which is the order a tie breaks in;
+    the generated famous entries after the hand seed."""
     out = {}
-    for row in SEED:
+    for row in SEED + famous_entries():
         out.setdefault(row["cc"], []).append(row)
     return out
 

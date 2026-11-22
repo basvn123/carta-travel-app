@@ -93,7 +93,7 @@ function YoureIn({ t, place }) {
 }
 
 export default function AskChat(props) {
-  const { t, lang, guided, rows, countries, labels, price, trip, seed, onClose, onOpenPlace, onPlanTrip, onApply, favorites, onToggleFav, filters = null } = props;
+  const { t, lang, guided, rows, countries, labels, price, trip, seed, onClose, onOpenPlace, onPlanTrip, onApply, favorites, onToggleFav, filters = null, leaving = false } = props;
   const isPhone = useIsPhone();
   const panelRef = React.useRef(null);
   const listRef = React.useRef(null);
@@ -267,10 +267,22 @@ export default function AskChat(props) {
     document.documentElement.classList.add('ac-open');
     return () => document.documentElement.classList.remove('ac-open');
   }, []);
+  // Leaving (the host keeps it for the exit), the page takes its room back
+  // while the panel slides out.
+  React.useEffect(() => {
+    if (leaving) document.documentElement.classList.remove('ac-open');
+  }, [leaving]);
   React.useEffect(() => {
     if (isPhone) return undefined;
     const onKey = (e) => {
-      if (e.key === 'Escape' && panelRef.current?.contains(document.activeElement)) { e.preventDefault(); onClose(); }
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      // Also from the page or the band's Ask button: Ask is the one side
+      // panel open (Settings closes when it opens), so Escape is its.
+      const at = document.activeElement;
+      if (panelRef.current?.contains(at) || !at || at === document.body || at.closest?.('.band-ask')) {
+        e.preventDefault();
+        onClose();
+      }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
@@ -278,7 +290,7 @@ export default function AskChat(props) {
   // A phone lands on the heading, so the keyboard does not cover the
   // questions to ask (carta-design: a page opened by pointer focuses its
   // heading); desktop puts the caret in the field.
-  useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: isPhone });
+  useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: isPhone && !leaving });
   React.useEffect(() => { if (!isPhone) fieldRef.current?.focus(); }, [isPhone]);
 
   // T766: the traveller's taste, so Ask ranks with the same fit as Explore.
@@ -316,7 +328,7 @@ export default function AskChat(props) {
   };
 
   const panel = (
-    <section ref={panelRef} className={`ac${isPhone ? ' is-phone' : ''}`}
+    <section ref={panelRef} className={`ac${isPhone ? ' is-phone' : ''}${leaving ? ' is-leaving' : ''}`} inert={leaving || undefined}
       role={isPhone ? 'dialog' : 'complementary'} aria-modal={isPhone || undefined} aria-labelledby="ac-title">
       <header className="ac-head">
         {view === 'history'
@@ -417,5 +429,12 @@ export default function AskChat(props) {
       </form>
     </section>
   );
-  return createPortal(panel, document.body);
+  // G12 round 2: a phone opens Ask as a sheet over Explore, the page dimmed
+  // above it (a press there closes it), never a surprise full page.
+  return createPortal(isPhone ? (
+    <>
+      <div className={`ac-scrim${leaving ? ' is-leaving' : ''}`} aria-hidden="true" onClick={onClose} />
+      {panel}
+    </>
+  ) : panel, document.body);
 }

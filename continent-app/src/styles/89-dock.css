@@ -39,13 +39,6 @@
   background: var(--umber-600);
 }
 
-/* Trip: a 44 px pill, the tune glyph and a chevron. */
-.btn.dock-trigger--under-tabs {
-  min-width: 64px;
-  padding: 0 var(--space-2) 0 var(--space-3);
-  border-radius: var(--radius-pill);
-}
-.dock-trigger--under-tabs .hs-icon-tune { width: 24px; height: 24px; }
 
 /* The tune glyph moves when its dock opens: the plane glides on, the two
    knobs swap places. */
@@ -57,38 +50,59 @@
 .dock-trigger[aria-expanded="true"] .tune-k1 { transform: translateX(8px); }
 .dock-trigger[aria-expanded="true"] .tune-k2 { transform: translateX(-8px); }
 
-/* Style: a 52 px disc in the active style's tone, the chevron on a badge
-   pointing up at the studio it opens. The whole disc is the target; the
-   badge is never a button of its own. */
-.dock--corner {
+/* ---- The two corners (G12, Explore top round 2; decision.md "Phone") --
+   Two fixed slots just above the bottom nav: the style disc bottom left
+   (Dock anchor="corner") and, on a phone, the Map disc bottom right
+   (MapCorner.jsx). Same size, same height, and nothing moves them: no lift,
+   no tuck, no measuring (owner: the disc "often disappears or appears
+   higher", audit-visual.md). Only the nav's own height moves the slots,
+   with a transition. Content that passes under them is the honest cost of
+   "never moves"; the scrollers end with --corner-room and pad focus clear
+   of them instead (end of this file). One exception: the Explore list from
+   769 to 1023 px ends on a foot bar that holds the disc (end of this file). */
+:root {
+  --corner-size: var(--tap-main);
+  --corner-gap: var(--space-3);
+  /* What a scroller keeps free under its last line and around focus. */
+  --corner-room: calc(var(--corner-size) + 2 * var(--corner-gap));
+}
+.corner-slot {
   position: fixed;
-  left: max(var(--space-4), env(safe-area-inset-left, 0px));
-  bottom: calc(var(--bottom-nav-h) + var(--space-3));
+  bottom: calc(var(--bottom-nav-h) + var(--corner-gap));
   z-index: var(--z-overlay);
-  /* discClear.js: the lift that keeps it off a card's name and price at
-     rest, and the tuck while a list scrolls down (owner: bottom left on
-     every width, G12 judge 2). */
-  transform: translateY(calc(var(--disc-lift, 0px) * -1));
-  transition: transform var(--dur-3) var(--ease-out), opacity var(--dur-2) var(--ease-out);
+  transition: bottom var(--dur-2) var(--ease-out);
 }
-.dock--corner[data-tucked="1"] {
-  transform: translate(calc(-100% - var(--space-5)), calc(var(--disc-lift, 0px) * -1));
-  opacity: 0;
-  pointer-events: none;
-}
-.btn.dock-trigger--corner {
-  width: 52px;
-  height: 52px;
+.corner-slot--left { left: max(var(--space-4), env(safe-area-inset-left, 0px)); }
+.corner-slot--right { right: max(var(--space-4), env(safe-area-inset-right, 0px)); }
+
+/* Style: a 48 px disc in the active style's tone, the chevron on a badge
+   pointing up at the studio it opens. Map: the same disc on paper with the
+   map glyph. The whole disc is the target; the badge is never a button of
+   its own. Both float, so both cast the one shadow and draw no edge. */
+.btn.corner-btn {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--corner-size);
+  height: var(--corner-size);
+  min-height: var(--corner-size);
   padding: 0;
   border: 0;
   border-radius: var(--radius-pill);
-  background: var(--ts-ground, var(--select-bg));
-  color: var(--ts-ink, var(--umber-700));
   box-shadow: var(--elev-2);
+  transition: background-color var(--dur-1) var(--ease-out), scale var(--dur-tick) var(--ease-tick);
 }
-.dock-trigger--corner .dock-glyph .hs-icon,
-.dock-trigger--corner .dock-glyph svg { width: 26px; height: 26px; }
-.dock-trigger--corner .dock-glyph.is-swap { animation: dock-glyph-in var(--dur-2) var(--ease-out); }
+.btn.corner-btn:active:not(:disabled) { scale: var(--press-scale-sm); }
+.btn.corner-btn--map { background: var(--surface); color: var(--text); }
+.btn.corner-btn--map .btn-label { display: contents; }
+@media (hover: hover) {
+  .btn.corner-btn--map:hover { background: var(--select-row); color: var(--text); }
+}
+/* The Map corner is a phone's: a desktop picks List or Map in the tab row,
+   and the phone map has its drawer's List. */
+@media (min-width: 769px) {
+  .corner-map { display: none; }
+}
 @keyframes dock-glyph-in {
   from { opacity: 0; transform: scale(0.6); }
   to { opacity: 1; transform: none; }
@@ -106,12 +120,17 @@
   box-shadow: var(--elev-1);
 }
 .dock-badge .dock-chev { transform: rotate(-90deg); }
-.dock-trigger--corner .dock-dot { top: auto; left: auto; right: 0; bottom: 0; }
 
-/* The style disc steps aside for the keyboard and for any modal, the
-   studio it opens included. */
-html.kbd-open .dock--corner,
-body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden; }
+/* Both corners step aside, with a fade, for the keyboard, the phone search
+   panel (ExploreBand sets band-searching; at 360x640 they covered its
+   suggestions, judge 1) and any modal, the studio the disc opens included.
+   Visibility waits for the fade on the way out and comes back at once. */
+.corner-slot {
+  transition: bottom var(--dur-2) var(--ease-out), opacity var(--dur-1) var(--ease-out), visibility var(--dur-1);
+}
+html.kbd-open .corner-slot,
+html.band-searching .corner-slot,
+body:has([aria-modal="true"]:not(.dock-card)) .corner-slot { opacity: 0; visibility: hidden; }
 
 /* ---- The card --------------------------------------------------------- */
 .dock-card {
@@ -233,43 +252,60 @@ body:has([aria-modal="true"]:not(.dock-card)) .dock--corner { visibility: hidden
 }
 .dock-row-value { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-body); }
 .dock-row-control { min-width: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; }
-.dock-row--stack { grid-template-columns: minmax(0, 1fr); }
 .dock-row.is-pulse { animation: dock-pulse var(--dur-4) var(--ease-out); }
 @keyframes dock-pulse {
   from { background: var(--select-bg); }
   to { background: transparent; }
 }
 
-/* ---- The row under the tabs ------------------------------------------- */
-/* The rail chips' row on the phone overview. The Trip dock that ended it
-   left with G12 (Explore top): Settings holds the trip now. */
-.xsub {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  min-width: 0;
-  margin: 0 0 var(--space-3);
-}
 
 /* ---- The style disc (StyleDock.jsx) ---------------------------------- */
 /* A style switch cross-fades the glyph: the keyed span mounts anew. */
 .dock-glyph-in { display: inline-grid; place-items: center; animation: dock-glyph-in var(--dur-2) var(--ease-out); }
 
-/* The list keeps room under its last row for the disc on a desktop, where
-   it sits inside the list pane. */
+/* Desktop: no bottom nav, the disc alone in the bottom-left corner of the
+   window (owner default 2026-11-19). */
 @media (min-width: 769px) {
-  .dock--corner { left: var(--space-5); bottom: var(--space-5); }
-  .explore-shell .explore-wrap,
-  .places-wrap { padding-bottom: 88px; }
+  :root { --corner-gap: var(--space-5); }
+  .corner-slot--left { left: var(--space-5); }
+}
+
+/* The lists under the corners: each scroller ends with room for a slot, so
+   its last row and the footer's last line scroll fully clear of both
+   discs, and a control that takes keyboard focus is scrolled up out of the
+   slots' band instead of being focused underneath one (WCAG 2.4.11;
+   critique-a11y-perf.md). The padding sits on the scroller itself, after
+   the footer, so it is the true end of the page. */
+.explore-shell .explore-tab,
+.places-tab {
+  padding-bottom: var(--corner-room);
+  scroll-padding-bottom: var(--corner-room);
+}
+/* The one exception, the Explore list from 769 to 1023 px: its cards start
+   24 px in, so a card's name sat under the disc at rest (769, "La♡omo",
+   judgement-7). There the list ends on a foot bar: a hairline 8 px above
+   the disc and the top band's ground under it, so the page is framed at
+   its top and its foot, with the disc in the bar. 80 px, and the list ends
+   once: the site footer's end meets the hairline (judgement-8: 96 px with
+   24 px of ground after the footer read as dead space and a double end).
+   From 1024 px the cards start 32 to 48 px in and the disc floats again:
+   at most a photo's corner passes under it, never a name, a figure or a
+   control (verify_map round G). The map keeps its corner (has-map-corner). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  html:not(.has-map-corner) .explore-shell { background: var(--surface-page); }
+  html:not(.has-map-corner) .explore-shell .explore-tab {
+    margin-bottom: calc(var(--corner-size) + var(--corner-gap) + var(--space-2));
+    border-bottom: var(--stroke-hair) solid var(--border-soft);
+    padding-bottom: 0;
+    scroll-padding-bottom: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .dock-card,
   .dock-card.is-open { transform: none; }
   .dock-row { transform: none; }
-  /* The disc never tucks (discClear.js) and its lift is a jump. */
-  .dock--corner { transition: none; }
+  .corner-slot { transition: none; }
   .trip-dock-drill,
   .dock-glyph-in { animation: none; }
 }

@@ -14,7 +14,9 @@
  *
  * A flight is { price, airline, airlineName, flightNo, dep, arr, stops, min,
  * via } with dep/arr as the airport's local 'HH:MM' and price in EUR for one
- * adult. Flights are sorted cheapest first and capped at MAX_FLIGHTS.
+ * adult. Flights are sorted cheapest first and capped at `max` (MAX_FLIGHTS
+ * for the sweep, which keeps only the cheapest; the live day list asks for
+ * every flight of the day, G12 D10).
  */
 import {
   Airport, Client, FlightSearchFilters, FlightSegment, MaxStops, SearchFlights, SeatType, SortBy,
@@ -60,9 +62,9 @@ export function toFlight(f) {
 
 /**
  * @param {{from: string, to: string, date: string, fetchImpl?: typeof fetch,
- *          directOnly?: boolean, timeoutMs?: number}} q
+ *          directOnly?: boolean, timeoutMs?: number, max?: number}} q
  */
-export async function searchDay({ from, to, date, fetchImpl, directOnly = false, timeoutMs = 15000 }) {
+export async function searchDay({ from, to, date, fetchImpl, directOnly = false, timeoutMs = 15000, max = MAX_FLIGHTS }) {
   if (!IATA.test(from) || !IATA.test(to) || !DATE.test(date) || from === to) {
     return { ok: false, blocked: false, reason: 'bad-query' };
   }
@@ -94,7 +96,7 @@ export async function searchDay({ from, to, date, fetchImpl, directOnly = false,
     const rows = (await search.search(filters, LOCALE)) || [];
     if (refused && refused !== 'empty') return { ok: false, blocked: true, reason: refused };
     const flights = rows.map(toFlight).filter(Boolean)
-      .sort((a, b) => a.price - b.price).slice(0, MAX_FLIGHTS);
+      .sort((a, b) => a.price - b.price).slice(0, max);
     return { ok: true, flights, link: googleLink(from, to, date) };
   } catch (e) {
     if (refused && refused !== 'empty') return { ok: false, blocked: true, reason: refused };

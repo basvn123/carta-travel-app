@@ -457,9 +457,11 @@ def make_router(url=BROUTER_URL, profile=PROFILE, timeout=60):
     import requests
     session = requests.Session()
 
-    def route(a, b):
+    # alt: BRouter's alternative route index (0 to 3). seed_routes.py asks
+    # for 1 to 3 to find a different way back for a circuit walk (D25 a).
+    def route(a, b, alt=0):
         params = {"lonlats": f"{a[0]:.6f},{a[1]:.6f}|{b[0]:.6f},{b[1]:.6f}",
-                  "profile": profile, "alternativeidx": 0,
+                  "profile": profile, "alternativeidx": int(alt),
                   "format": "geojson"}
         try:
             resp = session.get(url, params=params, timeout=timeout)

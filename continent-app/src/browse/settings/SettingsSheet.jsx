@@ -106,11 +106,14 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   }, [nonce, openStep]);
 
   // Phone and tablet: a modal, its focus trapped, Escape closes.
-  useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: !docked });
+  useFocusTrap(panelRef, onClose, { initialFocusRef: titleRef, enabled: !docked, afterPaint: true });
   // Desktop: non-modal. Focus moves to the title on open and Escape closes
   // while focus is inside the panel; Tab leaves it into the page as usual.
+  // preventScroll (G12, D10, lane 1 round 3): the title is in view, and a
+  // focus that may scroll forces a layout of the whole Explore page (0.7 to
+  // 0.8 s at 4x CPU on desktop).
   React.useEffect(() => {
-    if (docked) titleRef.current?.focus();
+    if (docked) titleRef.current?.focus({ preventScroll: true });
   }, [docked]);
   const onKeyDown = (e) => {
     if (docked && e.key === 'Escape' && !e.defaultPrevented) {
@@ -118,19 +121,32 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
       onClose();
     }
   };
+  // Escape with focus on the page or on the band's Settings button closes
+  // the docked panel too: it is the one side panel open (flow-corners 1).
+  React.useEffect(() => {
+    if (!docked) return undefined;
+    const onKey = (e) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      const at = document.activeElement;
+      if (at && at !== document.body && !at.closest?.('.band-settings')) return;
+      e.preventDefault();
+      onClose();
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [docked, onClose]);
 
   // A fixed docked panel covers the page's right edge: the page is told,
   // so Explore can keep its list clear of it (Lane 1 reads the class).
+  // G12, D10 (lane 1, round 4): only the class. The panel's width is a
+  // constant in CSS (--settings-dock-w, 85-explore-rails.css), because
+  // writing it on the root each open restyled the whole desktop page (1 to
+  // 1.5 s at 4x CPU), and measuring it here forced a layout first.
   React.useEffect(() => {
     if (!docked || inline) return undefined;
     const root = document.documentElement;
-    const w = Math.round(panelRef.current?.getBoundingClientRect().width || 0);
     root.classList.add('has-settings-dock');
-    root.style.setProperty('--settings-dock-w', `${w}px`);
-    return () => {
-      root.classList.remove('has-settings-dock');
-      root.style.removeProperty('--settings-dock-w');
-    };
+    return () => { root.classList.remove('has-settings-dock'); };
   }, [docked, inline]);
 
   // The phone's keyboard shrinks the visual viewport, not the layout one;
@@ -146,6 +162,10 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   }, [docked]);
 
   const go = (to) => {
+    // Focus leaves the pressed row for the title first: removing a focused
+    // row with the overview cost a second full style pass (about 1 s at 4x
+    // CPU), and the title is where the step's effect puts focus anyway.
+    titleRef.current?.focus({ preventScroll: true });
     setDir(1);
     setCameFrom(to);
     setStep(to);
@@ -177,7 +197,7 @@ function SettingsPanel({ docked, inline, openStep, nonce, leaving, onClose }) {
   const firstStep = React.useRef(true);
   React.useEffect(() => {
     if (firstStep.current) { firstStep.current = false; return; }
-    if (step !== 'overview') titleRef.current?.focus();
+    if (step !== 'overview' && document.activeElement !== titleRef.current) titleRef.current?.focus({ preventScroll: true });
   }, [step]);
 
   const cls = [

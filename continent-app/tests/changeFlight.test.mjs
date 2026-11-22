@@ -50,3 +50,17 @@ test('without a live answer only the priced flight is known', () => {
   assert.equal(r.rows.length, 1);
   assert.deepEqual(flightRows({}), { rows: [], known: false });
 });
+
+// G12 (D10): the flights screen shows each row's fare, so it sorts on the
+// fare; sorting on fare plus a bag estimate made the list look unsorted.
+test('flightRows by fare sorts on the shown price, then the departure', () => {
+  const answer = { flights: [
+    { price: 149, airline: 'FR', dep: '06:30', arr: '08:40', stops: 0, min: 130 },
+    { price: 137, airline: 'KL', dep: '18:20', arr: '20:30', stops: 0, min: 130 },
+    { price: 145, airline: 'VY', dep: '09:10', arr: '11:20', stops: 0, min: 130 },
+    { price: 137, airline: 'AZ', dep: '07:00', arr: '09:10', stops: 0, min: 130 },
+  ] };
+  const { rows } = flightRows({ answer, party: { paying: 1, bagKey: 'checked' }, by: 'fare' });
+  assert.deepEqual(rows.map((r) => r.leg.airline), ['AZ', 'KL', 'VY', 'FR']);
+  assert.ok(rows.every((r, i) => i === 0 || r.leg.price >= rows[i - 1].leg.price));
+});

@@ -92,6 +92,28 @@ export function fareDays(file, dir, airport, { from, to, after = null, wanted = 
   return out.sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0));
 }
 
+/**
+ * The columns the flights screen draws (G12, D10): fresh fares only, in date
+ * order, with a break where more than `gap` days lie between two of them, so
+ * 1 Dec never reads as the day before 11 May. A swept null is left out: some
+ * sweeps search direct flights only, so it does not prove there is no
+ * flight; the live day list says that, from a full search.
+ * Returns [{ date, leg, state: 'fare' } | { gap: true, key, days }].
+ */
+export const GAP_DAYS = 7;
+export function stripColumns(days, { gap = GAP_DAYS } = {}) {
+  const out = [];
+  let prev = null;
+  for (const d of days || []) {
+    if (d.state !== 'fare' || !d.leg) continue;
+    const apart = prev ? Math.round((msOf(d.date) - msOf(prev)) / DAY_MS) : 0;
+    if (apart > gap) out.push({ gap: true, key: `gap-${prev}`, days: apart - 1 });
+    out.push(d);
+    prev = d.date;
+  }
+  return out;
+}
+
 /** A bar's height in px from a zero baseline, with a floor so a cheap day still shows. */
 export function barHeight(price, max, { h = 72, min = 6 } = {}) {
   if (!(price > 0) || !(max > 0)) return min;

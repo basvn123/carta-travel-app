@@ -7,6 +7,7 @@ import { useDialogExit } from '../../lib/motion.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { useStyleFigures, styleName } from './styleBits.jsx';
 import { StyleOverview } from './StyleOverview.jsx';
+import { StudioTaste } from './StudioTaste.jsx';
 import { StyleWizard } from './StyleWizard.jsx';
 import { STEPS } from './studioSteps.js';
 import '../../styles/79-style-studio.css';
@@ -137,6 +138,7 @@ export function StyleStudio({ onClose }) {
               <StyleOverview
                 ts={ts}
                 figures={figures}
+                taste={<StudioTaste destinations={destinations} />}
                 fresh={after.fresh}
                 escRef={escRef}
                 onClose={exit.close}

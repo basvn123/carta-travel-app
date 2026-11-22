@@ -41,6 +41,8 @@ Checked against the live account and rewritten by the owner sweep of 2026-11-12 
 
 ## 5. Waiting on another step
 
+- **G15, receipt reading data on R2 (Uitgaven).** The receipt reader runs Tesseract on the phone and fetches the English text model once from `https://data.carta-europetravel.com/ocr/4.0.0_best_int/eng.traineddata.gz` (the CSP allows only Carta's data host). Upload it: from `continent-app/`, `npm pack @tesseract.js-data/eng@1.0.0`, unpack, and copy `package/4.0.0_best_int/eng.traineddata.gz` (2.95 MB, MIT) to the bucket `carta` at `ocr/4.0.0_best_int/eng.traineddata.gz` with `rclone copyto` (the same remote `scripts/r2/push-data.mjs` uses), long cache headers, and CORS open to the site's origins like the rest of `data/`. Until then a scanned receipt is kept on the phone and the sheet says to type the amount. Check: scan a receipt on the preview; the lines appear with the total chosen.
+
 Round 2 (2026-11-12) moved the box, data and engineering steps that were here into their ROADMAP items (H9, D7, K2); what is left needs the R2 credential or the admin login.
 
 - **T269-e**: After the first real derive runs, run `derive.py gc` against the live img/ listing and img/manifest copy, read gc-plan.json, then repeat with --apply (needs the R2 credential)

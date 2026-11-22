@@ -59,6 +59,7 @@ const NOT_A_PRICE = new Set([
   "DAY", "DAY_MS",        // milliseconds in a day
   "GROUND_LONG_HAUL_KM",  // when a ground leg stops being a recommendation
   "MAX_AGE_MS",           // derived from flights.max_age_days
+  "COST_SLICE", "SLICE_MS", // G12, D10: how much pricing runs before the browser gets a turn
 ]);
 const strip = (s) => s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:"'`\\])\/\/.*$/gm, "$1");
 

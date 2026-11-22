@@ -36,15 +36,40 @@ test('spreadLeads keeps every place and never touches saved or short rails', () 
 test('every rail with four places is a strip; the theme rails use the vibe filter', () => {
   const src = read('src/browse/explore/useExploreRails.js');
   assert.match(src, /const railLead = Infinity;/);
-  for (const k of ['oldtown', 'island', 'mountain', 'unesco', 'lake', 'food', 'views', 'castles', 'village', 'city', 'family', 'romantic', 'art']) {
+  for (const k of ['mountain', 'unesco', 'food', 'views', 'castles', 'village', 'city', 'family', 'romantic', 'art']) {
     assert.match(src, new RegExp(`theme\\('${k}'\\)`), k);
   }
-  assert.match(src, /seeAll: \(\) => patchXf\(\{ vibe \}\)/);
+  // G12 round 2: a theme with a Browse shortcut opens what the shortcut
+  // sets, so its See all and the shortcut leave the same chip.
+  for (const k of ['oldtown', 'island', 'lake']) {
+    assert.match(src, new RegExp(`theme\\('${k}', '${k}', '${k}'\\)`), k);
+  }
+  assert.match(src, /seeAll: shortcut \? \(\) => applyShortcut\(shortcut\) : \(\) => patchXf\(\{ vibe \}\)/);
+  for (const k of ['top', 'hiking', 'gems']) assert.match(src, new RegExp(`seeAll: \\(\\) => applyShortcut\\('${k}'\\)`), k);
   // Before the guided data loads, nothing after Hiking bases shows, so the
   // vibe rails never push the rails below them down under the reader.
-  assert.match(src, /guided \? list : list\.slice\(0, list\.findIndex\(\(r\) => r\.key === 'hiking'\)\)/);
+  assert.match(src, /guided && !waiting \? list : list\.slice\(0, list\.findIndex\(\(r\) => r\.key === 'hiking'\)\)/);
+  // Round 6: the cut holds while the guided rails' lists are pending, and
+  // Explore draws its footer only once the rails are complete.
+  assert.match(src, /const railsSettled = !railsIdle \|\| \(!!guided && !waiting\)/);
+  assert.match(read('src/browse/ExploreTab.jsx'), /\(railsSettled \|\| \(guidedDone && !guided\)\) && <SiteFooter \/>/);
+  // Round 6 (lead decision): one card height (two name lines kept), a strip
+  // draws the cards near its view and spacers for the rest, focus draws all,
+  // and the late swap reaches the rails one per task.
+  const rails = read('src/browse/ExploreRails.jsx');
+  assert.match(rails, /function useStripReach\(id, total\)/);
+  assert.match(rails, /className="hs-rcard xrc-spacer" aria-hidden="true"/);
+  assert.match(rails, /sec\.addEventListener\('focusin', all\)/);
+  assert.match(rails, /function useRailsInTurn\(rails, full\)/);
+  const railCss = read('src/styles/85-explore-rails.css');
+  // Round 2 fix: the strip's name lines (1 to 4) set the room, one per strip;
+  // Explore clean (2026-11-20): held above the figure, which sits at the foot.
+  assert.match(railCss, /\.xrc \.xrc-top \{[^}]*min-height: calc\(max\(var\(--xrc-name-lines, 2\) \* 1\.25 \* var\(--text-lead\) \+ 1px, 24px\)/);
+  assert.match(railCss, /\.xrc \.xrc-foot \{[^}]*margin-top: auto;/);
+  assert.match(rails, /function useNameLines\(id, names, near\)/);
+  assert.match(railCss, /contain-intrinsic-size: auto var\(--xrail-h\);/);
   // A theme rail asks for a Good Score or better, best first, by country.
-  assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\)\.sort\(byRating\)/);
+  assert.match(src, /vibeOf\(guided, p\.id, vibe\) >= 80 && bandAtLeast\(p\.rating, 'good'\)\s+&& !\(vibe === 'oldtown' && castleOnly\(p\)\)\)\.sort\(byRating\)/);
 });
 
 test('the new rail titles and the named See all exist in all six languages', () => {
@@ -57,17 +82,37 @@ test('the new rail titles and the named See all exist in all six languages', () 
   }
 });
 
-test('a rail card: the figure on the name line, the parts after the country, the tile at the end', () => {
+test('a rail card: the figure on the name line, the basis after the country, the tile at the end', () => {
   const rails = read('src/browse/ExploreRails.jsx');
-  assert.match(rails, /<div className="xrc-head">[\s\S]*slot="figure"/);
-  assert.match(rails, /slot="parts"/);
+  assert.match(rails, /<span className="xrc-head">[\s\S]*<FigureAmount fig=\{fig\} className="xrc-fig" \/>/);
+  assert.match(rails, /<span className="xrc-basis" aria-hidden="true">\{fig\.basis\}<\/span>/);
   assert.match(rails, /<SeeAllTile r=\{r\} rest=\{r\.rows\.slice\(CAP\)\}/);
   // The stretched link carries the place's name; no button sits inside it.
   const link = rails.slice(rails.indexOf('<a className="hs-rcard-link"'), rails.indexOf('</a>'));
   assert.match(link, /aria-labelledby=/);
   assert.doesNotMatch(link, /<RowFormation|<button|<Button/);
-  const parts = read('src/browse/explore/HouseParts.jsx');
-  assert.match(parts, /slot === 'parts' && go/);
+});
+
+// G12, Explore top round 2 (owner: "the arrows move to the middle of the
+// images"): out of the head, onto the photos, mouse and keyboard only, dimmed
+// rather than disabled at an end so keyboard focus stays on them. The
+// geometry in a browser is scripts/verify_rail_arrows.mjs.
+test('rail arrows sit on the photos, before the strip, and dim at the ends', () => {
+  const rail = read('src/components/ui/Rail.jsx');
+  assert.match(rail, /export const Rail = React\.memo\(function Rail\(/);
+  const head = rail.slice(rail.indexOf('<div className="hs-rail-head">'), rail.indexOf('hs-rail-frame'));
+  assert.doesNotMatch(head, /RoundButton|hs-rail-arrows/, 'no arrows in the head');
+  const frame = rail.slice(rail.indexOf('hs-rail-frame'));
+  assert.ok(frame.indexOf('<RoundButton') < frame.indexOf('className="hs-rail"'), 'arrows come before the strip');
+  assert.match(rail, /aria-disabled=\{atEnd \|\| undefined\}/);
+  assert.doesNotMatch(rail, /disabled=\{pos\./, 'never the disabled attribute');
+  const css = read('src/styles/05-house.css');
+  assert.doesNotMatch(css, /hs-rail-arrows/);
+  assert.match(css, /\.hs-rail-arrow \{ display: none; \}/, 'hidden by default, so never on touch');
+  assert.match(css, /@media \(hover: hover\) and \(pointer: fine\) \{\s+\.hs-rail-frame \{\s+container-type: inline-size;/);
+  assert.match(css, /top: calc\(2px \+ var\(--rail-card-w\) \* 0\.375 - var\(--tap\) \/ 2\);/);
+  assert.match(css, /\.hs-rail-frame:has\(:focus-visible\) > \.hs-rail-arrow \{ opacity: 1; \}/);
+  assert.match(css, /> \.hs-rail-arrow\[aria-disabled="true"\] \{ opacity: 0\.45; \}/);
 });
 
 test('See all keeps its word, wears the disc and is named with its rail', () => {
@@ -77,19 +122,13 @@ test('See all keeps its word, wears the disc and is named with its rail', () => 
   assert.match(rail, /t\('rail\.seeAllNamed', \{ title \}\)/);
 });
 
-test('the phone row under the tabs: rail chips only (G12: the Trip dock left Explore)', () => {
+test('no row of rail chips under the tabs: the shortcuts live in the search (G12 round 2)', () => {
   const tab = read('src/browse/ExploreTab.jsx');
   assert.doesNotMatch(tab, /<TripDock/);
-  const at = tab.indexOf('<div className="xsub xsub--rails">');
-  const row = tab.slice(at, tab.indexOf('))}', at));
-  assert.match(row, /<div className="xsub-chips" role="group" aria-label=\{t\('explore\.quickAria'\)\}>/);
-  // Every drawn rail but the first (its heading is right below) is a chip
-  // that opens what its See all opens.
-  assert.match(row, /rail\.rows\.length >= 4 && rail\.key !== 'saved'\)\.slice\(1\)/);
-  assert.match(row, /onClick=\{rail\.seeAll\}/);
-  const css = read('src/styles/85-explore-rails.css');
-  assert.match(css, /\.xsub-chips \{[^}]*overflow-x: auto;[^}]*mask-image: linear-gradient\(to right, var\(--text\)/);
-  assert.match(css, /\.xsub--rails \.btn\.xsub-chip::after,\s*\.xsub--rails \.btn\.dock-trigger::after \{ content: ""; position: absolute; inset: -2px 0; \}/);
+  // decision.md section 4: the phone's shortcut chip row is gone; the
+  // desktop overview's quick row went with it (Map is at the tab row's end).
+  assert.doesNotMatch(tab, /xsub--rails|xsub-chip|quickRails/);
+  assert.match(tab, /\{railsIdle && <OverviewHero t=\{t\} TitleTag=\{TitleTag\} docked \/>\}/);
 });
 
 test('signed out, Account and Sign in share one split pill', () => {

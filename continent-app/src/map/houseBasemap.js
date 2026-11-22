@@ -14,6 +14,7 @@
  * leaves the stock colours rather than a broken map.
  */
 import { tokenColour } from './tokenColors.js';
+import { isCartaBasemap } from '../lib/map/cartaMapStyle.js';
 
 function paint(map, id, prop, value) {
   try { map.setPaintProperty(id, prop, value); } catch { /* layer or property absent */ }
@@ -22,6 +23,9 @@ function paint(map, id, prop, value) {
 export function applyHouseBasemap(map) {
   const style = map?.getStyle?.();
   if (!style?.layers) return;
+  // G12: the Carta basemap is drawn in the house palette already; repainting
+  // its background would turn the sea into land.
+  if (isCartaBasemap(style)) return;
   const land = tokenColour('--map-land');
   const water = tokenColour('--map-water');
   const border = tokenColour('--map-border');

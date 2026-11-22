@@ -8,9 +8,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { en } from '../src/i18n/en.js';
-import {
-  handoff, inPriceRows, stayBasisKey, foodBasisKey, tabForPart, wayTabKey, capturedMonth,
-} from '../src/lib/price/priceSheet.js';
 import { googleFlightsLink } from '../src/lib/flights/flights.js';
 
 const read = (p) => readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -31,90 +28,28 @@ test('flight copy never says exact, live, available, guaranteed or seats left', 
   }
 });
 
-test('the flight tab keeps its checked line and the Google Flights link', () => {
+// G12 (D10, owner 2026-11-19 and 2026-11-20): the source, the check date,
+// "it may change" and a typical fare's flag live behind the info button by
+// "Book on Google Flights", never as lines of text.
+test('the flights screen keeps the Google Flights link with its source, date and warning behind the info button', () => {
   const src = read('src/components/price/FlightTab.jsx');
-  assert.match(src, /checkedLabel\(t, /, 'each leg says when it was checked');
-  assert.match(src, /flight\.bookNote/, 'prices may have changed');
   assert.match(src, /googleFlightsLink\(ft\.home, ft\.airport, shown\.out\.date, \{ back: shown\.back\.date/);
-  assert.match(src, /t\('flight\.book'\)/);
-  assert.doesNotMatch(src, /flight\.bookReturn/, 'the button label stays short');
+  assert.match(src, /t\('price\.flight\.book'\)/);
+  assert.match(src, /t\('price\.flight\.info', \{ date \}\)/);
+  assert.match(src, /t\('price\.flight\.infoTypical'\)/);
+  assert.doesNotMatch(src, /flight\.bookNote|checkedLabel|settingsSum\.typical|price\.flight\.dayFailed|price\.flight\.basis/);
+  assert.match(en['price.flight.info'], /checked \{date\}\. It may change/);
   const href = googleFlightsLink('BRU', 'FCO', '2026-03-14', { back: '2026-03-21' });
   assert.match(href, /curr=EUR/);
   assert.match(decodeURIComponent(href), /2026-03-14 returning 2026-03-21/);
 });
 
-test('the flight tab draws a duration only for a searched flight', () => {
+test('G12 (D10): the row way figure heads the screen until a pick, and no fare says no flight checked yet', () => {
   const src = read('src/components/price/FlightTab.jsx');
-  assert.match(src, /leg\.source === 'live' \? durationOf\(t, leg\.min\) : null/);
-});
-
-test('the stay basis follows the data case', () => {
-  const line = (extra = {}) => ({ key: 'bed', ...extra });
-  assert.equal(stayBasisKey({ stayLevel: 'city', lines: [line({ provenance: { captured: '2026-11-03' } })] }), 'price.stay.basisLocal');
-  assert.equal(stayBasisKey({ stayLevel: 'city', lines: [line()] }), 'price.stay.basisLocalNoDate');
-  assert.equal(stayBasisKey({ stayLevel: 'city', lines: [line({ thin: true })] }), 'price.stay.basisThin');
-  assert.equal(stayBasisKey({ stayLevel: 'region', lines: [line({ thin: true })] }), 'price.stay.basisWide');
-  assert.equal(stayBasisKey({ stayLevel: 'city', lines: [line({ provenance: { repaired: true } })] }), 'price.stay.basisWide');
-  assert.equal(capturedMonth({ lines: [line({ provenance: { captured: '2026-11-03' } })] }), '2026-11');
-  assert.equal(foodBasisKey({ foodLevel: 'city' }), 'price.food.basisLocal');
-  assert.equal(foodBasisKey({ foodLevel: 'country' }), 'price.food.basisCountry');
-});
-
-test('"In this price" lists bed, food, the day, transport not measured, the way apart', () => {
-  const rows = inPriceRows({ dayEur: 149, stayEur: 116, foodEur: 33, way: { mode: 'plane', perPerson: 105 } }, { wayEur: 105 });
-  assert.deepEqual(rows.map((r) => r.key), ['bed', 'food', 'sum', 'transport', 'way']);
-  assert.equal(rows.find((r) => r.key === 'sum').eur, 149);
-  assert.equal(rows.find((r) => r.key === 'transport').eur, null, 'no fare: not yet measured, never zero');
-  assert.equal(rows.find((r) => r.key === 'way').apart, true);
-  assert.equal(inPriceRows({ dayEur: 149 }, {}).find((r) => r.key === 'way').eur, null);
-  const group = inPriceRows({ dayEur: 100, stayEur: 70, foodEur: 30 }, { group: true, seats: 2 });
-  assert.equal(group.find((r) => r.key === 'sum').eur, 200);
-  const src = read('src/components/price/PriceSheet.jsx');
-  assert.match(src, /price\.notYetMeasured/);
-  assert.match(src, /price\.in\.covers/);
-});
-
-test('each tab hands over to the Settings or studio step that moves its number', () => {
-  assert.deepEqual(handoff('stay'), { studio: 'spend', key: 'price.changeStay' });
-  assert.deepEqual(handoff('food'), { studio: 'spend', key: 'price.changeFood' });
-  assert.deepEqual(handoff('flight'), { settings: 'start', key: 'price.changeFlight' });
-  assert.deepEqual(handoff('in'), { settings: 'overview', key: 'price.changeTrip' });
-  assert.deepEqual(handoff('flight', { way: { mode: 'train' } }), { studio: 'way', key: 'price.changeWay' });
-  // A studio step goes through the one studio door, the rest through Settings.
-  assert.match(read('src/components/price/PriceSheet.jsx'), /h\.studio \? openStudioAt\(ts, h\.studio\) : openSettings\(\{ step: h\.settings \}\)/);
-});
-
-test('the tapped part chooses the tab; a ground way names its own tab', () => {
-  assert.equal(tabForPart('way'), 'flight');
-  assert.equal(tabForPart('bed'), 'stay');
-  assert.equal(tabForPart('food'), 'food');
-  assert.equal(tabForPart('day'), 'in');
-  assert.equal(wayTabKey({ way: { mode: 'plane' } }), 'price.tabFlight');
-  assert.equal(wayTabKey(null), 'price.tabFlight');
-  assert.equal(wayTabKey({ way: { mode: 'bus' } }), 'way.bus');
-  // The list row's parts open the sheet (not the old items popover), each
-  // with its own part name, so the flight wagon lands on the Flight tab.
-  const parts = read('src/browse/explore/HouseParts.jsx');
-  assert.match(parts, /<SheetTrigger place=\{place\}[^>]*part="way">/);
-  assert.match(parts, /<SheetTrigger place=\{place\}[^>]*part=\{key\}/);
-  assert.match(parts, /<SheetTrigger place=\{place\} cost=\{cost\} triggerClass="xform-fig" part="day"/);
-  assert.match(parts, /openPriceSheet\(\{ place: place \|\| \{ id: null \}, cost, tab: tabForPart\(part\), anchor: button \}\)/);
-});
-
-test('the sheet tabs are a tablist and the flight tab loads lazily', () => {
-  const src = read('src/components/price/PriceSheet.jsx');
-  assert.match(src, /lazy\(\(\) => import\('\.\/FlightTab\.jsx'\)\)/);
-  assert.match(src, /<Tabs /);
-  assert.match(src, /role="tabpanel"/);
-  assert.match(src, /aria-modal="false"/, 'the desktop popover is not modal');
-});
-
-test('G12 (D10): a typical fare is labelled typical, and no fare says no flight checked yet', () => {
-  const src = read('src/components/price/FlightTab.jsx');
-  assert.match(src, /way\?\.typical && way\.perPerson > 0 && !ft\.picked/, 'the row typical fare heads the tab until a checked day is picked');
-  assert.match(src, /t\('settingsSum\.typical'\)/);
+  const hook = read('src/components/price/useFlightTab.js');
+  assert.match(hook, /!picked && rowWay/, 'the cards\' own figure until another flight is picked');
+  assert.doesNotMatch(hook, /group: view/, 'always per person');
   assert.match(src, /t\('settingsSum\.noFlight'\)/);
   assert.match(read('src/components/price/PriceSheet.jsx'), /<FlightTab [^>]*way=\{s\.cost\?\.way/);
-  assert.match(en['settingsSum.typical'], /^Typical fare/);
   assert.equal(en['settingsSum.noFlight'], 'No flight checked yet');
 });

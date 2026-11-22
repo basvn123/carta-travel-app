@@ -1,12 +1,16 @@
 // T513: one Google Flights search through the vendored fli-js, read from a
 // saved results page (the ds:1 data script only), so it runs offline.
 // Run: npm test (continent-app/)
-import test from "node:test";
+import test, { before, after, mock } from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { searchDay, blockReason, googleLink } from "../workers/shared/flightSearch.mjs";
 
 const page = readFileSync(new URL("./fixtures/gflights-BRU-BCN-2026-11-18.txt", import.meta.url), "utf8");
+// fli refuses a past travel date, and the saved page is of 2026-11-18: the
+// clock stands a week before it so the fixture never ages out (G12, D10).
+before(() => mock.timers.enable({ apis: ["Date"], now: new Date("2026-11-11T12:00:00Z") }));
+after(() => mock.timers.reset());
 const serve = (body, status = 200, url = "https://www.google.com/travel/flights") =>
   async () => Object.defineProperty(new Response(body, { status }), "url", { value: url });
 

@@ -169,20 +169,10 @@
 
 /* --------------------------------------------------------------------------
    The route map (Trails and Cycling). The lines and their length pins are
-   drawn by the map itself (ExploreMap `lines`); the keyboard stops stay as
-   invisible buttons on the pins, so the name labels give way to the
-   lengths and every route keeps its name for a screen reader and its tip.
+   drawn by the map itself (ExploreMap `lines`); the place pins step aside
+   (their layers hidden) and the keyboard stops stay as invisible buttons,
+   so every route keeps its name for a screen reader and its tip.
    -------------------------------------------------------------------------- */
-.explore-shell.dtab-mapwrap.has-lines .xmap-kpin.is-label,
-.explore-shell.dtab-mapwrap.has-lines .xmap-kpin.is-cheapest {
-  width: var(--kpin-d, 16px);
-  height: var(--kpin-d, 16px);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  box-shadow: none;
-  animation: none;
-}
 .explore-shell.dtab-mapwrap.has-lines .xmap-kpin-label { display: none; }
 
 /* End check: the Map or List pill sits after Search, a pill like Places'. */

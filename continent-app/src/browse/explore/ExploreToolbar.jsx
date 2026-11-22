@@ -1,102 +1,60 @@
 import { HouseIcon } from '../../components/HouseIcons.jsx';
-import { CloseIcon } from '../../components/Icons.jsx';
-import { Button, IconButton } from '../../components/ui/index.js';
-import { phoneChips } from './chipRules.js';
-
-/** G12: the saved filter wears the save glyph, filled while on. It stays one
- *  tap away on every width (decision.md change 7). */
-function SavedToggle({ showFavOnly, setShowFavOnly, t, className = '' }) {
-  return (
-    <Button variant="secondary" size="sm" className={`xtool xtool-saved${showFavOnly ? ' is-on' : ''}${className ? ` ${className}` : ''}`}
-      iconStart={<HouseIcon.bookmark size={18} />} aria-pressed={showFavOnly}
-      aria-label={t('explore.savedOnlyAria')}
-      onClick={() => setShowFavOnly(!showFavOnly)}>
-      {t('explore.toolSaved')}
-    </Button>
-  );
-}
+import { IconButton } from '../../components/ui/index.js';
+import { AppliedRow, SavedToggle } from '../filters/AppliedRow.jsx';
+import { deskChips, mapRowChips, phoneChips } from './chipRules.js';
+import { countKey } from '../../lib/plural.js';
 
 /**
- * G12 (decision.md step 8): the phone list's one row. Sort, then the chips
- * scrolling after it (Explore top: the Trip dock left for the band). Clear all
- * leads the chips and sticks to the left so it is always reachable; Saved
- * is always there. Every chip is capped in CSS and keeps its full text in
- * its name and title, so a long German or French label never pushes the row
- * past the screen.
+ * The list's head (G12, Explore top round 2): the page's h1 and its count,
+ * read but not drawn (the band names the list: its field holds the search
+ * and the way back), then the applied row (filters/AppliedRow.jsx).
+ *
+ * What left this head for the band: the back arrow (inside the field), Map
+ * (the List | Map switch at the tab row's end on a desktop, the corner on a
+ * phone) and Filters. What it dropped as a repeat: the search chip (the field
+ * shows it), the "Showing places in" hint and the second and third pill
+ * styles. Share stays at the desktop row's right end; a phone has it in the
+ * field. On the map (`mapView`) the row keeps no tools: Sort is the list
+ * sheet's or the column's head, Saved a quick chip on the map (judgement-4:
+ * each control once), and Share stands beside List | Map from 1024 px (ExploreTab)
+ * or sits in the search field below it (ExploreBand). From 769 px on the map
+ * with no filter on, the row would be an empty band above the map, so it is
+ * not drawn (judgement-5). A filter on there that the map's quick row shows
+ * checked is not drawn twice: the row lists only what the quick row cannot
+ * show (a month, an area), and with only quick filters on it is not drawn
+ * and Clear all ends the quick row (judgement-6).
  */
-function PhoneTools({ chips, resetAll, showFavOnly, setShowFavOnly, sortMenu, t }) {
-  const shown = phoneChips(chips);
-  return (
-    <>
-      <span className="xtools-sort">{sortMenu}</span>
-      <div className="xtools-chips" role="group" aria-label={t('filter.activeAria')}>
-        {chips.length > 0 && (
-          <Button variant="quiet" size="sm" className="xtools-clear"
-            aria-label={t('explore.clearAllAria')} onClick={resetAll}>
-            {t('dock.clear')}
-          </Button>
-        )}
-        <SavedToggle showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly} t={t} className="xtools-saved" />
-        {shown.map((c) => (
-          <Button key={c.key} variant="quiet" size="sm" className="xtools-chip" data-chip={c.key}
-            title={c.label} aria-label={t('filter.removeChip', { name: c.label })} onClick={c.remove}
-            iconEnd={<CloseIcon size={12} />}>
-            <span className="xchip-text">{c.label}</span>
-          </Button>
-        ))}
-      </div>
-    </>
-  );
-}
-
 export function ExploreToolbar({
-  TitleTag, chips, gridTotal, isDesktop, isMock, lang, lens,
-  resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t, viewSwitch,
+  TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang, mapView = false,
+  quick = [], resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
 }) {
+  const tools = isDesktop && !mapView ? (
+    <>
+      {sortMenu}
+      <SavedToggle on={showFavOnly} onChange={setShowFavOnly} t={t} />
+      <IconButton className="xap-share" label={t('explore.toolShare')} onClick={shareView}>
+        <HouseIcon.share size={18} />
+      </IconButton>
+    </>
+  ) : null;
+  const shown = !isDesktop ? phoneChips(chips) : mapView ? mapRowChips(chips, quick) : deskChips(chips);
+  const bare = isDesktop && mapView && shown.length === 0;
   return (
-    <div className="xbar">
-      <div className="xbar-lead">
-        {/* The page's one h1, only while this tab is the one showing:
-            the tab stays mounted under Destinations, and its h1 made a
-            second one there (row T380-g). Hidden, it is a plain div. */}
-        {/* T588: the title and the live count under it (owner
-            2026-10-22, reversing 2026-10-13). */}
-        {/* T598: one head row. The way back to the overview (T586) is
-            a round arrow before the title: a link to the overview's
-            address, drawn as the kit's icon button; Back in the browser
-            does the same. */}
-        {isDesktop && <a className="icon-btn icon-btn-surface xov-back" href={lens.href}
-          aria-label={t('explore.backOverview')} title={t('explore.backOverview')}
-          onClick={(e) => { e.preventDefault(); lens.back(); }}>
-          <HouseIcon.back size={20} />
-        </a>}
-        <TitleTag className="xbar-title">{t('explore.placesTitle')}</TitleTag>
-        <span className="xbar-count sr-only">
-          {t(gridTotal === 1 ? 'explore.countOne' : 'explore.countMany',
-            { n: new Intl.NumberFormat(lang).format(gridTotal) })}
-        </span>
-        {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
-      </div>
-      <div className={`xbar-tools xtools${isDesktop ? '' : ' xtools--phone'}`} role="group" aria-label={t('explore.toolsAria')}>
-        {isDesktop ? (
-          <>
-            {/* G12: Share is an icon on a desktop (on a phone it sits in the
-                search field), so the row keeps its room for the filters. */}
-            <IconButton className="xtool-share" tone="surface" label={t('explore.toolShare')}
-              onClick={shareView}>
-              <HouseIcon.share size={18} />
-            </IconButton>
-            {sortMenu}
-            {/* G12 (Explore top): Filters, Strong match and the Trip dock
-                left; the band's Settings holds what the dock did. */}
-            <SavedToggle showFavOnly={showFavOnly} setShowFavOnly={setShowFavOnly} t={t} />
-            {viewSwitch('xtool-view')}
-          </>
-        ) : (
-          <PhoneTools chips={chips} resetAll={resetAll} showFavOnly={showFavOnly}
-            setShowFavOnly={setShowFavOnly} sortMenu={sortMenu} t={t} />
-        )}
-      </div>
+    <div className={`xhead${bare ? ' is-bare' : ''}`}>
+      {/* The page's one h1, only while this tab is the one showing: the
+          tab stays mounted under Destinations (row T380-g). It says
+          "Places", not "Places in Europe", which was wrong over a
+          Belgian list (audit-visual defect 10). */}
+      <TitleTag className="xhead-title sr-only">{t('places.catPlaces')}</TitleTag>
+      <span className="xbar-count sr-only">
+        {t(countKey(lang, gridTotal, 'explore.countOne', 'explore.countMany'),
+          { n: new Intl.NumberFormat(lang).format(gridTotal) })}
+      </span>
+      {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
+      {!bare && (
+        <AppliedRow t={t} desktop={isDesktop} count={filterCount}
+          chips={shown} onClearAll={resetAll} tools={tools} />
+      )}
     </div>
   );
 }

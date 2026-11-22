@@ -1,15 +1,23 @@
 /*
  * Rail and RailCard (G1, house style 2026-11, DESIGN.md "Rails"): the row
  * of large rounded photo cards (Top rated in Europe, Hiking bases, Hidden
- * gems). The head: the title left, "See all" in umber and two round arrow
- * buttons right. A card: the photo (16 px corners; a missing photo is the
- * world tile), the name with its Score plate, the flag and country (and the
- * hidden gem mark), then the formation. Text never sits on the photo; the
- * save button is a paper disc.
+ * gems). The head: the title left, "See all" in umber right. A card: the
+ * photo (16 px corners; a missing photo is the world tile), the name with
+ * its Score plate, the flag and country (and the hidden gem mark), then the
+ * formation. Text never sits on the photo; the save button is a paper disc.
+ *
+ * The arrows (G12, Explore top round 2, owner: "move to the middle of the
+ * images"): two 44 px paper discs on the photos' vertical middle, Back over
+ * the first visible photo's left edge, Forward over the last one's right
+ * edge (05-house.css, .hs-rail-frame). A mouse or keyboard shows them; touch
+ * swipes and never sees them. At an end an arrow dims with aria-disabled
+ * rather than `disabled` or hiding, so a keyboard user who presses Forward
+ * to the end keeps focus on it. In the DOM they come before the strip, so
+ * Tab reads See all, Back, Forward, then the cards.
  *
  * It keeps every behaviour of browse/StoryRail.jsx (owner rule: no function
  * removed): the section is labelled by its heading; the arrows carry the same
- * labels (explore.railPrev, explore.railNext) and are disabled at the ends
+ * labels (explore.railPrev, explore.railNext) and are marked at the ends
  * (the same strip-position logic); ArrowLeft and ArrowRight move focus card
  * to card and bring the card into view; "See all" is a real button (or a
  * link when the caller gives an href).
@@ -29,7 +37,9 @@ import { ScorePlate } from './Plate.jsx';
 import { WorldTile } from './StateBlock.jsx';
 import { HouseIcon } from '../HouseIcons.jsx';
 
-export function Rail({ id, title, headingLevel = 2, seeAllHref, onSeeAll, seeAllLabel, className = '', children }) {
+// Memoised (G12 speed, audit-perf.md): Explore draws about twenty rails, and
+// a parent render that hands the same props redraws none of them.
+export const Rail = React.memo(function Rail({ id, title, headingLevel = 2, seeAllHref, onSeeAll, seeAllLabel, className = '', children }) {
   const { t } = useI18n();
   const auto = useId();
   const headId = id || `rail-${auto.replace(/[^a-zA-Z0-9]/g, '')}`;
@@ -76,23 +86,25 @@ export function Rail({ id, title, headingLevel = 2, seeAllHref, onSeeAll, seeAll
         ) : onSeeAll ? (
           <Button variant="quiet" size="sm" className="hs-see-all" onClick={onSeeAll} aria-label={named}>{seeAllFace}</Button>
         ) : null}
-        <span className="hs-rail-arrows">
-          <RoundButton label={t('explore.railPrev')} onClick={() => step(-1)} disabled={pos.atStart} flip />
-          <RoundButton label={t('explore.railNext')} onClick={() => step(1)} disabled={pos.atEnd} />
-        </span>
       </div>
-      <div className="hs-rail" ref={ref} role="list" onKeyDown={onKeyDown}
-        aria-label={typeof title === 'string' ? title : undefined}>
-        {children}
+      {/* A strip that fits whole has nothing to scroll: no arrows then. */}
+      <div className={`hs-rail-frame${pos.atStart && pos.atEnd ? ' is-still' : ''}`}>
+        <RoundButton label={t('explore.railPrev')} onClick={() => step(-1)} atEnd={pos.atStart} side="prev" />
+        <RoundButton label={t('explore.railNext')} onClick={() => step(1)} atEnd={pos.atEnd} side="next" />
+        <div className="hs-rail" ref={ref} role="list" onKeyDown={onKeyDown}
+          aria-label={typeof title === 'string' ? title : undefined}>
+          {children}
+        </div>
       </div>
     </section>
   );
-}
+});
 
-function RoundButton({ label, onClick, disabled = false, flip = false }) {
+function RoundButton({ label, onClick, atEnd = false, side }) {
   return (
-    <button type="button" className="hs-round" aria-label={label} onClick={onClick} disabled={disabled}>
-      <HouseIcon.next size={18} className={flip ? 'is-flipped' : ''} />
+    <button type="button" className={`hs-round hs-rail-arrow is-${side}`} aria-label={label}
+      aria-disabled={atEnd || undefined} onClick={atEnd ? undefined : onClick}>
+      <HouseIcon.next size={18} className={side === 'prev' ? 'is-flipped' : ''} />
     </button>
   );
 }

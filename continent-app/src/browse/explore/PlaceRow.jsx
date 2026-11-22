@@ -7,9 +7,9 @@ import { localNameOf } from '../../lib/search/localNames.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { useSettledFigure } from '../../lib/figureChange.js';
-import { MatchLine } from '../WhyItMatches.jsx';
+import { MatchMark } from './MatchMark.jsx';
 import { SaveButton } from '../ExploreCards.jsx';
-import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
+import { PlaceScore, BandWord, PlaceFigure } from './HouseParts.jsx';
 
 /**
  * PlaceRow (G1, house style 2026-11): a place as one row of the walker's
@@ -21,9 +21,10 @@ import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
  *   a photo (44 px on a phone, 56 px from a 600 px list), the name with the
  *   Score plate (the band word where the row has room), the flag with the
  *   region and country (the hidden gem and water marks), the one reason (from
- *   a 1024 px list), the taste lines where a taste is set (T765, T1208), the
- *   formation and the day figure, loudest; the formation and the save
- *   control outside the link (G12: they are buttons).
+ *   a 1024 px list), the taste lines where a taste is set (T765, T1208), and
+ *   the figure over its basis, loudest (G12, D10, place-prices: one button
+ *   to the receipt); the figure and the save control sit outside the link
+ *   (they are buttons).
  *
  * The layout is one grid per list width (container queries in
  * 62-v6-explore.css), so a narrow map column reads like a phone. The row is
@@ -35,7 +36,7 @@ import { PlaceScore, BandWord, RowFormation } from './HouseParts.jsx';
 
 /** The region and the country as two parts of one line, in the language's
  *  own order ("Alps, Italy"): the region gives way, the country never. */
-function WhereLine({ p, region, t }) {
+export function WhereLine({ p, region, t }) {
   const country = countryName(p.iso2, p.country);
   if (!region) return <span className="xrow-country"><span className="xrow-ctry">{country}</span></span>;
   // The language's own pattern, read with two markers, gives the order and
@@ -106,14 +107,14 @@ export const PlaceRow = React.memo(function PlaceRow({
           {p.rating?.hidden_gem && <span className="hs-gem xrow-gem">{t('common.hiddenGem')}</span>}
         </span>
         {reason && <span className="xrow-why">{reason}</span>}
-        <span className="xrow-fit">
-          <MatchLine place={p} />
-        </span>
       </a>
+      {/* G12 map view round 2: the match as its mark, a button of its own
+          beside the link (it opens why), in the row's fit area. */}
+      <MatchMark place={p} className="xrow-fit xrow-match" />
       {/* G12, D10: the price sits outside the link, a direct child of the
-          row grid (62-v6-explore.css), because its figure and wagons are
-          buttons and a button never nests in a link. */}
-      <RowFormation cost={p.cost} t={t} figRef={figRef} pressable place={p} />
+          row grid (62-v6-explore.css), because it is a button (the
+          receipt) and a button never nests in a link. */}
+      <PlaceFigure place={p} t={t} figRef={figRef} />
       {onToggleFav && (
         <SaveButton fav={fav} onToggle={() => onToggleFav(p.id)} t={t} name={name} className="xrow-save" word />
       )}

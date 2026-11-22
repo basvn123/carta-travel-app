@@ -107,7 +107,9 @@ export function SaveButton({ fav, onToggle, t, tone = 'plain', className = '', n
   );
 }
 
-export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
+// Memoised (G12, D10): a country page redraws only the tiles whose place
+// or save state changed.
+export const PlaceTile = React.memo(function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
   return (
     <Card
       layout="tile"
@@ -146,4 +148,4 @@ export function PlaceTile({ p, onSelect, fav, onToggleFav, t }) {
       ) : null}
     />
   );
-}
+});

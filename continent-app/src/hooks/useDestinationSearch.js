@@ -8,6 +8,9 @@ import { isBigPlace } from '../lib/placeSize.js';
 import { placeLinkingOn } from '../lib/linking/flag.js';
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
+// The inputs of a hook that has never been enabled: nothing to price.
+const NO_INPUTS = { data: null, departDate: null, returnDate: null, choices: null };
+
 function normalize(s) {
   return (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
 }
@@ -72,7 +75,16 @@ export function useDestinationSearch({
   ratingRange, gemOnly, unescoOnly, topBeachOnly, bigOnly, topPick,
   reachHours, reachMinutes,
   initialPriceRange,
+  enabled = true,
 }) {
+  // G12, D10 (audit-perf.md cause 3): the fares are priced only while a
+  // reader shows them. Disabled, the hook keeps the inputs of its last
+  // enabled commit, so a settings change on Explore prices nothing here and
+  // returning to the reader re-prices only if something changed meanwhile.
+  const heldRef = useRef(null);
+  const live = { data, departDate, returnDate, choices };
+  useEffect(() => { if (enabled) heldRef.current = live; });
+  const priceIn = enabled ? live : (heldRef.current || NO_INPUTS);
   // Rating band as a stable [lo, hi] tuple, and whether it constrains anything.
   const rLo = ratingRange?.[0] ?? 0;
   const rHi = ratingRange?.[1] ?? 10;
@@ -87,9 +99,11 @@ export function useDestinationSearch({
   // unreachable ones are still surfaced in the UI, just flagged, never silently
   // dropped.
   const { pricedAll, unreachableAll } = useMemo(() => {
+    const { data, departDate, returnDate, choices } = priceIn;
     if (!data || !departDate || !returnDate || returnDate <= departDate) {
       return { pricedAll: [], unreachableAll: [] };
     }
+    globalThis.performance?.mark?.('carta:trip-fares');
     const reach = [], unreach = [];
     // The home airport's swept flights (T518): the plane total includes the
     // return flight where the sweep has one near these dates.
@@ -158,15 +172,20 @@ export function useDestinationSearch({
     const dedupedUnreach = dedupeGateways(unreach);
     dedupedUnreach.sort((a, b) => a.city.localeCompare(b.city));
     return { pricedAll: dedupedReach, unreachableAll: dedupedUnreach };
-  }, [data, departDate, returnDate, choices]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on the four inputs, which priceIn holds still while disabled
+  }, [priceIn.data, priceIn.departDate, priceIn.returnDate, priceIn.choices]);
 
+  // Every place with a position is priced or listed as unreachable, so the
+  // countries come straight from the catalogue: no pricing needed, and the
+  // list keeps its identity across re-prices (it rides on the settings context).
   const availableCountries = useMemo(() => {
     const map = new Map();
-    for (const p of [...pricedAll, ...unreachableAll]) {
-      if (!map.has(p.iso2)) map.set(p.iso2, p.country);
+    for (const d of Object.values(data?.destinations || {})) {
+      if (d.lat == null || d.lon == null || !d.iso2) continue;
+      if (!map.has(d.iso2)) map.set(d.iso2, d.country);
     }
-    return [...map.entries()].sort((a, b) => a[1].localeCompare(b[1]));
-  }, [pricedAll, unreachableAll]);
+    return [...map.entries()].sort((a, b) => String(a[1]).localeCompare(String(b[1])));
+  }, [data]);
 
   const priceBounds = useMemo(() => {
     if (pricedAll.length === 0) return null;

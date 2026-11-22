@@ -110,7 +110,7 @@ export function CardMenu({ actions = [], onRemove, removeLabel, label }) {
  * with every other transient message. Undo takes focus when the removal took
  * the focused control away with it.
  */
-export function UndoToast({ label, onUndo, onClose }) {
+export function UndoToast({ label, text = '', onUndo, onClose }) {
   const { t } = useI18n();
   const undoRef = useRef(null);
   useEffect(() => {
@@ -119,7 +119,7 @@ export function UndoToast({ label, onUndo, onClose }) {
   }, []);
   const node = (
     <div className="undo-toast" role="status">
-      <span className="undo-toast-text">{t('saved.undoRemoved', { name: label })}</span>
+      <span className="undo-toast-text">{text || t('saved.undoRemoved', { name: label })}</span>
       <Button ref={undoRef} size="sm" onClick={onUndo}>{t('saved.undo')}</Button>
       <IconButton label={t('a11y.close')} onClick={onClose}><CloseIcon size={16} /></IconButton>
     </div>
@@ -144,12 +144,14 @@ export function RecordMapDialog({ title, onClose, children }) {
  * trip is opened: the estimate, the figure and the party. Whole euros on a list, the estimate
  * mark whenever Carta priced any of it.
  */
-export function TripPrice({ figure, className = '', showUnit = false }) {
+export function TripPrice({ figure, className = '', showUnit = false, unitValue = null }) {
   const { t } = useI18n();
   const ref = useRef(null);
   // One figure a trip card prints (owner 1.8, T503): a person a day in whole
   // euros, the same unit as Explore. The party's total is the receipt's.
-  const day = figure && Number.isFinite(figure.perPersonDay) ? figure.perPersonDay : null;
+  // G12: unitValue is the figure in the traveller's chosen unit (TripParts.tripInUnit).
+  const day = Number.isFinite(unitValue) ? unitValue
+    : figure && Number.isFinite(figure.perPersonDay) ? figure.perPersonDay : null;
   useSettledFigure(ref, day != null ? Math.round(day) : null);
   if (day == null) return null;
   return (
@@ -172,13 +174,13 @@ export function whenText(t, when) {
 }
 
 /** Initials in rings, the people on a trip; nothing when there is nobody. */
-export function Faces({ people = [], max = 4 }) {
+export function Faces({ people = [], max = 4, me = null }) {
   if (!people.length) return null;
   const shown = people.slice(0, max);
   return (
     <span className="mt-faces" aria-hidden="true">
       {shown.map((p) => (
-        <span className="mt-face" key={p.id || p.name} title={p.name}>{p.initials || <PersonIcon size={12} />}</span>
+        <span className={`mt-face${me && p.id === me ? ' is-me' : ''}`} key={p.id || p.name} title={p.name}>{p.initials || <PersonIcon size={12} />}</span>
       ))}
       {people.length > shown.length && <span className="mt-face is-more">+{people.length - shown.length}</span>}
     </span>

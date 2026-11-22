@@ -230,3 +230,12 @@ export function StoryCard({
 // wider bands keep T622's numbers (a 320 px 4:5 card at 1440 needs 600).
 export const STORY_MAX = 1280;
 export const STORY_SIZES = '(max-width: 768px) 64vw, (max-width: 1079px) 68vw, 570px';
+
+/** Photo sizes for a house rail card (components/ui Rail, 05-house.css
+ *  .hs-rail): a 4:3 photo box 76% of a phone's strip, 2.15 cards a row from
+ *  600 px, and four and a quarter (at least 256 px, about 290 at 1440) from
+ *  1024. A 3:2 photograph cropped to 4:3 draws about 1.1 times the box's
+ *  width, hence 86vw and 52vw. G12, D10 (audit-perf.md cause 6): the desktop
+ *  rail asked for STORY_SIZES' 570 px, so a 290 px card fetched the 640 rung
+ *  and twice the bytes it shows. */
+export const RAIL_CARD_SIZES = '(max-width: 599px) 86vw, (max-width: 1023px) 52vw, 300px';

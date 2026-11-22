@@ -46,6 +46,13 @@ actually is in it; the country cap survives only as a sanity ceiling far
 above the sum, so that no country's published count can ever equal a global
 constant.
 
+FAMOUS ROUTES (D25). A row the harvest marked famous (raw_tags
+"carta:famous", from data/famous/seed_cycling.json) that passes basic_row
+always ships: the region quota does not demote it when it is rated
+(keep_famous), and when it misses the score or photo gate it is listed,
+never editorial, because no person vouched for it. basic_row is the same
+for it: a broken line stays out.
+
 THE GATE RUNS BEFORE THE WRITE (invariant 7). Every file is composed and
 checked in memory first; a validation failure leaves the previous wire
 standing.
@@ -363,6 +370,25 @@ def tier_of(row):
     return "r"
 
 
+def famous_of(row):
+    """The harvest's famous mark (D25, seed_cycling.famous_pins), or None.
+    It is not a vouch: a famous route that misses the score or photo gate
+    ships listed (unrated coverage), never as an editorial pick."""
+    mark = (row.get("raw_tags") or {}).get("carta:famous")
+    if isinstance(mark, dict) and mark.get("why") == "famous":
+        return mark
+    return None
+
+
+def keep_famous(rows, kept, famous_ids):
+    """The rows the quota kept, plus every famous row (D25) it cut: a famous
+    route that cleared every gate stays rated beyond its region's target.
+    Order: the kept rows first, then the famous extras."""
+    have = {r["id"] for r in kept}
+    return kept + [r for r in rows if r["id"] in famous_ids
+                   and r["id"] not in have]
+
+
 def region_key(row):
     rg = row.get("regions") or {}
     return rg.get("n3") or rg.get("n2") or rg.get("co")
@@ -392,10 +418,14 @@ def apply_quotas(rows, verbose=False):
         listed = [r for r in group if r["_tier"] != "r"]
         quota = Q.published_target(rid, "cycling") if rid else 0
         if rid and quota and len(rated) > quota:
-            for row in rated[quota:]:
-                row["_tier"] = "l"
-                demoted[rid] += 1
-            rated = rated[:quota]
+            famous = {r["id"] for r in rated if famous_of(r)}
+            stay = keep_famous(rated, rated[:quota], famous)
+            stay_ids = {r["id"] for r in stay}
+            for row in rated:
+                if row["id"] not in stay_ids:
+                    row["_tier"] = "l"
+                    demoted[rid] += 1
+            rated = stay
         # The floor: a region page is never empty when the region has
         # anything at all. Satisfied by listed rows when nothing is rated.
         floor = Q.floor(rid, "cycling") if rid else 0
@@ -571,6 +601,15 @@ def route_card(row, tier):
         card["rt"] = shape
     if row.get("cycle_network"):
         card["fam"] = row["cycle_network"]
+    # D25: a famous route carries its Wikidata id, which is how the famous
+    # coverage report finds it; a section carries its route's id and is
+    # marked as a stretch, so the report counts the sections as stages and
+    # the page says "part of" the route.
+    famous = famous_of(row)
+    if famous:
+        card["wd"] = famous["wd"]
+        if famous.get("section"):
+            card["sec"] = 1
     if surface.get("paved_share") is not None:
         card["paved"] = surface["paved_share"]
     if surface.get("traffic_free_share") is not None:
@@ -866,6 +905,10 @@ def _build_country(conn, cc, stamp, by_country, counts, fam_rows,
         why = basic_row(row)
         if why:
             refused_all[why] += 1
+            if famous_of(row):
+                # Counted apart: the famous routes the floor kept out, and
+                # why (a broken line, no region), are the next D25 work.
+                refused_all[f"famous_{why}"] += 1
             continue
         row["_tier"] = tier_of(row)
         usable.append(row)

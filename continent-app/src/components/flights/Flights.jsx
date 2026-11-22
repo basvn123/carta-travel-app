@@ -17,6 +17,7 @@ import { Segmented } from '../ui/Segmented.jsx';
 import { fmtDate } from '../../lib/dates.js';
 import { checkedLabel, stopsText } from '../../lib/flights/flightText.js';
 import { airlineLogoUrl } from '../../lib/flights/flightData.js';
+import { airlineColour } from '../../lib/flights/airlineColours.js';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { googleFlightsLink } from '../../lib/flights/flights.js';
 import { bagTier } from '../../lib/flights/bagFees.js';
@@ -25,17 +26,25 @@ import { ExternalIcon } from '../Icons.jsx';
 import { PlaneIcon } from '../TransportIcons.jsx';
 import '../../styles/74-flights.css';
 
-/** The airline's logo in a small white square, or its code when there is none. */
+/**
+ * The airline's mark (G12, D10): a rounded square with the IATA code in the
+ * airline's colour, and its logo laid over it once the file has loaded, so a
+ * missing or slow logo never leaves an empty box or a flash.
+ */
 export function AirlineMark({ code, size = 'md' }) {
   const airlines = useAirlines();
-  const [broken, setBroken] = useState(false);
+  const [logo, setLogo] = useState('wait'); // 'wait' | 'shown' | 'none'
   const known = airlines[code];
-  const showLogo = code && known?.logo && !broken;
+  const tryLogo = Boolean(code && known?.logo && logo !== 'none');
+  const { bg, ink } = airlineColour(code);
   return (
-    <span className={`flt-mark flt-mark-${size}`} aria-hidden="true">
-      {showLogo
-        ? <img src={airlineLogoUrl(code)} alt="" loading="lazy" decoding="async" onError={() => setBroken(true)} />
-        : <span className="flt-mark-code">{code || ''}</span>}
+    <span className={`flt-mark flt-mark-${size}${logo === 'shown' ? ' has-logo' : ''}`} aria-hidden="true"
+      style={{ '--air': bg, '--air-ink': ink }}>
+      <span className="flt-mark-code">{code || ''}</span>
+      {tryLogo && (
+        <img src={airlineLogoUrl(code)} alt="" loading="lazy" decoding="async"
+          onLoad={() => setLogo('shown')} onError={() => setLogo('none')} />
+      )}
     </span>
   );
 }

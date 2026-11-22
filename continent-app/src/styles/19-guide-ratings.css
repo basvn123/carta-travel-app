@@ -62,30 +62,20 @@
 .hidden-gem-tag.lg { font-size: var(--text-label); }
 .gem-mark { width: 0.85em; height: 0.85em; flex: none; }
 
-/* Bathing-water quality pill (dest.bathing_water, EEA WISE). Same mono/uppercase
-   language as the hidden-gem tag; colour carries the Directive class. */
+/* Bathing-water quality (dest.bathing_water, EEA WISE): the house water
+   icon in umber, no pill and no teal (G12, Explore clean 2026-11-20; owner:
+   brown and saffron only). The class is in its accessible name and title. */
 .water-badge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   font-family: var(--ui);
   font-weight: 600;
-  font-size: var(--text-micro);
-  border-radius: 3px;
-  padding: 1px 5px 1px 4px;
+  font-size: var(--text-label);
   white-space: nowrap;
-  /* The grade's colour is in the border and the tint; the word is ink, since
-     the indicator colours are under 4.5:1 as text (T186). */
-  color: var(--ink);
-  border: 1px solid color-mix(in srgb, var(--bw-ink) 42%, transparent);
-  background: color-mix(in srgb, var(--bw-ink) 9%, transparent);
+  color: var(--umber-700);
 }
-.water-badge.lg { font-size: 10px; padding: 2px 7px 2px 6px; }
 .water-badge svg { flex: none; }
-.water-badge.bw-excellent { --bw-ink: var(--water-clear); }   /* clear sea blue */
-.water-badge.bw-good      { --bw-ink: var(--good-vivid); }   /* green */
-.water-badge.bw-sufficient{ --bw-ink: var(--amber); }   /* amber */
-.water-badge.bw-poor      { --bw-ink: var(--warn-vivid); }   /* red */
 
 /* Regional crowding pill (dest.crowding, JRC Tourism Density). Same language as
    the water badge; only the Quiet/Crowded extremes surface in the header. */

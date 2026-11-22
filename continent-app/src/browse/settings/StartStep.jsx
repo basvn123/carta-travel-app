@@ -27,6 +27,10 @@ function originIso(data, code) {
   return '';
 }
 
+// The countries drawn with the step; the rest follow a frame later (a phone
+// sheet shows about eleven).
+const FIRST_COUNTRIES = 16;
+
 /**
  * Start (G12 Settings, APPROVED): "Use my current location" first, then a
  * search over the countries and the towns in Carta's data, then every
@@ -50,9 +54,20 @@ export function StartStep({ model, onChange }) {
     () => orderedCountries((iso) => countryName(iso), homeAtOpen, lang),
     [homeAtOpen, lang],
   );
-  const towns = React.useMemo(() => townRows(data?.destinations), [data?.destinations]);
-  const hits = React.useMemo(() => searchStart(query, countries, towns), [query, countries, towns]);
   const typing = query.trim().length > 0;
+  // G12, D10 (round 7): the towns are read only once the traveller types
+  // (every place of the catalogue, 0.1 s at 4x CPU in the tap that opened
+  // the step), and the country list draws its first rows with the step and
+  // the rest a frame later, below the fold.
+  const towns = React.useMemo(() => (typing ? townRows(data?.destinations) : []), [typing, data?.destinations]);
+  const hits = React.useMemo(() => (typing ? searchStart(query, countries, towns) : null), [typing, query, countries, towns]);
+  const [allCountries, setAllCountries] = React.useState(false);
+  React.useEffect(() => {
+    if (allCountries) return undefined;
+    let timer = 0;
+    const frame = requestAnimationFrame(() => { timer = setTimeout(() => setAllCountries(true), 0); });
+    return () => { cancelAnimationFrame(frame); clearTimeout(timer); };
+  }, [allCountries]);
 
   const pickCountry = (iso2) => {
     setLocNote('');
@@ -153,7 +168,7 @@ export function StartStep({ model, onChange }) {
       ) : (
         <section aria-labelledby="set-countries">
           <h3 className="set-label" id="set-countries">{t('settings.sheet.countries')}</h3>
-          <ul className="set-picks">{countries.map(countryRow)}</ul>
+          <ul className="set-picks">{(allCountries ? countries : countries.slice(0, FIRST_COUNTRIES)).map(countryRow)}</ul>
         </section>
       )}
     </div>

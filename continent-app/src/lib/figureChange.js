@@ -27,6 +27,19 @@ function easeOut() {
   }
 }
 
+// G12, D10 (explore-top-2 profile): a re-price settles hundreds of figures in
+// one commit, and each token read was a getComputedStyle on an 18,000-element
+// page (1.1 s of a 7.3 s task at 4x CPU). The tokens are read once a frame.
+let tokens = null;
+function motionTokens() {
+  if (!tokens) {
+    tokens = { duration: durationMs('--dur-2'), easing: easeOut() };
+    const drop = () => { tokens = null; };
+    if (typeof requestAnimationFrame === 'function') requestAnimationFrame(drop); else setTimeout(drop, 16);
+  }
+  return tokens;
+}
+
 /**
  * Dip the element's opacity to 0.35 and back over --dur-2. Returns the
  * Animation, or null when nothing ran (reduced motion, no element, no API).
@@ -34,12 +47,12 @@ function easeOut() {
  */
 export function settleFigure(el) {
   if (!el || typeof el.animate !== 'function' || prefersReducedMotion()) return null;
-  const duration = durationMs('--dur-2');
+  const { duration, easing } = motionTokens();
   if (!duration) return null;
   try {
     return el.animate(
       [{ opacity: 1 }, { opacity: 0.35, offset: 0.4 }, { opacity: 1 }],
-      { duration, easing: easeOut() },
+      { duration, easing },
     );
   } catch {
     return null;

@@ -343,6 +343,17 @@ def shortlist_size(beaches, floor=SHORTLIST):
         return floor
     return int(max(floor, min(SHORTLIST_MAX, target * SHORTLIST_PER_QUOTA)))
 
+
+def pick_shortlist(beaches, n):
+    """The first `n` beaches (already sorted by prelim score), plus every
+    famous seed (D25 c) the cut left behind, in their prelim order. A famous
+    beach the harvest pinned must reach the export; the pre score only
+    decides who else gets the network calls."""
+    short = beaches[:n]
+    short += [b for b in beaches[n:]
+              if (b.get("seed") or {}).get("why") == "famous"]
+    return short
+
 SURFACE_GOOD = {"sand", "fine_gravel", "pebblestone", "pebbles", "gravel",
                 "shingle", "shells", "rock", "sand;pebblestone"}
 
@@ -1073,7 +1084,7 @@ def enrich_country(cc, shortlist_n=None, refresh=False, bathing=None,
     beaches.sort(key=lambda b: -b["prelim"])
     if shortlist_n is None:
         shortlist_n = shortlist_size(beaches)
-    short = beaches[:shortlist_n]
+    short = pick_shortlist(beaches, shortlist_n)
     print(f"  {cc}: {len(beaches)} harvested, enriching {len(short)}"
           + (" [no bathing water source for this country]"
              if no_water_source else ""))

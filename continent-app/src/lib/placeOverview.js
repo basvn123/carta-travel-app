@@ -70,6 +70,18 @@ export function overviewReason(p, { month = null, why = null } = {}) {
 }
 
 /**
+ * The reason a row shows under the applied chips: none when it is only the
+ * month chip's own words ("Good in July" under the "Good in July" chip,
+ * judgement-7). A month's own sentence or the best months differ by place
+ * and stay. `month` is the month filter set by hand (a chip), not the
+ * month of the traveller's dates (no chip says that one).
+ */
+export function rowReason(reason, { month = null } = {}) {
+  if (reason?.kind === 'goodIn' && Number(month) && reason.month === Number(month)) return null;
+  return reason;
+}
+
+/**
  * The reason descriptor as one line in the reader's language. `monthName`
  * names one month inline ("October"), `monthRanges` words a set of months
  * ("May to Sep"); both come from the caller so this file stays pure.

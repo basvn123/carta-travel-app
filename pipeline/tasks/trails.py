@@ -49,6 +49,64 @@ def trails_validate_dry(ctx):
 
 
 TASKS = [
+    # ---- famous coverage (D23/D24, 2026-11-20): what should be in Carta ---- #
+    {
+        "key": "famous_reference",
+        "title": "Famous reference per outdoor kind from Wikidata "
+                 "(data/famous/<kind>.json)",
+        "cadence": "monthly",
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/famous/build_reference.py", "--kind", "all",
+                  "-q"]],
+        "note": ("the famous trails, cycling routes, beaches, lakes and "
+                 "mountains of Europe: Wikidata items of the kind's classes "
+                 "with articles in enough languages (cuts in "
+                 "pipeline/famous/wikidata.py), plus the D24 trails reference "
+                 "and the country high points. One query per country and kind "
+                 "on QLever, then WDQS; a failed country keeps its rows from "
+                 "the last file. Here, in the trails domain, because the "
+                 "routed seeds read it in the same run; the outdoor wires it "
+                 "is measured against were written earlier in the run."),
+    },
+    {
+        "key": "famous_coverage",
+        "title": "Famous coverage: which famous items Carta has, and why each "
+                 "missing one is missing (data/reports/famous/)",
+        "cadence": "after",
+        "after": ["famous_reference"],
+        "writes_app_data": False,
+        "soft": True,
+        "cmds": [[PY, "pipeline/famous/coverage.py", "--kind", "all",
+                  "--sample", "30", "--handoff"]],
+        "note": ("matches each famous item to the published wire by Wikidata "
+                 "id, OSM relation, then name and place (trails through the "
+                 "trails external check's own matcher), and gives every miss "
+                 "a reason: no_osm_relation, osm_relation_not_published, "
+                 "matcher_miss, not_in_wire, out_of_scope. Reads files only."),
+    },
+    {
+        "key": "trails_seed_routes",
+        "title": "Trails: famous walks OSM has no route for, routed with "
+                 "BRouter (D24)",
+        "cadence": "after",
+        "after": ["famous_coverage"],
+        "writes_app_data": False,
+        "soft": True,
+        "guard": guard_trails_route_bridge,
+        "cmds": [[PY, "pipeline/trails/seed_routes.py", "--write"]],
+        "note": ("behind CARTA_TRAILS_ROUTE_BRIDGE=1 like the route bridge. "
+                 "For each famous trail the coverage report lists as "
+                 "no_osm_relation, routes Wikidata's start (P1427) to end "
+                 "(P1444), through the walk's own point, or else (D25 a) "
+                 "from its D24 trailhead to the landmark its name or QID "
+                 "names and back, and keeps it only on "
+                 "paths (80% path-like, 50% trail ways), snapped, of a sane "
+                 "length and not doubling back. Kept walks enter the lab as "
+                 "source seed_routed with the QID; curate's reference pass "
+                 "picks them by that id. Every refusal is in "
+                 "data/reports/famous/seed_routes.json."),
+    },
     # ---- trails content lab (tools/trailslab, local PostGIS): soft + guarded ---- #
     {
         "key": "trails_ingest",
@@ -201,7 +259,12 @@ TASKS = [
         "key": "trails_regionize",
         "title": "Trails: region ids on every staged route",
         "cadence": "after",
-        "after": ["trails_ingest"],
+        # Also after trails_derive_routes (D24): derived routes staged after the
+        # regions ran reached curate "unplaced", outside every region quota,
+        # and 4,893 of them were approved through the fill pass that way.
+        # And after trails_seed_routes, for the same reason (2026-11-20).
+        "after": ["trails_ingest", "trails_derive_routes",
+                  "trails_seed_routes"],
         "writes_app_data": False,
         "soft": True,
         "guard": guard_trailslab_up,

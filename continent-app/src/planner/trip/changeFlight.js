@@ -9,6 +9,9 @@
  *   current   priced.cartaFlight[dir] (a leg with its cost) or null
  *   prefs     { direct, after, before } or null
  *   party     { paying, babies, bagKey }
+ *   by        'total' (the planner: what the trip pays) or 'fare' (the
+ *             flights screen, G12 D10: rows show the fare, so they sort on
+ *             it; a list sorted on a figure it does not show looks unsorted)
  *
  * Returns { rows, known } where a row is { leg, total, delta, current } and
  * `known` is false when only the priced flight is known (no live answer).
@@ -19,7 +22,7 @@ import { sameFlight } from '../wizard/flightChoices.js';
 
 const r2 = (n) => Math.round(n * 100) / 100;
 
-export function flightRows({ answer = null, current = null, prefs = null, party = {} } = {}) {
+export function flightRows({ answer = null, current = null, prefs = null, party = {}, by = 'total' } = {}) {
   const { paying = 1, babies = 0, bagKey } = party;
   const lap = babies * BABY_LAP_FEE_LEG;
   const now = current?.cost?.total ?? null;
@@ -34,6 +37,8 @@ export function flightRows({ answer = null, current = null, prefs = null, party 
       const total = isCurrent && Number.isFinite(now) ? now : r2(legCost(f, { paying, bagKey }).total + lap);
       return { leg: f, total, delta: Number.isFinite(now) ? r2(total - now) : null, current: isCurrent };
     })
-    .sort((a, b) => a.total - b.total);
+    .sort(by === 'fare'
+      ? (a, b) => a.leg.price - b.leg.price || String(a.leg.dep).localeCompare(String(b.leg.dep))
+      : (a, b) => a.total - b.total);
   return { rows, known: true };
 }

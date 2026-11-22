@@ -1095,36 +1095,65 @@ INSERT_SQL = """
 # So a derived route is a duplicate only when the relation is also mostly
 # covered by IT. Two lines that are each mostly the other are one walk; a
 # short line inside a long one is a walk with its own name.
+#
+# The test is unchanged, but its cost was not survivable (D24): the old single
+# query re-projected and re-buffered BOTH lines for every candidate pair, so a
+# 300 km relation was buffered again for each of the hundreds of derived routes
+# near it. Italy's check ran 42 hours without finishing, and Germany has nearly
+# four times Italy's relations. So each line is projected, buffered and
+# measured once per country into a temporary table with a spatial index, and
+# the pair test only intersects what is already there. Same rule, same answer.
+DUPLICATE_PREP_SQL = [
+    """CREATE TEMP TABLE dup_r ON COMMIT DROP AS
+       SELECT id, geom, ST_Transform(geom, 3035) AS g,
+              ST_Buffer(ST_Transform(geom, 3035), %(buf)s) AS gb,
+              ST_Length(ST_Transform(geom, 3035)) AS len
+       FROM trips
+       WHERE country = %(cc)s AND category = 'hike'
+         AND source = 'osm' AND status <> 'rejected'""",
+    "CREATE INDEX ON dup_r USING gist (geom)",
+    "CREATE INDEX ON dup_r USING gist (gb)",
+    "ANALYZE dup_r",
+    """CREATE TEMP TABLE dup_d ON COMMIT DROP AS
+       SELECT id, geom, ST_Transform(geom, 3035) AS g,
+              ST_Buffer(ST_Transform(geom, 3035), %(buf)s) AS gb,
+              ST_Length(ST_Transform(geom, 3035)) AS len
+       FROM trips
+       WHERE country = %(cc)s AND source = %(source)s AND derived_route""",
+    "ANALYZE dup_d",
+]
+
 DUPLICATE_SQL = """
     SELECT d.id
-    FROM trips d
-    WHERE d.country = %(cc)s AND d.source = %(source)s AND d.derived_route
-      AND EXISTS (
-        SELECT 1 FROM trips r
-        WHERE r.country = d.country AND r.category = 'hike'
-          AND r.source = 'osm' AND r.status <> 'rejected'
-          AND r.geom && ST_Expand(d.geom, 0.01)
-          AND ST_Length(
-                ST_Intersection(
-                    ST_Transform(d.geom, 3035),
-                    ST_Buffer(ST_Transform(r.geom, 3035), %(buf)s)))
-              >= %(share)s * ST_Length(ST_Transform(d.geom, 3035))
-          AND ST_Length(
-                ST_Intersection(
-                    ST_Transform(r.geom, 3035),
-                    ST_Buffer(ST_Transform(d.geom, 3035), %(buf)s)))
-              >= %(back)s * ST_Length(ST_Transform(r.geom, 3035))
+    FROM dup_d d
+    WHERE EXISTS (
+        SELECT 1 FROM dup_r r
+        WHERE r.geom && ST_Expand(d.geom, 0.01)
+          AND r.gb && d.g
+          AND ST_Length(ST_Intersection(d.g, r.gb)) >= %(share)s * d.len
+          AND ST_Length(ST_Intersection(r.g, d.gb)) >= %(back)s * r.len
       )
 """
 
 
-def drop_duplicates(conn, cc, verbose=False):
+def find_duplicates(conn, cc):
+    """Ids of this country's derived routes that duplicate a relation. Reads
+    only: the temporary tables drop at the end of the transaction."""
+    params = {"cc": cc, "source": SOURCE, "buf": DUPLICATE_BUFFER_M,
+              "share": DUPLICATE_SHARE, "back": DUPLICATE_SHARE_BACK}
     with conn.cursor() as cur:
-        cur.execute(DUPLICATE_SQL, {"cc": cc, "source": SOURCE,
-                                    "buf": DUPLICATE_BUFFER_M,
-                                    "share": DUPLICATE_SHARE,
-                                    "back": DUPLICATE_SHARE_BACK})
-        ids = [r[0] for r in cur.fetchall()]
+        for sql in DUPLICATE_PREP_SQL:
+            cur.execute(sql, params)
+        cur.execute(DUPLICATE_SQL, params)
+        return [r[0] for r in cur.fetchall()]
+
+
+def drop_duplicates(conn, cc, verbose=False):
+    t0 = time.time()
+    ids = find_duplicates(conn, cc)
+    print(f"[{cc}] duplicate check: {len(ids)} in {time.time() - t0:.0f}s",
+          flush=True)
+    with conn.cursor() as cur:
         if ids:
             cur.execute("UPDATE trips SET status = 'rejected'::trip_status, "
                         "curation_note = %s WHERE id = ANY(%s)",

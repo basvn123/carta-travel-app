@@ -73,7 +73,27 @@
 
 /* -- The panel ---------------------------------------------------------------- */
 
-.dtab-panel { min-width: 0; }
+/* flow-root: the first child's top margin stays inside, so the panel starts
+   at the same place whatever arrives first (G12 round 2: it stood 12 px
+   lower until the quick row came, and moved). */
+.dtab-panel { display: flow-root; min-width: 0; }
+/* While a section's rails load (DestinationsTab openingPending): two rails'
+   shape over a full screen, so what comes after waits below the fold. */
+.dtab-hold {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: calc(100dvh - var(--filter-h));
+  overflow: hidden;
+}
+.dtab-hold-title { width: min(40%, 240px); height: 24px; margin-top: var(--space-3); }
+.dtab-hold-row { display: flex; gap: var(--space-3); margin-bottom: var(--space-8); }
+.dtab-hold-card { flex: none; width: 76%; aspect-ratio: 4 / 3; border-radius: var(--radius-card); }
+@media (min-width: 600px) { .dtab-hold-card { width: calc((100% - var(--space-3)) / 2.15); } }
+@media (min-width: 1024px) {
+  .dtab-hold-row { gap: var(--space-5); }
+  .dtab-hold-card { width: max(256px, calc((100% - 4 * var(--space-5)) / 4.25)); }
+}
 /* Trails at rest (T451): the countries track under the head. T430 fixed the
    selector, which a comment wedged into it had narrowed to ".dtab-head +
    .places-list", and moved the near-me door up into the head. */
