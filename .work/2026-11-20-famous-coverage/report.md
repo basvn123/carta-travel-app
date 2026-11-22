@@ -3,6 +3,21 @@
 Status: paused. Everything is built, on `main` and queued on the box. The measured "after" numbers come from the box runs. Revised 2026-11-21 10:35: the quarterly catch-up runs about 3 times its stated hours (Overpass mirrors time out), so the last run is now expected about 2026-11-27 to 11-29 (range 11-26 to 11-30).
 Run: `.work/2026-11-20-famous-coverage/`, 2026-11-20 to 2026-11-21. ROADMAP D25 (with D23, D24).
 
+## 2026-11-22: the beach rebuild and the publish gate
+- **What happened:** `beach_context` (15.7 h) ended with its gated export refused, so the old beach wire stands. The export had two problems:
+  - every country's `v5` fell to 0, because the rating is added by a later step;
+  - 3,243 rows came out against the wire's 6,619, because the box's beach shortlists are thin (170 a country for FI to SK, from 2026-11-08).
+- **The danger it showed:** the queued follow-up's `beaches`, `lakes` and `mountains` rebuilds wrote the wire with no gate at all.
+- **Fixed** (`fa15f33c20`, D25 i):
+  - those rebuilds and `cycling_publish` now publish through the gate;
+  - the gate rates the rows first;
+  - it allows at most 2% lost rows over the layer (5% for cycling).
+- **Box dry runs:**
+  - mountains 2,143 to 2,310 rows and rated lakes 1,628 to 2,731: both pass;
+  - beaches would be refused.
+- **What that means:** the famous beaches will not publish with this run. The beach shortlist has to be sized to the wire first (ROADMAP D25 i).
+- `peak_context` and `lake_detail` in the current catch-up run the old task list, so their gates will refuse on `v5` again; the old wires stand.
+
 ## What the owner asked
 - "When will everything be done, as well as the additional work to close the gap? Can you already set up the infrastructure to close the gap fully and gather every famous trail, cycling route, beach, lake, mountain? Deep task."
 - Then: "Do the necessary changes until each tab reaches the biggest coverage possible. 90+% is the goal."
