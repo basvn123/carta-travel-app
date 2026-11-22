@@ -12,7 +12,7 @@ import { useI18n } from '../../../i18n/index.jsx';
 import { useFocusTrap } from '../../../hooks/useFocusTrap.js';
 import { prefersReducedMotion } from '../../../lib/motion.js';
 import { CURRENCIES, EUR_RATES } from '../../../lib/currency.js';
-import { DAY_CATS, ME, splitEqual, splitFromAmounts, makeSpend } from '../../../lib/spend/model.js';
+import { DAY_CATS, ME, splitEqual, splitFromAmounts, makeSpend, draftRateOf } from '../../../lib/spend/model.js';
 import { Face, SpendRow, eur, formatIn, personName } from './parts.jsx';
 import {
   CAT_GLYPH, CamGlyph, CheckGlyph, ChatGlyph, CopyGlyph, DelGlyph, LinkGlyph, LockGlyph, MicGlyph,
@@ -87,9 +87,7 @@ export const draftAmount = (d) => {
   const n = Number(String(d?.amount || '').replace(',', '.'));
   return Number.isFinite(n) ? n : 0;
 };
-// The stored rate of a spend being edited while its currency is unchanged;
-// else today's static rate for the chosen currency.
-const draftRate = (d) => (d?.rate > 0 && d.rateCur === d.currency ? d.rate : EUR_RATES[d?.currency] ?? 1);
+const draftRate = (d) => draftRateOf(d, EUR_RATES);
 
 /** The split the draft would save, in euro cents ({} when it does not add up). */
 export function draftSplit(d, people) {

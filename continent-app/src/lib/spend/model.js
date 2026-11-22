@@ -63,6 +63,18 @@ export function kasPeople(extras, { groupSize = 1 } = {}) {
 }
 
 /**
+ * The rate a draft is valued at: the stored rate of a spend being edited
+ * while its currency is unchanged (Aanpassen never re-values a logged
+ * spend), else today's static rate for the chosen currency.
+ *   draft   { currency, rate?, rateCur? }
+ *   rates   lib/currency EUR_RATES
+ */
+export function draftRateOf(draft, rates = {}) {
+  if (Number(draft?.rate) > 0 && draft.rateCur === draft.currency) return Number(draft.rate);
+  return rates[draft?.currency] ?? 1;
+}
+
+/**
  * An equal split: Map-free { id: cents }, summing to `cents`. The odd cents
  * go to the payer (the critique-money rule), or to the first sharer when
  * the payer is not among them.

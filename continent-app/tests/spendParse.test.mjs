@@ -139,6 +139,14 @@ test('The amount: cents first, then next to the currency, never a count', () => 
   assert.equal(say('1.250 euro hotel', 'nl').amount, 1250);
   assert.equal(say('hotel 1,250.00 pounds', 'en').amount, 1250);
   assert.equal(say('2 nights 180 euro', 'en').amount, 180);
+  // No cents, no currency: the last number is the price, not the count.
+  assert.equal(say('4 biertjes 18', 'nl').amount, 18);
+  assert.equal(say('twaalf vijftig', 'nl').amount, 12.5);
+});
+
+test('The name leaves out a count and its "voor"', () => {
+  assert.equal(say('lunch voor 4 personen 40 euro', 'nl').desc, 'Lunch');
+  assert.equal(say('dinner for 3 people 60 euro', 'en').desc, 'Dinner');
 });
 
 test('A named payer stays among the sharers', () => {

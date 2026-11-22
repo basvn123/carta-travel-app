@@ -5,7 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  ME, kasPeople, splitEqual, equalAmounts, splitSum, splitFromAmounts, makeSpend, readSpend, readLedger,
+  ME, kasPeople, splitEqual, equalAmounts, draftRateOf, splitSum, splitFromAmounts, makeSpend, readSpend, readLedger,
   mineOnDay, kasBalances, kasTransfers, kasExtremes, roadSpendByCat, tripSpendPP,
 } from '../src/lib/spend/model.js';
 import { spendOnDay } from '../src/lib/myTrips.js';
@@ -158,4 +158,15 @@ test('ledger bridge: your share only, never the group total, never twice', () =>
   // With nothing logged, it is exactly the old memory figure.
   assert.equal(tripSpendPP(mem, {}, toEur), spendPerPerson(mem));
   assert.equal(tripSpendPP(null, {}, toEur), null);
+});
+
+test('draftRateOf: Aanpassen keeps the stored rate while the currency stays', () => {
+  const rates = { EUR: 1, PLN: 0.23 };
+  // Logged at 0.25 a zloty; today's static rate is 0.23.
+  assert.equal(draftRateOf({ currency: 'PLN', rate: 0.25, rateCur: 'PLN' }, rates), 0.25);
+  // Switched to euro while editing: today's rate for the new currency.
+  assert.equal(draftRateOf({ currency: 'EUR', rate: 0.25, rateCur: 'PLN' }, rates), 1);
+  // A new spend has no stored rate.
+  assert.equal(draftRateOf({ currency: 'PLN' }, rates), 0.23);
+  assert.equal(draftRateOf({ currency: 'XXX' }, rates), 1);
 });

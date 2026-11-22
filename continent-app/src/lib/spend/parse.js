@@ -277,11 +277,18 @@ export function parseSpeech(text, lang = 'en', people = []) {
   let amount = null;
   let unsure = false;
   // Which number is the amount: one with cents, else one next to a currency
-  // word or sign, else the first; never a count ("4 personen", "3 nachten").
+  // word or sign, else the last ("4 biertjes 18": the price follows what was
+  // bought); never a count ("4 personen", "3 nachten").
   const counted = (g) => COUNT_NOUN.test(tokens[g.to] || '');
   const nearCurrency = (g) => isCurrencyWord(tokens[g.to] || '', L) || isCurrencyWord(tokens[g.from - 1] || '', L);
+  const joinsWords = (list) => list.every((w) => isCurrencyWord(w, L) || (JOINT[L] || []).includes(w) || (POINT[L] || []).includes(w) || ['en', 'and', 'und', 'et', 'y', 'e', 'con'].includes(w));
   const pool = groups.filter((g) => !counted(g));
-  const pick = pool.find((g) => g.decimals) || pool.find(nearCurrency) || pool[0] || null;
+  let last = pool[pool.length - 1] || null;
+  // "twaalf vijftig": the last number is the cents of the one before it.
+  const before = last ? groups[groups.indexOf(last) - 1] : null;
+  if (before && !counted(before) && !before.decimals && last.value < 100 && Number.isInteger(last.value)
+      && joinsWords(tokens.slice(before.to, last.from)) && last.from - before.to <= 2) last = before;
+  const pick = pool.find((g) => g.decimals) || pool.find(nearCurrency) || last;
   if (pick) {
     const g = pick;
     for (let k = g.from; k < g.to; k += 1) used.add(k);
@@ -289,7 +296,7 @@ export function parseSpeech(text, lang = 'en', people = []) {
     const second = groups[groups.indexOf(g) + 1];
     // "twaalf vijftig", "twelve euro fifty", "12 komma 5": euros, then cents.
     const between = second ? tokens.slice(g.to, second.from) : [];
-    const joins = between.every((w) => isCurrencyWord(w, L) || (JOINT[L] || []).includes(w) || (POINT[L] || []).includes(w) || ['en', 'and', 'und', 'et', 'y', 'e', 'con'].includes(w));
+    const joins = joinsWords(between);
     const afterSecond = second ? tokens[second.to] : null;
     if (second && !g.decimals && second.value < 100 && Number.isInteger(second.value) && joins && between.length <= 2
         && !(afterSecond && COUNT_NOUN.test(afterSecond))) {
@@ -348,7 +355,7 @@ export function parseSpeech(text, lang = 'en', people = []) {
   // The name: what is left, without numbers, names, joining and filler words.
   const desc = tokens
     .filter((w, k) => !used.has(k) && !FILLER.has(w) && !WITH.includes(w) && !FOR_ALL.includes(w) && !/^\d/.test(w)
-      && !wordValues(w, L) && !PAID_WORDS.has(w) && !['alleen', 'just', 'only', 'nur', 'juste', 'seulement', 'solo', 'mij', 'me', 'moi', 'mich', 'mí', 'mi', 'enkel'].includes(w))
+      && !wordValues(w, L) && !PAID_WORDS.has(w) && !COUNT_NOUN.test(w) && !['alleen', 'just', 'only', 'nur', 'juste', 'seulement', 'solo', 'mij', 'me', 'moi', 'mich', 'mí', 'mi', 'enkel'].includes(w))
     .slice(0, 4).join(' ');
   return {
     amount,
