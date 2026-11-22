@@ -221,45 +221,6 @@ export function GradeBadge({ n, top = false, stamp = '' }) {
   );
 }
 
-/** Je reislog: rated trips by the traveller's grade; an unrated trip is rated in place. */
-export function TripLog({ rated, unrated, ask, onAsk, rate }) {
-  const { t } = useI18n();
-  const [all, setAll] = useState(false);
-  const shown = all ? rated : rated.slice(0, 5);
-  return (
-    <Sect
-      id="mt-log-h"
-      full
-      title={t('mt.tripLog')}
-      action={rated.length > 5 ? (
-        <Pressable className="atlas-lnk" aria-expanded={all} onClick={() => setAll((v) => !v)}>
-          {all ? t('mt.logLess') : t('mt.logAll', { n: rated.length })}
-        </Pressable>
-      ) : null}
-    >
-      {rate}
-      {shown.length > 0 && (
-        <ol className="atlas-log">
-          {shown.map((x, i) => (
-            <li className="atlas-lrow" key={x.id}>
-              <span className="atlas-rk">{i + 1}</span>
-              <span className="atlas-lt">
-                <b>{x.title} <small>{x.year}</small></b>
-              </span>
-              <GradeBadge n={x.grade} top={i === 0} />
-            </li>
-          ))}
-        </ol>
-      )}
-      {unrated.length > 0 && !ask && (
-        <Pressable className="atlas-lnk is-start" onClick={() => onAsk(unrated[0].id)}>
-          {t(unrated.length === 1 ? 'mt.unrated1' : 'mt.unratedN', { n: unrated.length })}
-        </Pressable>
-      )}
-    </Sect>
-  );
-}
-
 const BADGE_ICON = { region: GlobeIcon, next: GlobeIcon, nightTrain: TrainIcon, longest: CalendarIcon, north: MountainIcon, ten: GlobeIcon };
 
 /** Mijlpalen as round badges: earned in umber, the ones still ahead outlined.
@@ -321,12 +282,13 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
  *  Carta's estimate; on the right the grade badge (the best trip on umber
  *  600), or "Geef een cijfer", which opens the ten taps in the row. A tap on
  *  the row opens its memory. */
-export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, onLift = null, geo = null, trip = null }) {
+export function PastRow({ x, top = false, withYear = false, rating = false, onRateOpen, onRate, onLift = null, geo = null, trip = null }) {
   const { t } = useI18n();
   const month = monthShort(x.start);
   const meta = [
     x.nights > 0 ? t(x.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: x.nights }) : '',
-    month,
+    // Ranked by grade the year headings are gone, so the row says its year.
+    withYear && x.year ? [month, x.year].filter(Boolean).join(' ') : month,
   ].filter(Boolean).join(', ');
   return (
     <div

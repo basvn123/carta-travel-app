@@ -363,12 +363,17 @@ export function SavedTab({
     <div className="mt-saved">
       {example && <ExampleBar onClose={onExampleClose} />}
       {mapHost && liveMap && createPortal(liveMap, mapHost)}
-      <WatchRail items={watchItems} onOpen={setWatchOpen} />
+      {/* The lead (followed prices, then the lists) spans the width above the
+          rows and the map from 1100 px; the rows stand beside the map
+          (owner review 2026-11-22, 72-atlas.css "flow"). */}
+      <div className="atlas-lead mt-saved-lead">
+      {watchItems.length > 0 && <div className="mt-saved-watch"><WatchRail items={watchItems} onOpen={setWatchOpen} /></div>}
       {watchOpen && (
         <WatchSheet item={watchOpen} example={example} dest={destinations[String(watchOpen.placeKey || '').replace(/^dest:/, '')] || null}
           onOpenPlace={(w) => { const id = String(w.placeKey || '').replace(/^dest:/, ''); const row = rows.find((x) => x.kind === 'dest' && x.id === id); if (row) onOpen(row); }}
           onClose={() => setWatchOpen(null)} />
       )}
+      <div className="mt-saved-lists">
       <h3 className="atlas-sect-title">{t('mt.lists')}</h3>
       <div className="mt-lists atlas-rail" role="group" aria-label={t('mt.lists')}>
         <Button className="mt-lcard" aria-pressed={list === 'all'} onClick={() => setList('all')}>
@@ -413,6 +418,9 @@ export function SavedTab({
           <Button variant="quiet" onClick={() => setNaming(null)}>{t('pf.cancel')}</Button>
         </form>
       )}
+      </div>
+      </div>
+      <div className="atlas-main mt-saved-main">
 
       {current && (
         <div className="mt-list-bar">
@@ -599,6 +607,7 @@ export function SavedTab({
           </Button>
         </div>
       )}
+      </div>
     </div>
   );
 }

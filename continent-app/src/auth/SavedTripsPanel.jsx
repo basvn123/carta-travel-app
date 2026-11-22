@@ -77,7 +77,6 @@ import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
-import { usePastBeside } from './mytrips/atlas/pastBeside.js';
 import { UnitSheet, UnitButton, RateTrip, tripInUnit, unitWords } from './mytrips/TripParts.jsx';
 import { shareRouteImage } from './mytrips/atlas/routeImage.js';
 import { project } from './mytrips/atlas/project.js';
@@ -372,10 +371,7 @@ export function SavedTripsPanel({
   const [unitOpen, setUnitOpen] = useState(false);
   // G12 Phase D: the slot's host for Saved's live map.
   const [savedMapEl, setSavedMapEl] = useState(null);
-  // G12 atlas: Your Europe's past trips under the map (1100 x 720 and up).
-  const [europePastEl, setEuropePastEl] = useState(null);
   const [euLift, setEuLift] = useState('');
-  const pastWide = usePastBeside();
   const [example, setExample] = useState(false);
   const [lift, setLift] = useState('');
   const [friends, setFriends] = useState([]);
@@ -1269,7 +1265,6 @@ export function SavedTripsPanel({
     };
   })), [euExample, exGrades]);
   const euTrips = euExample ? exampleEurope : atlasPast;
-  const pastBeside = pastWide && tab === 'europe' && euTrips.length > 0;
   const euBeen = useMemo(() => (euExample ? new Set(exampleEurope.flatMap((x) => x.countries)) : beenIso), [euExample, exampleEurope, beenIso]);
   const europeMap = useMemo(() => {
     const trips = euTrips;
@@ -1490,7 +1485,7 @@ export function SavedTripsPanel({
           {/* The section's name as the page's h2, for the heading outline; the
               tab above already shows it. */}
           <h2 className="sr-only" id="mytrips-panel-title">{t(tab === 'trips' ? 'mt.tabTrips' : tab === 'saved' ? 'mt.tabSaved' : 'mt.tabEurope')}</h2>
-          <div className={`atlas-body is-${tab}${pastBeside ? ' has-past' : ''}`}>
+          <div className={`atlas-body is-${tab}`}>
           {/* G12 atlas: with the past trips under the map, the slot follows the
               content in the DOM, so a screen reader meets the left column first;
               keys keep both mounted when they swap. */}
@@ -1512,7 +1507,6 @@ export function SavedTripsPanel({
             listRef={countriesRef}
             savedEmpty={!shortRows.length && !example}
             savedHost={setSavedMapEl}
-            pastHost={pastBeside ? setEuropePastEl : null}
           />
             </React.Fragment>,
             <React.Fragment key="content">
@@ -1604,7 +1598,6 @@ export function SavedTripsPanel({
               pastForm={pastForm}
               error={tripPlansError}
               fmtMonth={fmtMonth}
-              pastHost={pastBeside ? europePastEl : null}
               onLift={setEuLift}
               example={euExample}
               onExample={() => setExample(true)}
@@ -1613,7 +1606,7 @@ export function SavedTripsPanel({
           )}
           </div></div>
             </React.Fragment>,
-          ][pastBeside ? 'reverse' : 'slice']()}
+          ]}
           </div>
         </div>
 

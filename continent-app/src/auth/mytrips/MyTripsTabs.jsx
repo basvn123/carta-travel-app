@@ -124,6 +124,15 @@ export function TripsTab({
 }) {
   const { t } = useI18n();
   const nothing = !example && !today && !next && !coming.length && !planning.length && !dayPlans.length;
+  // T466: the friends line is the faces of the friends showing you a
+  // trip, then the count; the whole line opens Friends.
+  const friends = friendsShared > 0 && onOpenFriends ? (
+    <Button variant="secondary" block className="mt-friends-line" onClick={onOpenFriends}>
+      <FaceStack people={friendFaces} />
+      <span className="mt-friends-text">{t(friendsShared === 1 ? 'saved.friendsShared1' : 'saved.friendsSharedN', { n: friendsShared })}</span>
+      <span className="mt-friends-open">{t('saved.friendsOpen')}<ChevronRightIcon size={16} /></span>
+    </Button>
+  ) : null;
   return (
     <>
       {loading && authed ? (
@@ -157,14 +166,22 @@ export function TripsTab({
       ) : (
         <>
           {example && <ExampleBar onClose={onExampleClose} />}
-          {today}
-          {next && (
-            <div className="mt-next">
-              <NextTripCard {...next} />
-              <JoinsLine planId={next.id} />
-              {next.below}
+          {/* The focal card is the hero: beside the map from 1100 px, with
+              everything else in the full width under both (owner review
+              2026-11-22, 72-atlas.css "flow"). */}
+          {(today || next) && (
+            <div className="atlas-hero">
+              {today}
+              {next && (
+                <div className="mt-next">
+                  <NextTripCard {...next} />
+                  <JoinsLine planId={next.id} />
+                  {next.below}
+                </div>
+              )}
             </div>
           )}
+          <div className="atlas-rest mt-trips-rest">
           {/* Today and the next trip are the focal cards; the grade can wait. */}
           {rate}
           {(coming.length > 0 || planning.length > 0) && (
@@ -205,17 +222,12 @@ export function TripsTab({
               <Button variant="quiet" size="sm" onClick={onSignIn}>{t('saved.signIn')}</Button>
             </p>
           )}
+          {friends}
+          </div>
         </>
       )}
-      {/* T466: the friends line is the faces of the friends showing you a
-          trip, then the count; the whole line opens Friends. */}
-      {friendsShared > 0 && onOpenFriends && (
-        <Button variant="secondary" block className="mt-friends-line" onClick={onOpenFriends}>
-          <FaceStack people={friendFaces} />
-          <span className="mt-friends-text">{t(friendsShared === 1 ? 'saved.friendsShared1' : 'saved.friendsSharedN', { n: friendsShared })}</span>
-          <span className="mt-friends-open">{t('saved.friendsOpen')}<ChevronRightIcon size={16} /></span>
-        </Button>
-      )}
+      {/* In the loading, error and first states the friends line closes the column, as before. */}
+      {(loading && authed) || error || nothing ? friends : null}
     </>
   );
 }

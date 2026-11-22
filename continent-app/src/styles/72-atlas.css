@@ -2435,31 +2435,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .atlas-plate.is-fill .mt-eumap .is-f9 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 9); }
 @keyframes atlas-fill { from { fill-opacity: 0; } to { fill-opacity: 1; } }
 
-/* The past trips under the map: the slot is a column no taller than the
-   window, the map a fixed height, the list its own focusable scroll region.
-   No overscroll containment, so the page scrolls on at the list's end. */
-@media (min-width: 1100px) and (min-height: 720px) {
-  .atlas-body.is-europe.has-past .atlas-slot {
-    display: flex;
-    flex-direction: column;
-    max-height: calc(100dvh - var(--header-h) - 2 * var(--space-4));
-  }
-  .atlas-body.is-europe.has-past .atlas-slot .atlas-map { flex: none; height: clamp(340px, 46dvh, 440px); }
-  .atlas-body.is-europe.has-past .atlas-under { flex: none; }
-  .atlas-past {
-    flex: 1 1 auto;
-    min-height: 220px;
-    margin-top: var(--space-3);
-    padding-right: var(--space-2);
-    overflow-y: auto;
-    scrollbar-gutter: stable;
-    scrollbar-width: thin;
-    scrollbar-color: var(--umber-300) transparent;
-  }
-  .atlas-past:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
-  .atlas-past .atlas-pyear-h { position: sticky; top: 0; z-index: 2; background: var(--surface-page); }
-}
-
 /* A past row pointed at: its route lifts, the others step back. */
 .atlas-route.is-lift .atlas-route-line { stroke: var(--umber-800); opacity: 1; }
 
@@ -2515,10 +2490,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 @media (prefers-reduced-motion: reduce) {
   .atlas-plate.is-fill .mt-eumap .mt-eumap-land[class*=' is-f'], .atlas-plate.is-fill .mt-eumap .mt-eumap-dot[class*=' is-f'] { animation: none; }
   .atlas-badge { transition: none; }
-}
-@media (min-width: 1100px) and (min-height: 720px) {
-  .atlas-past .atlas-th { width: 56px; height: 56px; }
-  .atlas-past .atlas-prow { min-height: 64px; padding: var(--space-2) 0; }
 }
 
 /* ==== G12 wow, phase F: the four open items. Kiezen ends Saved's tools row
@@ -2625,4 +2596,96 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .mt-invite-bed { flex: none; }
   .mt-invite-path { flex: 1 1 16px; width: auto; min-width: 16px; }
   .mt-invite-row > .btn { flex: none; }
+}
+
+
+/* ==== G12 flow (owner review 2026-11-22: "everything stands left, use the
+   whole width; one clean whole"). Each tab marks a hero and the rest:
+   Reizen's focal card, Your Europe's charts and extremes, Saved's lead
+   (followed prices and lists). From 1100 px the hero stands beside the map
+   and the rest runs the full width under both; Saved's lead spans the width
+   and its rows keep the sticky map beside them. Below 1100 px the trips and
+   saved wrappers fold away (display: contents), so phone and tablet keep
+   their column. The wrappers' parents fold away from 1100 px instead, so the
+   parts land in the body's own grid. */
+.atlas-hero.atlas-eu-hero, .atlas-eu-rest, .atlas-eu-list, .atlas-eu-side { display: grid; gap: var(--space-2); min-width: 0; align-content: start; }
+.atlas-hero:not(.atlas-eu-hero), .atlas-rest:not(.atlas-eu-rest), .atlas-lead, .atlas-main, .mt-saved-lists, .mt-saved-watch { display: contents; }
+
+/* Past trips: the sort switch and Add share the heading's end. */
+.atlas-past-acts { display: inline-flex; align-items: center; gap: var(--space-3); }
+/* On a phone the switch and Add take their own line under the heading, so the title stays on one line. */
+@media (max-width: 599px) {
+  .atlas-sect-h:has(> .atlas-past-acts) { flex-wrap: wrap; row-gap: var(--space-2); }
+  .atlas-sect-h > .atlas-past-acts { flex: 1 0 100%; justify-content: space-between; }
+}
+.atlas-prows.is-ranked { display: grid; }
+
+/* Your Europe: one column of parts; the hero's two charts pair up from a tablet. */
+.mt-europe.atlas-eu:not(.is-empty) { grid-template-columns: minmax(0, 1fr); }
+.mt-europe.atlas-eu > .mt-exbar { grid-column: 1 / -1; }
+@media (min-width: 768px) {
+  .atlas-eu-hero:not(.is-first) { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); }
+  .atlas-eu-hero > .atlas-sect:has(.atlas-extremes) { grid-column: 1 / -1; }
+}
+@media (min-width: 1024px) {
+  /* The rest: the past trips on the left, cost, milestones and year card beside. */
+  .atlas-eu-rest:not(.is-first) { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--space-8); }
+  .atlas-eu-rest.is-first { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-8); }
+  .atlas-eu-rest.is-first > .atlas-sect:has(.atlas-badges) { grid-column: 2; }
+}
+
+@media (min-width: 1100px) {
+  /* Trips and Your Europe: the bar, then the hero beside the map, then the rest. */
+  .atlas-body:has(.atlas-hero) { row-gap: var(--space-7); }
+  .atlas-body:has(.atlas-hero) > .atlas-content,
+  .atlas-body:has(.atlas-hero) > .atlas-content > .atlas-col,
+  .atlas-body:has(.atlas-hero) .atlas-col > .mt-europe.atlas-eu { display: contents; }
+  .atlas-body:has(.atlas-hero) .atlas-col > *,
+  .atlas-body:has(.atlas-hero) .atlas-eu > * { grid-column: 1 / -1; }
+  .atlas-body:has(.atlas-hero) .atlas-hero { grid-column: 1; grid-row: 1; display: flex; flex-direction: column; gap: var(--space-6); }
+  .atlas-body:has(.atlas-hero) .atlas-hero.atlas-eu-hero { display: grid; gap: var(--space-2) var(--space-6); }
+  .atlas-body:has(.atlas-hero) > .atlas-slot { grid-column: 2; grid-row: 1; position: relative; top: auto; align-self: start; }
+  .atlas-body:has(.atlas-hero) .atlas-rest:not(.atlas-eu-rest) { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-8); align-items: start; }
+  .atlas-body:has(.atlas-hero) .atlas-rest:not(.atlas-eu-rest) > :not(.mt-two) { grid-column: 1 / -1; }
+  .atlas-body:has(.atlas-hero) .atlas-rest:not(.atlas-eu-rest) > .mt-two { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-8); }
+  .atlas-body:has(.atlas-hero) .atlas-rest .mt-rate, .atlas-body:has(.atlas-hero) .atlas-rest > .mt-friends-line { max-width: clamp(540px, 42vw, 620px); }
+
+  /* With the Example bar it takes the first row and stays in view on scroll. */
+  .atlas-body:has(.atlas-hero):has(.mt-exbar) { grid-template-rows: 56px; }
+  .atlas-body:has(.atlas-hero):has(.mt-exbar) .mt-exbar { grid-row: 1 / span 3; align-self: start; }
+  .atlas-body:has(.atlas-hero):has(.mt-exbar) .atlas-hero,
+  .atlas-body:has(.atlas-hero):has(.mt-exbar) > .atlas-slot { grid-row: 2; }
+
+  /* The map is as tall as its hero, no longer the window. */
+  /* The map stands as tall as its hero (its height follows the hero's
+     layout, not the plate, so nothing shifts when the plate loads). */
+  .atlas-body:has(.atlas-hero) > .atlas-slot.is-trips,
+  .atlas-body:has(.atlas-eu-hero:not(.is-first)) > .atlas-slot.is-europe { align-self: stretch; display: flex; flex-direction: column; }
+  .atlas-body:has(.atlas-hero) > .atlas-slot.is-trips .atlas-map,
+  .atlas-body:has(.atlas-eu-hero:not(.is-first)) > .atlas-slot.is-europe .atlas-map { flex: 1 1 auto; height: auto; min-height: 420px; max-height: 680px; }
+  /* The grade and the friends line share a row. */
+  .atlas-body:has(.atlas-hero) .atlas-rest:has(> .mt-rate) > .mt-rate { grid-column: 1; }
+  .atlas-body:has(.atlas-hero) .atlas-rest:has(> .mt-rate) > .mt-friends-line { grid-column: 2; grid-row: 1; align-self: end; max-width: none; }
+
+  /* Saved: the lead spans the width (followed prices left, the lists right,
+     on the body's own columns), then the rows beside the sticky map. */
+  .atlas-body.is-saved:has(.atlas-lead) { row-gap: var(--space-6); }
+  .atlas-body.is-saved:has(.atlas-lead) > .atlas-content,
+  .atlas-body.is-saved:has(.atlas-lead) > .atlas-content > .atlas-col,
+  .atlas-body.is-saved:has(.atlas-lead) .atlas-col > .mt-saved { display: contents; }
+  .atlas-body.is-saved:has(.atlas-lead) .atlas-col > *,
+  .atlas-body.is-saved:has(.atlas-lead) .mt-saved > * { grid-column: 1 / -1; }
+  .atlas-body.is-saved:has(.atlas-lead) .mt-saved > .atlas-lead { grid-row: 1; display: grid; grid-template-columns: subgrid; align-items: start; }
+  .atlas-body.is-saved .mt-saved-watch { display: block; grid-column: 1; min-width: 0; }
+  .atlas-body.is-saved .mt-saved-lists { display: block; grid-column: 2; min-width: 0; }
+  .atlas-body.is-saved .atlas-lead:not(:has(.mt-saved-watch)) .mt-saved-lists { grid-column: 1 / -1; }
+  .atlas-body.is-saved .mt-saved .mt-lists.atlas-rail { grid-template-columns: repeat(auto-fill, minmax(124px, 1fr)); margin-bottom: 0; }
+  .atlas-body.is-saved:has(.atlas-lead) .mt-saved > .atlas-main { grid-column: 1; grid-row: 2; display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+  /* Sticky for real: the base .atlas-slot { position: relative } came later and won, so top only nudged it down. */
+  .atlas-body.is-saved:has(.atlas-lead) > .atlas-slot { grid-column: 2; grid-row: 2; position: sticky; top: var(--space-4); align-self: start; }
+  .atlas-body.is-saved:has(.atlas-lead):has(.mt-exbar) { grid-template-rows: 56px; }
+  .atlas-body.is-saved:has(.atlas-lead):has(.mt-exbar) .mt-saved > .mt-exbar { grid-row: 1 / span 3; align-self: start; }
+  .atlas-body.is-saved:has(.atlas-lead):has(.mt-exbar) .mt-saved > .atlas-lead { grid-row: 2; }
+  .atlas-body.is-saved:has(.atlas-lead):has(.mt-exbar) .mt-saved > .atlas-main,
+  .atlas-body.is-saved:has(.atlas-lead):has(.mt-exbar) > .atlas-slot { grid-row: 3; }
 }
