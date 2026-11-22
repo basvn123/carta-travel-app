@@ -1287,7 +1287,7 @@
 }
 .atlas-btn.is-soft { border-color: transparent; background: var(--umber-100); color: var(--umber-800); }
 .atlas-btn.is-primary { border-color: transparent; background: var(--action); color: var(--action-text); }
-.atlas-btn:focus-visible, .atlas-prow:focus-visible, .atlas-ycbtn:focus-visible, .atlas-bar:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.atlas-btn:focus-visible, .atlas-ycbtn:focus-visible, .atlas-bar:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .atlas-softbtn { justify-self: start; min-height: var(--tap); padding: 0 var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); font: 700 var(--text-body) / 1 var(--ui); cursor: pointer; }
 .atlas-lnk.is-start { justify-self: start; text-align: start; }
 .atlas-sect-h .atlas-lnk { display: inline-flex; align-items: center; gap: var(--space-1); }
@@ -1373,21 +1373,7 @@
 /* past trips: rows on the ground */
 .atlas-pyear { display: grid; }
 .atlas-pyear-h { margin: 0; padding: 6px 0 2px; font-size: var(--text-label); font-weight: 800; color: var(--text-3); }
-.atlas-prow-wrap { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; border-bottom: 1px solid var(--border-soft); }
-.atlas-prow-wrap > :nth-child(n + 3) { grid-column: 1 / -1; }
-.atlas-prow { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: center; min-height: 64px; padding: var(--space-2) 0; border: 0; background: none; color: var(--text); font: inherit; text-align: start; cursor: pointer; }
-.atlas-th { width: 52px; height: 52px; overflow: hidden; border-radius: var(--radius-control); background: var(--surface-sunken); }
-.atlas-th .atlas-th-img, .atlas-th img { width: 100%; height: 100%; object-fit: cover; }
-.atlas-prow-t { display: grid; gap: 3px; min-width: 0; }
-.atlas-prow-t b { display: flex; align-items: center; gap: 5px; min-width: 0; font-size: var(--text-body); }
 /* The name keeps one line and gives way first: the flags, the figure and the menu never squeeze it into a wrap. */
-.atlas-prow-name { min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.atlas-prow-t b > :not(.atlas-prow-name) { flex: none; }
-.atlas-prow-wrap.mt-jcard { display: grid; overflow: visible; background: none; border: 0; border-bottom: 1px solid var(--border-soft); border-radius: 0; }
-.atlas-prow-wrap > .atlas-prow { min-width: 0; }
-.atlas-prow-wrap > .mt-menu { align-self: start; margin-top: var(--space-3); }
-.atlas-prow-m { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-label); color: var(--text-2); }
-.atlas-prow > svg { color: var(--text-3); }
 .atlas-prow-open { display: grid; gap: var(--space-2); padding-bottom: var(--space-3); }
 
 /* the country sheet */
@@ -1549,8 +1535,7 @@
   cursor: pointer;
 }
 .mt-who-step button:disabled { color: var(--text-3); cursor: default; }
-.mt-whobtn:focus-visible, .mt-who-menu button:focus-visible, .mt-kies:focus-visible, .mt-vote:focus-visible,
-.mt-scard-note:focus-visible, .atlas-rateit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.mt-whobtn:focus-visible, .mt-who-menu button:focus-visible, .mt-kies:focus-visible, .mt-vote:focus-visible, .mt-scard-note:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 
 /* The lists rail: 16 px between covers, 3 px between photos, starting on the gutter; the ring sits 3 px out. */
 .mt-saved .mt-lists.atlas-rail {
@@ -1669,31 +1654,8 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 /* Past trips: the same media row, a 56 px grade badge or "Geef een cijfer", and quiet year heads. */
 .atlas-pyear-h { display: flex; justify-content: space-between; gap: var(--space-3); padding: 18px 0 2px; }
 .atlas-pyear-h span { font-weight: 600; }
-.atlas-prow-wrap, .atlas-prow-wrap.mt-jcard { grid-template-columns: minmax(0, 1fr) auto; border-bottom: 0; border-top: 1px solid var(--border); }
-.atlas-prows > .atlas-prow-wrap:first-child { border-top: 0; }
-.atlas-prow { grid-template-columns: auto minmax(0, 1fr); gap: 14px; padding: var(--space-3) 0; }
-.atlas-prow > svg { display: none; }
-.atlas-th { width: 96px; height: 96px; border-radius: var(--radius-card); }
-.atlas-prow-t b { gap: 7px; font-size: var(--text-lead); font-weight: 800; }
-.atlas-prow-m { font-size: var(--text-label); }
-.atlas-prow-end { display: inline-flex; align-items: center; gap: var(--space-1); }
-.atlas-prow-wrap > .atlas-prow-end > .mt-menu { align-self: center; }
-.atlas-rateit {
-  min-height: var(--tap);
-  padding: 0 var(--space-3);
-  border: 1.5px dashed var(--umber-500);
-  border-radius: var(--radius-pill);
-  background: none;
-  color: var(--umber-800);
-  font: 700 var(--text-label) / 1 var(--ui);
-  white-space: nowrap;
-  cursor: pointer;
-}
 .atlas-ratebox { grid-column: 1 / -1; margin-bottom: var(--space-3); }
 .atlas-ratebox .mt-rate-scale { grid-template-columns: repeat(5, minmax(var(--tap), 1fr)); }
-@media (min-width: 1100px) {
-  .atlas-th { width: 120px; height: 90px; }
-}
 @media (prefers-reduced-motion: reduce) {
   .mt-who-menu { animation: none; }
   .mt-vote svg { transition: none; }
@@ -1702,27 +1664,10 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 /* With the live map in the atlas pane, the rows take the whole column (no empty second column). */
 .mt-saved .mt-split.is-hosted { grid-template-columns: minmax(0, 1fr); }
 .mt-saved .mt-split.is-hosted .mt-split-map { display: none; }
-.atlas-prow-m .atlas-move { white-space: normal; }
-.atlas-prow-end .mt-menu { margin-inline-end: -10px; }
 .mt-scard-acts { flex-wrap: wrap; row-gap: var(--space-1); }
 
 /* Names are never cut short of two lines (owner review): past trips put the name on its own line,
    the flags beside the nights, the estimate chip under them; Saved names wrap the same way. */
-.atlas-prow-t .atlas-prow-name {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  overflow: hidden;
-  white-space: normal;
-  overflow-wrap: anywhere;
-  font-size: var(--text-lead);
-  font-weight: 800;
-  line-height: 1.25;
-}
-.atlas-prow-m { gap: 6px; }
-.atlas-prow-est { display: flex; }
-.atlas-prow-end { align-self: center; }
 .mt-saved .btn.mt-item-name .btn-label {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -1795,7 +1740,7 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 }
 
 /* The grade in a past row and the reislog sits right and centred. */
-.atlas-prow-end > .atlas-grade, .atlas-lrow > .atlas-grade { align-self: center; justify-self: end; }
+.atlas-lrow > .atlas-grade { align-self: center; justify-self: end; }
 
 /* The Saved toolbar (owner review): Per dag | Hele reis, Voor N personen, the nights only with Hele reis,
    and List / Map at the end of the same row; 36 px pills with 13 px text. Each pill's hit area reaches
@@ -1978,13 +1923,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 /* Past rows, a strict grid (owner fixes round 4): photo | text minmax(0, 1fr) |
    grade or Geef een cijfer | menu. The estimate chip wraps inside the text
    column, so the button never sits over it. */
-.atlas-prow-wrap, .atlas-prow-wrap.mt-jcard { column-gap: var(--space-2); }
-.atlas-prow-t, .atlas-prow-est { min-width: 0; max-width: 100%; }
-.atlas-prow-est .atlas-move { min-width: 0; max-width: 100%; white-space: normal; }
-.atlas-prow-end { min-width: 0; }
-@media (max-width: 599px) {
-  .atlas-rateit { max-width: 88px; padding: var(--space-1) var(--space-2); line-height: 1.15; white-space: normal; text-align: center; }
-}
 
 /* ==== Desktop placement (owner review 2026-11-22, G12): from 1100 the column beside the map is a
    reading column, not a squeezed phone. It grows with the window (540 to 620 px) and starts on the
@@ -2494,7 +2432,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   rotate: var(--tilt, 0deg);
 }
 .atlas-gstamp.is-ten { background: var(--umber-800); border-color: var(--umber-800); outline-color: var(--on-plate); color: var(--on-plate); }
-.atlas-prow-end > .atlas-gstamp { align-self: center; justify-self: end; }
 
 .atlas-mini { display: block; width: 100%; height: 100%; }
 .atlas-mini path { fill: var(--atlas-land, var(--map-land)); stroke: var(--atlas-border, var(--map-border)); stroke-width: 0.8; vector-effect: non-scaling-stroke; }

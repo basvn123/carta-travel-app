@@ -442,8 +442,8 @@
     border-right: 1.75px solid var(--text-3);
     transform: rotate(45deg);
   }
-  .mt-panel .mt-today-side > .mt-spend-door > svg:last-child,
-  .mt-panel .mt-today-side > .mt-disc-row > svg:last-child { justify-self: center; color: var(--text-3); }
+  .mt-today-side > .mt-spend-door > svg:last-child,
+  .mt-today-side > .mt-disc-row > svg:last-child { justify-self: center; color: var(--text-3); }
 }
 /* No wash on a door under the pointer: its name underlines. */
 .mt-panel .mt-spend-door:hover,
