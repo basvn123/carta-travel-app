@@ -145,7 +145,10 @@ Deno.serve(withCors(async (req) => {
     if (!(await verifyLink(linkSecret, a, u, x, t))) return html(400, resultPage('en', 'bad', appUrl));
     const { data: row } = await db.from('price_alert_consent').select('lang').eq('user_id', u).maybeSingle();
     const lang = langOf(row?.lang);
-    const { data, error } = await db.rpc(a === 'confirm' ? 'price_alert_confirm' : 'price_alert_unsubscribe', { p_user: u });
+    // Two literal calls, not a computed name: the contract gate checks rpc names statically.
+    const { data, error } = a === 'confirm'
+      ? await db.rpc('price_alert_confirm', { p_user: u })
+      : await db.rpc('price_alert_unsubscribe', { p_user: u });
     // The one-click POST from a mail client wants a bare 200.
     if (req.method === 'POST' && a === 'unsub') return new Response(null, { status: error ? 500 : 200 });
     if (error) return html(500, resultPage(lang, 'bad', appUrl));
