@@ -1108,6 +1108,18 @@
       "what": "Ask Carta passages, vectors and BM25"
     },
     {
+      "path": "search/places/",
+      "tasks": [
+        "gazetteer"
+      ],
+      "writer": "pipeline/gazetteer_layer.py",
+      "host": "R2",
+      "readers": [
+        "continent-app/src/lib/search/gazetteer.js"
+      ],
+      "what": "the GeoNames gazetteer: Europe's towns, regions and countries in prefix shards"
+    },
+    {
       "path": "stays/",
       "tasks": [
         "manual"

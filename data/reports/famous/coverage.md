@@ -1,0 +1,878 @@
+# Famous coverage
+
+Generated 2026-11-21T01:35:03Z. Headline: tier A rows that are in Carta (rated, listed, or as stages). Built by `pipeline/famous/coverage.py`; reference rule in `pipeline/famous/wikidata.py`.
+
+| Kind | Famous (A) | In | Share | Rated | Listed | Stages | Piece only | Missing | Near (B) in |
+|---|---|---|---|---|---|---|---|---|---|
+| trails | 663 | 209 | 32% | 198 | 1 | 10 | 93 | 361 | 249 of 1226 |
+| cycling | 235 | 45 | 19% | 11 | 34 | 0 | 36 | 154 | 37 of 313 |
+| beaches | 186 | 141 | 76% | 117 | 24 | 0 | 0 | 45 | 496 of 1591 |
+| lakes | 249 | 165 | 66% | 147 | 18 | 0 | 0 | 84 | 190 of 364 |
+| mountains | 346 | 287 | 83% | 207 | 80 | 0 | 0 | 59 | 361 of 871 |
+
+## trails
+
+Missing famous (A) by reason: osm_relation_not_published 170, no_osm_relation 155, out_of_scope:over_400km 31, unlocated 3, out_of_scope:under_2km 2
+
+| Name | Countries | Sitelinks | Status | Reason |
+|---|---|---|---|---|
+| Caminito del Rey | ES | 25 | in_as_piece |  |
+| Main Beskid Trail | PL | 24 | missing | out_of_scope:over_400km |
+| Główny Szlak Sudecki | PL | 23 | missing | out_of_scope:over_400km |
+| Via Regia | DE | 23 | in_as_piece |  |
+| Lycian Way | TR | 20 | missing | out_of_scope:over_400km |
+| Orla Perć | PL | 20 | missing | no_osm_relation |
+| French Way | ES | 19 | in_as_piece |  |
+| Kungsleden | SE | 19 | in_as_piece |  |
+| Countrywide Blue Tour in Hungary | HU | 18 | in_as_piece |  |
+| Laugavegur | IS | 18 | missing | osm_relation_not_published |
+| Way of Saint James UNESCO World Heritage Sites in France | FR | 18 | missing | osm_relation_not_published |
+| E9 European long distance path | BE,ES,FR,LT,NL,PT | 17 | in_as_piece |  |
+| Trail of the Eagles' Nests | PL | 17 | missing | osm_relation_not_published |
+| E1 European long distance path | CH,DE,DK,IT,NO,SE | 16 | in_as_piece |  |
+| E3 European long distance path | BE,BG,CZ,DE,ES,FR,HU,LU,PL,RO,SK | 16 | in_as_piece |  |
+| E4 European long distance path | AT,BG,CH,CY,DE,ES,FR,GR,HU,PT,RO,RS | 15 | in_as_piece |  |
+| Hærvejen | DE,DK | 14 | in_as_piece |  |
+| E5 European long distance path | AT,CH,DE,FR,IT | 13 | in_as_piece |  |
+| E7 European long distance path | ES,FR,HU,IT,PT,SI | 13 | missing | out_of_scope:over_400km |
+| E8 European long distance path | AT,BG,DE,FR,GB,IE,NL,PL,RO,SK,UA | 13 | missing | out_of_scope:over_400km |
+| Pieterpad | NL | 13 | in_as_piece |  |
+| Via Podiensis | FR | 13 | in_as_piece |  |
+| GR-160 | ES | 12 | missing | out_of_scope:over_400km |
+| Stockholm Archipelago Trail | SE | 12 | in_as_piece |  |
+| Strada of 52 Gallerie | IT | 12 | missing | osm_relation_not_published |
+| Arctic Trail | FI,NO,SE | 11 | in_as_piece |  |
+| E10 European long distance path | AT,CZ,DE,ES,FI,FR,IT | 11 | in_as_piece |  |
+| E6 European long distance path | AT,DE,DK,FI,FR,GR,SE,SI,TR | 11 | in_as_piece |  |
+| GR-11 (Spain) | AD,ES | 11 | in_as_piece |  |
+| Pennine Way | GB | 11 | in_as_piece |  |
+| Via Turonensis | FR | 11 | in_as_piece |  |
+| E11 European long distance path | DE,FR,NL,PL | 10 | in_as_piece |  |
+| E2 European long distance path | BE,CH,FR,GB,NL | 10 | in_as_piece |  |
+| GR 10 (France) | FR | 10 | in_as_piece |  |
+| Glagolitic Alley | HR | 10 | missing | no_osm_relation |
+| Via Lemovicensis | FR | 10 | missing | osm_relation_not_published |
+| Muravsky Trail | UA | 9 | missing | no_osm_relation |
+| Sentiero di Leonardo | CH,IT | 9 | missing | no_osm_relation |
+| South West Coast Path | GB | 9 | missing | out_of_scope:over_400km |
+| Via dell'Amore | IT | 9 | missing | no_osm_relation |
+| Calà del Sasso | IT | 8 | missing | no_osm_relation |
+| E12 European long distance path | ES,FR,GR,HR,IT,SI | 8 | missing | out_of_scope:over_400km |
+| High Coast Trail | SE | 8 | in_as_piece |  |
+| Izyumsky Trail | UA | 8 | missing | no_osm_relation |
+| Karhunkierros | FI | 8 | in_as_piece |  |
+| Pyrenean High Route | AD,ES,FR | 8 | in_as_piece |  |
+| Routes of Santiago de Compostela: Camino Francés and Routes of Northern Spain | ES | 8 | missing | out_of_scope:over_400km |
+| Slovenian Mountain Hiking Trail | SI | 8 | missing | osm_relation_not_published |
+| Via Transilvanica | RO | 8 | in_as_piece |  |
+| Black Trail | UA | 7 | missing | no_osm_relation |
+| Cares Trail | ES | 7 | missing | osm_relation_not_published |
+| GR 34 (France) | FR | 7 | in_as_piece |  |
+| GR 5 | BE,CH,DE,FR,LU,NL | 7 | in_as_piece |  |
+| GR 7 | AD,ES,FR | 7 | in_as_piece |  |
+| GR 70 (France) | FR | 7 | in_as_piece |  |
+| GR 92 | ES | 7 | in_as_piece |  |
+| GR-131 | ES | 7 | missing | out_of_scope:over_400km |
+| King Charles III England Coast Path | GB | 7 | in_as_piece |  |
+| Kom–Emine | BG | 7 | missing | out_of_scope:over_400km |
+| Offa's Dyke Path | GB | 7 | missing | osm_relation_not_published |
+| Peace Trail | IT | 7 | in_as_piece |  |
+| Ponale road | IT | 7 | missing | osm_relation_not_published |
+| Rilke trail | IT | 7 | missing | osm_relation_not_published |
+| Ruta Jacobea de Madrid | ES | 7 | missing | no_osm_relation |
+| Speyside Way | GB | 7 | missing | osm_relation_not_published |
+| Sörmland Trail | SE | 7 | in_as_piece |  |
+| Via Tolosana | FR | 7 | missing | osm_relation_not_published |
+| Alta Via dei Monti Liguri | IT | 6 | in_as_piece |  |
+| Bergslag Trail | SE | 6 | in_as_piece |  |
+| Camino a Fisterra | ES | 6 | missing | no_osm_relation |
+| Cesta hrdinov SNP | CZ,SK | 6 | missing | out_of_scope:over_400km |
+| Fürstensteig | LI | 6 | missing | no_osm_relation |
+| GR-236 (Spain) | ES | 6 | missing | osm_relation_not_published |
+| Ignatian Way | ES | 6 | missing | osm_relation_not_published |
+| International Mountain Trail of Friendship Eisenach–Budapest | CZ,DE,HU,PL,SK | 6 | in_as_piece |  |
+| Kerry Way | IE | 6 | missing | osm_relation_not_published |
+| Pad van Ad | BE | 6 | missing | osm_relation_not_published |
+| Path of Saint Charles | IT | 6 | missing | osm_relation_not_published |
+| Roslagsleden | SE | 6 | in_as_piece |  |
+| Rotyło | UA | 6 | missing | no_osm_relation |
+| Sentiero Italia | IT | 6 | in_as_piece |  |
+| Swiss Path | CH | 6 | in_as_piece |  |
+| Via Dinarica | AL,BA,HR,ME,SI | 6 | in_as_piece |  |
+| Vistula River Cycling Route | PL | 6 | missing | osm_relation_not_published |
+| Alpe Adria Trail | AT,IT,SI | 5 | in_as_piece |  |
+| Alpine Pass Route | CH,LI | 5 | missing | osm_relation_not_published |
+| Alta Via 2 | IT | 5 | in_as_piece |  |
+| Berliner Mauerweg | DE | 5 | missing | no_osm_relation |
+| Bohusleden | SE | 5 | in_as_piece |  |
+| Carian Trail | TR | 5 | missing | osm_relation_not_published |
+| Diana, Princess of Wales Memorial Walk | GB | 5 | missing | osm_relation_not_published |
+| Eifelsteig | BE,DE | 5 | missing | osm_relation_not_published |
+| European Route of Cistercian Abbeys | PL | 5 | missing | no_osm_relation |
+| Ferrata Tridentina | IT | 5 | missing | no_osm_relation |
+| Finnskogleden | NO,SE | 5 | in_as_piece |  |
+| GR 21 (France) | FR | 5 | missing | osm_relation_not_published |
+| GR 4 (France) | FR | 5 | missing | osm_relation_not_published |
+| GR 5 - Viewpoints Trail | ES | 5 | missing | osm_relation_not_published |
+| GR 8 (France) | FR | 5 | missing | out_of_scope:over_400km |
+| Glyndŵr's Way | GB | 5 | missing | osm_relation_not_published |
+| Great Western Greenway | IE | 5 | missing | no_osm_relation |
+| Hermannsweg | DE | 5 | in_as_piece |  |
+| Ingegerdsleden | SE | 5 | in_as_piece |  |
+| Peaks of the Balkans | AL,ME,XK | 5 | missing | osm_relation_not_published |
+| Perć Akademików | PL | 5 | missing | no_osm_relation |
+| Rheinburgenweg Trail | DE | 5 | in_as_piece |  |
+| Rothaarsteig | DE | 5 | missing | osm_relation_not_published |
+| Ruta mariana | AD,ES,FR | 5 | missing | no_osm_relation |
+| Saint Paul Trail | TR | 5 | missing | out_of_scope:over_400km |
+| Schluchtensteig | DE | 5 | missing | osm_relation_not_published |
+| Schwarzwald-Querweg Freiburg-Bodensee | DE | 5 | missing | osm_relation_not_published |
+| South Downs Way | GB | 5 | in_as_piece |  |
+| Via Ausonia | DE | 5 | missing | osm_relation_not_published |
+| Via Czechia | CZ | 5 | in_as_piece |  |
+| 66-Seen-Regionalparkroute | DE | 4 | missing | out_of_scope:over_400km |
+| Addison's Walk | GB | 4 | missing | no_osm_relation |
+| Alpine Path | DE | 4 | missing | no_osm_relation |
+| Alpine Peace Crossing | AT | 4 | missing | no_osm_relation |
+| Barrow Way | IE | 4 | missing | osm_relation_not_published |
+| Beara Way | IE | 4 | missing | osm_relation_not_published |
+| Bluestack Way | IE | 4 | missing | osm_relation_not_published |
+| Bonacossaweg | IT | 4 | missing | no_osm_relation |
+| Camino de San Salvador | ES | 4 | missing | no_osm_relation |
+| Camino de la Lengua Castellana | ES | 4 | missing | no_osm_relation |
+| Cleveland Way | GB | 4 | missing | osm_relation_not_published |
+| Dorsale del Triangolo Lariano | IT | 4 | missing | osm_relation_not_published |
+| Dr. Bronisław Turoń Trail Around Wrocław | PL | 4 | missing | osm_relation_not_published |
+| Europaweg | CH | 4 | missing | no_osm_relation |
+| Evliya Çelebi Way | TR | 4 | missing | no_osm_relation |
+| Fairfield Horseshoe | GB | 4 | missing | no_osm_relation |
+| Floris V-pad | NL | 4 | in_as_piece |  |
+| GR 1 (France) | FR | 4 | missing | out_of_scope:over_400km |
+| GR 1 (Spain) | ES | 4 | in_as_piece |  |
+| GR 128 | BE,DE,FR,NL | 4 | in_as_piece |  |
+| GR 222 | ES | 4 | missing | no_osm_relation |
+| GR 57 (Belgium) | BE | 4 | missing | osm_relation_not_published |
+| GR 72 (France) | FR | 4 | missing | osm_relation_not_published |
+| GR 9 (France) | FR | 4 | missing | out_of_scope:over_400km |
+| GR 99 | ES | 4 | in_as_piece |  |
+| GR-10 (Spain) | ES,PT | 4 | in_as_piece |  |
+| GR-101 (Spain) | ES | 4 | missing | no_osm_relation |
+| GR-8 | ES | 4 | in_as_piece |  |
+| Harzer Hexenstieg | DE | 4 | in_as_piece |  |
+| Harzer Naturistenstieg | DE | 4 | missing | osm_relation_not_published |
+| Haytor Granite Tramway | GB | 4 | missing | no_osm_relation |
+| Hindelang Via Ferrata | DE | 4 | missing | osm_relation_not_published |
+| Hus trail | CZ,DE | 4 | missing | no_osm_relation |
+| Höglandsleden | SE | 4 | missing | osm_relation_not_published |
+| International Frassati Path of Pollone | IT | 4 | missing | no_osm_relation |
+| Levada das 25 Fontes | PT | 4 | missing | no_osm_relation |
+| Levada do Caldeirão Verde | PT | 4 | missing | no_osm_relation |
+| Liberation Route Europe | BE,CZ,DE,FI,FR,GB,GR,IT,LU,NL,PL | 4 | missing | no_osm_relation |
+| Lothar Path | DE | 4 | missing | osm_relation_not_published |
+| Marskramerpad | DE,NL | 4 | in_as_piece |  |
+| Moray Coast trail | GB | 4 | missing | osm_relation_not_published |
+| Mullerthal Trail | LU | 4 | in_as_piece |  |
+| Navarrese Way | ES,FR | 4 | in_as_piece |  |
+| Noaberpad | DE,NL | 4 | in_as_piece |  |
+| Pelgrimspad | BE,NL | 4 | in_as_piece |  |
+| Pennine Bridleway | GB | 4 | missing | osm_relation_not_published |
+| Pilgerweg Loccum - Volkenroda | DE | 4 | missing | osm_relation_not_published |
+| Renchtalsteig | DE | 4 | missing | osm_relation_not_published |
+| Rheinhöhenweg Trail | DE | 4 | missing | osm_relation_not_published |
+| Rob Roy Way | GB | 4 | missing | osm_relation_not_published |
+| Rupertiweg | AT | 4 | missing | no_osm_relation |
+| Saint Kevin's Way | IE | 4 | missing | no_osm_relation |
+| Saints' Way | GB | 4 | missing | osm_relation_not_published |
+| South Wales Coast and Severn Estuary Coastal Path | GB | 4 | missing | no_osm_relation |
+| Tappeinerweg | IT | 4 | missing | osm_relation_not_published |
+| Tjustleden | SE | 4 | in_as_piece |  |
+| Tsar's Path | UA | 4 | missing | no_osm_relation |
+| Upplandsleden | SE | 4 | in_as_piece |  |
+| VF Ivano Dibona | IT | 4 | missing | osm_relation_not_published |
+| Via Algarviana | PT | 4 | missing | no_osm_relation |
+| Via Ferrata Loen | NO | 4 | missing | no_osm_relation |
+| Via Vandelli | IT | 4 | missing | no_osm_relation |
+| Via degli Dei | IT | 4 | missing | osm_relation_not_published |
+| ViaJacobi | CH | 4 | in_as_piece |  |
+| Waterliniepad | NL | 4 | missing | osm_relation_not_published |
+| Westerborkpad | NL | 4 | in_as_piece |  |
+| Zuiderzeepad | NL | 4 | missing | out_of_scope:over_400km |
+| alpine route | AT,CH,FR,IT,LI,MC,SI | 4 | missing | no_osm_relation |
+| ways of St. James in Catalonia | ES | 4 | missing | no_osm_relation |
+| 5-Seenweg Zermatt | CH | 3 | missing | no_osm_relation |
+| Alföldi Blue Trail | HU | 3 | missing | out_of_scope:over_400km |
+| Altmühltal Panorama Trail | DE | 3 | missing | osm_relation_not_published |
+| Annandale Way | GB | 3 | missing | osm_relation_not_published |
+| Arno Trail | AT | 3 | missing | out_of_scope:over_400km |
+| Ayrshire Coastal Path | GB | 3 | missing | osm_relation_not_published |
+| Ballyhoura Way | IE | 3 | missing | osm_relation_not_published |
+| Baztan way | ES,FR | 3 | missing | osm_relation_not_published |
+| Bealach na Gaeltachta, Dún na nGall | IE | 3 | in_as_piece |  |
+| Beara-Breifne Way | IE | 3 | missing | no_osm_relation |
+| Bergischer Weg | DE | 3 | missing | osm_relation_not_published |
+| Berwickshire Coastal Path | GB | 3 | missing | osm_relation_not_published |
+| Bettlerpfad | DE | 3 | missing | osm_relation_not_published |
+| Bocchette-Weg | IT | 3 | missing | no_osm_relation |
+| Botkin path | UA | 3 | missing | no_osm_relation |
+| Brontë Way | GB | 3 | missing | osm_relation_not_published |
+| Burgen- und Schlösserweg | AT,CZ | 3 | missing | no_osm_relation |
+| Burren Way | IE | 3 | missing | osm_relation_not_published |
+| Camel Trail | GB | 3 | missing | osm_relation_not_published |
+| Camino Miñoto Ribeiro | ES,PT | 3 | missing | no_osm_relation |
+| Camino de Invierno | ES | 3 | missing | osm_relation_not_published |
+| Clyde walkway | GB | 3 | missing | osm_relation_not_published |
+| Coventry Way | GB | 3 | missing | osm_relation_not_published |
+| Croagh Patrick Heritage Trail | IE | 3 | missing | osm_relation_not_published |
+| Cyril and Methodius Route | AL,AT,CZ,GR,IT,MK,PL,SK,TR | 3 | missing | osm_relation_not_published |
+| Diagonaalpad | NL | 3 | in_as_piece |  |
+| Downs Link | GB | 3 | missing | osm_relation_not_published |
+| Drenthepad | NL | 3 | missing | osm_relation_not_published |
+| East Highland Way | GB | 3 | missing | osm_relation_not_published |
+| Ederseeweg | DE | 3 | missing | osm_relation_not_published |
+| Eselsweg | DE | 3 | missing | osm_relation_not_published |
+| Ferrata delle Mèsules | IT | 3 | missing | no_osm_relation |
+| Fife Coastal Path | GB | 3 | missing | osm_relation_not_published |
+| Flyktningeruta | NO | 3 | missing | osm_relation_not_published |
+| Formartine and Buchan Way | GB | 3 | missing | osm_relation_not_published |
+| Forth to Firth Canal Pathway | GB | 3 | missing | osm_relation_not_published |
+| Friese Kustpad | NL | 3 | missing | no_osm_relation |
+| Friese Woudenpad | NL | 3 | missing | osm_relation_not_published |
+| GR 120 | FR | 3 | missing | osm_relation_not_published |
+| GR 121 | FR | 3 | missing | osm_relation_not_published |
+| GR 122 | BE,FR,NL | 3 | missing | osm_relation_not_published |
+| GR 130 | BE,FR | 3 | missing | osm_relation_not_published |
+| GR 132 | ES | 3 | missing | osm_relation_not_published |
+| GR 14 | BE,FR | 3 | missing | out_of_scope:over_400km |
+| GR 15 (Belgium) | BE,DE | 3 | missing | no_osm_relation |
+| GR 16 | BE,FR | 3 | missing | osm_relation_not_published |
+| GR 19 | ES | 3 | missing | osm_relation_not_published |
+| GR 2 (France) | FR | 3 | missing | out_of_scope:over_400km |
+| GR 2013 (France) | FR | 3 | missing | osm_relation_not_published |
+| GR 36 (France) | FR | 3 | missing | out_of_scope:over_400km |
+| GR 37 | ES | 3 | missing | osm_relation_not_published |
+| GR 37 (France) | FR | 3 | missing | out_of_scope:over_400km |
+| GR 54 (France) | FR | 3 | missing | osm_relation_not_published |
+| GR 6 (France) | FR | 3 | missing | osm_relation_not_published |
+| GR 654 (France) | BE,FR | 3 | missing | out_of_scope:over_400km |
+| GR R1 | FR | 3 | missing | no_osm_relation |
+| GR R2 | FR | 3 | missing | osm_relation_not_published |
+| GR of the Flemish Ardennes land | BE | 3 | missing | no_osm_relation |
+| GR-125 (Espagne) | ES | 3 | missing | no_osm_relation |
+| GR-130 Camino Real de la Costa | ES | 3 | missing | osm_relation_not_published |
+| GR-3 (Spain) | ES | 3 | missing | out_of_scope:over_400km |
+| GR-4 (Spain) | ES | 3 | missing | osm_relation_not_published |
+| GR-73 (Spain) | ES | 3 | missing | no_osm_relation |
+| GR-96 (Spain) | ES | 3 | missing | osm_relation_not_published |
+| Gengenbach–Alpirsbach Black Forest Trail | DE | 3 | missing | osm_relation_not_published |
+| Gobbins path | GB | 3 | missing | no_osm_relation |
+| Goethe-Erlebnisweg | DE | 3 | missing | no_osm_relation |
+| Golіtsinsky stitch and Grote | UA | 3 | missing | no_osm_relation |
+| Gower and Swansea Bay Coast Path | GB | 3 | missing | no_osm_relation |
+| Graafschapspad | NL | 3 | missing | osm_relation_not_published |
+| Grande Rota do Guadiana | PT | 3 | missing | no_osm_relation |
+| Great Trossachs Path | GB | 3 | missing | osm_relation_not_published |
+| Grin trail, Crimea | UA | 3 | missing | no_osm_relation |
+| Grote Rivierenpad | DE,NL | 3 | in_as_piece |  |
+| Grove Walk | GB | 3 | missing | no_osm_relation |
+| Grüner Pfad | DE | 3 | missing | no_osm_relation |
+| Hanzestedenpad | NL | 3 | in_as_piece |  |
+| Havelhöhenweg | DE | 3 | missing | osm_relation_not_published |
+| Heart of England Way | GB | 3 | missing | osm_relation_not_published |
+| Hebel-Wanderweg | CH,DE | 3 | missing | osm_relation_not_published |
+| Hertfordshire Way | GB | 3 | missing | osm_relation_not_published |
+| Hertogenpad | NL | 3 | missing | osm_relation_not_published |
+| HexaTrek | AD,CH,ES,FR | 3 | missing | out_of_scope:over_400km |
+| Holy Way | DE | 3 | missing | osm_relation_not_published |
+| Il sentiero Kalendskaya (Via Militaris) | UA | 3 | missing | no_osm_relation |
+| Jabikspaad | NL | 3 | missing | no_osm_relation |
+| Jean-Paul-Weg | DE | 3 | missing | osm_relation_not_published |
+| Jerusalem Way | AT,CH,DE,ES,FR,GR,HR,HU,MK,RS,TR,XK | 3 | missing | no_osm_relation |
+| Jewish Heritage Trail in Białystok | PL | 3 | missing | no_osm_relation |
+| Jurassic Way | GB | 3 | missing | osm_relation_not_published |
+| Kandelhöhenweg | DE | 3 | missing | osm_relation_not_published |
+| Kelten-Erlebnisweg | DE | 3 | missing | osm_relation_not_published |
+| Kintyre Way | GB | 3 | missing | osm_relation_not_published |
+| Kleiner Beskidenwanderweg | PL | 3 | missing | osm_relation_not_published |
+| Klingenpfad | DE | 3 | missing | osm_relation_not_published |
+| Kristiansand Boardwalk | NO | 3 | missing | no_osm_relation |
+| Kulmer Steig | CZ,DE | 3 | missing | no_osm_relation |
+| Kunstweg MenschenSpuren | DE | 3 | missing | out_of_scope:under_2km |
+| König-Ludwig-Weg | DE | 3 | missing | osm_relation_not_published |
+| Lancashire Witches Walk | GB | 3 | missing | no_osm_relation |
+| Lausitzer Schlange | DE | 3 | missing | osm_relation_not_published |
+| Linzer Steig | AT | 3 | missing | no_osm_relation |
+| London Outer Orbital Path | GB | 3 | in_as_piece |  |
+| Lubuski Szlak Wina i Miodu | DE,PL | 3 | missing | no_osm_relation |
+| Luther pilgrimage route Saxony | DE | 3 | missing | osm_relation_not_published |
+| Lyke Wake Walk | GB | 3 | missing | osm_relation_not_published |
+| Maarten van Rossumpad | NL | 3 | in_as_piece |  |
+| Maas- en Peelliniepad | NL | 3 | missing | osm_relation_not_published |
+| Mare e Monti | FR | 3 | missing | osm_relation_not_published |
+| Mediterranean Steps | GB | 3 | missing | osm_relation_not_published |
+| Mindelheim Via Ferrata | AT,DE | 3 | missing | no_osm_relation |
+| Mittelweg | DE | 3 | missing | osm_relation_not_published |
+| Moselsteig | DE | 3 | missing | osm_relation_not_published |
+| Murgleiter | DE | 3 | missing | osm_relation_not_published |
+| Natursteig Sieg | DE | 3 | missing | no_osm_relation |
+| Neckarsteig | DE | 3 | missing | osm_relation_not_published |
+| Nederlands Kustpad | NL | 3 | missing | out_of_scope:over_400km |
+| North Wales Path | GB | 3 | missing | osm_relation_not_published |
+| Overijssels Havezatenpad | NL | 3 | missing | osm_relation_not_published |
+| Oxfordshire Way | GB | 3 | missing | osm_relation_not_published |
+| PR-HU 36 | ES | 3 | missing | no_osm_relation |
+| Paian Trail | IT | 3 | missing | no_osm_relation |
+| Passadiços do Paiva | PT | 3 | missing | osm_relation_not_published |
+| Perć Przyrodników | PL | 3 | missing | no_osm_relation |
+| Phrygian Way | TR | 3 | missing | out_of_scope:over_400km |
+| Processó del Sant Enterrament de Tarragona | ES | 3 | missing | no_osm_relation |
+| Prättigauer Höhenweg | CH | 3 | missing | no_osm_relation |
+| Rantaraitti | FI | 3 | in_as_piece |  |
+| River Ayr Way | GB | 3 | missing | osm_relation_not_published |
+| Roman Canal hiking trail | DE | 3 | missing | osm_relation_not_published |
+| Roman trail Bavay-Velzeke | BE,FR | 3 | missing | no_osm_relation |
+| Romeinse Limespad | NL | 3 | missing | osm_relation_not_published |
+| Rottweil–Lahr Black Forest Trail | DE | 3 | missing | osm_relation_not_published |
+| Ruhrhöhenweg | DE | 3 | missing | osm_relation_not_published |
+| Ruta del Alba | ES | 3 | missing | no_osm_relation |
+| Sallmannshäuser Rennsteig | DE | 3 | missing | osm_relation_not_published |
+| Sanabria Way | ES | 3 | missing | osm_relation_not_published |
+| Sandlings Walk | GB | 3 | missing | osm_relation_not_published |
+| Scholtenpad | NL | 3 | in_as_piece |  |
+| Selke Valley Trail | DE | 3 | missing | no_osm_relation |
+| Sentier alpin central | AT,CH,LI | 3 | in_as_piece |  |
+| Sentier des Roches | FR | 3 | missing | no_osm_relation |
+| Sentiero della Bonifica | IT | 3 | missing | osm_relation_not_published |
+| Severn Way | GB | 3 | missing | osm_relation_not_published |
+| St Cuthbert's Way | GB | 3 | missing | osm_relation_not_published |
+| St Oswald's Way | GB | 3 | missing | osm_relation_not_published |
+| Stezka Českem | CZ | 3 | missing | out_of_scope:over_400km |
+| Stoltzekleiven | NO | 3 | missing | osm_relation_not_published |
+| Streekpad Nijmegen | DE,NL | 3 | in_as_piece |  |
+| Szlak Husarii Polskiej | PL | 3 | missing | osm_relation_not_published |
+| Szlak turystyczny im. Marii Konopnickiej „Krasnoludki są na świecie” | PL | 3 | missing | no_osm_relation |
+| Taff Trail | GB | 3 | missing | osm_relation_not_published |
+| Three Castles Path | GB | 3 | missing | osm_relation_not_published |
+| Thüringenweg | DE | 3 | missing | osm_relation_not_published |
+| Trans-Swiss Trail | CH | 3 | in_as_piece |  |
+| Translagorai | IT | 3 | missing | osm_relation_not_published |
+| Trekvogelpad | NL | 3 | in_as_piece |  |
+| Twentepad | NL | 3 | missing | osm_relation_not_published |
+| Two Moors Way | GB | 3 | missing | osm_relation_not_published |
+| Ulster Way | GB | 3 | in_as_piece |  |
+| Urwaldsteig Edersee | DE | 3 | missing | osm_relation_not_published |
+| Utrechtpad | NL | 3 | missing | osm_relation_not_published |
+| Učka Land Art Trail | HR | 3 | missing | osm_relation_not_published |
+| Vanguard Way | GB | 3 | missing | osm_relation_not_published |
+| Via Ardèche | FR | 3 | missing | no_osm_relation |
+| Viking Way | GB | 3 | in_as_piece |  |
+| Volkmarser Weg | DE | 3 | missing | osm_relation_not_published |
+| Waldskulpturenweg | DE | 3 | missing | osm_relation_not_published |
+| Walking routes in the Palatine Forest | DE | 3 | missing | no_osm_relation |
+| Way of the Lighthouses | ES | 3 | missing | osm_relation_not_published |
+| Weg zum Heiligen Stein | AT | 3 | missing | no_osm_relation |
+| Weiltalweg | DE | 3 | missing | osm_relation_not_published |
+| Werra-Burgen-Steig Hessen | DE | 3 | missing | osm_relation_not_published |
+| Westerholmstigen | FI | 3 | missing | no_osm_relation |
+| Wildnis Trail | DE | 3 | in_as_piece |  |
+| Wittekindsweg | DE | 3 | missing | osm_relation_not_published |
+| Wye Valley Walk | GB | 3 | missing | osm_relation_not_published |
+| Øhavsstien | DK | 3 | missing | osm_relation_not_published |
+| Alpenpanorama-Weg | CH | 2 | in_as_piece |  |
+| Alpine Passes Trail | CH | 2 | in_as_piece |  |
+| Cowal Way | GB | 2 | missing | osm_relation_not_published |
+| Cumbria Way | GB | 2 | missing | osm_relation_not_published |
+| Dales Way | GB | 2 | missing | osm_relation_not_published |
+| Der Hochrhöner | DE | 2 | in_as_piece |  |
+| East Munster Way | IE | 2 | missing | osm_relation_not_published |
+| GR 58 (France) | FR | 2 | missing | osm_relation_not_published |
+| Three Lochs Way | GB | 2 | missing | osm_relation_not_published |
+| Westerwald-Steig | DE | 2 | missing | osm_relation_not_published |
+| Adolf Munkel Trail, Val di Funes | IT |  | missing | no_osm_relation |
+| Aonach Eagach ridge | GB |  | missing | no_osm_relation |
+| Arthur's Seat | GB |  | missing | no_osm_relation |
+| Bachalpsee from First | CH |  | missing | no_osm_relation |
+| Ben Nevis Mountain Track | GB |  | in_as_piece |  |
+| Bohemian Switzerland Ridge Trail | CZ |  | missing | unlocated |
+| Breitachklamm | DE |  | missing | no_osm_relation |
+| Carrauntoohil | IE |  | missing | no_osm_relation |
+| Catbells | GB |  | missing | no_osm_relation |
+| Causeway Coast Way | GB |  | missing | no_osm_relation |
+| Cliffs of Moher Coastal Walk | IE |  | missing | no_osm_relation |
+| Creux du Van | CH |  | missing | no_osm_relation |
+| Croagh Patrick | IE |  | missing | no_osm_relation |
+| Cuilcagh Boardwalk | GB |  | missing | no_osm_relation |
+| Deeside Way | GB |  | missing | no_osm_relation |
+| Diamond Hill | IE |  | missing | no_osm_relation |
+| Ebenalp and Aescher cliff | CH |  | missing | no_osm_relation |
+| Fife Pilgrim Way | GB |  | missing | osm_relation_not_published |
+| Five Lakes Walk | CH |  | missing | no_osm_relation |
+| Făgăraș Ridge Traverse | RO |  | missing | no_osm_relation |
+| GR 11 Senda Pirenaica | AD,ES |  | in_as_piece |  |
+| Galdhøpiggen from Juvasshytta | NO |  | missing | no_osm_relation |
+| Giewont | PL |  | missing | no_osm_relation |
+| Grand Canal Way | IE |  | missing | osm_relation_not_published |
+| Grande Rota das Aldeias Históricas | PT |  | missing | out_of_scope:over_400km |
+| Hardergrat | CH |  | missing | no_osm_relation |
+| Hebridean Way | GB |  | missing | no_osm_relation |
+| Helvellyn via Striding Edge | GB |  | missing | no_osm_relation |
+| Hill of Witches | LT |  | missing | no_osm_relation |
+| Höllentalklamm | DE |  | missing | no_osm_relation |
+| Kallur lighthouse, Kalsoy | FO |  | missing | no_osm_relation |
+| Kjerag and Kjeragbolten | NO |  | in_as_piece |  |
+| Krimml Waterfalls trail | AT |  | missing | no_osm_relation |
+| Kullaleden | SE |  | missing | unlocated |
+| Königssee to Obersee and Röthbach waterfall | DE |  | missing | no_osm_relation |
+| Lago di Sorapis | IT |  | missing | no_osm_relation |
+| Levada das 25 Fontes | PT |  | missing | no_osm_relation |
+| Malham Cove and Gordale Scar | GB |  | missing | no_osm_relation |
+| Mam Tor and the Great Ridge | GB |  | missing | no_osm_relation |
+| Masca Gorge | ES |  | missing | no_osm_relation |
+| Matka Canyon | MK |  | missing | no_osm_relation |
+| Morskie Oko | PL |  | missing | no_osm_relation |
+| Mount Olympus summit trail from Prionia | GR |  | missing | no_osm_relation |
+| National Park Trail Hoge Kempen | BE |  | missing | unlocated |
+| Oeschinensee | CH |  | missing | no_osm_relation |
+| Ordesa Valley to Cola de Caballo | ES |  | missing | no_osm_relation |
+| Partnachklamm | DE |  | missing | no_osm_relation |
+| Peaks of the Balkans | AL,ME,XK |  | missing | osm_relation_not_published |
+| Pen y Fan from Pont ar Daf | GB |  | missing | no_osm_relation |
+| Pico do Arieiro to Pico Ruivo | PT |  | missing | no_osm_relation |
+| Ponta de São Lourenço | PT |  | missing | no_osm_relation |
+| Pravčická brána | CZ |  | missing | no_osm_relation |
+| Reinebringen | NO |  | missing | no_osm_relation |
+| Reykjadalur hot river | IS |  | missing | no_osm_relation |
+| Roque Nublo | ES |  | missing | no_osm_relation |
+| Royal Canal Way | IE |  | missing | no_osm_relation |
+| Rysy | PL,SK |  | missing | no_osm_relation |
+| Saana fell | FI |  | missing | no_osm_relation |
+| Scafell Pike from Wasdale Head | GB |  | missing | no_osm_relation |
+| Seceda ridge | IT |  | missing | no_osm_relation |
+| Sentier Blanc-Martel, Gorges du Verdon | FR |  | missing | no_osm_relation |
+| Sentier des Ocres, Roussillon | FR |  | missing | out_of_scope:under_2km |
+| Sentier des Roches, Vosges | FR |  | missing | no_osm_relation |
+| Seven Rila Lakes | BG |  | missing | no_osm_relation |
+| Sheep's Head Way | IE |  | missing | osm_relation_not_published |
+| Slieve League cliffs | IE |  | missing | no_osm_relation |
+| Snowdon by the Pyg Track | GB |  | in_as_piece |  |
+| South Leinster Way | IE |  | missing | osm_relation_not_published |
+| Suchá Belá gorge | SK |  | missing | no_osm_relation |
+| Tour de l'Oisans et des Écrins | FR |  | in_as_piece |  |
+| Tour de la Vanoise | FR |  | missing | no_osm_relation |
+| Tour of Monte Rosa | CH,IT |  | in_as_piece |  |
+| Tre Cime di Lavaredo circuit | IT |  | missing | no_osm_relation |
+| Trolltunga | NO |  | in_as_piece |  |
+| Trælanípan and Bøsdalafossur | FO |  | missing | no_osm_relation |
+| Valbona to Theth pass | AL |  | missing | no_osm_relation |
+| ViaGottardo | CH |  | in_as_piece |  |
+| Vihren | BG |  | missing | no_osm_relation |
+| Vintgar Gorge | SI |  | missing | no_osm_relation |
+| Viru Bog boardwalk | EE |  | missing | no_osm_relation |
+| Wutach Gorge | DE |  | missing | no_osm_relation |
+| Yorkshire Three Peaks | GB |  | missing | no_osm_relation |
+| Étretat cliffs | FR |  | missing | no_osm_relation |
+
+## cycling
+
+Missing famous (A) by reason: osm_relation_not_published 82, no_osm_relation 53, matcher_miss 19
+
+| Name | Countries | Sitelinks | Status | Reason |
+|---|---|---|---|---|
+| Via Claudia Augusta | AT,DE,IT | 24 | missing | no_osm_relation |
+| EuroVelo 10 – Baltic Sea Cycle Route | DE,DK,EE,FI,LT,LV,PL,SE | 16 | in_as_piece |  |
+| EuroVelo 13 – Iron Curtain Trail | AT,BG,CZ,DE,EE,FI,GR,HR,HU,LT,LV,MK,NO,PL,RO,RS,SI,SK,TR | 16 | in_as_piece |  |
+| EuroVelo 2 – Capitals Route | DE,GB,IE,NL,PL | 16 | in_as_piece |  |
+| EuroVelo 6 – The Rivers Route | AT,BG,CH,DE,FR,HR,HU,RO,RS,SK | 16 | missing | osm_relation_not_published |
+| EuroVelo 9 – Baltic-Adriatic | AT,CZ,HR,IT,PL,SI | 16 | in_as_piece |  |
+| Donauradweg | AT,DE | 15 | in_as_piece |  |
+| EuroVelo 1 – Atlantic Coast Route | ES,FR,GB,IE,NO,PT | 15 | in_as_piece |  |
+| EuroVelo 15 – Rhine Cycle Route | AT,CH,DE,FR,NL | 14 | missing | osm_relation_not_published |
+| EuroVelo 3 – The Pilgrims Route | BE,DE,DK,ES,FR,NO,SE | 13 | in_as_piece |  |
+| EuroVelo 4 – Central Europe Route | BE,CZ,DE,FR,NL,PL,UA | 13 | missing | osm_relation_not_published |
+| EuroVelo 5 – Via Romea Francigena | BE,CH,DE,FR,GB,IT,LU | 13 | in_as_piece |  |
+| EuroVelo 7 – The Sun Route | AT,CZ,DE,DK,FI,IT,MT,NO,SE | 13 | in_as_piece |  |
+| Old Salt Route | DE | 13 | missing | osm_relation_not_published |
+| EuroVelo 8 – Mediterranean Route | AL,BA,CY,ES,FR,GR,HR,IT,MC,ME,SI,TR | 12 | missing | osm_relation_not_published |
+| EuroVelo 11 – East Europe Route | EE,FI,GR,HU,LT,LV,MK,NO,PL,RS,SK | 11 | missing | osm_relation_not_published |
+| EuroVelo 12 - North Sea Cycle Route | BE,DE,DK,FR,GB,NL,NO,SE | 11 | in_as_piece |  |
+| Sultans Trail | AT,BG,HR,HU,RS,SK,TR | 11 | missing | no_osm_relation |
+| German Timber-Frame Road | DE | 10 | in_as_piece |  |
+| Green Velo – East of Poland Cycling Trail | PL | 10 | missing | osm_relation_not_published |
+| Elbe Cycle Route | CZ,DE | 8 | in_as_piece |  |
+| EuroVelo 19 – Meuse Cycle Route | BE,FR | 8 | missing | osm_relation_not_published |
+| Alpe Adria cycling route | AT,IT | 7 | in_as_piece |  |
+| Dão line | PT | 7 | missing | no_osm_relation |
+| EuroVelo 14 – Waters of Central Europe | AT,HU | 7 | missing | osm_relation_not_published |
+| Oder-Neiße-Radweg | CZ,DE | 7 | missing | osm_relation_not_published |
+| German Ferry Road | DE | 6 | missing | osm_relation_not_published |
+| Saale-Radwanderweg | DE | 6 | in_as_piece |  |
+| Vistula River Cycling Route | PL | 6 | missing | osm_relation_not_published |
+| Weser-Harz-Heide Cycle Route | DE | 6 | missing | no_osm_relation |
+| West Coast Route | DK | 6 | missing | osm_relation_not_published |
+| Berliner Mauerweg | DE | 5 | missing | no_osm_relation |
+| Bodensee-Radweg | AT | 5 | missing | matcher_miss |
+| Ciclabile della Drava | AT,IT | 5 | in_as_piece |  |
+| Danish National Cycle Route 5 | DK | 5 | missing | osm_relation_not_published |
+| Euroroute R1 | BE,DE,EE,FR,LT,LV,NL,PL | 5 | missing | osm_relation_not_published |
+| Green Cycle Routes | DK | 5 | missing | no_osm_relation |
+| Internationale Dollardroute | DE,NL | 5 | missing | osm_relation_not_published |
+| Main-Radweg | DE | 5 | missing | osm_relation_not_published |
+| RAVeL network | BE | 5 | missing | no_osm_relation |
+| Radwanderweg Donau-Bodensee | DE | 5 | missing | matcher_miss |
+| Szczecin Lagoon Cycling Path | DE,PL | 5 | missing | matcher_miss |
+| ViaRhôna | FR | 5 | in_as_piece |  |
+| Werratal-Radweg | DE | 5 | missing | no_osm_relation |
+| 100 Schlösser Route | DE | 4 | in_as_piece |  |
+| Ahr Cycleway | DE | 4 | missing | osm_relation_not_published |
+| Altmühltal-Radweg | DE | 4 | missing | osm_relation_not_published |
+| Avenue Verte | FR,GB | 4 | in_as_piece |  |
+| Beara Way | IE | 4 | missing | osm_relation_not_published |
+| Berlin-Copenhagen Cycle Route | DE | 4 | missing | osm_relation_not_published |
+| Bikeway 3 | IT | 4 | missing | osm_relation_not_published |
+| Bocklradweg | DE | 4 | missing | no_osm_relation |
+| Bodensee-Königssee-Radweg | DE | 4 | in_as_piece |  |
+| Bornholm circular route | DK | 4 | missing | no_osm_relation |
+| Ciclopista della valle dell'Adige | AT,IT | 4 | missing | no_osm_relation |
+| Cycling routes in the Czech Republic | CZ | 4 | missing | no_osm_relation |
+| EuroVelo 17 - Rhone Cycle Route | CH,FR | 4 | in_as_piece |  |
+| Flaeming-Skate | DE | 4 | missing | matcher_miss |
+| Garte Valley Railway | DE | 4 | missing | no_osm_relation |
+| Gera-Radweg | DE | 4 | missing | no_osm_relation |
+| Gurkenradweg | DE | 4 | in_as_piece |  |
+| Hessian long-distance cycle route R1 | DE | 4 | missing | matcher_miss |
+| Hessian long-distance cycle route R2 | DE | 4 | missing | matcher_miss |
+| Hessian long-distance cycle route R3 | DE | 4 | missing | matcher_miss |
+| Hessian long-distance cycle route R4 | DE | 4 | missing | matcher_miss |
+| Hessian long-distance cycle route R5 | DE | 4 | missing | osm_relation_not_published |
+| Hessian long-distance cycle route R6 | DE | 4 | missing | matcher_miss |
+| Hessian long-distance cycle route R8 | DE | 4 | in_as_piece |  |
+| Hessischer Radfernweg | DE | 4 | missing | osm_relation_not_published |
+| Kattegattleden | SE | 4 | missing | no_osm_relation |
+| Klarälvsbanan | SE | 4 | missing | osm_relation_not_published |
+| Kyll-Radweg | DE | 4 | missing | matcher_miss |
+| Lahn Valley Cycle Path | DE | 4 | missing | no_osm_relation |
+| Leine-Heide Cycle Path | DE | 4 | missing | matcher_miss |
+| Maare-Mosel-Radweg | DE | 4 | missing | osm_relation_not_published |
+| Main-Werra-Radweg | DE | 4 | missing | no_osm_relation |
+| Mergellandroute | NL | 4 | missing | no_osm_relation |
+| Mosel-Radweg | DE,FR | 4 | missing | osm_relation_not_published |
+| Nahe-Radweg | DE | 4 | missing | osm_relation_not_published |
+| Neckartalradweg | DE | 4 | missing | osm_relation_not_published |
+| NiederRheinroute | DE | 4 | missing | no_osm_relation |
+| Noordzeeroute | BE,FR,NL | 4 | missing | no_osm_relation |
+| Pilgerweg Loccum - Volkenroda | DE | 4 | missing | no_osm_relation |
+| Radfernweg Berlin–Usedom | DE | 4 | missing | no_osm_relation |
+| Radfernweg Thüringer Städtekette | DE | 4 | missing | osm_relation_not_published |
+| Rhön Cycleway | DE | 4 | missing | no_osm_relation |
+| RuhrtalRadweg | DE | 4 | missing | no_osm_relation |
+| RurUfer cycling route | BE,DE,NL | 4 | missing | osm_relation_not_published |
+| Römer-Lippe-Route | DE | 4 | missing | no_osm_relation |
+| Saar-Radweg | DE,FR | 4 | missing | osm_relation_not_published |
+| Sverigeleden | SE | 4 | in_as_piece |  |
+| Tauber Valley Cycleway | DE | 4 | missing | no_osm_relation |
+| Tauern Cycle Path | AT,DE | 4 | in_as_piece |  |
+| Voie Bleue | FR | 4 | in_as_piece |  |
+| Aischtal cycling route | DE | 3 | missing | osm_relation_not_published |
+| Aller-Radweg | DE | 3 | in_as_piece |  |
+| Altmark circuit | DE | 3 | missing | osm_relation_not_published |
+| Balatoni kerékpárút | HU | 3 | missing | osm_relation_not_published |
+| Baltic Cycle Route | DK | 3 | missing | osm_relation_not_published |
+| Beara-Breifne Way | IE | 3 | missing | no_osm_relation |
+| Bicycle Trail of the former Borderland | PL | 3 | missing | osm_relation_not_published |
+| Bike route 1 (Switzerland) | CH | 3 | in_as_piece |  |
+| Blue Velo | PL | 3 | missing | osm_relation_not_published |
+| Cycling route Berlin–Leipzig | DE | 3 | missing | osm_relation_not_published |
+| Cyklistická trasa Vlčí Důl | CZ | 3 | missing | no_osm_relation |
+| D-Route 9 | DE | 3 | in_as_piece |  |
+| Dahme-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Den Grønne Sti | DK | 3 | missing | osm_relation_not_published |
+| Deutsche Fußball Route NRW | DE | 3 | missing | osm_relation_not_published |
+| Deutscher Limes-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Elster-Radweg | CZ,DE | 3 | missing | osm_relation_not_published |
+| Emsradweg | DE | 3 | missing | osm_relation_not_published |
+| Ennsradweg | AT | 3 | in_as_piece |  |
+| Esbjerg - Copenhagen | DK | 3 | missing | osm_relation_not_published |
+| EuroVelo 10 in Germany | DE | 3 | missing | no_osm_relation |
+| Fürst-Pückler-Weg | DE | 3 | missing | no_osm_relation |
+| Gaubahn-Radweg | DE | 3 | missing | osm_relation_not_published |
+| German Unity Cycle Route | DE | 3 | in_as_piece |  |
+| Glan-Blies Way | DE,FR | 3 | missing | osm_relation_not_published |
+| Greenway Krakow-Moravia-Vienna | AT,CZ,PL | 3 | in_as_piece |  |
+| Greenway Oder River Trail | PL | 3 | in_as_piece |  |
+| Greenways Praha-Wien | AT,CZ | 3 | missing | no_osm_relation |
+| Harzrundweg | DE | 3 | missing | no_osm_relation |
+| Heidelberg-Schwarzwald-Bodensee-Weg | DE | 3 | missing | osm_relation_not_published |
+| Helsingør - Gedser | DK | 3 | missing | osm_relation_not_published |
+| Herkules-Wartburg-Radweg | DE | 3 | missing | matcher_miss |
+| Hessian long-distance cycle route R7 | DE | 3 | missing | osm_relation_not_published |
+| Hessian long-distance cycle route R9 | DE | 3 | missing | osm_relation_not_published |
+| Hiwwel-Route | DE | 3 | missing | no_osm_relation |
+| Hofjagdweg | DE | 3 | missing | osm_relation_not_published |
+| Information plaques on Following Švejk Hiking Trail | AT,CZ,HU,PL,SK,UA | 3 | missing | matcher_miss |
+| Kaiser-Route | DE | 3 | missing | matcher_miss |
+| Kulturringen | DK | 3 | missing | osm_relation_not_published |
+| LF Kustroute | BE,NL | 3 | missing | osm_relation_not_published |
+| La Régalante | FR | 3 | missing | no_osm_relation |
+| La Seine à Vélo | FR | 3 | missing | no_osm_relation |
+| Mittelland-Route | CH | 3 | in_as_piece |  |
+| Moldaufietsroute | CZ | 3 | missing | no_osm_relation |
+| Mulderadweg | DE | 3 | missing | osm_relation_not_published |
+| Mönchsweg | DE | 3 | missing | no_osm_relation |
+| National Cycle Route 8 | GB | 3 | missing | matcher_miss |
+| PC1 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC10 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC11 Cycle Route | LU | 3 | missing | no_osm_relation |
+| PC12 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC14 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC15 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC17 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC18 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC2 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC20 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC21 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC22 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC23 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC3 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC4 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC5 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC6 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC8 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| PC9 Cycle Route | LU | 3 | missing | osm_relation_not_published |
+| Paneuropa-Radweg | CZ,DE,FR | 3 | missing | no_osm_relation |
+| Pennine Cycleway | GB | 3 | missing | matcher_miss |
+| Pierścień Rowerowy dookoła Poznania | PL | 3 | missing | no_osm_relation |
+| Queich Valley Cycleway | DE | 3 | missing | osm_relation_not_published |
+| Radfernweg Hamburg-Bremen | DE | 3 | missing | no_osm_relation |
+| Radrunde Allgäu | DE | 3 | missing | osm_relation_not_published |
+| Radweg Berlin–Hameln | DE | 3 | in_as_piece |  |
+| Ruhr-Sieg-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Saar-Mosel-Main (D5) | DE,FR | 3 | in_as_piece |  |
+| Sauertalradweg | DE,LU | 3 | missing | no_osm_relation |
+| Schwarze-Elster-Radweg | DE | 3 | missing | no_osm_relation |
+| Sea to Sea Cycle Route | GB | 3 | missing | no_osm_relation |
+| Sydostleden | SE | 3 | in_as_piece |  |
+| Szlak "Zielona Odra" | PL | 3 | missing | matcher_miss |
+| Søndervig - København | DK | 3 | missing | osm_relation_not_published |
+| Südschwarzwald-Radweg | CH,DE | 3 | missing | no_osm_relation |
+| The Limfjord route | DK | 3 | missing | osm_relation_not_published |
+| Ulstertal-Radweg | DE | 3 | missing | matcher_miss |
+| Unstrut-Radweg | DE | 3 | missing | no_osm_relation |
+| Unstrut-Werra-Radweg | DE | 3 | missing | osm_relation_not_published |
+| Veloroute SaarLorLux | DE,FR,LU | 3 | missing | osm_relation_not_published |
+| Vogelsberger Südbahnradweg | DE | 3 | missing | no_osm_relation |
+| Vélo Francette | FR | 3 | missing | no_osm_relation |
+| Véloroute du Calavon | FR | 3 | missing | no_osm_relation |
+| Waddenzeeroute | NL | 3 | missing | no_osm_relation |
+| Weiltalweg | DE | 3 | missing | osm_relation_not_published |
+| Westphalian Mill Route | DE | 3 | missing | matcher_miss |
+| cycleway of the Sun | IT | 3 | missing | no_osm_relation |
+| cycling in Gdańsk | PL | 3 | missing | no_osm_relation |
+| La Loire à vélo | FR | 2 | missing | no_osm_relation |
+
+## beaches
+
+Missing famous (A) by reason: dropped_at_export 26, matcher_miss 10, not_in_catalogue 9
+
+| Name | Countries | Sitelinks | Status | Reason |
+|---|---|---|---|---|
+| Playa del Inglés | ES | 26 | missing | dropped_at_export |
+| Calanques de Piana | FR | 24 | missing | dropped_at_export |
+| Durdle Door | GB | 24 | missing | matcher_miss |
+| Leptokarya | GR | 20 | missing | dropped_at_export |
+| Playa de Gulpiyuri | ES | 16 | missing | dropped_at_export |
+| As Catedrais beach | ES | 15 | missing | dropped_at_export |
+| Velika Plaža | ME | 13 | missing | dropped_at_export |
+| Chesil Beach | GB | 12 | missing | dropped_at_export |
+| Barceloneta Beach | ES | 11 | missing | matcher_miss |
+| Bolata | BG | 10 | missing | dropped_at_export |
+| Bedruthan Steps | GB | 9 | missing | dropped_at_export |
+| Bellevue Beach | DK | 9 | missing | dropped_at_export |
+| Dueodde | DK | 9 | missing | dropped_at_export |
+| Ensenada de los Galápagos Beach | ES | 9 | missing | matcher_miss |
+| Playa El Tarajal | ES | 9 | missing | dropped_at_export |
+| Ftelia | GR | 8 | missing | dropped_at_export |
+| Hietaniemi beach | FI | 8 | missing | matcher_miss |
+| Nugal Beach | HR | 8 | missing | dropped_at_export |
+| Platja de la Nova Mar Bella | ES | 8 | missing | matcher_miss |
+| Playa de la Caleta | ES | 8 | missing | dropped_at_export |
+| San Lorenzo Beach | ES | 8 | missing | dropped_at_export |
+| Štrand | RS | 8 | missing | dropped_at_export |
+| Keem Bay | IE | 7 | missing | not_in_catalogue |
+| Praia do Burgau | PT | 7 | missing | matcher_miss |
+| Red Wharf Bay | GB | 7 | missing | not_in_catalogue |
+| Cala Burantino | IT | 6 | missing | not_in_catalogue |
+| Gurteen Beach | IE | 6 | missing | not_in_catalogue |
+| Lido | RS | 6 | missing | not_in_catalogue |
+| Moesgård Beach | DK | 6 | missing | dropped_at_export |
+| Praia da Arrifana | PT | 6 | missing | dropped_at_export |
+| Sahara Beach | HR | 6 | missing | dropped_at_export |
+| Strandbad Wannsee | DE | 6 | missing | dropped_at_export |
+| Svanemølle Beach | DK | 6 | missing | dropped_at_export |
+| Agios Ioannis Peristeron | GR | 5 | missing | dropped_at_export |
+| Kakome Bay | AL | 5 | missing | not_in_catalogue |
+| Praia Formosa | PT | 5 | missing | matcher_miss |
+| Praia da Adraga | PT | 5 | missing | matcher_miss |
+| Praia de Vale Figueira | PT | 5 | missing | dropped_at_export |
+| Santo André Beach | PT | 5 | missing | dropped_at_export |
+| Vault Beach | GB | 5 | missing | dropped_at_export |
+| Rhossili Bay | GB | 3 | missing | not_in_catalogue |
+| Cala Macarella | ES |  | missing | matcher_miss |
+| Dune of Pilat | FR |  | missing | not_in_catalogue |
+| Scala dei Turchi | IT |  | missing | not_in_catalogue |
+| Ses Illetes | ES |  | missing | matcher_miss |
+
+## lakes
+
+Missing famous (A) by reason: dropped_at_export 77, not_enriched 5, not_in_catalogue 2
+
+| Name | Countries | Sitelinks | Status | Reason |
+|---|---|---|---|---|
+| Lake Garda | IT | 88 | missing | dropped_at_export |
+| Plitvice Lakes | HR | 71 | missing | not_in_catalogue |
+| Mälaren | SE | 64 | missing | dropped_at_export |
+| Lake Zurich | CH | 63 | missing | dropped_at_export |
+| Chiemsee | DE | 58 | missing | dropped_at_export |
+| Lake Ülemiste | EE | 47 | missing | dropped_at_export |
+| Mjøsa | NO | 45 | missing | dropped_at_export |
+| Lake Thun | CH | 44 | missing | dropped_at_export |
+| Hornindalsvatnet | NO | 39 | missing | dropped_at_export |
+| Jökulsárlón | IS | 37 | missing | dropped_at_export |
+| Lough Corrib | IE | 37 | missing | dropped_at_export |
+| Walensee | CH | 35 | missing | dropped_at_export |
+| Kaali crater | EE | 34 | missing | dropped_at_export |
+| Millstätter See | AT | 34 | missing | dropped_at_export |
+| Siljan | SE | 34 | missing | dropped_at_export |
+| Tjörnin | IS | 33 | missing | dropped_at_export |
+| Hornavan | SE | 32 | missing | dropped_at_export |
+| Þórisvatn | IS | 32 | missing | dropped_at_export |
+| Lake Bodom | FI | 30 | missing | dropped_at_export |
+| Lough Derg | IE | 30 | missing | dropped_at_export |
+| Narva Reservoir | EE | 30 | missing | dropped_at_export |
+| Saadjärv | EE | 30 | missing | dropped_at_export |
+| Veisjärv | EE | 30 | missing | dropped_at_export |
+| Lake Vagula | EE | 29 | missing | dropped_at_export |
+| Loch Morar | GB | 29 | missing | dropped_at_export |
+| Randsfjorden | NO | 29 | missing | dropped_at_export |
+| Bolmen | SE | 28 | missing | dropped_at_export |
+| Karujärv | EE | 28 | missing | dropped_at_export |
+| Lake Cerknica | SI | 27 | missing | dropped_at_export |
+| Lake Pamvotida | GR | 27 | missing | dropped_at_export |
+| Loch Awe | GB | 27 | missing | dropped_at_export |
+| Mullutu-Suurlaht | EE | 27 | missing | dropped_at_export |
+| Røssvatnet | NO | 27 | missing | dropped_at_export |
+| Lagarfljót | IS | 26 | missing | dropped_at_export |
+| Lake Volvi | GR | 26 | missing | dropped_at_export |
+| Loch Maree | GB | 26 | missing | dropped_at_export |
+| Steinhuder Meer | DE | 26 | missing | dropped_at_export |
+| Uddjaure | SE | 26 | missing | dropped_at_export |
+| Greifensee | CH | 25 | missing | dropped_at_export |
+| Hóp | IS | 25 | missing | dropped_at_export |
+| Kallavesi | FI | 25 | missing | dropped_at_export |
+| Lake Koroneia | GR | 25 | missing | dropped_at_export |
+| Müggelsee | DE | 25 | missing | dropped_at_export |
+| Ancylus Lake | FI,SE | 24 | missing | not_in_catalogue |
+| Apavatn | IS | 24 | missing | dropped_at_export |
+| Großer Wannsee | DE | 24 | missing | dropped_at_export |
+| Kerið | IS | 24 | missing | dropped_at_export |
+| Kleifarvatn | IS | 24 | missing | dropped_at_export |
+| Lake Burtnieks | LV | 24 | missing | dropped_at_export |
+| Lake Harku | EE | 24 | missing | dropped_at_export |
+| Lake Toplitz | AT | 24 | missing | dropped_at_export |
+| Loch Lochy | GB | 24 | missing | not_enriched |
+| Lough Allen | IE | 24 | missing | dropped_at_export |
+| Mavrovo Lake | MK | 24 | missing | dropped_at_export |
+| Palić Lake | RS | 24 | missing | dropped_at_export |
+| Faaker See | AT | 23 | missing | dropped_at_export |
+| Langisjór | IS | 23 | missing | dropped_at_export |
+| Tinnsjå | NO | 23 | missing | dropped_at_export |
+| Kummerower See | DE | 22 | missing | not_enriched |
+| Lake Burgas | BG | 22 | missing | dropped_at_export |
+| Lake Ermistu | EE | 22 | missing | dropped_at_export |
+| Lake Varna | BG | 22 | missing | dropped_at_export |
+| Red Lake | HR | 22 | missing | dropped_at_export |
+| Sultartangalón | IS | 22 | missing | dropped_at_export |
+| Hvítárvatn | IS | 21 | missing | dropped_at_export |
+| Laugarvatn | IS | 21 | missing | dropped_at_export |
+| Loch Ericht | GB | 21 | missing | not_enriched |
+| Loch Katrine | GB | 21 | missing | dropped_at_export |
+| Loch Oich | GB | 21 | missing | not_enriched |
+| Loch Shin | GB | 21 | missing | not_enriched |
+| Titisee | DE | 21 | missing | dropped_at_export |
+| Zemplínska šírava | SK | 21 | missing | dropped_at_export |
+| Arresø | DK | 20 | missing | dropped_at_export |
+| Blöndulón | IS | 20 | missing | dropped_at_export |
+| Fjallavatn | FO | 20 | missing | dropped_at_export |
+| Jablaničko Lake | BA | 20 | missing | dropped_at_export |
+| Lake Esrum | DK | 20 | missing | dropped_at_export |
+| Lauwersmeer | NL | 20 | missing | dropped_at_export |
+| Lough Mask | IE | 20 | missing | dropped_at_export |
+| Plauer See | DE | 20 | missing | dropped_at_export |
+| Puula | FI | 20 | missing | dropped_at_export |
+| Schaalsee | DE | 20 | missing | dropped_at_export |
+| Sigöldulón | IS | 20 | missing | dropped_at_export |
+| Vesijärvi | FI | 20 | missing | dropped_at_export |
+
+## mountains
+
+Missing famous (A) by reason: dropped_at_export 37, not_in_catalogue 18, not_enriched 4
+
+| Name | Countries | Sitelinks | Status | Reason |
+|---|---|---|---|---|
+| Stromboli | IT | 85 | missing | not_in_catalogue |
+| Laki | IS | 52 | missing | dropped_at_export |
+| Katla | IS | 48 | missing | dropped_at_export |
+| Monte San Giorgio | CH | 47 | missing | not_in_catalogue |
+| Durmitor | ME | 45 | missing | not_in_catalogue |
+| Monte Cassino | IT | 43 | missing | not_in_catalogue |
+| Mount Pico | PT | 42 | missing | dropped_at_export |
+| Bárðarbunga | IS | 40 | missing | dropped_at_export |
+| Weisshorn | CH | 40 | missing | dropped_at_export |
+| Corno Grande | IT | 38 | missing | dropped_at_export |
+| Vogelsberg | DE | 38 | missing | not_in_catalogue |
+| Hochwanner | AT,DE | 33 | missing | not_in_catalogue |
+| Schreckhorn | CH | 32 | missing | dropped_at_export |
+| Tre Cime di Lavaredo | IT | 32 | missing | not_in_catalogue |
+| Santorini caldera | GR | 31 | missing | dropped_at_export |
+| Solfatara | IT | 31 | missing | dropped_at_export |
+| Rimpfischhorn | CH | 30 | missing | dropped_at_export |
+| Dirfi | GR | 19 | missing | dropped_at_export |
+| Parângu Mare | RO | 19 | missing | dropped_at_export |
+| Patscherkofel | AT | 18 | missing | not_in_catalogue |
+| Velika Rudoka | MK,XK | 18 | missing | dropped_at_export |
+| Càrn Eige | GB | 17 | missing | dropped_at_export |
+| Grand Muveran | CH | 17 | missing | not_in_catalogue |
+| Piz Calderas | CH | 17 | missing | dropped_at_export |
+| Grimming | AT | 15 | missing | not_in_catalogue |
+| Le Catogne | CH | 15 | missing | not_in_catalogue |
+| Monte Bondone | IT | 15 | missing | dropped_at_export |
+| Mount Limbara | IT | 14 | missing | dropped_at_export |
+| Pointe de Charbonnel | FR | 14 | missing | dropped_at_export |
+| Stätzerhorn | CH | 14 | missing | not_in_catalogue |
+| Calanda | CH | 13 | missing | not_in_catalogue |
+| Dreischusterspitze | IT | 12 | missing | dropped_at_export |
+| Hohe Gaisl | IT | 12 | missing | dropped_at_export |
+| Pico da Vara | PT | 12 | missing | dropped_at_export |
+| Berchtesgadener Hochthron | DE | 11 | missing | not_in_catalogue |
+| Großer Pyhrgas | AT | 11 | missing | dropped_at_export |
+| Guffert | AT | 11 | missing | not_in_catalogue |
+| Pic de Rochebrune | FR | 11 | missing | dropped_at_export |
+| Blyznytsya | UA | 10 | missing | dropped_at_export |
+| Mont Colombier | FR | 10 | missing | dropped_at_export |
+| Monte Cadria | IT | 10 | missing | dropped_at_export |
+| Store Blåmann | NO | 10 | missing | dropped_at_export |
+| Store Lenangstind | NO | 10 | missing | dropped_at_export |
+| Zwiesel | DE | 10 | missing | dropped_at_export |
+| Großer Traithen | DE | 9 | missing | not_in_catalogue |
+| Kellenspitze | AT | 9 | missing | dropped_at_export |
+| Kreuzspitze | DE | 9 | missing | not_in_catalogue |
+| Kvitegga | NO | 9 | missing | dropped_at_export |
+| Monte Caplone | IT | 9 | missing | not_enriched |
+| Monte Sirente | IT | 9 | missing | not_enriched |
+| Paganella | IT | 9 | missing | not_enriched |
+| Skårasalen | NO | 9 | missing | dropped_at_export |
+| Kolåstinden | NO | 8 | missing | dropped_at_export |
+| Monte San Vicino | IT | 8 | missing | not_enriched |
+| Njunis | NO | 8 | missing | dropped_at_export |
+| Seilandstuva | NO | 8 | missing | dropped_at_export |
+| Soltindan | NO | 8 | missing | dropped_at_export |
+| Storsteinsfjellet | NO | 8 | missing | not_in_catalogue |
+| Trolla | NO | 8 | missing | dropped_at_export |

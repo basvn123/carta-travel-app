@@ -48,7 +48,9 @@ export function useExploreMapView({ isActive }) {
     }
   }, [viewportMode, isActive, view, pins]);
   const onMapViewport = React.useCallback((b, zoom) => {
-    setBbox(b);
+    // G12 map view: the list beside the map follows as a transition, in
+    // slices, so a pan that just ended is never held up by it.
+    React.startTransition(() => setBbox(b));
     if (viewportMode && zoom >= DETAIL_FROM) catalogue.ensureViewport(b).catch(() => {});
   }, [viewportMode]);
   const onMapNeedDetail = React.useCallback((id) => {

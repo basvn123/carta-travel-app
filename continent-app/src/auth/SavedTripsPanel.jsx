@@ -7,13 +7,12 @@ import {
   loadTripExtras, persistTripExtras, hasTripExtras,
 } from '../planner/dayPlanStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
-import { CalendarIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
+import { CalendarIcon, CameraIcon, RouteIcon, LinkIcon, PencilIcon, ReceiptIcon } from '../components/Icons.jsx';
 import { shareReceiptOn } from '../lib/share/flag.js';
 // T1175: the receipt sheet loads on first use; it is behind a flag.
 const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
 // T1215 (T1152-g): the taste card, its profile code and the taxonomy map load
 // with the Your Europe tab, not with My trips.
-const TasteChips = lazy(() => import('./mytrips/TasteChips.jsx').then((m) => ({ default: m.TasteChips })));
 import { Button, Chip } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
@@ -23,7 +22,7 @@ import {
   updatePastTripInAccount, updatePastTripOnDevice,
 } from './pastTrip.js';
 import {
-  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, spendPerPerson, emptyMemory, SPEND_CATS,
+  loadMemory, saveMemory, clearMemory, coverPhoto, memoryPoints, spendSummary, spendPerPerson, tripSpendPerPerson, emptyMemory, SPEND_CATS,
 } from './pastTripMemory.js';
 import { COUNTRY_ISO2 } from '../components/CountryFlag.jsx';
 import { crewLabel, crewInitials, namedCrew, readCrew, writeCrew, MAX_CREW } from './tripCrew.js';
@@ -39,6 +38,11 @@ import { activeLocale } from '../lib/localeState.js';
 import { useFavoriteItems } from '../hooks/useFavoriteItems.js';
 import { parseFavKey } from '../lib/favorites.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+import { seedWatch } from '../lib/watchStore.js';
+import {
+  ONE_PLANS, STATEMENT_PLANS, FIRST_PAST_PLANS, FIRST_PAST_MEMS, YEARS_PLANS, YEARS_MEMS, LOTS_FAV_KEYS, LOTS_WATCH,
+  SPEND_PLANS, spendExtras,
+} from './mytrips/savedMocks.js';
 import { DayPrice } from '../browse/ExploreCards.jsx';
 import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
@@ -49,7 +53,7 @@ import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
   nightsBetween, tripFigure, visitedRecord, yearOf, deviceTripAsPlan, readinessSteps, tripStops,
-  isHappening, tripToday, europeMilestones, europeMoney, planBedNudge,
+  isHappening, tripToday, europeMilestones, planBedNudge,
 } from '../lib/myTrips.js';
 import { useVisitedCountries, toggleVisitedCountry } from '../lib/visitedCountries.js';
 import { UNDO_MS, UndoToast, CrewBar, TripPrice, whenText } from './mytrips/parts.jsx';
@@ -57,7 +61,15 @@ import { SiteFooter } from '../components/SiteFooter.jsx';
 import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips/MyTripsTabs.jsx';
 import { BAND_CUTOFFS } from '../lib/rating.js';
 import { YourEurope } from './mytrips/YourEurope.jsx';
-import { YearRecap } from './mytrips/YearRecap.jsx';
+import { AtlasSlot } from './mytrips/atlas/AtlasSlot.jsx';
+import { useEuropeMap, NAME_OF } from './mytrips/atlas/plateData.js';
+import { tripsLayer, europeLayer } from './mytrips/atlas/layers.js';
+import { exportYearCard } from './mytrips/YearRecap.jsx';
+import { YearStudio } from './mytrips/YearStudio.jsx';
+import { defaultStudio, yearCardModel } from './mytrips/yearCardModel.js';
+import { CountrySheet } from './mytrips/EuropeParts.jsx';
+import { tripYear, yearCard } from '../lib/atlasFacts.js';
+import { publishTasteInputs } from './mytrips/tasteInputs.js';
 import { AddBookingSheet } from './mytrips/AddBookingSheet.jsx';
 import { SavedTab } from './mytrips/SavedTab.jsx';
 import { useSharedLists, MOCK_FRIENDS } from './sharedLists.js';
@@ -65,6 +77,10 @@ import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
+import { usePastBeside } from './mytrips/atlas/pastBeside.js';
+import { UnitSheet, UnitButton, RateTrip, tripInUnit, unitWords } from './mytrips/TripParts.jsx';
+import { shareRouteImage } from './mytrips/atlas/routeImage.js';
+import { project } from './mytrips/atlas/project.js';
 
 /**
  * My trips (T434, rebuilt as Concept A by T923 to T927). One header with
@@ -83,6 +99,29 @@ import { TodayCard } from './mytrips/TodayCard.jsx';
 // the account-only shapes render in headless checks. Never on in production.
 const SAVED_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('savedmock');
+// G12: ?savedmock=<variant> picks a fixture state (./mytrips/savedMocks.js);
+// a bare ?savedmock is the default set.
+const MOCK_VARIANT = SAVED_MOCK ? (new URLSearchParams(window.location.search).get('savedmock') || '') : null;
+// Nothing of the seam's own: signed out, or signed in with nothing at all.
+const MOCK_BARE = ['guest', 'empty'].includes(MOCK_VARIANT);
+// The variants built on the default trips (and their stored extras).
+const MOCK_DEFAULT_TRIPS = ['', 'next', '1', 'lots', 'nopast', 'drafts'].includes(MOCK_VARIANT);
+// The statement of reasons (DSA) has its own variant, one trip to come with
+// it, so the busy variants stay about the lists (G12 round 4).
+const MOCK_WITH_STATEMENT = MOCK_VARIANT === 'statement';
+// Each variant starts from a clean device: the seam writes trip extras,
+// memories, lists and watched prices into localStorage, and a variant must
+// not show another's. Cleared once when the variant changes (dev only).
+if (SAVED_MOCK) {
+  try {
+    const MARK = 'carta.savedmock.variant';
+    if (localStorage.getItem(MARK) !== MOCK_VARIANT) {
+      const keep = new Set(['carta.savedTripsTab', 'continent.homeSeen.v1']);
+      Object.keys(localStorage).filter((k) => !keep.has(k)).forEach((k) => localStorage.removeItem(k));
+      localStorage.setItem(MARK, MOCK_VARIANT);
+    }
+  } catch { /* private mode */ }
+}
 const MOCK_FAVS = [
   { id: 'mf1', destination_id: 'LIS', city: 'Lisbon', country: 'Portugal', depart_date: addDaysIso(34), return_date: addDaysIso(38), created_at: addDaysIso(-12) },
   { id: 'mf2', destination_id: 'OPO', city: 'Porto', country: 'Portugal', depart_date: addDaysIso(62), return_date: addDaysIso(65), created_at: addDaysIso(-30) },
@@ -109,7 +148,7 @@ const MOCK_FRIEND_TRIPS = [
   { ownerId: 'u-jonas', ownerHandle: 'jonas', ownerName: 'Jonas Peeters', tripPlanId: 'ft3', label: 'A week in Rome', startDate: addDaysIso(-150), endDate: addDaysIso(-143), cities: ['Rome'], countries: ['Italy'], destinationIds: ['FCO'] },
 ];
 const MOCK_STATEMENTS = [
-  { id: 1, plan_id: 'mp1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false, ground: 'terms', ground_ref: 'c6' },
+  { id: 1, plan_id: 'ms1', plan_label: 'Lisbon and Porto', source: 'notice', notice_count: 2, facts: 'The guide copies a chapter of a published travel book word for word.', automated: false, created_at: addDaysIso(-3), contest_until: addDaysIso(180), complaint_status: 'none', complaint_note: null, reinstated: false, ground: 'terms', ground_ref: 'c6' },
 ];
 // Stops carry their own windows so the seam can price the trips the way a
 // real account's rows are priced (choices on the first stop, T434).
@@ -134,8 +173,26 @@ const MOCK_PLANS = [
 
 /** The seam's own trip state, written once into this browser so the cards
  *  read it through the same stores a real trip uses (dev only). */
+// The plans each variant starts with.
+function mockPlansFor(v) {
+  if (v === 'one') return ONE_PLANS;
+  if (v === 'statement') return STATEMENT_PLANS;
+  if (v === 'firstpast') return FIRST_PAST_PLANS;
+  if (v === 'years') return YEARS_PLANS;
+  if (v === 'spend') return SPEND_PLANS;
+  if (v === 'drafts') return MOCK_PLANS.filter((p) => !p.start_date);
+  if (v === 'nopast') return MOCK_PLANS.filter((p) => !p.end_date || p.end_date >= addDaysIso(0));
+  if (v === 'next') return MOCK_PLANS.filter((p) => p.id !== 'mp6');
+  return MOCK_DEFAULT_TRIPS ? MOCK_PLANS : [];
+}
+
 function seedMock() {
   if (!SAVED_MOCK) return;
+  const ownMems = MOCK_VARIANT === 'firstpast' ? FIRST_PAST_MEMS : MOCK_VARIANT === 'years' ? YEARS_MEMS : null;
+  if (ownMems) Object.entries(ownMems).forEach(([id, m]) => { if (!loadMemory(id)) saveMemory(id, { ...emptyMemory(), ...m }, {}); });
+  if (MOCK_VARIANT === 'lots') seedWatch(LOTS_WATCH);
+  if (MOCK_VARIANT === 'spend' && !hasTripExtras('msp1')) persistTripExtras('msp1', { ...loadTripExtras('msp1'), ...spendExtras() });
+  if (!MOCK_DEFAULT_TRIPS) return;
   if (!hasTripExtras('mp6')) {
     const at = (h) => { const d = new Date(); d.setHours(h, 0, 0, 0); return `${d.getTime()}`; };
     persistTripExtras('mp6', {
@@ -221,6 +278,9 @@ export function SavedTripsPanel({
   onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null,
   // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
   startWithPast = false, onPastStarted = null,
+  // G12 Phase C: the "Prijzen tonen" setting the trip plate and the rows
+  // follow, and its writer (App's setChoices, through lib/price/priceView).
+  choices = null, setChoices = null,
 }) {
   const { user, configured } = useAuth();
   const { t, lang } = useI18n();
@@ -234,18 +294,22 @@ export function SavedTripsPanel({
   const [tab, setTab] = useState(readTab);
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
+  // G12 atlas: the tab's one authored moment plays after a tab change, never
+  // at first paint; the tab bodies mount fresh on each change and read this.
+  const [drawnTab, setDrawnTab] = useState(tab);
+  const [tabDraw, setTabDraw] = useState(false);
+  if (drawnTab !== tab) { setDrawnTab(tab); setTabDraw(true); }
 
-  const authed = !!user || SAVED_MOCK;
-  const [trips, setTrips] = useState(SAVED_MOCK ? MOCK_FAVS : []);
+  const authed = !!user || (SAVED_MOCK && MOCK_VARIANT !== 'guest');
+  const [trips, setTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FAVS : []);
   const [loading, setLoading] = useState(!!user && !SAVED_MOCK);
   // ?savedmock=next leaves out the trip happening today, so the seam shows
   // the next trip's focal card instead of Today.
-  const [tripPlans, setTripPlans] = useState(() => (!SAVED_MOCK ? []
-    : new URLSearchParams(window.location.search).get('savedmock') === 'next' ? MOCK_PLANS.filter((p) => p.id !== 'mp6') : MOCK_PLANS));
-  const [tripPlansLoading, setTripPlansLoading] = useState(!!user && !SAVED_MOCK);
+  const [tripPlans, setTripPlans] = useState(() => (!SAVED_MOCK || MOCK_VARIANT === 'loading' ? [] : mockPlansFor(MOCK_VARIANT)));
+  const [tripPlansLoading, setTripPlansLoading] = useState((!!user && !SAVED_MOCK) || MOCK_VARIANT === 'loading');
   // A list that cannot be read is not a traveller with no trips (020 lesson).
-  const [tripPlansError, setTripPlansError] = useState('');
-  const [statements, setStatements] = useState(SAVED_MOCK ? MOCK_STATEMENTS : []);
+  const [tripPlansError, setTripPlansError] = useState(() => (MOCK_VARIANT === 'error' ? t('saved.errLoad') : ''));
+  const [statements, setStatements] = useState(SAVED_MOCK && MOCK_WITH_STATEMENT ? MOCK_STATEMENTS : []);
   const [dayPlans, setDayPlans] = useState(() => loadStandalonePlans());
   // The one trip kept on this device without an account (T500, carta.
   // deviceTrip.v1), read once per opening of My trips (T503, owner T500-a).
@@ -283,7 +347,7 @@ export function SavedTripsPanel({
     fetchMyStatements().then(setStatements).catch((e) => console.error('statements of reasons failed to load', e));
   };
   useEffect(() => {
-    if (!user || SAVED_MOCK) { setLoading(false); setTripPlansLoading(false); return; }
+    if (!user || SAVED_MOCK) { setLoading(false); setTripPlansLoading(MOCK_VARIANT === 'loading'); return; }
     loadTrips();
     loadTripPlans();
     loadStatements();
@@ -303,10 +367,29 @@ export function SavedTripsPanel({
   const [memTick, setMemTick] = useState(0);
   const [openMemory, setOpenMemory] = useState('');
   const [openShare, setOpenShare] = useState('');
+  // G12 Phase C: the unit sheet, example mode (never saved, never counted)
+  // and the route a hovered or focused row lifts on the map.
+  const [unitOpen, setUnitOpen] = useState(false);
+  // G12 Phase D: the slot's host for Saved's live map.
+  const [savedMapEl, setSavedMapEl] = useState(null);
+  // G12 atlas: Your Europe's past trips under the map (1100 x 720 and up).
+  const [europePastEl, setEuropePastEl] = useState(null);
+  const [euLift, setEuLift] = useState('');
+  const pastWide = usePastBeside();
+  const [example, setExample] = useState(false);
+  const [lift, setLift] = useState('');
   const [friends, setFriends] = useState([]);
-  const [friendTrips, setFriendTrips] = useState(SAVED_MOCK ? MOCK_FRIEND_TRIPS : []);
+  const [friendTrips, setFriendTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FRIEND_TRIPS : []);
   const [visById, setVisById] = useState({});
-  const [recapOpen, setRecapOpen] = useState(false);
+  // G12 Phase F: the year card studio's choices and the traveller's own
+  // upload (a data URL held in memory on this device, never sent).
+  const [yc, setYc] = useState(defaultStudio);
+  const [studioOpen, setStudioOpen] = useState(false);
+  const [ycUpload, setYcUpload] = useState('');
+  const [ycBusy, setYcBusy] = useState('');
+  const [ycNote, setYcNote] = useState('');
+  // "Toon bewaard" from a country sheet opens Saved filtered to that country.
+  const [savedCc, setSavedCc] = useState('');
   // T927: the Add a booking sheet, opened from the header or a trip's
   // readiness, with the trip it was opened from.
   const [book, setBook] = useState(null);
@@ -326,11 +409,11 @@ export function SavedTripsPanel({
     setUndo(null);
     u.commit?.();
   }, []);
-  const removeWithUndo = useCallback(({ key, label, commit, restore }) => {
+  const removeWithUndo = useCallback(({ key, label, text, commit, restore }) => {
     flushUndo();
     const timer = window.setTimeout(flushUndo, UNDO_MS);
     undoRef.current = { key, commit, restore, timer };
-    setUndo({ key, label });
+    setUndo({ key, label, text });
   }, [flushUndo]);
   const undoRemoval = () => {
     const u = undoRef.current;
@@ -697,6 +780,8 @@ export function SavedTripsPanel({
         ...common,
         countries: parts.countries,
         countdown: n != null && n > 0 ? { n, place: firstTown(p) } : null,
+        // G12 atlas: the journey line under the photo, every day still to come.
+        lineStops: tripStops(p).map((s, i) => ({ ...s, city: destinations[s.id]?.city || s.city || planCities(p)[i] || '' })),
         when,
         dates: fmtRange(p.start_date, p.end_date),
         nights,
@@ -713,14 +798,37 @@ export function SavedTripsPanel({
         // device trip opens in Plan, where its days begin.
         onPlanDays: device ? null : () => onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 }),
         menuActions: planMenu(p, parts, device),
+        plateValue: tripInUnit(figure, choices),
+        plateLabel: figure ? t('mt.unitPlateAria', { unit: unitWords(t, choices, figure.party), price: formatMoney(tripInUnit(figure, choices) || 0) }) : '',
+        onUnit: () => setUnitOpen(true),
+        onStep: (key) => stepDoor(p, key, device),
+        onImage: () => shareRoute(p, figure),
+        onShare: device || p.coplan ? null : () => toggleShare(p.id),
+        onEurope: () => pickTab('europe'),
+        countryLabel: parts.countries.length === 1 ? countryName(isoFor(parts.countries), parts.countries[0]) : '',
       };
     }
     return {
       ...common,
       meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
-      figure: figure ? <TripPrice figure={figure} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
+      figure: figure ? <TripPrice figure={figure} unitValue={tripInUnit(figure, choices)} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
       menuActions: planMenu(p, parts, device),
     };
+  };
+
+  // A readiness tile opens its own step: dates edit the trip, the way there
+  // and the beds open the trip page (Ready to book), the days open Plan the days.
+  const stepDoor = (p, key, device) => {
+    if (device) { onOpenDeviceTrip?.(); return; }
+    if (key === 'dates') onLoadTripPlan?.({ id: p.id, edit: true });
+    else if (key === 'days') onOpenDayPlan?.({ planId: p.id, stopIndex: 0, dayIndex: 0 });
+    else onLoadTripPlan?.(p.id);
+  };
+  // "Deel deze route": the route on the plate, its name and figure, no dates.
+  const shareRoute = (p, figure) => {
+    const pts = atlasTrip(p).stops.map((x) => project(x.lat, x.lon)).filter(Boolean);
+    const value = tripInUnit(figure, choices);
+    shareRouteImage(atlasGeo, { pts, name: journeyParts(p).title, figure: value != null ? formatMoney(value) : '' });
   };
 
   // A draft: no dates yet. It lives in Plan; My trips lists it and opens it there.
@@ -793,8 +901,12 @@ export function SavedTripsPanel({
         destinations={destinations}
         figure={figures[happening.id] || null}
         todayIso={todayIso}
+        draw={tabDraw}
         crewNames={planLocal[happening.id]?.crewLine || ''}
         spendLabels={spendLabels}
+        title={journeyParts(happening).title}
+        img={resolveImage({ ids: happening.destination_ids || [], cities: planCities(happening), countries: journeyParts(happening).countries })}
+        userId={user?.id || null}
         onPlanDay={(stopIndex, dayIndex) => onOpenDayPlan?.({ planId: happening.id, stopIndex, dayIndex })}
         onOpenTrip={() => onLoadTripPlan?.(happening.id)}
         onCrew={() => toggleShare(happening.id)}
@@ -819,14 +931,16 @@ export function SavedTripsPanel({
 
   // ── Saved (T925): the starred things and the account's saved places, one list. ──
   const shownFavs = useMemo(
-    () => (SAVED_MOCK ? new Set([...MOCK_FAV_KEYS, ...(favorites || [])]) : favorites),
+    () => (SAVED_MOCK && !MOCK_BARE
+      ? new Set([...MOCK_FAV_KEYS, ...(MOCK_VARIANT === 'lots' ? LOTS_FAV_KEYS : []), ...(favorites || [])])
+      : favorites),
     [favorites],
   );
   const shortlist = useFavoriteItems(shownFavs, destinations);
   const savedLists = useSavedLists();
   // T941: lists shared with friends (migration 059; nothing before it), and
   // their items resolved to photos and points like the traveller's own saves.
-  const sharedState = useSharedLists(user, { mock: SAVED_MOCK });
+  const sharedState = useSharedLists(user, { mock: SAVED_MOCK && !MOCK_BARE });
   const sharedKeySet = useMemo(() => new Set(sharedKeys(sharedState.lists)), [sharedState.lists]);
   const sharedFav = useFavoriteItems(sharedKeySet, destinations);
   const sharedRowMap = useMemo(
@@ -860,7 +974,7 @@ export function SavedTripsPanel({
 
   // The seam's saves get a price at save time and two lists, once (dev only).
   useEffect(() => {
-    if (!SAVED_MOCK || !costs) return;
+    if (!SAVED_MOCK || MOCK_BARE || !costs) return;
     const cur = loadSavedLists();
     Object.entries(MOCK_SAVED_AT).forEach(([k, off]) => {
       const now = costs.get?.(k.slice(5))?.dayEur;
@@ -893,12 +1007,6 @@ export function SavedTripsPanel({
   const fullRecord = useMemo(() => visitedRecord({
     pastPlans, pastDayPlans, memories, destinations, manualCountries,
   }), [pastPlans, pastDayPlans, memories, destinations, manualCountries]);
-
-  const mapLocale = useMemo(() => ({
-    'CooperativeGesturesHandler.WindowsHelpText': t('map.ctrlZoom'),
-    'CooperativeGesturesHandler.MacHelpText': t('map.cmdZoom'),
-    'CooperativeGesturesHandler.MobileHelpText': t('map.twoFingers'),
-  }), [t]);
 
   const placesFromPlan = (p) => (p.cities || []).map((city, i) => ({
     id: (p.destination_ids || [])[i] || null, city,
@@ -992,9 +1100,6 @@ export function SavedTripsPanel({
   const nextPlan = ahead[0] || null;
   const nextIsoAll = nextPlan ? planCountries(nextPlan).map(isoOf).filter(Boolean) : [];
   const nextIso = new Set(nextIsoAll.filter((c) => !beenIso.has(c)));
-  const savedIso = new Set(shortRows.filter((r) => r.kind === 'dest')
-    .map((r) => r.cc || destinations[r.id]?.iso2 || isoOf(destinations[r.id]?.country))
-    .filter((c) => c && !beenIso.has(c) && !nextIso.has(c)));
   const catalogueCountries = useMemo(() => new Set(Object.values(destinations)
     .map((d) => d.iso2 || d.cc || COUNTRY_ISO2[d.country]).filter(Boolean)).size, [destinations]);
   const fmtMonth = (iso) => (iso ? new Date(`${iso}T00:00:00Z`).toLocaleDateString(activeLocale(), { month: 'short', year: 'numeric', timeZone: 'UTC' }) : '');
@@ -1017,10 +1122,159 @@ export function SavedTripsPanel({
     ];
     return rows.map((r) => {
       const mem = memories[r.id] || null;
-      return { ...r, mem, spendPP: mem ? spendPerPerson(mem) : null, estDayPP: r.est, score: scoreOf(r.ids) };
+      return { ...r, mem, spendPP: tripSpendPerPerson(r.id, mem), estDayPP: r.est, score: scoreOf(r.ids) };
     }).sort((a, b) => ((a.end || '') < (b.end || '') ? 1 : -1));
   }, [pastPlans, pastDayPlans, memories, destinations, journeyParts, dayJourneyParts, priceFor]);
-  const money = useMemo(() => europeMoney(pastTrips, { greatScore: BAND_CUTOFFS.excellent }), [pastTrips]);
+
+  // G12 Phase B: the one map of the panel. Trips in the plain shape
+  // atlas/layers.js reads; a stop is placed by its catalogue entry, or by the
+  // memory's own place when the trip was logged by hand.
+  const atlasGeo = useEuropeMap();
+  const [atlasYear, setAtlasYear] = useState(null);
+  const atlasStopsOf = (ids, cityOf) => ids.map((id, i) => {
+    const c = destCoords(id);
+    return c ? { id, city: cityOf(i) || destinations[id]?.city || '', ...c } : null;
+  }).filter(Boolean);
+  const atlasTrip = (p) => {
+    const st = tripStops(p);
+    const stops = st.length
+      ? atlasStopsOf(st.map((s) => s.id), (i) => st[i].city)
+      : atlasStopsOf(p.destination_ids || [], () => '');
+    return { id: p.id, title: journeyParts(p).title, start: p.start_date, countries: planCountries(p).map(isoOf).filter(Boolean), stops };
+  };
+  // G12 Phase C, example mode: the Ready-made trip si-road-trip-julian-alps-passes
+  // (lib/journeys.js; its stops Bled, Kranjska Gora and the Soca valley from
+  // the catalogue, Bled's photo) as the next trip, and one real trip under
+  // Coming up. Built here, priced by the engine, never saved or counted.
+  const examplePlans = useMemo(() => [
+    {
+      id: 'example-julian-alps', label: t('mt.exTitle'), cities: [], countries: ['Slovenia'],
+      start_date: addDaysIso(64), end_date: addDaysIso(71), destination_ids: ['gem:bled', 'gem:kranjska-gora', 'gem:soca-valley'],
+      stops: mockStops([['gem:bled', 64, 66], ['gem:kranjska-gora', 66, 68], ['gem:soca-valley', 68, 71]]), choices: { groupSize: 2 },
+    },
+    {
+      id: 'example-lisbon-porto', label: null, cities: ['Lisbon', 'Porto'], countries: ['Portugal'],
+      start_date: addDaysIso(112), end_date: addDaysIso(120), destination_ids: ['LIS', 'OPO'],
+      stops: mockStops([['LIS', 112, 116], ['OPO', 116, 120]]), choices: { groupSize: 2 },
+    },
+  ], [lang]); // eslint-disable-line react-hooks/exhaustive-deps -- t follows lang
+  const exampleModel = (p, focal) => {
+    const fig = priceFor(p);
+    const parts = journeyParts(p);
+    const val = tripInUnit(fig, choices);
+    const toPlan = () => onGoToTab?.('planstart');
+    const base = {
+      id: p.id, title: parts.title, iso2: isoFor(parts.countries), onOpen: toPlan,
+      img: resolveImage({ ids: p.destination_ids, cities: planCities(p), countries: parts.countries }),
+    };
+    if (!focal) {
+      return {
+        ...base,
+        meta: [fmtRange(p.start_date, p.end_date), t('saved.nightsN', { n: nightsBetween(p.start_date, p.end_date) })].join(', '),
+        figure: fig ? <TripPrice figure={fig} unitValue={val} /> : null,
+      };
+    }
+    return {
+      ...base, example: true, countries: parts.countries,
+      countdown: { n: daysUntil(p.start_date, todayIso), place: firstTown(p) },
+      dates: fmtRange(p.start_date, p.end_date), nights: nightsBetween(p.start_date, p.end_date),
+      figure: fig, party: fig?.party || 2, readiness: readinessSteps(p, { assignments: {}, extras: {} }),
+      plateValue: val,
+      plateLabel: fig ? t('mt.unitPlateAria', { unit: unitWords(t, choices, fig.party), price: formatMoney(val || 0) }) : '',
+      onUnit: () => setUnitOpen(true), onStep: toPlan, onPlanDays: toPlan,
+      onEurope: () => pickTab('europe'), countryLabel: countryName('SI', 'Slovenia'),
+    };
+  };
+  // Example mode only stands in for an empty tab; real trips end it.
+  const showExample = example && !happening && !ahead.length;
+  // Saved's example: the catalogue's top places by Score, real figures,
+  // never saved or counted (G12 Phase D).
+  const exampleSaved = useMemo(() => (example && !shortRows.length ? Object.values(destinations || {})
+    // The Score lives in rating.score (an object), so the old number check
+    // never matched and the example stayed empty; a priced place goes first.
+    .filter((d) => d?.id && Number.isFinite(d.rating?.score))
+    .sort((a, b) => (costs?.get?.(b.id) ? 1 : 0) - (costs?.get?.(a.id) ? 1 : 0) || b.rating.score - a.rating.score)
+    .slice(0, 10)
+    .map((d) => ({ key: `ex:${d.id}`, kind: 'dest', id: d.id, cc: d.iso2 || '', name: d.city || d.id, img: resolveImage({ ids: [d.id], cities: [d.city], countries: [d.country] }) }))
+    : []), [example, shortRows.length, destinations, costs, resolveImage]);
+
+  // "Hoe was {trip}?" (decision 8): the latest ended trip without a grade,
+  // until it is graded; the grade is memory.rating, Je cijfer.
+  const toRate = pastTrips.find((x) => x.kind === 'plan' && (x.mem?.rating ?? null) == null) || null;
+  const rateIso = toRate ? journeyParts(toRate.item).countries.map(isoOf).filter(Boolean)[0] || '' : '';
+  const rateNode = toRate && !showExample ? (
+    <RateTrip
+      title={toRate.title}
+      shape={rateIso ? atlasGeo?.countries?.find((c) => c.cc === rateIso)?.d || '' : ''}
+      onRate={(n) => {
+        const before = loadMemory(toRate.id) || emptyMemory();
+        saveMemory(toRate.id, { ...before, rating: n }, spendLabels);
+        setMemTick((k) => k + 1);
+        // One tap saves the grade, so it gets the house undo like a removal.
+        removeWithUndo({
+          key: `rate:${toRate.id}`,
+          text: t('mt.ratedUndo', { trip: toRate.title, n }),
+          restore: () => { saveMemory(toRate.id, before, spendLabels); setMemTick((k) => k + 1); },
+        });
+      }}
+    />
+  ) : null;
+  // G12 Phase E: the past trips in lib/atlasFacts' plain shape, for the
+  // plate and every Your Europe graphic.
+  const atlasPast = useMemo(() => pastTrips.map((r) => {
+      const mine = (r.mem?.places || []).filter((x) => Number.isFinite(x.lat) && Number.isFinite(x.lon));
+      const stops = mine.length ? mine.map((x) => ({ id: x.id, city: x.city, lat: x.lat, lon: x.lon })) : atlasStopsOf(r.ids, () => '');
+      const parts = r.kind === 'plan' ? journeyParts(r.item) : dayJourneyParts(r.item);
+      return {
+        id: r.id,
+        title: r.title,
+        start: r.kind === 'plan' ? r.item.start_date : r.item.startDate,
+        end: r.end,
+        nights: r.nights,
+        countries: parts.countries.map(isoOf).filter(Boolean),
+        stops,
+        grade: Number.isFinite(r.mem?.rating) ? r.mem.rating : null,
+        spendPP: Number.isFinite(r.spendPP) ? r.spendPP : null,
+      };
+    }), [pastTrips]); // eslint-disable-line react-hooks/exhaustive-deps -- the helpers follow destinations, which pastTrips already follows
+  // With no trip ahead, the Trips plate shows the past routes and the
+  // countries been to, so a returning traveller never sees a blank Europe.
+  const tripsMap = tripsLayer(showExample ? { ahead: [atlasTrip(examplePlans[0])] } : {
+    today: happening && todayAt ? atlasTrip(happening) : null,
+    todayAt,
+    ahead: ahead.filter((p) => p.start_date).map(atlasTrip),
+    past: atlasPast,
+  });
+  tripsMap.nextIso = new Set(showExample ? ['SI'] : happening ? [] : nextIsoAll);
+  tripsMap.been = tripsMap.state === 'past' ? beenIso : undefined;
+  tripsMap.lift = lift;
+  // Example mode on Your Europe: a record of real catalogue places, marked
+  // Voorbeeld, held only here (never saved, counted or shared as a record).
+  const [exGrades, setExGrades] = useState({});
+  const euExample = example && !pastTrips.length && tab === 'europe';
+  const exampleEurope = useMemo(() => (!euExample ? [] : YEARS_PLANS.map((p) => {
+    const mem = YEARS_MEMS[p.id] || {};
+    const places = mem.places || [];
+    return {
+      id: p.id,
+      title: p.label || places.map((x) => x.city).join(', '),
+      start: p.start_date,
+      end: p.end_date,
+      nights: places.reduce((n, x) => n + (x.nights || 0), 0),
+      countries: [...new Set(places.map((x) => isoOf(x.country)).filter(Boolean))],
+      stops: places.map((x) => ({ id: x.id, city: x.city, lat: x.lat, lon: x.lon })),
+      grade: exGrades[p.id] ?? (Number.isFinite(mem.rating) ? mem.rating : null),
+      spendPP: spendPerPerson(mem),
+      ids: places.map((x) => x.id),
+    };
+  })), [euExample, exGrades]);
+  const euTrips = euExample ? exampleEurope : atlasPast;
+  const pastBeside = pastWide && tab === 'europe' && euTrips.length > 0;
+  const euBeen = useMemo(() => (euExample ? new Set(exampleEurope.flatMap((x) => x.countries)) : beenIso), [euExample, exampleEurope, beenIso]);
+  const europeMap = useMemo(() => {
+    const trips = euTrips;
+    return europeLayer({ trips, been: euBeen });
+  }, [euTrips, euBeen]);
   const milestones = useMemo(() => {
     const points = [];
     pastTrips.forEach((x) => {
@@ -1033,18 +1287,6 @@ export function SavedTripsPanel({
     });
   }, [pastTrips, beenIso, nextIsoAll.join(','), destCoords, destinations]); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the codes
 
-  // The journal: each past trip with its cover, its photos, what a day cost
-  // a person against Carta's estimate, how it was, and the two invitations.
-  const journal = useMemo(() => {
-    const groups = [];
-    pastTrips.forEach((x) => {
-      const y = yearOf(x.end);
-      let g = groups.find((v) => v.year === y);
-      if (!g) { g = { year: y, items: [] }; groups.push(g); }
-      g.items.push(x);
-    });
-    return groups;
-  }, [pastTrips]);
   const journalItem = (x) => {
     const row = recordRow({ kind: x.kind, item: x.item });
     const mem = x.mem;
@@ -1065,37 +1307,115 @@ export function SavedTripsPanel({
     };
   };
 
-  // Your year in Europe: this year once it has a trip, else the latest one.
-  const recap = useMemo(() => {
-    const thisYear = Number(todayIso.slice(0, 4));
-    const years = journal.map((g) => g.year).filter(Boolean);
-    const year = years.includes(thisYear) ? thisYear : years[0];
-    if (!year) return null;
-    const trips = pastTrips.filter((x) => yearOf(x.end) === year);
-    const rec = visitedRecord({
-      pastPlans: trips.filter((x) => x.kind === 'plan').map((x) => x.item),
-      pastDayPlans: trips.filter((x) => x.kind === 'day').map((x) => x.item),
-      memories: Object.fromEntries(trips.filter((x) => x.mem).map((x) => [x.id, x.mem])),
-      destinations,
+
+  // G12 Phase E: the example record's milestones, the past trips as rows,
+  // the country sheet and the year card's Delen.
+  const exMilestones = useMemo(() => (!euExample ? [] : europeMilestones({
+    beenIso: [...euBeen], nextIso: [], trips: exampleEurope,
+    points: exampleEurope.flatMap((x) => x.stops), legs: [],
+  })), [euExample, euBeen, exampleEurope]);
+  const pastRows = euExample
+    ? exampleEurope.map((x) => ({
+      id: x.id, year: tripYear(x), title: x.title, nights: x.nights, grade: x.grade, vs: null, start: x.start,
+      img: resolveImage({ ids: x.ids }), flags: x.countries, iso2: x.countries[0],
+    }))
+    : pastTrips.map((x) => {
+      const row = journalItem(x);
+      const plain = atlasPast.find((a) => a.id === x.id);
+      const day = Number.isFinite(x.spendPP) && x.nights > 0 ? x.spendPP / x.nights : null;
+      const open = openMemory === x.id;
+      const mem = x.mem;
+      const edit = () => openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, mem) : editableFromDayPlan(x.item, mem));
+      return {
+        ...row,
+        year: tripYear(plain) ?? yearOf(x.end),
+        start: plain?.start || null,
+        flags: plain?.countries || [],
+        nights: x.nights,
+        grade: Number.isFinite(mem?.rating) ? mem.rating : null,
+        vs: day != null && Number.isFinite(x.estDayPP) ? day - x.estDayPP : null,
+        open,
+        // A tap opens the trip's memory in place, or the form for one without.
+        onOpen: () => setOpenMemory(open ? '' : x.id),
+        below: open ? (
+          <div className="atlas-prow-open">
+            {mem ? row.below : (
+              <span className="mt-jcard-acts">
+                <Button size="sm" onClick={edit}>{t('mt.howWasIt')}</Button>
+                <Button size="sm" variant="quiet" onClick={() => (x.kind === 'plan' ? onLoadTripPlan?.(x.item.id) : onOpenDayPlan?.(x.item.id))}>{t('saved.openTripPlanner')}</Button>
+              </span>
+            )}
+            {mem && !mem.photos?.length && <Button size="sm" iconStart={<CameraIcon size={14} />} onClick={edit}>{t('mt.addPhotos')}</Button>}
+          </div>
+        ) : row.below && !mem ? row.below : null,
+      };
     });
-    const m = europeMoney(trips, { greatScore: BAND_CUTOFFS.excellent });
-    const loved = trips.filter((x) => Number.isFinite(x.mem?.rating)).sort((a, b) => b.mem.rating - a.mem.rating)[0];
-    // Only the traveller's own photo can go on the image: a catalogue photo
-    // is another site's and would taint the canvas.
-    const own = trips.map((x) => coverPhoto(x.mem)).find((src) => src && (src.startsWith('data:') || src.startsWith('/')));
+  const gradeTrip = (id, n) => {
+    if (euExample) { setExGrades((g) => ({ ...g, [id]: n })); return; }
+    const before = loadMemory(id) || emptyMemory();
+    saveMemory(id, { ...before, rating: n }, spendLabels);
+    setMemTick((k) => k + 1);
+    // One tap saves the grade, so it gets the house undo like the Trips tab's.
+    const title = pastTrips.find((v) => v.id === id)?.title || '';
+    removeWithUndo({
+      key: `rate:${id}`,
+      text: t('mt.ratedUndo', { trip: title, n }),
+      restore: () => { saveMemory(id, before, spendLabels); setMemTick((k) => k + 1); },
+    });
+  };
+  const fillSpend = (id) => {
+    const x = pastTrips.find((v) => v.id === id) || pastTrips.find((v) => !(v.spendPP > 0));
+    if (!x) { openPastForm(null); return; }
+    openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, x.mem) : editableFromDayPlan(x.item, x.mem));
+  };
+  // The year card (G12 Phase F): the studio's year, else the map's filter, else the latest.
+  const ycCard = useMemo(() => yearCard(euTrips, yc.year ?? atlasYear), [euTrips, yc.year, atlasYear]);
+  const ycModel = useMemo(() => {
+    const mf = new Intl.DateTimeFormat(activeLocale(), { month: 'long', timeZone: 'UTC' });
+    return yearCardModel(ycCard, yc, {
+      t,
+      nf: (n, d) => Number(n).toLocaleString(activeLocale(), { minimumFractionDigits: d, maximumFractionDigits: d }),
+      money: formatMoney,
+      month: (i) => mf.format(Date.UTC(2020, i, 1)),
+    });
+  }, [ycCard, yc, t]);
+  // Only the traveller's own photos: a catalogue photo is another site's and would taint the canvas.
+  const ycPhotos = useMemo(() => (euExample ? [] : [...new Set(pastTrips.map((x) => coverPhoto(x.mem))
+    .filter((src) => src && (src.startsWith('data:') || src.startsWith('/'))))].slice(0, 8)), [euExample, pastTrips]);
+  const ycExample = euExample ? t('mt.example') : '';
+  const ycExport = async (share) => {
+    setYcBusy(share ? 'share' : 'download');
+    const r = await exportYearCard({ model: ycModel, geo: atlasGeo, share, exampleLabel: ycExample });
+    setYcBusy('');
+    setYcNote(r === 'saved' ? t('mt.stSaved') : r === 'failed' ? t('mt.stFailed') : '');
+  };
+  const [country, setCountry] = useState('');
+  const countryInfo = useMemo(() => {
+    if (!country) return null;
+    const there = euTrips.filter((x) => (x.countries || []).includes(country));
+    const spent = there.filter((x) => x.spendPP > 0 && x.nights > 0);
+    const nightsSpent = spent.reduce((n, x) => n + x.nights, 0);
+    const days = Object.values(destinations)
+      .filter((d) => (d.iso2 || COUNTRY_ISO2[d.country]) === country)
+      .map((d) => costs?.get?.(d.id)?.dayEur).filter(Number.isFinite).sort((a, b) => a - b);
     return {
-      year, trips: trips.length, countries: rec.countries.length, nights: rec.nights,
-      avgDay: m.avgDay, cheapestGreat: m.cheapestGreat ? { ...m.cheapestGreat } : null,
-      best: loved ? { title: loved.title, rating: loved.mem.rating } : null,
-      photo: own || null,
-      img: trips.map((x) => coverPhoto(x.mem)).find(Boolean) || resolveImage({ ids: trips[0]?.ids || [] }),
+      cc: country,
+      name: countryName(country, NAME_OF[country] || country),
+      years: [...new Set(there.map(tripYear).filter(Boolean))].sort(),
+      trips: there.length,
+      nights: there.reduce((n, x) => n + (x.nights || 0), 0),
+      hand: euBeen.has(country) && !there.length,
+      been: euBeen.has(country),
+      saved: shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === country).length,
+      dayYou: nightsSpent ? spent.reduce((n, x) => n + x.spendPP, 0) / nightsSpent : null,
+      dayNow: days.length ? days[Math.floor(days.length / 2)] : null,
+      canToggle: !euExample && !viaTripIso.has(country),
     };
-  }, [journal, pastTrips, destinations, todayIso, resolveImage]);
-  const recapLine = recap ? [
-    t(recap.trips === 1 ? 'mt.trips1' : 'mt.tripsN', { n: recap.trips }),
-    recap.countries ? t(recap.countries === 1 ? 'mt.countries1' : 'mt.countriesN', { n: recap.countries }) : '',
-    recap.nights ? t(recap.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: recap.nights }) : '',
-  ].filter(Boolean).join(', ') : '';
+  }, [country, euTrips, euBeen, destinations, costs, shortRows]); // eslint-disable-line react-hooks/exhaustive-deps -- viaTripIso follows the record
+  const nextLine = nextPlan && nextIso.size ? t('mt.nextAfter', {
+    country: countryName([...nextIso][0], NAME_OF[[...nextIso][0]] || [...nextIso][0]),
+    date: nextPlan.end_date ? new Date(`${nextPlan.end_date}T00:00:00Z`).toLocaleDateString(activeLocale(), { day: 'numeric', month: 'short', timeZone: 'UTC' }) : '',
+  }) : '';
 
   // The trips a booking can go to: every dated account trip ahead.
   const bookPlans = datedPlans.filter((p) => !p.device && !p.coplan).map((p) => ({
@@ -1117,6 +1437,9 @@ export function SavedTripsPanel({
     ...(devicePlan ? [{ id: `device:${devicePlan.id || 'trip'}`, name: devicePlan.label || '', at: devicePlan.updated_at || devicePlan.start_date, destIds: devicePlan.destination_ids || [] }] : []),
     ...keptAll.map((r) => ({ id: `kept:${r.id}`, name: r.name || '', at: r.keptAt, destIds: r.plan?.order || [] })),
   ], [tripPlans, devicePlan, keptAll]);
+
+  // Jouw smaak moved to the Style Studio (G12 decision 7); it reads these.
+  useEffect(() => { publishTasteInputs({ saves: tasteSaves, trips: tasteTrips, userId: user?.id || null }); }, [tasteSaves, tasteTrips, user?.id]);
 
   // Land on Trips once a trip ahead is known, unless a tab was picked this visit.
   useEffect(() => {
@@ -1167,6 +1490,33 @@ export function SavedTripsPanel({
           {/* The section's name as the page's h2, for the heading outline; the
               tab above already shows it. */}
           <h2 className="sr-only" id="mytrips-panel-title">{t(tab === 'trips' ? 'mt.tabTrips' : tab === 'saved' ? 'mt.tabSaved' : 'mt.tabEurope')}</h2>
+          <div className={`atlas-body is-${tab}${pastBeside ? ' has-past' : ''}`}>
+          {/* G12 atlas: with the past trips under the map, the slot follows the
+              content in the DOM, so a screen reader meets the left column first;
+              keys keep both mounted when they swap. */}
+          {[
+            <React.Fragment key="slot">
+          <AtlasSlot
+            tab={tab}
+            geo={atlasGeo}
+            trips={tripsMap}
+            europe={{
+              ...europeMap, lift: euLift, been: euBeen, next: euExample ? new Set() : nextIso, viaTrip: viaTripIso, total: catalogueCountries,
+              nextLine: euExample ? '' : nextLine, example: euExample,
+            }}
+            onCountry={setCountry}
+            year={atlasYear}
+            onYear={setAtlasYear}
+            onToggleCountry={toggleIso}
+            onList={() => setCountriesOpen(true)}
+            listRef={countriesRef}
+            savedEmpty={!shortRows.length && !example}
+            savedHost={setSavedMapEl}
+            pastHost={pastBeside ? setEuropePastEl : null}
+          />
+            </React.Fragment>,
+            <React.Fragment key="content">
+          <div className="atlas-content"><div className="atlas-full atlas-col">
           {tab === 'trips' && (
             <TripsTab
               authed={authed}
@@ -1174,11 +1524,18 @@ export function SavedTripsPanel({
               loading={tripPlansLoading}
               error={tripPlansError}
               onRetry={loadTripPlans}
-              today={todayNode}
-              next={nextModel}
-              coming={comingModels}
-              planning={planningModels}
-              dayPlans={dayModels}
+              today={showExample ? null : todayNode}
+              next={showExample ? exampleModel(examplePlans[0], true) : nextModel}
+              coming={showExample ? [exampleModel(examplePlans[1], false)] : comingModels}
+              planning={showExample ? [] : planningModels}
+              dayPlans={showExample ? [] : dayModels}
+              example={showExample}
+              onExample={() => setExample(true)}
+              onExampleClose={() => setExample(false)}
+              rate={rateNode}
+              hasPast={pastTrips.length > 0}
+              unit={<UnitButton choices={choices} onOpen={() => setUnitOpen(true)} />}
+              onLift={setLift}
               friendsShared={friendTrips.length}
               friendFaces={ownersOf(friendTrips)}
               onOpenFriends={onOpenFriends}
@@ -1188,6 +1545,7 @@ export function SavedTripsPanel({
               signInLine={!devicePlan}
             />
           )}
+          {unitOpen && <UnitSheet choices={choices} setChoices={setChoices} onClose={() => setUnitOpen(false)} />}
           {tab === 'saved' && (
             <SavedTab
               rows={shortRows}
@@ -1200,11 +1558,21 @@ export function SavedTripsPanel({
               onPlan={(stops) => onPlanStops?.(stops)}
               onBrowse={() => onGoToTab?.('places')}
               onUndo={removeWithUndo}
-              mapLocale={mapLocale}
+              geo={atlasGeo}
+              europe={{ ...europeMap, been: euBeen, next: euExample ? new Set() : nextIso }}
               shared={authed || SAVED_MOCK ? sharedState : null}
               friends={SAVED_MOCK ? MOCK_FRIENDS : friends}
               sharedRows={sharedRowMap}
               heldKey={heldKey}
+              choices={choices}
+              setChoices={setChoices}
+              example={example && !shortRows.length}
+              onExample={() => setExample(true)}
+              onExampleClose={() => setExample(false)}
+              exampleRows={exampleSaved}
+              initialCc={savedCc}
+              onCcUsed={() => setSavedCc('')}
+              mapHost={savedMapEl}
               top={(
                 <>
                   {/* Kept trips from the trip finder (T806): planning one hands
@@ -1215,40 +1583,74 @@ export function SavedTripsPanel({
               )}
             />
           )}
-          {tab === 'europe' && recapOpen && recap && (
-            <YearRecap recap={recap} onBack={() => setRecapOpen(false)} />
-          )}
-          {tab === 'europe' && !(recapOpen && recap) && (
+          {tab === 'europe' && (
             <YourEurope
-              map={{
-                been: beenIso, next: nextIso, saved: savedIso, viaTrip: viaTripIso,
-                nextName: nextPlan ? journeyParts(nextPlan).title : '',
-              }}
-              onToggleCountry={toggleIso}
-              figures={{
-                countries: beenIso.size, total: catalogueCountries, nights: fullRecord.nights, trips: fullRecord.trips,
-                avgDay: money.avgDay, vsEstimate: money.vsEstimate, cheapestGreat: money.cheapestGreat,
-              }}
-              milestones={milestones}
-              journal={journal.map((g) => ({ year: g.year, items: g.items.map(journalItem) }))}
-              recap={recap ? { year: recap.year, line: recapLine, img: recap.img } : null}
-              onRecap={() => setRecapOpen(true)}
-              onMark={() => setCountriesOpen(true)}
-              markRef={countriesRef}
+              trips={euTrips}
+              year={atlasYear}
+              onYear={setAtlasYear}
+              ramp={europeMap.ramp}
+              geo={atlasGeo}
+              milestones={euExample ? exMilestones : milestones}
+              countries={euBeen.size}
+              past={pastRows}
+              onGrade={gradeTrip}
+              onFill={fillSpend}
+              ycModel={ycModel}
+              ycExample={ycExample}
+              onRecap={() => { setYcNote(''); setStudioOpen(true); }}
+              onShare={() => ycExport(!ycExample)}
+              sharing={!!ycBusy}
               onAddPast={() => openPastForm(null)}
               pastForm={pastForm}
               error={tripPlansError}
               fmtMonth={fmtMonth}
+              pastHost={pastBeside ? europePastEl : null}
+              onLift={setEuLift}
+              example={euExample}
+              onExample={() => setExample(true)}
+              onExampleClose={() => setExample(false)}
             />
           )}
-          {/* T1152 (F3): the taste profile with its evidence, yes and no per chip. */}
-          {tab === 'europe' && !(recapOpen && recap) && (
-            <Suspense fallback={null}>
-              <TasteChips saves={tasteSaves} trips={tasteTrips} destinations={destinations} userId={user?.id || null} />
-            </Suspense>
-          )}
+          </div></div>
+            </React.Fragment>,
+          ][pastBeside ? 'reverse' : 'slice']()}
+          </div>
         </div>
 
+        {countryInfo && (
+          <CountrySheet
+            info={countryInfo}
+            onClose={() => setCountry('')}
+            onToggle={(cc) => { toggleIso(cc); setCountry(''); }}
+            onShowSaved={() => { setSavedCc(countryInfo.cc); setCountry(''); pickTab('saved'); }}
+            onPlan={() => {
+              const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc).map((r) => r.id);
+              setCountry('');
+              if (stops.length && onPlanStops) onPlanStops(stops);
+              else onGoToTab?.('planstart');
+            }}
+          />
+        )}
+        {studioOpen && tab === 'europe' && ycCard.year != null && (
+          <YearStudio
+            model={ycModel}
+            geo={atlasGeo}
+            cfg={yc}
+            onCfg={(patch) => setYc((cur) => ({ ...cur, ...patch }))}
+            years={ycCard.years}
+            year={ycCard.year}
+            hasMoney={ycCard.hasMoney}
+            photos={ycPhotos}
+            upload={ycUpload}
+            onUpload={setYcUpload}
+            onClose={() => setStudioOpen(false)}
+            onDownload={() => ycExport(false)}
+            onShare={() => ycExport(true)}
+            busy={ycBusy}
+            note={ycNote}
+            example={ycExample}
+          />
+        )}
         {countriesOpen && (
           <VisitedCountriesSheet
             fromTrips={allRecord.fromTrips}
@@ -1267,7 +1669,7 @@ export function SavedTripsPanel({
             mockRead={SAVED_MOCK ? mockRead : null}
           />
         )}
-        {undo && <UndoToast key={undo.key} label={undo.label} onUndo={undoRemoval} onClose={flushUndo} />}
+        {undo && <UndoToast key={undo.key} label={undo.label} text={undo.text} onUndo={undoRemoval} onClose={flushUndo} />}
         <SiteFooter />
       </div>
     </div>

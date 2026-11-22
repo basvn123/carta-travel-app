@@ -8,9 +8,10 @@
  *   lists  [{ id, name, keys: [favKey], at }] in the traveller's order. A key
  *          may sit in several lists; "All saved" is every favourite and is
  *          not stored.
- *   meta   { [favKey]: { at, eur, note, gone } }: when it was saved (ms),
+ *   meta   { [favKey]: { at, eur, basis, note, gone } }: when it was saved (ms),
  *          the day price Carta showed at that moment (whole euros a person
- *          a day, only where Carta prices that kind), the traveller's own
+ *          a day, only where Carta prices that kind), the basis it stood on
+ *          (priceView.basisOf: month, stay style, lifestyle), the traveller's own
  *          note, and when it was last unsaved (so an Undo keeps the price it
  *          was saved at instead of taking today's).
  *
@@ -48,6 +49,7 @@ function clean(raw) {
       const row = {};
       if (Number.isFinite(m.at)) row.at = m.at;
       if (Number.isFinite(m.eur) && m.eur > 0) row.eur = Math.round(m.eur);
+      if (row.eur && typeof m.basis === 'string' && m.basis) row.basis = m.basis.slice(0, 200);
       if (typeof m.note === 'string' && m.note.trim()) row.note = m.note.slice(0, MAX_NOTE);
       if (Number.isFinite(m.gone)) row.gone = m.gone;
       if (Object.keys(row).length) meta[k] = row;
@@ -78,14 +80,18 @@ export function savedListsForSync() { return read(); }
  * REVIVE_MS keeps its first price, so Undo never resets the "since you saved
  * it" figure.
  */
-export function noteSaved(key, eur = null, now = Date.now()) {
+export function noteSaved(key, eur = null, now = Date.now(), basis = '') {
   if (!key) return read();
   const cur = read();
   const was = cur.meta[key];
   const revived = was && Number.isFinite(was.gone) && now - was.gone < REVIVE_MS;
   const row = revived
     ? { ...was, gone: undefined }
-    : { at: now, ...(Number.isFinite(eur) && eur > 0 ? { eur: Math.round(eur) } : {}), ...(was?.note ? { note: was.note } : {}) };
+    : {
+      at: now,
+      ...(Number.isFinite(eur) && eur > 0 ? { eur: Math.round(eur), ...(basis ? { basis: String(basis) } : {}) } : {}),
+      ...(was?.note ? { note: was.note } : {}),
+    };
   return write({ ...cur, meta: { ...cur.meta, [key]: row } });
 }
 
@@ -185,7 +191,7 @@ export function mergeSavedLists(local, incoming) {
     const o = meta[k];
     if (!o) { meta[k] = m; continue; }
     const first = (o.at ?? Infinity) < (m.at ?? Infinity) ? o : m;
-    meta[k] = { ...o, ...m, at: first.at, eur: first.eur, note: m.note || o.note };
+    meta[k] = { ...o, ...m, at: first.at, eur: first.eur, basis: first.basis, note: m.note || o.note };
   }
   return clean({ lists, meta });
 }

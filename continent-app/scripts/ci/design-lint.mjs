@@ -67,6 +67,7 @@
  * Not part of `npm run ci`; it runs from .github/workflows/design-lint.yml.
  */
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -84,9 +85,10 @@ const bannedRe = new RegExp(`\\b(${BANNED_WORDS.join('|')})\\b`, 'i');
 // T198: the only legal values of a font-family declaration outside :root.
 const FONT_TOKENS = /^(inherit|var\(\s*--(display|ui|mono|font|plate-face)\s*\))$/;  // --font: T421 Lagoon; --plate-face: house style plate names (G1)
 // T364: the one file that may hold a hex in JavaScript, and the artwork that
-// is not a design token (flags are country artwork, the Google mark is a brand).
+// is not a design token (flags are country artwork, the Google mark and the
+// airline badge colours are brands; G12, D10).
 const MIRROR_FILE = 'src/map/tokenColors.js';
-const JS_HEX_EXEMPT = new Set([MIRROR_FILE, 'src/components/CountryFlag.jsx', 'src/auth/GoogleButton.jsx']);
+const JS_HEX_EXEMPT = new Set([MIRROR_FILE, 'src/components/CountryFlag.jsx', 'src/auth/GoogleButton.jsx', 'src/lib/flights/airlineColours.js']);
 const JS_HEX = /(?<![&\w/(])#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/;
 // T425: pre-Lagoon token names that new rules must not read (01-tokens.css aliases them).
 const LEGACY_TOKEN = /var\(\s*--(paper|paper-dim|paper-hover|paper-lift|ink|ink-soft|ink-mute|ink-fill|rule|rule-soft|accent|accent-soft|accent-bg|accent-hover|accent-press|accent-press-alt|accent-wash|accent-wash-alt|bg-card|on-fill|display|mono|shadow-1|shadow-2|shadow-card|wash)\s*\)/;
@@ -110,7 +112,10 @@ const stripCssComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, (m) => m.replace(
 
 function scanFile(abs, rel) {
   const found = [];
-  const raw = fs.readFileSync(abs, 'utf8');
+  // Normalise CRLF: a Windows checkout (core.autocrlf) ends every line in a
+  // CR, JS '.' stops at it, so the line-anchored rules (motion-literal's
+  // `(.*)$`) matched nothing locally and CI alone saw the violations.
+  const raw = fs.readFileSync(abs, 'utf8').replace(/\r\n/g, '\n');
   const isCss = rel.endsWith('.css');
   const isEnStrings = /(^|\/)i18n\/en\.js$/.test(rel);
   const rawLines = raw.split('\n');
@@ -257,6 +262,13 @@ function selfTest() {
   let ok = true;
   if (missing.length) { console.error('self-test: rules that did not fire on the seeded fixture: ' + missing.join(', ')); ok = false; }
   if (good.fresh.length) { console.error('self-test: the clean fixture produced violations: ' + good.fresh.map((v) => v.rule).join(', ')); ok = false; }
+  // A CRLF file must be judged like its LF twin (the Windows checkout case).
+  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'design-lint-'));
+  const crlf = path.join(tmp, 'crlf.css');
+  fs.writeFileSync(crlf, '.a { animation: spin 240ms var(--ease-out); }\r\n.b { transition: opacity 200ms; }\r\n');
+  const crlfRules = scanFile(crlf, 'crlf.css').filter((v) => v.rule === 'motion-literal').length;
+  fs.rmSync(tmp, { recursive: true, force: true });
+  if (crlfRules !== 2) { console.error(`self-test: a CRLF stylesheet gave ${crlfRules} motion-literal, expected 2`); ok = false; }
   if (ok) console.log(`self-test ok: ${bad.fresh.length} seeded violations across ${rules.size} rules caught, clean fixture silent`);
   process.exit(ok ? 0 : 1);
 }

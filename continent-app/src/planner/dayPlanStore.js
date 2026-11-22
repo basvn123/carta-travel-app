@@ -215,6 +215,11 @@ const EMPTY_EXTRAS = {
   // what it cost, how it was, the photographs (see auth/pastTripMemory.js).
   // Null on every trip the app itself planned.
   memory: null,
+  // The Reiskas on this phone (G15): transfers marked paid ([{ id, from, to,
+  // cents, at }]), when each person was last nudged ({ [personId]: ms }) and
+  // the reminders the traveller asked for ({ [personId]: ms }). The spends
+  // themselves are rows of `expenses` (lib/spend/model.js).
+  kas: { settled: [], nudged: {}, remind: {} },
 };
 
 /** Always returns the full shape, never null: callers render straight off it. */
@@ -235,6 +240,11 @@ export function loadTripExtras(planId) {
       ideas: Array.isArray(raw.ideas) ? raw.ideas.filter((x) => x && typeof x.text === 'string') : [],
       dayNotes: raw.dayNotes && typeof raw.dayNotes === 'object' ? raw.dayNotes : {},
       memory: raw.memory && typeof raw.memory === 'object' ? raw.memory : null,
+      kas: raw.kas && typeof raw.kas === 'object' ? {
+        settled: Array.isArray(raw.kas.settled) ? raw.kas.settled : [],
+        nudged: raw.kas.nudged && typeof raw.kas.nudged === 'object' ? raw.kas.nudged : {},
+        remind: raw.kas.remind && typeof raw.kas.remind === 'object' ? raw.kas.remind : {},
+      } : { settled: [], nudged: {}, remind: {} },
     };
   } catch {
     return { ...EMPTY_EXTRAS };

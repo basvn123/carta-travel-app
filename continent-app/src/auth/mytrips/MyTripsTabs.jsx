@@ -4,7 +4,8 @@ import { Button, Chip, Tabs, IconButton, Blaze } from '../../components/ui/index
 import { CountryFlag, COUNTRY_ISO2 } from '../../components/CountryFlag.jsx';
 import { LoadingBlock, ErrorBlock } from '../../components/StateBlocks.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { PlusIcon, UploadIcon, ChevronRightIcon, RouteIcon } from '../../components/Icons.jsx';
+import { PlusIcon, UploadIcon, ChevronRightIcon, EyeIcon } from '../../components/Icons.jsx';
+import { ExampleBar } from './TripParts.jsx';
 import { countryName } from '../../lib/countryName.js';
 import { tabHref } from '../../lib/urlState.js';
 import { NextTripCard, TripRow } from './TripCards.jsx';
@@ -25,6 +26,7 @@ export function door(go) {
 /** Does any row in a list print a day figure? The section head says the unit
  *  only then (an unpriced list has no unit to name). */
 const priced = (rows) => rows.some((r) => r.figure?.type === TripPrice);
+
 
 /** A section of one tab: a heading with an optional count and action. */
 export function Section({ title, count, action, unit, children, id, className = '' }) {
@@ -118,9 +120,10 @@ export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }
 export function TripsTab({
   authed, configured, loading, error, onRetry, today = null, next, coming = [], planning = [], dayPlans = [],
   friendsShared, friendFaces = [], onOpenFriends, onPlanTrip, onAllInPlan, onSignIn, signInLine = true,
+  example = false, onExample = null, onExampleClose = null, rate = null, unit = null, onLift = null, hasPast = false,
 }) {
   const { t } = useI18n();
-  const nothing = !today && !next && !coming.length && !planning.length && !dayPlans.length;
+  const nothing = !example && !today && !next && !coming.length && !planning.length && !dayPlans.length;
   return (
     <>
       {loading && authed ? (
@@ -128,13 +131,32 @@ export function TripsTab({
       ) : error ? (
         <ErrorBlock message={t('state.savedFailed')} onRetry={onRetry} retryLabel={t('layer.retry')} />
       ) : nothing ? (
-        <Empty
-          title={t('saved.noTripsYet')}
-          icon={<RouteIcon size={28} />}
-          action={<Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onPlanTrip}>{t('saved.planTrip')}</Button>}
-        />
+        // G12 (Revision 1): one action plus "Bekijk een voorbeeld"; the map
+        // above is the picture, so no drawn slots and no helper line.
+        <>
+          <div className="mt-first">
+            {/* A traveller with past trips is not new here: the plate above shows
+                their routes, so the line asks for the next one (judgement 1). */}
+            <h3 className="mt-first-title">{t(hasPast ? 'mt.nextTrip' : 'mt.firstTrip')}</h3>
+            <div className="mt-first-acts">
+              <Button variant="primary" iconStart={<PlusIcon size={18} />} onClick={onPlanTrip}>{t('saved.planTrip')}</Button>
+              {onExample && (
+                <Button variant="secondary" className="mt-soft" iconStart={<EyeIcon size={18} />} onClick={onExample}>{t('mt.seeExample')}</Button>
+              )}
+            </div>
+            {!authed && configured && signInLine && (
+              <p className="mt-signin-line mt-device-says">
+                {t('mt.onDevice')}{' '}
+                <Button variant="quiet" size="sm" onClick={onSignIn}>{t('saved.signIn')}</Button>
+              </p>
+            )}
+          </div>
+          {/* Plan is the focal action; the grade can wait (judgement 2). */}
+          {rate}
+        </>
       ) : (
         <>
+          {example && <ExampleBar onClose={onExampleClose} />}
           {today}
           {next && (
             <div className="mt-next">
@@ -143,12 +165,14 @@ export function TripsTab({
               {next.below}
             </div>
           )}
+          {/* Today and the next trip are the focal cards; the grade can wait. */}
+          {rate}
           {(coming.length > 0 || planning.length > 0) && (
             <div className="mt-two">
               {coming.length > 0 && (
-                <Section id="mt-coming" title={t('mt.comingUp')} unit={priced(coming) ? t('mt.figDay') : null}>
+                <Section id="mt-coming" title={t('mt.comingUp')} action={priced(coming) ? unit : null}>
                   <div className="mt-rows">
-                    {coming.map((r) => <TripRow key={r.id} {...r}><JoinsLine planId={r.id} />{r.below}</TripRow>)}
+                    {coming.map((r) => <TripRow key={r.id} {...r} onLift={onLift}><JoinsLine planId={r.id} />{r.below}</TripRow>)}
                   </div>
                 </Section>
               )}
@@ -156,7 +180,6 @@ export function TripsTab({
                 <Section
                   id="mt-planning"
                   title={t('mt.beingPlanned')}
-                  unit={priced(planning) ? t('mt.figDay') : null}
                   action={(
                     <a className="mt-link" href={tabHref('planstart')} onClick={door(onAllInPlan)}>
                       {t('mt.allInPlan')}<ChevronRightIcon size={16} />
@@ -177,7 +200,7 @@ export function TripsTab({
               </div>
             </Section>
           )}
-          {!authed && configured && signInLine && (
+          {!authed && configured && signInLine && !example && (
             <p className="mt-signin-line">
               <Button variant="quiet" size="sm" onClick={onSignIn}>{t('saved.signIn')}</Button>
             </p>

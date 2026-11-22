@@ -693,11 +693,14 @@
 /* T987: on a desktop with nothing for the wide column (no plans that meet,
    no friends' plans), the blocks share two equal columns instead of leaving
    the left half empty. */
+/* The empty first column is a class from TogetherPage.jsx (G12, D10, lane 1
+   round 4): as :has(> .tg-col:first-child:empty) it made any insertion on a
+   desktop page restyle the whole document. */
 @media (min-width: 1024px) {
-  .tg-grid:has(> .tg-col:first-child:empty) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:first-child { display: none; }
-  .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:last-child { display: contents; }
-  .tg-grid:has(> .tg-col:first-child:empty) > .tg-col:last-child > * { order: initial; }
+  .tg-grid.is-wide-empty { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tg-grid.is-wide-empty > .tg-col:first-child { display: none; }
+  .tg-grid.is-wide-empty > .tg-col:last-child { display: contents; }
+  .tg-grid.is-wide-empty > .tg-col:last-child > * { order: initial; }
 }
 
 /* T991: signed out, one card: TripArt with the Together mark, the title,

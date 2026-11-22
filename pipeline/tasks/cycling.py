@@ -3,7 +3,7 @@
 Part of the task registry (pipeline/tasks/__init__.py, ROADMAP A2, T1207).
 List order is run order; run_pipeline.py runs the domains in DOMAINS order."""
 
-from pipeline.tasks._base import PY, guard_brouter_up, guard_trailslab_up
+from pipeline.tasks._base import PUBLISH, PY, guard_brouter_up, guard_trailslab_up
 
 TASKS = [
 
@@ -119,7 +119,15 @@ TASKS = [
                  [PY, "pipeline/cycling/cycle_index.py"],
                  [PY, "pipeline/cycling/stage_planner.py"],
                  [PY, "pipeline/cycling/validate_cycling.py"],
-                 [PY, "pipeline/cycling/export_cycling.py"]],
+                 # D25, 2026-11-22: through the gate, which rates the rows
+                 # first (publish.py runs nature_tiers.py, so the wire keeps
+                 # its v5) and refuses a layer that lost over 5% of its
+                 # rows. 5, not the outdoor rebuilds' 2: a superroute that
+                 # now ships as its sections (D25 g) replaces one row with
+                 # several. A refusal keeps the lab tables, so a re-export
+                 # after a look is minutes.
+                 [PY, PUBLISH, "--layer", "cycling", "--max-row-loss", "5", "--",
+                  PY, "pipeline/cycling/export_cycling.py"]],
         "note": ("last in the chain because the rating reads every earlier "
                  "pass and the stage planner reads the rating. Tours are "
                  "composed HERE, at build time, never at request time, and "

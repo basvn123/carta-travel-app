@@ -1,86 +1,78 @@
-// The price sheet's choices, pure (D10, explore polish decision step 6).
-// The sheet opens from the row figure and from each wagon; what it says on
-// each tab and where its button leads are decided here, so a node test can
-// pin the honesty rules (copy.md sections 2 to 6) without a browser.
+// The receipt behind a place's figure (G12, D10, place-prices decision
+// section 2), pure. The card and the receipt read one calculation
+// (lib/settings/prices.js grandTotal and priceFigure), so in every basis
+// cell (a day or the trip, each or the group) the receipt's total is the
+// card's figure and its lines add up to it.
 
-import { rowFigures } from './rowFigures.js';
+import { grandTotal, priceFigure } from '../settings/prices.js';
 
-export const TABS = ['flight', 'stay', 'food', 'in'];
-
-const GROUND = new Set(['train', 'bus', 'car']);
-
-/** The tab a tapped part opens on: the figure explains itself on "In this price". */
-export function tabForPart(part) {
-  if (part === 'way') return 'flight';
-  if (part === 'bed') return 'stay';
-  if (part === 'food') return 'food';
-  return 'in';
-}
-
-/** The first tab's label key: the row's own way when it goes over ground,
- *  since a "Flight" tab over a train fare would be a false heading. */
-export function wayTabKey(cost) {
-  const mode = cost?.way?.mode;
-  return GROUND.has(mode) ? `way.${mode}` : 'price.tabFlight';
-}
-
-export const isGroundWay = (cost) => GROUND.has(cost?.way?.mode);
+const cents = (v) => Math.round(v * 100) / 100;
 
 /**
- * Where each tab's button hands over: getting there and the whole day lead
- * to the Trip dock at From; bed, food and the ground way to the Style Studio
- * at the step that moves that number (Style Studio, G12: the studio is the
- * one place a style is edited).
+ * The receipt's figures for one row under the Settings model:
+ *   total     the card's figure (priceFigure eur), whole euros on screen
+ *   basis     the card's basis line [key, params]
+ *   span      'day' | 'trip'; group, n, nights
+ *   bed       { eur, each }  eur in the basis; each: a night (trip only)
+ *   food      { eur, each }  eur in the basis; each: a day (trip only)
+ *   way       { eur, inTotal, missing, off, mode, typical, estimated }
+ *             the return, for the view's people; inside the total on a
+ *             trip, apart on a day. typical: the route's median fare;
+ *             estimated: a ground estimate for a way with no fare (the
+ *             price chain, lib/settings/prices.js); the receipt names each
+ *   sum       the total again, in cents, for the receipt's Total line
+ *   rounding  what the printed cent lines miss of sum (null when nothing)
+ *   notKnown  part of the trip has no figure yet (the way)
  */
-export function handoff(tab, cost = null) {
-  if (tab === 'stay') return { studio: 'spend', key: 'price.changeStay' };
-  if (tab === 'food') return { studio: 'spend', key: 'price.changeFood' };
-  if (tab === 'flight' && isGroundWay(cost)) return { studio: 'way', key: 'price.changeWay' };
-  // G12 (Explore top): the trip lives in Settings; a flight moves with the start.
-  if (tab === 'flight') return { settings: 'start', key: 'price.changeFlight' };
-  return { settings: 'overview', key: 'price.changeTrip' };
-}
-
-const bedLine = (cost) => (cost?.lines || []).find((l) => l.key === 'bed') || null;
-
-/** The Stay basis (copy.md 4): measured here, few stays, or estimated wider. */
-export function stayBasisKey(cost) {
-  const line = bedLine(cost);
-  if (cost?.stayLevel !== 'city' || line?.provenance?.repaired) return 'price.stay.basisWide';
-  if (line?.thin) return 'price.stay.basisThin';
-  return capturedMonth(cost) ? 'price.stay.basisLocal' : 'price.stay.basisLocalNoDate';
-}
-
-/** 'YYYY-MM' the bed prices were captured, when the row knows it. */
-export function capturedMonth(cost) {
-  const c = bedLine(cost)?.provenance?.captured;
-  const m = typeof c === 'string' ? /^(\d{4})-(\d{2})/.exec(c) : null;
-  return m ? `${m[1]}-${m[2]}` : null;
-}
-
-/** The Food basis (copy.md 5): local prices, or the country's. */
-export function foodBasisKey(cost) {
-  return cost?.foodLevel === 'city' ? 'price.food.basisLocal' : 'price.food.basisCountry';
+export function receiptLines(row, model) {
+  const g = grandTotal(row, model);
+  const f = priceFigure(row, model);
+  const trip = f.span === 'trip';
+  const bed = { eur: trip ? f.parts.bed : g.bed, each: trip ? g.bed : null };
+  const food = { eur: trip ? f.parts.food : g.food, each: trip ? g.food : null };
+  const way = {
+    eur: g.way, inTotal: trip, missing: g.wayMissing, off: g.wayOff, mode: g.wayMode,
+    typical: !g.wayMissing && g.wayTypical, estimated: !g.wayMissing && g.wayEstimated,
+  };
+  const sum = f.eur;
+  let rounding = null;
+  if (sum != null && bed.eur != null && food.eur != null) {
+    const printed = bed.eur + food.eur + (trip && way.eur != null ? way.eur : 0);
+    const d = cents(sum - printed);
+    if (Math.abs(d) >= 0.01) rounding = d;
+  }
+  return {
+    total: f.eur, basis: f.basis, span: f.span, group: f.group, n: g.n, nights: g.nights,
+    bed, food, way, sum, rounding, notKnown: f.notKnown,
+  };
 }
 
 /**
- * "In this price" (copy.md 6, decision change 4): bed, food, the day they
- * make, then local transport, then getting there kept apart. Amounts are
- * the row's own (rowFigures), so the sheet and the row cannot disagree.
- * `eur` null means the data has no figure: the sheet says so in words.
+ * The words under the receipt's way line for the price chain's step (G12,
+ * D10, owner 2026-11-20: the card shows no sign, the receipt says which),
+ * as [i18n key] or [null]: the route's typical fare, a ground estimate for a
+ * way with no fare (by the way it priced), or a way not priced yet (the
+ * total is the stay alone). A dated fare or a way switched off says nothing.
  */
-export function inPriceRows(cost, { group = false, seats = 1, wayEur = null } = {}) {
-  const f = rowFigures(cost, { group, seats });
-  const tr = (cost?.lines || []).find((l) => l.key === 'transport');
-  // Only a fare the engine put in the day counts; anything else is not yet
-  // measured, never a zero.
-  const trEur = tr && tr.status === 'included' && Number.isFinite(tr.eur) ? tr.eur * f.seats : null;
-  const mode = cost?.way?.mode || 'plane';
-  return [
-    { key: 'bed', eur: f.bed },
-    { key: 'food', eur: f.food },
-    { key: 'sum', eur: f.day },
-    { key: 'transport', eur: trEur },
-    { key: 'way', eur: Number.isFinite(wayEur) && wayEur > 0 ? wayEur : null, mode, apart: true },
-  ];
+export function wayLegNote(way) {
+  if (!way || way.off) return [null];
+  if (way.missing) return ['price.receipt.wayNotPriced'];
+  if (way.estimated && ['train', 'bus', 'car'].includes(way.mode)) return [`price.receipt.est.${way.mode}`];
+  if (way.typical) return ['price.receipt.typical'];
+  return [null];
+}
+
+/**
+ * The one insight line (decision section 2): how this place's day sits
+ * against the traveller's usual day (the style's median day at the same
+ * party, bed and table, lib/price/styleDay.js), only when it differs by 10%
+ * or more. Amounts a person; `n` scales them to the view's people.
+ *   -> { dir: 'under' | 'over', eur } or null
+ */
+export const INSIGHT_SHARE = 0.1;
+export function dayInsight(dayEur, usualEur, n = 1) {
+  if (!Number.isFinite(dayEur) || !Number.isFinite(usualEur) || usualEur <= 0) return null;
+  const d = dayEur - usualEur;
+  if (Math.abs(d) < usualEur * INSIGHT_SHARE) return null;
+  return { dir: d < 0 ? 'under' : 'over', eur: Math.abs(d) * Math.max(1, n) };
 }

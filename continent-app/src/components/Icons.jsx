@@ -123,6 +123,48 @@ export function MapPinIcon({ size = 20, className = '' }) {
   );
 }
 
+/** A folded paper map: the Saved tab's List / Map switch (G12). */
+export function MapIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M3.5 6.5 9 4.5l6 2 5.5-2v13l-5.5 2-6-2-5.5 2Z" />
+      <path d="M9 4.5v13M15 6.5v13" />
+    </svg>
+  );
+}
+
+/** Rows of a list: the same switch when the map is showing. */
+export function ListIcon({ size = 20, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      <path d="M9 6.5h11M9 12h11M9 17.5h11" />
+      <path d="M4.5 6.5h.01M4.5 12h.01M4.5 17.5h.01" strokeWidth="2.4" />
+    </svg>
+  );
+}
+
 export function RouteIcon({ size = 20, className = '' }) {
   return (
     <svg
@@ -1022,6 +1064,30 @@ export function ArrowRightIcon({ size = 15, className = '', labelled = false }) 
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Next">
       <path d="M4.5 12h15M13.2 5.3 19.9 12l-6.7 6.7" />
+    </Glyph>
+  );
+}
+
+export function ArrowDownIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Lower">
+      <path d="M12 4.5v15M5.3 13.2 12 19.9l6.7-6.7" />
+    </Glyph>
+  );
+}
+
+export function ArrowUpIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Higher">
+      <path d="M12 19.5v-15M5.3 10.8 12 4.1l6.7 6.7" />
+    </Glyph>
+  );
+}
+
+export function BellIcon({ size = 15, className = '', labelled = false }) {
+  return (
+    <Glyph size={size} className={className} labelled={labelled} label="Alert">
+      <path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.5h-15L6 16.5ZM10 20.5a2.2 2.2 0 0 0 4 0" />
     </Glyph>
   );
 }

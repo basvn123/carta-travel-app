@@ -42,7 +42,7 @@ export function Segmented({ label, options, value, onChange, size = 'md', block 
             onClick={() => { onChange?.(o.value); if (!on) haptic('tick'); }}
           >
             {o.icon && <span className="seg-icon" aria-hidden="true">{o.icon}</span>}
-            <span>{o.label}</span>
+            <span className="seg-word">{o.label}</span>
           </button>
         );
       })}

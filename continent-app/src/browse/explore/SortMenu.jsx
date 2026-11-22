@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
+import { ChevronDownIcon } from '../../components/Icons.jsx';
 import { createPortal } from 'react-dom';
 
 /**
@@ -12,12 +13,19 @@ import { createPortal } from 'react-dom';
  */
 // G12: `compact` draws the icon alone (the phone row once a chip exists);
 // at 320 px CSS hides the word too, before any chip shrinks.
-export function SortMenu({ t, options, value, onChange, compact = false }) {
+// G12 round 2: `showValue` says the order on the pill ("Sort: Best match"),
+// the desktop applied row's right end.
+// G12 map view round 2: `bare` draws the map sheet's quiet control (the
+// icon, the current order and a chevron, no pill); a choice may carry
+// `args` for its words (Distance names the From place) and `rule` (A to Z
+// sits after a hairline).
+export function SortMenu({ t, options, value, onChange, compact = false, showValue = false, bare = false, className = '' }) {
   const [pos, setPos] = React.useState(null);
   const btnRef = React.useRef(null);
   const menuRef = React.useRef(null);
   const id = React.useId();
   const cur = options.find((o) => o.key === value) || options[0];
+  const word = (o) => t(o.labelKey, o.args);
   const open = pos != null;
   const close = React.useCallback((refocus) => {
     setPos(null);
@@ -26,7 +34,7 @@ export function SortMenu({ t, options, value, onChange, compact = false }) {
   const toggle = () => {
     if (open) { close(false); return; }
     const r = btnRef.current.getBoundingClientRect();
-    const width = 220;
+    const width = 260;
     setPos({
       top: Math.round(r.bottom + 4),
       left: Math.round(Math.max(16, Math.min(r.left, window.innerWidth - width - 16))),
@@ -69,27 +77,34 @@ export function SortMenu({ t, options, value, onChange, compact = false }) {
   };
   return (
     <>
-      <Button ref={btnRef} variant="secondary" size="sm"
-        className={`xtool xtool-sort${open ? ' is-open' : ''}${compact ? ' is-compact' : ''}`}
+      <Button ref={btnRef} variant={bare ? 'quiet' : 'secondary'} size="sm"
+        className={`xtool xtool-sort${open ? ' is-open' : ''}${compact ? ' is-compact' : ''}${bare ? ' is-bare' : ''}${className ? ` ${className}` : ''}`}
         iconStart={<HouseIcon.sort size={18} />} aria-haspopup="menu" aria-expanded={open}
+        iconEnd={bare ? <ChevronDownIcon size={16} /> : undefined}
         aria-controls={open ? id : undefined}
-        aria-label={t('explore.sortAria', { value: t(cur.labelKey) })}
-        title={compact ? t('explore.sortAria', { value: t(cur.labelKey) }) : undefined}
+        aria-label={t('explore.sortAria', { value: word(cur) })}
+        title={compact ? t('explore.sortAria', { value: word(cur) }) : undefined}
         onClick={toggle}>
-        <span className="xtool-word">{t('explore.toolSort')}</span>
+        <span className="xtool-word">
+          {bare ? word(cur) : showValue ? t('filters.sortValue', { value: word(cur) }) : t('explore.toolSort')}
+        </span>
       </Button>
       {open && createPortal(
         <div className="xsort-menu" role="menu" id={id} ref={menuRef} aria-label={t('places.sortLabel')}
           style={{ top: pos.top, left: pos.left }} onKeyDown={onMenuKey}>
+          <p className="xsort-head" aria-hidden="true">{t('filters.sort')}</p>
           {options.map((o) => {
             const on = o.key === cur.key;
             return (
-              <Button key={o.key} variant="quiet" size="sm" role="menuitemradio" aria-checked={on}
-                tabIndex={-1} className={`xsort-item${on ? ' is-on' : ''}`}
-                iconEnd={on ? <HouseIcon.check size={16} /> : null}
-                onClick={() => { onChange(o.key); close(true); }}>
-                {t(o.labelKey)}
-              </Button>
+              <React.Fragment key={o.key}>
+                {o.rule && <span className="xsort-rule" role="separator" />}
+                <Button variant="quiet" size="sm" role="menuitemradio" aria-checked={on}
+                  tabIndex={-1} className={`xsort-item${on ? ' is-on' : ''}`}
+                  iconEnd={on ? <HouseIcon.check size={16} /> : null}
+                  onClick={() => { onChange(o.key); close(true); }}>
+                  {word(o)}
+                </Button>
+              </React.Fragment>
             );
           })}
         </div>,

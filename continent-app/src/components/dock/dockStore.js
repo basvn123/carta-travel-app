@@ -20,8 +20,8 @@ const listeners = new Set();
 function emit(next) {
   if (next.open === state.open && next.focus === state.focus) return;
   state = next;
-  // The Map pill and the list read which dock is open from the page root
-  // (89-dock.css), so CSS can step aside without a prop chain.
+  // CSS reads which dock is open from the page root, so a part can step
+  // aside without a prop chain.
   if (typeof document !== 'undefined') {
     if (state.open) document.documentElement.dataset.dock = state.open;
     else delete document.documentElement.dataset.dock;

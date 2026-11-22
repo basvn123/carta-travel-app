@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Tabs, Tile, TileGroup } from '../components/ui/index.js';
+import { Segmented, Tabs, Tile, TileGroup } from '../components/ui/index.js';
 import { HouseIcon } from '../components/HouseIcons.jsx';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 
@@ -60,13 +60,45 @@ function focusTabSoon(key) {
   requestAnimationFrame(step);
 }
 
-export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid' }) {
+export function ExploreCategories({ current, onPick, columns = 3, panelId, className = '', variant = 'grid', view, onView, onViewIntent, end = null }) {
   const row = variant === 'row';
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
   const movedAt = React.useRef(0);
+  const lineRef = React.useRef(null);
+  const [more, setMore] = React.useState({ start: false, end: false });
+  // A narrow window (769 to about 900 px, a long language) can hold fewer
+  // tabs than six: the row then slides sideways, fades on a side that has
+  // more, and brings the chosen tab into view, so no tab is cut without a
+  // cue (owner: no cut text).
+  React.useLayoutEffect(() => {
+    const el = row && isDesktop ? lineRef.current?.querySelector('.xcats-row') : null;
+    if (!el) return undefined;
+    let gone = false;
+    const read = () => {
+      if (gone) return;
+      const x = Math.abs(el.scrollLeft);
+      const max = el.scrollWidth - el.clientWidth;
+      setMore((m) => (m.start === x > 1 && m.end === max - x > 1 ? m : { start: x > 1, end: max - x > 1 }));
+    };
+    const reveal = () => {
+      const tab = el.querySelector('[aria-selected="true"]');
+      if (!tab || el.scrollWidth <= el.clientWidth + 1) { read(); return; }
+      const a = tab.offsetLeft - el.offsetLeft; const b = a + tab.offsetWidth;
+      const fade = 32;
+      if (a - fade < el.scrollLeft) el.scrollLeft = Math.max(0, a - fade);
+      else if (b + fade > el.scrollLeft + el.clientWidth) el.scrollLeft = b + fade - el.clientWidth;
+      read();
+    };
+    reveal();
+    document.fonts?.ready?.then(reveal);
+    el.addEventListener('scroll', read, { passive: true });
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(reveal) : null;
+    ro?.observe(el);
+    return () => { gone = true; el.removeEventListener('scroll', read); ro?.disconnect(); };
+  }, [row, isDesktop, current, t]);
   if (row) {
-    return (
+    const tabs = (
       // Listens to the kit Tabs' own keys; the tabs are the controls.
       <div className="xcats-keys" style={{ display: 'contents' }}
         onKeyDownCapture={(ev) => { if (MOVE_KEYS.has(ev.key)) movedAt.current = Date.now(); }}>
@@ -86,6 +118,33 @@ export function ExploreCategories({ current, onPick, columns = 3, panelId, class
             </span>
           ),
         }))} />
+      </div>
+    );
+    if (!isDesktop) return tabs;
+    // G12 round 2 (decision.md 6): on a desktop the row is one line with
+    // the hairline under it, and the List | Map switch closes it at the
+    // right when the tab passes `view` ('list' | 'map') and `onView(view)`;
+    // `onViewIntent` runs on hover or focus (the map's prefetch). `end` (the
+    // map's Share, judgement-5) stands just before the switch, so the switch
+    // keeps its place between the list and the map.
+    return (
+      <div ref={lineRef} className={`xcats-line${more.start ? ' has-start' : ''}${more.end ? ' has-end' : ''}`}>
+        {tabs}
+        {(onView || end) && (
+          <span className="xcats-end">
+            {end}
+            {onView && (
+              <span className="xcats-view-wrap" onPointerEnter={onViewIntent} onFocus={onViewIntent}>
+                <Segmented label={t('explore.viewAria')} size="sm" className="xcats-view"
+                  value={view === 'map' ? 'map' : 'list'} onChange={onView}
+                  options={[
+                    { value: 'list', label: t('explore.viewList'), icon: <HouseIcon.list size={16} /> },
+                    { value: 'map', label: t('explore.viewMap'), icon: <HouseIcon.map size={16} /> },
+                  ]} />
+              </span>
+            )}
+          </span>
+        )}
       </div>
     );
   }

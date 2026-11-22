@@ -20,7 +20,7 @@ export function AppOverlays({
   openTogether, openTripForCountry, openTripInPlanner, openTripStyles, pastAtOpen,
   pendingFriend, pendingGuide, pendingRegion, place, placeRows, planInProgress, savedCount,
   requestAuth, savedTripsOpen, selectedDest, selectedId, setAdminOpen, setAuthModalOpen,
-  setCountryPage, setGuidesOpen, setPastAtOpen, setPendingDayPlanId,
+  setChoices, setCountryPage, setGuidesOpen, setPastAtOpen, setPendingDayPlanId,
   setPendingGuide, setPendingRegion, setPendingTrip, setSavedTripsOpen, setSelectedId,
   setTogetherCode, togetherCode, togetherOpen, togetherView, toggleFav, user,
 }) {
@@ -150,6 +150,8 @@ export function AppOverlays({
           costs={exploreIndices}
           stayTier={choices.stay_tier || 'home'}
           lifestyle={choices.lifestyle}
+          choices={choices}
+          setChoices={setChoices}
           onPlanTripCountry={openTripForCountry}
           onOpenFriends={() => openTogether('home')}
           /* An empty shelf offers the tab that fills it, so "nothing here

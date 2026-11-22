@@ -471,10 +471,20 @@ if (seed && seed in PAYLOAD_SEEDS) {
 // groups, each line with its source and date checked; plus seeded breaks.
 {
   const file = path.join(APP_ROOT, 'public', 'entry_rules.json');
-  if (!fs.existsSync(file)) {
+  // The file is tracked, but the schema-contract job's sparse checkout does
+  // not list it; then the gate reads the committed blob, so it checks exactly
+  // what ships. An untracked, missing file still fails.
+  let text = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : null;
+  if (text == null) {
+    try {
+      text = execFileSync('git', ['-C', REPO_ROOT, 'show', 'HEAD:continent-app/public/entry_rules.json'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 16 * 1024 * 1024 });
+      console.log('  NOTE  public/entry_rules.json is not in this sparse checkout; checking the committed copy at HEAD');
+    } catch { text = null; }
+  }
+  if (text == null) {
     fail('public/entry_rules.json is missing (run python pipeline/entry_rules.py)');
   } else {
-    const doc = JSON.parse(fs.readFileSync(file, 'utf8'));
+    const doc = JSON.parse(text);
     const countries = [...new Set(Object.values(real.destinations).map((d) => d.iso2).filter(Boolean))].sort();
     const problems = validateEntryRules(doc, { countries });
     if (problems.length) fail(`entry_rules.json breaks the contract:\n${problems.slice(0, 12).map((p) => `          ${p}`).join('\n')}`);

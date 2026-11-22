@@ -546,6 +546,8 @@ export function DestinationPage({
       doItems={doItems}
       ways={ways}
       openSignal={cardSignal}
+      saved={!!isFavorite}
+      onSave={onToggleFavorite || null}
     />
   ) : null;
 

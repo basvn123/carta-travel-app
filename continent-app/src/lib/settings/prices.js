@@ -15,10 +15,14 @@
  * (explore-settings.md 2d: the row multiplied a day by the seats, the rest
  * of the app by seats x nights): the span now says which.
  *
- * A trip whose way there has no figure (notKnown, or no way on the row)
- * still shows the stay part, marked `notKnown: true` with `missing:
- * ['way']`, so the UI marks it and the price sort can put it last. A way
- * the traveller switched off (price_excluded 'flight') is not missing.
+ * The way there follows one chain (G12, D10, Explore clean 2026-11-20):
+ * the dated fare, the route's typical fare (`typical`), a train, coach or
+ * car estimate when the chosen way has no fare (`estimated`, set in
+ * lib/settings/ways.js groundEstimate), else nothing. A trip whose way has
+ * no figure still shows the stay part, marked `notKnown: true` with
+ * `missing: ['way']`: the card shows no sign (owner rule), the receipt says
+ * so and the price sort puts it last. A way the traveller switched off
+ * (price_excluded 'flight') is not missing.
  *
  * Pure: no React, no i18n (unit is a key and its params).
  */
@@ -37,20 +41,22 @@ export function asModel(choices) {
 
 const costOf = (row) => (row && typeof row === 'object' && 'cost' in row ? row.cost : row) || null;
 
-/** The way there a figure can add: { eur, typical, mode, from } a person,
- *  or null with `why` 'off' | 'none' | 'notKnown'. */
+/** The way there a figure can add: { eur, typical, estimated, mode, from }
+ *  a person, or null with `why` 'off' | 'none' | 'notKnown'. */
 function wayPart(cost, excluded) {
   if (excluded) return { eur: null, why: 'off' };
   const way = cost?.way;
   if (!way) return { eur: null, why: 'none' };
   if (way.notKnown || !(way.perPerson > 0)) return { eur: null, why: 'notKnown', mode: way.mode };
-  return { eur: way.perPerson, typical: !!way.typical, mode: way.mode, from: way.from || null };
+  return {
+    eur: way.perPerson, typical: !!way.typical, estimated: !!way.estimated, mode: way.mode, from: way.from || null,
+  };
 }
 
 /**
  * Every amount of the four cells for one row, in euros.
  * @returns {{ group, n, nights, span, day, bed, food, way, stay, trip,
- *   wayTypical, wayMissing, wayOff }}
+ *   wayTypical, wayEstimated, wayMissing, wayOff }}
  *   day/bed/food are one day for n; way is the return for n; stay is
  *   day x nights; trip is stay + way (stay alone when the way is missing).
  */
@@ -75,6 +81,7 @@ export function grandTotal(row, choices) {
     stay,
     trip: stay == null ? null : cents(stay + (way || 0)),
     wayTypical: !!w.typical,
+    wayEstimated: !!w.estimated,
     wayMissing: w.why === 'notKnown' || w.why === 'none',
     wayOff: w.why === 'off',
     wayMode: w.mode || cost?.way?.mode || null,
@@ -82,14 +89,28 @@ export function grandTotal(row, choices) {
   };
 }
 
+/** The basis line under a figure (G12, D10, card option A): the words the
+ *  card and the receipt both print, as an i18n key and its params. */
+function basisOf(g) {
+  if (g.span !== 'trip') return g.group ? ['price.basis.dayGroup', { n: g.n }] : ['price.basis.day', {}];
+  const one = g.nights === 1;
+  if (g.group) return [one ? 'price.basis.tripGroupOne' : 'price.basis.tripGroup', { n: g.n, nights: g.nights }];
+  return [one ? 'price.basis.tripOne' : 'price.basis.trip', { nights: g.nights }];
+}
+
 /**
  * The figure for a row under the choices:
- *   { eur, unit: [key, params], typical, notKnown, missing, parts }
+ *   { eur, unit: [key, params], basis: [key, params], span, group,
+ *     typical, notKnown, missing, parts }
  *   eur       the number to show (null: no figure at all)
  *   unit      the i18n key and params after it ("/day", "/day for 3",
  *             "/trip", "/trip for 3")
+ *   basis     the line under the figure ("a day, each", "for 2, 7 nights")
+ *   span      'day' | 'trip'; group: the figure is the group's
  *   typical   the figure holds a typical fare (whole trip only)
- *   notKnown  part of the figure has no number yet (missing names it)
+ *   estimated the figure holds a ground estimate for a way with no fare
+ *   notKnown  part of the figure has no number yet (missing names it):
+ *             the stay alone, never the best value, sorted last
  *   parts     { bed, food, way, nights, n }: the wagons, each in the same
  *             span and view as eur, so they add up to it (way null on a day)
  */
@@ -107,7 +128,11 @@ export function priceFigure(row, choices) {
   return {
     eur: trip ? g.trip : g.day,
     unit,
+    basis: basisOf(g),
+    span: trip ? 'trip' : 'day',
+    group: g.group,
     typical: trip && !g.wayMissing && !g.wayOff && g.wayTypical,
+    estimated: trip && !g.wayMissing && !g.wayOff && g.wayEstimated,
     notKnown: missing.length > 0,
     missing,
     parts: {
@@ -116,6 +141,7 @@ export function priceFigure(row, choices) {
       way: trip ? g.way : null,
       wayMode: g.wayMode,
       wayTypical: g.wayTypical,
+      wayEstimated: g.wayEstimated,
       wayFrom: g.wayFrom,
       nights: g.nights,
       n: g.n,
@@ -132,4 +158,23 @@ export function priceSortValue(row, choices) {
   const f = priceFigure(row, choices);
   if (f.eur == null) return Infinity;
   return f.notKnown ? 1e9 + f.eur : f.eur;
+}
+
+/**
+ * Rows in the order of the figure the cards show (priceSortValue), low to
+ * high or, with `desc`, high to low (G12 map view round 2, "Price, high to
+ * low"). Either way a figure with a missing part (the stay alone) comes
+ * after every complete one and a row with no figure last, so a stay-only
+ * trip never heads a list as the cheapest or the dearest. Stable.
+ */
+export function sortByPrice(rows, choices, { desc = false } = {}) {
+  const v = new Map(rows.map((p) => [p, priceSortValue(p, choices)]));
+  const band = (x) => (x === Infinity ? 2 : x >= 1e9 ? 1 : 0);
+  return [...rows].sort((a, b) => {
+    const x = v.get(a);
+    const y = v.get(b);
+    if (band(x) !== band(y)) return band(x) - band(y);
+    if (x === y) return 0;
+    return desc ? y - x : x - y;
+  });
 }

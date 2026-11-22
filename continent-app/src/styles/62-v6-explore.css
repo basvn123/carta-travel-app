@@ -97,13 +97,8 @@
 
 /* --- 12. "Score key", a word instead of a bare "?" ----------------------- */
 
-/* --- 13. The floating List/Map switch never covers the last card --------- */
-/* (Its own rules are in the T441 block at the end of this file.) */
-@media (max-width: 768px) {
-  .explore-shell .explore-wrap {
-    padding-bottom: calc(var(--tap) + var(--space-7) + env(safe-area-inset-bottom, 0px));
-  }
-}
+/* --- 13. The room under the last card is the scroller's own (G12 round 2:
+   the Map pill left for the fixed corner, 89-dock.css --corner-room). ---- */
 
 /* ==========================================================================
    V4 (T393): visual and dynamic. Plan: docs/design-v6/plans/V4-explore.md in
@@ -461,7 +456,7 @@
   grid-template-columns: 44px minmax(0, 1fr) auto auto auto;
   grid-template-areas:
     "media l1 l1 day save"
-    "media l2 parts parts save"
+    "media l2 l2 day save"
     "media fit fit fit save";
   align-items: center;
   column-gap: 10px;
@@ -541,13 +536,46 @@
     grid-template-areas:
       "media l1 l1 l1 save"
       "media l2 l2 day save"
-      "media parts parts parts save"
+      "media . . day save"
       "media fit fit fit save";
     padding-block: 2px;
   }
   .xrows--ledger .xrow-hs .xrow-name { white-space: normal; overflow: visible; text-wrap: balance; }
   .xrows--ledger .xrow-hs .xrow-line2 { margin-top: 1px; line-height: var(--leading-tight); flex-wrap: wrap; row-gap: 2px; }
   .xrows--ledger .xrow-hs .xform-parts { --wh: 20px; justify-content: flex-start; margin-top: 1px; }
+}
+/* Explore's list rows never cut (G12, Explore clean 2026-11-20, owner:
+   no cut text in any language at any width; proposal section 4): the name
+   wraps, the region and the country wrap rather than end in an ellipsis,
+   and on a phone list the region has its own line with the figure and its
+   basis on the line under it, so the figure never squeezes the name or
+   the region. Only the list (.xrows--ledger); the map's rows are their
+   own (Lane A). */
+.xrows--ledger .xrow-hs .xrow-name { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: break-word; }
+.xrows--ledger .xrow-hs .xrow-line1 { align-items: flex-start; flex-wrap: wrap; row-gap: 2px; }
+.xrows--ledger .xrow-hs .xrow-country { flex-wrap: wrap; white-space: normal; }
+.xrows--ledger .xrow-hs .xrow-region { overflow: visible; text-overflow: clip; overflow-wrap: break-word; }
+.xrows--ledger .xrow-hs .xrow-ctry { flex: 0 1 auto; }
+@container xlist (max-width: 599px) {
+  .xrows--ledger .xrow-hs {
+    grid-template-areas:
+      "media l1 l1 l1 save"
+      "media l2 l2 l2 save"
+      "media day day day save"
+      "media fit fit fit save";
+  }
+  .xrows--ledger .xrow-hs .hs-formation-day.xfig {
+    justify-self: start;
+    grid-auto-flow: column;
+    align-items: baseline;
+    justify-items: start;
+    column-gap: var(--space-2);
+    min-height: 30px;
+    margin-top: 2px;
+    text-align: start;
+  }
+  /* The figure's press area stays 44 px tall without making the row so. */
+  .xrows--ledger .xrow-hs .xfig::before { content: ""; position: absolute; inset: -7px -6px; }
 }
 /* The flag and the water mark never shrink; the words give way. */
 .xrow-hs .xrow-line2 > .country-flag,
@@ -566,6 +594,31 @@
 .xrow-hs .xform-parts .hs-wagon { padding-inline: 5px; gap: 2px; }
 .xrow-hs .xform-parts .hs-wagon svg { width: 12px; height: 12px; }
 .xrow-hs .hs-formation-day { grid-area: day; justify-self: end; margin: 0; padding: 0; }
+/* G12, D10 (place-prices): the figure over its basis, one button to the
+   place's receipt, right aligned in the day column. */
+.xrow-hs .xfig {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  justify-items: end;
+  align-content: center;
+  gap: 1px;
+  min-height: var(--tap);
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: end;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+/* .xprice adds weight so no same-weight route sheet rule ties with it (css-routes). */
+.xrow-hs .xprice.xfig:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xrow-hs .xfig-amount { font-size: var(--text-lead); font-weight: 800; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.xrow-hs .xfig-basis { font-size: var(--text-caption); font-weight: 600; color: var(--text-2); white-space: nowrap; text-decoration: underline dotted var(--umber-300); text-underline-offset: 3px; }
+.xrow-hs.is-selected .xfig-basis { color: inherit; }
+@media (hover: hover) { .xrow-hs .xfig:hover .xfig-amount { color: var(--action-hover); } }
 .xrow-hs .hs-formation-day .money { font-weight: 800; }
 /* G12: the pressable wagons are 32 px in every list width. */
 .xrow-hs .xform.is-pressable .xform-parts { --wh: 32px; align-items: center; }
@@ -588,6 +641,7 @@
   animation: hs-settle-in var(--dur-settle) var(--ease-settle) both;
 }
 .xrow-hs.is-selected .hs-formation-day .money,
+.xrow-hs.is-selected .hs-formation-day .not-yet,
 .xrow-hs.is-selected .hs-formation-day .pitems-trigger { color: inherit; }
 
 /* The empty state as one centred block: the dashed blaze over the sentence
@@ -595,10 +649,6 @@
 .explore-shell .xempty-mark { display: block; margin: var(--space-7) auto var(--space-3); }
 .explore-shell .xempty-mark + .xempty { align-items: center; text-align: center; }
 .explore-shell .xempty-mark + .xempty .empty-result-line { font-size: var(--text-lead); }
-@media (max-width: 768px) {
-  /* Room under the last row for the floating Map pill. */
-  .explore-shell .xcontent-main { padding-bottom: calc(var(--tap) + var(--space-7)); }
-}
 
 /* Save (ExploreCards.jsx SaveButton; G12 point 4): the bookmark, an
    outline in the quiet ink, filled in the select ink once saved. The
@@ -609,7 +659,7 @@
 .xsave .bm-fill { fill: transparent; transition: fill var(--dur-1) var(--ease-out); }
 .xsave[aria-pressed="true"] .hs-icon-bookmark { color: var(--select-ink); }
 .xsave[aria-pressed="true"] .bm-fill { fill: var(--select-ink); }
-.xsave.is-ticking .hs-icon-bookmark { animation: xsave-tick 240ms var(--ease-out); }
+.xsave.is-ticking .hs-icon-bookmark { animation: xsave-tick var(--dur-save) var(--ease-out); }
 .xsave.is-ticking::after {
   content: "";
   position: absolute;
@@ -620,7 +670,7 @@
   border-radius: 50%;
   background: var(--select-bg);
   pointer-events: none;
-  animation: xsave-ring 240ms var(--ease-out) forwards;
+  animation: xsave-ring var(--dur-save) var(--ease-out) forwards;
 }
 @keyframes xsave-tick { 50% { scale: 1.14; } }
 @keyframes xsave-ring { from { scale: 0.6; opacity: 0.9; } to { scale: 1.4; opacity: 0; } }
@@ -641,7 +691,7 @@
 .xtool-saved[aria-pressed="true"] .bm-fill { fill: currentColor; }
 .xov-quick [aria-pressed="true"] .bm-fill { fill: currentColor; }
 /* The first save of a session: My trips in the nav bumps once. */
-.hs-nav-bump { animation: hs-nav-bump 200ms var(--ease-out); }
+.hs-nav-bump { animation: hs-nav-bump var(--dur-2) var(--ease-out); }
 @keyframes hs-nav-bump { 50% { translate: 0 -3px; } }
 @media (prefers-reduced-motion: reduce) {
   .xsave.is-ticking .hs-icon-bookmark, .hs-nav-bump { animation: none; }
@@ -659,7 +709,6 @@
       "media l1 l1 l1 save"
       "media l2 l2 day save"
       "media why why why save"
-      "media parts parts parts save"
       "media fit fit fit save";
   }
   .mpp-rows .xrow-hs .xform-parts { justify-content: flex-start; margin-top: var(--space-1); }
@@ -678,8 +727,8 @@
   .xrow-hs {
     grid-template-columns: 56px minmax(0, 1fr) auto minmax(76px, auto) auto;
     grid-template-areas:
-      "media l1 parts day save"
-      "media l2 parts day save"
+      "media l1 l1 day save"
+      "media l2 l2 day save"
       "media why why why save"
       "media fit fit fit save";
     column-gap: var(--space-4);
@@ -703,11 +752,11 @@
   .xrow-hs {
     /* The parts take a fixed track, so the reason column does not drift
        with the width of the wagons and the row has no empty middle. */
-    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) 15rem minmax(84px, auto) auto;
+    grid-template-columns: 56px minmax(0, 18rem) minmax(0, 1fr) minmax(84px, auto) auto;
     grid-template-areas:
-      "media l1 why parts day save"
-      "media l2 why parts day save"
-      "media fit fit fit fit save";
+      "media l1 why day save"
+      "media l2 why day save"
+      "media fit fit fit save";
   }
   .xrow-hs .xband { display: inline; }
   .xrow-hs .xform-parts { justify-self: end; }
@@ -734,7 +783,6 @@
    every on/off filter, and three quiet folds for the long lists.
    ========================================================================== */
 .xrail { display: flex; flex-direction: column; gap: var(--space-5); }
-.xrail-clear { align-self: flex-end; margin: 0 0 calc(-1 * var(--space-3)); }
 .xrail-sec { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
 .xrail-h {
   margin: 0;
@@ -780,88 +828,12 @@
    a hairline under them there so the category's own filters read as its. */
 /* 16 px under the search row on both sides of Explore (T498). */
 .xcats-bar { margin: var(--space-2) 0 var(--space-4); }
-/* "Budget a day" with the day-price dot after it, outside the label. */
-.xrail-budget { display: flex; flex-direction: column; min-width: 0; }
-.xrail-label-row { display: inline-flex; align-items: center; }
-.xrail-pair {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-3);
-}
-.xrail-pair .field-label,
 .xrail-sec > .field .field-label {
   font-size: var(--text-caption);
   font-weight: 600;
   color: var(--text-2);
 }
-.xrail-rating { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.xrail-switches { gap: 0; }
-.xrail-switches .xrail-h { margin-bottom: var(--space-1); }
-.xrail-fold { border-top: 1px solid var(--border-soft); }
-.xrail-fold-head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  cursor: pointer;
-  list-style: none;
-}
-.xrail-fold-head::-webkit-details-marker { display: none; }
-.xrail-fold-head .xrail-h { flex: 1 1 auto; }
-.xrail-fold-chev {
-  flex: none;
-  color: var(--text-3);
-  transition: transform var(--dur-2) var(--ease-out);
-}
-.xrail-fold[open] .xrail-fold-chev { transform: rotate(180deg); }
-.xrail-fold-head:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
-.xrail-fold-body { padding: 0 0 var(--space-4); }
 .xrail-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.xrail-country-find { margin-bottom: var(--space-2); }
-.xrail-countries {
-  display: flex;
-  flex-direction: column;
-  max-height: 320px;
-  margin: 0;
-  padding: 0;
-  overflow-y: auto;
-  list-style: none;
-}
-/* T457: one row height on both tabs, Explore's 44 px (its rows were that
-   tall through the country page chevron; Destinations' have none). */
-.xrail-country-row { display: flex; align-items: center; gap: var(--space-1); min-height: var(--tap); }
-.xrail-country {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 36px;
-  font-size: var(--text-body);
-  color: var(--text);
-  cursor: pointer;
-}
-.xrail-country input { width: 18px; height: 18px; margin: 0; accent-color: var(--action); }
-/* The flag's column keeps its width when a country has no drawn flag, so
-   every name starts on one line (T457). */
-.xrail-flag { display: inline-flex; flex: none; width: 17px; }
-/* A chosen country is the one selected state, the tint with the selected
-   ink, besides the native tick or dot (T457, carta-design: a selected rail
-   row). The row keeps its text on the rail's line. */
-/* The list bleeds 8 px each side, inside its own scroller, so the tint has
-   room on both sides and nothing scrolls sideways. */
-.xrail-countries { margin-inline: calc(-1 * var(--space-2)); }
-.xrail-country {
-  padding-inline: var(--space-2);
-  border-radius: var(--radius-control);
-}
-.xrail-country:has(input:checked) { background: var(--select-bg); color: var(--select-ink); }
-@media (pointer: coarse) {
-  .xrail-country { min-height: var(--tap); }
-}
-@media (prefers-reduced-motion: reduce) {
-  .xrail-fold-chev { transition: none; }
-}
 /* The phone's Filters door and the country page link. */
 .explore-shell .xfilters-n { margin-left: var(--space-1); }
 .explore-shell .xcountry-link { margin: 0 0 var(--space-3); }
@@ -984,8 +956,6 @@
   .explore-shell.is-map .xcats-bar { grid-column: 1 / -1; margin: 0 0 var(--space-3); }
   .explore-shell.is-map .xcats-row .ui-tab { min-height: var(--tap-main); }
   .explore-shell.is-map .xbar { display: contents; }
-  .explore-shell.is-map .xbar-lead { grid-column: 1; grid-row: 2; }
-  .explore-shell.is-map .xqf { grid-column: 2; grid-row: 2; align-self: center; }
   .explore-shell.is-map .xbar-tools { grid-column: 3; grid-row: 2; }
   .explore-shell.is-map .xbar-title {
     position: absolute;
@@ -1003,6 +973,8 @@
     min-height: 0;
     margin: var(--space-3) calc(var(--page-gutter) - var(--page-inset)) 0;
   }
+  /* No applied row (judgement-5): the map starts one step under the tabs. */
+  .explore-shell.is-map .explore-wrap:has(> .xhead.is-bare) .xcontent { margin-top: 0; }
   .explore-shell.is-map .xcontent-map {
     position: relative;
     top: auto;
@@ -1021,7 +993,6 @@
 @media (min-width: 769px) and (max-width: 1023px) {
   .explore-shell.is-map .explore-wrap { grid-template-rows: auto auto auto minmax(0, 1fr); }
   .explore-shell.is-map .xbar-tools { grid-column: 2 / -1; justify-self: end; }
-  .explore-shell.is-map .xqf { grid-column: 1 / -1; grid-row: 3; margin-top: var(--space-2); }
   .explore-shell.is-map .xcontent { grid-row: 4; }
 }
 .explore-shell .xmap-failed {
@@ -1040,75 +1011,7 @@
 }
 .explore-shell .xmap-failed p { margin: 0; max-width: 28ch; }
 
-/* --- The keyboard layer: one real button per pin in view ----------------
-   Transparent and pointer-events none (the mouse talks to the canvas), each
-   centred on its dot so the focus ring lands on what the reader sees. */
-.explore-shell .xmap-kpins { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-.explore-shell .xmap-kpin {
-  position: absolute;
-  width: var(--kpin-d, 16px);
-  height: var(--kpin-d, 16px);
-  padding: 0;
-  border: 0;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-.explore-shell .xmap-kpin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-
-/* --- Price labels (house rule "Price pins"): the name at 500, the figure
-   semibold, on the surface with a border edge. ExploreMap.jsx estimates the
-   same box for its collision check (LABEL_BOX_W, LABEL_H). ------------- */
-.explore-shell .xmap-kpin.is-label {
-  display: inline-flex;
-  align-items: baseline;
-  width: auto;
-  height: auto;
-  padding: var(--space-1) var(--space-2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  background: var(--surface);
-  color: var(--text);
-  font-family: var(--font);
-  font-size: var(--text-caption);
-  font-weight: 500;
-  line-height: var(--leading-tight);
-  white-space: nowrap;
-  cursor: pointer;
-  pointer-events: auto;
-}
-/* Every pin has a 44 px hit box whatever its drawn size. */
-.explore-shell .xmap-kpin.is-label::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: var(--tap);
-  height: var(--tap);
-  transform: translate(-50%, -50%);
-}
-.explore-shell .xmap-kpin-label { display: inline-flex; align-items: baseline; gap: var(--space-1); }
-.explore-shell .xmap-kpin-eur { font-weight: 600; font-variant-numeric: tabular-nums; }
-@media (hover: hover) {
-  .explore-shell .xmap-kpin.is-label:hover { border-color: var(--text-3); }
-}
-/* The one cheapest in view: the best-value marker, ink on sun. */
-.explore-shell .xmap-kpin.is-cheapest {
-  z-index: 2;
-  border-color: var(--best);
-  background: var(--best);
-  color: var(--text);
-  animation: xpin-in var(--dur-1) var(--ease-out);
-}
-/* The card under the pointer or in focus in the list rings its pin. */
-.explore-shell .xmap-kpin.is-ringed { z-index: 3; outline: 2px solid var(--text); outline-offset: 2px; }
-/* Settles from 0.9: the scale property composes with the centring
-   transform, so the label does not jump. */
-@keyframes xpin-in {
-  from { scale: 0.9; }
-  to { scale: 1; }
-}
+/* The keyboard layer and the pins: 86-map-view.css (G12 map view). */
 
 /* --- The tip and the card a pin opens ---------------------------------- */
 /* Above the price labels, which come later in the frame: a label under the
@@ -1189,25 +1092,11 @@
   -webkit-box-orient: vertical;
 }
 
-/* --- The phone's List/Map switch: the kit Segmented, floating ----------- */
-.explore-shell .xview-fab { display: none; }
-@media (max-width: 768px) {
-  /* The right edge, not the middle: centred it sat on the first card's
-     bed and food figures at rest (judge 1, G12); at the edge it only meets
-     the next card's peek. The style disc keeps the bottom left (89-dock.css). */
-  .explore-shell .xview-fab {
-    position: fixed;
-    right: max(var(--space-4), env(safe-area-inset-right, 0px));
-    bottom: calc(var(--bottom-nav-h) + var(--space-3));
-    z-index: var(--z-overlay);
-    display: block;
-  }
-  .explore-shell .xview-fab .seg { box-shadow: var(--elev-2); }
-}
+/* The phone's Map is the fixed bottom-right corner (G12 round 2,
+   components/dock/MapCorner.jsx, 89-dock.css). */
 
 @media (prefers-reduced-motion: reduce) {
   .explore-shell .xmap-canvas { transition: none; }
-  .explore-shell .xmap-kpin.is-cheapest { animation: none; }
 }
 
 /* ==========================================================================
@@ -1470,18 +1359,8 @@
    Roles and scales only.
    ========================================================================== */
 
-/* The picked pin: the one selected state on the map, the light tint with
-   the brown edge (the dot under it carries the brown ring, ExploreMap.jsx).
-   The cheapest keeps its sun marker; picked wins when they are one place. */
-/* House style (decision 0012): the chosen pin is the umber mark, paper
-   figure (5.81), settling without overshoot. */
-.explore-shell .xmap-kpin.is-label.is-picked {
-  z-index: 4;
-  border-color: var(--action);
-  background: var(--action);
-  color: var(--action-text);
-  outline: 2px solid var(--surface);
-}
+/* The picked pin is drawn by the map since the G12 map view: the umber
+   pill with the name (explore/mapPins.js, layer xpin-picked). */
 
 /* The picked place on a desktop map: the same overview the list row draws,
    on the surface at the foot of the frame, with its own close. A floating
@@ -1504,10 +1383,9 @@
 
 /* The phone map lies under T500's drawer. The map's box is the drawer's
    host, so it is positioned and clips the drawer's resting part; the
-   floating List | Map steps into the drawer's strip. */
+   drawer's strip holds List. */
 @media (max-width: 768px) {
   .explore-shell.is-map .xcontent-map { position: relative; overflow: hidden; }
-  .explore-shell.is-map .xview-fab { display: none; }
   .explore-shell .xdrawer .map-drawer-strip-slot { padding-left: var(--space-4); }
 }
 

@@ -1,6 +1,6 @@
 # Owner steps: Carta's AI (Gemini, Workers AI, Ask)
 
-Everything about Carta's AI that only the owner can do: live facts, dashboard checks, keys, labels, live runs, deploys and SQL pastes. Plan: `.work/2026-11-17-ai-north-star/decision.md` (approved 2026-11-17) and the baseline `.work/2026-11-17-gemini-rag/decision.md` S0 to S8; record `docs/decisions/0013-ai-cheapest-layer-first.md`. When a step is done, delete it here and write the answer where the step says (`docs/decisions/0003-open-items-owner-steps-and-roadmap.md`).
+Everything about Carta's AI that only the owner can do: live facts, dashboard checks, keys, labels, live runs, deploys and SQL pastes. Plan: `.work/2026-11-17-ai-north-star/decision.md` (approved 2026-11-17) and the baseline `.work/2026-11-17-gemini-rag/decision.md` S0 to S8; record `docs/decisions/0016-ai-cheapest-layer-first.md`. When a step is done, delete it here and write the answer where the step says (`docs/decisions/0003-open-items-owner-steps-and-roadmap.md`).
 
 ## What is known (lane 0 facts, public web, checked 2026-11-17)
 Full table with sources: `.work/2026-11-17-ai-north-star/lane0-facts.md` (H = vendor page quoted, M = indirect, L = not found).

@@ -27,6 +27,21 @@ export function addDays(iso, n) {
   return out;
 }
 
+// G12, D10 (audit-perf.md cause 4): building an Intl.DateTimeFormat is slow
+// (monthName was the largest single function of an Explore load, called for
+// every list card on every render), so each language and shape is built once.
+const formatters = new Map();
+function formatter(loc, key, opts) {
+  const k = `${loc}|${key}`;
+  let f = formatters.get(k);
+  if (!f) {
+    f = new Intl.DateTimeFormat(loc, opts);
+    formatters.set(k, f);
+  }
+  return f;
+}
+const monthNames = new Map();
+
 /** '2026-09-04' -> '04 Sep 2026', or 'Fri 04 Sep' with `withWeekday`. */
 export function fmtDate(iso, withWeekday = false) {
   if (!iso) return '';
@@ -36,7 +51,7 @@ export function fmtDate(iso, withWeekday = false) {
   const loc = activeLocale();
   if (loc && !loc.toLowerCase().startsWith('en')) {
     try {
-      return new Intl.DateTimeFormat(loc, withWeekday
+      return formatter(loc, withWeekday ? 'stamp-wd' : 'stamp', withWeekday
         ? { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' }
         : { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' })
         .format(new Date(Date.UTC(y, m - 1, d)));
@@ -60,12 +75,18 @@ export function fmtDate(iso, withWeekday = false) {
 export function monthName(m, lang = 'en', long = true) {
   const n = Number(m);
   if (!n || n < 1 || n > 12) return '';
+  const key = `${lang || 'en'}|${long ? 'l' : 's'}|${n}`;
+  const hit = monthNames.get(key);
+  if (hit !== undefined) return hit;
+  let out;
   try {
-    return new Intl.DateTimeFormat(lang || 'en', { month: long ? 'long' : 'short' })
+    out = formatter(lang || 'en', long ? 'month-l' : 'month-s', { month: long ? 'long' : 'short' })
       .format(new Date(Date.UTC(2021, n - 1, 15)));
   } catch {
-    return MONTHS[n - 1];
+    out = MONTHS[n - 1];
   }
+  monthNames.set(key, out);
+  return out;
 }
 
 /** Today's local date as ISO 'YYYY-MM-DD'. */

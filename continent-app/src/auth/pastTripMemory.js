@@ -22,6 +22,7 @@
 import { loadTripExtras, persistTripExtras } from '../planner/dayPlanStore.js';
 import { readCrew, writeCrew } from './tripCrew.js';
 import { toEur } from '../lib/currency.js';
+import { kasPeople, roadSpendByCat, tripSpendPP } from '../lib/spend/model.js';
 
 export const MEMORY_VERSION = 1;
 
@@ -115,6 +116,18 @@ export function spendPerPerson(memory) {
   const t = memory?.travellers || {};
   const heads = Math.max(1, (Number(t.adults) || 0) + (Number(t.children) || 0));
   return total / heads;
+}
+
+/** What the trip cost a person with the road spend in (G15, the ledger
+ *  bridge): per category the memory's typed figure, else your share of what
+ *  was logged on the road (lib/spend/model.js tripSpendPP). Your Europe's
+ *  cost chart and the year card read this. Null when neither holds a figure. */
+export function tripSpendPerPerson(planId, memory) {
+  const extras = loadTripExtras(planId);
+  const t = memory?.travellers || {};
+  const groupSize = Math.max(1, (Number(t.adults) || 0) + (Number(t.children) || 0));
+  const road = roadSpendByCat(extras.expenses, kasPeople(extras, { groupSize }), toEur);
+  return tripSpendPP(memory, road, toEur);
 }
 
 /** The photograph the card wears, if the traveller supplied one. */

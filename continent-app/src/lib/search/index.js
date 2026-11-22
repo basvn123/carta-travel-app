@@ -7,7 +7,7 @@ export { cartaPlaces, cityPart, kmBetween, inBox } from './places.js';
 export { suggest, readQuery, cartaTwin, MAX_PLACES } from './suggest.js';
 export { resolveIds, hitsFor, placesNear, NEAR_KM, NEAR_MIN, NEAR_MAX_KM } from './resolve.js';
 export { rememberPick, pickedHits, resetPicked } from './picked.js';
-export { readRecent, addRecent, clearRecent, MAX_RECENT } from './recent.js';
+export { readRecent, addRecent, addRecentText, clearRecent, MAX_RECENT } from './recent.js';
 export { cartaRegionsFrom } from './cartaRegions.js';
 export { townNames, namesFromTowns, startTown, useStartNames } from './startNames.js';
 export { rememberLocalName, localNameOf, resetLocalNames, usePlaceLocalName } from './localNames.js';

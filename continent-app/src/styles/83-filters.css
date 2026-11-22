@@ -1,0 +1,268 @@
+/*
+ * Explore's filters (G12, Explore top round 2; browse/filters/): the sheet
+ * (phone), the panel under the search bar (desktop) and the applied row
+ * under the band. The Settings sheet's look (81-settings.css): paper, a
+ * 60 px head with the title in 800, groups on hairlines, a foot with the
+ * one primary action. Selected chips are the kit's (04-ui.css): the wash,
+ * the umber edge and a tick, so the state never rests on colour alone.
+ */
+
+/* ---- The shell: head, body, foot ---- */
+.flt {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+  color: var(--text);
+}
+.flt-scrim { z-index: var(--z-modal); }
+.fsheet.flt-sheet {
+  width: 100%;
+  max-width: 560px;
+  height: min(88dvh, 820px);
+  max-height: min(88dvh, 820px);
+}
+
+/* Desktop: hung under the search field, the list visible and recounting
+   around it; the inline style sets top, left, width and max-height. */
+.flt-panel {
+  position: fixed;
+  z-index: var(--z-overlay);
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: var(--elev-2);
+  overflow: hidden;
+  animation: flt-drop var(--dur-2) var(--ease-out) both;
+}
+.flt-panel.is-leaving { animation: flt-lift var(--dur-2) var(--ease-in) both; }
+@keyframes flt-drop { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+@keyframes flt-lift { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(-4px); } }
+
+.flt-head {
+  flex: none;
+  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-5);
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+.flt-sheet .flt-head { touch-action: none; }
+.flt-grab {
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 0 auto var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--edge);
+}
+.flt-head-row { display: flex; align-items: center; gap: var(--space-2); min-height: 44px; }
+.flt-title {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  font-size: var(--text-title);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+  color: var(--text);
+}
+.flt-title:focus { outline-color: transparent; }
+.flt-title:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 4px; border-radius: var(--radius-sm); }
+.flt-close { flex: none; margin-left: auto; color: var(--text-2); }
+
+.flt-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--space-2) var(--space-5) var(--space-4);
+}
+.flt-groups { display: grid; grid-template-columns: minmax(0, 1fr); column-gap: var(--space-6); }
+.flt-group {
+  display: grid;
+  gap: var(--space-2);
+  align-content: start;
+  min-width: 0;
+  padding: var(--space-4) 0;
+  border-top: var(--stroke-hair) solid var(--border-soft);
+  scroll-margin-top: var(--space-2);
+}
+.flt-groups > :first-child { border-top: 0; }
+.flt-label {
+  margin: 0;
+  font-size: var(--text-body);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  color: var(--text);
+  text-wrap: balance;
+}
+.flt-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+/* A long word (German) wraps inside its chip rather than past the sheet. */
+.flt-chips .ui-chip { max-width: 100%; white-space: normal; line-height: var(--leading-tight); text-align: left; }
+/* The flight row's .flt-note (74-flights.css) names a grid area; here a
+   note takes the group's full width under its options (judgement-4). */
+.flt-note { grid-area: auto; margin: 0; font-size: var(--text-label); color: var(--text-2); text-wrap: pretty; }
+.flt-nomonth { display: grid; justify-items: start; gap: var(--space-2); }
+.flt-sort { width: 100%; }
+.flt-saved {
+  padding: var(--space-2) 0;
+  border-top: var(--stroke-hair) solid var(--border-soft);
+}
+.flt-saved .ui-switch { width: 100%; }
+
+/* Wide enough for two columns: the groups pair up from the first row
+   (Score and A day); Sort, last, runs the width under them. */
+@media (min-width: 769px) {
+  .flt-panel .flt-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .flt-panel .flt-group--wide { grid-column: 1 / -1; }
+  .flt-panel .flt-group:nth-child(-n + 2) { border-top: 0; }
+  .flt-panel .flt-group { padding: var(--space-3) 0; }
+}
+
+.flt-foot {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 64px;
+  padding: var(--space-2) var(--space-4) calc(var(--space-2) + env(safe-area-inset-bottom, 0px)) var(--space-5);
+  border-top: var(--stroke-hair) solid var(--border);
+  background: var(--surface);
+}
+.flt-show { flex: 1; font-variant-numeric: tabular-nums; }
+.flt-panel .flt-show { flex: none; margin-left: auto; }
+@media (max-width: 400px) {
+  .flt-head { padding-left: var(--space-4); }
+  .flt-body { padding-left: var(--space-4); padding-right: var(--space-4); }
+  .flt-foot { padding-left: var(--space-4); padding-right: var(--space-4); }
+}
+
+/* ---- The applied row ---- */
+.xhead { margin: 0 0 var(--space-4); }
+/* On the map from 769 px with no filter on: no applied row, so no band. */
+.xhead.is-bare { margin: 0; }
+.xap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.xap-chips {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+.xap.is-desk .xap-chips { flex: 1 1 auto; flex-wrap: wrap; }
+.xap.is-desk .xap-scroll { display: contents; }
+/* One line on a phone: Filters, the chips, Clear all. Only the chips slide
+   sideways, fading on a side that has more; Filters and Clear all never
+   shrink, so neither word is ever cut (judge 1: "Cle" at 390). */
+.xap.is-phone .xap-chips { flex: 1 1 auto; }
+.xap.is-phone .xap-chips > * { flex: none; }
+.xap.is-phone .xap-chips > .xap-scroll {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+  /* Room for the removes' 44 px targets, which spill past the 32 px chips:
+     a scroller clips what passes its edge. */
+  margin-block: calc((32px - var(--tap)) / 2);
+  padding-block: calc((var(--tap) - 32px) / 2);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.xap.is-phone .xap-scroll::-webkit-scrollbar { display: none; }
+.xap.is-phone .xap-scroll.has-start { --fade-s: var(--space-5); }
+.xap.is-phone .xap-scroll.has-end { --fade-e: var(--space-5); }
+.xap.is-phone .xap-scroll > * { flex: none; }
+.xap.is-phone .xap-chip { max-width: none; }
+/* Chips too wide together for the room between Filters and Clear all: the
+   chips take their own line under them (AppliedRow.jsx `stacked`), so no
+   chip is half faded next to Clear all (judgement-8). */
+.xap.is-phone.is-stacked .xap-chips { flex-wrap: wrap; row-gap: var(--space-2); }
+.xap.is-phone.is-stacked .xap-scroll { order: 3; flex: 1 0 100%; }
+.xap.is-phone.is-stacked .xap-clear { margin-inline-start: auto; }
+
+.xap-chip {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  min-height: 32px;
+  max-width: min(70vw, 280px);
+  padding-left: var(--space-3);
+  border-radius: var(--radius-pill);
+  background: var(--select-bg);
+  color: var(--select-ink);
+  font-size: var(--text-label);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.xap-text { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* The remove is its own 44 px button, drawn inside the 32 px chip: its
+   box spills over the chip's edges with nothing painted there. */
+.xap-chip .xap-x {
+  flex: none;
+  margin: calc((32px - var(--tap)) / 2) 0 calc((32px - var(--tap)) / 2) calc(var(--space-1) * -1);
+  color: var(--select-ink);
+}
+.xap-chip .xap-x .icon-btn-glyph {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  transition: background-color var(--dur-1) var(--ease-out);
+}
+@media (hover: hover) {
+  .xap-chip .xap-x:hover { background: none; }
+  .xap-chip .xap-x:hover .icon-btn-glyph { background: var(--surface); }
+}
+.xap-clear.btn { flex: none; padding: 0 var(--space-2); font-weight: 700; }
+.xap-filters.btn { flex: none; border-radius: var(--radius-control); }
+.xap-filters.is-on { border-color: var(--select-border); }
+/* The disc keeps 8 px from the word, as on the quick row's Filters: the
+   button's label has no gap of its own, so it touched "Filtros" (judgement-7). */
+.xap-n {
+  margin-inline-start: var(--space-2);
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 var(--space-1);
+  border-radius: var(--radius-pill);
+  background: var(--action);
+  color: var(--action-text);
+  font-size: var(--text-caption);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.xap-tools {
+  display: flex;
+  align-items: center;
+  flex: none;
+  gap: var(--space-2);
+  margin-left: auto;
+}
+.xap-tools .btn { border-radius: var(--radius-control); }
+.xap-tools .btn.is-on,
+.xap-tools .btn[aria-pressed="true"] {
+  border-color: var(--select-border);
+  background: var(--select-bg);
+  color: var(--select-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flt-panel, .flt-panel.is-leaving { animation: none; }
+  .xap-chip .xap-x .icon-btn-glyph { transition: none; }
+}
+
+/* G12 map view round 2: each option says the count it would leave; an
+   option that would leave nothing is greyed with its 0. */
+.flt .flt-n { margin-left: var(--space-1); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.flt .flt-chip[aria-checked="true"] .flt-n, .flt .flt-chip[aria-pressed="true"] .flt-n { color: inherit; }
+.flt .flt-chip.is-zero { color: var(--text-3); border-style: dashed; }
+.flt .flt-chip.is-zero .flt-n { color: var(--text-3); }

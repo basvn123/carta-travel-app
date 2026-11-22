@@ -4,7 +4,6 @@ import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { MONTHS_SHORT } from './ClimateStrip.jsx';
 import { useExploreCatalog } from '../hooks/useExploreCatalog.js';
 import { ExploreCategories } from './ExploreCategories.jsx';
-import { FilterChips } from './FilterChips.jsx';
 import { loadSearchIndex, querySearchIndex } from '../lib/searchIndex.js';
 import { placeLinkingOn } from '../lib/linking/flag.js';
 import { loadAskLexicon } from '../lib/ask/data.js';
@@ -13,23 +12,26 @@ import { GuidesStrip } from '../community/GuidesStrip.jsx';
 import { FULL_RATING_RANGE } from '../lib/rating.js';
 import { ChevronRightIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
+import { MapCorner } from '../components/dock/MapCorner.jsx';
 import { useTravelMonth, useSettings } from '../components/SettingsLine.jsx';
 import { scrollBehavior } from '../lib/motion.js';
-import { Button } from '../components/ui/index.js';
-import { useGuidedData } from '../lib/guidedData.js';
+import { Button, IconButton } from '../components/ui/index.js';
+import { useGuidedState } from '../lib/guidedData.js';
 import { setDockKind, setDockResults, setDockHandlers, useSearchDock } from './searchDockStore.js';
 // T586: the overview first page.
 // T588: the focused view's toolbar.
 // T585: the start dialog.
 import { StartDialog, startMode, markStartSeen } from './StartDialog.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
+import { calendarDefaultWindow } from '../lib/firstRun.js';
+import { todayISO } from '../lib/dates.js';
 import { isEmptyTaste, normalizeTaste } from '../lib/taste.js';
 import { MATCH } from '../lib/match.js';
 import { MatchMonth } from './WhyItMatches.jsx';
 import '../styles/84-explore-overview.css';
 import { SortMenu } from './explore/SortMenu.jsx';
 import { OverviewHero } from './explore/OverviewHero.jsx';
-import { useSettingsSheet } from './settings/settingsSheetStore.js';
+import { useSettingsSheet, openSettings } from './settings/settingsSheetStore.js';
 import { useFrozenOrder } from './band/useFrozenOrder.js';
 import { useExploreLens } from './explore/useExploreLens.js';
 import { ExploreContent } from './explore/ExploreContent.jsx';
@@ -38,10 +40,19 @@ import { useExploreRows } from './explore/useExploreRows.js';
 import { PAGE } from './explore/exploreConsts.js';
 import { useExploreRails } from './explore/useExploreRails.js';
 import { useExploreAsk } from './explore/useExploreAsk.jsx';
-import { useExploreChips } from './explore/useExploreChips.js';
-import { deskChips, lensCount } from './explore/chipRules.js';
+import { useExploreChips, XF_EMPTY } from './explore/useExploreChips.js';
+import { badgeCount, lensCount } from './explore/chipRules.js';
 import { prefetchMap } from './explore/exploreMapLazy.js';
 import { useExploreMapView } from './explore/useExploreMapView.js';
+import { setMapViewOn } from './explore/mapViewStore.js';
+import { FilterSheet } from './filters/FilterSheet.jsx';
+import { closeFilters, publishFilters, setFilterHandlers, useFilters } from './filters/filtersStore.js';
+import {
+  QUICK_BUDGET, SHORTCUTS, countNoTemp, parsePicks, parseTemps, quickChips, quickPatch, shortcutOn, shortcutPatch,
+  sortOptionsFor, sortShown,
+} from './filters/filterModel.js';
+import { formatMoney } from '../lib/money.js';
+import { spanOf, viewFactor } from '../lib/price/display.js';
 import { shareViewUrl } from '../lib/shareKeys.js';
 
 
@@ -49,13 +60,6 @@ import { shareViewUrl } from '../lib/shareKeys.js';
 // The shared predicates (no car, under a budget, quiet) live in
 // lib/guidedSearch.js since T442, so the rails, the filters and the guided
 // search read one definition each.
-
-const SORTS = [
-  { key: 'beauty', labelKey: 'sort.rating' },
-  { key: 'cost', labelKey: 'explore.sortCost' },
-  { key: 'name', labelKey: 'sort.az' },
-  { key: 'country', labelKey: 'sort.country' },
-];
 
 // An old link's "Under €70 a day" toggle (xp=e) lands on this ceiling.
 const LEGACY_CHEAP = 70;
@@ -105,7 +109,7 @@ export function ExploreTab({
   const { t, lang } = useI18n();
   // The guided search data (T439): vibes, areas and distances. Loaded on
   // idle; the hiking and beach rails and the vibe filter read it.
-  const guided = useGuidedData(isActive);
+  const { data: guided, done: guidedDone } = useGuidedState(isActive);
   const [visible, setVisible] = React.useState(PAGE);
   // Map and list in sync (house rule, explore N5): the card under the
   // pointer or in focus rings its pin; the pin under the pointer or in focus
@@ -135,6 +139,14 @@ export function ExploreTab({
       area: q.get('xa') || null,
       near: q.get('xn') || null,
       nb: list('xd'),
+      // G12 round 2 (decision.md section 2): the day-high bands (xt) and the
+      // sheet's picks (xk: water, walking, kind of place). xk carried the
+      // old trip kinds; an old link's city, island or mountains still read.
+      temps: parseTemps(list('xt')),
+      picks: parsePicks(list('xk')),
+      // G12 map view round 2: Score 8+ (xq) and Match 70%+ (xy, in percent).
+      minScore: Number(q.get('xq')) > 0 ? Number(q.get('xq')) : null,
+      minMatch: Number(q.get('xy')) > 0 ? Number(q.get('xy')) / 100 : null,
     };
   });
   const patchXf = React.useCallback((delta) => setXf((v) => ({ ...v, ...delta })), []);
@@ -151,10 +163,15 @@ export function ExploreTab({
   // T586: the rails name the month the settings line shows, so "Best in"
   // never says October above a trip the line dates in November. The
   // traveller's own month first, then the dates on show, then today.
-  const shownDepart = useSettings()?.departDate;
+  // G12, D10 (round 6): before the app has written its default dates (they
+  // reach Explore with the first settled prices, often with the full
+  // catalogue), the month of the dates Carta will pick (lib/firstRun.js),
+  // not today's: the rails said November, then all turned to December at
+  // the late swap and were worked out again in one 0.7 s task at 4x CPU.
+  const shownDepart = useSettings()?.departDate || calendarDefaultWindow(todayISO())?.start;
   const railMonth = travelMonth || Number(String(shownDepart || '').slice(5, 7)) || new Date().getMonth() + 1;
   const {
-    view, setView, bbox, pickedId, setPickedId, drawer, setDrawer, mapOpened, viewportMode,
+    view, setView, bbox, pickedId, setPickedId, mapOpened, viewportMode,
     pins, onMapViewport, onMapNeedDetail,
   } = useExploreMapView({ isActive });
   // B2: the fold-and-alias index answers the search box. Loaded on the
@@ -220,10 +237,11 @@ export function ExploreTab({
 
   const {
     settingsLine, setCountryNot, oneCountry, request, allRows, rows,
-    nearRow, gLabels, overviewOf, roleFor, taxRows, guidedRows, shownRows, listed,
+    nearRow, gLabels, overviewOf, rowOverviewOf, roleFor, taxRows, liveTotal, countFor, guidedRows, shownRows, listed,
+    home, keepFor, fitOf,
   } = useExploreRows({
     availableCountries, bbox, catAllRows, catRows, countryFilter, countryNot, data, dxf, guided,
-    lang, sortKey, t, travelMonth, view, visible, xf,
+    lang, sortKey, t, travelMonth, view, visible, xf, taste: matchTaste, matchMonth,
   });
 
   // C6: the filter state is the URL, so a filtered view is shareable and
@@ -251,9 +269,14 @@ export function ExploreTab({
     if (!isActive) return;
     const q = new URLSearchParams(window.location.search);
     const setOrDrop = (k, v) => (v ? q.set(k, v) : q.delete(k));
-    // G12: kind, Good for, budget floor, flight limit, best of and near the
-    // sea left with the filter pane; an old link's keys are dropped.
-    for (const k of ['xk', 'xr', 'xbm', 'xfh']) q.delete(k);
+    // G12: Good for, budget floor, flight limit and best of left with the
+    // filter pane; an old link's keys are dropped. G12 round 2: xk holds
+    // the sheet's picks again.
+    for (const k of ['xr', 'xbm', 'xfh']) q.delete(k);
+    setOrDrop('xk', xf.picks.join(','));
+    setOrDrop('xt', xf.temps.join(','));
+    setOrDrop('xq', xf.minScore || '');
+    setOrDrop('xy', xf.minMatch ? Math.round(xf.minMatch * 100) : '');
     setOrDrop('xv', xf.verdicts.join(','));
     setOrDrop('xm', xf.month || '');
     setOrDrop('xb', xf.budget || '');
@@ -267,7 +290,10 @@ export function ExploreTab({
     setOrDrop('xu', unescoOnly ? '1' : '');
     setOrDrop('xc', countryFilter.join(','));
     setOrDrop('xo', countryNot && countryFilter.length ? '1' : '');
-    setOrDrop('xs', sortKey !== 'beauty' ? sortKey : '');
+    // The sort is App's and App writes it as `sort` (lib/urlState.js); a
+    // second key said the same twice (flow-filters m5). An old link's xs is
+    // still read above, then dropped here.
+    setOrDrop('xs', '');
     setOrDrop('xw', view === 'map' ? 'map' : '');
     setOrDrop('xi', pickedId || '');
     const qs = q.toString();
@@ -289,6 +315,9 @@ export function ExploreTab({
   React.useEffect(() => { setVisible(PAGE); }, [bbox, view]);
 
   const gridTotal = view === 'map' ? shownRows.length : taxRows.length;
+  // The sheet's count follows a tap at once (liveTotal, the filters as
+  // tapped); the list and its own count follow when the deferred render lands.
+  const sheetTotal = view !== 'map' && liveTotal != null ? liveTotal : gridTotal;
 
   // A pin under the pointer or in focus outlines its card and brings it into
   // view, unless the reader moved the list in the last second: the list is
@@ -311,7 +340,9 @@ export function ExploreTab({
     if (!id && Date.now() < selfScrollUntil.current) return;
     setPinLinkId(id);
     if (!id || Date.now() - listScrolledAt.current < 1000) return;
-    const card = scrollRef.current?.querySelector(`.xcontent-main .xrow[data-id="${CSS.escape(id)}"]`);
+    // G12 map view: on a desktop the list is the column beside the map.
+    const card = scrollRef.current?.querySelector(`.xcontent-main .xrow[data-id="${CSS.escape(id)}"]`)
+      || scrollRef.current?.querySelector(`.mpp .xrow[data-id="${CSS.escape(id)}"]`);
     if (!card) return;
     const reduce = typeof window.matchMedia === 'function'
       && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -323,13 +354,20 @@ export function ExploreTab({
     gemOnly, gridTotal, locationQuery, nearRow, patchXf, reachAvailable, reachHours, request,
     scrollRef, sentinelRef, setBigOnly, setCountryFilter, setGemOnly, setLocationQuery,
     setRatingRange, setReachHours, setShowFavOnly, setTopBeachOnly, setTopPick, setTripKinds,
-    setUnescoOnly, setVisible, setXf, showFavOnly, t, tripKinds, unescoOnly, xf,
+    setUnescoOnly, setVisible, setXf, showFavOnly, t, travelMonth, tripKinds, unescoOnly, xf,
   });
 
   // Desktop chrome: the controls stand in the left panel. Ask Carta's one
   // door is the overview's own field (T595, owner 2026-10-22: only on
   // Explore, not in the header and not on other tabs).
   const isDesktop = useIsDesktop();
+  // G12 map view: the band and the corners follow the map view while this
+  // tab is the one on screen (mapViewStore).
+  const mapViewOn = isActive && !pageOver && view === 'map';
+  React.useEffect(() => {
+    setMapViewOn(mapViewOn);
+    return () => setMapViewOn(false);
+  }, [mapViewOn]);
 
   // T504: picking and opening. A pin picks a place (the overview shows);
   // the overview, a second tap on the same pin, or a list row opens it. A
@@ -339,12 +377,11 @@ export function ExploreTab({
     setPickedId(id);
     openWithMember(id);
   }, [openWithMember, setPickedId]);
+  // G12 map view: on a phone the pick shows as the tap card over the map
+  // (MapTapCard), so the map keeps its height; a tap on the open map clears it.
   const onPick = React.useCallback((id) => {
     setPickedId(id || null);
-    // On a phone the drawer rises to half with the picked place on top, and
-    // a tap on the open map lowers it again (design 1.5 C, question 7).
-    if (!isDesktop) setDrawer((d) => (id ? (d === 'strip' ? 'half' : d) : 'strip'));
-  }, [isDesktop, setDrawer, setPickedId]);
+  }, [setPickedId]);
   // The picked place, while it survives the filters; filtered out, it
   // leaves the map and the list together.
   const pickedRow = React.useMemo(
@@ -369,7 +406,7 @@ export function ExploreTab({
   // filters; `replace` starts the question over (an example, Clear).
   const applyGuided = React.useCallback((delta, replace = false) => {
     const next = replace
-      ? { vibe: null, area: null, near: null, month: null, budget: null, nb: [], nocar: false, quiet: false, ...delta }
+      ? { vibe: null, area: null, near: null, month: null, budget: null, nb: [], nocar: false, quiet: false, temps: [], picks: [], minScore: null, minMatch: null, ...delta }
       : { ...delta };
     if ('country' in next || replace) {
       setCountryFilter(next.country ? [next.country] : []);
@@ -419,8 +456,7 @@ export function ExploreTab({
       setShowFavOnly(false);
       setLocationQuery('');
       setView('grid');
-      setXf({ verdicts: [], month: null, budget: null, nocar: false, quiet: false,
-        vibe: null, area: null, near: null, nb: [] });
+      setXf({ ...XF_EMPTY });
       setPickedId(null);
     },
   });
@@ -439,18 +475,24 @@ export function ExploreTab({
   const dockLabel = locationQuery
     ? t('dock.in', { what: t('places.catPlaces'), q: locationQuery })
     : t('explore.placesTitle');
-  if (isActive && !isDesktop) {
+  // G12 round 2: on every width the band's field holds Back and the query
+  // (decision.md section 1), so the list state is published on both.
+  const filterCount = badgeCount(chips);
+  if (isActive) {
     setDockHandlers({ onBack: () => lens.back() });
   }
   React.useEffect(() => {
-    if (!isActive || isDesktop) return;
+    if (!isActive) return;
     setDockKind('places');
     setDockResults(railsIdle ? null : {
-      label: dockLabel, query: locationQuery || '', filterCount: chips.length,
-      // G12: the applied field carries Share on a phone (the toolbar lost it).
+      label: dockLabel, query: locationQuery || '', filterCount,
+      // G12: the applied field carries Share on a phone and on a tablet's
+      // map; a desktop has it at the applied row's right end, on the map
+      // beside List | Map (judgement-5).
       canShare: true,
     });
-  }, [isActive, isDesktop, railsIdle, dockLabel, locationQuery, chips.length]);
+  }, [isActive, railsIdle, dockLabel, locationQuery, filterCount]);
+  // Share copies this view's address.
   // Share copies this view: the place, filters and lens only, never the
   // traveller's home point, shortlist, party, dates or taste (lib/shareKeys.js, C9).
   const [toast, setToast] = React.useState(null);
@@ -466,7 +508,7 @@ export function ExploreTab({
         .then(() => setToast(t('explore.linkCopied')), fail);
     } catch { fail(); }
   };
-  if (isActive && !isDesktop) setDockHandlers({ onShare: shareView });
+  if (isActive) setDockHandlers({ onShare: shareView });
   // T585: the start dialog, once per device on a wide screen (T595: on the
   // first visit only; Ask Carta's field took over its door). On a phone a
   // first visit with no travel style opens the Style Studio's create flow
@@ -501,9 +543,20 @@ export function ExploreTab({
     }).catch(() => { /* offline: the corner disc still opens the studio */ });
     return () => { live = false; };
   }, [isActive, pageOver]);
-  const { rails, railLead, quickRails } = useExploreRails({
-    allRows, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows,
-    setGemOnly, setShowFavOnly, setSortKey, t, xf,
+  // G12 round 2 (decision.md section 1): a shortcut sets its one filter in
+  // place; the band stays and the list shows under it. The rails' See all
+  // for the same themes call it too, so both leave the same chip.
+  const applyShortcut = React.useCallback((id, on = true) => {
+    setXf((v) => {
+      const patch = shortcutPatch(id, on, v);
+      return patch.xf ? { ...v, ...patch.xf } : v;
+    });
+    const g = shortcutPatch(id, on, null);
+    if ('gemOnly' in g) setGemOnly(g.gemOnly);
+  }, [setGemOnly]);
+  const { rails, railLead, railsSettled } = useExploreRails({
+    allRows, applyShortcut, favorites, guided, isDesktop, lang, patchXf, railMonth, railsIdle, rows,
+    setShowFavOnly, setSortKey, t, xf,
   });
   // G12 (Explore top, decision.md "Layout stability"): while Settings is
   // open the list and the rails keep the order they had when it opened;
@@ -518,32 +571,35 @@ export function ExploreTab({
   }, [listSource, rails]);
   const held = useFrozenOrder(frozen, toFreeze);
   const shownList = React.useMemo(
-    () => (frozen ? held.list.slice(0, visible) : listed), [frozen, held, listed, visible]);
+    () => (frozen && held !== toFreeze ? held.list.slice(0, visible) : listed), [frozen, held, toFreeze, listed, visible]);
   const shownRails = React.useMemo(
-    () => (frozen ? rails.map((rail) => ({ ...rail, rows: held[`rail:${rail.key}`] || rail.rows })) : rails),
-    [frozen, held, rails]);
+    () => (frozen && held !== toFreeze ? rails.map((rail) => ({ ...rail, rows: held[`rail:${rail.key}`] || rail.rows })) : rails),
+    [frozen, held, toFreeze, rails]);
 
   // The control bar's three instruments. The count is a measured figure,
   // so it is grouped the way the reader's locale groups thousands.
 
-  // While a guided question orders the list (a vibe, or around a place),
-  // the default sort says so: "Best match" (T444; it read "Rating" over a
-  // list ordered by match). "Rating" stays a choice and turns the match
-  // order off.
-  const sortOptions = (xf.vibe || xf.near)
-    ? [{ key: 'beauty', labelKey: 'sort.match' }, { key: 'rating', labelKey: 'sort.rating' }, ...SORTS.slice(1)]
-    // T765: "For you" is offered once the traveller has a taste.
-    : matchTaste ? [{ key: 'foryou', labelKey: 'fit.sort' }, ...SORTS] : SORTS;
-  // T588: the sort is a menu behind one pill in the toolbar.
+  // G12 round 2 (decision.md section 2): Best match, Price, Score, A to Z,
+  // the same choices in the sheet and in the desktop row's menu. Best match
+  // is the match order under a guided question or a pick (T444), else the
+  // Score order; Best match does not read the style's taste while config
+  // keeps "For you" off by default (T765), so For you leads the list when
+  // the active style gives a taste, as in the sheet (requests-5.md R5.1).
   const sortMenu = (
-    <SortMenu t={t} options={sortOptions} onChange={setSortKey} compact={!isDesktop && chips.length > 0}
-      value={sortOptions.some((x) => x.key === catSort) ? catSort : 'beauty'} />
+    <SortMenu t={t} options={sortOptionsFor(!!matchTaste, home)} onChange={setSortKey} showValue className="xap-tool"
+      value={sortShown(sortKey, !!matchTaste, home)} />
+  );
+
+  // G12 map view round 2: the map sheet's and column's Sort, quiet.
+  const mapSort = (
+    <SortMenu t={t} options={sortOptionsFor(!!matchTaste, home)} onChange={setSortKey} bare
+      value={sortShown(sortKey, !!matchTaste, home)} />
   );
 
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the
   // list it offers the map, on the map it offers the list: a secondary pill
   // with the icon of where it goes. Drawn in the desktop toolbar, floating
-  // above the bottom nav on a phone, and in the map drawer's strip. Reaching
+  // above the bottom nav on a phone, and in the map sheet's head. Reaching
   // it starts loading the map.
   const viewSwitch = (cls) => {
     const toMap = view !== 'map';
@@ -556,6 +612,66 @@ export function ExploreTab({
         </Button>
       </span>
     );
+  };
+
+  // G12 round 2: the filters' store (filters/filtersStore.js) is the line
+  // to the band: its Filters control, its Browse shortcuts and the sheet
+  // read the same figures. Published only while Places is the tab on screen.
+  const filters = useFilters();
+  const shortcutList = React.useMemo(() => SHORTCUTS.map((s) => ({
+    id: s.id, label: t(s.labelKey), on: shortcutOn(s.id, { xf, gemOnly }),
+  })), [t, xf, gemOnly]);
+  // G12 map view round 2: the map's quick chips, in the reader's words; the
+  // budget is said in the traveller's basis, as the sheet's steps are.
+  const quickList = React.useMemo(() => {
+    const words = {
+      score8: () => t('filters.scoreMin', { n: 8 }),
+      budget: () => t('filters.upTo', { eur: formatMoney(QUICK_BUDGET * (viewFactor(request) || 1)) }),
+      warm: () => t('filters.quick.warm', { month: travelMonth ? gLabels.monthInline(travelMonth) : '' }),
+      water: () => t('filters.quick.water'),
+      hiking: () => t('filters.quick.hiking'),
+      gems: () => t('filters.gems'),
+      match: () => t('filters.matchMin', { n: 70 }),
+      saved: () => t('filters.quick.saved'),
+    };
+    return quickChips({ xf, gemOnly, showFavOnly, hasMonth: !!travelMonth, hasTaste: !!matchTaste })
+      .map((c) => ({ ...c, label: words[c.id]() }));
+  }, [t, xf, gemOnly, showFavOnly, travelMonth, matchTaste, request, gLabels]);
+  const applyQuick = React.useCallback((id, on) => {
+    setXf((v) => {
+      const patch = quickPatch(id, on, v);
+      return patch.xf ? { ...v, ...patch.xf } : v;
+    });
+    const g = quickPatch(id, on, null);
+    if ('gemOnly' in g) setGemOnly(g.gemOnly);
+    if ('showFavOnly' in g) setShowFavOnly(g.showFavOnly);
+  }, [setGemOnly, setShowFavOnly]);
+  if (isActive) setFilterHandlers({ applyQuick, clearAll: resetAll });
+  React.useEffect(() => {
+    if (!isActive) return;
+    publishFilters({ count: filterCount, total: sheetTotal, shortcuts: shortcutList, quick: quickList });
+  }, [isActive, filterCount, sheetTotal, shortcutList, quickList]);
+  React.useEffect(() => {
+    if (!isActive) return undefined;
+    return () => { closeFilters(); };
+  }, [isActive]);
+  if (isActive) setFilterHandlers({ applyShortcut });
+  const noTemp = React.useMemo(
+    () => (filters.isOpen && travelMonth ? countNoTemp(allRows, travelMonth) : 0),
+    [filters.isOpen, travelMonth, allRows]);
+  const sheetState = {
+    xf, setXf, sortKey, setSortKey, showFavOnly, setShowFavOnly, gemOnly, setGemOnly,
+    unescoOnly, setUnescoOnly, month: travelMonth,
+    monthName: travelMonth ? gLabels.monthInline(travelMonth) : '',
+    noTemp, dayFactor: viewFactor(request), tripSpan: spanOf(request) === 'trip',
+    // G12 map view round 2: the sheet counts on the map too, and each
+    // option shows the count it would leave (keepFor over the priced rows).
+    total: view !== 'map' ? sheetTotal : guidedRows.length, countFor, keepFor, rows, favorites, fitOf,
+    hasTaste: !!matchTaste, styleName: travelStyles?.active?.name || '',
+    listOn: !railsIdle, count: filterCount, onClearAll: resetAll,
+    onSetMonth: () => { closeFilters(); openSettings({ step: 'when' }); },
+    // From the overview with nothing chosen, Show opens every place.
+    onShow: () => { if (railsIdle) setFocusAll(true); },
   };
 
   // T598 (owner point 11): on a desktop the map starts right under the chip
@@ -583,8 +699,21 @@ export function ExploreTab({
   // T586 (owner decision 7): one row of pills at the top of the content,
   // on a phone and a desktop alike, instead of tiles in the side pane.
   // G12 (Explore top): on a phone the band in the top bar draws them.
+  // G12 round 2 (decision.md section 6): the desktop List | Map switch sits
+  // at the tab row's right end; the row draws it from `view` and `onView`.
+  // On the map Share stands just before it from 1024 px (judgement-5): the
+  // applied row under the tabs would otherwise stand empty above the map
+  // just to hold it. Below 1024 the six tabs fill the row, so the field
+  // holds Share.
   const catTiles = onPickCategory && isDesktop ? (
     <ExploreCategories current="places" variant="row"
+      view={view === 'map' ? 'map' : 'list'} onView={(v) => setView(v === 'map' ? 'map' : 'grid')}
+      onViewIntent={prefetchMap}
+      end={view === 'map' ? (
+        <IconButton className="xcats-share" label={t('explore.toolShare')} onClick={shareView}>
+          <HouseIcon.share size={18} />
+        </IconButton>
+      ) : null}
       onPick={(key) => onPickCategory(key, oneCountry || '')} />
   ) : null;
 
@@ -606,62 +735,30 @@ export function ExploreTab({
             the front, larger, more on top"): the six categories lead every
             view of the tab, right under the settings line. */}
         {catTiles && <div className="xcats-bar">{catTiles}</div>}
-        {/* G12: the phone overview's row under the band. Explore rails
-            (owner 2026-11-18, "fix these tiles"): the rails' doors as one
-            sideways row of chips, each opening what its rail's See all
-            opens. Strong match and the Trip dock left it (Explore top: the
-            band's settings line holds what the dock did). */}
-        {railsIdle && !isDesktop && (
-          <div className="xsub xsub--rails">
-            <div className="xsub-chips" role="group" aria-label={t('explore.quickAria')}>
-              {/* The first rail's own heading stands right under the row,
-                  so its chip would say the same twice. */}
-              {rails.filter((rail) => rail.rows.length >= 4 && rail.key !== 'saved').slice(1).map((rail) => (
-                <Button key={rail.key} variant="secondary" size="sm" className="xquick-chip xsub-chip" onClick={rail.seeAll}>
-                  {rail.short || rail.title}
-                </Button>
-              ))}
-            </div>
-          </div>
-        )}
-        {/* T586, T595: the overview leads with one compact block: the
-            headline, Ask Carta's field, the What and Where bar with the map
-            toggle, then the categories and the quick chips. The phone's
-            old Ask Carta and Filters row is gone: both live in the block. */}
-        {railsIdle && (
-          <OverviewHero t={t} TitleTag={TitleTag} docked={!isDesktop}
-            viewToggle={viewSwitch('xov-view')}
-            quick={quickRails} />
-        )}
+        {/* G12 round 2 (decision.md sections 1 and 4): the phone's row of
+            rail chips under the tabs and the desktop's quick row left; the
+            shortcuts live in the search panel (Browse) and apply in place,
+            and Map sits at the tab row's end or in the phone's corner. The
+            overview keeps its name for a screen reader. */}
+        {railsIdle && <OverviewHero t={t} TitleTag={TitleTag} docked />}
         {/* The six categories as one row of tabs (T586, owner decision 7);
             on the overview they sit inside the head block (T595). */}
         {/* The control bar: what this page is and how many places it holds
             right now (the count, V3), and the two ways to rearrange them.
             On a phone the title is read but not drawn, so the count is the
-            visible line, sharing its row with the sort; the grid/map switch
-            floats above the bottom nav instead (.xview-fab). */}
+            visible line, sharing its row with the sort; the Map corner sits
+            bottom right instead (MapCorner). */}
+        {/* G12 round 2: the list's head is the applied row under the band
+            (filters/AppliedRow.jsx): one removable chip per filter, Clear
+            all, and on a desktop Sort, Saved and Share at its right end. */}
         {!railsIdle && (
         <ExploreToolbar
-          TitleTag={TitleTag} chips={chips} gridTotal={gridTotal}
-          isDesktop={isDesktop} isMock={isMock} lang={lang} lens={lens}
+          TitleTag={TitleTag} chips={chips} filterCount={filterCount} gridTotal={gridTotal}
+          isDesktop={isDesktop} isMock={isMock} lang={lang} mapView={view === 'map'} quick={quickList}
           setShowFavOnly={setShowFavOnly} shareView={shareView}
           showFavOnly={showFavOnly} sortMenu={sortMenu} t={t}
-          viewSwitch={viewSwitch} resetAll={resetAll}
+          resetAll={resetAll}
         />
-        )}
-
-
-        {/* C6: active filters as removable chips, right under the bar. */}
-        {/* On a phone the sort leads the chip row (62-v6-explore.css), so
-            the list has one refine row; the bar's own sort shows otherwise. */}
-        {/* T598 (owner points 7 and 11): quick filter chips right under the
-            head, AllTrails style, each a small popover over the same state
-            the pane edits; then the active filters. */}
-        {/* G12: a phone draws its chips inside the toolbar's one row; a
-            desktop shows here only what its quick row and the toolbar's
-            Saved and Strong match toggles cannot (one line). */}
-        {!railsIdle && isDesktop && (
-          <FilterChips t={t} chips={deskChips(chips)} onClearAll={resetAll} />
         )}
 
         {/* The one community surface on a browse tab: a real count of what
@@ -690,11 +787,6 @@ export function ExploreTab({
             })}
           </p>
         )}
-        {locationQuery && searchHits?.regionLabel && (
-          <p className="xsearch-hint">
-            {t('explore.regionFilter', { region: searchHits.regionLabel })}
-          </p>
-        )}
 
         {/* C7: the feed. Grid alone, or on a desktop the grid beside a
             sticky map, the list narrowing to what the map holds. On a
@@ -702,26 +794,39 @@ export function ExploreTab({
             the list back. */}
         <ExploreContent
           allRows={allRows} anyActive={anyActive} cardLinkId={cardLinkId} chips={chips}
-          contentRef={contentRef} costIndex={costIndex} drawer={drawer} dxf={dxf}
+          catalogueFull={!data?.partial}
+          contentRef={contentRef} costIndex={costIndex} dxf={dxf}
+          guidedRows={guidedRows} isActiveMap={mapViewOn} lang={lang} sortMenu={sortMenu}
           emptyLine={emptyLine} favSet={favSet} gridTotal={gridTotal} isActive={isActive}
           isDesktop={isDesktop} lastChip={lastChip} listed={shownList}
           locationQuery={locationQuery} mapOpened={mapOpened} mapTop={mapTop}
           onMapNeedDetail={onMapNeedDetail} onMapViewport={onMapViewport} onPick={onPick}
           onPinLink={onPinLink} onToggleFav={onToggleFav} openPlace={openPlace}
-          overviewOf={overviewOf} pageOver={pageOver} pending={pending} pickedId={pickedId}
+          overviewOf={overviewOf} rowOverviewOf={rowOverviewOf} pageOver={pageOver} pending={pending} pickedId={pickedId}
           pickedRow={pickedRow} pinLinkId={pinLinkId} pins={pins} railLead={railLead}
           railMonth={railMonth} rails={shownRails} railsIdle={railsIdle} reachMinutes={reachMinutes}
           resetAll={resetAll} roleFor={roleFor} searchHits={searchHits} selectedId={selectedId}
-          sentinelRef={sentinelRef} setCardLinkId={setCardLinkId} setDrawer={setDrawer}
+          sentinelRef={sentinelRef} setCardLinkId={setCardLinkId}
           setLocationQuery={setLocationQuery} setPickedId={setPickedId}
           setShowFavOnly={setShowFavOnly} setView={setView} showFavOnly={showFavOnly}
           shownRows={shownRows} t={t} taxRows={taxRows} view={view} viewSwitch={viewSwitch}
+          mapSort={mapSort} quick={quickList}
           viewportMode={viewportMode} visible={visible} xf={xf}
         />
       </div>
-      <SiteFooter />
+      {/* G12, D10 (round 6): on the overview the footer waits until the
+          rails are complete (the guided data's rails in, or its file
+          missing): drawn earlier it stood in view on a short page and a
+          rail arriving above pushed it down under the reader (0.11 of a
+          1280 screen in perf_explore.mjs). */}
+      {(railsSettled || (guidedDone && !guided)) && <SiteFooter />}
 
-      {viewSwitch('xview-fab')}
+      {/* G12 round 2: the phone's Map is the fixed bottom-right corner
+          (components/dock/MapCorner.jsx); the map drawer's List brings the
+          list back, so the corner steps out while the map shows. */}
+      {!isDesktop && view !== 'map' && (
+        <MapCorner onOpen={() => setView('map')} onPrefetch={prefetchMap} />
+      )}
       </div>
 
       {/* The same sheet shell Destinations opens, with this tab's own rail as
@@ -730,6 +835,13 @@ export function ExploreTab({
           dropdown on top of the rail's would be the duplicate control this
           change exists to remove. */}
       {startOpen && <StartDialog t={t} mode={startOpen} onClose={() => setStartOpen(null)} />}
+
+      {/* G12 round 2: the filters, a sheet on a phone and a panel under the
+          search bar on a desktop (filters/FilterSheet.jsx). */}
+      {isActive && filters.isOpen && (
+        <FilterSheet desktop={isDesktop} group={filters.group} nonce={filters.nonce}
+          onClose={closeFilters} f={sheetState} t={t} lang={lang} />
+      )}
 
       {/* T588: Share's answer, in the bottom slot. */}
       <div className="xtoast-slot" role="status" aria-live="polite">

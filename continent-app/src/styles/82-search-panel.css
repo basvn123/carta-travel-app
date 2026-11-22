@@ -1,7 +1,9 @@
-/* The search panel under Explore's search field (G12, browse/search/SearchPanel.jsx).
-   Phone: one column; while typing the settings shrink to one line above the
-   suggestions. Desktop: suggestions and "You search as" side by side. The
-   Studio pattern: brown and saffron only, icon and word, no separators. */
+/* The search panel under Explore's search field (G12 round 2,
+   browse/search/SearchPanel.jsx). Phone: Browse, then Recent or Places,
+   then Filters and Ask Carta as a group of buttons under a rule (owner O3).
+   Desktop: Places (or Recent) on the left, Browse on the right, as wide as
+   the field. The Studio pattern: brown and saffron only, icon and word, no
+   separators. */
 
 .sp {
   display: grid;
@@ -12,20 +14,15 @@
   padding: var(--space-3);
   background: var(--surface);
   border: var(--stroke-hair) solid var(--border-soft);
-  border-radius: var(--radius-card);
+  border-radius: var(--radius-sheet);
   box-shadow: var(--elev-2);
   max-height: min(70vh, 640px);
   overflow-y: auto;
   overscroll-behavior: contain;
   color: var(--text);
 }
-
-/* Phone, before typing: the settings first, then Recent. */
-.sp.is-empty .sp-as { order: -1; }
-/* Phone, typing: the one line replaces the rows (keyboard-open budget). */
-.sp.is-typing .sp-as { display: none; }
-
-.sp-main { display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
+/* A phone's panel is the screen under the field: the card scrolls with it. */
+.sp.is-phone { max-height: none; overflow: visible; box-shadow: none; }
 
 .sp-head {
   margin: 0;
@@ -34,77 +31,6 @@
   font-weight: 600;
   color: var(--text-2);
 }
-
-/* "You search as" */
-.sp-as { display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
-.sp-rows { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-1); }
-.sp-row {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  min-height: var(--tap);
-  padding: 0 0 0 var(--space-2);
-  border-radius: var(--radius-control);
-  font-size: var(--text-body);
-}
-.sp-row-ic, .sp-opt-ic {
-  flex: none;
-  display: inline-grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-pill);
-  color: var(--umber-800);
-  background: var(--umber-50);
-}
-.sp-row.is-style .sp-row-ic { background: var(--umber-100); }
-.sp-row-text { flex: 1; min-width: 0; font-weight: 600; overflow-wrap: anywhere; }
-
-.sp-change {
-  flex: none;
-  min-height: var(--tap);
-  min-width: var(--tap);
-  padding: 0 var(--space-3);
-  border: 0;
-  border-radius: var(--radius-control);
-  background: transparent;
-  color: var(--action);
-  font: inherit;
-  font-size: var(--text-label);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--dur-1) var(--ease-out), transform var(--dur-press) var(--ease-tick);
-}
-.sp-change:hover { background: var(--umber-50); }
-.sp-change:active { transform: scale(var(--press-scale)); }
-.sp-change:focus-visible, .sp-tok-x:focus-visible, .sp-tok-more:focus-visible {
-  outline: var(--stroke-focus) solid var(--focus);
-  outline-offset: 2px;
-}
-
-/* The settings while typing: every item whole, wrapping onto a second line
-   when the width runs out (never cut, never wider than the panel), Change
-   at the end where a thumb reaches it (flow-C M2). */
-.sp-line {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
-  min-width: 0;
-  padding: 0 0 var(--space-1) var(--space-2);
-  border-bottom: var(--stroke-hair) solid var(--border-soft);
-}
-.sp-line-items {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
-  padding-top: var(--space-3);
-  font-size: var(--text-label);
-  color: var(--text-2);
-}
-.sp-line-item { display: inline-flex; align-items: center; gap: var(--space-1); min-width: 0; overflow-wrap: anywhere; }
-.sp-line-item:first-child { color: var(--umber-800); font-weight: 600; }
 
 /* Feature tokens: two shown, then "+n"; each remove is a 44 px target. */
 .sp-tokens { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: 0 var(--space-1); }
@@ -140,10 +66,15 @@
   color: var(--umber-800);
   font-weight: 600;
 }
+.sp-tok-x:focus-visible, .sp-tok-more:focus-visible {
+  outline: var(--stroke-focus) solid var(--focus);
+  outline-offset: 2px;
+}
 
-/* Suggestions */
-.sp-list { display: grid; gap: var(--space-2); }
-.sp-list > [role='group'] { display: grid; gap: var(--space-1); }
+/* The list: groups of rows, Browse as chips. */
+.sp-list { display: grid; gap: var(--space-3); min-width: 0; }
+.sp-col { display: grid; gap: var(--space-3); align-content: start; min-width: 0; }
+.sp-group { display: grid; gap: var(--space-1); min-width: 0; }
 .sp-opt {
   display: flex;
   align-items: center;
@@ -152,12 +83,22 @@
   padding: var(--space-1) var(--space-2);
   border-radius: var(--radius-control);
   cursor: pointer;
-  transition: background var(--dur-1) var(--ease-out);
+  transition: background-color var(--dur-1) var(--ease-out);
 }
 .sp-opt.is-active {
-  background: var(--select-bg);
+  background: var(--select-row);
   outline: var(--stroke-hair) solid var(--select-border);
   outline-offset: calc(-1 * var(--stroke-hair));
+}
+.sp-opt-ic {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-control);
+  color: var(--umber-600);
+  background: var(--surface-page);
 }
 .sp-opt-text { flex: 1; min-width: 0; display: grid; }
 .sp-opt-name {
@@ -165,19 +106,11 @@
   flex-wrap: wrap;
   align-items: center;
   gap: var(--space-1);
-  font-weight: 600;
+  font-weight: 700;
   font-size: var(--text-body);
   overflow-wrap: anywhere;
 }
 .sp-opt-sub { font-size: var(--text-label); color: var(--text-2); overflow-wrap: anywhere; }
-.sp-opt-count {
-  flex: none;
-  font-size: var(--text-label);
-  font-weight: 600;
-  color: var(--umber-800);
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
 .sp-tok-mark {
   padding: 0 var(--space-2);
   border-radius: var(--radius-pill);
@@ -186,40 +119,94 @@
   font-size: var(--text-caption);
 }
 
-/* Desktop: suggestions beside the settings. */
-@media (min-width: 769px) {
-  /* Side by side only when there is a list: with no recent searches the
-     settings take the panel alone, no blank half (flow-C m6). */
-  .sp.has-settings.has-list {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    column-gap: var(--space-4);
-  }
-  .sp.has-settings .sp-as { display: grid; order: 0; }
-  /* The rule parts two columns; alone, the settings need none (judge 1). */
-  .sp.has-settings.has-list .sp-as {
-    padding-left: var(--space-4);
-    border-left: var(--stroke-hair) solid var(--border-soft);
-  }
-  .sp .sp-line { display: none; }
+/* Browse: the shortcuts as chips; lit while applied (wash, umber edge). */
+.sp-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); padding: var(--space-1) var(--space-1) 0; }
+.sp-chip {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 var(--space-3);
+  border: var(--stroke-edge) solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  color: var(--text);
+  font-size: var(--text-body);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), border-color var(--dur-1) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+/* A 36 px chip, a 44 px target. */
+.sp-chip { position: relative; }
+.sp-chip::after { content: ''; position: absolute; inset: -4px 0; }
+.sp-chip-ic { display: inline-flex; color: var(--umber-600); }
+@media (hover: hover) { .sp-chip:hover { border-color: var(--umber-300); } }
+.sp-chip:active { transform: scale(var(--press-scale)); }
+.sp-chip.is-active { border-color: var(--select-border); }
+.sp-chip.is-on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+.sp-chip.is-on .sp-chip-ic { color: var(--select-ink); }
 
-  /* The panel drops from the pill over the page, as a menu does, instead
-     of pushing the page down; it starts where the settings line sits and
-     the line hides meanwhile, so the summary shows once (judge 1). The
-     band keeps its height. Width: the pill's 720 px for the settings
-     alone, wider with suggestions beside them, so each Change sits by its
-     value. */
-  .band.is-desk.is-searching .band-line { visibility: hidden; }
-  .band.is-desk .band-search-panel {
-    position: absolute;
-    left: var(--page-inset);
-    top: calc(100% - var(--tap) - var(--space-1));
-    width: min(720px, calc(100% - 2 * var(--page-inset)));
-  }
-  .band.is-desk .band-search-panel:has(.sp.has-list.has-settings) {
-    width: min(1040px, calc(100% - 2 * var(--page-inset)));
-  }
+/* Phone (G12, D10, place-prices 4): Browse wraps inside the panel, so
+   every chip shows; no chip is cut at the edge (owner shot 15). */
+.sp.is-phone .sp-chips { padding-block: var(--space-1); }
+
+/* Phone, O3: Filters and Ask Carta, a group of their own under a rule, as
+   buttons, never rows of the list. */
+.sp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding-top: var(--space-3);
+  border-top: var(--stroke-hair) solid var(--border-soft);
+}
+.sp-action {
+  display: inline-flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-width: 0;
+  min-height: var(--tap);
+  padding: 0 var(--space-4);
+  border: var(--stroke-edge) solid var(--umber-300);
+  border-radius: var(--radius-control);
+  background: var(--surface);
+  color: var(--umber-800);
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.sp-action .hs-icon { flex: none; color: var(--umber-600); }
+.sp-action--ask { border-color: var(--action); }
+.sp-action-word { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sp-action:active { transform: scale(var(--press-scale)); background: var(--umber-50); }
+.sp-action:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* On a phone the group sticks to the panel's foot (the panel ends above the
+   nav and the keyboard, 80-band.css), so a long list scrolls under it and
+   Filters and Ask are always in reach (judge 1, 360x640). It covers the
+   card's own bottom padding, so nothing shows below it. */
+.sp.is-phone .sp-actions {
+  position: sticky;
+  /* Sticky measures from inside the panel's bottom padding (80-band.css,
+     space-4): past it, so no row shows under the group. */
+  bottom: calc(var(--space-4) * -1);
+  z-index: 1;
+  margin: 0 calc(var(--space-3) * -1) calc(var(--space-3) * -1);
+  padding: var(--space-3);
+  border-radius: 0 0 var(--radius-sheet) var(--radius-sheet);
+  background: var(--surface);
+}
+
+/* Desktop: two columns, a hairline between, when both have something. */
+@media (min-width: 769px) {
+  .sp.is-two .sp-list { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); column-gap: var(--space-4); }
+  .sp.is-two .sp-col--side { padding-left: var(--space-4); border-left: var(--stroke-hair) solid var(--border-soft); }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sp-change, .sp-tok-x, .sp-tok-more, .sp-opt { transition: none; }
+  .sp-tok-x, .sp-tok-more, .sp-opt, .sp-chip, .sp-action { transition: none; }
 }

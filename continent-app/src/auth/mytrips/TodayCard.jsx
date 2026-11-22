@@ -1,26 +1,31 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, ChipGroup, Field, IconButton, Money } from '../../components/ui/index.js';
+import { Button, IconButton, Money } from '../../components/ui/index.js';
 import {
   SunIcon, PartSunIcon, CloudIcon, FogIcon, RainIcon, DrizzleIcon, SnowIcon, StormIcon,
-  BedIcon, CheckIcon, PlusIcon, TicketIcon, CalendarIcon, CameraIcon, FriendsIcon,
+  BedIcon, CheckIcon, TicketIcon, CalendarIcon, CameraIcon, FriendsIcon, HeartIcon,
 } from '../../components/Icons.jsx';
 import { useForecast } from '../../lib/weather.js';
-import { toEur } from '../../lib/currency.js';
-import { formatMoney } from '../../lib/money.js';
-import { spendOnDay, tripStops } from '../../lib/myTrips.js';
+import { tripStops } from '../../lib/myTrips.js';
 import { dayPlaceNames } from '../../planner/trip/dayNames.js';
 import { ideasOnDay } from '../../planner/trip/ownIdeas.js';
 import { useTripDayStore } from '../../planner/trip/useTripDayStore.js';
 import { loadMemory, saveMemory, emptyMemory, MAX_PHOTOS } from '../pastTripMemory.js';
 import { readPhoto } from '../PastTripForm.jsx';
+import { Pressable } from '../../components/ui/Pressable.jsx';
+import { CountryFlag } from '../../components/CountryFlag.jsx';
+import { ChevronRightIcon } from '../../components/Icons.jsx';
+import { WalletGlyph } from './spend/icons.jsx';
+import { JourneyLine } from './atlas/JourneyLine.jsx';
+import { nightsLeft } from './atlas/journeyLine.js';
+
+// G15: the Uitgaven page loads with its own chunk, when it is opened.
+const SpendPage = lazy(() => import('./spend/SpendPage.jsx'));
 
 const SKY = {
   sun: SunIcon, partsun: PartSunIcon, cloud: CloudIcon, fog: FogIcon,
   rain: RainIcon, drizzle: DrizzleIcon, snow: SnowIcon, storm: StormIcon,
 };
-/** What a spend on the road is, in the past-trip memory's own words. */
-const DAY_CATS = ['food', 'transport', 'activities', 'other'];
 const DONE_KEY = 'carta.mytrips.done.v1';
 const readDone = () => { try { return JSON.parse(localStorage.getItem(DONE_KEY) || '{}') || {}; } catch { return {}; } };
 const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v)); } catch { /* private mode */ } };
@@ -31,9 +36,10 @@ const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v
  * timeline from the day plans (places picked in the day planner, the
  * traveller's own ideas for the day, and booked things put on the day, which
  * carry a ticket mark), each marked done by the traveller, the first not done
- * being next; what was spent today from the expense ledger, against the
- * plan's food and drink a person a day, with a bar by category and Add a
- * spend; then quick tiles for the bookings, tomorrow, photos and the crew.
+ * being next; the quiet "Uitgaven" row (G15), which opens the spending page
+ * with today's spends, the food plan tick, adding by keypad, speech or a
+ * receipt, and the Reiskas; then quick tiles for the bookings, tomorrow,
+ * photos and the crew.
  * A part with no data is not drawn.
  *
  *   plan, today          the trip row and lib/myTrips.tripToday()
@@ -42,6 +48,7 @@ const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v
  */
 export function TodayCard({
   plan, today, destinations = {}, figure = null, todayIso, crewNames = '', spendLabels = {},
+  title = '', img = null, userId = null, openSpend = false, draw = false,
   onPlanDay, onOpenTrip, onCrew, onPhotoAdded,
 }) {
   const { t } = useI18n();
@@ -81,31 +88,8 @@ export function TodayCard({
   };
   const dayWords = String(extras.dayNotes?.[today.dayNum] || '').trim();
 
-  // What was spent today, a person, against the plan's food and drink.
-  const head = Math.max(1, figure?.party || plan.choices?.groupSize || 1);
-  const spent = useMemo(() => spendOnDay(extras.expenses, todayIso, toEur), [extras.expenses, todayIso]);
-  const pp = spent.total / head;
-  const foodPP = (spent.byCat.food || 0) / head;
-  const plannedFood = figure?.foodDayPP || null;
-  const cats = Object.entries(spent.byCat).filter(([, v]) => v > 0);
-
-  // Add a spend: one line in the trip's own expense ledger, dated today.
-  const [adding, setAdding] = useState(false);
-  const [form, setForm] = useState({ desc: '', amount: '', cat: 'food' });
-  const amount = Number(String(form.amount).replace(',', '.'));
-  const addSpend = (e) => {
-    e.preventDefault();
-    if (!(amount > 0)) return;
-    saveExtras({
-      ...extras,
-      expenses: [...(extras.expenses || []), {
-        id: `${Date.now()}`, desc: form.desc.trim() || spendLabels[form.cat] || '', amount, currency: 'EUR',
-        paidBy: 0, sharers: null, date: todayIso, cat: form.cat,
-      }],
-    });
-    setForm({ desc: '', amount: '', cat: form.cat });
-    setAdding(false);
-  };
+  // Uitgaven (G15): the page holds the spends, the food plan and the kas.
+  const [spendOpen, setSpendOpen] = useState(openSpend);
 
   // Photos go to the trip's memory, marked with the day they were taken.
   const fileRef = useRef(null);
@@ -131,6 +115,10 @@ export function TodayCard({
     if (fileRef.current) fileRef.current.value = '';
   };
 
+  // The memory row's counts: photos in the trip's memory, notes kept per day.
+  const memPhotos = (loadMemory(plan.id)?.photos || []).length;
+  const memNotes = Object.values(extras.dayNotes || {}).filter((x) => String(x || '').trim()).length;
+
   // The quick tiles hold only what the trip holds.
   const bookedCount = Object.values(extras.bookings || {}).filter((b) => b && (b.ref || (b.price != null && b.price !== '') || b.url)).length;
   const tmr = today.tomorrow;
@@ -140,21 +128,53 @@ export function TodayCard({
     ...ideasOnDay(extras, tmr.dayNum).map((x) => x.text),
     ...(extras.dayExtras?.[tmr.dayNum] || []).map((a) => a?.name).filter(Boolean),
   ][0] : null;
+  const left = nightsLeft(today.stop, today.dayIndex);
+  // The line names each stop as the rest of the app does: the catalogue's city first.
+  const lineStops = useMemo(() => stops.map((s, i) => ({ ...s, city: destinations[s.id]?.city || s.city || (plan.cities || [])[i] || '' })), [stops, destinations, plan.cities]);
+  // "Dag 4 van 6" with the day's figure set larger, the words around it kept.
+  const dayOf = (() => {
+    const str = t('mt.dayOf', { n: '\u0000', m: today.of });
+    const at = str.indexOf('\u0000');
+    return at < 0 ? str : <>{str.slice(0, at)}<b>{today.dayNum}</b>{str.slice(at + 1)}</>;
+  })();
   const tmrLine = !tmr ? '' : tmr.moves && tmrDest?.city ? t('mt.tomorrowTo', { city: tmrDest.city })
     : tmrFirst || t('mt.tomorrowFree');
 
   return (
-    <section className="mt-today" aria-labelledby="mt-today-h">
+    <section className={`mt-today${draw ? ' is-draw' : ''}`} aria-labelledby="mt-today-h">
       <div className="mt-today-main">
-        {/* House style: no eyebrow above the heading; the day count follows
-            the title as its first fact. */}
-        <h3 className="mt-today-title" id="mt-today-h">{dayWords ? t('mt.todayPlaceWords', { place: city, words: dayWords }) : city}</h3>
-        <p className="mt-today-kicker">{t('mt.todayDay', { n: today.dayNum, of: today.of })}</p>
+        {/* G12 atlas: the place on a signpost plate (the plate face, the flag
+            on a paper disc); on a phone it floats over the map band's fade. */}
+        <div className="mt-sign">
+          {dest?.country && <span className="mt-sign-disc"><CountryFlag country={dest.country} size={18} /></span>}
+          <h3 className="mt-today-title" id="mt-today-h">
+            <span className="mt-sign-name">{city}</span>
+            {dayWords && <><span className="sr-only">, </span><span className="mt-sign-words">{dayWords}</span></>}
+          </h3>
+        </div>
+        {/* The journey line: a pill per stop as long as its nights, a bead per
+            day, today the one saffron bead; "Dag n van m" beside it. */}
+        <div className="mt-dayrow">
+          <JourneyLine
+            stops={lineStops}
+            dayNum={today.dayNum}
+            strong={tmr?.moves ? tmr.stopIndex : -1}
+            draw={draw}
+            label={`${lineStops.map((s) => `${s.city} ${t(s.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: s.nights })}`).join(', ')}. ${t('mt.todayDay', { n: today.dayNum, of: today.of })}`}
+          />
+          <p className="mt-dayn">{dayOf}</p>
+        </div>
         <p className="mt-today-facts">
           {sky && Number.isFinite(sky.hi) && (
-            <span><Sky size={16} />{t('mt.todayWeather', { t: Math.round(sky.hi) })}</span>
+            <span><Sky size={18} />{t('mt.todayWeather', { t: Math.round(sky.hi) })}</span>
           )}
-          {city && <span><BedIcon size={16} />{t('mt.stayingIn', { place: city })}</span>}
+          {/* "Je slaapt in X" stays, for a screen reader and as the bed's title. */}
+          {city && (
+            <span title={t('mt.stayingIn', { place: city })}>
+              <BedIcon size={18} /><span className="sr-only">{t('mt.stayingIn', { place: city })}, </span>
+              {left === 1 ? t('mt.lastNight') : t('mt.nightsLeft', { n: left })}
+            </span>
+          )}
         </p>
 
         {items.length > 0 ? (
@@ -186,62 +206,57 @@ export function TodayCard({
             })}
           </ol>
         ) : (
-          <p className="mt-today-empty">{t('mt.todayNothing')}</p>
+          // Nothing planned is an invitation: a dotted path from the bed to Plan vandaag.
+          <div className="mt-invite">
+            <p className="mt-today-empty">{t('mt.todayNothing')}</p>
+            <div className="mt-invite-row">
+              <span className="mt-invite-bed" aria-hidden="true"><BedIcon size={20} /></span>
+              <svg className="mt-invite-path" viewBox="0 0 100 4" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="1" y1="2" x2="99" y2="2" vectorEffect="non-scaling-stroke" />
+              </svg>
+              <Button variant="primary" iconStart={<CalendarIcon size={18} />} onClick={() => onPlanDay?.(today.stopIndex, today.dayIndex)}>
+                {t('mt.planToday')}
+              </Button>
+              <Button className="mt-invite-open" onClick={onOpenTrip}>{t('saved.openTrip')}</Button>
+            </div>
+          </div>
         )}
-        <div className="mt-today-acts">
-          <Button variant="primary" iconStart={<CalendarIcon size={18} />} onClick={() => onPlanDay?.(today.stopIndex, today.dayIndex)}>
-            {t(items.length ? 'mt.openToday' : 'mt.planToday')}
-          </Button>
-          <Button onClick={onOpenTrip}>{t('saved.openTrip')}</Button>
-        </div>
+        {items.length > 0 && (
+          <div className="mt-today-acts">
+            <Button variant="primary" iconStart={<CalendarIcon size={18} />} onClick={() => onPlanDay?.(today.stopIndex, today.dayIndex)}>
+              {t('mt.openToday')}
+            </Button>
+            <Button onClick={onOpenTrip}>{t('saved.openTrip')}</Button>
+          </div>
+        )}
       </div>
 
       <div className="mt-today-side">
-        <section className="mt-spend" aria-labelledby="mt-spend-h">
-          <h4 className="mt-spend-h" id="mt-spend-h">{t('mt.spendToday')}</h4>
-          {spent.total > 0 ? (
-            <>
-              <p className="mt-spend-fig">
-                <Money value={pp} precision="cents" />
-                <span>{t('mt.aPerson')}</span>
-              </p>
-              {plannedFood > 0 && (
-                <p className="mt-spend-plan">{t('mt.foodVsPlan', { spent: formatMoney(foodPP), plan: formatMoney(plannedFood) })}</p>
-              )}
-              <span className="mt-spend-bar" aria-hidden="true">
-                {cats.map(([c, v]) => <i key={c} className={`is-${c}`} style={{ flexGrow: v }} />)}
-              </span>
-              <ul className="mt-spend-legend">
-                {cats.map(([c, v]) => (
-                  <li key={c}><i className={`is-${c}`} aria-hidden="true" />{spendLabels[c] || c} <Money value={v / head} precision="cents" /></li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <p className="mt-spend-none">{t('mt.spendNone')}</p>
-          )}
-          {adding ? (
-            <form className="mt-spend-form" onSubmit={addSpend}>
-              <ChipGroup label={t('mt.spendKind')} className="mt-chips">
-                {DAY_CATS.map((c) => (
-                  <Chip key={c} kind="choice" selected={form.cat === c} onClick={() => setForm((f) => ({ ...f, cat: c }))}>{spendLabels[c] || c}</Chip>
-                ))}
-              </ChipGroup>
-              <div className="mt-spend-fields">
-                <Field label={t('mt.spendWhat')} value={form.desc} onChange={(e) => setForm((f) => ({ ...f, desc: e.target.value }))} />
-                <Field label={t('mt.spendAmount')} inputMode="decimal" value={form.amount}
-                  onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value.replace(/[^\d.,]/g, '') }))} />
-              </div>
-              <p className="mt-spend-help">{t('mt.spendWhole', { n: head })}</p>
-              <div className="mt-spend-foot">
-                <Button type="submit" disabled={!(amount > 0)}>{t('mt.spendAdd')}</Button>
-                <Button variant="quiet" onClick={() => setAdding(false)}>{t('pf.cancel')}</Button>
-              </div>
-            </form>
-          ) : (
-            <Button size="sm" iconStart={<PlusIcon size={16} />} onClick={() => setAdding(true)}>{t('mt.addSpend')}</Button>
-          )}
-        </section>
+        <Pressable type="button" className="mt-spend-door" onClick={() => setSpendOpen(true)} aria-haspopup="dialog">
+          <span className="mt-spend-door-ico"><WalletGlyph size={20} /></span>
+          <span className="mt-spend-door-t">{t('sp.title')}</span>
+          <ChevronRightIcon size={18} />
+        </Pressable>
+        {spendOpen && (
+          <Suspense fallback={null}>
+            <SpendPage
+              planId={plan.id}
+              extras={extras}
+              saveExtras={saveExtras}
+              todayIso={todayIso}
+              startIso={plan.start_date || null}
+              title={title || city}
+              img={img}
+              groupSize={Math.max(1, figure?.party || plan.choices?.groupSize || 1)}
+              plannedFood={figure?.foodDayPP || null}
+              stops={lineStops}
+              dayNum={today.dayNum}
+              userId={userId}
+              onClose={() => setSpendOpen(false)}
+              onCrew={onCrew}
+            />
+          </Suspense>
+        )}
 
         <div className="mt-quick">
           {bookedCount > 0 && (
@@ -269,6 +284,17 @@ export function TodayCard({
           )}
         </div>
         <p className="mt-today-note" role="status">{photoNote}</p>
+        {/* The memory page so far: the photos and notes the trip holds. */}
+        <Pressable className="mt-disc-row" onClick={onOpenTrip}>
+          {/* Desktop only: the icon lines the row up with the quick rows above (owner review 2026-11-22). */}
+          <HeartIcon size={20} className="mt-disc-row-ico" />
+          <span className="mt-disc-row-t">{t('mt.memPage')}</span>
+          <span className="mt-disc-row-s">{[
+            t(memPhotos === 1 ? 'mt.memPhotos1' : 'mt.memPhotosN', { n: memPhotos }),
+            t(memNotes === 1 ? 'mt.memNotes1' : 'mt.memNotesN', { n: memNotes }),
+          ].join(', ')}</span>
+          <ChevronRightIcon size={18} />
+        </Pressable>
       </div>
     </section>
   );

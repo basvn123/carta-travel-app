@@ -53,7 +53,11 @@ The sweep could not apply migrations or write secrets: the session's permission 
      ```
      `source_header` must be `cf-connecting-ip`. That also closes T068-c.
 
-4. **Migration 078 and the three AI Edge Functions (ai fix program wave 1).** The exact commands, the check and the undo are steps AI-1 and AI-2 in `docs/owner/ai.md`: apply `078_ai_hygiene.sql`, then deploy plan-day, suggest-city and parse-booking.
+4. **Migration 076: followed prices across devices (G12, My trips atlas).** Paste `supabase/migrations/076_account_things_watch.sql` in the Supabase SQL editor and run it. It adds the kind `watch` to the `account_things` check. Undo: `076_account_things_watch_down.sql`. Until it runs, followed prices stay on the device. Check: follow a price signed in on one device and see it under Saved, Followed on another.
+
+5. **Migration 077: per-person splits for a shared Reiskas (G15, Uitgaven).** Paste `supabase/migrations/077_group_expenses_split.sql` in the Supabase SQL editor after 058 and run it; look for "group expenses split self-check passed". It adds per-person shares, the currency, the category, a client id, the day and a column-level update grant with an update policy to `group_trip_expenses`. Nothing in the app writes these columns yet: phase 1 keeps the Reiskas in the trip on one phone, and phase 2 (join by link) will. Undo: `077_group_expenses_split_down.sql` (one-way for the new columns' data). Check: `supabase db query --linked "select column_name from information_schema.columns where table_name = 'group_trip_expenses' and column_name in ('shares','currency','client_id')"` answers three rows. Not run against a database by the build session.
+
+6. **Migration 078 and the three AI Edge Functions (ai fix program wave 1).** The exact commands, the check and the undo are steps AI-1 and AI-2 in `docs/owner/ai.md`: apply `078_ai_hygiene.sql`, then deploy plan-day, suggest-city and parse-booking.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
