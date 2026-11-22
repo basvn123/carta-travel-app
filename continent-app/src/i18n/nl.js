@@ -5360,6 +5360,7 @@ export const nl = {
   "when.mild": "Dagen van {lo}° tot {hi}°, de aangenaamste van het jaar",
   "when.quieter": "Rustiger en nog steeds aangenaam: {months}",
   "when.hot": "Heet en druk in {months}",
+  "when.hotOnly": "Heet in {months}",
   "heat.hot": "Extreme hitte in {months}: dagtemperaturen van 35 C of meer.",
   "heat.fireDry": "Droge hitte in {months}: hogere kans op bosbranden, check lokale waarschuwingen.",
   "heat.fireFwi": "Brandweerindex in {months} haalt de hoge klasse: check lokale brandwaarschuwingen.",

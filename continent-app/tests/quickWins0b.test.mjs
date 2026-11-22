@@ -14,6 +14,9 @@ import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 import { groupTripVariants, variantKey } from "../src/lib/trips.js";
 import { guideScreens } from "../src/planner/flow/flowGraph.js";
 import { withOriginRoutes } from "../src/lib/origins.js";
+import { matchAll } from "../src/lib/guidedSearch.js";
+import { byRating } from "../src/lib/rating.js";
+import { monthsOf, whenVerdict } from "../src/lib/whenGuide.js";
 
 const read = (rel) => readFileSync(new URL(`../${rel}`, import.meta.url), "utf8");
 
@@ -120,4 +123,51 @@ test("H-9: with flights booked the whole-trip-or-flights-first question is not a
   assert.ok(guideScreens(s).includes("g:how"), "asked when nothing is booked");
   const booked = { ...s, booked: { ...s.booked, flights: true } };
   assert.ok(!guideScreens(booked).includes("g:how"));
+});
+
+test("E-10: For you is offered only to a taste the match can score", async () => {
+  const { forYouOffered } = await import("../src/lib/taste.js");
+  const { sortOptionsFor } = await import("../src/browse/filters/filterModel.js");
+  for (const taste of [{ party: "couple" }, { lifestyle: "foodie" }, { noCar: true }, null]) assert.equal(forYouOffered(taste), false, JSON.stringify(taste));
+  for (const taste of [{ likes: ["beach"] }, { quiet: "quiet" }, { size: "village" }]) assert.equal(forYouOffered(taste), true, JSON.stringify(taste));
+  const offers = (taste) => sortOptionsFor(forYouOffered(taste)).some((o) => o["key"] === "foryou");
+  assert.equal(offers({ party: "couple" }), false);
+  assert.equal(offers({ likes: ["beach"] }), true);
+});
+
+test("E-12: the guided example counts judge quiet by the example's own month", () => {
+  const tier = Array(12).fill(3); tier[0] = 0; // quiet in January only
+  const place = { id: "x", iso2: "AT", climate: { best: [1, 8] }, crowding: { tier: 3, monthly: { tier } } };
+  assert.equal(matchAll(place, { quiet: true, month: 8 }, { guided: null }), false);
+  assert.equal(matchAll(place, { quiet: true, month: 1 }, { guided: null }), true);
+});
+
+test("E-6: equal ratings go by fame, then id, whatever the input order", () => {
+  const p = (id, score, fame) => ({ id, rating: { score, fame } });
+  const four = [p("gem:taormina", 9.6, 335), p("gem:hallstatt", 9.6, 621), p("DBV", 9.6, 1106), p("SZG", 9.6, 1284)];
+  const want = ["SZG", "DBV", "gem:hallstatt", "gem:taormina"];
+  assert.deepEqual([...four].sort(byRating).map((x) => x.id), want);
+  assert.deepEqual([...four].reverse().sort(byRating).map((x) => x.id), want);
+  assert.deepEqual([p("b", 9, 5), p("a", 9, 5), p("c", 9.5, 0)].sort(byRating).map((x) => x.id), ["c", "a", "b"]);
+});
+
+test("F-6 and F-9: the place page reads one month and guards the dossier's best months", () => {
+  const src = read("src/browse/DestinationPage.jsx");
+  assert.ok(!/monthOf\(firstRun\?\.departDate/.test(src), "no month from the departure date");
+  assert.ok(/const tripMonth = statMonth/.test(src));
+  assert.ok(/bestMonthsFor\(\{ \.\.\.destination\.climate, best: d\?\.when\?\.best/.test(src), "the dossier best passes the heat guard");
+});
+
+test("F-10: a hot month with unknown crowds is hot, not hot and busy", () => {
+  const m = (month, hi, crowd) => ({ month, hi, lo: 20, rain: 5, tier: "good", crowd });
+  const v = whenVerdict([m(7, 33, null), m(8, 33, 3), m(9, 22, null)], [9]);
+  assert.deepEqual(v.hot, [7, 8]);
+  assert.deepEqual(v.hotUnknown, [7]);
+  assert.ok(monthsOf === monthsOf);
+});
+
+test("F-16: the priced month and the When default read the local day, not UTC", () => {
+  for (const rel of ["src/lib/settings/model.js", "src/lib/settings/setters.js", "src/browse/settings/WhenStep.jsx"]) {
+    assert.ok(!read(rel).includes("new Date().toISOString().slice(0"), rel);
+  }
 });

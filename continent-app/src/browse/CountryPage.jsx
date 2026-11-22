@@ -1,4 +1,5 @@
 import React from 'react';
+import { byRating } from '../lib/rating.js';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../components/Icons.jsx';
 import { kindOf } from '../lib/taxonomy.js';
@@ -78,7 +79,7 @@ export function CountryPage({
   const view = useDayView();   // T694: per person or the group's total
   const mine = React.useMemo(
     () => rows.filter((p) => p.iso2 === iso2)
-      .sort((a, b) => (b.rating?.score ?? 0) - (a.rating?.score ?? 0)),
+      .sort(byRating),
     [rows, iso2],
   );
   const country = localCountryName(iso2, mine[0]?.country || iso2);

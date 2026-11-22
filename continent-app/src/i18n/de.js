@@ -5351,6 +5351,7 @@ export const de = {
   "when.mild": "Tage mit {lo}° bis {hi}°, die angenehmsten des Jahres",
   "when.quieter": "Ruhiger und trotzdem angenehm: {months}",
   "when.hot": "Heiß und voll im {months}",
+  "when.hotOnly": "Heiß im {months}",
   "heat.hot": "Extreme Hitze im {months}: Tageshöchstwerte ab 35 C.",
   "heat.fireDry": "Trockene Hitze im {months}: höhere Waldbrandgefahr, lokale Warnungen prüfen.",
   "heat.fireFwi": "Waldbrandindex im {months} erreicht die hohe Stufe: lokale Warnungen prüfen.",

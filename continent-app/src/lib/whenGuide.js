@@ -70,6 +70,8 @@ export function whenVerdict(months, best) {
   const quieter = months.filter((x) => nice(x) && !picked.includes(x.month) && x.crowd != null && x.crowd <= QUIET_MAX_TIER)
     .map((x) => x.month);
   const hot = months.filter((x) => x.hi >= HOT_C && (x.crowd == null || x.crowd > QUIET_MAX_TIER)).map((x) => x.month);
+  // F-10: a hot month whose crowds are unknown is only "hot"; it is not called busy.
+  const hotUnknown = months.filter((x) => x.hi >= HOT_C && x.crowd == null).map((x) => x.month);
   const cold = months.filter((x) => x.tier === 'poor' && x.hi < HOT_C).map((x) => x.month);
   const span = months.filter((x) => picked.includes(x.month));
   return {
@@ -77,6 +79,7 @@ export function whenVerdict(months, best) {
     range: span.length ? { lo: Math.min(...span.map((x) => x.hi)), hi: Math.max(...span.map((x) => x.hi)) } : null,
     quieter,
     hot,
+    hotUnknown,
     cold,
   };
 }

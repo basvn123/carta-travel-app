@@ -5351,6 +5351,7 @@ export const es = {
   "when.mild": "Días de {lo}° a {hi}°, los más agradables del año",
   "when.quieter": "Más tranquilo y aún agradable: {months}",
   "when.hot": "Calor y mucha gente en {months}",
+  "when.hotOnly": "Calor en {months}",
   "heat.hot": "Calor extremo en {months}: máximas de 35 C o más.",
   "heat.fireDry": "Calor seco en {months}: mayor riesgo de incendios, consulta las alertas locales.",
   "heat.fireFwi": "El índice de riesgo de incendio llega a la clase alta en {months}: consulta las alertas locales.",

@@ -78,6 +78,9 @@ export function hasMatchSignal(raw) {
   return t.likes.length > 0 || (t.size != null && t.size !== 'mix') || t.quiet != null;
 }
 
+/** E-10 (owner default 10): the For you sort is offered only to a taste the match can weigh. */
+export const forYouOffered = (raw) => !!raw && hasMatchSignal(raw);
+
 /** A copy with one answer set; null is "No preference". */
 export function setTasteAnswer(raw, key, value) {
   const t = normalizeTaste(raw);

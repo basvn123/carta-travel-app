@@ -13,6 +13,7 @@ import {
   withDateMode, withMonth, withTripNights, withWay, withPriceView, withPriceSpan, withStart,
   legacyFlex, legacyXm, isYm, addMonth,
 } from './model.js';
+import { todayISO } from '../dates.js';
 import { nearestTown, countryStartTown, countryAirports } from './start.js';
 
 const noop = () => {};
@@ -71,7 +72,7 @@ export function makeSettingsSetters(deps = {}) {
     setDateMode(mode) {
       const c = getChoices() || {};
       // A month mode opened for the first time starts on next month.
-      const ym = isYm(c.when_month) ? c.when_month : addMonth(new Date().toISOString().slice(0, 7));
+      const ym = isYm(c.when_month) ? c.when_month : addMonth(todayISO().slice(0, 7));
       if (mode === 'month') setChoices(withMonth(ym));
       else setChoices(withDateMode(mode));
       syncLegacy(mode, ym);
