@@ -6,6 +6,7 @@ import { CountryFlag } from '../../../components/CountryFlag.jsx';
 import { countryName } from '../../../lib/countryName.js';
 import { clampFrame, frame, keepMarks, viewBoxOf } from './project.js';
 import { WHOLE } from './layers.js';
+import { wishDraw } from './wish.js';
 import { fillStep } from './pastBeside.js';
 
 /**
@@ -47,20 +48,29 @@ export function EuropeMap({
           <rect width={hatchW} height={hatchW} className="mt-eumap-wish-bg" />
           <rect width={hatchW * 0.25} height={hatchW} className="mt-eumap-wish" />
         </pattern>
+        {/* The same hatch with no ground, laid over a been country's fill. */}
+        <pattern id={`${pid}-wishline`} width={hatchW} height={hatchW} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width={hatchW * 0.25} height={hatchW} className="mt-eumap-wish" />
+        </pattern>
       </defs>
       <path className="mt-eumap-context" d={geo.context} />
       {geo.countries.map((c) => {
         const st = stateOf(c.cc, been, next, saved);
+        const w = wishDraw(st, !!wish?.has(c.cc));
         return (
           <path
             key={c.cc}
-            className={`mt-eumap-land is-${st}${picked === c.cc ? ' is-picked' : ''}${cls(c)}${wish?.has(c.cc) ? ' is-wish' : ''}`}
+            className={`mt-eumap-land is-${st}${picked === c.cc ? ' is-picked' : ''}${cls(c)}${w === 'fill' ? ' is-wish' : ''}`}
             d={c.d}
-            style={st === 'next' ? { fill: `url(#${pid}-hatch)` } : wish?.has(c.cc) ? { fill: `url(#${pid}-wish)` } : undefined}
+            style={w === 'next' ? { fill: `url(#${pid}-hatch)` } : w === 'fill' ? { fill: `url(#${pid}-wish)` } : undefined}
             onClick={pick(c.cc)}
           />
         );
       })}
+      {/* Been and wanted: the been fill stays, the hatch lies over it. */}
+      {wish && geo.countries.filter((c) => wishDraw(stateOf(c.cc, been, next, saved), wish.has(c.cc)) === 'over').map((c) => (
+        <path key={`wish-${c.cc}`} className="mt-eumap-wishover is-wish" d={c.d} style={{ fill: `url(#${pid}-wishline)` }} pointerEvents="none" />
+      ))}
       {geo.countries.filter((c) => c.dot).map((c) => (
         <circle key={`dot-${c.cc}`} className={`mt-eumap-dot is-${stateOf(c.cc, been, next, saved)}${picked === c.cc ? ' is-picked' : ''}${cls(c)}`}
           cx={c.x} cy={c.y} r={dotR} onClick={pick(c.cc)} />

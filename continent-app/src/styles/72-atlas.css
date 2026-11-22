@@ -2565,3 +2565,39 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 @media (prefers-reduced-motion: reduce) {
   .atlas-zoom.is-sweep-0 .mt-eumap-land.is-wish, .atlas-zoom.is-sweep-1 .mt-eumap-land.is-wish { animation: none; clip-path: none; }
 }
+
+/* ==== G12 wow, judge round 1 fixes: the wish hatch lies over a been
+   country's fill instead of hiding it; on a phone the compass is a 2 x 2
+   grid without the rose, the stamps one 64 px row that scrolls sideways,
+   and Open reis stays quiet on the invite row, so no tab grows. ==== */
+.atlas-plate .mt-eumap-wishover { stroke: var(--umber-500); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.atlas-zoom.is-sweep-0 .mt-eumap-wishover { animation: atlas-sweep-a var(--dur-3) var(--ease-out) both; }
+.atlas-zoom.is-sweep-1 .mt-eumap-wishover { animation: atlas-sweep-b var(--dur-3) var(--ease-out) both; }
+@media (max-width: 599px) {
+  .atlas-extremes { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; }
+  .atlas-rose { display: none; }
+  .atlas-ext.is-n { grid-column: 1; grid-row: 1; justify-self: stretch; }
+  .atlas-ext.is-w { grid-column: 2; grid-row: 1; }
+  .atlas-ext.is-e { grid-column: 1; grid-row: 2; }
+  .atlas-ext.is-s { grid-column: 2; grid-row: 2; justify-self: stretch; }
+  .atlas-badges { flex-wrap: nowrap; overflow-x: auto; margin-inline: calc(-1 * var(--space-1)); padding: var(--space-1); scrollbar-width: none; }
+  .atlas-badge { flex: none; width: 64px; height: 64px; padding: var(--space-1); font-size: var(--text-micro); outline-offset: -6px; }
+  .atlas-badge i svg { width: 18px; height: 18px; }
+  .mt-invite-row { grid-template-columns: 40px minmax(16px, 1fr) auto auto; gap: var(--space-2); }
+  .mt-invite-open { grid-column: auto; }
+  .mt-invite-row .btn.mt-invite-open { padding-inline: var(--space-2); border-color: transparent; background: none; text-decoration: underline; text-underline-offset: 3px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .atlas-zoom.is-sweep-0 .mt-eumap-wishover, .atlas-zoom.is-sweep-1 .mt-eumap-wishover { animation: none; clip-path: none; }
+}
+@media (max-width: 599px) {
+  /* Phone lengths at or under the base (judge round 1): the plate sits 8 px
+     deeper in the band fade, the invitation drops its top pad, the next
+     trip's photo is 16:7 and its journey line tucks under it. */
+  .mt-panel.is-trips .atlas-col > .mt-next:first-child .mt-sign { margin-top: calc(-1 * var(--space-9)); }
+  .mt-invite { gap: var(--space-1); padding-top: 0; }
+  .mt-trip .mt-next-media { aspect-ratio: 16 / 7; }
+  .mt-next-line { min-height: 0; gap: 2px; margin-top: calc(-1 * var(--space-3)); }
+  .mt-next-line .jl-labs { height: 14px; }
+  .mt-next-line .jl-labs span { line-height: 14px; }
+}

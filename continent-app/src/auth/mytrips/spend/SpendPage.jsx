@@ -451,15 +451,14 @@ export function SpendPage({
             )}
           </header>
           {dayTotals.length > 0 && (
-            <JourneyLine
+            <div className="sp-line"><JourneyLine
               variant="spend"
-              className="sp-line"
               stops={stops}
               dayNum={dayNum}
               dayTotals={dayTotals}
               dayLabels={dayWords}
               label={`${t('sp.perDayLabel')}: ${dayTotals.slice(0, dayNum).map((d, i) => `${t('sp.dayN', { n: i + 1 })} ${formatMoney(d.eur || 0)}`).join(', ')}`}
-            />
+            /></div>
           )}
           <div className="sp-tabs" role="tablist" aria-label={t('sp.title')}>
             {[['today', 'sp.tabToday'], ['kas', 'sp.tabKas']].map(([k, key]) => (

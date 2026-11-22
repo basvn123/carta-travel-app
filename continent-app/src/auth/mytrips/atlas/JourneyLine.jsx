@@ -30,7 +30,12 @@ export function JourneyLine({
   useLayoutEffect(() => {
     const el = box.current;
     if (!el) return undefined;
-    const read = () => { const w = Math.floor(el.getBoundingClientRect().width); if (w > 0) setWidth((v) => (v === w ? v : w)); };
+    // The content box: a padded line (the Uitgaven page's) must end inside its padding.
+    const read = () => {
+      const cs = getComputedStyle(el);
+      const w = Math.floor(el.clientWidth - parseFloat(cs.paddingLeft || '0') - parseFloat(cs.paddingRight || '0'));
+      if (w > 0) setWidth((v) => (v === w ? v : w));
+    };
     read();
     if (typeof ResizeObserver === 'undefined') return undefined;
     const ro = new ResizeObserver(read);
