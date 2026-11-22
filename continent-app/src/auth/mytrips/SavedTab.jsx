@@ -123,7 +123,7 @@ function SavedItem({
       <span className="mt-pcard-ph">
         {/* The photo opens the thing for a pointer; the keyboard has its name. */}
         <span className="mt-pcard-img" onClick={() => !row.missing && onOpen(row)} aria-hidden="true">
-          <HeroImage url={row.img} city={name} iso2={row.cc} className="mt-pcard-imgel" maxWidth={480} ratio={[4, 3]} sizes="(min-width: 820px) 220px, 50vw" />
+          <HeroImage url={row.img} city={name} iso2={row.cc} className="mt-pcard-imgel" maxWidth={480} ratio={[4, 3]} sizes="(min-width: 768px) 220px, 50vw" />
         </span>
         {/* Kiezen (G12 polish): a select disc on the photo, the same function behind one tap. */}
         {choosing && (

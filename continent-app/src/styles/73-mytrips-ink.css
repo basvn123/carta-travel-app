@@ -152,7 +152,7 @@
 
 /* ==== Bewaard (block 2): the photo card grid, Gevolgd, the lists, the tools ==== */
 
-/* The photo card: two across on a phone, three from 820 px (and beside the
+/* The photo card: two across on a phone, three from 768 px (and beside the
    map from 1100 px). Every row function stays on the card. */
 .mt-panel .mt-items.mt-pgrid {
   display: grid;
@@ -160,7 +160,7 @@
   gap: 22px 14px;
   align-items: start;
 }
-@media (min-width: 820px) {
+@media (min-width: 768px) {
   .mt-panel .mt-items.mt-pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
 }
 .mt-pcard { position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-width: 0; }
@@ -353,7 +353,7 @@
 /* Komend, In planning and Dagplannen: a 4:3 photo, the name, the date line
    under it and the figure right. Pointed at, the name underlines; no wash. */
 .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 120px; height: 90px; border-radius: var(--radius-panel); }
-@media (min-width: 820px) { .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 144px; height: 108px; } }
+@media (min-width: 768px) { .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 144px; height: 108px; } }
 @media (min-width: 1100px) { .mt-panel.is-trips .mt-rows .mt-row .card-media { width: 160px; height: 120px; } }
 .mt-panel.is-trips .mt-rows .mt-row-wrap:hover .mt-row.card,
 .mt-panel.is-trips .mt-rows .mt-row-wrap:focus-within .mt-row.card { background: none; }
@@ -481,7 +481,7 @@
 /* ==== Jouw Europa (block 4): past trips as photo cards with the grade in
    cells, clean bars on one baseline, the compass, the cost bars ==== */
 
-/* Past trips: the Saved card, two across on a phone, three from 820 px (in
+/* Past trips: the Saved card, two across on a phone, three from 768 px (in
    the left 7/12 from 1024). An opened memory or the ten taps run across the
    grid under the card; the next card fills the gap beside it. */
 .mt-panel .atlas-prows.mt-pgrid {
@@ -491,7 +491,7 @@
   gap: 22px 14px;
   align-items: start;
 }
-@media (min-width: 820px) {
+@media (min-width: 768px) {
   .mt-panel .atlas-prows.mt-pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
 }
 .mt-pgrid-open { grid-column: 1 / -1; min-width: 0; }
@@ -640,3 +640,10 @@
 .mt-panel .atlas-pyear { gap: 10px; }
 .mt-panel .atlas-eu .atlas-sect { margin-bottom: var(--space-2); }
 .mt-past-est { margin-bottom: var(--space-2); }
+
+/* ==== Block 6: the last sunken fills in My trips (decision 0016) ==== */
+/* "Bekijk een voorbeeld": the kit's secondary look, an ink edge, no well. */
+.mt-panel .btn.mt-soft { border-color: var(--text); background: transparent; }
+/* The shared list's vote: an outlined pill; on, the action paint. */
+.mt-panel .mt-vote { box-sizing: border-box; border: var(--stroke-edge) solid var(--edge); background: transparent; }
+.mt-panel .mt-vote.is-on { border-color: var(--action); background: var(--action); }

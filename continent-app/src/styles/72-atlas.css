@@ -174,15 +174,6 @@
   gap: var(--space-2);
 }
 
-.atlas-seg2 {
-  display: inline-flex;
-  flex: none;
-  gap: 2px;
-  padding: 3px;
-  border-radius: var(--radius-pill);
-  background: var(--surface-sunken);
-}
-
 /* 36 px pills; the 3 px well and the gap round each up to the 44 px hit
    area the spec asks for (decision: compact control). */
 .atlas-seg2 button {
@@ -1203,26 +1194,12 @@
 .atlas-watch-p b { font-size: var(--text-headline); font-weight: 800; }
 .atlas-watch-wait { display: grid; place-items: center; height: 54px; padding: 0 var(--space-2); border: 1px dashed var(--border); border-radius: var(--radius-sm); font-size: var(--text-caption); font-weight: 600; color: var(--text-2); text-align: center; }
 .atlas-chart { display: block; max-width: 100%; height: auto; overflow: visible; }
-.atlas-chart-area { fill: var(--umber-100); opacity: 0.55; }
 .atlas-chart-line { fill: none; stroke: var(--umber-600); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
 .atlas-chart circle { fill: var(--surface); stroke: var(--umber-600); stroke-width: 1.6; }
 .atlas-chart circle.is-now { fill: var(--umber-800); }
 .atlas-chart-axis { stroke: var(--border); }
 .atlas-chart text { font-size: var(--text-caption); font-weight: 700; fill: var(--text-2); }
 .atlas-chart text.is-v { fill: var(--text); font-weight: 800; }
-.atlas-move {
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  padding: 2px var(--space-2);
-  border-radius: var(--radius-pill);
-  font-size: var(--text-caption);
-  font-weight: 800;
-  white-space: nowrap;
-  color: var(--umber-800);
-  background: var(--umber-100);
-}
-.atlas-move.is-up { color: var(--text-2); background: var(--surface-sunken); }
 .atlas-watch-src { display: flex; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); font-size: var(--text-caption); color: var(--text-2); }
 .atlas-kv { display: grid; margin: var(--space-4) 0; }
 .atlas-kv > div { display: flex; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) 0; border-top: 1px solid var(--border); }
@@ -1318,7 +1295,6 @@
 /* charts: drawn at the column's measured width, 12 px text */
 .atlas-chartbox { width: 100%; min-width: 0; }
 .atlas-chart text { font-family: var(--ui); }
-.atlas-chart rect.is-off { fill: var(--umber-100); }
 .atlas-chart rect.is-on { fill: var(--umber-600); }
 .atlas-chart rect.is-r0 { fill: var(--umber-300); }
 .atlas-chart rect.is-r1 { fill: var(--umber-500); }
@@ -1590,8 +1566,6 @@
 .mt-saved .mt-mosaic.is-new { border: 1.5px solid var(--border); color: var(--text-2); }
 
 /* The list head: the count and Kiezen / Klaar. */
-.mt-listhead { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: var(--space-2); }
-.mt-listhead b { font-size: var(--text-lead); }
 .mt-kies {
   min-height: var(--tap);
   padding: 0 var(--space-3);
@@ -1666,11 +1640,10 @@
   gap: var(--space-2);
   min-width: 0;
   min-height: var(--tap);
-  padding: var(--space-2) 10px;
+  padding: var(--space-1) 0;
   border: 0;
   border-radius: var(--radius-control);
-  background: var(--umber-50);
-  border: 1px solid var(--umber-200);
+  background: none;
   color: var(--text-2);
   font: 500 var(--text-label) / 1.3 var(--ui);
   text-align: start;
@@ -2128,14 +2101,14 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .atlas-ghost-h { margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text-3); }
   .atlas-ghost-years, .atlas-ghost-months { display: flex; align-items: flex-end; height: 104px; border-bottom: 1px solid var(--border); }
   .atlas-ghost-years { justify-content: space-around; }
-  .atlas-ghost-years i { width: 44px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--umber-100); }
+  .atlas-ghost-years i { width: 44px; border: 1.5px dashed var(--edge); border-bottom: 0; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: none; }
   .atlas-ghost-months { gap: 5px; }
-  .atlas-ghost-months i { flex: 1; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--border-soft); }
-  .atlas-ghost-months i.is-on { background: var(--umber-100); }
+  .atlas-ghost-months i { flex: 1; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: none; }
+  .atlas-ghost-months i.is-on { border: 1.5px dashed var(--edge); border-bottom: 0; }
   .atlas-ghost-cost { display: grid; gap: var(--space-4); }
   .atlas-ghost-cost span { display: grid; gap: var(--space-2); }
   .atlas-ghost-cost b { width: 34%; height: 10px; border-radius: var(--radius-pill); background: var(--border-soft); }
-  .atlas-ghost-cost i { height: 8px; border-radius: var(--radius-pill); background: var(--umber-100); }
+  .atlas-ghost-cost i { height: 8px; border: 1.5px dashed var(--edge); border-radius: 0; background: none; }
 }
 
 /* ==== G12 wow, phase A (owner approved 2026-11-22): the journey line and the

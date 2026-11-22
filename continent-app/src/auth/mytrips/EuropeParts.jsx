@@ -316,7 +316,7 @@ export function PastRow({ x, top = false, withYear = false, rating = false, onRa
         <span className="mt-pcard-ph">
           <span className="mt-pcard-img" onClick={x.onOpen} aria-hidden="true">
             {!x.img && geo && trip?.stops?.length ? <MiniRoute geo={geo} trip={trip} /> : (
-              <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="mt-pcard-imgel" maxWidth={480} ratio={[4, 3]} sizes="(min-width: 820px) 240px, 50vw" />
+              <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="mt-pcard-imgel" maxWidth={480} ratio={[4, 3]} sizes="(min-width: 768px) 240px, 50vw" />
             )}
           </span>
           {(x.menuActions?.length > 0 || x.onRemove) && (

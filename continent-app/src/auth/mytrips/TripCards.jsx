@@ -172,7 +172,7 @@ export function TripRow({
         layout="row"
         as="div"
         className="mt-row"
-        media={<HeroImage url={img} city={title} iso2={iso2} className="mt-row-img" maxWidth={330} ratio={[4, 3]} sizes="(min-width: 1100px) 160px, (min-width: 820px) 144px, 120px" />}
+        media={<HeroImage url={img} city={title} iso2={iso2} className="mt-row-img" maxWidth={330} ratio={[4, 3]} sizes="(min-width: 1100px) 160px, (min-width: 768px) 144px, 120px" />}
         title={title}
         onOpen={onOpen}
         meta={meta}
