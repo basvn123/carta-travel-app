@@ -471,18 +471,21 @@ export function SpendPage({
               <>
                 <section className="sp-sec" aria-label={t('sp.dayAria', { day: t('sp.tabToday'), amount: eur(mineToday.cents) })}>
                   <div className="sp-sech"><h2>{t('sp.tabToday')}</h2><span>{eur(mineToday.cents)}</span></div>
+                  {/* Food against the plan (decision 0016): ten connected tiles in one
+                      umber frame, each a tenth of the plan, filled to today's food
+                      with a part fill on the last; the figure printed above. */}
                   {plannedFood > 0 && (
-                    <div className="sp-plan" role="img" aria-label={t('mt.foodVsPlan', { spent: formatMoney(foodToday), plan: formatMoney(plannedFood) })}>
-                      {(() => {
-                        const scale = Math.max(foodToday, plannedFood) * 1.15;
-                        return (
-                          <>
-                            <i className="sp-plan-fill" style={{ transform: `scaleX(${Math.min(1, foodToday / scale)})` }} />
-                            <u style={{ left: `${(plannedFood / scale) * 100}%` }} />
-                            <em style={{ left: `${(plannedFood / scale) * 100}%` }}>{t('sp.plan')}</em>
-                          </>
-                        );
-                      })()}
+                    <div className="sp-plan10" role="img" aria-label={t('mt.foodVsPlan', { spent: formatMoney(foodToday), plan: formatMoney(plannedFood) })}>
+                      <span className="sp-plan10-h">
+                        <span>{t('sp.cat_food')}</span>
+                        <b>{t('sp.progressOf', { done: formatMoney(foodToday), n: formatMoney(plannedFood) })}</b>
+                      </span>
+                      <span className="sp-plan10-t">
+                        {Array.from({ length: 10 }, (_, i) => {
+                          const f = Math.max(0, Math.min(1, (foodToday / plannedFood) * 10 - i));
+                          return <i key={i} className={f >= 1 ? 'is-on' : undefined}>{f > 0 && f < 1 && <b style={{ width: `${Math.round(f * 100)}%` }} />}</i>;
+                        })}
+                      </span>
                     </div>
                   )}
                   {todayRows.length ? (

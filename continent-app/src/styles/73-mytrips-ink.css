@@ -44,11 +44,13 @@
 .ink-sh-icon path { fill: var(--umber-600); }
 
 /* ---- the frame: two cells in one umber edge, the chosen one painted ---- */
+/* The edge is an inset outline, so each cell keeps the full 44 px target. */
 .ink-frame {
   display: inline-flex;
   flex: none;
-  border: var(--stroke-edge) solid var(--umber-800);
   border-radius: var(--radius-sm);
+  outline: var(--stroke-edge) solid var(--umber-800);
+  outline-offset: calc(-1 * var(--stroke-edge));
   background: transparent;
 }
 .ink-frame > button {
@@ -56,7 +58,7 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-1);
-  min-height: calc(var(--tap) - 2 * var(--stroke-edge));
+  min-height: var(--tap);
   padding: 0 var(--space-3);
   border: 0;
   border-radius: 0;
@@ -68,8 +70,8 @@
   transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
 }
 .ink-frame > button + button { border-inline-start: var(--stroke-hair) solid var(--umber-300); }
-.ink-frame > button:first-child { border-start-start-radius: calc(var(--radius-sm) - var(--stroke-edge)); border-end-start-radius: calc(var(--radius-sm) - var(--stroke-edge)); }
-.ink-frame > button:last-child { border-start-end-radius: calc(var(--radius-sm) - var(--stroke-edge)); border-end-end-radius: calc(var(--radius-sm) - var(--stroke-edge)); }
+.ink-frame > button:first-child { border-start-start-radius: var(--radius-sm); border-end-start-radius: var(--radius-sm); }
+.ink-frame > button:last-child { border-start-end-radius: var(--radius-sm); border-end-end-radius: var(--radius-sm); }
 .ink-frame > button[aria-pressed="true"] { background: var(--action); color: var(--action-text); font-weight: 800; }
 .ink-frame > button[aria-pressed="true"] + button,
 .ink-frame > button + button[aria-pressed="true"] { border-inline-start-color: var(--action); }
