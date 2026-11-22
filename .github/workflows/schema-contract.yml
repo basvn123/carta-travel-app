@@ -150,6 +150,7 @@ jobs:
             /continent-app/config/
             /continent-app/scripts/ci/
             /continent-app/scripts/sync-data.mjs
+            /continent-app/public/entry_rules.json
             /continent-app/tests/wire-contract.test.mjs
             /pipeline/
             /tests/test_provenance.py
