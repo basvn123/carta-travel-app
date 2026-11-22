@@ -24,3 +24,4 @@ Each file here records one decision that still matters, so nobody has to guess l
 | [0011](0011-travel-styles.md) | Travel styles: one switchable "how you travel" for the whole app | accepted | 2026-11-13 |
 | [0012](0012-house-style.md) | The house style: Waymark, in Line's colours, rounder | accepted | 2026-11-15 |
 | [0013](0013-my-trips-atlas.md) | My trips as one atlas: examples behind a button, prices you follow | accepted | 2026-11-21 |
+| [0014](0014-spend-on-device.md) | Uitgaven: one page, a Reiskas split, capture on the device without AI | accepted | 2026-11-22 |
