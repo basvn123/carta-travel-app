@@ -882,6 +882,8 @@ Every rating number lives in one file, `continent-app/config/rating.json` (versi
 
 **Heat and fire months (D20, T1200).** `pipeline/heat_fire.py` (task `heat_fire`) adds `climate.heat` (mean daytime high at or above `extreme_c`, 35 C) and `climate.fire` (months at FWI 21.3 or more when `cache/fire_fwi.json` exists, else a dry-heat proxy: high at or above 28 C and under 30 mm rain) plus `climate.risk`. All numbers are the rule `when.heat` in `config/pricing.json`. `lib/heatRisk.js` is the one app rule: for a party with children or babies, or an "avoid heat" answer, the place page's best months drop those months (never below one month); When to go prints a note naming them.
 
+Status (2026-11-22): code fixed, on the wire after the next box run. The task used to read only `climate.m`, which the wire has and the master does not, so on the box it changed nothing; `_rows()` now reads both shapes and `lib/wireClimate.mjs` (used by `sync-data.mjs`) keeps `heat`, `fire` and `risk` on the wire. The three keys are optional in `docs/wire.schema.json`, schema version stays 20. Run on a copy of the 2026-11-10 box master: 61 places with heat months and 669 with fire months (dry-heat proxy).
+
 **Limits.** Month initials on the strip are English only (T1022-a). Elevation still comes from the Open-Meteo API, non-commercial tier (T470-b). An i18n string still says 30 years of normals (T469-i).
 
 ---
