@@ -145,6 +145,30 @@ async function reducedMotion(browser, v) {
   return res;
 }
 
+// G12 wow: Your Europe's past trips sit under the map from 1100 x 720 (a
+// focusable region inside the slot, after the content in the DOM) and stay
+// inline in a shorter window.
+async function pastPlacement(browser, v, height) {
+  const { ctx, page } = await open(browser, v, 1440, { viewport: { width: 1440, height } });
+  await showTab(page, 2);
+  await page.waitForTimeout(1500);
+  const r = await page.evaluate(() => {
+    const h = document.getElementById('mt-past-h');
+    const region = document.querySelector('.atlas-slot .atlas-past');
+    const body = document.querySelector('.atlas-body');
+    const kids = body ? [...body.children].map((c) => c.className) : [];
+    return {
+      heading: !!h,
+      inSlot: !!(h && h.closest('.atlas-slot')),
+      region: region ? { tabindex: region.getAttribute('tabindex'), role: region.getAttribute('role'), label: region.getAttribute('aria-labelledby') } : null,
+      contentFirst: kids.findIndex((c) => c.includes('atlas-content')) < kids.findIndex((c) => c.includes('atlas-slot')),
+      overscroll: region ? getComputedStyle(region).overscrollBehaviorY : '',
+    };
+  });
+  await ctx.close();
+  return { v, height, ...r };
+}
+
 const browser = await chromium.launch();
 const jobs = [];
 for (const v of VARIANTS) for (const w of WIDTHS) jobs.push(() => runOne(browser, v, w));
@@ -162,7 +186,18 @@ if (WIDTHS.includes(390)) {
     try { extras.push({ v, examples: await exampleCounts(browser, v), motion: await reducedMotion(browser, v) }); } catch (e) { extras.push({ v, error: e.message }); }
   }
 }
+const placement = [];
+if (WIDTHS.includes(1440) && VARIANTS.includes('years')) {
+  for (const hgt of [900, 700]) {
+    try { placement.push(await pastPlacement(browser, 'years', hgt)); } catch (e) { placement.push({ v: 'years', height: hgt, error: e.message }); }
+  }
+}
 await browser.close();
+const placeBad = placement.filter((p) => p.error || !p.heading || (p.height >= 720
+  ? !(p.inSlot && p.contentFirst && p.region?.tabindex === '0' && p.region?.role === 'region' && p.region?.label === 'mt-past-h' && p.overscroll !== 'contain')
+  : p.inSlot));
+console.log(`past list placement checks ${placement.length}, ${placeBad.length} fail`);
+for (const p of placeBad) console.log(`FAIL placement ${JSON.stringify(p)}`);
 
 const bad = results.filter((r) => !r.skip && !r.ok);
 const exBad = extras.filter((x) => x.error || x.examples?.some((e) => !e.same) || x.motion?.some((m) => m.running.length));
@@ -171,4 +206,4 @@ const maxCls = Math.max(0, ...results.map((r) => r.cls || 0));
 console.log(`checked ${results.length} variant-tab-width cells, ${bad.length} fail; max CLS ${maxCls.toFixed(4)}; example and motion checks ${extras.length}, ${exBad.length} fail`);
 for (const r of bad) console.log(`FAIL ${r.v} ${r.tab} ${r.w}: overflow ${r.overflow}, cls ${r.cls?.toFixed(4)}, axe ${JSON.stringify(r.axe)}, errors ${JSON.stringify(r.errors)}`);
 for (const x of exBad) console.log(`FAIL ${x.v}: ${JSON.stringify(x)}`);
-process.exit(bad.length || exBad.length ? 1 : 0);
+process.exit(bad.length || exBad.length || placeBad.length ? 1 : 0);

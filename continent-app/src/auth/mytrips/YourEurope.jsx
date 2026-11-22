@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { Button } from '../../components/ui/index.js';
@@ -53,7 +54,7 @@ function badgeOf(t, m, fmtMonth) {
 export function YourEurope({
   trips = [], year = null, onYear, ramp = {}, geo, milestones = [], countries = 0, past = [],
   onGrade, onFill, onRecap, onShare, sharing = false, ycModel = null, ycExample = '', onAddPast, pastForm, error, fmtMonth,
-  example = false, onExample, onExampleClose,
+  example = false, onExample, onExampleClose, pastHost = null, onLift = null,
 }) {
   const { t } = useI18n();
   const [per, setPer] = useState('day');
@@ -138,6 +139,7 @@ export function YourEurope({
                   rating={rowRate === x.id}
                   onRateOpen={() => setRowRate((v) => (v === x.id ? '' : x.id))}
                   onRate={onGrade ? (n) => { onGrade(x.id, n); setRowRate(''); } : undefined}
+                  onLift={onLift}
                 />
               ))}
             </div>
@@ -146,6 +148,8 @@ export function YourEurope({
       })}
     </Sect>
   );
+  // From 1100 x 720 the past trips stand under the map (a portal into the slot).
+  const pastNode = pastHost ? createPortal(pastSect, pastHost) : pastSect;
   const first = trips.length < 3;
   const yc = ycModel ? (
     <YearCardSection model={ycModel} geo={geo} onEdit={onRecap} onShare={onShare} busy={sharing} example={ycExample} />
@@ -164,7 +168,7 @@ export function YourEurope({
     <div className="mt-europe atlas-eu">
       {example && <ExampleBar onClose={onExampleClose} />}
       {first ? (
-        <>{logSect}{cost}{yc}<Badges items={items} />{pastSect}</>
+        <>{logSect}{cost}{yc}<Badges items={items} />{pastNode}</>
       ) : (
         <>
           <Sect
@@ -180,7 +184,7 @@ export function YourEurope({
           {logSect}
           <Badges items={items} />
           {yc}
-          {pastSect}
+          {pastNode}
         </>
       )}
     </div>

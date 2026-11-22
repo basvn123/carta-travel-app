@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
+import { stampTilt } from './atlas/pastBeside.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -178,8 +179,14 @@ export function Extremes({ ex }) {
   return (
     <Sect id="mt-ext-h" title={t('mt.extremes')}>
       <div className="atlas-extremes">
+        {/* G12 atlas: the four tiles stand as a compass around a rose. */}
+        <svg className="atlas-rose" viewBox="0 0 76 76" aria-hidden="true">
+          <circle cx="38" cy="38" r="30" />
+          <path d="M38 6 44 38H32z" /><path className="is-l" d="M38 70 32 38h12z" />
+          <path className="is-l" d="M6 38 38 32v12z" /><path d="M70 38 38 44V32z" />
+        </svg>
         {cells.map(([k, letter, s, deg]) => (
-          <div className="atlas-ext" key={k}>
+          <div className={`atlas-ext is-${k}`} key={k}>
             <i aria-hidden="true">{letter}</i>
             <b>{s.city}</b>
             <span>{deg}</span>
@@ -260,6 +267,8 @@ export function Badges({ items }) {
             <Pressable
               key={b.id}
               className={`atlas-badge${b.earned ? '' : ' is-locked'}`}
+              // An earned stamp sits at a fixed tilt from its id, like ink pressed by hand.
+              style={b.earned ? { '--tilt': `${stampTilt(b.id)}deg` } : undefined}
               aria-label={b.earned ? b.label : t('mt.badgeNotYet', { name: b.label })}
               aria-pressed={open === b.id}
               onClick={() => setOpen(open === b.id ? '' : b.id)}
@@ -302,7 +311,7 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
  *  Carta's estimate; on the right the grade badge (the best trip on umber
  *  600), or "Geef een cijfer", which opens the ten taps in the row. A tap on
  *  the row opens its memory. */
-export function PastRow({ x, top = false, rating = false, onRateOpen, onRate }) {
+export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, onLift = null }) {
   const { t } = useI18n();
   const month = monthShort(x.start);
   const meta = [
@@ -310,7 +319,14 @@ export function PastRow({ x, top = false, rating = false, onRateOpen, onRate }) 
     month,
   ].filter(Boolean).join(', ');
   return (
-    <div className="atlas-prow-wrap mt-jcard">
+    <div
+      className="atlas-prow-wrap mt-jcard"
+      // G12 atlas: pointing at a past trip lifts its route on the map.
+      onMouseEnter={onLift ? () => onLift(x.id) : undefined}
+      onMouseLeave={onLift ? () => onLift('') : undefined}
+      onFocus={onLift ? () => onLift(x.id) : undefined}
+      onBlur={onLift ? () => onLift('') : undefined}
+    >
       <Pressable className="atlas-prow mt-jcard-title" onClick={x.onOpen} aria-expanded={x.open}>
         <span className="atlas-th">
           <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={240} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />

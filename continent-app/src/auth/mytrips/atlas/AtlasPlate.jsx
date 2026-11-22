@@ -6,6 +6,7 @@ import { CountryFlag } from '../../../components/CountryFlag.jsx';
 import { countryName } from '../../../lib/countryName.js';
 import { clampFrame, frame, keepMarks, viewBoxOf } from './project.js';
 import { WHOLE } from './layers.js';
+import { fillStep } from './pastBeside.js';
 
 /**
  * The map: land you have not been to one flat grey, been in umber, the next
@@ -120,7 +121,7 @@ const WHOLE_LAYER = { whole: true };
  *   overlay(vb, k)  HTML drawn over the plate on the shown frame (Saved pins)
  */
 export function AtlasPlate({
-  geo, layer, been = EMPTY, next = EMPTY, label, year = null, drawKey = 0, picked, onPick, cornerT = {}, zoom = null, overlay = null, wish = null, children,
+  geo, layer, been = EMPTY, next = EMPTY, label, year = null, drawKey = 0, fill = false, picked, onPick, cornerT = {}, zoom = null, overlay = null, wish = null, children,
 }) {
   const box = useRef(null);
   const [size, setSize] = useState(null);
@@ -168,18 +169,24 @@ export function AtlasPlate({
   }, [base, zoom]);
   const k = vb.w / w;
   const ramp = L.ramp || {};
+  // G12 atlas, the fill by year: each first-visit year is one step, oldest first.
+  const fillYears = useMemo(() => [...new Set(Object.values(L.firstYear || {}))].sort((a, b) => a - b), [L]);
   const classOf = (cc) => {
     if (L.hand?.has(cc)) return 'is-hand';
     const y = L.firstYear?.[cc];
     if (y == null) return '';
     if (year != null && !L.visits?.[cc]?.has(year)) return 'is-off';
-    return `is-r${ramp[y] ?? 0}`;
+    return `is-r${ramp[y] ?? 0}${fill ? ` is-f${Math.min(9, fillYears.indexOf(y))}` : ''}`;
   };
   const dimmed = (y) => year != null && y != null && y !== year;
   const pid = useId().replace(/:/g, '');
 
   return (
-    <div ref={box} className={`atlas-plate${drawKey ? ' is-draw' : ''}`}>
+    <div
+      ref={box}
+      className={`atlas-plate${drawKey ? ' is-draw' : ''}${fill ? ' is-fill' : ''}`}
+      style={fill ? { '--fill-step': `${fillStep(fillYears.length)}ms` } : undefined}
+    >
       <EuropeMap
         geo={geo}
         been={been}

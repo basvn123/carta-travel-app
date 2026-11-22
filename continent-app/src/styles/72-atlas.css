@@ -2412,3 +2412,111 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .atlas-pinplate { animation: none; }
   .btn.mt-lcard .mt-mosaic > * { transition: none; }
 }
+
+/* ==== G12 wow, phase D: Jouw Europa. Europe fills year by year on the tab
+   change (once a session, at most 1200 ms; the chip shows its final figure
+   at once); the past trips stand under the map from 1100 x 720; one-line
+   costs; the extremes as a compass; the milestones as ink stamps. ==== */
+.atlas-plate.is-fill .mt-eumap [class*=' is-f'] {
+  animation-name: atlas-fill;
+  animation-duration: var(--fill-step, var(--dur-fill-step));
+  animation-timing-function: var(--ease-out);
+  animation-fill-mode: both;
+}
+.atlas-plate.is-fill .mt-eumap .is-f0 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 0); }
+.atlas-plate.is-fill .mt-eumap .is-f1 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 1); }
+.atlas-plate.is-fill .mt-eumap .is-f2 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 2); }
+.atlas-plate.is-fill .mt-eumap .is-f3 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 3); }
+.atlas-plate.is-fill .mt-eumap .is-f4 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 4); }
+.atlas-plate.is-fill .mt-eumap .is-f5 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 5); }
+.atlas-plate.is-fill .mt-eumap .is-f6 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 6); }
+.atlas-plate.is-fill .mt-eumap .is-f7 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 7); }
+.atlas-plate.is-fill .mt-eumap .is-f8 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 8); }
+.atlas-plate.is-fill .mt-eumap .is-f9 { animation-delay: calc(var(--fill-step, var(--dur-fill-step)) * 9); }
+@keyframes atlas-fill { from { fill-opacity: 0; } to { fill-opacity: 1; } }
+
+/* The past trips under the map: the slot is a column no taller than the
+   window, the map a fixed height, the list its own focusable scroll region.
+   No overscroll containment, so the page scrolls on at the list's end. */
+@media (min-width: 1100px) and (min-height: 720px) {
+  .atlas-body.is-europe.has-past .atlas-slot {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - var(--header-h) - 2 * var(--space-4));
+  }
+  .atlas-body.is-europe.has-past .atlas-slot .atlas-map { flex: none; height: clamp(340px, 46dvh, 440px); }
+  .atlas-body.is-europe.has-past .atlas-under { flex: none; }
+  .atlas-past {
+    flex: 1 1 auto;
+    min-height: 220px;
+    margin-top: var(--space-3);
+    padding-right: var(--space-2);
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+    scrollbar-width: thin;
+    scrollbar-color: var(--umber-300) transparent;
+  }
+  .atlas-past:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+  .atlas-past .atlas-pyear-h { position: sticky; top: 0; z-index: 2; background: var(--surface-page); }
+}
+
+/* A past row pointed at: its route lifts, the others step back. */
+.atlas-route.is-lift .atlas-route-line { stroke: var(--umber-800); opacity: 1; }
+
+/* One line per trip: the name and year, the bar in the middle, the figure. */
+.atlas-crow { grid-template-columns: minmax(0, 1fr) 34% minmax(64px, auto); align-items: center; gap: var(--space-3); min-height: 36px; border-bottom: 1px solid var(--border-soft); }
+.atlas-crow .atlas-ctrack { grid-column: 2; grid-row: 1; height: 8px; }
+.atlas-crow .atlas-cval { grid-column: 3; grid-row: 1; text-align: end; }
+
+/* The extremes as a compass: N on top, W and O beside the rose, Z under it. */
+.atlas-extremes { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); grid-template-rows: auto 76px auto; gap: var(--space-2); align-items: center; }
+.atlas-rose { grid-column: 2; grid-row: 2; width: 76px; height: 76px; }
+.atlas-rose circle { fill: none; stroke: var(--umber-300); stroke-width: 1.5; }
+.atlas-rose path { fill: var(--umber-700); }
+.atlas-rose path.is-l { fill: var(--umber-300); }
+.atlas-ext.is-n { grid-column: 1 / -1; grid-row: 1; justify-self: center; }
+.atlas-ext.is-s { grid-column: 1 / -1; grid-row: 3; justify-self: center; }
+.atlas-ext.is-w { grid-column: 1; grid-row: 2; }
+.atlas-ext.is-e { grid-column: 3; grid-row: 2; }
+@media (min-width: 1100px) {
+  .atlas-extremes { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); }
+}
+
+/* Milestones as ink stamps: earned, a double umber ring at a fixed tilt;
+   not yet, one plain light ring, no progress. */
+.atlas-badges { display: flex; flex-wrap: wrap; gap: var(--space-3); }
+.atlas-badge {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 2px;
+  width: 84px;
+  height: 84px;
+  padding: var(--space-2);
+  border: 2.5px solid var(--umber-700);
+  border-radius: var(--radius-pill);
+  outline: 1.5px solid var(--umber-700);
+  outline-offset: -8px;
+  background: none;
+  color: var(--umber-800);
+  font-size: var(--text-caption);
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  rotate: var(--tilt, 0deg);
+  transition: scale var(--dur-tick) var(--ease-tick);
+}
+.atlas-badge:active { scale: 0.96; }
+.atlas-badge i { width: auto; height: auto; background: none; color: inherit; }
+.atlas-badge.is-locked { border: 2px solid var(--umber-200); outline-color: transparent; color: var(--text-3); rotate: 0deg; }
+.atlas-badge.is-locked i { background: none; color: var(--text-3); }
+.atlas-badge:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-plate.is-fill .mt-eumap [class*=' is-f'] { animation: none; }
+  .atlas-badge { transition: none; }
+}
+@media (min-width: 1100px) and (min-height: 720px) {
+  .atlas-past .atlas-th { width: 56px; height: 56px; }
+  .atlas-past .atlas-prow { min-height: 64px; padding: var(--space-2) 0; }
+}

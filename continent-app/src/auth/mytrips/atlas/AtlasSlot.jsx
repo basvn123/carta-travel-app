@@ -6,6 +6,8 @@ import { Pressable } from '../../../components/ui/Pressable.jsx';
 import { AtlasPlate, CountryPick } from './AtlasPlate.jsx';
 import { landShare, plateColours, stateOf } from './plateData.js';
 
+const FILL_KEY = 'mt-eu-filled';
+
 /**
  * The one map of a My trips panel (G12, Phase B), placed per device like the
  * approved reference: on a phone a full-bleed band that fades into the
@@ -24,16 +26,23 @@ import { landShare, plateColours, stateOf } from './plateData.js';
  *   onToggleCountry(iso)  a hand mark (T972, useVisitedCountries)
  *   onList, listRef       "Countries as a list" (VisitedCountriesSheet)
  */
-export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, year = null, onYear, onToggleCountry, onCountry, onList, listRef, children }) {
+export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, pastHost = null, year = null, onYear, onToggleCountry, onCountry, onList, listRef, children }) {
   const { t } = useI18n();
   const [picked, setPicked] = useState('');
   const first = useRef(tab);
   const [drawKey, setDrawKey] = useState(0);
+  // Your Europe fills year by year once a session, on the tab change only.
+  const [fill, setFill] = useState(false);
   useEffect(() => {
     if (first.current === tab) return;
     first.current = tab;
     setDrawKey((n) => n + 1);
     setPicked('');
+    let play = false;
+    if (tab === 'europe') {
+      try { play = !sessionStorage.getItem(FILL_KEY); sessionStorage.setItem(FILL_KEY, '1'); } catch { play = false; }
+    }
+    setFill(play);
   }, [tab]);
   const share = useMemo(() => (europe ? landShare(geo, europe.been) : 0), [geo, europe]);
   if (tab === 'saved') {
@@ -80,6 +89,7 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
         year={year}
         label={t('mt.mapEurope', { n, total: E.total })}
         drawKey={drawKey}
+        fill={fill && !empty}
         picked={picked}
         onPick={onPick}
         cornerT={cornerT}
@@ -132,6 +142,10 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
     <div className={`atlas-slot is-${tab}${empty ? ' is-empty' : ''}`}>
       <div className="atlas-map" style={plateColours()}>{plate}</div>
       {under}
+      {pastHost && tab === 'europe' && (
+        // The past trips' own scroll region under the map (from 1100 x 720).
+        <div className="atlas-past" ref={pastHost} tabIndex={0} role="region" aria-labelledby="mt-past-h" />
+      )}
       {children}
     </div>
   );
