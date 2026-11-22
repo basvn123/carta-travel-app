@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useRef, useState } from 'react';
 import { stampTilt } from './atlas/pastBeside.js';
+import { MiniRoute } from './atlas/MiniRoute.jsx';
 import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -201,8 +202,17 @@ export function Extremes({ ex }) {
  *  baseline, a blaze-style meter under it painted to the grade; the best
  *  trip's number in umber 700 and its meter in umber 800. No pill, so it
  *  reads as Carta's mark and not a stock badge. */
-export function GradeBadge({ n, top = false }) {
+export function GradeBadge({ n, top = false, stamp = '' }) {
   const { t } = useI18n();
+  // In a past row the grade is an ink stamp (G12 atlas): a stable tilt from the trip's id, a 10 filled.
+  if (stamp) {
+    return (
+      <span className={`atlas-gstamp${n >= 10 ? ' is-ten' : ''}`} role="img" aria-label={t('mt.gradeAria', { n })}
+        style={{ '--tilt': `${stampTilt(stamp)}deg` }}>
+        <b aria-hidden="true">{n}</b>
+      </span>
+    );
+  }
   return (
     <span className={`atlas-grade${top ? ' is-top' : ''}`} role="img" aria-label={t('mt.gradeAria', { n })}>
       <span className="atlas-grade-n" aria-hidden="true"><b>{n}</b><small>/10</small></span>
@@ -311,7 +321,7 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
  *  Carta's estimate; on the right the grade badge (the best trip on umber
  *  600), or "Geef een cijfer", which opens the ten taps in the row. A tap on
  *  the row opens its memory. */
-export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, onLift = null }) {
+export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, onLift = null, geo = null, trip = null }) {
   const { t } = useI18n();
   const month = monthShort(x.start);
   const meta = [
@@ -329,7 +339,9 @@ export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, on
     >
       <Pressable className="atlas-prow mt-jcard-title" onClick={x.onOpen} aria-expanded={x.open}>
         <span className="atlas-th">
-          <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={240} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />
+          {!x.img && geo && trip?.stops?.length ? <MiniRoute geo={geo} trip={trip} /> : (
+            <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={240} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />
+          )}
         </span>
         <span className="atlas-prow-t">
           <b className="atlas-prow-name">{x.title}</b>
@@ -348,7 +360,7 @@ export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, on
         </span>
       </Pressable>
       <span className="atlas-prow-end">
-        {x.grade != null ? <GradeBadge n={x.grade} top={top} /> : onRate ? (
+        {x.grade != null ? <GradeBadge n={x.grade} top={top} stamp={x.id} /> : onRate ? (
           <Pressable className="atlas-rateit" aria-expanded={rating} onClick={onRateOpen}>{t('mt.giveGrade')}</Pressable>
         ) : null}
         {(x.menuActions?.length > 0 || x.onRemove) && (

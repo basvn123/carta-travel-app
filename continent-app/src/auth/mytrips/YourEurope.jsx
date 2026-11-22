@@ -140,6 +140,8 @@ export function YourEurope({
                   onRateOpen={() => setRowRate((v) => (v === x.id ? '' : x.id))}
                   onRate={onGrade ? (n) => { onGrade(x.id, n); setRowRate(''); } : undefined}
                   onLift={onLift}
+                  geo={geo}
+                  trip={trips.find((tr) => tr.id === x.id) || null}
                 />
               ))}
             </div>

@@ -356,7 +356,7 @@ export function SavedTab({
   }
   // G12 round 4: the Your Europe plate with the saved places, not a street map.
   const liveMap = points.length > 0 && geo ? (
-    <SavedPlate geo={geo} europe={europe} points={points} cc={cc} hot={hot} onCountry={setCc} onPin={pickPin} />
+    <SavedPlate geo={geo} europe={europe} points={points} cc={cc} hot={hot} sweepKey={list} onCountry={setCc} onPin={pickPin} />
   ) : null;
 
   return (
@@ -484,6 +484,13 @@ export function SavedTab({
           {view === 'map' ? <ListIcon size={16} /> : <MapIcon size={16} />}
           {t(view === 'map' ? 'mt.viewList' : 'mt.viewMap')}
         </Pressable>
+        {/* G12 atlas: from 1100 px Kiezen ends the tools row; a phone keeps it in the list head. */}
+        {shown.length > 0 && (
+          <Pressable className="mt-kies is-tools" aria-pressed={choosing}
+            onClick={() => { if (choosing) setSel([]); setChoosing((v) => !v); }}>
+            {t(choosing ? 'saved.done' : 'mt.choose')}
+          </Pressable>
+        )}
       </div>
       {(kinds.length > 1 || anyFell || fell || cc) && <div className="mt-saved-filters atlas-chips-scroll">
         {kinds.length > 1 && (
@@ -507,7 +514,7 @@ export function SavedTab({
       {shown.length > 0 && (
         <div className="mt-listhead">
           <b>{t(shown.length === 1 ? 'mt.saves1' : 'mt.savesN', { n: shown.length })}</b>
-          <Pressable className="mt-kies" aria-pressed={choosing}
+          <Pressable className="mt-kies is-head" aria-pressed={choosing}
             onClick={() => { if (choosing) setSel([]); setChoosing((v) => !v); }}>
             {t(choosing ? 'saved.done' : 'mt.choose')}
           </Pressable>

@@ -482,7 +482,7 @@ Character: **painted and placed**. Rules:
 | `--dur-1` to `--dur-4` | 120, 200, 320, 480 ms | Colour changes, routine changes, surfaces, one authored movement |
 | `--dur-note` | 4000 ms | A delta note ("+€328") |
 | `--dur-fill-step` | 240 ms | One year's step in Your Europe's fill on a tab change (at most 1200 ms in all; more than five years share the 1200 ms) |
-| `--dur-draw` | 640 ms (same as `--dur-reveal`) | A route on the My trips plate and the journey line drawing in on a tab change |
+| `--dur-reveal` | 640 ms | A route on the My trips plate and the journey line drawing in on a tab change |
 
 The linear() easings are generated from `src/lib/motionTokens.js` (`SPRING`: tick, pop, settle, surface, route, reveal, fling) by `scripts/ci/spring-easings.mjs`, so CSS and Motion move alike.
 

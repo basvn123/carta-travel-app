@@ -463,7 +463,7 @@
 }
 
 .atlas-plate.is-draw .atlas-mk {
-  animation: atlas-draw var(--dur-draw) var(--ease-out) var(--dur-1) both;
+  animation: atlas-draw var(--dur-reveal) var(--ease-out) var(--dur-1) both;
 }
 
 @keyframes atlas-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
@@ -2177,11 +2177,11 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .jl-labs span.is-strong { color: var(--text); font-weight: 800; }
 .jl-days span { transform: translateX(-50%); color: var(--text-2); font-variant-numeric: tabular-nums; }
 .jl-days span.is-today { color: var(--text); font-weight: 800; }
-.jl.is-draw .jl-done { animation: jl-wipe var(--dur-draw) var(--ease-out) both; }
+.jl.is-draw .jl-done { animation: jl-wipe var(--dur-reveal) var(--ease-out) both; }
 .jl.is-draw .jl-bead.is-today {
   transform-box: fill-box;
   transform-origin: center;
-  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-draw) - var(--dur-1)) both;
+  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-reveal) - var(--dur-1)) both;
 }
 @keyframes jl-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes jl-land { from { transform: scale(0); } to { transform: scale(1); } }
@@ -2272,7 +2272,7 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .mt-spend-door > svg:last-child { transition: translate var(--dur-1) var(--ease-out); }
 .mt-spend-door:active > svg:last-child { translate: 4px 0; }
 @media (hover: hover) { .mt-spend-door:hover > svg:last-child { translate: 4px 0; } }
-.mt-panel.is-trips .btn.mt-qk svg { color: var(--umber-700); }
+.mt-panel.is-trips .mt-quick .btn.mt-qk svg { color: var(--umber-700); }
 
 /* Desktop: the ledger in two columns of ruled rows with line icons; the
    memory page across both. */
@@ -2299,7 +2299,7 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .atlas-plate.is-draw .atlas-here {
   transform-box: fill-box;
   transform-origin: center;
-  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-draw) - var(--dur-1)) both;
+  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-reveal) - var(--dur-1)) both;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -2397,7 +2397,7 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 }
 
 /* The cover fan: at rest the 2 x 2 mosaic; pointed at, its first three photos fan out. */
-.btn.mt-lcard .mt-mosaic > * { transition: transform var(--dur-3) var(--ease-out); }
+.mt-saved .mt-lists .btn.mt-lcard .mt-mosaic > * { transition: transform var(--dur-3) var(--ease-out); }
 @media (hover: hover) {
   .btn.mt-lcard:hover .mt-mosaic { overflow: visible; }
   .btn.mt-lcard:hover .mt-mosaic > :nth-child(1) { transform: rotate(-6deg) translate(-4px, 2px); }
@@ -2410,14 +2410,14 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .btn.mt-lcard:focus-visible .mt-mosaic > :nth-child(3) { transform: rotate(-3deg) translate(-3px, 4px); }
 @media (prefers-reduced-motion: reduce) {
   .atlas-pinplate { animation: none; }
-  .btn.mt-lcard .mt-mosaic > * { transition: none; }
+  .mt-saved .mt-lists .btn.mt-lcard .mt-mosaic > * { transition: none; }
 }
 
 /* ==== G12 wow, phase D: Jouw Europa. Europe fills year by year on the tab
    change (once a session, at most 1200 ms; the chip shows its final figure
    at once); the past trips stand under the map from 1100 x 720; one-line
    costs; the extremes as a compass; the milestones as ink stamps. ==== */
-.atlas-plate.is-fill .mt-eumap [class*=' is-f'] {
+.atlas-plate.is-fill .mt-eumap .mt-eumap-land[class*=' is-f'], .atlas-plate.is-fill .mt-eumap .mt-eumap-dot[class*=' is-f'] {
   animation-name: atlas-fill;
   animation-duration: var(--fill-step, var(--dur-fill-step));
   animation-timing-function: var(--ease-out);
@@ -2513,10 +2513,55 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .atlas-badge:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
-  .atlas-plate.is-fill .mt-eumap [class*=' is-f'] { animation: none; }
+  .atlas-plate.is-fill .mt-eumap .mt-eumap-land[class*=' is-f'], .atlas-plate.is-fill .mt-eumap .mt-eumap-dot[class*=' is-f'] { animation: none; }
   .atlas-badge { transition: none; }
 }
 @media (min-width: 1100px) and (min-height: 720px) {
   .atlas-past .atlas-th { width: 56px; height: 56px; }
   .atlas-past .atlas-prow { min-height: 64px; padding: var(--space-2) 0; }
+}
+
+/* ==== G12 wow, phase F: the four open items. Kiezen ends Saved's tools row
+   from 1100 px; the hatch sweeps in on a list switch; a past row's grade is
+   an ink stamp (a 10 filled); a past trip without a photo shows its route on
+   a small piece of the plate. ==== */
+.mt-kies.is-tools { display: none; }
+@media (min-width: 1100px) {
+  .mt-saved-tools .mt-kies.is-tools { display: inline-flex; align-items: center; min-height: var(--tap); margin-inline-start: auto; }
+  .mt-saved-tools .mt-kies.is-tools ~ .mt-view-toggle, .mt-saved-tools .mt-view-toggle + .mt-kies.is-tools { margin-inline-start: var(--space-2); }
+  .mt-listhead .mt-kies.is-head { display: none; }
+}
+.atlas-zoom.is-sweep-0 .mt-eumap-land.is-wish { animation: atlas-sweep-a var(--dur-3) var(--ease-out) both; }
+.atlas-zoom.is-sweep-1 .mt-eumap-land.is-wish { animation: atlas-sweep-b var(--dur-3) var(--ease-out) both; }
+@keyframes atlas-sweep-a { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes atlas-sweep-b { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+
+.atlas-gstamp {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 2px solid var(--umber-700);
+  border-radius: var(--radius-pill);
+  outline: 1.5px solid var(--umber-700);
+  outline-offset: -6px;
+  color: var(--umber-800);
+  font-size: var(--text-figure);
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  rotate: var(--tilt, 0deg);
+}
+.atlas-gstamp.is-ten { background: var(--umber-800); border-color: var(--umber-800); outline-color: var(--on-plate); color: var(--on-plate); }
+.atlas-prow-end > .atlas-gstamp { align-self: center; justify-self: end; }
+
+.atlas-mini { display: block; width: 100%; height: 100%; }
+.atlas-mini path { fill: var(--atlas-land, var(--map-land)); stroke: var(--atlas-border, var(--map-border)); stroke-width: 0.8; vector-effect: non-scaling-stroke; }
+.atlas-mini path.is-own { fill: var(--umber-500); }
+.atlas-mini .atlas-mini-sea { fill: var(--atlas-sea, var(--map-water)); stroke: none; }
+.atlas-mini .atlas-mini-route { fill: none; stroke: var(--surface); stroke-linecap: round; vector-effect: none; }
+.atlas-mini-stop { fill: var(--surface); stroke: var(--umber-800); }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas-zoom.is-sweep-0 .mt-eumap-land.is-wish, .atlas-zoom.is-sweep-1 .mt-eumap-land.is-wish { animation: none; clip-path: none; }
 }

@@ -45,11 +45,16 @@ function MinusIcon({ size = 20 }) {
  *   onCountry(iso or '')   a country or pill tap
  *   onPin(point)           a pin tap
  */
-export function SavedPlate({ geo, europe, points, cc = '', hot = '', onCountry, onPin }) {
+export function SavedPlate({ geo, europe, points, cc = '', hot = '', sweepKey = '', onCountry, onPin }) {
   const { t } = useI18n();
   const box = useRef(null);
   const vbRef = useRef(null);
   const [mz, setMz] = useState({ z: 1, cx: null, cy: null });
+  // A list switch the traveller made sweeps the hatch in, west to east; two
+  // names alternate so each switch restarts it. Never at first paint.
+  const [lastSweep, setLastSweep] = useState(sweepKey);
+  const [sweeps, setSweeps] = useState(0);
+  if (lastSweep !== sweepKey) { setLastSweep(sweepKey); setSweeps((n) => n + 1); }
   const gesture = useRef({ ptrs: new Map(), drag: null, pinch: null, moved: false, lastTap: 0, lastType: '' });
 
   const zoomBy = useCallback((f, mx, my) => {
@@ -236,7 +241,7 @@ export function SavedPlate({ geo, europe, points, cc = '', hot = '', onCountry, 
   return (
     <div
       ref={box}
-      className={`atlas-zoom${mz.z > 1 ? ' is-zoomed' : ''}`}
+      className={`atlas-zoom${mz.z > 1 ? ' is-zoomed' : ''}${sweeps ? ` is-sweep-${sweeps % 2}` : ''}`}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

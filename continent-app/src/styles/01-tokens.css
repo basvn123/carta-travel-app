@@ -449,10 +449,9 @@
   --dur-film-fade:    1200ms;
   --dur-reveal:       640ms;
   /* My trips atlas (G12 wow): one year's step in the Europe fill (the JS
-     caps the whole fill at 1200 ms), and the route and journey line drawing
-     in, kept in step with --dur-reveal under its own name. */
+     caps the whole fill at 1200 ms). The route and journey line draw on
+     --dur-reveal (a --dur-draw alias was removed as unread in K17). */
   --dur-fill-step:    240ms;
-  --dur-draw:         640ms;
 
   /* The Plan opening (T743): read only by 86-plan-flow.css. */
   --plan-ground:      var(--surface-page);
