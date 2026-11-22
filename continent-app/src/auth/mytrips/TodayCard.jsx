@@ -3,7 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, IconButton, Money } from '../../components/ui/index.js';
 import {
   SunIcon, PartSunIcon, CloudIcon, FogIcon, RainIcon, DrizzleIcon, SnowIcon, StormIcon,
-  BedIcon, CheckIcon, TicketIcon, CalendarIcon, CameraIcon, FriendsIcon,
+  BedIcon, CheckIcon, TicketIcon, CalendarIcon, CameraIcon, FriendsIcon, HeartIcon,
 } from '../../components/Icons.jsx';
 import { useForecast } from '../../lib/weather.js';
 import { tripStops } from '../../lib/myTrips.js';
@@ -239,6 +239,8 @@ export function TodayCard({
         <p className="mt-today-note" role="status">{photoNote}</p>
         {/* The memory page so far: the photos and notes the trip holds. */}
         <Pressable className="mt-disc-row" onClick={onOpenTrip}>
+          {/* Desktop only: the icon lines the row up with the quick rows above (owner review 2026-11-22). */}
+          <HeartIcon size={20} className="mt-disc-row-ico" />
           <span className="mt-disc-row-t">{t('mt.memPage')}</span>
           <span className="mt-disc-row-s">{[
             t(memPhotos === 1 ? 'mt.memPhotos1' : 'mt.memPhotosN', { n: memPhotos }),

@@ -74,6 +74,22 @@ export function YourEurope({
           <Pressable className="atlas-btn" onClick={onAddPast}><PlusIcon size={18} />{t('saved.addPastTrip')}</Pressable>
           {onExample && <Button variant="secondary" className="mt-soft" iconStart={<EyeIcon size={18} />} onClick={onExample}>{t('mt.seeExample')}</Button>}
         </div>
+        {/* Desktop: the column beside the map shows the shape of what a first trip fills in,
+            the same three charts as bare shapes, no figures (owner review 2026-11-22). */}
+        <div className="atlas-ghost" aria-hidden="true">
+          <div className="atlas-ghost-b">
+            <p className="atlas-ghost-h">{t('mt.nightsPerYear')}</p>
+            <div className="atlas-ghost-years">{[46, 78, 60].map((h, i) => <i key={i} style={{ height: `${h}%` }} />)}</div>
+          </div>
+          <div className="atlas-ghost-b">
+            <p className="atlas-ghost-h">{t('mt.whenYouTravel')}</p>
+            <div className="atlas-ghost-months">{[0, 0, 0, 0, 44, 0, 70, 100, 30, 0, 0, 0].map((h, i) => <i key={i} style={{ height: `${Math.max(6, h)}%` }} className={h ? 'is-on' : ''} />)}</div>
+          </div>
+          <div className="atlas-ghost-b is-full">
+            <p className="atlas-ghost-h">{t('mt.costTitle')}</p>
+            <div className="atlas-ghost-cost">{[88, 64, 76].map((w, i) => <span key={i}><b /><i style={{ width: `${w}%` }} /></span>)}</div>
+          </div>
+        </div>
       </div>
     );
   }

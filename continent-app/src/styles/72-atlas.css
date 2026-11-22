@@ -2021,3 +2021,132 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 @media (max-width: 599px) {
   .atlas-rateit { max-width: 88px; padding: var(--space-1) var(--space-2); line-height: 1.15; white-space: normal; text-align: center; }
 }
+
+/* ==== Desktop placement (owner review 2026-11-22, G12): from 1100 the column beside the map is a
+   reading column, not a squeezed phone. It grows with the window (540 to 620 px) and starts on the
+   map's top line; Today stacks (the day, then one aligned list of what the trip holds); Saved names
+   keep their flag on the first line and "Nog geen prijs" on one; Your Europe's extremes take the
+   column; an empty Your Europe shows the shape of its three charts. The phone is unchanged. ==== */
+.atlas-ghost, .mt-disc-row-ico { display: none; }
+@media (min-width: 1100px) {
+  .atlas-body { grid-template-columns: minmax(0, clamp(540px, 42vw, 620px)) minmax(0, 1fr); gap: var(--space-7); }
+  .mt-panel .atlas-content { padding-top: var(--space-4); }
+  .atlas-slot.is-saved .atlas-map,
+  .atlas-slot.is-saved.is-empty .atlas-map { height: max(480px, calc(100dvh - var(--header-h) - 176px)); }
+
+  /* Today: the day on top, full width; its title and flag share the first line. */
+  .mt-panel.is-trips .mt-today { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding: 0; }
+  /* The flag follows the title's last word, on its line, however the title wraps. */
+  .mt-today-h { display: block; }
+  .mt-panel.is-trips .mt-today .mt-today-title { display: inline; text-wrap: balance; }
+  .mt-today-h > .country-flag { display: inline-block; margin-inline-start: 12px; vertical-align: 0.12em; }
+  .mt-today-main { gap: var(--space-3); }
+  .mt-today-acts .btn { min-height: 48px; }
+
+  /* What the trip holds: one list, one icon column, one value column, one chevron column. */
+  .mt-panel.is-trips .mt-today-side { gap: 0; border-top: 1px solid var(--border); }
+  .mt-today-side > .mt-spend-door,
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk,
+  .mt-today-side > .mt-disc-row {
+    display: grid;
+    grid-template-columns: 36px minmax(0, max-content) minmax(0, 1fr) 18px;
+    align-items: center;
+    column-gap: var(--space-3);
+    width: 100%;
+    min-height: 60px;
+    padding: var(--space-2) var(--space-1);
+    border: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: none;
+    color: var(--text);
+    font: 700 var(--text-lead) / var(--leading-tight) var(--ui);
+    text-align: start;
+    transition: background-color var(--dur-1) var(--ease-out);
+  }
+  .mt-today-side > .mt-spend-door { grid-template-columns: 36px minmax(0, 1fr) 18px; border-top: 0; }
+  @media (hover: hover) {
+    .mt-today-side > .mt-spend-door:hover,
+    .mt-panel.is-trips .mt-quick > .btn.mt-qk:hover,
+    .mt-today-side > .mt-disc-row:hover { background: var(--select-row); }
+  }
+  .mt-panel.is-trips .mt-quick { display: contents; }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk .btn-label { display: contents; }
+  /* The tile's own icon becomes the 36 px square every row starts with. */
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk svg,
+  .mt-today-side > .mt-disc-row > .mt-disc-row-ico {
+    display: block;
+    box-sizing: border-box;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 8px;
+    border-radius: var(--radius-control);
+    background: var(--surface-sunken);
+    color: var(--action-press);
+  }
+  .mt-panel.is-trips .mt-qk-t { font-size: var(--text-lead); font-weight: 700; color: var(--text); white-space: nowrap; }
+  .mt-panel.is-trips .mt-qk-s,
+  .mt-today-side > .mt-disc-row > .mt-disc-row-s {
+    min-width: 0;
+    margin: 0;
+    overflow: hidden;
+    font-size: var(--text-body);
+    font-weight: 500;
+    color: var(--text-2);
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: end;
+  }
+  /* The quick rows carry no chevron in the markup; draw the same one the other rows hold. */
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk::after {
+    content: '';
+    justify-self: center;
+    width: 7px;
+    height: 7px;
+    margin-inline-end: 3px;
+    border-top: 1.75px solid var(--text-3);
+    border-right: 1.75px solid var(--text-3);
+    transform: rotate(45deg);
+  }
+  .mt-today-side > .mt-spend-door > svg:last-child,
+  .mt-today-side > .mt-disc-row > svg:last-child { justify-self: center; color: var(--text-3); }
+  .mt-today-side > .mt-disc-row > .mt-disc-row-t { white-space: nowrap; }
+  .mt-today-side > .mt-today-note { padding: var(--space-2) var(--space-1); }
+
+  /* Saved rows: the flag sits on the name's first line; "Nog geen prijs" on one line. */
+  .mt-saved .mt-item-title { align-items: flex-start; }
+  .mt-saved .mt-item-title > .country-flag { margin-top: 4px; }
+  .mt-saved .mt-item-fig.mt-muted,
+  .mt-panel.is-trips .mt-rows .mt-muted { max-width: none; white-space: nowrap; }
+  .mt-saved .mt-item:not(.is-shared) { column-gap: var(--space-4); }
+
+  /* Saved lists: four covers a row that fill the column, no ragged gap at the right. */
+  .mt-saved .mt-lists.atlas-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); margin-inline: 0; padding-inline: 3px; }
+  .mt-saved .btn.mt-lcard { width: auto; min-width: 0; }
+
+  /* Your Europe starts on the map's top line too. */
+  .atlas-eu { padding-top: 0; }
+
+  /* Your Europe: the extremes take the column, two by two. */
+  .atlas-eu > .atlas-sect:has(.atlas-extremes) { grid-column: 1 / -1; }
+  .atlas-extremes { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+  /* An empty Your Europe: the two ways in side by side, then the shape of the three charts. */
+  .mt-europe.atlas-eu.is-empty { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
+  .atlas-eu.is-empty .atlas-empty-acts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .atlas-ghost { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6) var(--space-6); }
+  .atlas-ghost-b { display: grid; gap: var(--space-4); align-content: start; }
+  .atlas-ghost-b.is-full { grid-column: 1 / -1; }
+  .atlas-ghost-h { margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text-3); }
+  .atlas-ghost-years, .atlas-ghost-months { display: flex; align-items: flex-end; height: 104px; border-bottom: 1px solid var(--border); }
+  .atlas-ghost-years { justify-content: space-around; }
+  .atlas-ghost-years i { width: 44px; border-radius: 5px 5px 0 0; background: var(--umber-100); }
+  .atlas-ghost-months { gap: 5px; }
+  .atlas-ghost-months i { flex: 1; border-radius: 3px 3px 0 0; background: var(--border-soft); }
+  .atlas-ghost-months i.is-on { background: var(--umber-100); }
+  .atlas-ghost-cost { display: grid; gap: var(--space-4); }
+  .atlas-ghost-cost span { display: grid; gap: var(--space-2); }
+  .atlas-ghost-cost b { width: 34%; height: 10px; border-radius: var(--radius-pill); background: var(--border-soft); }
+  .atlas-ghost-cost i { height: 8px; border-radius: var(--radius-pill); background: var(--umber-100); }
+}
