@@ -1,6 +1,6 @@
 # Run report: Uitgaven and the Reiskas (spend capture with a split)
 
-- **Status:** paused (waiting for: the owner's review of the preview, then the owner steps: apply migration 077 and upload the OCR model to R2, then merge `p15-my-trips`)
+- **Status:** done (merged into `main` and shipped live on 2026-11-22; the owner steps stay open: apply migration 077 and upload the OCR model to R2)
 - **Date:** 2026-11-22
 - **Level and playbook:** L2 · feature plus design (deep task)
 - **Run folder:** `.work/2026-11-21-spend-capture/`

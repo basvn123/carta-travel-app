@@ -1,6 +1,6 @@
 # Report: My trips as an atlas (the final design pass)
 
-**Status: paused (waiting for the owner's review of the preview, then the merge of `p15-my-trips`)**
+**Status: done (merged into `main` as `01f395277d`, pushed and shipped live on 2026-11-22 at the owner's request)**
 
 **Result:** The approved atlas design is built on branch `p15-my-trips` in 10 commits, phases A to I plus decision 0015.
 
