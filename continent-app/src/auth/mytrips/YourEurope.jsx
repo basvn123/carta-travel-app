@@ -151,7 +151,7 @@ export function YourEurope({
       {error && <p className="mt-error" role="alert">{error}</p>}
       {rate}
       {byGrade ? (
-        <div className="atlas-prows is-ranked">{ranked.map((x) => row(x, true))}</div>
+        <div className="atlas-prows mt-pgrid is-ranked">{ranked.map((x) => row(x, true))}</div>
       ) : years.map((y) => {
         const rows = inYear.filter((x) => x.year === y);
         const nights = rows.reduce((n, x) => n + (x.nights > 0 ? x.nights : 0), 0);
@@ -161,7 +161,7 @@ export function YourEurope({
               {y}
               {nights > 0 && <span>{t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights })}</span>}
             </h4>
-            <div className="atlas-prows">{rows.map((x) => row(x))}</div>
+            <div className="atlas-prows mt-pgrid">{rows.map((x) => row(x))}</div>
           </div>
         );
       })}

@@ -78,3 +78,28 @@ export function Silhouette({ d, className = '' }) {
     </svg>
   );
 }
+
+/** The traveller's grade as ten small cells in one umber frame, filled to n
+ *  (the best trip in umber 800), with "9/10" printed beside it. */
+export function GradeCells({ n, top = false, label }) {
+  return (
+    <span className={`ink-grade${top ? ' is-top' : ''}`} role="img" aria-label={label}>
+      <span className="ink-grade-cells" aria-hidden="true">
+        {Array.from({ length: 10 }, (_, i) => <i key={i} className={i < n ? 'is-on' : undefined} />)}
+      </span>
+      <b aria-hidden="true">{n}<small>/10</small></b>
+    </span>
+  );
+}
+
+/** No grade yet: the ten cells dashed and empty, and the action beside them. */
+export function GradeEmpty({ children }) {
+  return (
+    <span className="ink-grade is-none">
+      <span className="ink-grade-cells" aria-hidden="true">
+        {Array.from({ length: 10 }, (_, i) => <i key={i} />)}
+      </span>
+      {children}
+    </span>
+  );
+}

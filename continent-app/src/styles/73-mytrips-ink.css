@@ -475,3 +475,166 @@
 .mt-panel .mt-disc > button { padding-inline: var(--space-1); }
 /* A step marked done: its check in the action paint, not the kit's beige. */
 .mt-panel .mt-tl .icon-btn.is-pressed { background: var(--action); color: var(--action-text); }
+
+/* ==== Jouw Europa (block 4): past trips as photo cards with the grade in
+   cells, clean bars on one baseline, the compass, the cost bars ==== */
+
+/* Past trips: the Saved card, two across on a phone, three from 820 px (in
+   the left 7/12 from 1024). An opened memory or the ten taps run across the
+   grid under the card; the next card fills the gap beside it. */
+.mt-panel .atlas-prows.mt-pgrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: row dense;
+  gap: 22px 14px;
+  align-items: start;
+}
+@media (min-width: 820px) {
+  .mt-panel .atlas-prows.mt-pgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-6) var(--space-4); }
+}
+.mt-pgrid-open { grid-column: 1 / -1; min-width: 0; }
+.mt-panel .atlas-ratebox.mt-pgrid-open { margin: 0; }
+.mt-pcard.is-past.is-open .mt-pcard-img { outline: var(--stroke-edge) solid var(--umber-800); outline-offset: 2px; }
+.mt-pcard-img .atlas-mini { width: 100%; height: 100%; }
+.mt-pcard-name.is-past {
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--text);
+  font: 800 var(--text-lead) / 1.22 var(--ui);
+  text-align: start;
+  cursor: pointer;
+}
+.mt-pcard-name.is-past > span {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  overflow-wrap: break-word;
+}
+@media (hover: hover) { .mt-pcard-name.is-past:hover > span { text-decoration: underline; text-underline-offset: 3px; } }
+.mt-pcard-name.is-past:focus-visible, .ink-give:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.mt-pcard-pm { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) 6px; font-size: var(--text-label); font-weight: 600; color: var(--text-2); }
+
+/* The grade: ten 9 x 14 px cells in one umber frame, filled to n in the
+   action paint with paper rules; the best trip in umber 800; "9/10" printed. */
+.ink-grade { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 24px; }
+.ink-grade-cells {
+  display: grid;
+  grid-template-columns: repeat(10, 9px);
+  height: 14px;
+  overflow: hidden;
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: calc(var(--radius-sm) / 2);
+}
+.ink-grade-cells i + i { border-inline-start: var(--stroke-hair) solid var(--umber-300); }
+.ink-grade-cells i.is-on { background: var(--action); }
+.ink-grade-cells i.is-on + i { border-inline-start-color: var(--surface); }
+.ink-grade-cells i.is-on + i.is-on { border-inline-start-color: var(--surface); }
+.ink-grade.is-top .ink-grade-cells i.is-on { background: var(--umber-800); }
+.ink-grade > b { font-size: var(--text-label); font-weight: 800; font-variant-numeric: tabular-nums; }
+.ink-grade > b small { font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.ink-grade.is-none .ink-grade-cells { border-style: dashed; border-color: var(--edge); }
+.ink-grade.is-none .ink-grade-cells i + i { border-inline-start-style: dashed; border-inline-start-color: var(--border); }
+.ink-give {
+  min-height: var(--tap);
+  margin-block: -10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--umber-700);
+  font: 700 var(--text-label) / 1.2 var(--ui);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-align: start;
+  cursor: pointer;
+}
+
+/* The year head: the year and its nights on an umber rule. */
+.mt-panel .atlas-pyear { gap: var(--space-3); }
+.mt-panel .atlas-pyear-h {
+  align-items: baseline;
+  margin: 0;
+  padding: var(--space-4) 0 var(--space-1);
+  border-bottom: var(--stroke-edge) solid var(--umber-800);
+  color: var(--text);
+  font-size: var(--text-lead);
+  font-weight: 800;
+}
+.mt-panel .atlas-pyear-h span { font-size: var(--text-label); font-weight: 700; color: var(--text-3); }
+
+/* Nights per year and the months: solid bars on one baseline, no off bars. */
+.atlas-chart .atlas-base { stroke: var(--edge); stroke-width: 1; }
+.atlas-bars .atlas-bar-ring { fill: none; stroke: var(--umber-800); stroke-width: 2; }
+.atlas-chart rect.is-on { fill: var(--action); }
+.atlas-chart rect.is-top { fill: var(--umber-800); }
+.atlas-chart rect.is-zero { fill: var(--edge); }
+
+/* Je uitersten: a drawn rose, the four places at its points. */
+.mt-panel .atlas-extremes {
+  grid-template-columns: minmax(0, 1fr) 80px minmax(0, 1fr);
+  grid-template-rows: auto 80px auto;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+}
+.mt-panel .atlas-rose { grid-column: 2; grid-row: 2; width: 80px; height: 80px; }
+.atlas-rose .is-ring { fill: none; stroke: var(--umber-300); stroke-width: 1.5; }
+.atlas-rose .is-dash { fill: none; stroke: var(--umber-300); stroke-width: 1; stroke-dasharray: 2 3; }
+.atlas-rose .is-star { fill: var(--umber-600); }
+.atlas-rose .is-shade { fill: var(--umber-800); }
+.atlas-rose .is-hub { fill: var(--surface); stroke: var(--umber-800); stroke-width: 1.5; }
+.mt-panel .atlas-ext { display: grid; grid-template-columns: minmax(0, auto); gap: 1px; min-width: 0; padding: 0; border-radius: 0; background: none; }
+.mt-panel .atlas-ext b { display: flex; align-items: center; gap: 7px; min-width: 0; overflow: visible; font-size: var(--text-lead); font-weight: 800; white-space: normal; overflow-wrap: break-word; }
+.mt-panel .atlas-ext b i {
+  flex: none;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  width: 22px;
+  height: 22px;
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: calc(var(--radius-sm) * 2 / 3);
+  background: none;
+  color: var(--umber-800);
+  font: 800 var(--text-caption) / 1 var(--ui);
+  font-style: normal;
+}
+.mt-panel .atlas-ext span { padding-inline-start: 29px; font-size: var(--text-caption); font-weight: 600; color: var(--text-3); }
+.mt-panel .atlas-ext.is-n { grid-column: 2 / 4; grid-row: 1; justify-self: start; }
+.mt-panel .atlas-ext.is-s { grid-column: 2 / 4; grid-row: 3; justify-self: start; }
+.mt-panel .atlas-ext.is-w { grid-column: 1; grid-row: 2; justify-self: end; text-align: end; }
+.mt-panel .atlas-ext.is-w b { flex-direction: row-reverse; }
+.mt-panel .atlas-ext.is-w span { padding-inline: 0 29px; }
+.mt-panel .atlas-ext.is-e { grid-column: 3; grid-row: 2; }
+
+/* What the trips cost: a solid bar on a hairline, the average an ink notch. */
+.mt-panel .atlas-ctrack { height: 10px; border-radius: 0; background: none; border-bottom: var(--stroke-hair) solid var(--border); }
+.mt-panel .atlas-cbar { inset: 0 auto 0 0; border-radius: 0; background: var(--action); }
+.atlas-cavg { position: absolute; top: -4px; bottom: -4px; width: 2px; margin-inline-start: -1px; background: var(--text); }
+.mt-panel .atlas-costkey b { display: inline-flex; align-items: center; gap: 6px; }
+.mt-panel .atlas-costkey b i { display: inline-block; width: 2px; height: 14px; margin: 0; border-radius: 0; background: var(--text); }
+.mt-panel .atlas-costkey i { background: none; }
+.mt-panel .atlas-crow { border-bottom-color: var(--border); }
+.mt-panel .atlas-softbtn { border: var(--stroke-edge) solid var(--umber-800); border-radius: var(--radius-sm); background: transparent; }
+
+/* Milestones: the locked stamp is dashed, no beige; the year card keeps its art. */
+.mt-panel .atlas-badge.is-locked { border: 0; }
+.mt-panel .atlas-badge.is-locked i { border: 2px dashed var(--edge); }
+.mt-panel .atlas-eu-hero { align-items: start; }
+.mt-panel .atlas-btn.is-soft { border: var(--stroke-edge) solid var(--umber-800); background: transparent; color: var(--umber-800); }
+
+/* Jouw Europa stays within its old length on a phone (spec: it must not grow):
+   the rose shows again (the 3 x 3 compass), the cost rows are one tight
+   ledger, the year heads and the sections sit closer. */
+.mt-panel .atlas-rose { display: block; }
+.mt-panel .atlas-cost { gap: 0; }
+.mt-panel .atlas-crow { min-height: 36px; }
+.mt-pcard.is-past { gap: 5px; }
+.mt-pcard.is-past .ink-grade { min-height: 20px; }
+.mt-panel .atlas-prows.mt-pgrid { row-gap: 18px; }
+.mt-panel .atlas-pyear-h { padding-top: var(--space-2); }
+.mt-panel .atlas-pyear { gap: 10px; }
+.mt-panel .atlas-eu .atlas-sect { margin-bottom: var(--space-2); }
+.mt-past-est { margin-bottom: var(--space-2); }
