@@ -47,9 +47,11 @@ test('the row is the grid: the formation and the save sit in its areas, beside t
   assert.doesNotMatch(css, /\.xrow-hs \.xrow-hit \{\s*grid-template/);
 });
 
-test('the list, the map column and the drawer draw the same row', () => {
+test('the list draws the house row; the map column and the sheet draw the map row', () => {
   assert.match(read('src/browse/explore/ExploreCard.jsx'), /<PlaceRow/);
-  assert.match(read('src/browse/MapPlacePanel.jsx'), /<PlaceRow key=\{p\.id\}/);
+  // G12 map view round 2: one map row (MapRow) in the column and the sheet.
+  assert.match(read('src/browse/MapPlacePanel.jsx'), /<MapRow key=\{p\.id\}/);
+  assert.match(read('src/browse/explore/MapSheet.jsx'), /<MapRow key=\{p\.id\}/);
 });
 
 test('rails are the house rail and keep See all and the arrows', () => {
@@ -75,7 +77,10 @@ test('the chosen pin is the umber mark with its name, drawn by the map', () => {
   // one an umber pill with the place's name before its figure.
   const pins = read('src/browse/explore/mapPins.js');
   assert.match(pins, /fillStyle = kind === 'p' \? action : surface/);
-  assert.match(pins, /symbol\('xpin-picked'[^;]*\['get', 'city'\]/);
+  // Round 2: the picked pin's image says its name (a named photo pin or the
+  // umber pill), worked out per place (oneImage).
+  assert.match(pins, /symbol\('xpin-picked', 'dests-pick'/);
+  assert.match(pins, /role === 'pick' \? \['xp', 'p', pr\.city, pr\.fig\]/);
   const map = read('src/browse/ExploreMap.jsx');
   assert.doesNotMatch(map, /className=\{`xmap-kpin-label/);
 });
@@ -127,8 +132,10 @@ test('save wears the bookmark with one fixed name; the ticket is My trips', () =
   assert.match(cards, /\{word && <span className="xsave-word">\{fav \? t\('detail\.saved'\) : t\('explore\.save'\)\}<\/span>\}/);
   assert.match(read('src/browse/explore/PlaceRow.jsx'), /className="xrow-save" word \/>/);
   assert.match(css, /\.xsave-word \{ display: none; \}/);
-  assert.match(css, /animation: xsave-tick 240ms/);
-  assert.match(css, /animation: xsave-ring 240ms/);
+  // Both read --dur-save, 240 ms in 01-tokens.css.
+  assert.match(css, /animation: xsave-tick var\(--dur-save\)/);
+  assert.match(css, /animation: xsave-ring var\(--dur-save\)/);
+  assert.match(read('src/styles/01-tokens.css'), /--dur-save:\s*240ms;/);
   // No star left in the save copy, in any language.
   for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) {
     const cat = read(`src/i18n/${lang}.js`);

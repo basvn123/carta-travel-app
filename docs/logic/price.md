@@ -111,7 +111,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Decides: a scraped bed that failed the bounds shows its country's typical figure, labelled as borrowed; a place the scrape never reached shows no bed price ("Not available yet").
 - Rule: only a bed with `outOfBounds` borrows; it takes the median (the upper middle value, `arr[len >> 1]`) of its country's in-bounds beds for the same tier, party, dates and nights; `stayLevel` becomes `region`, `stayRepaired` true, source fields null. Medians are cached per catalogue and request (cleared above 24 requests) and drop when a stays file arrives.
 - Constant: `stay.repair` in `continent-app/config/pricing.json:116` = { method: "country_median_same_request" }
-- Constant: `countryStayMedians`, `costRow` in `continent-app/src/lib/costIndex.js:253`, `:337`
+- Constant: `countryStayMediansSteps`, `costRow` in `continent-app/src/lib/costIndex.js:257`, `:351`
 - Test: `continent-app/tests/priceEngine.test.mjs` :: "the country repair: a bed outside its bounds borrows its country's median, marked"
 
 ### PRICE-014 Thin bed

@@ -1,63 +1,85 @@
 import React from 'react';
 import { Pressable } from '../../components/ui/Pressable.jsx';
+import { Blaze, Button, Segmented } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { prefersReducedMotion } from '../../lib/motion.js';
-import { countKey } from '../../lib/plural.js';
-import { PlaceRow } from './PlaceRow.jsx';
+import { openSettings } from '../settings/settingsSheetStore.js';
+import { useMedia } from '../settings/settingsBits.jsx';
+import { MapRow } from './MapRow.jsx';
 
 /**
  * The phone's list over the map (G12, map view: decision.md "Phone map
- * view"). At rest the map is the whole screen and only the "List of {n}"
- * pill shows; the pill opens the sheet half way. Three snap points: peek
- * (the count, the sort and the best-value legend), half and full (with a
- * Map pill to come back). The sheet follows the finger on its head, and on
- * its rows when they are scrolled to the top; a flick moves one stop.
+ * view"; round 2, proposal.md section 3). At rest the map is the whole
+ * screen and only the "List of {n}" pill shows; the pill opens the sheet
+ * half way. Snap points: peek, half and full (with a Map pill to come back;
+ * full stops under the chip rows, so they stay in reach). The sheet follows
+ * the finger on its head, and on its rows when they are scrolled to the
+ * top; a flick moves one stop.
  *
- * The rows are the places in view in the list's order, the picked one
- * marked. A row picks its place: the sheet steps down and the tap card
- * shows it over the map. The state is the sheet's own, so a drag never
- * re-renders the tab under it (audit-map.md: a 336 ms task on release).
+ * The head: In view | All (the traveller's choice; a pan never changes it)
+ * with List beside it on a phone, then Sort and the price basis (a quiet
+ * button to the basis setting); from 769 px one line, In view | All, Sort
+ * and the basis. Each control is said once on the page (judgement-4):
+ * Filters is the chip row's (phone) or the search field's and the quick
+ * row's (tablet), List | Map the band's from 769 px. The rows say the basis
+ * short under this head. In view lists the places on the map, All every place
+ * the filters keep; a row picks its place (in All the map flies there). With
+ * nothing in view the pill says so and the sheet offers Show all and Zoom
+ * out. The state is the sheet's own, so a drag never re-renders the tab
+ * under it (audit-map.md: a 336 ms task on release).
  *
- *   rows       the places in view, best first (capped by the caller)
- *   count      how many places are in view
- *   pickedId   the picked place, marked in the rows; a new pick closes
- *              the sheet so the tap card has the map
- *   sort       the sort control (SortMenu), drawn in the head
- *   listSwitch the List | Map toggle (ExploreTab's viewSwitch): the way
- *              from the map view back to the full list view
+ *   rows, count        the places in view (rows capped) and how many
+ *   allRows, allCount  every place the filters keep (rows capped)
+ *   pickedId           the picked place; a new pick closes the sheet
+ *   sort               the sort control (SortMenu, bare), drawn in the head
+ *   basis              the price basis in words (the Settings' prices chip)
+ *   bestId             the best value in view (its row says so)
+ *   onZoomOut          zooms the map out a step (the empty state)
  */
 const STOPS = ['closed', 'peek', 'half', 'full'];
+// How far down the floating search and chip rows reach in the host, plus a gap.
+function measureTop(host) {
+  const top = host.getBoundingClientRect().top;
+  let room = 0;
+  // A tablet's quick chips ride the map's top edge (.xmap-quick).
+  for (const el of document.querySelectorAll('.band.is-map .band-row, .band.is-map .band-strip, .band.is-map .band-quick, .xmap-quick')) {
+    const r = el.getBoundingClientRect();
+    if (r.height) room = Math.max(room, r.bottom - top);
+  }
+  return Math.round(room + 8);
+}
 const PEEK_PX = 72;
+// From here the band has List | Map and the page Filters of its own.
+const WIDE = '(min-width: 769px)';
 // A release faster than this (px per ms) moves one stop the way it went.
 const FLICK = 0.45;
 
-export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, onToggleFav, sort, listSwitch = null, t, lang }) {
+export function MapSheet({
+  rows, count, allRows = [], allCount = 0, pickedId, overviewOf, onPick, favSet, onToggleFav, sort,
+  basis = '', bestId = '', onZoomOut = null, listSwitch = null, t, lang,
+}) {
+  const wide = useMedia(WIDE);
   const [stop, setStop] = React.useState('closed');
+  const [scope, setScope] = React.useState('view');
   const rootRef = React.useRef(null);
   const bodyRef = React.useRef(null);
   const [hostH, setHostH] = React.useState(0);
   const [topRoom, setTopRoom] = React.useState(0);
-  // Peek shows the head down to the sort, measured: the count's own line is
-  // one or two lines high by language.
+  // Peek shows the head down to its first row, measured: its lines wrap by
+  // language.
   const [peekPx, setPeekPx] = React.useState(PEEK_PX);
   const [headH, setHeadH] = React.useState(PEEK_PX + 24);
   const [drag, setDrag] = React.useState(null);
   const dragRef = React.useRef(null);
 
   // The host is the map's own box (above the nav); full stops under the
-  // floating search and chips, so they stay in reach.
+  // floating search and chip rows, so they stay in reach.
   React.useLayoutEffect(() => {
     const host = rootRef.current?.parentElement;
     if (!host) return undefined;
     const read = () => {
       setHostH(host.clientHeight);
-      const top = host.getBoundingClientRect().top;
-      let room = 0;
-      for (const el of document.querySelectorAll('.band.is-map .band-row, .band.is-map .band-strip')) {
-        const r = el.getBoundingClientRect();
-        if (r.height) room = Math.max(room, r.bottom - top);
-      }
-      setTopRoom(Math.round(room + 8));
+      setTopRoom(measureTop(host));
       const head = rootRef.current?.querySelector('.xsheet-head');
       const row = rootRef.current?.querySelector('.xsheet-row');
       if (row) setPeekPx(Math.max(PEEK_PX, row.offsetTop + row.offsetHeight + 8));
@@ -70,6 +92,13 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
     if (head) ro?.observe(head);
     return () => ro?.disconnect();
   }, []);
+
+  // The chip rows can change after the sheet mounted (a style chip whose
+  // words wrap, the quick row arriving): measured again on every new stop.
+  React.useEffect(() => {
+    const host = rootRef.current?.parentElement;
+    if (host) setTopRoom(measureTop(host));
+  }, [stop]);
 
   const shown = (s) => {
     if (s === 'full') return Math.max(peekPx, hostH - topRoom);
@@ -111,11 +140,9 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
       // A row: it drags the sheet only from the top of its scroll.
       if ((bodyRef.current?.scrollTop || 0) > 0) return;
     }
-    // The whole head starts a drag, its buttons too: a finger on the count
-    // or the legend is often retargeted to the sort button next to it (touch
-    // adjustment), and the flick was lost (en at 390). Only a move past 6 px
-    // makes it a drag, so a tap still presses the button. An open menu keeps
-    // its own touches.
+    // The whole head starts a drag, its buttons too: only a move past 6 px
+    // makes it a drag, so a tap still presses the button. An open menu
+    // keeps its own touches.
     if (e.target.closest('[role="menu"], [role="listbox"]')) return;
     dragRef.current = { id: e.pointerId, y0: e.clientY, v0: shown(stop), moved: false, last: [[e.timeStamp, e.clientY]] };
   };
@@ -159,16 +186,43 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
     setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 0);
   };
 
-  const n = new Intl.NumberFormat(lang).format(count);
+  // While the list is up the tap card waits under it (86-map-view.css).
+  const sheetUp = stop !== 'closed';
+  React.useEffect(() => {
+    document.documentElement.classList.toggle('xsheet-open', sheetUp);
+    return () => document.documentElement.classList.remove('xsheet-open');
+  }, [sheetUp]);
+
+  const fmt = (x) => new Intl.NumberFormat(lang).format(x);
   const offset = Math.max(0, hostH - visible);
   const open = stop !== 'closed' || drag != null;
+  const all = scope === 'all';
+  const list = all ? allRows : rows;
+  const empty = !all && count === 0;
+  const scopeOptions = [
+    { value: 'view', label: <><span>{t('explore.map.scopeView')}</span> <span className="xsheet-n">{fmt(count)}</span></> },
+    { value: 'all', label: <><span>{t('explore.map.scopeAll')}</span> <span className="xsheet-n">{fmt(allCount)}</span></> },
+  ];
+  const scopeControl = (
+    <Segmented label={t('explore.map.scopeAria')} size="sm" className="xsheet-scope"
+      options={scopeOptions} value={scope} onChange={setScope} />
+  );
+  const sortLine = (
+    <>
+      <span className="xsheet-sort">{sort}</span>
+      {basis && (
+        <Button variant="quiet" size="sm" className="xsheet-basis"
+          onClick={() => openSettings({ step: 'prices' })}>{basis}</Button>
+      )}
+    </>
+  );
   return (
     <>
-      {stop === 'closed' && drag == null && !pickedId && (
-        <Pressable className="xmap-listpill" onClick={() => setStop('half')}
+      {stop === 'closed' && drag == null && (
+        <Pressable className={`xmap-listpill${pickedId ? ' is-above-card' : ''}`} onClick={() => setStop('half')}
           aria-expanded="false">
           <HouseIcon.list size={18} />
-          <span>{t('explore.mapListOf', { n })}</span>
+          <span>{count === 0 ? t('explore.map.nothingInView') : t('explore.mapListOf', { n: fmt(count) })}</span>
         </Pressable>
       )}
       {stop === 'full' && (
@@ -181,7 +235,7 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
         className={`xsheet is-${drag != null ? 'dragging' : stop}${open ? '' : ' is-closed'}`}
         style={{ transform: `translateY(${offset}px)` }}
         aria-label={t('explore.drawerAria')}
-        inert={!open || undefined}
+        inert={open ? undefined : ''}
         onPointerDown={onDown} onPointerMove={onMove} onPointerUp={onUp} onPointerCancel={onUp}>
         <div className="xsheet-head">
           <Pressable className="xsheet-grab" aria-label={t(stop === 'full' ? 'drawer.full' : 'drawer.half')}
@@ -189,23 +243,43 @@ export function MapSheet({ rows, count, pickedId, overviewOf, onPick, favSet, on
             onClick={() => setStop(stop === 'full' ? 'peek' : stop === 'half' ? 'full' : 'half')}>
             <span className="xsheet-grab-bar" aria-hidden="true" />
           </Pressable>
-          <div className="xsheet-row">
-            <h2 className="xsheet-count">{t(countKey(lang, count, 'mapPanel.inViewOne', 'mapPanel.inView'), { n })}</h2>
-            <span className="xsheet-sort">{sort}{listSwitch}</span>
-          </div>
-          <p className="xsheet-legend"><span className="xmap-best-dot" aria-hidden="true" />{t('explore.mapBestInView')}</p>
+          {wide ? (
+            <div className="xsheet-row is-one">{scopeControl}{sortLine}</div>
+          ) : (
+            <>
+              <div className="xsheet-row">{scopeControl}{listSwitch}</div>
+              <div className="xsheet-row2">{sortLine}</div>
+            </>
+          )}
         </div>
         <div ref={bodyRef} className="xsheet-body" style={{ height: `${Math.max(0, shown(stop === 'closed' ? 'half' : stop) - headH)}px` }}>
-          <div className="xrows xsheet-rows">
-            {/* Rows only while the sheet shows: a closed sheet re-rendering
-                60 rows after every pan cost the map its frames. */}
-            {open && rows.map((p) => (
-              <PlaceRow key={p.id} p={p} {...overviewOf(p)} t={t}
-                selected={p.id === pickedId}
-                fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
-                onOpen={() => { setStop('closed'); onPick(p.id); }} />
-            ))}
-          </div>
+          {open && empty ? (
+            <div className="xsheet-empty">
+              <Blaze size="lg" state="blank" className="xsheet-empty-mark" />
+              <h2 className="xsheet-empty-title">{t('explore.map.empty')}</h2>
+              <div className="xsheet-empty-acts">
+                <Button variant="primary" iconStart={<HouseIcon.list size={18} />} onClick={() => setScope('all')}>
+                  {t('explore.map.showAll', { n: fmt(allCount) })}
+                </Button>
+                {onZoomOut && (
+                  <Button variant="quiet" iconStart={<HouseIcon.minus size={18} />} onClick={onZoomOut}>
+                    {t('explore.map.zoomOut')}
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="xsheet-rows">
+              {/* Rows only while the sheet shows: a closed sheet re-rendering
+                  60 rows after every pan cost the map its frames. */}
+              {open && list.map((p) => (
+                <MapRow key={p.id} p={p} {...overviewOf(p)} t={t}
+                  selected={p.id === pickedId} best={p.id === bestId}
+                  fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
+                  onOpen={() => { setStop('closed'); onPick(p.id); }} />
+              ))}
+            </div>
+          )}
         </div>
       </section>
     </>

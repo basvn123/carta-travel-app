@@ -12,7 +12,9 @@ import { visitLength } from '../lib/nearby.js';
 import { placeSights } from '../lib/placeStory.js';
 import { knownFor } from '../lib/knownFor.js';
 import { useI18n } from '../i18n/index.jsx';
-import { PlaceRow } from './explore/PlaceRow.jsx';
+import { MapRow } from './explore/MapRow.jsx';
+import { Segmented } from '../components/ui/index.js';
+import { openSettings } from './settings/settingsSheetStore.js';
 import { PlaceScore, BandWord } from './explore/HouseParts.jsx';
 import { SaveButton } from './ExploreCards.jsx';
 import '../styles/81-map-panel.css';
@@ -51,7 +53,10 @@ export function MapPlacePanel({
   rows = [], count = 0, picked = null, overviewOf, onPick, onBack, onOpen,
   favSet = null, onToggleFav = null, compact = false, t,
   linkedId = null, onLink = null, pickedId: listPickedId = null,
+  // G12 map view round 2: In view | All, Sort, the basis and the best value.
+  allRows = [], allCount = 0, sort = null, basis = '', bestId = '',
 }) {
+  const [scope, setScope] = React.useState('view');
   const rootRef = React.useRef(null);
   const headRef = React.useRef(null);
   const lastPick = React.useRef(null);
@@ -89,18 +94,34 @@ export function MapPlacePanel({
               after T603 had hidden it): the count heads the column again,
               with the legend of the saffron dot on the best-value pin. */}
           <div className="mpp-head-row">
-            <h2 className="mpp-count">
+            <h2 className="sr-only">
               {count === 1 ? t('mapPanel.inViewOne') : t('mapPanel.inView', { n: new Intl.NumberFormat(t.lang || undefined).format(count) })}
             </h2>
-            <p className="mpp-legend"><span className="xmap-best-dot" aria-hidden="true" />{t('explore.mapBestInView')}</p>
+            <div className="mpp-head-line">
+              <Segmented label={t('explore.map.scopeAria')} size="sm" className="xsheet-scope"
+                value={scope} onChange={setScope} options={[
+                  { value: 'view', label: <><span>{t('explore.map.scopeView')}</span> <span className="xsheet-n">{new Intl.NumberFormat(t.lang || undefined).format(count)}</span></> },
+                  { value: 'all', label: <><span>{t('explore.map.scopeAll')}</span> <span className="xsheet-n">{new Intl.NumberFormat(t.lang || undefined).format(allCount)}</span></> },
+                ]} />
+              {sort}
+            </div>
+            {basis && (
+              <Button variant="quiet" size="sm" className="xsheet-basis mpp-basis"
+                onClick={() => openSettings({ step: 'prices' })}>{basis}</Button>
+            )}
           </div>
-          {rows.length === 0 ? (
-            <p className="mpp-empty">{t('mapPanel.empty')}</p>
+          {(scope === 'all' ? allRows : rows).length === 0 ? (
+            <div className="mpp-empty">
+              <p>{t('explore.map.empty')}</p>
+              <Button variant="primary" size="sm" onClick={() => setScope('all')}>
+                {t('explore.map.showAll', { n: new Intl.NumberFormat(t.lang || undefined).format(allCount) })}
+              </Button>
+            </div>
           ) : (
             <>
             <div className="xrows mpp-rows">
-              {rows.map((p) => (
-                <PlaceRow key={p.id} p={p} {...overviewOf(p)} t={t}
+              {(scope === 'all' ? allRows : rows).map((p) => (
+                <MapRow key={p.id} p={p} {...overviewOf(p)} t={t} photoW={128} best={p.id === bestId}
                   fav={favSet ? favSet.has(p.id) : false} onToggleFav={onToggleFav}
                   selected={p.id === listPickedId} linked={p.id === linkedId}
                   rootProps={onLink ? {

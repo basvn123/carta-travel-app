@@ -589,6 +589,8 @@ PRICE_EFFECT = {
     "ground.plane_reach_km": "How far from an airport a place still counts as reached by plane.",
     "flights.max_age_days": "How old a swept fare may be before it is not shown.",
     "flights.nearest_day_spread": "How many days from the wanted date a swept fare may come from.",
+    "flights.pair_slack_days": "How many days a cheapest out-and-back fare pair may differ from the trip length.",
+    "flights.typical_min_fares": "How many checked fares each way a route needs before its typical fare shows.",
     "origins.airport_access": "The drive, parking and time to the traveller's home airport.",
     "flights.bag_fees": "The bag fee each airline adds to a flight price.",
     "stays.model": "How scraped stay prices are aged, cleaned and spread over the year.",

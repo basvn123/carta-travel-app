@@ -96,7 +96,9 @@
 .flt-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
 /* A long word (German) wraps inside its chip rather than past the sheet. */
 .flt-chips .ui-chip { max-width: 100%; white-space: normal; line-height: var(--leading-tight); text-align: left; }
-.flt-note { margin: 0; font-size: var(--text-label); color: var(--text-2); text-wrap: pretty; }
+/* The flight row's .flt-note (74-flights.css) names a grid area; here a
+   note takes the group's full width under its options (judgement-4). */
+.flt-note { grid-area: auto; margin: 0; font-size: var(--text-label); color: var(--text-2); text-wrap: pretty; }
 .flt-nomonth { display: grid; justify-items: start; gap: var(--space-2); }
 .flt-sort { width: 100%; }
 .flt-saved {
@@ -105,12 +107,12 @@
 }
 .flt-saved .ui-switch { width: 100%; }
 
-/* Wide enough for two columns: the groups pair up, Sort and Saved run the
-   width above them. */
+/* Wide enough for two columns: the groups pair up from the first row
+   (Score and A day); Sort, last, runs the width under them. */
 @media (min-width: 769px) {
   .flt-panel .flt-groups { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .flt-panel .flt-group--wide { grid-column: 1 / -1; }
-  .flt-panel .flt-group:nth-child(-n + 3) { border-top: 0; }
+  .flt-panel .flt-group:nth-child(-n + 2) { border-top: 0; }
   .flt-panel .flt-group { padding: var(--space-3) 0; }
 }
 
@@ -134,6 +136,8 @@
 
 /* ---- The applied row ---- */
 .xhead { margin: 0 0 var(--space-4); }
+/* On the map from 769 px with no filter on: no applied row, so no band. */
+.xhead.is-bare { margin: 0; }
 .xap {
   display: flex;
   align-items: center;
@@ -176,6 +180,12 @@
 .xap.is-phone .xap-scroll.has-end { --fade-e: var(--space-5); }
 .xap.is-phone .xap-scroll > * { flex: none; }
 .xap.is-phone .xap-chip { max-width: none; }
+/* Chips too wide together for the room between Filters and Clear all: the
+   chips take their own line under them (AppliedRow.jsx `stacked`), so no
+   chip is half faded next to Clear all (judgement-8). */
+.xap.is-phone.is-stacked .xap-chips { flex-wrap: wrap; row-gap: var(--space-2); }
+.xap.is-phone.is-stacked .xap-scroll { order: 3; flex: 1 0 100%; }
+.xap.is-phone.is-stacked .xap-clear { margin-inline-start: auto; }
 
 .xap-chip {
   display: inline-flex;
@@ -214,7 +224,10 @@
 .xap-clear.btn { flex: none; padding: 0 var(--space-2); font-weight: 700; }
 .xap-filters.btn { flex: none; border-radius: var(--radius-control); }
 .xap-filters.is-on { border-color: var(--select-border); }
+/* The disc keeps 8 px from the word, as on the quick row's Filters: the
+   button's label has no gap of its own, so it touched "Filtros" (judgement-7). */
 .xap-n {
+  margin-inline-start: var(--space-2);
   display: inline-grid;
   place-items: center;
   min-width: 20px;
@@ -246,3 +259,10 @@
   .flt-panel, .flt-panel.is-leaving { animation: none; }
   .xap-chip .xap-x .icon-btn-glyph { transition: none; }
 }
+
+/* G12 map view round 2: each option says the count it would leave; an
+   option that would leave nothing is greyed with its 0. */
+.flt .flt-n { margin-left: var(--space-1); font-weight: 600; color: var(--text-2); font-variant-numeric: tabular-nums; }
+.flt .flt-chip[aria-checked="true"] .flt-n, .flt .flt-chip[aria-pressed="true"] .flt-n { color: inherit; }
+.flt .flt-chip.is-zero { color: var(--text-3); border-style: dashed; }
+.flt .flt-chip.is-zero .flt-n { color: var(--text-3); }

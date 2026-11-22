@@ -627,7 +627,8 @@ export function checkSchemaTable(markdown, schema = WIRE_SCHEMA) {
   const a = markdown.indexOf(TABLE_START);
   const b = markdown.indexOf(TABLE_END);
   if (a < 0 || b < a) problems.push('docs/SCHEMA.md has no wire-table markers around the table');
-  else if (markdown.slice(a + TABLE_START.length, b).trim() !== renderWireTable(schema)) {
+  // CRLF folded to LF: a Windows checkout (core.autocrlf) must not read as stale.
+  else if (markdown.slice(a + TABLE_START.length, b).replace(/\r\n/g, '\n').trim() !== renderWireTable(schema)) {
     problems.push('docs/SCHEMA.md\'s wire table is not the one the schema renders; run node continent-app/scripts/ci/wire-table.mjs --write');
   }
   return problems;

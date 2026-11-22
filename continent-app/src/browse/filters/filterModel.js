@@ -144,22 +144,163 @@ export function rankVibe(picks) {
  *  never relabels itself when another filter or a price changes. */
 export const BUDGET_STEPS = Object.freeze([50, 75, 100, 150]);
 
-/** The sort choices the sheet and the desktop row offer (decision.md). */
+/** The sort choices the sheet and the desktop row offer (decision.md). G12
+ *  map view round 2 adds price high to low, distance from the From place
+ *  and hidden gems first; A to Z stays last, after a rule (`rule`). The
+ *  distance choice shows only while a From place is known (`needsHome`). */
 export const SORT_OPTIONS = Object.freeze([
   { key: 'beauty', labelKey: 'filters.sortMatch' },
-  { key: 'cost', labelKey: 'filters.sortPrice' },
   { key: 'rating', labelKey: 'filters.sortScore' },
-  { key: 'name', labelKey: 'filters.sortAz' },
+  { key: 'cost', labelKey: 'filters.sortPriceUp' },
+  { key: 'costDesc', labelKey: 'filters.sortPriceDown' },
+  { key: 'distance', labelKey: 'filters.sortDistance', needsHome: true },
+  { key: 'gemsFirst', labelKey: 'filters.sortGems' },
+  { key: 'name', labelKey: 'filters.sortAz', rule: true },
 ]);
+
+/** The minimum Score the "Score 8+" chip and the sheet's Score steps set. */
+export const SCORE_STEPS = Object.freeze([7, 8]);
+/** A place passes a minimum Score when it has one at least that high; an
+ *  unrated place never passes (honest: no Score is not a high Score). */
+export function scoreOk(p, min) {
+  if (!min) return true;
+  const s = p?.rating?.score;
+  return typeof s === 'number' && Number.isFinite(s) && s >= min;
+}
+
+/** The match the "Match 70%+" chip asks for (a share, 0 to 1). */
+export const MATCH_MIN = 0.7;
+/** A place passes a minimum match when its fit (lib/match.js) reaches it;
+ *  without a taste the filter holds nothing back (the chip is not offered). */
+export function matchOk(p, min, fitOf) {
+  if (!min || typeof fitOf !== 'function') return true;
+  const f = fitOf(p);
+  if (!f) return false;
+  return f.F >= min;
+}
+
+const scoreOf = (p) => (p?.rating?.score ?? p?.beauty?.score ?? -Infinity);
+const dayOf = (p) => (Number.isFinite(p?.cost?.dayEur) ? p.cost.dayEur : null);
+const latOf = (p) => p?.city_lat ?? p?.lat;
+const lonOf = (p) => p?.city_lon ?? p?.lon;
+
+/** Great-circle km between two points (the same formula as lib/nearby.js). */
+function km(a, b) {
+  const R = 6371;
+  const rad = (x) => (x * Math.PI) / 180;
+  const dLat = rad(b.lat - a.lat);
+  const dLon = rad(b.lon - a.lon);
+  const h = Math.sin(dLat / 2) ** 2 + Math.cos(rad(a.lat)) * Math.cos(rad(b.lat)) * Math.sin(dLon / 2) ** 2;
+  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
+}
+
+/**
+ * The orders the catalogue's own sort does not know (G12 map view round 2),
+ * applied to a list already in Best match order, so ties keep that order:
+ *   costDesc   the dearest day first; a place with no figure last
+ *   distance   nearest to `home` ({ lat, lon }) first; no position last;
+ *              without a home the list is returned as it is
+ *   gemsFirst  the hidden gems first, each part in the order it came
+ * Any other key returns the list unchanged. Returns a new array.
+ */
+export function sortExtra(rows, key, { home = null } = {}) {
+  const list = [...(rows || [])];
+  const keyed = list.map((p, i) => ({ p, i }));
+  const by = (fn) => keyed.sort((a, b) => fn(a.p, b.p) || (a.i - b.i)).map((k) => k.p);
+  if (key === 'costDesc') {
+    return by((a, b) => {
+      const x = dayOf(a); const y = dayOf(b);
+      if (x == null || y == null) return (x == null) - (y == null);
+      return (y - x) || (scoreOf(b) - scoreOf(a));
+    });
+  }
+  if (key === 'distance') {
+    if (!home || !Number.isFinite(home.lat) || !Number.isFinite(home.lon)) return list;
+    const d = new Map(list.map((p) => {
+      const at = { lat: latOf(p), lon: lonOf(p) };
+      return [p, Number.isFinite(at.lat) && Number.isFinite(at.lon) ? km(home, at) : Infinity];
+    }));
+    return by((a, b) => d.get(a) - d.get(b));
+  }
+  if (key === 'gemsFirst') return by((a, b) => (!!b.rating?.hidden_gem) - (!!a.rating?.hidden_gem));
+  return list;
+}
+
+/** The keys sortExtra orders (the catalogue sorts them as Best match first). */
+export const EXTRA_SORTS = Object.freeze(['costDesc', 'distance', 'gemsFirst']);
+
+/**
+ * The quick chips of the map (G12 map view round 2, decision.md: row 3 on a
+ * phone, the map's top edge on a desktop). Each is one filter the sheet also
+ * holds; `when` says when it is offered:
+ *   score8   Score 8+                 xf.minScore = 8
+ *   budget   Up to €100 in the basis  xf.budget = 100
+ *   warm     20 °C+ in the When month xf.temps 20, 25 and 30 (a month only)
+ *   water    By the water             the sea or a lake (picks sea + lake)
+ *   hiking   Hiking base              the hiking pick
+ *   gems     Hidden gems              gemOnly
+ *   match    Match 70%+               xf.minMatch = 0.7 (a taste only)
+ *   saved    Saved                    showFavOnly
+ */
+export const QUICK = Object.freeze(['score8', 'budget', 'warm', 'water', 'hiking', 'gems', 'match', 'saved']);
+export const QUICK_BUDGET = 100;
+export const WARM = Object.freeze(['20', '25', '30']);
+
+/** Whether a quick chip is on, from { xf, gemOnly, showFavOnly }. */
+export function quickOn(id, { xf, gemOnly = false, showFavOnly = false }) {
+  if (id === 'score8') return xf?.minScore === 8;
+  if (id === 'budget') return xf?.budget === QUICK_BUDGET;
+  if (id === 'warm') return WARM.every((b) => xf?.temps?.includes(b)) && !xf?.temps?.includes('15');
+  if (id === 'water') return !!xf?.picks?.includes('sea') && !!xf?.picks?.includes('lake');
+  if (id === 'hiking') return !!xf?.picks?.includes('hiking');
+  if (id === 'gems') return !!gemOnly;
+  if (id === 'match') return xf?.minMatch === MATCH_MIN;
+  if (id === 'saved') return !!showFavOnly;
+  return false;
+}
+
+/** The state change a quick chip makes: { xf?, gemOnly?, showFavOnly? }. */
+export function quickPatch(id, on, xf) {
+  const picks = (add, ids) => {
+    const rest = (xf?.picks || []).filter((x) => !ids.includes(x));
+    return parsePicks(add ? [...rest, ...ids] : rest);
+  };
+  if (id === 'score8') return { xf: { minScore: on ? 8 : null } };
+  if (id === 'budget') return { xf: { budget: on ? QUICK_BUDGET : null } };
+  if (id === 'warm') return { xf: { temps: on ? [...WARM] : (xf?.temps || []).filter((x) => !WARM.includes(x)) } };
+  if (id === 'water') return { xf: { picks: picks(on, ['sea', 'lake']) } };
+  if (id === 'hiking') return { xf: { picks: picks(on, ['hiking']) } };
+  if (id === 'gems') return { gemOnly: !!on };
+  if (id === 'match') return { xf: { minMatch: on ? MATCH_MIN : null } };
+  if (id === 'saved') return { showFavOnly: !!on };
+  return {};
+}
+
+/** The quick chips to draw: the offered ones, an active chip moved to the
+ *  front (in its own order), each { id, on }. */
+export function quickChips({ xf, gemOnly, showFavOnly, hasMonth, hasTaste }) {
+  const offered = QUICK.filter((id) => (id !== 'warm' || hasMonth) && (id !== 'match' || hasTaste));
+  const state = { xf, gemOnly, showFavOnly };
+  const all = offered.map((id) => ({ id, on: quickOn(id, state) }));
+  return [...all.filter((c) => c.on), ...all.filter((c) => !c.on)];
+}
 /** "For you" (T765, lib/match.js: the rating moved by the active style's
  *  explore half) leads the choices once the traveller has a taste. Best
  *  match does not read the taste while config/rating.json
  *  match.for_you_default is off, so without this the order was lost in
  *  round 2 of G12. */
 export const FOR_YOU_SORT = Object.freeze({ key: 'foryou', labelKey: 'fit.sort' });
-export const sortOptionsFor = (hasTaste) => (hasTaste ? [FOR_YOU_SORT, ...SORT_OPTIONS] : SORT_OPTIONS);
+/** The choices for this traveller: For you first with a taste; Distance
+ *  only with a From place (`home`, { name }), its label naming the place
+ *  (`args`). */
+export const sortOptionsFor = (hasTaste, home = null) => {
+  const own = SORT_OPTIONS
+    .filter((o) => !o.needsHome || (home && home.name))
+    .map((o) => (o.needsHome ? { ...o, args: { place: home.name } } : o));
+  return hasTaste ? [FOR_YOU_SORT, ...own] : own;
+};
 /** The sort as one of the choices: an older link's sort shows as Best match. */
-export const sortShown = (key, hasTaste = false) => (sortOptionsFor(hasTaste).some((o) => o.key === key) ? key : 'beauty');
+export const sortShown = (key, hasTaste = false, home = null) => (sortOptionsFor(hasTaste, home).some((o) => o.key === key) ? key : 'beauty');
 
 /**
  * The shortcuts (the search panel's Browse list and the rails' See all):

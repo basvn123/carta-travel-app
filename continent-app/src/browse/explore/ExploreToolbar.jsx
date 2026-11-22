@@ -1,7 +1,7 @@
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { AppliedRow, SavedToggle } from '../filters/AppliedRow.jsx';
-import { deskChips, phoneChips } from './chipRules.js';
+import { deskChips, mapRowChips, phoneChips } from './chipRules.js';
 import { countKey } from '../../lib/plural.js';
 
 /**
@@ -14,13 +14,21 @@ import { countKey } from '../../lib/plural.js';
  * phone) and Filters. What it dropped as a repeat: the search chip (the field
  * shows it), the "Showing places in" hint and the second and third pill
  * styles. Share stays at the desktop row's right end; a phone has it in the
- * field.
+ * field. On the map (`mapView`) the row keeps no tools: Sort is the list
+ * sheet's or the column's head, Saved a quick chip on the map (judgement-4:
+ * each control once), and Share stands beside List | Map from 1024 px (ExploreTab)
+ * or sits in the search field below it (ExploreBand). From 769 px on the map
+ * with no filter on, the row would be an empty band above the map, so it is
+ * not drawn (judgement-5). A filter on there that the map's quick row shows
+ * checked is not drawn twice: the row lists only what the quick row cannot
+ * show (a month, an area), and with only quick filters on it is not drawn
+ * and Clear all ends the quick row (judgement-6).
  */
 export function ExploreToolbar({
-  TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang,
-  resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
+  TitleTag, chips, filterCount, gridTotal, isDesktop, isMock, lang, mapView = false,
+  quick = [], resetAll, setShowFavOnly, shareView, showFavOnly, sortMenu, t,
 }) {
-  const tools = isDesktop ? (
+  const tools = isDesktop && !mapView ? (
     <>
       {sortMenu}
       <SavedToggle on={showFavOnly} onChange={setShowFavOnly} t={t} />
@@ -29,8 +37,10 @@ export function ExploreToolbar({
       </IconButton>
     </>
   ) : null;
+  const shown = !isDesktop ? phoneChips(chips) : mapView ? mapRowChips(chips, quick) : deskChips(chips);
+  const bare = isDesktop && mapView && shown.length === 0;
   return (
-    <div className="xhead">
+    <div className={`xhead${bare ? ' is-bare' : ''}`}>
       {/* The page's one h1, only while this tab is the one showing: the
           tab stays mounted under Destinations (row T380-g). It says
           "Places", not "Places in Europe", which was wrong over a
@@ -41,9 +51,10 @@ export function ExploreToolbar({
           { n: new Intl.NumberFormat(lang).format(gridTotal) })}
       </span>
       {isMock && <span className="explore-mock">{t('explore.mockData')}</span>}
-      <AppliedRow t={t} desktop={isDesktop} count={filterCount}
-        chips={isDesktop ? deskChips(chips) : phoneChips(chips)}
-        onClearAll={resetAll} tools={tools} />
+      {!bare && (
+        <AppliedRow t={t} desktop={isDesktop} count={filterCount}
+          chips={shown} onClearAll={resetAll} tools={tools} />
+      )}
     </div>
   );
 }

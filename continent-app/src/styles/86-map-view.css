@@ -28,7 +28,7 @@
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
-.explore-shell .xmap-kpins .xmap-kpin.is-pill { width: var(--kpin-w, var(--tap)); height: 28px; }
+.explore-shell .xmap-kpins .xmap-kpin.is-pill { width: var(--kpin-w, var(--tap)); height: var(--kpin-h, 28px); }
 .explore-shell .xmap-kpins .xmap-kpin:focus-visible {
   outline: var(--stroke-focus) solid var(--focus);
   outline-offset: 2px;
@@ -111,14 +111,14 @@
   .band.is-map .band-ask-word { display: none; }
   .band.is-phone.is-map > .band-strip { padding-top: var(--space-1); }
   /* One row of chips on the map: each a paper pill, the style on its mist,
-     Filters first with its umber edge; the row swipes, no fade over the map. */
+     Filters first with its umber edge; the row swipes and, like the quick
+     row under it, fades only on a side that has more (judgement-5: no hard
+     cut). The mask is the strip's own (80-band.css, SummaryChips' edges). */
   .band.is-map .band-chips.is-swipe {
     gap: var(--space-2);
     padding: 0 var(--space-3);
     background: transparent;
     scroll-snap-type: none;
-    -webkit-mask-image: none;
-    mask-image: none;
   }
   .band.is-map .band-chips.is-swipe .band-chip { padding: 0 var(--space-3); font-size: var(--text-label); }
   .band.is-map .band-chips.is-swipe .band-chip.is-style { margin-right: 0; }
@@ -136,6 +136,10 @@
   }
   .band.is-map .band-chips.is-swipe .band-chip:active::before { background: var(--surface-hover); }
 
+}
+/* The List pill, the tap card and the sheet: the phone's, and a tablet's
+   under 1024 px inside the map's frame (round 2, proposal.md 8). */
+@media (max-width: 1023px) {
   /* The pill at rest: "List of {n}", ink, bottom centre over the map. */
   .explore-shell .xmap-listpill {
     position: absolute;
@@ -313,7 +317,9 @@
   .explore-shell .mpp--float .mpp-head-row {
     position: sticky;
     top: 0;
-    z-index: 1;
+    /* Over the rows' raised parts (the figure, the mark, Save: z-index 1),
+       which otherwise paint over the head as the column scrolls. */
+    z-index: 2;
     padding: var(--space-3) var(--space-4) var(--space-2);
     background: var(--surface-page);
   }
@@ -359,3 +365,565 @@
   .explore-shell .xsheet,
   .explore-shell .xsheet.is-closed { transition: none; }
 }
+
+/* ==========================================================================
+   Round 2 (G12, .work/2026-11-20-map-view-2/proposal.md, owner conditions in
+   decision.md): the band's three rows on the phone map, the map list's row
+   (MapRow), the sheet's head and empty state, the tap card with its way
+   back, the anchored card, the quick chips and the match mark.
+   ========================================================================== */
+
+/* --- The match mark: a saffron pill with the style's heart -------------- */
+.xmatch-mark {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  height: 24px;
+  padding: 0 var(--space-2);
+  border: var(--stroke-hair) solid var(--sun-400);
+  border-radius: var(--radius-pill);
+  background: var(--sun-100);
+  color: var(--sun-800);
+  font: inherit;
+  font-size: var(--text-micro);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  cursor: pointer;
+  transition: transform var(--dur-press) var(--ease-tick);
+}
+/* A 44 px target round the 24 px mark. */
+.xmatch-mark::after { content: ''; position: absolute; inset: -10px -4px; }
+.xmatch-mark:active { transform: scale(var(--press-scale)); }
+.xmatch-mark:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xmatch-mark .xmatch-heart { color: var(--sun-800); fill: var(--sun-400); }
+
+/* --- Why it matches: points that add up to the figure ------------------- */
+.xwhy-pop .xwhy-body { display: grid; gap: var(--space-3); padding-bottom: var(--space-2); }
+.xwhy-pop .xwhy-style { display: flex; align-items: center; gap: var(--space-2); margin: 0; font-size: var(--text-body); font-weight: 700; }
+.xwhy-pop .xwhy-kicker { display: block; font-size: var(--text-micro); font-weight: 600; color: var(--text-2); }
+.xwhy-pop .xwhy-heart {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  background: var(--sun-100);
+  color: var(--sun-800);
+}
+.xwhy-pop .xwhy-heart svg { fill: var(--sun-400); }
+.xwhy-pop .xwhy-fig { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.xwhy-pop .xwhy-fig strong { font-size: var(--text-headline); font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+.xwhy-pop .xwhy-stack { display: flex; height: 12px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.xwhy-pop .xwhy-seg { height: 100%; }
+.xwhy-pop .is-0 { background: var(--umber-600); }
+.xwhy-pop .is-1 { background: var(--umber-500); }
+.xwhy-pop .is-2 { background: var(--umber-300); }
+.xwhy-pop .is-3 { background: var(--umber-200); }
+.xwhy-pop .is-hatch { background: repeating-linear-gradient(135deg, var(--sun-400) 0 3px, var(--sun-100) 3px 6px); }
+.xwhy-pop .xwhy-rows { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
+.xwhy-pop .xwhy-row { display: grid; gap: var(--space-1); }
+.xwhy-pop .xwhy-row-top { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-1) var(--space-2); font-size: var(--text-body); }
+.xwhy-pop .xwhy-sw { flex: none; width: 10px; height: 10px; border-radius: var(--radius-sm); }
+.xwhy-pop .xwhy-name { font-weight: 700; overflow-wrap: anywhere; }
+.xwhy-pop .xwhy-tag { padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); font-size: var(--text-micro); font-weight: 700; }
+.xwhy-pop .xwhy-pts { margin-left: auto; font-weight: 800; font-variant-numeric: tabular-nums; }
+.xwhy-pop .xwhy-track { display: block; height: 6px; overflow: hidden; border-radius: var(--radius-pill); background: var(--surface-sunken); }
+.xwhy-pop .xwhy-fill { display: block; height: 100%; border-radius: inherit; background: var(--umber-600); }
+.xwhy-pop .xwhy-row.is-conflict .xwhy-name,
+.xwhy-pop .xwhy-row.is-conflict .xwhy-pts { color: var(--text-3); font-weight: 600; }
+/* From 769 px the explanation floats off its mark (MatchMark.jsx WhyFloat):
+   a paper popover, no backdrop, the page live around it; it rises from the
+   mark's side. */
+.xwhy-float {
+  position: fixed;
+  z-index: var(--z-menu);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: var(--stroke-hair) solid var(--border);
+  border-radius: var(--radius-panel);
+  background: var(--surface);
+  box-shadow: var(--elev-3);
+  transform-origin: top center;
+  animation: xwhy-in var(--dur-2) var(--ease-out);
+}
+.xwhy-float.is-up { transform-origin: bottom center; }
+.xwhy-float-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4);
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+.xwhy-float-title { margin: 0; min-width: 0; font-size: var(--text-lead); font-weight: 800; line-height: var(--leading-tight); overflow-wrap: anywhere; }
+.xwhy-float-body { min-height: 0; padding: var(--space-3) var(--space-4) var(--space-3); overflow-y: auto; overscroll-behavior: contain; }
+@keyframes xwhy-in {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+.xwhy-float.is-up { animation-name: xwhy-in-up; }
+@keyframes xwhy-in-up {
+  from { opacity: 0; transform: translateY(4px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .xwhy-float, .xwhy-float.is-up { animation: none; } }
+
+/* --- The map list's row: photo, three lines, Save ----------------------- */
+.explore-shell .xrow.xmr,
+.explore-shell .xrows > .xrow.xmr {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--xmr-w, 112px) minmax(0, 1fr) var(--tap);
+  align-items: start;
+  gap: 0 var(--space-3);
+  padding: var(--space-3) 0;
+  border-bottom: var(--stroke-hair) solid var(--border-soft);
+}
+/* As specific as the row rule above, so the padding holds against the
+   negative margin and the picked row's content stays put (judgement-5). */
+.explore-shell .xrow.xmr.is-selected,
+.explore-shell .xrows > .xrow.xmr.is-selected { margin: 0 calc(-1 * var(--space-2)); padding-inline: var(--space-2); border-radius: var(--radius-panel); background: var(--select-bg); }
+.explore-shell .xmr.is-linked .xmr-media { outline: var(--stroke-edge) solid var(--action); outline-offset: 2px; }
+.explore-shell .xmr-media { width: var(--xmr-w, 112px); height: 96px; overflow: hidden; border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.explore-shell .xmr-media .xmr-img,
+.explore-shell .xmr-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.explore-shell .xmr-text { display: grid; gap: var(--space-1); min-width: 0; }
+/* The name wraps inside its column, whatever the list's row rules say (they
+   keep .xrow-name on one line): a long word breaks, never runs under Save. */
+.explore-shell .xmr-text > *,
+.explore-shell .xtc-text > *,
+.explore-shell .xac-text > * { min-width: 0; }
+.explore-shell .xrow.xmr .xmr-l1 .xmr-hit,
+.explore-shell .xmap-tapcard .xtc-l1 .xtc-hit,
+.explore-shell .xmap-anchor-card .xtc-l1 .xac-hit { white-space: normal; overflow: visible; text-overflow: clip; overflow-wrap: anywhere; }
+.explore-shell .xmr-l1,
+.explore-shell .xtc-l1 { margin: 0; font-size: var(--text-lead); font-weight: 800; line-height: 1.3; overflow-wrap: break-word; }
+.explore-shell .xmr-hit,
+.explore-shell .xtc-hit,
+.explore-shell .xac-hit { color: var(--text); text-decoration: none; white-space: normal; overflow: visible; }
+/* The name is the row's link, stretched over the row; the buttons sit over it. */
+.explore-shell .xmr-hit::after { content: ''; position: absolute; inset: 0; z-index: 0; }
+.explore-shell .xmr-hit:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-sm); }
+.explore-shell .xmr .hs-score,
+.explore-shell .xmap-tapcard .hs-score,
+.explore-shell .xmap-anchor-card .hs-score { display: inline-flex; vertical-align: 2px; }
+.explore-shell .xmr-l2,
+.explore-shell .xtc-l2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+  margin: 0;
+  font-size: var(--text-label);
+  line-height: 1.3;
+  color: var(--text-2);
+}
+.explore-shell .xmr-l2 .xrow-country,
+.explore-shell .xtc-l2 .xrow-country { display: inline-flex; flex-wrap: wrap; column-gap: 0.25em; min-width: 0; white-space: normal; overflow-wrap: anywhere; }
+.explore-shell .xmr-l2 .xrow-region,
+.explore-shell .xtc-l2 .xrow-region { overflow: visible; white-space: normal; }
+.explore-shell .xmr-facet { display: inline-flex; align-items: center; gap: var(--space-1); color: var(--umber-800); font-weight: 600; }
+.explore-shell .xmr-best {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px var(--space-2);
+  border-radius: var(--radius-pill);
+  background: var(--umber-100);
+  color: var(--umber-800);
+  font-size: var(--text-micro);
+  font-weight: 700;
+}
+.explore-shell .xmr-best .xmap-best-dot { margin-right: var(--space-1); }
+.explore-shell .xmr-l3,
+.explore-shell .xtc-l3 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-1) var(--space-2); }
+/* Judgement-4: the figure over its short basis, the mark at the line's end
+   level with the figure; the basis has the whole width under it, so a row
+   with a mark is as tall as one without. */
+.explore-shell .xmr-l3 { display: grid; grid-template-columns: minmax(0, 1fr); align-items: start; }
+.explore-shell .xmr-l3 > .xmr-fig { grid-area: 1 / 1; justify-self: start; flex-direction: column; flex-wrap: nowrap; align-items: flex-start; gap: 0; }
+.explore-shell .xmr-l3 > .xmr-match { grid-area: 1 / 1; justify-self: end; margin-top: 2px; }
+.explore-shell .xmr-l3 > *,
+.explore-shell .xmr-save { position: relative; z-index: 1; }
+.explore-shell .xmr .xmr-fig,
+.explore-shell .xtc-fig {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-1);
+  min-width: 0;
+  min-height: var(--tap);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-control);
+  background: none;
+  color: var(--text);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.explore-shell .xmr .xmr-fig:focus-visible,
+.explore-shell .xtc-fig:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.explore-shell .xmr .xmr-fig .xfig-amount,
+.explore-shell .xtc-fig .xfig-amount { font-size: var(--text-title); font-weight: 800; white-space: nowrap; }
+.explore-shell .xmr .xmr-fig .xfig-basis,
+.explore-shell .xtc-fig .xfig-basis { font-size: var(--text-label); color: var(--text-2); white-space: normal; text-decoration: none; }
+/* Save keeps its own column, whatever the list's row rules say. */
+.explore-shell .xmr .xmr-save { position: relative; inset: auto; grid-column: 3; grid-row: 1; justify-self: end; margin: 0; }
+
+/* --- The tap card: the place, its neighbours peeking, the way back ------ */
+/* The sheet open: the list has the screen, the tap card waits under it. */
+html.xsheet-open .explore-shell .xmap-tapcard { visibility: hidden; }
+@media (max-width: 1023px) {
+  .explore-shell .xmap-tapcard {
+    left: 0;
+    right: 0;
+    bottom: var(--space-6);
+    width: min(342px, calc(100% - 2 * var(--space-6)));
+    margin: 0 auto;
+    overflow: visible;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: var(--elev-3);
+    touch-action: none;
+  }
+  .explore-shell .xmap-tapcard.is-dragging { transition: none; }
+  /* The List pill rides 12 px above the card, so the way back never leaves. */
+  .explore-shell .xmap-listpill.is-above-card { bottom: calc(var(--space-6) + var(--xmap-card-h, 144px) + var(--space-3)); }
+}
+.explore-shell .xtc-face { display: grid; grid-template-columns: 120px minmax(0, 1fr); gap: var(--space-3); padding: var(--space-2); }
+.explore-shell .xtc-media { position: relative; width: 120px; height: 120px; overflow: hidden; border-radius: var(--radius-panel); background: var(--surface-sunken); }
+.explore-shell .xtc-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.explore-shell .xtc-save { position: absolute; top: var(--space-1); right: var(--space-1); }
+.explore-shell .xtc-text { display: grid; align-content: start; gap: var(--space-1); min-width: 0; padding: var(--space-1) calc(36px + var(--space-1)) var(--space-1) 0; }
+.explore-shell .xtc-l1 { font-size: var(--text-title); line-height: 1.25; }
+.explore-shell .xtc-l3 { margin-top: var(--space-1); }
+.explore-shell .xtc-close,
+.explore-shell .xac-close {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface-sunken);
+  color: var(--text);
+  cursor: pointer;
+}
+.explore-shell .xtc-close::after,
+.explore-shell .xac-close::after { content: ''; position: absolute; inset: -4px; }
+.explore-shell .xtc-close:focus-visible,
+.explore-shell .xac-close:focus-visible,
+.explore-shell .xtc-step:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* The neighbours: the same card's edge, 16 px in view at each side. */
+.explore-shell .xtc-peek {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  pointer-events: none;
+}
+.explore-shell .xtc-peek.is-prev { right: calc(100% + var(--space-2)); }
+.explore-shell .xtc-peek.is-next { left: calc(100% + var(--space-2)); }
+.explore-shell .xtc-peek .xtc-face.is-ghost { display: flex; justify-content: flex-end; }
+.explore-shell .xtc-peek.is-next .xtc-face.is-ghost { justify-content: flex-start; }
+/* The arrows are for a keyboard: drawn while focused, a finger swipes. */
+.explore-shell .xtc-step {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-top: -18px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-2);
+  opacity: 0;
+}
+.explore-shell .xtc-step.is-prev { left: calc(-1 * var(--space-4)); }
+.explore-shell .xtc-step.is-next { right: calc(-1 * var(--space-4)); }
+.explore-shell .xtc-step:focus-visible { opacity: 1; }
+
+/* --- The sheet's head (judgement-4): on a phone In view | All and List,
+   then Sort and the basis on one line; from 769 px all three on one line.
+   Filters and List | Map are the band's, said once on the page. */
+.explore-shell .xsheet-head .xsheet-row { flex-wrap: wrap; justify-content: space-between; gap: var(--space-2); }
+/* The grab's 44 px target reaches into the first row: the row's controls
+   stand over it, the gaps stay the grab's. */
+.explore-shell .xsheet-head .xsheet-row,
+.explore-shell .xsheet-head .xsheet-row2 { position: relative; z-index: 1; }
+.explore-shell .xsheet-head .xsheet-row.is-one { justify-content: flex-start; column-gap: var(--space-4); }
+.explore-shell .xsheet-head .xsheet-row.is-one .xsheet-basis { margin-left: auto; }
+.explore-shell .xsheet-scope .xsheet-n,
+.explore-shell .mpp .xsheet-n { font-weight: 800; font-variant-numeric: tabular-nums; }
+.explore-shell .xsheet-row2 { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0 var(--space-3); }
+.explore-shell .xsheet-sort { display: inline-flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.explore-shell .xtool-sort.is-bare { padding-inline: 0; font-weight: 700; }
+.explore-shell .xsheet-basis { min-width: 0; padding-inline: 0; color: var(--text-2); font-weight: 600; white-space: normal; text-align: right; }
+/* Nothing in view: the dashed blaze, the space named, one way out. */
+.explore-shell .xsheet-empty { display: grid; justify-items: center; gap: var(--space-3); padding: var(--space-6) var(--space-4); text-align: center; }
+.explore-shell .xsheet-empty-title { margin: 0; font-size: var(--text-lead); font-weight: 800; }
+.explore-shell .xsheet-empty-acts { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-2); }
+
+/* --- Quick filters: the phone's third row and the desktop map's top edge  */
+.xquick { display: flex; align-items: center; gap: var(--space-2); }
+/* One line at every width that scrolls sideways, a soft fade on a side
+   that has more (QuickChips.jsx reads the edges). */
+.xquick.is-swipe,
+.explore-shell .xmap-quick {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.xquick.is-swipe { padding: 0 var(--space-3); }
+.xquick.is-swipe::-webkit-scrollbar,
+.explore-shell .xmap-quick::-webkit-scrollbar { display: none; }
+.xquick.has-start { --fade-s: var(--space-6); }
+.xquick.has-end { --fade-e: var(--space-6); }
+.xquick-chip {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: 36px;
+  margin: var(--space-1) 0;
+  padding: 0 var(--space-3);
+  border: var(--stroke-hair) solid var(--border-soft);
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  box-shadow: var(--elev-1);
+  color: var(--text);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), transform var(--dur-press) var(--ease-tick);
+}
+.xquick-chip::after { content: ''; position: absolute; inset: -4px 0; }
+.xquick-chip:active { transform: scale(var(--press-scale)); }
+.xquick-chip:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.xquick-chip.is-on { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); }
+.xquick-chip.xquick-filters { border: var(--stroke-edge) solid var(--action); }
+.xquick-chip .band-count { position: static; }
+/* Clear all: quiet words, not a chip that reads as a filter (judgement-6),
+   right after the checked chips (after Filters on a phone). */
+.xquick-clear {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: transparent;
+  color: var(--action);
+  font: inherit;
+  font-size: var(--text-label);
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.xquick-clear::after { content: ''; position: absolute; inset: -4px calc(-1 * var(--space-1)); }
+.xquick-clear:active { transform: scale(var(--press-scale)); }
+.xquick-clear:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+/* The map's top edge: room above and below for the chips' shadow, which
+   a scroller clips; the gaps let a drag reach the map. */
+.explore-shell .xmap-quick {
+  position: absolute;
+  top: var(--space-2);
+  left: calc(var(--mpp-w, 400px) + var(--space-3));
+  right: calc(var(--space-3) + 48px);
+  z-index: 3;
+  flex-wrap: nowrap;
+  padding-block: var(--space-1);
+  pointer-events: none;
+}
+.explore-shell .xmap-quick .xquick-chip { pointer-events: auto; margin: 0; }
+/* On the phone band's row no box, with the row's own 8 px gap either side
+   (judgement-8: 4 px read tight); a chip turned on at 360 px in fr still
+   stands whole in view beside Filters and it (verify_map round G). */
+.band-quick .xquick-clear { margin: 0; }
+/* On the map it stands on the chips' paper, the row's 8 px gaps either side,
+   so it reads over sea and land alike and not jammed between two chips
+   (judgement-7); no edge and no shadow, so it is still not a chip. */
+.explore-shell .xmap-quick .xquick-clear {
+  align-self: center;
+  min-height: 28px;
+  padding: 0 var(--space-2);
+  background: var(--surface);
+}
+.explore-shell .xmap-quick .xquick-clear::after { inset: -4px 0; }
+
+/* --- The phone map's band: row 2 the style (pinned) and the settings ----- */
+@media (max-width: 768px) {
+  .band.is-map .band-chips-pin { display: flex; align-items: center; gap: var(--space-2); min-width: 0; padding-left: var(--space-3); }
+  .band.is-map .band-chips-pin > .band-chip.is-style {
+    flex: none;
+    max-width: 46%;
+    padding: 0 var(--space-3);
+    font-size: var(--text-label);
+  }
+  /* One line, as tall as its neighbours (judgement-4): a style name too
+     long for the room fades out at its end; the chip's title and name
+     carry it whole. */
+  .band.is-map .band-chips-pin > .band-chip.is-style .band-chip-text { min-width: 0; overflow: hidden; white-space: nowrap; }
+  .band.is-map .band-chips-pin > .band-chip.is-style.is-cut .band-chip-text {
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - var(--space-5)), transparent);
+    mask-image: linear-gradient(to right, black calc(100% - var(--space-5)), transparent);
+  }
+  .band.is-map .band-chips-pin > .band-chip.is-style::before {
+    content: '';
+    position: absolute;
+    inset: 6px 0;
+    z-index: -1;
+    border-radius: var(--radius-pill);
+    background: var(--umber-100);
+    box-shadow: var(--elev-2);
+  }
+  .band.is-map .band-chips-pin > .band-chips.is-swipe { flex: 1; padding-left: 0; }
+  /* A scroller clips at its box, so the chips' --elev-2 shadow (12 px above
+     the chip, 36 below) stopped on a hard edge and read as a pale box on
+     the map (judgement-9). Both rows reach past their chips by the shadow's
+     room and give it back as negative margin, so the band keeps its height;
+     the end fade (mask) still fades chips and shadow together. */
+  .band.is-map .band-chips-pin > .band-chips.is-swipe,
+  .band.is-map .band-quick > .xquick.is-swipe {
+    padding-block: var(--space-2) var(--space-6);
+    margin-block: calc(var(--space-2) * -1) calc(var(--space-6) * -1);
+    background: transparent;
+  }
+  /* Row 2 starts beside the pinned style chip: it reaches 24 px under that
+     chip for the shadow's side room and fades it in there, so the first
+     settings chip's shadow has no hard left edge; the style chip stays on
+     top and keeps its taps. */
+  .band.is-map .band-chips-pin > .band-chips.is-swipe {
+    padding-left: var(--space-5);
+    margin-left: calc(var(--space-5) * -1);
+    -webkit-mask-image: linear-gradient(to right, transparent 0, black calc(var(--space-5) + var(--fade-s)), black calc(100% - var(--fade-e)), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0, black calc(var(--space-5) + var(--fade-s)), black calc(100% - var(--fade-e)), transparent 100%);
+  }
+  .band.is-map .band-chips-pin > .band-chip.is-style { z-index: 2; }
+  /* Row 3 stands over row 2's shadow room, so its chips keep their taps;
+     its own room reaches over the map, so only its controls take presses
+     there and a drag below the band still moves the map. */
+  .band.is-phone.is-map > .band-quick { z-index: 2; padding-top: 0; }
+  .band.is-map .band-quick > .xquick.is-swipe { pointer-events: none; }
+  .band.is-map .band-quick > .xquick.is-swipe > * { pointer-events: auto; }
+  /* Clear all stays bare words here (judgement-9 asked for the paper of
+     769 px and up): the paper's 16 px pushed a chip turned on at the row's
+     end out of view at 360 in nl, fr and es (verify_active_chips). */
+  .band.is-map .band-quick .xquick-chip { box-shadow: var(--elev-2); border-color: transparent; }
+  .band.is-map .band-quick .xquick-chip.is-on { border-color: var(--select-border); }
+  .band.is-map .band-quick .xquick-chip.xquick-filters { border-color: var(--action); }
+}
+
+/* --- Tablet and desktop: the column, the anchored card ------------------ */
+@media (min-width: 769px) {
+  .explore-shell .mpp--float .mpp-rows { display: block; gap: 0; padding: 0 var(--space-4) var(--space-4); }
+  .explore-shell .mpp--float .mpp-head-row { gap: var(--space-1); }
+  .explore-shell .mpp-head-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); }
+  .explore-shell .mpp-basis { justify-self: end; }
+  .explore-shell .mpp--float { background: var(--surface); border-right: var(--stroke-hair) solid var(--border-soft); }
+  .explore-shell .mpp--float .mpp-head-row { background: var(--surface); }
+  .explore-shell .mpp-empty { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); }
+  .explore-shell .xmap-anchor { z-index: 4; }
+  .explore-shell .xmap-anchor-card {
+    width: 320px;
+    /* A map marker inherits MapLibre's own font (Helvetica 12/20): the
+       card sets the house type again. */
+    font-family: var(--ui);
+    font-size: var(--text-body);
+    line-height: var(--leading-body);
+    overflow: hidden;
+    border-radius: var(--radius-card);
+    background: var(--surface);
+    box-shadow: var(--elev-3);
+    animation: xmap-anchor-in var(--dur-3) var(--ease-settle);
+    cursor: auto;
+  }
+  .explore-shell .xac-media { position: relative; display: block; aspect-ratio: 16 / 9; background: var(--surface-sunken); }
+  .explore-shell .xac-media img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .explore-shell .xac-close { left: var(--space-2); right: auto; background: var(--surface); }
+  .explore-shell .xac-save { position: absolute; top: var(--space-2); right: var(--space-2); }
+  .explore-shell .xac-text { display: grid; gap: var(--space-1); padding: var(--space-3) var(--space-4) var(--space-4); }
+}
+@media (min-width: 1024px) {
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 380px; }
+}
+@media (min-width: 769px) and (max-width: 1439px) {
+  .explore-shell .xmap-anchor-card { width: 288px; }
+}
+/* A tablet held upright (769 to 1023, 820 the reference): the phone's map
+   model in the map's frame (ExploreContent.jsx MAP_SPLIT). The map takes
+   the frame's width; the List pill, the tap card and the half sheet stand
+   centred, at most 560 px; the full sheet takes the frame and lays its
+   rows in two columns. The quick chips keep the map's top edge, the zoom
+   buttons and the band stay the tablet's. */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 0px; grid-template-columns: minmax(0, 1fr); }
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map > .xmap { grid-column: 1; }
+  .explore-shell .xmap-quick { left: var(--space-3); }
+  .explore-shell .xmap-tapcard { width: min(560px, calc(100% - 2 * var(--space-6))); }
+  .explore-shell .xsheet {
+    width: min(560px, 100%);
+    margin-inline: auto;
+    box-shadow: var(--elev-3);
+    transition: transform var(--dur-3) var(--ease-settle), width var(--dur-3) var(--ease-settle);
+  }
+  .explore-shell .xsheet.is-full { width: 100%; }
+  .explore-shell .xsheet.is-full .xsheet-head { padding-inline: var(--space-5); }
+  .explore-shell .xsheet.is-full .xsheet-rows {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-6);
+    padding-inline: var(--space-5);
+  }
+  /* While the list or a tap card is up the style disc steps aside (the
+     band's style chip stays one tap away): it would lie over the full
+     sheet's rows or the card's left neighbour. */
+  html.xsheet-open .corner-slot--left,
+  html:has(.explore-shell .xmap-tapcard) .corner-slot--left { visibility: hidden; }
+}
+@media (min-width: 1440px) {
+  .explore-shell.explore-shell .xcontent.xcontent--split .xcontent-map { --mpp-w: 440px; }
+}
+@keyframes xmap-anchor-in {
+  from { opacity: 0; transform: translateY(var(--space-2)); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .explore-shell .xmap-anchor-card { animation: none; }
+  .xquick-chip, .xmatch-mark { transition: none; }
+}
+
+/* The match mark on the list rows (round 2); the rail card's is in
+   85-explore-rails.css. */
+.explore-shell .xrow-hs .xrow-match { position: relative; z-index: 1; justify-self: start; align-self: center; margin-top: var(--space-1); }

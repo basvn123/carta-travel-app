@@ -6,7 +6,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {
-  DESK_SHOWN, badgeCount, deskChips, lensCount, phoneChips,
+  DESK_SHOWN, QUICK_OF, badgeCount, deskChips, lensCount, mapRowChips, phoneChips,
 } from '../src/browse/explore/chipRules.js';
 
 const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8');
@@ -72,7 +72,23 @@ test('the applied row: Filters leads on a phone, then the chips, then Clear all;
   assert.match(row, /role="status"/);
   const bar = read('src/browse/explore/ExploreToolbar.jsx');
   assert.doesNotMatch(bar, /PhoneTools|xtools|viewSwitch|xov-back/);
-  assert.match(bar, /\{sortMenu\}\s*<SavedToggle/);
+  // Judgement-4: on the map the row keeps no Sort (the sheet's or the
+  // column's head) or Saved (a quick chip). Judgement-5: no Share either
+  // (it follows List | Map, or sits in the field below 1024 px), and from
+  // 769 px with no filter on the row is not drawn at all.
+  assert.match(bar, /const tools = isDesktop && !mapView \?/);
+  assert.match(bar, /const bare = isDesktop && mapView && shown\.length === 0;/);
+  assert.match(bar, /\{!bare && \(\s*<AppliedRow/);
+  const tab = read('src/browse/ExploreTab.jsx');
+  assert.match(tab, /end=\{view === 'map' \? \(\s*<IconButton className="xcats-share" label=\{t\('explore\.toolShare'\)\}/);
+});
+
+test('a quick chip is one filter: By the water and 20 °C+ make one chip each', () => {
+  const src = read('src/browse/explore/useExploreChips.js');
+  assert.match(src, /key: 'p:water'/);
+  assert.match(src, /key: 't:warm'/);
+  // The two picks By the water sets count once.
+  assert.equal(badgeCount([chip('p:water'), chip('minScore')]), 2);
 });
 
 test('the chips are capped with an ellipsis; the phone row never wraps', () => {
@@ -88,4 +104,38 @@ test('the chips are capped with an ellipsis; the phone row never wraps', () => {
   assert.ok(scroller.lastIndexOf('</div>') > scroller.indexOf('xap-chip"'), 'Clear all stands after the scroller, outside it');
   // The remove's 44 px box spills over the 32 px chip.
   assert.match(css, /margin: calc\(\(32px - var\(--tap\)\) \/ 2\)/);
+  // Chips that do not all fit take their own line, so none is half faded
+  // beside Clear all (judgement-8); read from the chips, not the scroller.
+  assert.match(src, /const chipsW = first \? last\.offsetLeft \+ last\.offsetWidth - first\.offsetLeft : 0;/);
+  assert.match(src, /const stacked = !!first && chipsW > room \+ 1;/);
+  // The phone band's Clear all keeps the row's 8 px gaps (judgement-8).
+  assert.match(read('src/styles/86-map-view.css'), /\.band-quick \.xquick-clear \{ margin: 0; \}/);
+});
+
+test('the map from 769 px: a quick filter that is on shows once, in the quick row (judgement-6)', () => {
+  const quick = [{ id: 'water', on: true }, { id: 'score8', on: true }, { id: 'budget', on: false }, { id: 'saved', on: true }];
+  const on = ['p:water', 'minScore', 'budget', 'nocar', 'month', 'fav', 'q'].map(chip);
+  const keys = (list) => list.map((c) => c.key);
+  // Water and Score 8+ are checked quick chips; a budget the quick chip does
+  // not hold stays; Saved and the search are never in the desktop row.
+  assert.deepEqual(keys(mapRowChips(on, quick)), ['budget', 'nocar', 'month']);
+  assert.deepEqual(mapRowChips([chip('p:water'), chip('minScore')], quick), []);
+  assert.deepEqual(keys(mapRowChips(on, [])), keys(deskChips(on)));
+  for (const id of Object.values(QUICK_OF)) assert.ok(['score8', 'budget', 'warm', 'water', 'hiking', 'gems', 'match', 'saved'].includes(id), id);
+  const bar = read('src/browse/explore/ExploreToolbar.jsx');
+  assert.match(bar, /mapView \? mapRowChips\(chips, quick\)/);
+  // Clear all has one home: the quick row's end when the row is not drawn.
+  const content = read('src/browse/explore/ExploreContent.jsx');
+  assert.match(content, /showClear=\{clearOnQuick\}/);
+  // Right after the checked chips (they lead the row), before the others.
+  const qsrc = read('src/browse/filters/QuickChips.jsx');
+  // On the map's top edge right after the checked chips; on a phone right
+  // after Filters (two checked chips fill the row there).
+  const onAt = qsrc.indexOf('f.quick.filter((c) => c.on).map(chip)');
+  const deskAt = qsrc.indexOf('{!withFilters && clear}');
+  const phoneAt = qsrc.indexOf('{withFilters && clear}');
+  const off = qsrc.indexOf('f.quick.filter((c) => !c.on).map(chip)');
+  assert.ok(phoneAt > 0 && onAt > phoneAt && deskAt > onAt && off > deskAt, 'Filters, Clear all (phone), checked, Clear all (desk), the rest');
+  assert.match(qsrc, /className="xquick-clear"/);
+  assert.match(read('src/browse/band/ExploreBand.jsx'), /<QuickChips className="is-swipe" showClear=\{filters\.count > 0\} \/>/);
 });

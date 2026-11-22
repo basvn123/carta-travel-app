@@ -133,13 +133,22 @@ function PlainFormation({ cost, t, figRef, weighted, className }) {
 }
 
 
+// The map's rows and cards say the basis short (proposal.md section 9).
+const SHORT_BASIS = {
+  'price.basis.day': 'price.basisShort.day',
+  'price.basis.trip': 'price.basisShort.trip',
+  'price.basis.tripOne': 'price.basisShort.tripOne',
+};
+
 /**
  * A place's figure in the Settings' basis (G12, D10, place-prices decision
  * section 1): priceFigure over the Settings model, the same call the
  * receipt makes, so a card and its receipt cannot disagree. Explore's
  * Settings context holds the model the figures were priced with.
- *   -> { model, f, basis, missing }  basis: the words; missing: the spoken
- *      name of a way with no figure yet when the figure leaves it out
+ *   -> { model, f, basis, short, missing }  basis: the words; short: the
+ *      same basis abbreviated for a row or card beside the sheet head that
+ *      says it in full ("a day, each", "pro Tag, p. P."); missing: the
+ *      spoken name of a way with no figure yet when the figure leaves it out
  */
 // eslint-disable-next-line react-refresh/only-export-components -- shared with the rail card (ExploreRails.jsx)
 export function usePlaceFigure(cost) {
@@ -150,7 +159,9 @@ export function usePlaceFigure(cost) {
     const [key, args] = f.basis;
     const mode = f.parts.wayMode || cost?.way?.mode || 'any';
     const missing = f.notKnown && f.eur != null ? t(`settingsSum.notKnown.${mode}`) : '';
-    return { model, f, basis: t(key, args), missing };
+    // A group basis ("a day for 2") is short already.
+    const shortKey = SHORT_BASIS[key];
+    return { model, f, basis: t(key, args), short: t(shortKey || key, args), missing };
   }, [cost, model, t]);
 }
 
@@ -191,27 +202,30 @@ export function ReceiptButton({ place, cost, model, label, className = '', child
   );
 }
 
-/** The figure itself: loudest, whole euros, "Not yet" without one; a way
- *  with no figure yet leaves a "+" after it. */
+/** The figure itself: loudest, whole euros, "Not yet" without one. No sign
+ *  after it (owner, 2026-11-20: the "+" went): the price chain completes the
+ *  figure (lib/settings/prices.js), a stay-only trip is said in words in the
+ *  receipt and in the accessible name, never on the card. */
 export function FigureAmount({ fig, figRef = null, className = '' }) {
   const { f } = fig;
   return (
     <span className={`xfig-amount ${className}`.trim()} ref={figRef}>
       {f.eur == null ? <NotYet /> : <Money value={f.eur} est={false} />}
-      {f.eur != null && fig.missing && <span className="xform-open" aria-hidden="true">+</span>}
     </span>
   );
 }
 
 /** Explore's list row's price (PlaceRow): the figure over its basis, one
- *  button to the receipt, in the row's day column. */
-export function PlaceFigure({ place, t, figRef = null, className = '' }) {
+ *  button to the receipt, in the row's day column. `short` draws the
+ *  abbreviated basis (the map's rows and cards, under a head that says it
+ *  in full); the spoken name keeps the whole basis. */
+export function PlaceFigure({ place, t, figRef = null, className = '', short = false }) {
   const fig = usePlaceFigure(place?.cost);
   return (
     <ReceiptButton place={place} cost={place?.cost} model={fig.model} label={figureSpoken(t, place, fig)}
       className={`xprice xfig hs-formation-day ${className}`.trim()}>
       <FigureAmount fig={fig} figRef={figRef} />
-      {fig.f.eur != null && <span className="xfig-basis" aria-hidden="true">{fig.basis}</span>}
+      {fig.f.eur != null && <span className="xfig-basis" aria-hidden="true">{short ? fig.short : fig.basis}</span>}
     </ReceiptButton>
   );
 }

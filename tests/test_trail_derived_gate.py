@@ -4,6 +4,7 @@ Every case is a real row from the 2026-11-20 hand check of the box data
 (Germany, plus the approved samples from other countries), so a word list or
 a threshold change that flips one of them shows up here first."""
 
+import ast
 import sys
 from collections import Counter
 from pathlib import Path
@@ -169,7 +170,7 @@ def test_control_group_keeps_its_rows_but_not_bridges_or_untitled():
 def test_control_matches_derive_routes():
     src = (ROOT / "pipeline" / "trails" / "derive_routes.py").read_text(encoding="utf-8")
     line = next(ln for ln in src.splitlines() if ln.startswith("THIN_COUNTRIES"))
-    assert set(eval(line.split("=", 1)[1])) == set(g.CONTROL)
+    assert set(ast.literal_eval(line.split("=", 1)[1].strip())) == set(g.CONTROL)
 
 
 # --- split ----------------------------------------------------------------

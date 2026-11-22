@@ -79,6 +79,7 @@ RANK = {"weekly": 1, "monthly": 2, "quarterly": 3}
 # prints; a new backfill task must add its line here or the test fails.
 MANUAL = {
     "geonames": "static gazetteer; worth a run only after the catalogue grows",
+    "gazetteer": "static geography for Explore search; --fetch pulls about 200 MB of GeoNames, so run it by hand when GeoNames is worth refreshing",
     "nature": "static geography; a heavy Overpass sweep on a cold cache",
     "climate": "full re-baseline of the climate normals; climate_daily is the quarterly path",
     "guide": "Wikivoyage blurbs; apply is coverage-guarded and wants a person to read the cache first",

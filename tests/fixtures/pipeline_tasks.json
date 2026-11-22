@@ -160,6 +160,13 @@
    "cmds": [
     [
      "<PY>",
+     "pipeline/field_stubs/publish.py",
+     "--layer",
+     "beaches",
+     "--max-row-loss",
+     "2",
+     "--",
+     "<PY>",
      "pipeline/beaches/build_beaches.py"
     ]
    ],
@@ -175,6 +182,13 @@
    "soft": true,
    "cmds": [
     [
+     "<PY>",
+     "pipeline/field_stubs/publish.py",
+     "--layer",
+     "lakes",
+     "--max-row-loss",
+     "2",
+     "--",
      "<PY>",
      "pipeline/lakes/build_lakes.py"
     ]
@@ -210,6 +224,13 @@
      "pipeline/mountains/season.py"
     ],
     [
+     "<PY>",
+     "pipeline/field_stubs/publish.py",
+     "--layer",
+     "peaks",
+     "--max-row-loss",
+     "2",
+     "--",
      "<PY>",
      "pipeline/mountains/export_peaks.py"
     ]
@@ -965,6 +986,13 @@
      "pipeline/cycling/validate_cycling.py"
     ],
     [
+     "<PY>",
+     "pipeline/field_stubs/publish.py",
+     "--layer",
+     "cycling",
+     "--max-row-loss",
+     "5",
+     "--",
      "<PY>",
      "pipeline/cycling/export_cycling.py"
     ]
@@ -1905,7 +1933,7 @@
      "pipeline/ask_index_layer.py"
     ],
     [
-     "<NODE>",
+     "C:\\Program Files\\nodejs\\node.EXE",
      "continent-app/scripts/build-ask-bm25.mjs"
     ]
    ],
@@ -2063,7 +2091,7 @@
      "cycling",
      "region",
      "--out",
-     "<ROOT>/logs/img_sources",
+     "<ROOT>\\logs\\img_sources",
      "--upload",
      "auto",
      "--allow-missing"

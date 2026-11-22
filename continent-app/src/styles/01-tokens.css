@@ -408,6 +408,7 @@
   --ease-in:      cubic-bezier(0.5, 0, 0.75, 0);
   --dur-press:    80ms;      /* the finger lands */
   --dur-paint:    220ms;     /* a blaze stripe or a tab's paint bar */
+  --dur-save:     240ms;     /* a save ticks the bookmark and sends its ring */
   --dur-couple:   420ms;     /* a wagon couples into the formation */
   --dur-sheet:    420ms;     /* a sheet rises */
   --ease-sheet:   cubic-bezier(0.32, 0.72, 0, 1);

@@ -9,6 +9,7 @@ import { countryName } from '../lib/countryName.js';
 import { SaveButton } from './ExploreCards.jsx';
 import { FigureAmount, PlaceScore, ReceiptButton, figureSpoken, usePlaceFigure } from './explore/HouseParts.jsx';
 import { FriendCardLine } from '../together/signals.jsx';
+import { MatchMark } from './explore/MatchMark.jsx';
 import { STORY_MAX, RAIL_CARD_SIZES } from './StoryRail.jsx';
 import { nameLines } from './nameLines.js';
 
@@ -60,10 +61,12 @@ export function interleaveByCountry(rows) {
 
 
 /** One place as a house rail card (DESIGN.md "Rail and RailCard"): the photo
- *  with only the save disc on it (no text on a photo), then two lines (G12,
- *  D10, place-prices card option A): the name with its Score plate and the
- *  figure; the flag and country and the figure's basis. The two lines are
- *  one button to the place's receipt; the photo is the link to the place. */
+ *  with only the save disc on it (no text on a photo), then the name with
+ *  its Score plate, the flag and country, and at the card's foot the figure
+ *  with its basis right under it, one unit (G12, D10, Explore clean
+ *  2026-11-20: a short name no longer leaves a gap between the figure and
+ *  its basis; the strip's room for long names sits above the figure). The
+ *  text is one button to the place's receipt; the photo is the link. */
 // G12, D10 (audit-perf.md cause 4): memoised, so a rail redraw (a typed
 // letter, a saved place, a tab hop) redraws only the cards whose place, save
 // state changed. Every prop is a value or a stable callback.
@@ -89,18 +92,29 @@ const PlaceRailCard = React.memo(function PlaceRailCard({ p, onSelect, fav, onTo
             sizes={RAIL_CARD_SIZES} ratio={[4, 3]} eager={eager} />
         </span>
       </a>
-      <ReceiptButton place={p} cost={p.cost} model={fig.model} label={figureSpoken(t, p, fig)} className="xrc-text">
-        <span className="xrc-head">
-          <span className="hs-rcard-name" id={`${uid}-n`}>{p.city}</span>
-          <PlaceScore rating={p.rating} />
-          <FigureAmount fig={fig} className="xrc-fig" />
-        </span>
-        <span className="hs-rcard-where">
-          <CountryFlag country={p.iso2} size={12} />
-          <span className="xrc-country" id={`${uid}-w`}>{countryName(p.iso2, p.country)}</span>
-          {fig.f.eur != null && <span className="xrc-basis" aria-hidden="true">{fig.basis}</span>}
-        </span>
-      </ReceiptButton>
+      {/* G12 map view round 2: the match mark stands at the foot's end,
+          level with the figure, laid over the text button (a button never
+          nests in a button), so it adds no height and the figures stay on
+          one line across the strip. */}
+      <div className="xrc-body">
+        <ReceiptButton place={p} cost={p.cost} model={fig.model} label={figureSpoken(t, p, fig)} className="xrc-text">
+          <span className="xrc-top">
+            <span className="xrc-head">
+              <span className="hs-rcard-name" id={`${uid}-n`}>{p.city}</span>
+              <PlaceScore rating={p.rating} />
+            </span>
+            <span className="hs-rcard-where">
+              <CountryFlag country={p.iso2} size={12} />
+              <span className="xrc-country" id={`${uid}-w`}>{countryName(p.iso2, p.country)}</span>
+            </span>
+          </span>
+          <span className="xrc-foot">
+            <FigureAmount fig={fig} className="xrc-fig" />
+            {fig.f.eur != null && <span className="xrc-basis" aria-hidden="true">{fig.basis}</span>}
+          </span>
+        </ReceiptButton>
+        <MatchMark place={p} className="xrc-match" />
+      </div>
       <FriendCardLine destId={p.id} />
       {onToggleFav && (
         <span className="hs-rcard-save">
@@ -271,9 +285,10 @@ function useStripReach(id, total) {
 // Archipelago (Vaxholm)" or "'s-Hertogenbosch" at 360 px in German is no
 // longer cut at two. The lines are worked out once per rail list with a
 // canvas (no layout per card): the font and the room a name gets beside its
-// Score and figure are read once from a drawn card per viewport width.
-// Place-prices card A: a strip of one-line names keeps one line, so the
-// two lines under the photo stay two (about 48 px).
+// Score are read once from a drawn card per viewport width. A strip of
+// one-line names keeps one line. The room is held above the figure
+// (85-explore-rails.css .xrc-top), so the figure and its basis stay
+// together at the card's foot whatever the name's length.
 const NAME_LINES_MIN = 1;
 const NAME_LINES_MAX = 4;
 let nameRuler = null;

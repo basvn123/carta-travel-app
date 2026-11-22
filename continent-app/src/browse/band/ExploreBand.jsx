@@ -1,6 +1,7 @@
 import React from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { useIsDesktop } from '../../hooks/useIsDesktop.js';
+import { useMedia } from '../settings/settingsBits.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { IconButton } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
@@ -13,6 +14,7 @@ import { useSearchDock, dockBack, dockShare } from '../searchDockStore.js';
 import { useFilters } from '../filters/filtersStore.js';
 import { toggleSettings, useSettingsSheet } from '../settings/settingsSheetStore.js';
 import { useMapViewOn } from '../explore/mapViewStore.js';
+import { QuickChips } from '../filters/QuickChips.jsx';
 // The search panel loads on the field's first focus.
 const SearchPanel = React.lazy(() => import('../search/SearchPanel.jsx').then((m) => ({ default: m.SearchPanel })));
 import { SummaryChips, useSummaryItems } from './SummaryChips.jsx';
@@ -78,6 +80,8 @@ function usePresence(open, token = '--dur-1') {
 export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   const { t } = useI18n();
   const isDesktop = useIsDesktop();
+  // From 769 to 1023 px the settings line says the short words (judgement-6).
+  const wide = useMedia('(min-width: 1024px)');
   const dock = useSearchDock();
   const ask = useAskChat();
   const sheet = useSettingsSheet();
@@ -94,7 +98,8 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   // map on a phone, the band floats over it: the field and Ask, then one
   // swipeable row with Filters first, the style and the settings. The
   // header, the tabs and the band's ground step aside (86-map-view.css).
-  const mapView = useMapViewOn() && places && !isDesktop;
+  const onMap = useMapViewOn() && places;
+  const mapView = onMap && !isDesktop;
 
   const [q, setQ] = React.useState('');
   const [open, setOpen] = React.useState(false);
@@ -149,6 +154,38 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
   }, [instant, kind]);
 
   const inputRef = React.useRef(null);
+  // The hint is whole or it is not there (owner: no cut text): the long
+  // hint shows only while it fits the field, which from 769 to 1023 px
+  // (and with Back and Share in it) it often does not. Judgement-6: with a
+  // filter on, the Filters count narrows the field again ("Chercher un
+  // li…" at 769), so a one-word hint is the next step. Judgement-7: on a
+  // phone with a filter on, Back and Share sit in the field ("Busca …" at
+  // 360), so phones measure too, and where even the one word does not fit
+  // the field shows none (its name and the search button still say it).
+  const longHint = t('band.searchPh');
+  const shortHint = t('band.searchPhShort');
+  const tinyHint = t('band.searchPhTiny');
+  const [hint, setHint] = React.useState('long');
+  React.useLayoutEffect(() => {
+    const el = inputRef.current;
+    if (!el) return undefined;
+    let gone = false;
+    const ctx = document.createElement('canvas').getContext('2d');
+    const read = () => {
+      if (gone || !ctx) return;
+      const cs = getComputedStyle(el);
+      ctx.font = `${cs.fontStyle} ${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+      const room = el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+      const fits = (text) => ctx.measureText(text).width <= room - 1;
+      const next = fits(longHint) ? 'long' : fits(shortHint) ? 'short' : fits(tinyHint) ? 'tiny' : 'none';
+      setHint((h) => (h === next ? h : next));
+    };
+    read();
+    document.fonts?.ready?.then(read);
+    const ro = typeof ResizeObserver === 'function' ? new ResizeObserver(read) : null;
+    ro?.observe(el);
+    return () => { gone = true; ro?.disconnect(); };
+  }, [longHint, shortHint, tinyHint]);
   const panelId = React.useId();
   const close = React.useCallback(() => {
     setOpen(false);
@@ -287,7 +324,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                   </IconButton>
                 )}
                 <input ref={inputRef} type="search" className="band-input"
-                  value={value} placeholder={t(isDesktop ? 'band.searchPh' : 'band.searchPhShort')} aria-label={t('band.searchPh')}
+                  value={value} placeholder={{ long: longHint, short: shortHint, tiny: tinyHint }[hint] || ''} aria-label={t('band.searchPh')}
                   autoComplete="off" enterKeyHint="search" spellCheck={false}
                   role="combobox"
                   aria-expanded={open}
@@ -301,7 +338,9 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
                     <HouseIcon.close size={18} />
                   </IconButton>
                 )}
-                {results?.canShare && !open && !isDesktop && (
+                {/* A tablet's map has Share here too (judgement-5): the tab
+                    row has no room for it below 1024 px (80-band.css). */}
+                {results?.canShare && !open && (!isDesktop || onMap) && (
                   <IconButton className="band-in band-share" label={t('explore.toolShare')} onClick={dockShare}>
                     <HouseIcon.share size={20} />
                   </IconButton>
@@ -344,23 +383,24 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
           a phone keeps the strip in place under an open search (the panel
           covers it), so nothing below moves. */}
       {isDesktop ? (
-        <div className="band-line">{showChips && <SummaryChips items={items} />}</div>
+        <div className="band-line">{showChips && <SummaryChips items={items} short={!wide} />}</div>
       ) : ((showChips || mapView) && (
         // The strip's own ground: the chips fade at their ends (a mask),
         // and the list must not show through there when the strip is pinned.
         <div className="band-strip">
-          <SummaryChips items={items} className="is-swipe" lead={mapView ? (
-            <Pressable className={`band-chip band-chip--filters${filterCount ? ' is-on' : ''}`}
-              aria-label={filterCount ? t(countKey(t.lang, filterCount, 'band.filtersOnOne', 'band.filtersOn'), { n: filterCount }) : t('band.filters')}
-              aria-expanded={filters.isOpen} aria-haspopup="dialog"
-              onClick={(e) => openFilters(e.currentTarget)}>
-              <span className="band-chip-ic" aria-hidden="true"><HouseIcon.filter size={18} /></span>
-              <span className="band-chip-text">{t('band.filters')}</span>
-              {filterCount > 0 && <span className="band-count" aria-hidden="true">{filterCount}</span>}
-            </Pressable>
-          ) : null} />
+          <SummaryChips items={items} className="is-swipe" pinStyle={mapView} />
         </div>
       ))}
+      {/* G12 map view round 2 (owner, 2026-11-20: the travel style must stay
+          in view): row 2 above is the style, sticky at its left, and the
+          settings; row 3 is Filters and the quick filters. */}
+      {mapView && (
+        <div className="band-quick">
+          {/* The phone map draws no applied row, so Clear all is this
+              row's whenever a filter is on (judgement-6). */}
+          <QuickChips className="is-swipe" showClear={filters.count > 0} />
+        </div>
+      )}
       {!mapView && tabs}
     </div>
     </>

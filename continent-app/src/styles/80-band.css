@@ -272,6 +272,24 @@
   padding: 9px var(--page-inset) 0;
 }
 .band.is-desk .band-chip { min-height: 32px; }
+/* A line that still does not fit (fr at 769 px, a long style name) slides
+   and fades on a side that has more, like the phone's strip, so a last item
+   never ends in a hard cut (judgement-6). SummaryChips reads the edges. */
+.band.is-desk .band-line .band-chips {
+  --fade-s: 0px;
+  --fade-e: 0px;
+}
+.band.is-desk .band-line .band-chips:is(.has-start, .has-end) {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.band.is-desk .band-line .band-chips.has-start { --fade-s: var(--space-6); }
+.band.is-desk .band-line .band-chips.has-end { --fade-e: var(--space-6); }
+/* From 769 to 1023 px the items stand 12 px apart (16 from 1024), so the
+   short line fits whole in nl and es at 769 too. */
+@media (max-width: 1023px) {
+  .band.is-desk .band-line .band-chips { gap: var(--space-3); }
+}
 /* Hover paints a soft ground past the item's edge without moving it. */
 @media (hover: hover) {
   /* An outline of the same colour is the halo (no shadow token fits a
@@ -301,11 +319,18 @@
     min-width: 0;
     border-bottom: var(--stroke-hair) solid var(--border-soft);
   }
+  /* The row really scrolls when six tabs do not fit (judgement-9): the
+     phone rule in 84-explore-overview.css sets overflow hidden, so the end
+     fade hid a word that no finger or wheel could slide into view. */
   .xcats-line .ui-tabs.xcats-row {
     flex: 1 1 auto;
     gap: var(--space-6);
     min-width: 0;
     border-bottom: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
   }
   .xcats-line .xcats-row .ui-tab,
   .explore-shell.is-map .xcats-line .xcats-row .ui-tab {
@@ -320,7 +345,25 @@
   }
   .xcats-line .xcats-row .ui-tab:focus-visible { outline-offset: 2px; }
 }
-/* The List | Map switch: a 32 px segment, each half a 44 px target. */
+/* A row that cannot hold six tabs slides sideways and fades on a side that
+   has more (ExploreCategories reads the edges), like the chip rows. */
+.xcats-line:is(.has-start, .has-end) .ui-tabs.xcats-row {
+  --fade-s: 0px;
+  --fade-e: 0px;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, black var(--fade-s), black calc(100% - var(--fade-e)), transparent 100%);
+}
+.xcats-line.has-start .ui-tabs.xcats-row { --fade-s: var(--space-6); }
+.xcats-line.has-end .ui-tabs.xcats-row { --fade-e: var(--space-6); }
+/* The List | Map switch: a 32 px segment, each half a 44 px target. On the
+   map Share stands just before it (judgement-5), so the switch keeps its
+   place when the view changes. */
+.xcats-end { display: flex; flex: none; align-items: center; gap: var(--space-2); }
+/* Below 1024 px the six tabs need the row's width (it would cut Cycling at
+   820), so the map's Share stands in the search field, as on a phone; from
+   1024 it closes the tab row and the field holds none. */
+@media (max-width: 1023px) { .xcats-end .xcats-share { display: none; } }
+@media (min-width: 1024px) { .band.is-desk .band-share { display: none; } }
 .xcats-view-wrap { display: flex; flex: none; align-items: center; }
 .xcats-view.seg { padding: 1px; }
 .xcats-view .seg-item,
@@ -340,6 +383,20 @@
   .xcats-row .xcats-tab { gap: var(--space-1); }
   .xcats-line .ui-tabs.xcats-row { gap: var(--space-5); }
   .xcats-line .xcats-row .ui-tab::after { left: calc(20px + var(--space-1) * 2); right: var(--space-1); }
+}
+/* A tablet (769 to 1023 px): the tabs and the switch sit closer, so six
+   tabs fit whole in more languages; where they still do not, the row
+   slides with its end fade (above). */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .xcats-line { gap: var(--space-4); }
+  .xcats-line .ui-tabs.xcats-row { gap: var(--space-4); }
+}
+/* Below 800 px the tabs and the switch close up one more step, so all six
+   fit whole at 769 in es ("Ciclismo") and it ("Bicicletta"), which were 2
+   and 19 px over (judgement-9). */
+@media (min-width: 769px) and (max-width: 799px) {
+  .xcats-line { gap: var(--space-3); }
+  .xcats-line .ui-tabs.xcats-row { gap: var(--space-3); }
 }
 
 /* --- Phone -------------------------------------------------------------- */

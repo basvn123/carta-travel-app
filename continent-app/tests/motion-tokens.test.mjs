@@ -32,7 +32,7 @@ test('no script scrolls with a literal smooth behavior', () => {
   const walk = (d) => { for (const e of fs.readdirSync(d, { withFileTypes: true })) {
     const p = path.join(d, e.name);
     if (e.isDirectory()) walk(p);
-    else if (/\.(js|jsx)$/.test(e.name) && !p.endsWith('lib/motion.js') && /behavior:\s*['"]smooth['"]/.test(fs.readFileSync(p, 'utf8'))) bad.push(p);
+    else if (/\.(js|jsx)$/.test(e.name) && !p.split(path.sep).join('/').endsWith('lib/motion.js') && /behavior:\s*['"]smooth['"]/.test(fs.readFileSync(p, 'utf8'))) bad.push(p);
   } };
   walk(path.join(root, 'src'));
   assert.deepEqual(bad, []);

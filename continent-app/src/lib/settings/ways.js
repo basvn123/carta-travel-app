@@ -97,6 +97,22 @@ function waysKept(destinations, files, key) {
   return kept.ids;
 }
 
+/**
+ * The price chain's third step (G12, D10, Explore clean 2026-11-20; owner:
+ * no "+" after a figure, complete it instead). The chain: the dated fare,
+ * the route's typical fare (both in cheapestFlight), then this: the chosen
+ * way has no figure at all, so the trip takes the best train, coach or car
+ * estimate that reaches the place, flagged `estimated` so the receipt names
+ * it. 'any' already weighed every ground way, so it has nothing to add.
+ * Null when no ground way reaches the place (an island, a ride over 20
+ * hours): the trip is then the stay alone, notKnown, and sorts last.
+ */
+export function groundEstimate(dest, mode, { home, party, ground = null } = {}) {
+  if (mode === 'any' || !home) return null;
+  const est = wayFor(dest, 'any', { home, party, flight: null, ground });
+  return est ? { ...est, estimated: true } : null;
+}
+
 // One place's way and outbound minutes, with the flight per anchor shared.
 function wayMaker({ destinations, files, request, mode, home, party, now }) {
   const flies = mode === 'plane' || mode === 'any';
@@ -122,7 +138,10 @@ function wayMaker({ destinations, files, request, mode, home, party, now }) {
       }
       flight = byAnchor.get(anchor);
     }
-    const way = wayFor(d || p, mode, { home, party, flight, ground: ground && ground(d || p, id) }) || notKnownWay(mode);
+    const g = ground && ground(d || p, id);
+    const way = wayFor(d || p, mode, { home, party, flight, ground: g })
+      || groundEstimate(d || p, mode, { home, party, ground: g })
+      || notKnownWay(mode);
     const fmin = flight && !flight.typical ? flight.minutes : null;
     return { way, fmin };
   };

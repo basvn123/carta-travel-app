@@ -15,8 +15,14 @@ const value = (lang, key) => {
 
 test('the band field names itself; Ask Carta stands outside it (round 2)', () => {
   const band = read('src/browse/band/ExploreBand.jsx');
-  // A phone shows the short placeholder so it is never cut at 360 (fixes r1 T3); the name stays full.
-  assert.match(band, /placeholder=\{t\(isDesktop \? 'band\.searchPh' : 'band\.searchPhShort'\)\} aria-label=\{t\('band\.searchPh'\)\}/);
+  // The long hint only while it fits the field, else the short one, never
+  // cut (judgement-5 follow-up); the name stays whole. Judgement-6: a
+  // one-word hint when even the short one would be cut. Judgement-7: a
+  // phone measures too (Back and Share narrow its field with a filter on),
+  // and no hint at all when even the one word would be cut.
+  assert.match(band, /placeholder=\{\{ long: longHint, short: shortHint, tiny: tinyHint \}\[hint\] \|\| ''\} aria-label=\{t\('band\.searchPh'\)\}/);
+  assert.match(band, /const next = fits\(longHint\) \? 'long' : fits\(shortHint\) \? 'short' : fits\(tinyHint\) \? 'tiny' : 'none';/);
+  assert.doesNotMatch(band, /if \(!isDesktop \|\| !el\) return undefined;/);
   // The search button closes the field at its right end; no magnifier on the left.
   assert.match(band, /<Pressable type="submit" className="band-go"/);
   assert.match(band, /type="search"[\s\S]*enterKeyHint="search"/);
@@ -37,7 +43,7 @@ test('the field is a combobox whose aria-controls names the panel listbox', () =
 test('the band strings, in six languages, the old dock pill strings gone', () => {
   assert.equal(value('en', 'band.searchPh'), 'Search a place, region or country');
   for (const l of LANGS) {
-    for (const k of ['band.searchPh', 'band.searchPhShort', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
+    for (const k of ['band.searchPh', 'band.searchPhShort', 'band.searchPhTiny', 'band.settings', 'band.clear']) assert.ok(value(l, k), `${l} ${k}`);
     for (const k of ['dock.choose', 'dock.openAria', 'explore.chooseOrAsk']) assert.equal(value(l, k), null, `${l} ${k}`);
   }
 });

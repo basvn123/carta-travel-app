@@ -255,7 +255,7 @@ Beaches: named coves + the beauty index -> public/beaches
 - Commands:
 
 ```
-python pipeline/beaches/build_beaches.py
+python <PUBLISH> --layer beaches <...> -- python pipeline/beaches/build_beaches.py
 ```
 
 ### <a id="lakes"></a>`lakes`
@@ -271,7 +271,7 @@ Lakes: the best water bodies in Europe -> public/lakes
 - Commands:
 
 ```
-python pipeline/lakes/build_lakes.py
+python <PUBLISH> --layer lakes <...> -- python pipeline/lakes/build_lakes.py
 ```
 
 ### <a id="mountains"></a>`mountains`
@@ -291,7 +291,7 @@ python pipeline/mountains/osm_spine.py
 python pipeline/mountains/build_peaks.py --skip-export
 python pipeline/mountains/terrain.py --workers 4
 python pipeline/mountains/season.py
-python pipeline/mountains/export_peaks.py
+python <PUBLISH> --layer peaks <...> -- python pipeline/mountains/export_peaks.py
 ```
 
 ### <a id="trips"></a>`trips`
@@ -853,7 +853,7 @@ python pipeline/cycling/seed_bike_rail.py
 python pipeline/cycling/cycle_index.py
 python pipeline/cycling/stage_planner.py
 python pipeline/cycling/validate_cycling.py
-python pipeline/cycling/export_cycling.py
+python <PUBLISH> --layer cycling --max-row-loss 5 -- python pipeline/cycling/export_cycling.py
 ```
 
 ### <a id="geonames"></a>`geonames`
@@ -1461,6 +1461,7 @@ Gazetteer: Europe's towns, regions and countries from GeoNames -> public/search/
 
 - Cadence: backfill
 - Writes: the wire files in `continent-app/public/`
+- Wire files: `search/places/`
 - Note: G12. Explore search finds any place in Europe: cities500 towns, admin1 regions and countries, with en, nl, de, fr, es and it names from alternateNamesV2 (CC BY 4.0). --fetch downloads the three extra GeoNames files into cache/geonames/ once (about 200 MB). About 20 prefix shards, 6 MB raw and 2.5 MB gzip in all, fetched one or two at a time as the traveller types. Static geography: run it by hand when GeoNames is worth refreshing.
 - Reads and runs: `pipeline/gazetteer_layer.py`
 - Commands:

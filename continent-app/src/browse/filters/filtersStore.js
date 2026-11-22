@@ -26,9 +26,12 @@
  */
 import { useSyncExternalStore } from 'react';
 
-const INITIAL = Object.freeze({ isOpen: false, group: null, nonce: 0, count: 0, total: null, shortcuts: [] });
+// G12 map view round 2: `quick` is the map's quick chips [{ id, label, on }]
+// (filterModel.js QUICK), drawn by the band on a phone and over the map on
+// a desktop; applyQuick(id, on) sets one.
+const INITIAL = Object.freeze({ isOpen: false, group: null, nonce: 0, count: 0, total: null, shortcuts: [], quick: [] });
 let state = INITIAL;
-let handlers = { applyShortcut: null };
+let handlers = { applyShortcut: null, applyQuick: null, clearAll: null };
 let opener = null;
 const subs = new Set();
 const emit = () => subs.forEach((f) => f());
@@ -59,9 +62,10 @@ const sameShortcuts = (a, b) => a.length === b.length
   && a.every((x, i) => x.id === b[i].id && x.label === b[i].label && x.on === b[i].on);
 
 /** The tab's figures and shortcuts; a no-op when nothing changed. */
-export function publishFilters({ count = 0, total = null, shortcuts = [] }) {
-  if (state.count === count && state.total === total && sameShortcuts(state.shortcuts, shortcuts)) return;
-  state = { ...state, count, total, shortcuts };
+export function publishFilters({ count = 0, total = null, shortcuts = [], quick = [] }) {
+  if (state.count === count && state.total === total && sameShortcuts(state.shortcuts, shortcuts)
+    && sameShortcuts(state.quick, quick)) return;
+  state = { ...state, count, total, shortcuts, quick };
   emit();
 }
 
@@ -74,6 +78,15 @@ export function applyShortcut(id, on = true) {
   handlers.applyShortcut?.(id, on);
 }
 
+export function applyQuick(id, on = true) {
+  handlers.applyQuick?.(id, on);
+}
+
+/** Every filter off: the quick row's Clear all (judgement-6). */
+export function clearAllFilters() {
+  handlers.clearAll?.();
+}
+
 /** The current state, for code outside React (tests, a verify script). */
 export function filtersState() {
   return state;
@@ -84,5 +97,5 @@ const snapshot = () => state;
 
 export function useFilters() {
   const s = useSyncExternalStore(subscribe, snapshot, snapshot);
-  return { ...s, open: openFilters, close: closeFilters, toggle: toggleFilters, applyShortcut };
+  return { ...s, open: openFilters, close: closeFilters, toggle: toggleFilters, applyShortcut, applyQuick };
 }

@@ -44,7 +44,7 @@ test('Ask opens a side panel on a desktop and a sheet on a phone, and leaves ani
 
 test('the desktop tab row closes with the List | Map switch; tabs take their word width', () => {
   const cats = read('src/browse/ExploreCategories.jsx');
-  assert.match(cats, /<div className="xcats-line">/);
+  assert.match(cats, /<div ref=\{lineRef\} className=\{`xcats-line\$\{more\.start \? ' has-start' : ''\}\$\{more\.end \? ' has-end' : ''\}`\}>/);
   assert.match(cats, /value=\{view === 'map' \? 'map' : 'list'\} onChange=\{onView\}/);
   const css = read('src/styles/80-band.css');
   assert.match(css, /\.xcats-line \.xcats-row \.ui-tab,[\s\S]*?flex: none;/);

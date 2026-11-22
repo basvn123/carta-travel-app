@@ -17,6 +17,7 @@
 import { chromium } from 'playwright';
 import path from 'node:path';
 import { mirrorData } from './lib/dataMirror.mjs';
+import { ICON_ALIGN_JS } from './lib/iconAlign.mjs';
 
 const PORT = Number(process.env.CARTA_PORT) || 5182;
 const BASE = `http://127.0.0.1:${PORT}/`;
@@ -225,6 +226,13 @@ async function run(width, height) {
   }, LANG);
   await open(page, '?tab=explore');
   await page.waitForSelector('.xprice', { timeout: 60000 }).catch(() => {});
+  // Owner 2026-11-21 (G12): the band's chips, Filters and Ask put their
+  // icon level with the word's capitals, 1 px or less (lib/iconAlign.mjs).
+  await page.evaluate(() => document.fonts.ready);
+  const icons = await page.evaluate(ICON_ALIGN_JS);
+  const iconsOff = icons.filter((r) => Math.abs(r.dCap) > 1);
+  check(`${tag}: every icon in the band level with its word's capitals`, icons.length >= 5 && iconsOff.length === 0,
+    `${icons.length} chips, worst ${Math.max(...icons.map((r) => Math.abs(r.dCap)))} px${iconsOff.length ? `: ${JSON.stringify(iconsOff.slice(0, 3))}` : ''}`);
 
   // The slots at rest.
   const home = await corners(page);

@@ -1,6 +1,7 @@
 import { isGateway } from '../lib/rating.js';
-import { MatchLine } from './WhyItMatches.jsx';
+import { MatchMark } from './explore/MatchMark.jsx';
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import maplibregl from '../map/maplibre.js';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { thumbAt } from '../lib/heroImage.js';
@@ -17,8 +18,10 @@ import { priceFigure } from '../lib/settings/prices.js';
 import { houseBasemap } from '../map/houseBasemap.js';
 import { cartaMapStyle } from '../lib/map/cartaMapStyle.js';
 import { registerPmtiles, basemapFallback } from '../lib/map/pmtilesProtocol.js';
+import { heroLadder } from '../lib/heroImage.js';
 import {
-  PIN_LAYERS, SEP, addPinImage, addPinLayers, pinAt, pinSize, pillWidth, setPinFilters,
+  BUBBLE_MAX, DOT_LAYERS, HALO_LAYERS, PIN_LAYERS, PILL_H, SEP, addPinImage, addPinLayers, evictPhotos, faceDims,
+  hasPhoto, loadPhotos, oneImage, photoFailed, pinAt, pinSize, pillWidth, setPinFilters,
 } from './explore/mapPins.js';
 
 /**
@@ -74,9 +77,16 @@ const STYLE_WAIT_MS = 12000;
 // many pixels top to bottom, left to right within a band.
 const KPIN_CAP = 30;
 const KPIN_ROW = 64;
-// A pill's half height plus a gap, for the chrome check.
-const PILL_HALF_H = 17;
 const EDGE_GAP = 4;
+// G12 map view round 2 (proposal.md section 1): photo pins by zoom, the
+// best-ranked places in view first: how many, and how many carry their name.
+// Every pin stands on its point, so its box runs from the point upwards.
+const photoTier = (z) => (z < 4.5 ? { n: 3, named: 3 } : z < 6.5 ? { n: 6, named: 2 } : z < 8.5 ? { n: 10, named: 4 } : { n: 16, named: 16 });
+// A gap kept between two pins' boxes, so labels never touch.
+const PIN_GAP = 4;
+// After a photograph lands, the pins are chosen again this long after the
+// last one (six land at a time), and only while the camera rests.
+const PHOTO_REST_MS = 160;
 // How long the camera rests before the pins are chosen again and the list
 // follows: longer than the pause between two strokes of one pan (up to about
 // 0.6 s on a slowed phone, progress-3.md), so a run of strokes does that
@@ -168,21 +178,21 @@ function addRouteLayers(map, fc, { open, hot }) {
   map.addLayer({
     id: 'route-casing', type: 'line', source: 'routes', layout: lineLayout,
     paint: { 'line-color': surface, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 3, 10, 6, 14, 8], 'line-opacity': 0.9 },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   map.addLayer({
     id: 'route-line', type: 'line', source: 'routes', layout: lineLayout,
     paint: { 'line-color': line, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 1.5, 10, 3, 14, 4.5] },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   map.addLayer({
     id: 'route-hot', type: 'line', source: 'routes', layout: lineLayout,
     filter: ['==', ['get', 'id'], ''],
     paint: { 'line-color': action, 'line-width': ['interpolate', ['linear'], ['zoom'], 5, 3, 10, 4.5, 14, 6] },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   // A wide, unseen line under the pointer, so a 3 px route is easy to hover.
   map.addLayer({
     id: 'route-hit', type: 'line', source: 'routes', layout: lineLayout,
     paint: { 'line-color': line, 'line-width': 14, 'line-opacity': 0 },
-  }, 'dest-dots');
+  }, DOT_LAYERS[0]);
   const pill = (id, image, colour, filter, overlap) => map.addLayer({
     id, type: 'symbol', source: 'route-starts', ...(filter ? { filter } : {}),
     layout: {
@@ -212,7 +222,7 @@ function addRouteLayers(map, fc, { open, hot }) {
   });
   map.on('click', (e) => {
     // A dot under the tap is the map's own business (its card, its open).
-    if (map.queryRenderedFeatures(e.point, { layers: ['dest-dots'] }).length) return;
+    if (map.queryRenderedFeatures(e.point, { layers: DOT_LAYERS }).length) return;
     const f = at(e);
     if (f) open(f.properties.id);
   });
@@ -310,6 +320,9 @@ export function ExploreMap({
   // corner (owner, 2026-11-20: in the window corner it covered the list
   // column's last photo).
   cornerInMap = false,
+  // G12 map view round 2: on a tablet or desktop the picked place's card
+  // hangs beside its pin (a marker, so it follows the map with no render).
+  pickCard = null,
 }) {
   const containerRef = useRef(null);
   useMapCorner(containerRef, cornerInMap && visible);
@@ -390,8 +403,12 @@ export function ExploreMap({
         const s = p.rating?.score;
         return { fig: s != null ? Number(s).toFixed(1) : '', eur: -1 };
       }
-      const eur = priceFigure({ cost: costOf(p) }, model || {}).eur;
-      return Number.isFinite(eur) ? { fig: formatMoney(eur), eur: Math.round(eur) } : { fig: '', eur: -1 };
+      const f = priceFigure({ cost: costOf(p) }, model || {});
+      if (!Number.isFinite(f.eur)) return { fig: '', eur: -1 };
+      // G12, D10: a trip figure that is the stay alone (no way priced) is
+      // lower than the real trip, so it never takes the best-value dot
+      // (eur -1 keeps it out of that pick only; the pill shows its figure).
+      return { fig: formatMoney(f.eur), eur: f.notKnown ? -1 : Math.round(f.eur) };
     };
     const loaded = (p, lon, lat) => {
       const { fig, eur } = figOf(p);
@@ -481,7 +498,10 @@ export function ExploreMap({
         + (money ? `<br>${eurHtml(money, 'xmap-pop-eur')}` : '')
         + '</div>';
       cardRef.current = null;
-      popup(map).setLngLat(f.geometry.coordinates).setHTML(html);
+      // The pins stand above their point: the tip opens above the hovered
+      // pin (drawn as the hot pin), never over it, so a click still picks.
+      const pin = pinSize(oneImage('hot', f.properties));
+      popup(map).setOffset(pin ? pin[1] + 8 : 18).setLngLat(f.geometry.coordinates).setHTML(html);
     };
     const showCard = (map, f) => {
       const { id, city, score, fig, cc } = f.properties;
@@ -535,16 +555,20 @@ export function ExploreMap({
       seen.add(pr.id);
       const pt = map.project(f.geometry.coordinates);
       if (pt.x < 0 || pt.y < 0 || pt.x > W || pt.y > H) return;
+      // A drawn pin stands on its point: its button covers the pin above it.
+      const size = label ? pinSize(pr.img || `xp${SEP}n${SEP}${pr.fig}`) : null;
+      const w = label ? (size?.[0] || pillWidth(pr.fig || pr.city || '')) : 0;
+      const h = label ? (size?.[1] || PILL_H) : 0;
       out.push({
-        key: `d${pr.id}`, id: pr.id, x: pt.x, y: pt.y, label,
+        key: `d${pr.id}`, id: pr.id, x: pt.x, y: label ? pt.y - h / 2 : pt.y, label,
         city: pr.city, country: pr.country, cc: pr.cc, score: pr.score, fig: pr.fig || '',
-        w: label ? (pinSize(`xp${SEP}n${SEP}${pr.fig}`)?.[0] || pillWidth(pr.fig || pr.city || '')) : 0,
+        w, h,
         feature: { geometry: { coordinates: f.geometry.coordinates }, properties: pr },
       });
     };
     if (pinLayers.length) for (const f of map.queryRenderedFeatures({ layers: pinLayers })) add(f, true);
     if (out.length < KPIN_CAP) {
-      for (const f of map.queryRenderedFeatures({ layers: ['dest-dots'] })) {
+      for (const f of map.queryRenderedFeatures({ layers: DOT_LAYERS })) {
         if (out.length >= KPIN_CAP) break;
         add(f, false);
       }
@@ -555,7 +579,7 @@ export function ExploreMap({
 
   // The pin filters of this moment: what the chrome covers leaves, the best
   // value in view gets its dot, the hovered and the picked pins their own.
-  const pinStateRef = useRef({ shown: [], hiddenClusters: [], best: '' });
+  const pinStateRef = useRef({ shown: [], photos: [], hiddenClusters: [], best: '' });
   const applyPins = React.useCallback((map) => {
     if (!map?.getLayer('xpin')) return;
     setPinFilters(map, {
@@ -565,59 +589,207 @@ export function ExploreMap({
       picked: pickedRef.current || '',
     });
   }, []);
+  // A place's photograph for its pin: our own copy (the CDN's 320 px rung),
+  // else the Commons thumb; both answer CORS, so the canvas stays clean.
+  const urlsOf = React.useCallback((id) => {
+    const rec = byIdRef.current.get(id);
+    if (!rec) return [];
+    const url = rec.image?.url || rec.image || '';
+    const own = rec.photo && typeof rec.photo === 'object' ? heroLadder(rec.photo, 320)?.src : null;
+    return [own, url ? thumbAt(url, 250) : null];
+  }, []);
+  const photoTimer = useRef(0);
+  // When the camera last started or stopped: a photograph that lands between
+  // two strokes of a pan waits for the rest like every other pin change (a
+  // new photo pin lays tiles out and re-uploads the icon atlas, which cost
+  // the next stroke its frames).
+  const lastMoveRef = useRef(0);
   const refreshPins = React.useCallback((map) => {
     if (!map?.getLayer('xpin')) return;
     const cv = map.getCanvas();
     const W = cv.clientWidth; const H = cv.clientHeight;
     const rects = chromeRects(map, chromeRef.current);
-    // The view plus a margin: a pill whose point is just off screen still
+    // The view plus a margin: a pin whose point is just off screen still
     // reaches into it, and must be judged (and hidden at the edge) too.
     const box = (x0, y0, x1, y1) => {
       const a = map.unproject([x0, y0]); const b = map.unproject([x1, y1]);
       return [Math.min(a.lng, b.lng), Math.min(a.lat, b.lat), Math.max(a.lng, b.lng), Math.max(a.lat, b.lat)];
     };
     const inBox = ([lon, lat], [w, s, e, n]) => lon >= w && lon <= e && lat >= s && lat <= n;
-    const near = box(-120, -40, W + 120, H + 40);
+    const near = box(-120, -40, W + 120, H + 120);
     // Half a view around it: pills a pan brings in are there before it ends.
     const ring = box(-W / 2, -H / 2, W * 1.5, H * 1.5);
-    const fits = [];
+    const inView = [];
     const outside = [];
     let best = null;
-    const under = (pt, half) => (
-      pt.x - half < EDGE_GAP || pt.x + half > W - EDGE_GAP || pt.y - PILL_HALF_H < EDGE_GAP || pt.y + PILL_HALF_H > H - EDGE_GAP
-      || rects.some((r) => pt.x + half > r.l && pt.x - half < r.r && pt.y + PILL_HALF_H > r.t && pt.y - PILL_HALF_H < r.b));
+    // A pin's box (it stands on its point), and whether it would reach under
+    // the floating chrome or past an edge.
+    const boxAt = (pt, [w, h]) => ({ l: pt.x - w / 2, r: pt.x + w / 2, t: pt.y - h, b: pt.y });
+    const covered = (b) => (
+      b.l < EDGE_GAP || b.r > W - EDGE_GAP || b.t < EDGE_GAP || b.b > H - EDGE_GAP
+      || rects.some((r) => b.r > r.l && b.l < r.r && b.b > r.t && b.t < r.b));
+    const placed = [];
+    // Each placed photo or pill's box by place, so the best value can move
+    // them aside (below).
+    const boxOf = new Map();
+    const clashes =(b) => placed.some((p) => b.r + PIN_GAP > p.l && b.l - PIN_GAP < p.r && b.b + PIN_GAP > p.t && b.t - PIN_GAP < p.b);
+    const picked = pickedRef.current || '';
+    const hot = hoverRef.current || ringRef.current || '';
     for (const f of geojsonRef.current.features) {
       const pr = f.properties;
-      if (!pr.fig) continue;
+      if (pr.ld === 0) continue;
       if (!inBox(f.geometry.coordinates, near)) {
-        if (inBox(f.geometry.coordinates, ring)) outside.push(pr);
+        if (pr.fig && inBox(f.geometry.coordinates, ring)) outside.push(pr);
         continue;
       }
       const pt = map.project(f.geometry.coordinates);
-      const half = (pinSize(`xp${SEP}n${SEP}${pr.fig}`)?.[0] || pillWidth(pr.fig)) / 2 + 6;
-      if (under(pt, half)) continue;
-      fits.push(pr);
-      if (pinFigRef.current !== 'score' && pr.eur >= 0
+      inView.push([pr, pt]);
+      // The best value is one the reader can see: the margin's places just
+      // past an edge are judged for the pins but never named best (Ohrid,
+      // off screen at Europe zoom, left the map with no best value shown).
+      const seen = pt.x >= 0 && pt.x <= W && pt.y >= 0 && pt.y <= H;
+      if (seen && pinFigRef.current !== 'score' && pr.eur >= 0
         && (!best || pr.eur < best.eur || (pr.eur === best.eur && pr.rank < best.rank))) best = pr;
     }
+    inView.sort((a, c) => a[0].rank - c[0].rank);
+    // The picked and hovered pins draw over everything: the rest keep clear.
+    for (const [pr, pt] of inView) {
+      if (pr.id !== picked && pr.id !== hot) continue;
+      const size = pinSize(oneImage(pr.id === picked ? 'pick' : 'hot', pr));
+      if (size) placed.push(boxAt(pt, size));
+    }
+    // Photo pins first (proposal.md section 1: by zoom, the best-ranked in
+    // view, the top ones named), then price pills, then dots: each place
+    // takes the first that fits, in the list's order. A place stays a pill
+    // until its photograph is in.
+    const tier = photoTier(map.getZoom());
     // A price pill for the best-ranked in view only (about one per 18,000
     // px of map, 10 to 40); the rest are bubbles and dots (decision.md).
     const cap = Math.max(10, Math.min(40, Math.round((W * H) / 18000)));
-    const byRank = (a, c) => a.rank - c.rank;
-    fits.sort(byRank);
-    outside.sort(byRank);
-    // The ring is twice the view's area beyond it: twice the cap.
-    const shown = [...fits.slice(0, cap), ...outside.slice(0, cap * 2)].map((pr) => pr.id);
-    const hiddenClusters = [];
-    if (map.getSource('dests-c')) {
-      for (const f of map.querySourceFeatures('dests-c', { filter: ['has', 'point_count'] })) {
-        const pt = map.project(f.geometry.coordinates);
-        if (under(pt, 22)) hiddenClusters.push(f.id ?? f.properties.cluster_id);
+    const photos = [];
+    const shown = [];
+    const want = [];
+    let named = 0;
+    const figOf = (pr) => (pinFigRef.current === 'score' ? '' : pr.fig);
+    for (const [pr, pt] of inView) {
+      if (pr.id === picked || pr.id === hot) continue;
+      // The best value's pin is 12 px wider (its saffron dot): measured at
+      // the plain size it met its neighbour in MapLibre's collision and hid.
+      const isBest = pr.id === best?.id;
+      if (photos.length < tier.n) {
+        if (hasPhoto(pr.id)) {
+          const tries = [];
+          if (named < tier.named) tries.push('fn');
+          tries.push('fs');
+          let done = false;
+          for (const kind of tries) {
+            const d = faceDims(isBest ? `${kind}b` : kind, pr.score, figOf(pr), kind === 'fn' ? pr.city : '');
+            if (kind === 'fn' && !d.nameFits) continue;
+            const b = boxAt(pt, [d.w, d.h]);
+            if (covered(b) || clashes(b)) continue;
+            placed.push(b);
+            boxOf.set(pr.id, b);
+            photos.push({ id: pr.id, kind });
+            if (kind === 'fn') named += 1;
+            done = true;
+            break;
+          }
+          if (done) continue;
+        } else if (!photoFailed(pr.id) && want.length < tier.n * 2) {
+          want.push(pr.id);
+        }
+      }
+      if (!pr.fig || shown.length >= cap) continue;
+      const b = boxAt(pt, pinSize(`xp${SEP}${isBest ? 'b' : 'n'}${SEP}${pr.fig}`) || [pillWidth(pr.fig) + (isBest ? 12 : 0), PILL_H]);
+      if (covered(b) || clashes(b)) continue;
+      placed.push(b);
+      boxOf.set(pr.id, b);
+      shown.push(pr.id);
+    }
+    // At least the top photo pin carries its name when the tier names any
+    // (judgement-4: at Europe zoom on a phone none did, the named box of each
+    // reaching past the edge or into a pill placed before it): the first
+    // photo pin whose named box fits clear of the edge, the chrome, the
+    // picked or hovered pin, the other photo pins and the best value takes
+    // it, and the pills it meets step aside.
+    if (tier.named > 0 && named === 0) {
+      const photoIds = new Set(photos.map((x) => x.id));
+      const fixedNow = placed.filter((p) => ![...boxOf.values()].includes(p));
+      for (const ph of photos) {
+        const at = inView.find(([pr]) => pr.id === ph.id);
+        if (!at) continue;
+        const [pr, pt] = at;
+        const d = faceDims(pr.id === best?.id ? 'fnb' : 'fn', pr.score, figOf(pr), pr.city);
+        if (!d.nameFits) continue;
+        const nb = boxAt(pt, [d.w, d.h]);
+        const meets = (p) => nb.r + PIN_GAP > p.l && nb.l - PIN_GAP < p.r && nb.b + PIN_GAP > p.t && nb.t - PIN_GAP < p.b;
+        const others = [...boxOf].filter(([id]) => id !== pr.id);
+        if (covered(nb) || fixedNow.some(meets)
+          || others.some(([id, p]) => (photoIds.has(id) || id === best?.id) && meets(p))) continue;
+        const away = new Set(others.filter(([, p]) => meets(p)).map(([id]) => id));
+        for (const id of away) {
+          const i = placed.indexOf(boxOf.get(id));
+          if (i >= 0) placed.splice(i, 1);
+          boxOf.delete(id);
+        }
+        for (let i = shown.length - 1; i >= 0; i -= 1) if (away.has(shown[i])) shown.splice(i, 1);
+        const was = placed.indexOf(boxOf.get(pr.id));
+        if (was >= 0) placed.splice(was, 1, nb);
+        boxOf.set(pr.id, nb);
+        ph.kind = 'fn';
+        named = 1;
+        break;
       }
     }
-    pinStateRef.current = { shown, hiddenClusters, best: best?.id || '' };
+    // The best value in view always shows, as the list's "Best value" row
+    // says: when no photo or pill of its own was placed, its pill takes its
+    // room and the pins it meets step aside (forced in unplaced, it lost
+    // MapLibre's collision and the map showed none at Europe zoom,
+    // integration check 2026-11-21). Never over the picked or hovered pin,
+    // never under the chrome: a best value with no room is not named, so the
+    // best layer (drawn past MapLibre's collision, mapPins.js) never covers
+    // the chrome or the picked pin.
+    let bestShown = !!best && boxOf.has(best.id);
+    if (best && best.id !== picked && best.id !== hot && !bestShown) {
+      const at = inView.find(([pr]) => pr.id === best.id);
+      const bb = at && boxAt(at[1], pinSize(`xp${SEP}b${SEP}${best.fig}`) || [pillWidth(best.fig) + 12, PILL_H]);
+      const meets = (p) => bb.r + PIN_GAP > p.l && bb.l - PIN_GAP < p.r && bb.b + PIN_GAP > p.t && bb.t - PIN_GAP < p.b;
+      const fixed = placed.filter((p) => ![...boxOf.values()].includes(p));
+      if (bb && !covered(bb) && !fixed.some(meets)) {
+        const away = new Set([...boxOf].filter(([, p]) => meets(p)).map(([id]) => id));
+        for (let i = photos.length - 1; i >= 0; i -= 1) if (away.has(photos[i].id)) photos.splice(i, 1);
+        for (let i = shown.length - 1; i >= 0; i -= 1) if (away.has(shown[i])) shown.splice(i, 1);
+        shown.push(best.id);
+        bestShown = true;
+      }
+    }
+    outside.sort((a, c) => a.rank - c.rank);
+    // The ring is twice the view's area beyond it: twice the cap.
+    for (const pr of outside.slice(0, cap * 2)) shown.push(pr.id);
+    const hiddenClusters = [];
+    if (map.getSource('dests-c') && map.getZoom() < BUBBLE_MAX) {
+      for (const f of map.querySourceFeatures('dests-c', { filter: ['has', 'point_count'] })) {
+        const pt = map.project(f.geometry.coordinates);
+        const b = { l: pt.x - 22, r: pt.x + 22, t: pt.y - 18, b: pt.y + 18 };
+        if (covered(b)) hiddenClusters.push(f.id ?? f.properties.cluster_id);
+      }
+    }
+    pinStateRef.current = { shown, photos, hiddenClusters, best: bestShown ? best.id : '' };
     applyPins(map);
-  }, [applyPins]);
+    evictPhotos(map, new Set([...photos.map((x) => x.id), picked, hot].filter(Boolean)));
+    // The photographs the best-ranked places still need, loaded while the
+    // camera rests; the pins are chosen again once a few have landed.
+    const need = [...want];
+    if (picked && !hasPhoto(picked)) need.unshift(picked);
+    if (need.length) {
+      loadPhotos(need, urlsOf, () => {
+        clearTimeout(photoTimer.current);
+        photoTimer.current = setTimeout(() => {
+          if (!map.isMoving() && Date.now() - lastMoveRef.current >= PIN_REST_MS) refreshRef.current(map);
+        }, PHOTO_REST_MS);
+      });
+    }
+  }, [applyPins, urlsOf]);
   const refreshRef = useRef(refreshPins);
   refreshRef.current = refreshPins;
 
@@ -666,8 +838,14 @@ export function ExploreMap({
     if (import.meta.env?.DEV) map.on('error', (e) => console.warn('[map]', e?.error?.message || e));
     const styleTimer = setTimeout(fail, STYLE_WAIT_MS);
 
-    // The pills and bubbles are drawn the first time a layer asks for one.
-    map.on('styleimagemissing', (e) => { addPinImage(map, e.id, countLabel); });
+    // The pins and bubbles are drawn the first time a layer asks for one.
+    // MapLibre 6 takes them from a resolver; a styleimagemissing listener
+    // can no longer answer the request that raised it (the "xc 23" warning).
+    if (typeof map.setMissingStyleImageResolver === 'function') {
+      map.setMissingStyleImageResolver((id) => { addPinImage(map, id, countLabel); });
+    } else {
+      map.on('styleimagemissing', (e) => { addPinImage(map, e.id, countLabel); });
+    }
 
     // The pins go in as soon as a style has loaded (not on 'load', which
     // waits for every tile, T441), and again after a basemap swap.
@@ -776,6 +954,7 @@ export function ExploreMap({
     // of a pan it cost the next stroke its frames (fix round 3, progress-3.md).
     let pinTimer = 0;
     map.on('movestart', () => {
+      lastMoveRef.current = Date.now();
       clearTimeout(viewTimer);
       clearTimeout(pinTimer);
       pinTimer = 0;
@@ -785,6 +964,7 @@ export function ExploreMap({
     // checked again once the map is idle.
     let dirty = false;
     map.on('moveend', () => {
+      lastMoveRef.current = Date.now();
       dirty = true;
       clearTimeout(pinTimer);
       pinTimer = setTimeout(() => { pinTimer = 0; refreshRef.current(map); }, PIN_REST_MS);
@@ -857,8 +1037,12 @@ export function ExploreMap({
         });
       }
       if (!dotsOpacity.has(map)) dotsOpacity.set(map, map.getPaintProperty('dest-dots', 'circle-opacity') ?? 1);
-      map.setPaintProperty('dest-dots', 'circle-opacity', data ? 0 : dotsOpacity.get(map));
-      map.setPaintProperty('dest-dots', 'circle-stroke-opacity', data ? 0 : 1);
+      for (const l of DOT_LAYERS) {
+        if (!map.getLayer(l)) continue;
+        map.setPaintProperty(l, 'circle-opacity', data ? 0 : dotsOpacity.get(map));
+        map.setPaintProperty(l, 'circle-stroke-opacity', data ? 0 : 1);
+      }
+      for (const l of HALO_LAYERS) if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', data ? 'none' : 'visible');
       for (const l of [...PIN_LAYERS, 'xcluster']) {
         if (map.getLayer(l)) map.setLayoutProperty(l, 'visibility', data ? 'none' : 'visible');
       }
@@ -913,10 +1097,12 @@ export function ExploreMap({
       }
       const pt = map.project(f.geometry.coordinates);
       const margin = 48;
-      // The picked pill carries the name, so it reaches further sideways.
+      // The picked pin carries the name, so it reaches further sideways, and
+      // it stands on its point, so its height counts above it.
       const pr = f.properties;
-      const half = (pinSize(['xp', 'p', pr.city, pr.fig].join(SEP))?.[0] || 160) / 2 + 8;
-      if (pt.x > half && pt.x < W - half && pt.y > top + margin && pt.y < H - bottom - margin) return;
+      const size = pinSize(oneImage('pick', pr)) || [160, 40];
+      const half = size[0] / 2 + 8;
+      if (pt.x > half && pt.x < W - half && pt.y - size[1] > top + 8 && pt.y > top + margin && pt.y < H - bottom - margin) return;
       // At low zoom the map's bounds can stop the camera short (Cyprus under
       // the card at zoom 3, judgement-2): a second try zooms in a step.
       const zoom = tries > 0 ? Math.min(map.getZoom() + 1.5, 9) : map.getZoom();
@@ -939,6 +1125,54 @@ export function ExploreMap({
     return () => { gone = true; cancelAnimationFrame(h); window.removeEventListener('carta:map-chrome', onChrome); };
   }, [pickedId, applyPins, pinsIn]);
 
+  // The picked place's card beside its pin: a marker holds a portal, on the
+  // side of the pin with room (left of a pin in the right half).
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const hasCard = !!pickCard;
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!hasCard || !pickedId || !map || !pinsIn) return undefined;
+    const f = geojsonRef.current.features.find((x) => x.properties.id === pickedId);
+    if (!f) return undefined;
+    const el = document.createElement('div');
+    el.className = 'xmap-anchor';
+    // Clear of the picked pin's label, which is as wide as its name.
+    const half = (pinSize(oneImage('pick', f.properties))?.[0] || 72) / 2 + 12;
+    // The side with room for the card (320 px at most, 16 px to spare): the
+    // pin's own half first, else the other side, else the roomier one; a
+    // pin just left of the middle of a 720 px map put the card past the
+    // frame at 1180 (integration check, 2026-11-21).
+    const x = map.project(f.geometry.coordinates).x;
+    const W = map.getCanvas().clientWidth;
+    const need = 320 + 16;
+    const roomL = x - half;
+    const roomR = W - x - half;
+    const pref = x > W / 2;
+    const right = (pref ? roomL : roomR) >= need ? pref : (pref ? roomR : roomL) >= need ? !pref : roomL > roomR;
+    const marker = new maplibregl.Marker({ element: el, anchor: right ? 'right' : 'left', offset: [right ? -half : half, -28] })
+      .setLngLat(f.geometry.coordinates).addTo(map);
+    setAnchorEl(el);
+    const settle = setTimeout(() => window.dispatchEvent(new Event('carta:map-chrome')), 60);
+    // Neither side wide enough: once the camera rests, the map moves the
+    // card's overflow (and 16 px) back inside the frame.
+    let gone = false;
+    const keepIn = () => {
+      if (gone) return;
+      const r = el.getBoundingClientRect();
+      const c = map.getCanvas().getBoundingClientRect();
+      if (!r.width) return;
+      const dx = r.right > c.right - 16 ? r.right - c.right + 16 : r.left < c.left + 16 ? r.left - c.left - 16 : 0;
+      if (Math.abs(dx) > 1) map.panBy([dx, 0], { duration: reducedMotion() ? 0 : 320 });
+    };
+    const later = () => {
+      if (gone) return;
+      if (map.isMoving()) map.once('moveend', later);
+      else requestAnimationFrame(keepIn);
+    };
+    const inside = setTimeout(later, 160);
+    return () => { gone = true; clearTimeout(settle); clearTimeout(inside); marker.remove(); setAnchorEl(null); };
+  }, [hasCard, pickedId, pinsIn]);
+
   // New places or new figures: the same camera, the pins re-priced and
   // re-ranked in place (decision.md "Pins": settings and filters never move
   // the camera).
@@ -946,6 +1180,7 @@ export function ExploreMap({
     const map = mapRef.current;
     if (!readyRef.current || !map?.getSource('dests-c')) return;
     map.getSource('dests-c').setData(geojson);
+    map.getSource('dests-all')?.setData(geojson);
     refreshRef.current(map);
     map.once('idle', () => refreshRef.current(map));
   }, [geojson]);
@@ -1019,6 +1254,7 @@ export function ExploreMap({
   return (
     <div className={`xmap${ready ? ' is-ready' : ''}`} role="region" aria-label={t('explore.mapAria')}>
       <div ref={containerRef} className="xmap-canvas" />
+      {anchorEl && pickCard && createPortal(pickCard, anchorEl)}
       {peek && (
         <div className="xmap-peek" role="group" aria-label={peek.city}>
           <a className="xmap-card-hit" href={`#dest=${encodeURIComponent(peek.id)}`}
@@ -1031,7 +1267,7 @@ export function ExploreMap({
                   <ScoreChip rating={{ score: peek.score }} size="sm" />
                 </div>
                 <p className="xmap-card-sub">{peek.country}</p>
-                <MatchLine place={source.find((p) => p.id === peek.id)} />
+                <MatchMark place={source.find((p) => p.id === peek.id)} />
                 {peek.fig && (
                   <p className="xmap-card-eur">
                     <span className="xmap-card-eur-line">
@@ -1063,7 +1299,7 @@ export function ExploreMap({
               key={k.key}
               type="button"
               className={`xmap-kpin${k.label ? ' is-pill' : ''}`}
-              style={{ left: k.x, top: k.y, '--kpin-w': k.label ? `${Math.round(k.w)}px` : undefined }}
+              style={{ left: k.x, top: k.y, '--kpin-w': k.label ? `${Math.round(k.w)}px` : undefined, '--kpin-h': k.label ? `${Math.round(k.h)}px` : undefined }}
               // WCAG 2.5.3: the name starts with the words the pill shows
               // (the figure), then says the rest.
               aria-label={k.label && k.fig ? `${k.fig} ${k.city}, ${kpinLabel(k)}` : kpinLabel(k)}

@@ -32,7 +32,7 @@ import { formatMoney } from '../../lib/money.js';
 import { minutesText } from '../../lib/journeys.js';
 import { priceDay } from '../../lib/price/priceDay.js';
 import { usualDayEur } from '../../lib/price/styleDay.js';
-import { dayInsight, receiptLines } from '../../lib/price/priceSheet.js';
+import { dayInsight, receiptLines, wayLegNote } from '../../lib/price/priceSheet.js';
 import { bedIsThin } from '../../lib/price/display.js';
 import { offeredStayTiers, DEFAULT_LIFESTYLE } from '../../lib/runtime_pricing.js';
 import { partyOf } from '../../lib/party.js';
@@ -216,7 +216,6 @@ function Receipt({ s, data, onPlan, t }) {
       <div className="rcp-top">
         <p className="rcp-total">
           {r.total == null ? <NotYet className="rcp-big" /> : <Money value={r.total} className="rcp-big" />}
-          {r.total != null && r.notKnown && <span className="rcp-open" aria-hidden="true">+</span>}
           {r.total != null && <span className="rcp-basis">{t(bKey, bArgs)}</span>}
         </p>
         {insight && (
@@ -420,9 +419,13 @@ function WayRow({ s, r, data, open, onToggle, t }) {
     return w?.rows || [];
   }, [open, dest, data, settings, view.request]);
   const k = r.group ? r.n : 1;
-  // Owner 2026-11-20: no visible "typical fare" line; a typical fare says
-  // so only in the amount's info (its name and hover title).
-  const sub = r.way.missing ? null : mode === 'plane' ? way?.airline || null : hoursOf(way);
+  // The price chain's step names the leg (G12, D10, owner 2026-11-20: the
+  // card shows no sign, the receipt says which): "Typical for this route",
+  // "Estimated, by train" or "Way there not priced yet"; else the airline
+  // or the hours. The typical fare's full sentence stays in the amount's
+  // info (its name and hover title).
+  const [noteKey] = wayLegNote(r.way);
+  const sub = noteKey ? t(noteKey) : mode === 'plane' ? way?.airline || null : hoursOf(way);
   const typical = mode === 'plane' && way?.typical ? t('settingsSum.typical') : null;
   const pick = (m) => {
     if (m !== mode) settings?.set?.setWay?.(m);

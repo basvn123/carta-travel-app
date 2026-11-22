@@ -3,12 +3,12 @@ import { PAGE } from './exploreConsts.js';
 import { FULL_RATING_RANGE, bandWord, minVerdict } from '../../lib/rating.js';
 import { spanOf, viewFactor } from '../../lib/price/display.js';
 import { formatMoney } from '../../lib/money.js';
-import { PICKS, bandLabel, labelForApplied } from '../filters/filterModel.js';
+import { PICKS, WARM, bandLabel, labelForApplied, quickOn } from '../filters/filterModel.js';
 
 /** Every filter off: the one shape Clear all, the lens clear and a guided
  *  search's "start over" write (G12 round 2 adds temps and picks). */
 export const XF_EMPTY = Object.freeze({ verdicts: [], month: null, budget: null, nocar: false, quiet: false,
-  vibe: null, area: null, near: null, nb: [], temps: [], picks: [] });
+  vibe: null, area: null, near: null, nb: [], temps: [], picks: [], minScore: null, minMatch: null });
 
 export function useExploreChips({
   availableCountries, countryFilter, countryNot, favorites, gLabels,
@@ -68,13 +68,24 @@ export function useExploreChips({
     // One chip for the rating, "Excellent and up" (T440): the rail asks for
     // a band and every band above it. G12 round 2: Top rated's own band
     // wears the shortcut's words (labelForApplied).
+    // G12 map view round 2: the quick chips' Score 8+ and Match 70%+.
+    if (xf.minScore) list.push({ key: 'minScore', label: t('filters.scoreMin', { n: xf.minScore }), remove: drop({ minScore: null }) });
+    if (xf.minMatch) list.push({ key: 'minMatch', label: t('filters.matchMin', { n: Math.round(xf.minMatch * 100) }), remove: drop({ minMatch: null }) });
     if (xf.verdicts.length) {
       list.push({ key: 'rating', label: labelForApplied('rating', t, xf) || t('filter.ratingAtLeast', { band: bandWord(t, minVerdict(xf.verdicts)) }), remove: drop({ verdicts: [] }) });
     }
     // G12 round 2: the day high in the When month, one chip per band. With
     // no month the band waits (it filters nothing), and its chip says so: a
     // link carrying xt must not turn a filter on later unseen (flow m2).
+    // Judgement-4: a quick chip is one filter, so the bands it set together
+    // are one chip (and count once) while all three are on.
+    const warm = travelMonth && quickOn('warm', { xf });
+    if (warm) {
+      list.push({ key: 't:warm', label: t('filters.quick.warm', { month: gLabels.monthInline(travelMonth) }),
+        remove: () => setXf((v) => ({ ...v, temps: v.temps.filter((x) => !WARM.includes(x)) })) });
+    }
     for (const id of xf.temps) {
+      if (warm && WARM.includes(id)) continue;
       const label = travelMonth
         ? t('filters.tempIn', { band: bandLabel(id, t), month: gLabels.monthInline(travelMonth) })
         : t('filters.tempWaiting', { band: bandLabel(id, t) });
@@ -82,8 +93,14 @@ export function useExploreChips({
         remove: () => setXf((v) => ({ ...v, temps: v.temps.filter((x) => x !== id) })) });
     }
     // The sheet's picks and the shortcuts that set them share one label.
+    // By the water (the quick chip) sets the sea and a lake: one chip.
+    const water = quickOn('water', { xf });
+    if (water) {
+      list.push({ key: 'p:water', label: t('filters.quick.water'),
+        remove: () => setXf((v) => ({ ...v, picks: v.picks.filter((x) => x !== 'sea' && x !== 'lake') })) });
+    }
     for (const id of xf.picks) {
-      if (!PICKS[id]) continue;
+      if (!PICKS[id] || (water && (id === 'sea' || id === 'lake'))) continue;
       list.push({ key: `p:${id}`, label: labelForApplied(`p:${id}`, t), remove: () => setXf((v) => ({ ...v, picks: v.picks.filter((x) => x !== id) })) });
     }
     if (xf.month) list.push({ key: 'month', label: t('gs.whyMonth', { month: gLabels.monthInline(xf.month) }), remove: drop({ month: null }) });
