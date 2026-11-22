@@ -11065,4 +11065,5 @@ export const en = {
   "mt.lastNight": "Last night here",
   "mt.dayOf": "Day {n} of {m}",
   "mt.wishCount": "{p} places in {c} countries",
+  "sp.perDayLabel": "Spending per day",
 };

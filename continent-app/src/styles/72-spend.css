@@ -681,3 +681,10 @@
   .sp-root.is-leaving, .sp-root.is-leaving .sp-panel, .sp-scrim.is-leaving, .sp-sheet, .sp-bal i, .sp-pbar i, .sp-plan-fill,
   .sp-tabs button, .sp-chips button, .sp-keys button, .sp-amtc, .sp-meter i { transition: none; }
 }
+
+/* G12 wow, phase E: the spend line under the bar. Each day's bead grows
+   with that day's own share (square root, 6 to 22 px); a day without spend
+   is an open ring, days to come are open and never counted; today keeps an
+   umber 800 ring (the page's saffron is the plan bar). After a save today's
+   bead settles to its new size (72-atlas.css .jl.is-spend). */
+.sp-line { padding: var(--space-1) var(--space-4) var(--space-3); }

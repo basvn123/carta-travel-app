@@ -249,6 +249,8 @@ export function TodayCard({
               img={img}
               groupSize={Math.max(1, figure?.party || plan.choices?.groupSize || 1)}
               plannedFood={figure?.foodDayPP || null}
+              stops={lineStops}
+              dayNum={today.dayNum}
               userId={userId}
               onClose={() => setSpendOpen(false)}
               onCrew={onCrew}

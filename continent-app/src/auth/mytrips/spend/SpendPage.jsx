@@ -25,6 +25,7 @@ import { prefersReducedMotion } from '../../../lib/motion.js';
 import { haptic } from '../../../lib/haptics.js';
 import { toEur } from '../../../lib/currency.js';
 import { formatMoney } from '../../../lib/money.js';
+import { JourneyLine } from '../atlas/JourneyLine.jsx';
 import { daysUntil, expenseDay } from '../../../lib/myTrips.js';
 import { parseSpeech, parseReceipt } from '../../../lib/spend/parse.js';
 import {
@@ -93,7 +94,7 @@ function useReceiptUrl(id) {
 }
 
 export function SpendPage({
-  planId, extras, saveExtras, todayIso, startIso, title, img, groupSize = 1, plannedFood = null,
+  planId, extras, saveExtras, todayIso, startIso, title, img, groupSize = 1, plannedFood = null, stops = [], dayNum = 0,
   userId = null, onClose, onCrew,
 }) {
   const { t, lang } = useI18n();
@@ -185,6 +186,17 @@ export function SpendPage({
   const todayRows = rows.filter((r) => r.day === todayIso);
   const yRows = rows.filter((r) => r.day === yesterdayIso);
   const mineToday = mineOnDay(rows, todayIso);
+  // G12 atlas: the spend line, your own share per trip day; days to come hold no figure.
+  const dayTotals = useMemo(() => {
+    const of = stops.reduce((n, s) => n + (s.nights || 0), 0);
+    if (!startIso || !of) return [];
+    return Array.from({ length: of }, (_, i) => {
+      const iso = shiftIso(startIso, i);
+      const cents = mineOnDay(rows, iso).cents;
+      return { iso, eur: i + 1 <= dayNum ? cents / 100 : null };
+    });
+  }, [rows, stops, startIso, dayNum]);
+  const dayWords = dayTotals.map((d, i) => (i + 1 > dayNum ? t('sp.dayN', { n: i + 1 }) : formatMoney(d.eur || 0)));
   const foodToday = (mineToday.byCat.food || 0) / 100;
 
   /* ── The kas ── */
@@ -438,6 +450,17 @@ export function SpendPage({
               </span>
             )}
           </header>
+          {dayTotals.length > 0 && (
+            <JourneyLine
+              variant="spend"
+              className="sp-line"
+              stops={stops}
+              dayNum={dayNum}
+              dayTotals={dayTotals}
+              dayLabels={dayWords}
+              label={`${t('sp.perDayLabel')}: ${dayTotals.slice(0, dayNum).map((d, i) => `${t('sp.dayN', { n: i + 1 })} ${formatMoney(d.eur || 0)}`).join(', ')}`}
+            />
+          )}
           <div className="sp-tabs" role="tablist" aria-label={t('sp.title')}>
             {[['today', 'sp.tabToday'], ['kas', 'sp.tabKas']].map(([k, key]) => (
               <Pressable key={k} type="button" role="tab" id={`sp-tab-${k}`} aria-selected={tab === k} aria-controls="sp-tabpanel"

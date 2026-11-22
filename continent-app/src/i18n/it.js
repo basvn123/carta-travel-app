@@ -10979,4 +10979,5 @@ export const it = {
   "mt.lastNight": "Ultima notte",
   "mt.dayOf": "Giorno {n} di {m}",
   "mt.wishCount": "{p} luoghi in {c} paesi",
+  "sp.perDayLabel": "Spese al giorno",
 };
