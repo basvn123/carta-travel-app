@@ -11,6 +11,7 @@ import { tabHref } from '../../lib/urlState.js';
 import { NextTripCard, TripRow } from './TripCards.jsx';
 import { TripPrice } from './parts.jsx';
 import { JoinsLine } from '../../together/signals.jsx';
+import { SectHead } from './atlas/Ink.jsx';
 import { FaceStack } from '../FriendFaces.jsx';
 
 /** A plain click stays in the app; a modified click opens the address. */
@@ -28,16 +29,11 @@ export function door(go) {
 const priced = (rows) => rows.some((r) => r.figure?.type === TripPrice);
 
 
-/** A section of one tab: a heading with an optional count and action. */
-export function Section({ title, count, action, unit, children, id, className = '' }) {
+/** A section of one tab: the shared head (title, a plain count, one action). */
+export function Section({ title, count, action, children, id, className = '' }) {
   return (
     <section className={`mt-section ${className}`.trim()} aria-labelledby={id}>
-      <div className="mt-section-head">
-        <h3 className="mt-section-title" id={id}>{title}</h3>
-        {count > 0 && <Chip kind="count">{count}</Chip>}
-        {unit && <span className="mt-section-unit">{unit}</span>}
-        {action && <span className="mt-section-action">{action}</span>}
-      </div>
+      <SectHead id={id} title={title} count={count > 0 ? count : null} action={action} />
       {children}
     </section>
   );
@@ -69,18 +65,19 @@ export function Empty({ title, line, action, icon = null, tone = 'umber' }) {
 export const MT_TABS = ['trips', 'saved', 'europe'];
 
 /**
- * The page head (T923, T989): the three underline tabs with their counts,
+ * The page head (T923, T989): the three underline tabs (no counts since
+ * decision 0016: the tab names the place, the sections count),
  * sticky under the app header, in the style of Explore's category tabs, and
  * at their right Add a booking (an icon on a phone; with New trip as buttons
  * from 700 px). No visible "My trips" title (owner, T989): the tab bar and
  * the lit door say where you are; the name stays for screen readers.
  */
-export function MyTripsHead({ tab, onTab, counts = {}, onAddBooking, onNewTrip }) {
+export function MyTripsHead({ tab, onTab, onAddBooking, onNewTrip }) {
   const { t } = useI18n();
   const tabs = [
-    { id: 'trips', label: t('mt.tabTrips'), count: counts.trips || null },
-    { id: 'saved', label: t('mt.tabSaved'), count: counts.saved || null },
-    { id: 'europe', label: t('mt.tabEurope'), count: counts.europe || null },
+    { id: 'trips', label: t('mt.tabTrips') },
+    { id: 'saved', label: t('mt.tabSaved') },
+    { id: 'europe', label: t('mt.tabEurope') },
   ];
   return (
     <>

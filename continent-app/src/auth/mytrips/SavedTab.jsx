@@ -6,7 +6,8 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { PriceControl, ExampleBar } from './TripParts.jsx';
-import { WatchRail, WatchSheet, MovePill, useWatched } from './Watch.jsx';
+import { WatchRail, WatchSheet, useWatched } from './Watch.jsx';
+import { SectHead, MoveInk, NoPrice } from './atlas/Ink.jsx';
 import { inUnit, moveInUnit, basisOf, sameBasis } from '../../lib/price/priceView.js';
 import {
   PlusIcon, ArrowDownIcon, RouteIcon, EyeIcon, CloseIcon, PencilIcon, ArrowLeftIcon, ArrowRightIcon, BookmarkIcon, CheckIcon, FriendsIcon, ShareIcon,
@@ -138,9 +139,9 @@ function SavedItem({
           {/* A place's sub is its country, which the flag already says. */}
           <span className="mt-item-kind">{[kindOne(t, row.kind), row.kind === 'dest' ? '' : row.sub].filter(Boolean).join(', ')}</span>
           {move ? (
-            <MovePill delta={move}>
+            <MoveInk delta={move}>
               {t(move < 0 ? 'mt.lowerSince' : 'mt.higherSince', { price: formatMoney(Math.abs(move)), date: sinceDay(change.at) })}
-            </MovePill>
+            </MoveInk>
           ) : null}
         </span>
         {editing ? (
@@ -172,7 +173,7 @@ function SavedItem({
           </div>
         )}
       </div>
-      {Number.isFinite(fig) ? <b className="mt-item-fig num">{formatMoney(fig)}</b> : <span className="mt-item-fig mt-muted">{t('saved.factNoPrice')}</span>}
+      {Number.isFinite(fig) ? <b className="mt-item-fig num">{formatMoney(fig)}</b> : <NoPrice className="mt-item-fig">{t('saved.factNoPrice')}</NoPrice>}
       <CardMenu
         label={t('mt.itemMenu', { name: row.name || row.id })}
         actions={[
@@ -374,8 +375,8 @@ export function SavedTab({
           onClose={() => setWatchOpen(null)} />
       )}
       <div className="mt-saved-lists">
-      <h3 className="atlas-sect-title">{t('mt.lists')}</h3>
-      <div className="mt-lists atlas-rail" role="group" aria-label={t('mt.lists')}>
+      <SectHead id="mt-lists-h" title={t('mt.lists')} />
+      <div className="mt-lists atlas-rail" role="group" aria-labelledby="mt-lists-h">
         <Button className="mt-lcard" aria-pressed={list === 'all'} onClick={() => setList('all')}>
           <Mosaic rows={rows} />
           <span className="mt-lcard-name">{t('mt.allSaved')}</span>
@@ -421,68 +422,6 @@ export function SavedTab({
       </div>
       </div>
       <div className="atlas-main mt-saved-main">
-
-      {current && (
-        <div className="mt-list-bar">
-          <h3 className="mt-list-title">{current.name}</h3>
-          <CardMenu
-            label={t('mt.listMenu', { name: current.name })}
-            actions={[
-              { key: 'rename', label: t('mt.renameList'), icon: <PencilIcon size={16} />, onClick: () => startName(current.id) },
-              ...(canShare ? [{ key: 'share', label: t('mt2.share'), icon: <ShareIcon size={16} />, onClick: () => { setShareFailed(false); setPeople(current.id); } }] : []),
-              ...(lists[0]?.id !== current.id ? [{ key: 'up', label: t('mt.moveEarlier'), icon: <ArrowLeftIcon size={16} />, onClick: () => moveList(current.id, -1) }] : []),
-              ...(lists[lists.length - 1]?.id !== current.id ? [{ key: 'down', label: t('mt.moveLater'), icon: <ArrowRightIcon size={16} />, onClick: () => moveList(current.id, 1) }] : []),
-            ]}
-            onRemove={() => removeList(current)}
-            removeLabel={t('mt.deleteList', { name: current.name })}
-          />
-        </div>
-      )}
-
-      {current && people === current.id && (
-        <PeoplePicker
-          friends={friends}
-          me={me}
-          submitLabel={(n) => (n ? t('mt2.shareWithN', { n }) : t('mt2.share'))}
-          onSubmit={(ids) => shareList(current, ids)}
-          onClose={() => setPeople(null)}
-        />
-      )}
-      {currentShared && (
-        <div className="mt-list-bar">
-          <h3 className="mt-list-title">{currentShared.name}</h3>
-          <Button size="sm" className="mt-people-btn" aria-expanded={people === currentShared.id}
-            aria-label={t('mt2.peopleIn', { name: currentShared.name })}
-            onClick={() => setPeople((p) => (p === currentShared.id ? null : currentShared.id))}>
-            <Faces people={facesOf(currentShared.members)} max={4} />
-          </Button>
-          <CardMenu
-            label={t('mt.listMenu', { name: currentShared.name })}
-            actions={currentShared.mine ? [
-              { key: 'rename', label: t('mt.renameList'), icon: <PencilIcon size={16} />, onClick: () => { setNaming(`sh:${currentShared.id}`); setName(currentShared.name); } },
-              { key: 'people', label: t('mt2.addPeople'), icon: <FriendsIcon size={16} />, onClick: () => setPeople(currentShared.id) },
-            ] : [
-              { key: 'leave', label: t('mt2.leaveList'), icon: <ArrowLeftIcon size={16} />, onClick: () => leaveShared(currentShared) },
-            ]}
-            onRemove={currentShared.mine ? () => removeSharedList(currentShared) : undefined}
-            removeLabel={t('mt.deleteList', { name: currentShared.name })}
-          />
-        </div>
-      )}
-      {currentShared && people === currentShared.id && (
-        <PeoplePicker
-          friends={friendsToAdd(friends, currentShared)}
-          members={currentShared.members}
-          me={me}
-          owner={currentShared.mine}
-          submitLabel={(n) => (n ? t('mt2.addN', { n }) : t('mt2.addPeople'))}
-          onSubmit={(ids) => ids.forEach((u) => act.addMember(currentShared.id, u).catch(() => {}))}
-          onRemoveMember={(m) => act.removeMember(currentShared.id, m.userId).catch(() => {})}
-          onClose={() => setPeople(null)}
-        />
-      )}
-      {shareFailed && <p className="mt-muted" role="alert">{t('mt2.shareFailed')}</p>}
-
       {list === 'all' && top}
 
       {/* One compact row (owner review): the price control, then List / Map at its end. */}
@@ -503,9 +442,11 @@ export function SavedTab({
       {(kinds.length > 1 || anyFell || fell || cc) && <div className="mt-saved-filters atlas-chips-scroll">
         {kinds.length > 1 && (
           <ChipGroup label={t('saved.kindLabel')} className="mt-chips">
-            <Chip kind="choice" selected={kindNow === 'all'} onClick={() => setKind('all')}>{t('mt.kindAllN', { n: inList.length })}</Chip>
+            <Chip kind="choice" selected={kindNow === 'all'} onClick={() => setKind('all')}>{t('mt.kindAll')}</Chip>
             {kinds.map(([k, n]) => (
-              <Chip key={k} kind="choice" selected={kindNow === k} onClick={() => setKind(k)}>{t('mt.kindN', { kind: t(FAV_KIND_LABEL[k]), n })}</Chip>
+              <Chip key={k} kind="choice" selected={kindNow === k} onClick={() => setKind(k)}>
+                {t(FAV_KIND_LABEL[k])} <span className="ink-chip-n num">{n}</span>
+              </Chip>
             ))}
           </ChipGroup>
         )}
@@ -519,15 +460,79 @@ export function SavedTab({
         )}
       </div>}
 
-      {shown.length > 0 && (
-        <div className="mt-listhead">
-          <b>{t(shown.length === 1 ? 'mt.saves1' : 'mt.savesN', { n: shown.length })}</b>
-          <Pressable className="mt-kies is-head" aria-pressed={choosing}
-            onClick={() => { if (choosing) setSel([]); setChoosing((v) => !v); }}>
-            {t(choosing ? 'saved.done' : 'mt.choose')}
-          </Pressable>
-        </div>
+      {/* One head for the list (decision 0016): its name and count, Kiezen and the
+          list's own controls; a picked country shows its silhouette and Toon alles. */}
+      <SectHead
+        id="mt-saved-h"
+        className="mt-saved-head"
+        title={current?.name || currentShared?.name || t('mt.allSaved')}
+        count={shown.length}
+        action={(
+          <>
+            {shown.length > 0 && (
+              <Pressable className="mt-kies is-head" aria-pressed={choosing}
+                onClick={() => { if (choosing) setSel([]); setChoosing((v) => !v); }}>
+                {t(choosing ? 'saved.done' : 'mt.choose')}
+              </Pressable>
+            )}
+            {currentShared && (
+              <Button size="sm" className="mt-people-btn" aria-expanded={people === currentShared.id}
+                aria-label={t('mt2.peopleIn', { name: currentShared.name })}
+                onClick={() => setPeople((p) => (p === currentShared.id ? null : currentShared.id))}>
+                <Faces people={facesOf(currentShared.members)} max={4} />
+              </Button>
+            )}
+            {current && (
+              <CardMenu
+                label={t('mt.listMenu', { name: current.name })}
+                actions={[
+                  { key: 'rename', label: t('mt.renameList'), icon: <PencilIcon size={16} />, onClick: () => startName(current.id) },
+                  ...(canShare ? [{ key: 'share', label: t('mt2.share'), icon: <ShareIcon size={16} />, onClick: () => { setShareFailed(false); setPeople(current.id); } }] : []),
+                  ...(lists[0]?.id !== current.id ? [{ key: 'up', label: t('mt.moveEarlier'), icon: <ArrowLeftIcon size={16} />, onClick: () => moveList(current.id, -1) }] : []),
+                  ...(lists[lists.length - 1]?.id !== current.id ? [{ key: 'down', label: t('mt.moveLater'), icon: <ArrowRightIcon size={16} />, onClick: () => moveList(current.id, 1) }] : []),
+                ]}
+                onRemove={() => removeList(current)}
+                removeLabel={t('mt.deleteList', { name: current.name })}
+              />
+            )}
+            {currentShared && (
+              <CardMenu
+                label={t('mt.listMenu', { name: currentShared.name })}
+                actions={currentShared.mine ? [
+                  { key: 'rename', label: t('mt.renameList'), icon: <PencilIcon size={16} />, onClick: () => { setNaming(`sh:${currentShared.id}`); setName(currentShared.name); } },
+                  { key: 'people', label: t('mt2.addPeople'), icon: <FriendsIcon size={16} />, onClick: () => setPeople(currentShared.id) },
+                ] : [
+                  { key: 'leave', label: t('mt2.leaveList'), icon: <ArrowLeftIcon size={16} />, onClick: () => leaveShared(currentShared) },
+                ]}
+                onRemove={currentShared.mine ? () => removeSharedList(currentShared) : undefined}
+                removeLabel={t('mt.deleteList', { name: currentShared.name })}
+              />
+            )}
+          </>
+        )}
+      />
+      {current && people === current.id && (
+        <PeoplePicker
+          friends={friends}
+          me={me}
+          submitLabel={(n) => (n ? t('mt2.shareWithN', { n }) : t('mt2.share'))}
+          onSubmit={(ids) => shareList(current, ids)}
+          onClose={() => setPeople(null)}
+        />
       )}
+      {currentShared && people === currentShared.id && (
+        <PeoplePicker
+          friends={friendsToAdd(friends, currentShared)}
+          members={currentShared.members}
+          me={me}
+          owner={currentShared.mine}
+          submitLabel={(n) => (n ? t('mt2.addN', { n }) : t('mt2.addPeople'))}
+          onSubmit={(ids) => ids.forEach((u) => act.addMember(currentShared.id, u).catch(() => {}))}
+          onRemoveMember={(m) => act.removeMember(currentShared.id, m.userId).catch(() => {})}
+          onClose={() => setPeople(null)}
+        />
+      )}
+      {shareFailed && <p className="mt-muted" role="alert">{t('mt2.shareFailed')}</p>}
       <div className={`mt-split is-${view}${mapHost ? ' is-hosted' : ''}`}>
         <div className="mt-split-list">
           {shown.length ? (

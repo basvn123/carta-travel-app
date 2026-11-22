@@ -5,7 +5,8 @@ import { useAuth } from '../AuthContext.jsx';
 import { Button, Switch } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { BedIcon, PlaneIcon, SunIcon, BellIcon, ArrowDownIcon, ArrowUpIcon } from '../../components/Icons.jsx';
+import { BedIcon, PlaneIcon, SunIcon, BellIcon } from '../../components/Icons.jsx';
+import { SectHead, MoveInk } from './atlas/Ink.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { activeLocale } from '../../lib/localeState.js';
 import {
@@ -76,16 +77,6 @@ function moveWords(t, delta) {
   return t(delta < 0 ? 'watch.lower' : 'watch.higher', { price: formatMoney(Math.abs(delta)) });
 }
 
-/** The price move as a pill with an arrow icon (never a glyph). */
-export function MovePill({ delta, children }) {
-  const Arrow = delta < 0 ? ArrowDownIcon : ArrowUpIcon;
-  return (
-    <span className={`atlas-move${delta > 0 ? ' is-up' : ''}`}>
-      {delta ? <Arrow size={12} /> : null}{children}
-    </span>
-  );
-}
-
 function WatchCard({ item, onOpen }) {
   const { t } = useI18n();
   const Icon = KIND_ICON[item.kind] || SunIcon;
@@ -108,7 +99,7 @@ function WatchCard({ item, onOpen }) {
       )}
       <span className="atlas-watch-p">
         <b className="num">{formatMoney(now)}</b>
-        {item.pts.length > 1 && <MovePill delta={delta}>{moveWords(t, delta)}</MovePill>}
+        {item.pts.length > 1 && <MoveInk delta={delta}>{moveWords(t, delta)}</MoveInk>}
       </span>
     </Pressable>
   );
@@ -120,10 +111,7 @@ export function WatchRail({ items, onOpen }) {
   if (!items.length) return null;
   return (
     <section className="atlas-sect" aria-labelledby="atlas-watch-h">
-      <div className="atlas-sect-h">
-        <h3 id="atlas-watch-h">{t('watch.title')}</h3>
-        <span className="atlas-sect-n">{items.length}</span>
-      </div>
+      <SectHead id="atlas-watch-h" title={t('watch.title')} count={items.length} />
       <div className="atlas-rail">
         {items.map((it) => <WatchCard key={it.id} item={it} onOpen={onOpen} />)}
       </div>

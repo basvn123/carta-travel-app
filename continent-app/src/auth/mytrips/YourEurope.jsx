@@ -7,6 +7,7 @@ import { countryName } from '../../lib/countryName.js';
 import { extremes, nightsPerMonth, nightsPerYear, tripLogOrder, tripYear } from '../../lib/atlasFacts.js';
 import { NAME_OF } from './atlas/plateData.js';
 import { ExampleBar, RateTrip } from './TripParts.jsx';
+import { Frame2 } from './atlas/Ink.jsx';
 import {
   Badges, CostChart, Extremes, MonthsChart, PastRow, Sect, YearBars, YearCardSection,
 } from './EuropeParts.jsx';
@@ -132,10 +133,7 @@ export function YourEurope({
   // By grade: the best first, a tie by the newest; trips without a grade last.
   const ranked = byGrade ? [...inYear].sort((p, q) => ((q.grade ?? -1) - (p.grade ?? -1)) || (q.year - p.year)) : [];
   const sortSeg = graded && inYear.length > 1 ? (
-    <div className="atlas-seg2" role="group" aria-label={t('mt.pastSort')}>
-      <Pressable aria-pressed={!byGrade} onClick={() => setOrder('year')}>{t('mt.pastByYear')}</Pressable>
-      <Pressable aria-pressed={byGrade} onClick={() => setOrder('grade')}>{t('mt.pastByGrade')}</Pressable>
-    </div>
+    <Frame2 label={t('mt.pastSort')} options={[['year', t('mt.pastByYear')], ['grade', t('mt.pastByGrade')]]} value={byGrade ? 'grade' : 'year'} onChange={setOrder} />
   ) : null;
   const pastSect = (
     <Sect

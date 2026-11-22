@@ -48,7 +48,6 @@ import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
 import { KeptTrips } from './mytrips/KeptTrips.jsx';
 import { SavedJourneys } from './mytrips/SavedJourneys.jsx';
-import { useSavedJourneys } from '../lib/journeySaves.js';
 import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
@@ -62,6 +61,7 @@ import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips
 import { BAND_CUTOFFS } from '../lib/rating.js';
 import { YourEurope } from './mytrips/YourEurope.jsx';
 import { AtlasSlot } from './mytrips/atlas/AtlasSlot.jsx';
+import { NoPrice } from './mytrips/atlas/Ink.jsx';
 import { useEuropeMap, NAME_OF } from './mytrips/atlas/plateData.js';
 import { tripsLayer, europeLayer } from './mytrips/atlas/layers.js';
 import { exportYearCard } from './mytrips/YearRecap.jsx';
@@ -287,9 +287,6 @@ export function SavedTripsPanel({
   const todayIso = localToday();
   useState(seedMock);
 
-  const keptCount = useKept().length;
-  // T831: Carta's own trips saved from their page count as something kept.
-  const savedWeeks = useSavedJourneys().length;
   const [tab, setTab] = useState(readTab);
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
@@ -807,7 +804,7 @@ export function SavedTripsPanel({
     return {
       ...common,
       meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
-      figure: figure ? <TripPrice figure={figure} unitValue={tripInUnit(figure, choices)} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
+      figure: figure ? <TripPrice figure={figure} unitValue={tripInUnit(figure, choices)} /> : <NoPrice>{t('saved.factNoPrice')}</NoPrice>,
       menuActions: planMenu(p, parts, device),
     };
   };
@@ -1469,11 +1466,6 @@ export function SavedTripsPanel({
           <MyTripsHead
             tab={tab}
             onTab={pickTab}
-            counts={{
-              trips: tripsCount,
-              saved: shortRows.length + savedWeeks + keptCount,
-              europe: beenIso.size,
-            }}
             onNewTrip={() => onGoToTab?.('planstart')}
             onAddBooking={() => setBook({ planId: '' })}
           />

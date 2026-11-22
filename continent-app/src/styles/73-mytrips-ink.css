@@ -1,0 +1,149 @@
+/* G12 My trips in ink and photo (decision 0016, run 2026-11-22-mytrips-levelup).
+   The shared parts of src/auth/mytrips/atlas/Ink.jsx: one section head, one
+   two-way frame, the price move in ink, the empty price cell, and the chip
+   inside My trips. No beige wash and no sunken fill: controls are line and
+   ink, the chosen thing is umber. Kit classes are only restyled under
+   .mt-panel, so Explore and Plan keep the kit; the ink-* classes are new and
+   only My trips names them. Tokens only. */
+
+/* ---- the section head: title, a plain count, one action ---- */
+.ink-sh {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--space-2);
+  row-gap: var(--space-1);
+  min-height: var(--tap);
+  min-width: 0;
+}
+.ink-sh-t {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--text-title);
+  font-weight: 800;
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-title);
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+.ink-sh-n {
+  font-size: var(--text-lead);
+  font-weight: 700;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.ink-sh-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2) var(--space-3);
+  margin-inline-start: auto;
+}
+.ink-sh-icon { flex: none; width: 28px; height: 28px; }
+.ink-sh-icon path { fill: var(--umber-600); }
+
+/* ---- the frame: two cells in one umber edge, the chosen one painted ---- */
+.ink-frame {
+  display: inline-flex;
+  flex: none;
+  border: var(--stroke-edge) solid var(--umber-800);
+  border-radius: var(--radius-sm);
+  background: transparent;
+}
+.ink-frame > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  min-height: calc(var(--tap) - 2 * var(--stroke-edge));
+  padding: 0 var(--space-3);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-2);
+  font: 700 var(--text-body) / 1 var(--ui);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color var(--dur-1) var(--ease-out), color var(--dur-1) var(--ease-out);
+}
+.ink-frame > button + button { border-inline-start: var(--stroke-hair) solid var(--umber-300); }
+.ink-frame > button:first-child { border-start-start-radius: calc(var(--radius-sm) - var(--stroke-edge)); border-end-start-radius: calc(var(--radius-sm) - var(--stroke-edge)); }
+.ink-frame > button:last-child { border-start-end-radius: calc(var(--radius-sm) - var(--stroke-edge)); border-end-end-radius: calc(var(--radius-sm) - var(--stroke-edge)); }
+.ink-frame > button[aria-pressed="true"] { background: var(--action); color: var(--action-text); font-weight: 800; }
+.ink-frame > button[aria-pressed="true"] + button,
+.ink-frame > button + button[aria-pressed="true"] { border-inline-start-color: var(--action); }
+@media (hover: hover) {
+  .ink-frame > button:not([aria-pressed="true"]):hover { color: var(--text); }
+}
+.ink-frame > button:focus-visible { position: relative; outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.ink-frame.is-wide { display: flex; width: 100%; overflow-x: auto; scrollbar-width: none; }
+.ink-frame.is-wide > button { flex: 1 0 auto; }
+
+/* ---- the price move: ink on its own line, no pill ---- */
+.ink-move {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1);
+  min-width: 0;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  line-height: var(--leading-ui);
+  color: var(--text-2);
+}
+.ink-move > svg { flex: none; margin-top: 1px; }
+.ink-move.is-down { color: var(--umber-700); }
+
+/* ---- no price yet: the empty cell and the words, on one line ---- */
+.ink-noprice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-label);
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.ink-noprice::before {
+  content: '';
+  flex: none;
+  width: 11px;
+  height: 11px;
+  border: var(--stroke-edge) dashed var(--edge);
+}
+
+/* ---- chips inside My trips (decision 0016, exception 1): an outline;
+   chosen is a 2.5 px umber 800 edge, umber words and the tick, no fill ---- */
+.mt-panel .ui-chip-filter,
+.mt-panel .ui-chip-choice { background: transparent; border-color: var(--edge); color: var(--text); }
+.mt-panel .ui-chip.is-selected {
+  padding-inline: 13px;
+  background: transparent;
+  border-width: calc(var(--stroke-edge) + var(--stroke-hair));
+  border-color: var(--umber-800);
+  color: var(--umber-800);
+  font-weight: 800;
+}
+.mt-panel .ui-chip:disabled { background: transparent; border-style: dashed; }
+.ink-chip-n { color: var(--text-3); font-weight: 600; font-variant-numeric: tabular-nums; }
+/* The chips wrap: none is cut at the edge of a phone. */
+.mt-panel .mt-saved .mt-saved-filters,
+.mt-panel .atlas-chips-scroll,
+.mt-panel .atlas-chips-scroll .mt-chips { flex-wrap: wrap; overflow: visible; }
+.mt-panel .atlas-chips-scroll > .ui-chip-group { flex: 0 1 auto; min-width: 0; max-width: 100%; }
+
+/* ---- the heads in place ---- */
+.mt-panel .mt-section > .ink-sh,
+.mt-panel .atlas-sect > .ink-sh { margin-bottom: calc(-1 * var(--space-1)); }
+.mt-panel .mt-saved-lists > .ink-sh { margin-bottom: var(--space-1); }
+.mt-saved-head { margin-top: var(--space-2); }
+/* Past trips: the switch and Add share the head's end; on a phone they take
+   their own line under it, so the title stays on one line. */
+@media (max-width: 599px) {
+  .ink-sh-act:has(> .atlas-past-acts) { flex: 1 0 100%; }
+  .ink-sh-act > .atlas-past-acts { flex: 1; justify-content: space-between; }
+}
+@media (min-width: 1100px) {
+  .mt-saved-head .mt-kies.is-head { display: none; }
+}

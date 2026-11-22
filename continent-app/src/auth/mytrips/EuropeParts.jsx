@@ -6,7 +6,7 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import {
-  ArrowDownIcon, ArrowUpIcon, CalendarIcon, ChevronRightIcon, GlobeIcon, MountainIcon, PencilIcon, ShareIcon, TrainIcon,
+  CalendarIcon, ChevronRightIcon, GlobeIcon, MountainIcon, PencilIcon, ShareIcon, TrainIcon,
 } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { RateTrip } from './TripParts.jsx';
@@ -15,6 +15,7 @@ import { EuropeMap } from './atlas/AtlasPlate.jsx';
 import { CardMenu } from './parts.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { YearCard } from './YearStudio.jsx';
+import { SectHead, Frame2, MoveInk } from './atlas/Ink.jsx';
 
 /**
  * The parts of Your Europe with a record (G12 Phase E), drawn as the
@@ -43,10 +44,10 @@ function useWidth(fallback = 358) {
 
 const nf = (n, d = 0) => Number(n).toLocaleString(activeLocale(), { minimumFractionDigits: d, maximumFractionDigits: d });
 
-export function Sect({ title, action = null, full = false, children, id }) {
+export function Sect({ title, count = null, action = null, full = false, children, id }) {
   return (
     <section className={`atlas-sect${full ? ' is-full' : ''}`} aria-labelledby={id}>
-      <div className="atlas-sect-h"><h3 id={id}>{title}</h3>{action}</div>
+      <SectHead id={id} title={title} count={count} action={action} />
       {children}
     </section>
   );
@@ -135,10 +136,7 @@ export function CostChart({ trips, per, onPer, missing = 0, onFill }) {
   const max = Math.max(1, ...rows.map((r) => r.v));
   const avg = rows.length ? rows.reduce((s, r) => s + r.v, 0) / rows.length : null;
   const seg = (
-    <div className="atlas-seg2" role="group" aria-label={t('mt.costTitle')}>
-      <Pressable aria-pressed={per === 'day'} onClick={() => onPer('day')}>{t('mt.costPerDay')}</Pressable>
-      <Pressable aria-pressed={per === 'trip'} onClick={() => onPer('trip')}>{t('mt.costPerTrip')}</Pressable>
-    </div>
+    <Frame2 label={t('mt.costTitle')} options={[['day', t('mt.costPerDay')], ['trip', t('mt.costPerTrip')]]} value={per} onChange={onPer} />
   );
   return (
     <Sect id="mt-cost-h" full title={t('mt.costTitle')} action={rows.length ? seg : null}>
@@ -312,12 +310,9 @@ export function PastRow({ x, top = false, withYear = false, rating = false, onRa
             {meta}
           </span>
           {x.vs != null && Math.round(x.vs) !== 0 && (
-            <span className="atlas-prow-est">
-              <span className={`atlas-move${x.vs > 0 ? ' is-up' : ''}`}>
-                {x.vs < 0 ? <ArrowDownIcon size={12} /> : <ArrowUpIcon size={12} />}
-                {t(x.vs < 0 ? 'mt.vsUnder' : 'mt.vsOver', { price: formatMoney(Math.abs(x.vs)) })}
-              </span>
-            </span>
+            <MoveInk delta={x.vs} className="atlas-prow-est">
+              {t(x.vs < 0 ? 'mt.vsUnder' : 'mt.vsOver', { price: formatMoney(Math.abs(x.vs)) })}
+            </MoveInk>
           )}
         </span>
       </Pressable>
