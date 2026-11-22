@@ -21,6 +21,11 @@ within MERGE_KM of each other AND share a folded name token, or they stay
 apart: two beaches 300 m apart along the same bay really are two beaches, and
 a merge that guesses would silently delete one of them.
 
+Then the famous seed (seed_beaches.py, D25 c): every Wikidata id the famous
+coverage report handed off for the country is pinned into its rows, fetched by
+id when the class query missed it, and marked row["seed"]. A cached country
+picks a new seed up without --refresh.
+
 Idempotent and resumable: one cache file per country per stage
 (cache/beaches/raw_CC.json), so a re-run costs nothing and a crash costs one
 country. Re-harvest a country with --refresh.
@@ -60,6 +65,7 @@ sys.path.insert(0, str(HERE))
 from sources import (SourceError, cell, get_json, haversine_km,  # noqa: E402
                      load_cache, overpass, save_cache, sparql)
 import eea_spine  # noqa: E402
+import seed_beaches  # noqa: E402
 
 ROOT = HERE.parents[1]
 
@@ -242,7 +248,11 @@ def wikidata_beaches(cc):
     if not qid:
         return []
     lang = LOCAL_LANG.get(cc, "en")
-    rows = sparql(WD_QUERY % {"qid": qid, "lang": lang})
+    return wd_records(sparql(WD_QUERY % {"qid": qid, "lang": lang}), cc)
+
+
+def wd_records(rows, cc):
+    """SPARQL bindings in WD_QUERY's shape, folded to one record per item."""
     out = {}
     for row in rows:
         item = cell(row, "x", "").rsplit("/", 1)[-1]
@@ -286,6 +296,43 @@ def wikidata_beaches(cc):
                 pass
     # A Wikidata "beach" with no label at all is an id, not a destination.
     return [r for r in out.values() if r["name"] and not r["name"].startswith("Q")]
+
+
+# The same fields for a list of named items, whatever their class or P17. The
+# famous seed needs this: an item typed as a cove or an arch, or one with no
+# country statement, never comes back from the country query above.
+ITEMS_QUERY = """
+SELECT ?x ?xLabel ?local ?lat ?lon ?img ?commons ?sl ?admLabel ?typeLabel
+       ?len ?enwiki ?localwiki ?protLabel ?partLabel WHERE {
+  VALUES ?x { %(items)s }
+  ?x p:P625/psv:P625 ?co .
+  ?co wikibase:geoLatitude ?lat ; wikibase:geoLongitude ?lon .
+  ?x wikibase:sitelinks ?sl .
+  OPTIONAL { ?x wdt:P31 ?type }
+  OPTIONAL { ?x rdfs:label ?local FILTER(LANG(?local) = "%(lang)s") }
+  OPTIONAL { ?x wdt:P18 ?img }
+  OPTIONAL { ?x wdt:P373 ?commons }
+  OPTIONAL { ?x wdt:P131 ?adm }
+  OPTIONAL { ?x wdt:P2043 ?len }
+  OPTIONAL { ?x wdt:P3018 ?prot }
+  OPTIONAL { ?x wdt:P361 ?part }
+  OPTIONAL { ?enwiki schema:about ?x ; schema:isPartOf <https://en.wikipedia.org/> }
+  OPTIONAL { ?localwiki schema:about ?x ;
+             schema:isPartOf <https://%(lang)s.wikipedia.org/> }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en,%(lang)s". }
+}
+"""
+
+
+def wikidata_items(qids, cc):
+    """Wikidata records for explicit items, filed under `cc`. An item with no
+    coordinate never comes back (P625 is required), so nothing is invented."""
+    qids = [q for q in qids if re.fullmatch(r"Q\d+", q or "")]
+    if not qids:
+        return []
+    lang = LOCAL_LANG.get(cc, "en")
+    items = " ".join(f"wd:{q}" for q in qids)
+    return wd_records(sparql(ITEMS_QUERY % {"items": items, "lang": lang}), cc)
 
 
 # ---------------------------------------------------------------------------
@@ -801,6 +848,121 @@ def merge_spine(beaches, sites):
     return added, matched
 
 
+# ---------------------------------------------------------------------------
+# The famous seed (D25 c), pinned by Wikidata id
+# ---------------------------------------------------------------------------
+
+# The Wikidata facts a seeded item lends to the OSM or register row it lands
+# on: the fame, the pictures and the articles that rank a beach at all.
+WD_FIELDS = ("wd", "sitelinks", "wd_img", "commons_cat", "enwiki", "localwiki",
+             "adm", "types", "protected", "part_of")
+
+
+def _seed_state(beaches):
+    return json.dumps([(b.get("key"), b.get("wd"), b.get("seed"))
+                       for b in beaches], sort_keys=True)
+
+
+def _fold_seed_record(rec, beaches):
+    """The row this fetched Wikidata record is, or None for a new one: an OSM
+    element that names the item, else an unlinked row within MERGE_KM whose
+    name agrees, the same conservative rule merge() uses."""
+    for row in beaches:
+        tags = row.get("osm_tags") or {}
+        if not row.get("wd") and (tags.get("wikidata") or "").strip() == rec["wd"]:
+            return row
+    best, best_km = None, MERGE_KM
+    for row in beaches:
+        if row.get("wd"):
+            continue
+        km = haversine_km(row["lat"], row["lon"], rec["lat"], rec["lon"])
+        if km <= best_km and (same_beach(rec["name"], row.get("name"))
+                              or same_beach(rec.get("name_local"),
+                                            row.get("name"))):
+            best, best_km = row, km
+    return best
+
+
+def resolve_seed(cc, beaches, entries=None, fetch=None):
+    """Pin every famous seed of this country into `beaches`, in place.
+
+    The seed file (pipeline/famous/coverage.py --handoff) names the famous
+    beaches the wire lacks by Wikidata id. An id already on a row marks that
+    row. The rest are fetched by id (wikidata_items) and either fold into the
+    OSM or register row they are, or become a row of their own filed under
+    this country. An item Wikidata gives no coordinate is reported, never
+    invented.
+
+    Idempotent: marks are cleared and re-decided on every call, and a row
+    that only a seed brought in leaves with its seed.
+
+    Returns (resolved, missing, changed); `changed` says whether the rows
+    differ from what came in, so a cached country is only rewritten then."""
+    if entries is None:
+        entries = seed_beaches.by_country().get(cc) or []
+    fetch = fetch or wikidata_items
+    before = _seed_state(beaches)
+    wanted_ids = {e["wd"] for e in entries}
+    beaches[:] = [b for b in beaches
+                  if not (b.get("seed_fetched") and b.get("wd") not in wanted_ids)]
+    for b in beaches:
+        b.pop("seed", None)
+
+    by_qid = {b["wd"]: b for b in beaches if b.get("wd")}
+    todo = [e for e in entries if e["wd"] not in by_qid]
+    if todo:
+        try:
+            records = {r["wd"]: r for r in fetch([e["wd"] for e in todo], cc)}
+        except SourceError as exc:
+            print(f"    seed fetch failed for {cc}: {str(exc)[:80]}")
+            records = {}
+        for entry in todo:
+            rec = records.get(entry["wd"])
+            if rec is None:
+                continue
+            target = _fold_seed_record(rec, beaches)
+            if target is not None:
+                for field in WD_FIELDS:
+                    if rec.get(field):
+                        target[field] = rec[field]
+                target["name"] = rec["name"]
+                if not target.get("name_local"):
+                    target["name_local"] = rec.get("name_local") or ""
+                if "wikidata" not in target["sources"]:
+                    target["sources"].append("wikidata")
+            else:
+                target = dict(rec)
+                target.update({"key": f"wd:{rec['wd']}", "iso2": cc,
+                               "sources": ["wikidata"], "osm_id": "",
+                               "osm_tags": {}, "seed_fetched": True})
+                beaches.append(target)
+            by_qid[rec["wd"]] = target
+
+    resolved, missing = 0, []
+    for entry in entries:
+        hit = by_qid.get(entry["wd"])
+        if hit is None:
+            missing.append(entry["n"])
+            continue
+        hit["seed"] = {"why": entry.get("why") or "famous", "name": entry["n"]}
+        resolved += 1
+    return resolved, missing, _seed_state(beaches) != before
+
+
+def _seed_cached(cc, cached):
+    """Resolve the seed over a cached country and rewrite it only on change,
+    so a new seed reaches the next run without a --refresh."""
+    resolved, missing, changed = resolve_seed(cc, cached["beaches"])
+    if changed:
+        cached["n_seeded"] = resolved
+        cached["seed_missing"] = missing
+        save_cache(STAGE, cc, cached)
+    if resolved or missing:
+        note = f", {len(missing)} UNRESOLVED" if missing else ""
+        print(f"    {cc}: {resolved} famous seeds pinned{note}")
+    return cached
+
+
 def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
                     use_spine=True, reuse_wikidata=False):
     """One country's beaches, cached. Re-runs pick up an unfinished half.
@@ -813,7 +975,7 @@ def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
     cached = None if refresh and not reuse_wikidata else load_cache(STAGE, cc)
     if cached and not reuse_wikidata and (cached.get("osm_ok") or not use_osm):
         print(f"  {cc}: {len(cached['beaches'])} beaches (cached)")
-        return cached
+        return _seed_cached(cc, cached)
 
     if cached and reuse_wikidata:
         # The OSM source changed under us, not Wikidata. This is the switch to
@@ -883,7 +1045,7 @@ def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
         # turned 74 beaches into 6 before the pattern showed.
         print(f"  {cc}: no usable OSM answer, keeping the cached "
               f"{len(cached['beaches'])} beaches")
-        return cached
+        return _seed_cached(cc, cached)
 
     beaches = merge(wd_rows, found)
     spine_added = spine_matched = 0
@@ -891,6 +1053,9 @@ def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
         sites = eea_spine.candidate_rows(cc)
         if sites:
             spine_added, spine_matched = merge_spine(beaches, sites)
+    # The famous seed resolves last, so a seeded item can fold into the OSM or
+    # register row it is rather than stand beside it.
+    seeded, seed_missing, _changed = resolve_seed(cc, beaches)
     payload = {
         "country": cc,
         "harvested_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
@@ -900,6 +1065,8 @@ def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
         "n_eea_new": spine_added,
         # False means Overpass never answered; the next run retries this half.
         "osm_ok": bool(osm_ok),
+        "n_seeded": seeded,
+        "seed_missing": seed_missing,
         "beaches": beaches,
     }
     save_cache(STAGE, cc, payload)
@@ -908,9 +1075,11 @@ def harvest_country(cc, use_osm=True, refresh=False, prefer_extract=True,
                    else " [OSM half outstanding, a later run fills it in]")
     spine_note = (f", {spine_added} new + {spine_matched} matched from the "
                   f"bathing register" if (spine_added or spine_matched) else "")
+    seed_note = (f", {seeded} famous seeds" if seeded else "") + (
+        f", {len(seed_missing)} seeds UNRESOLVED" if seed_missing else "")
     print(f"  {cc}: {len(beaches)} beaches "
           f"({len(wd_rows)} wikidata, {len(found)} osm, {both} merged"
-          f"{spine_note}){outstanding}")
+          f"{spine_note}{seed_note}){outstanding}")
     return payload
 
 

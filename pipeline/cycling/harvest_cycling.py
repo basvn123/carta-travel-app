@@ -51,6 +51,12 @@ Junction nodes (rcn_ref + network:type=node_network) are scanned only for
 the countries that actually have a node network, because it costs a full
 node pass. NL and BE by default, per the brief.
 
+Famous routes (D25): the routes data/famous/seed_cycling.json names are
+always assembled, even when the filter would skip them, and a famous
+superroute brings in its sections, each marked raw_tags["carta:famous"].
+seed_cycling.py finds them; export_cycling.py never leaves one out that
+passes the floor.
+
 Usage, from the repo root (DB up: cd tools/trailslab && docker compose up -d):
     python pipeline/cycling/harvest_cycling.py --countries great-britain
     python pipeline/cycling/harvest_cycling.py --dry-run --limit 200
@@ -77,6 +83,7 @@ sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
 
 import cycle_sources as S  # noqa: E402
+import seed_cycling  # noqa: E402
 from db import connect as _db_connect  # noqa: E402,F401
 
 # Every lab connection in this layer goes through the patient wrapper:
@@ -192,6 +199,19 @@ def publishable(tags):
     network = (tags.get("network") or "").replace(";", ",")
     tokens = {t.strip().lower() for t in network.split(",")}
     return bool(tokens & {"icn", "ncn", "rcn", "lcn"}) or bool(tags.get("name"))
+
+
+def select_routes(pool, pins, limit=0):
+    """The relations to assemble: every one that passes the filter (cut to
+    `limit` for a test run), then every famous one (D25) the filter or the
+    limit left out. A famous route is never skipped by the filter: an
+    unnamed EuroVelo section is still EuroVelo."""
+    routes = [rid for rid in sorted(pool) if publishable(pool[rid]["tags"])]
+    if limit:
+        routes = routes[:limit]
+    have = set(routes)
+    return routes + [rid for rid in sorted(pins) if rid not in have
+                     and rid in pool]
 
 
 def family_refs(pool):
@@ -498,8 +518,9 @@ def pack_spans(spans):
 
 
 def build_record(rid, info, way_refs, rstats, way_nodes, way_tags, locator,
-                 family):
-    """Assemble one relation into an insertable record, or None if empty."""
+                 family, famous=None):
+    """Assemble one relation into an insertable record, or None if empty.
+    `famous` is the seed_cycling mark of a famous route or section (D25)."""
     ordered = assemble_ordered(way_refs, way_nodes, rstats)
     merged = stitch_segments(ordered) if len(ordered) > 1 else ordered
 
@@ -538,6 +559,15 @@ def build_record(rid, info, way_refs, rstats, way_nodes, way_tags, locator,
         raw["carta:family_ref"] = family["ref"]
         if family.get("network"):
             raw["carta:family_network"] = family["network"]
+    if famous:
+        raw["carta:famous"] = dict(famous)
+    cycle_network = ((family or {}).get("network")
+                     or tags.get("cycle_network"))
+    # A section of a famous route names the route as its family, so the
+    # card's `fam` reads "part of Elbe Cycle Route". A network the mapper
+    # already set (EuroVelo) is kept.
+    if famous and famous.get("section") and not cycle_network:
+        cycle_network = famous.get("name")
 
     packed = pack_spans(all_spans)
     packed["n_ways"] = len(set(way_refs))
@@ -549,7 +579,7 @@ def build_record(rid, info, way_refs, rstats, way_nodes, way_tags, locator,
         "wkt": "MULTILINESTRING(" + ",".join(parts) + ")",
         "length_m": int(round(length_m)),
         "network": (tags.get("network") or "").split(";")[0].strip() or None,
-        "cycle_network": (family or {}).get("network") or tags.get("cycle_network"),
+        "cycle_network": cycle_network,
         "operator": tags.get("operator"),
         "roundtrip": _yesno(tags.get("roundtrip")),
         "raw_tags": raw,
@@ -766,20 +796,25 @@ def harvest_country(slug, country, args, conn, index):
     t0 = time.time()
     pool = scan_relations(pbf)
     families = family_refs(pool)
-    routes = [rid for rid in sorted(pool) if publishable(pool[rid]["tags"])]
+    # D25: the famous routes the wire lacks (data/famous/seed_cycling.json),
+    # by relation id in any extract, by name only in their own countries.
+    pins = seed_cycling.famous_pins(pool, seed_cycling.famous_entries(),
+                                    country, VARIANT_ROLES)
+    routes = select_routes(pool, pins, args.limit)
     connections = [rid for rid in sorted(pool)
                    if is_node_network(pool[rid]["tags"])]
     want_nodes = args.nodes and slug in args.nodes
     if not want_nodes:
         connections = []
-    if args.limit:
-        routes = routes[:args.limit]
     counts["pool"] = len(pool)
     counts["selected"] = len(routes)
     counts["connections"] = len(connections)
+    counts["famous_pinned"] = len(pins)
+    counts["famous_wd"] = len({m["wd"] for m in pins.values()})
     log(f"[{slug}] relations: {len(pool)} bicycle routes, {len(routes)} pass "
         f"the filter, {len(connections)} node-network connections, "
-        f"{len(families)} family memberships ({time.time() - t0:.0f}s)")
+        f"{len(families)} family memberships, {len(pins)} famous relation(s) "
+        f"for {counts['famous_wd']} famous route(s) ({time.time() - t0:.0f}s)")
 
     expansions, needed_ways = {}, set()
     for rid in routes + connections:
@@ -810,7 +845,8 @@ def harvest_country(slug, country, args, conn, index):
     for rid in routes:
         way_refs, rstats = expansions[rid]
         rec = build_record(rid, pool[rid], way_refs, rstats, way_nodes,
-                           way_tags, locator, families.get(rid))
+                           way_tags, locator, families.get(rid),
+                           pins.get(rid))
         counts["ways_missing"] += rstats["missing_ways"]
         if rec is None:
             counts["no_geometry"] += 1
@@ -820,6 +856,7 @@ def harvest_country(slug, country, args, conn, index):
         counts["unordered"] += 1 if gi["unordered_members"] else 0
         counts["clipped"] += 1 if gi.get("clipped") else 0
         counts["in_family"] += 1 if families.get(rid) else 0
+        counts["famous_assembled"] += 1 if rid in pins else 0
         records.append(rec)
 
     edges = []
@@ -863,7 +900,9 @@ def harvest_country(slug, country, args, conn, index):
     log(f"[{slug}] quality: {counts['with_gaps']} with gaps, "
         f"{counts['unordered']} unordered, {counts['clipped']} clipped at the "
         f"border, {counts['ways_missing']} member ways missing, "
-        f"{counts['in_family']} in a EuroVelo-style family")
+        f"{counts['in_family']} in a EuroVelo-style family, "
+        f"{counts['famous_assembled']} of {len(pins)} famous relation(s) "
+        f"assembled")
     return counts
 
 

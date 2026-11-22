@@ -13,6 +13,15 @@ sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
 
 import derived_gate as g  # noqa: E402
 
+# The rule tests below are about the gate's word and grade rules on the D24
+# reference alone; the Wikidata famous list (data/famous/trails.json) would
+# pass some of them earlier as "reference" (Fürstensteig is famous). Its own
+# effect is tested in test_famous_reference_passes_by_id.
+_FAMOUS_ROWS = g.famous_rows()
+g._FAMOUS = []
+g._REFERENCE = None
+g._REFERENCE_IDS = None
+
 
 def row(title, km, highway="track", surface=None, join="base-name", cc="DE",
         sac=None, waymark=0.0, derived_from=None, wikipedia=None,
@@ -239,3 +248,40 @@ def test_reference_matches_by_registry_id():
 def test_exact_and_longest_reference_name_wins():
     assert g.reference_of("Escapardenne Lee Trail", "LU") == ("escapardenne-lee-trail", True)
     assert g.reference_of("Escapardenne Eislek Trail", "LU")[0] == "escapardenne-eislek-trail"
+
+
+def test_famous_reference_passes_by_id():
+    """A famous trail from data/famous/trails.json passes as a reference by
+    its Wikidata id, whatever its name; the gate's caches are restored."""
+    famous = [r for r in _FAMOUS_ROWS if r.get("qid") and r.get("countries")
+              and not r.get("legacy_id")]
+    if not famous:
+        return
+    t = famous[0]
+    g._FAMOUS, g._REFERENCE, g._REFERENCE_IDS = _FAMOUS_ROWS, None, None
+    try:
+        r = row("Unnamed path", 6.0, highway="path", cc=t["countries"][0])
+        r["wikidata"] = t["qid"]
+        ref_id, exact = g.reference_of_row(r)
+        assert ref_id == t["id"] and exact
+    finally:
+        g._FAMOUS, g._REFERENCE, g._REFERENCE_IDS = [], None, None
+
+
+def test_famous_name_alone_does_not_claim_a_derived_piece():
+    """A derived route named like a Wikidata famous trail is not that trail
+    unless it carries the trail's id (Kaiserweg pieces, box dry run)."""
+    famous = [r for r in _FAMOUS_ROWS if r.get("qid") and r.get("countries")
+              and not r.get("legacy_id") and len(r.get("name") or "") >= 8]
+    if not famous:
+        return
+    t = famous[0]
+    g._FAMOUS, g._REFERENCE, g._REFERENCE_IDS = _FAMOUS_ROWS, None, None
+    try:
+        r = row(t["name"], 3.0, highway="path", cc=t["countries"][0])
+        r["derived_route"] = True
+        assert g.reference_of_row(r) == (None, False)
+        r["derived_route"] = False
+        assert g.reference_of_row(r)[0] == t["id"]
+    finally:
+        g._FAMOUS, g._REFERENCE, g._REFERENCE_IDS = [], None, None
