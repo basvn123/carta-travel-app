@@ -293,6 +293,11 @@ export function SavedTripsPanel({
   const [tab, setTab] = useState(readTab);
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
+  // G12 atlas: the tab's one authored moment plays after a tab change, never
+  // at first paint; the tab bodies mount fresh on each change and read this.
+  const [drawnTab, setDrawnTab] = useState(tab);
+  const [tabDraw, setTabDraw] = useState(false);
+  if (drawnTab !== tab) { setDrawnTab(tab); setTabDraw(true); }
 
   const authed = !!user || (SAVED_MOCK && MOCK_VARIANT !== 'guest');
   const [trips, setTrips] = useState(SAVED_MOCK && !MOCK_BARE ? MOCK_FAVS : []);
@@ -889,6 +894,7 @@ export function SavedTripsPanel({
         destinations={destinations}
         figure={figures[happening.id] || null}
         todayIso={todayIso}
+        draw={tabDraw}
         crewNames={planLocal[happening.id]?.crewLine || ''}
         spendLabels={spendLabels}
         title={journeyParts(happening).title}

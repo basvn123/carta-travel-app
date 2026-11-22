@@ -7442,7 +7442,7 @@ export const de = {
   "mt.booked": "Gebucht",
   "mt.markDone": "{name} als erledigt markieren",
   "mt.markNotDone": "{name} als nicht erledigt markieren",
-  "mt.todayNothing": "Für heute ist noch nichts geplant.",
+  "mt.todayNothing": "Heute ist noch alles offen",
   "mt.openToday": "Heute öffnen",
   "mt.planToday": "Heute planen",
   "mt.spendToday": "Heute ausgegeben",
@@ -10975,4 +10975,7 @@ export const de = {
   "filters.openOnOne": "Filter, {n} aktiv",
   "filters.removed": "{name} entfernt",
   "filters.cleared": "Filter gelöscht",
+  "mt.nightsLeft": "Noch {n} Nächte",
+  "mt.lastNight": "Letzte Nacht",
+  "mt.dayOf": "Tag {n} von {m}",
 };

@@ -8076,7 +8076,7 @@ export const en = {
   "mt.booked": "Booked",
   "mt.markDone": "Mark {name} done",
   "mt.markNotDone": "Mark {name} not done",
-  "mt.todayNothing": "Nothing planned for today yet.",
+  "mt.todayNothing": "Today is still open",
   "mt.openToday": "Open today",
   "mt.planToday": "Plan today",
   "mt.spendToday": "Spent today",
@@ -11061,4 +11061,7 @@ export const en = {
   "filters.openOnOne": "Filters, {n} on",
   "filters.removed": "Removed {name}",
   "filters.cleared": "Filters cleared",
+  "mt.nightsLeft": "{n} more nights",
+  "mt.lastNight": "Last night here",
+  "mt.dayOf": "Day {n} of {m}",
 };

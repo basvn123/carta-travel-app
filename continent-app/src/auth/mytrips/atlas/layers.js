@@ -48,13 +48,20 @@ export function tripsLayer({ today = null, todayAt = null, ahead = [], past = []
     if (stops.length) {
       const at = Math.min(Math.max(0, todayAt?.stopIndex ?? 0), stops.length - 1);
       const nextStop = stops[at + 1] || null;
+      // G12 atlas: the legs travelled are drawn thick, the legs to come thin
+      // and dashed; today's stop carries the umber "here" mark. The saffron
+      // is today's bead on the journey line, so no stop here takes it.
+      const id = today.id || 'today';
+      const routes = [];
+      if (at > 0) routes.push({ id: `${id}:done`, pts: stops.slice(0, at + 1).map(xy), kind: 'done' });
+      if (at < stops.length - 1) routes.push({ id: `${id}:ahead`, pts: stops.slice(at).map(xy), kind: 'ahead' });
       return {
         state: 'today',
         focus: stops.map(xy), pad: 0.35, minW: 220,
-        routes: stops.length > 1 ? [{ id: today.id || 'today', pts: stops.map(xy), kind: 'next' }] : [],
-        stops: stops.map((s, i) => ({ x: s.x, y: s.y, big: i === at, sun: i === at + 1 })),
+        routes,
+        stops: stops.map((s, i) => ({ x: s.x, y: s.y, here: i === at })).filter((s) => !s.here),
         here: xy(stops[at]),
-        labels: nextStop?.city ? [{ x: nextStop.x, y: nextStop.y, t: nextStop.city }] : [],
+        labels: [stops[at], nextStop].filter((s) => s?.city).map((s) => ({ x: s.x, y: s.y, t: s.city })),
         summary: { key: 'mt.mapTripsToday', city: stops[at].city || today.title, day: todayAt?.dayNum ?? 1, of: todayAt?.of ?? 1 },
       };
     }

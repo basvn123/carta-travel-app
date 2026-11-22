@@ -194,6 +194,7 @@
   --text-display:    40px;    /* a total figure: 40, 48, 54 */
   --text-figure:     18px;    /* a row's day figure */
   --text-plate:      21px;    /* a plate name */
+  --text-signpost:   32px;    /* the one signpost title: Today's place (G12) */
   --leading-tight:   1.2;
   --leading-ui:      1.35;
   --leading-body:    1.5;
@@ -447,6 +448,11 @@
   --dur-film:         9000ms;
   --dur-film-fade:    1200ms;
   --dur-reveal:       640ms;
+  /* My trips atlas (G12 wow): one year's step in the Europe fill (the JS
+     caps the whole fill at 1200 ms), and the route and journey line drawing
+     in, kept in step with --dur-reveal under its own name. */
+  --dur-fill-step:    240ms;
+  --dur-draw:         640ms;
 
   /* The Plan opening (T743): read only by 86-plan-flow.css. */
   --plan-ground:      var(--surface-page);
@@ -455,6 +461,6 @@
 }
 
 /* The three angles (DESIGN.md "Layout"): gutters and the type that grows. */
-@media (min-width: 769px)  { :root { --page-gutter: var(--space-5); --text-headline: 30px; --text-title: 21px; --text-display: 48px; --text-plate: 22px; } }
-@media (min-width: 1024px) { :root { --page-gutter: var(--space-6); --text-headline: 36px; --text-title: 22px; --text-display: 54px; --text-figure: 19px; } }
+@media (min-width: 769px)  { :root { --page-gutter: var(--space-5); --text-headline: 30px; --text-title: 21px; --text-display: 48px; --text-plate: 22px; --text-signpost: 38px; } }
+@media (min-width: 1024px) { :root { --page-gutter: var(--space-6); --text-headline: 36px; --text-title: 22px; --text-display: 54px; --text-figure: 19px; --text-signpost: 44px; } }
 @media (min-width: 1440px) { :root { --page-gutter: 48px; } }

@@ -51,12 +51,20 @@ test('tripsLayer: many trips, still one saffron point; a trip without located st
   assert.deepEqual(L.routes.map((r) => r.id), ['b']);
 });
 
-test('tripsLayer: today puts "here" on the stop of the day and the saffron on the next', () => {
+test('tripsLayer: today puts "here" on the stop of the day, no saffron stop, legs done and to come', () => {
   const L = tripsLayer({ today: { id: 't', title: 'Portugal', stops: [LIS, POR] }, todayAt: { stopIndex: 0, dayNum: 2, of: 7 } });
   assert.equal(L.state, 'today');
-  assert.deepEqual(L.here, [L.stops[0].x, L.stops[0].y]);
-  assert.equal(L.stops[1].sun, true);
+  assert.equal(L.stops.length, 1);
+  assert.ok(L.here[1] > L.stops[0].y, 'here is Lisbon, south of Porto');
+  assert.ok(L.stops.every((s) => !s.sun), 'the saffron is the journey line bead');
+  assert.deepEqual(L.routes.map((r) => r.kind), ['ahead']);
   assert.equal(L.summary.city, 'Lisbon');
+  const M = tripsLayer({ today: { id: 't', title: 'Portugal', stops: [POR, LIS, HALL] }, todayAt: { stopIndex: 1, dayNum: 4, of: 6 } });
+  assert.deepEqual(M.routes.map((r) => r.kind), ['done', 'ahead']);
+  assert.equal(M.routes[0].pts.length, 2);
+  assert.deepEqual(M.routes[0].pts[1], M.here);
+  assert.deepEqual(M.routes[1].pts[0], M.here);
+  assert.equal(M.focus.length, 3, 'the frame fits every stop');
 });
 
 test('europeLayer: years per country, hand marks, routes and corners', () => {

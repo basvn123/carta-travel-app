@@ -1,7 +1,6 @@
 import React, { useId, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../../i18n/index.jsx';
 import { NAME_OF, stateOf } from './plateData.js';
-import { Blaze } from '../../../components/ui/index.js';
 import { Pressable } from '../../../components/ui/Pressable.jsx';
 import { CountryFlag } from '../../../components/CountryFlag.jsx';
 import { countryName } from '../../../lib/countryName.js';
@@ -197,16 +196,16 @@ export function AtlasPlate({
           <g key={drawKey} className="atlas-overlay">
             {(L.routes || []).map((r, i) => {
               const d = pathOf(r.pts);
-              const past = r.kind === 'past';
-              const lw = (past ? 2 : 3) * k;
+              // G12 atlas: on Today the legs travelled are thick, the legs to come thin and dashed.
+              const lw = (r.kind === 'past' || r.kind === 'ahead' ? 2 : r.kind === 'done' ? 4 : 3) * k;
               return (
                 <React.Fragment key={r.id || i}>
                   <mask id={`${pid}r${i}`} maskUnits="userSpaceOnUse" x={vb.x} y={vb.y} width={vb.w} height={vb.h}>
                     <path className="atlas-mk" d={d} pathLength="1" strokeWidth={16 * k} />
                   </mask>
-                  <g className={`atlas-route is-${past ? 'past' : 'next'}${dimmed(r.year) || (L.lift && L.lift !== r.id) ? ' is-dim' : ''}${L.lift === r.id ? ' is-lift' : ''}`} mask={`url(#${pid}r${i})`}>
+                  <g className={`atlas-route is-${r.kind || 'next'}${dimmed(r.year) || (L.lift && L.lift !== r.id) ? ' is-dim' : ''}${L.lift === r.id ? ' is-lift' : ''}`} mask={`url(#${pid}r${i})`}>
                     <path className="atlas-route-case" d={d} strokeWidth={lw + 2.6 * k} />
-                    <path className="atlas-route-line" d={d} strokeWidth={lw} />
+                    <path className="atlas-route-line" d={d} strokeWidth={lw} strokeDasharray={r.kind === 'ahead' ? `${4 * k} ${5 * k}` : undefined} />
                   </g>
                 </React.Fragment>
               );
@@ -220,6 +219,12 @@ export function AtlasPlate({
                 r={(s.big ? 5.6 : 3.6) * k}
               />
             ))}
+            {L.here && (
+              <g className="atlas-here">
+                <circle className="atlas-here-halo" cx={L.here[0]} cy={L.here[1]} r={10 * k} />
+                <circle className="atlas-here-dot" cx={L.here[0]} cy={L.here[1]} r={5.5 * k} />
+              </g>
+            )}
             {(L.corners || []).map((c) => (
               <circle key={`c-${c.key}`} className="atlas-corner-ring" cx={c.x} cy={c.y} r={7 * k} />
             ))}
@@ -231,7 +236,6 @@ export function AtlasPlate({
           {(L.labels || []).map((l) => (
             <span key={`l-${l.t}`} className="atlas-ml atlas-ml-name" style={pct(vb, l.x, l.y - 6 * k)}>{l.t}</span>
           ))}
-          {L.here && <span className="atlas-ml atlas-ml-here" style={pct(vb, L.here[0], L.here[1])}><Blaze size="sm" /></span>}
           {(L.corners || []).map((c) => (
             <span key={`ct-${c.key}`} className="atlas-ml atlas-ml-corner" style={pct(vb, c.x + c.dx * k, c.y + c.dy * k)}>{cornerT[c.key] || c.key.toUpperCase()}</span>
           ))}

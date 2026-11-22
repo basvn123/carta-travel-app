@@ -7442,7 +7442,7 @@ export const it = {
   "mt.booked": "Prenotato",
   "mt.markDone": "Segna {name} come fatto",
   "mt.markNotDone": "Segna {name} come non fatto",
-  "mt.todayNothing": "Ancora niente in programma per oggi.",
+  "mt.todayNothing": "Oggi è ancora libero",
   "mt.openToday": "Apri oggi",
   "mt.planToday": "Pianifica oggi",
   "mt.spendToday": "Speso oggi",
@@ -10975,4 +10975,7 @@ export const it = {
   "filters.openOnOne": "Filtri, {n} attivo",
   "filters.removed": "{name} rimosso",
   "filters.cleared": "Filtri cancellati",
+  "mt.nightsLeft": "Ancora {n} notti",
+  "mt.lastNight": "Ultima notte",
+  "mt.dayOf": "Giorno {n} di {m}",
 };

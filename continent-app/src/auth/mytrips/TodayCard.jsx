@@ -16,6 +16,8 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { ChevronRightIcon } from '../../components/Icons.jsx';
 import { WalletGlyph } from './spend/icons.jsx';
+import { JourneyLine } from './atlas/JourneyLine.jsx';
+import { nightsLeft } from './atlas/journeyLine.js';
 
 // G15: the Uitgaven page loads with its own chunk, when it is opened.
 const SpendPage = lazy(() => import('./spend/SpendPage.jsx'));
@@ -46,7 +48,7 @@ const writeDone = (v) => { try { localStorage.setItem(DONE_KEY, JSON.stringify(v
  */
 export function TodayCard({
   plan, today, destinations = {}, figure = null, todayIso, crewNames = '', spendLabels = {},
-  title = '', img = null, userId = null, openSpend = false,
+  title = '', img = null, userId = null, openSpend = false, draw = false,
   onPlanDay, onOpenTrip, onCrew, onPhotoAdded,
 }) {
   const { t } = useI18n();
@@ -126,25 +128,53 @@ export function TodayCard({
     ...ideasOnDay(extras, tmr.dayNum).map((x) => x.text),
     ...(extras.dayExtras?.[tmr.dayNum] || []).map((a) => a?.name).filter(Boolean),
   ][0] : null;
+  const left = nightsLeft(today.stop, today.dayIndex);
+  // The line names each stop as the rest of the app does: the catalogue's city first.
+  const lineStops = useMemo(() => stops.map((s, i) => ({ ...s, city: destinations[s.id]?.city || s.city || (plan.cities || [])[i] || '' })), [stops, destinations, plan.cities]);
+  // "Dag 4 van 6" with the day's figure set larger, the words around it kept.
+  const dayOf = (() => {
+    const str = t('mt.dayOf', { n: '\u0000', m: today.of });
+    const at = str.indexOf('\u0000');
+    return at < 0 ? str : <>{str.slice(0, at)}<b>{today.dayNum}</b>{str.slice(at + 1)}</>;
+  })();
   const tmrLine = !tmr ? '' : tmr.moves && tmrDest?.city ? t('mt.tomorrowTo', { city: tmrDest.city })
     : tmrFirst || t('mt.tomorrowFree');
 
   return (
-    <section className="mt-today" aria-labelledby="mt-today-h">
+    <section className={`mt-today${draw ? ' is-draw' : ''}`} aria-labelledby="mt-today-h">
       <div className="mt-today-main">
-        {/* House style: no eyebrow above the heading; the day count follows
-            the title as its first fact. */}
-        {/* G12 Phase C: the title with the country's flag, the day count under it. */}
-        <div className="mt-today-h">
-          <h3 className="mt-today-title" id="mt-today-h">{dayWords ? t('mt.todayPlaceWords', { place: city, words: dayWords }) : city}</h3>
-          {dest?.country && <CountryFlag country={dest.country} size={18} />}
+        {/* G12 atlas: the place on a signpost plate (the plate face, the flag
+            on a paper disc); on a phone it floats over the map band's fade. */}
+        <div className="mt-sign">
+          {dest?.country && <span className="mt-sign-disc"><CountryFlag country={dest.country} size={18} /></span>}
+          <h3 className="mt-today-title" id="mt-today-h">
+            <span className="mt-sign-name">{city}</span>
+            {dayWords && <><span className="sr-only">, </span><span className="mt-sign-words">{dayWords}</span></>}
+          </h3>
         </div>
-        <p className="mt-today-kicker">{t('mt.todayDay', { n: today.dayNum, of: today.of })}</p>
+        {/* The journey line: a pill per stop as long as its nights, a bead per
+            day, today the one saffron bead; "Dag n van m" beside it. */}
+        <div className="mt-dayrow">
+          <JourneyLine
+            stops={lineStops}
+            dayNum={today.dayNum}
+            strong={tmr?.moves ? tmr.stopIndex : -1}
+            draw={draw}
+            label={`${lineStops.map((s) => `${s.city} ${t(s.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: s.nights })}`).join(', ')}. ${t('mt.todayDay', { n: today.dayNum, of: today.of })}`}
+          />
+          <p className="mt-dayn">{dayOf}</p>
+        </div>
         <p className="mt-today-facts">
           {sky && Number.isFinite(sky.hi) && (
-            <span><Sky size={16} />{t('mt.todayWeather', { t: Math.round(sky.hi) })}</span>
+            <span><Sky size={18} />{t('mt.todayWeather', { t: Math.round(sky.hi) })}</span>
           )}
-          {city && <span><BedIcon size={16} />{t('mt.stayingIn', { place: city })}</span>}
+          {/* "Je slaapt in X" stays, for a screen reader and as the bed's title. */}
+          {city && (
+            <span title={t('mt.stayingIn', { place: city })}>
+              <BedIcon size={18} /><span className="sr-only">{t('mt.stayingIn', { place: city })}, </span>
+              {left === 1 ? t('mt.lastNight') : t('mt.nightsLeft', { n: left })}
+            </span>
+          )}
         </p>
 
         {items.length > 0 ? (
@@ -176,19 +206,34 @@ export function TodayCard({
             })}
           </ol>
         ) : (
-          <p className="mt-today-empty">{t('mt.todayNothing')}</p>
+          // Nothing planned is an invitation: a dotted path from the bed to Plan vandaag.
+          <div className="mt-invite">
+            <p className="mt-today-empty">{t('mt.todayNothing')}</p>
+            <div className="mt-invite-row">
+              <span className="mt-invite-bed" aria-hidden="true"><BedIcon size={20} /></span>
+              <svg className="mt-invite-path" viewBox="0 0 100 4" preserveAspectRatio="none" aria-hidden="true">
+                <line x1="1" y1="2" x2="99" y2="2" vectorEffect="non-scaling-stroke" />
+              </svg>
+              <Button variant="primary" iconStart={<CalendarIcon size={18} />} onClick={() => onPlanDay?.(today.stopIndex, today.dayIndex)}>
+                {t('mt.planToday')}
+              </Button>
+              <Button className="mt-invite-open" onClick={onOpenTrip}>{t('saved.openTrip')}</Button>
+            </div>
+          </div>
         )}
-        <div className="mt-today-acts">
-          <Button variant="primary" iconStart={<CalendarIcon size={18} />} onClick={() => onPlanDay?.(today.stopIndex, today.dayIndex)}>
-            {t(items.length ? 'mt.openToday' : 'mt.planToday')}
-          </Button>
-          <Button onClick={onOpenTrip}>{t('saved.openTrip')}</Button>
-        </div>
+        {items.length > 0 && (
+          <div className="mt-today-acts">
+            <Button variant="primary" iconStart={<CalendarIcon size={18} />} onClick={() => onPlanDay?.(today.stopIndex, today.dayIndex)}>
+              {t('mt.openToday')}
+            </Button>
+            <Button onClick={onOpenTrip}>{t('saved.openTrip')}</Button>
+          </div>
+        )}
       </div>
 
       <div className="mt-today-side">
         <Pressable type="button" className="mt-spend-door" onClick={() => setSpendOpen(true)} aria-haspopup="dialog">
-          <span className="mt-spend-door-ico"><WalletGlyph size={18} /></span>
+          <span className="mt-spend-door-ico"><WalletGlyph size={20} /></span>
           <span className="mt-spend-door-t">{t('sp.title')}</span>
           <ChevronRightIcon size={18} />
         </Pressable>

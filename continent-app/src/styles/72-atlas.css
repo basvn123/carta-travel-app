@@ -463,7 +463,7 @@
 }
 
 .atlas-plate.is-draw .atlas-mk {
-  animation: atlas-draw var(--dur-blink) var(--ease-out) var(--dur-1) both;
+  animation: atlas-draw var(--dur-draw) var(--ease-out) var(--dur-1) both;
 }
 
 @keyframes atlas-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
@@ -1134,12 +1134,6 @@
 
 /* Today on the ground: the title with the flag, the timeline as rows,
    spend as a bar with its words, the quick tiles in a row of three. */
-.mt-today-h {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
 .mt-panel.is-trips .mt-today .mt-today-title {
   font-weight: 800;
 }
@@ -2036,10 +2030,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 
   /* Today: the day on top, full width; its title and flag share the first line. */
   .mt-panel.is-trips .mt-today { grid-template-columns: minmax(0, 1fr); gap: var(--space-6); padding: 0; }
-  /* The flag follows the title's last word, on its line, however the title wraps. */
-  .mt-today-h { display: block; }
-  .mt-panel.is-trips .mt-today .mt-today-title { display: inline; text-wrap: balance; }
-  .mt-today-h > .country-flag { display: inline-block; margin-inline-start: 12px; vertical-align: 0.12em; }
   .mt-today-main { gap: var(--space-3); }
   .mt-today-acts .btn { min-height: 48px; }
 
@@ -2141,12 +2131,179 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
   .atlas-ghost-h { margin: 0; font-size: var(--text-title); font-weight: 700; color: var(--text-3); }
   .atlas-ghost-years, .atlas-ghost-months { display: flex; align-items: flex-end; height: 104px; border-bottom: 1px solid var(--border); }
   .atlas-ghost-years { justify-content: space-around; }
-  .atlas-ghost-years i { width: 44px; border-radius: 5px 5px 0 0; background: var(--umber-100); }
+  .atlas-ghost-years i { width: 44px; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--umber-100); }
   .atlas-ghost-months { gap: 5px; }
-  .atlas-ghost-months i { flex: 1; border-radius: 3px 3px 0 0; background: var(--border-soft); }
+  .atlas-ghost-months i { flex: 1; border-radius: var(--radius-sm) var(--radius-sm) 0 0; background: var(--border-soft); }
   .atlas-ghost-months i.is-on { background: var(--umber-100); }
   .atlas-ghost-cost { display: grid; gap: var(--space-4); }
   .atlas-ghost-cost span { display: grid; gap: var(--space-2); }
   .atlas-ghost-cost b { width: 34%; height: 10px; border-radius: var(--radius-pill); background: var(--border-soft); }
   .atlas-ghost-cost i { height: 8px; border-radius: var(--radius-pill); background: var(--umber-100); }
+}
+
+/* ==== G12 wow, phase A (owner approved 2026-11-22): the journey line and the
+   Today header. One authored moment on a tab change: the plate route draws
+   to today while the journey line's done beads wipe in and today's saffron
+   bead lands. Nothing moves at first paint; reduced motion shows the end. ==== */
+
+/* The journey line (atlas/JourneyLine.jsx). Its height is held before it
+   measures, so nothing shifts. */
+.jl { display: grid; gap: var(--space-1); min-width: 0; min-height: 44px; }
+.jl.is-spend { min-height: 64px; }
+.jl-svg { display: block; overflow: visible; }
+.jl-pill { fill: var(--umber-100); }
+.jl-ln { stroke: var(--umber-800); stroke-width: 2; }
+.jl-bead.is-done, .jl-bead.is-spend { fill: var(--umber-600); }
+.jl-bead.is-later, .jl-bead.is-none { fill: var(--surface-page); stroke: var(--umber-500); stroke-width: 2; }
+/* The one saffron mark; the 2 px umber ring carries the 3:1 on stone. */
+.jl-bead.is-today, .jl-tick { fill: var(--sun-400); stroke: var(--umber-800); stroke-width: 2; }
+.jl.is-spend .jl-bead.is-none, .jl.is-spend .jl-bead.is-later { stroke-width: 1.5; }
+/* On the Uitgaven page the saffron is the plan bar: today keeps only its ring. */
+.jl.is-spend .jl-bead.is-today { fill: var(--umber-600); stroke-width: 2.5; }
+.jl.is-spend .jl-bead.is-today.is-zero { fill: var(--surface-page); }
+.jl.is-spend .jl-bead { transition: r var(--dur-settle) var(--ease-settle); }
+.jl-labs, .jl-days { position: relative; height: 16px; }
+.jl-labs span, .jl-days span {
+  position: absolute;
+  top: 0;
+  overflow: hidden;
+  font-size: var(--text-caption);
+  font-weight: 700;
+  line-height: 16px;
+  color: var(--umber-700);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.jl-labs span.is-strong { color: var(--text); font-weight: 800; }
+.jl-days span { transform: translateX(-50%); color: var(--text-2); font-variant-numeric: tabular-nums; }
+.jl-days span.is-today { color: var(--text); font-weight: 800; }
+.jl.is-draw .jl-done { animation: jl-wipe var(--dur-draw) var(--ease-out) both; }
+.jl.is-draw .jl-bead.is-today {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-draw) - var(--dur-1)) both;
+}
+@keyframes jl-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes jl-land { from { transform: scale(0); } to { transform: scale(1); } }
+
+/* The signpost plate: the place in the plate face on umber, a pointed end,
+   the flag on a paper disc. On a phone it floats over the map band's fade. */
+.mt-sign {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  justify-self: start;
+  align-self: flex-start;
+  max-width: 100%;
+  min-height: 56px;
+  padding: var(--space-2) calc(var(--plate-tip) + var(--space-5)) var(--space-2) var(--space-2);
+  border-radius: var(--radius-control) 0 0 var(--radius-control);
+  background: var(--umber-600);
+  color: var(--on-plate);
+  clip-path: polygon(0 0, calc(100% - var(--plate-tip) - 8px) 0, 100% 50%, calc(100% - var(--plate-tip) - 8px) 100%, 0 100%);
+}
+.mt-sign-disc { display: grid; flex: none; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--surface); }
+.mt-panel .mt-today .mt-sign .mt-today-title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0 var(--space-3);
+  min-width: 0;
+  margin: 0;
+  color: var(--on-plate);
+  font-weight: 800;
+  line-height: 1;
+}
+.mt-sign-name {
+  padding-top: 3px;
+  font-family: var(--plate-face);
+  font-size: var(--text-signpost);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.mt-sign-words { font-size: var(--text-lead); font-weight: 600; color: var(--on-plate); }
+.mt-today.is-draw .mt-sign { animation: mt-sign-rise var(--dur-3) var(--ease-settle) both; }
+@keyframes mt-sign-rise { from { translate: 0 6px; opacity: 0; } to { translate: 0 0; opacity: 1; } }
+@media (max-width: 767px) {
+  /* Over the bottom of the 250 px band, inside its fade into the ground. */
+  .mt-panel.is-trips .atlas-col > .mt-next:first-child .mt-sign { margin-top: calc(-1 * var(--space-8)); }
+}
+@media (min-width: 1024px) {
+  .mt-sign { min-height: 68px; }
+  .mt-sign-disc { width: 48px; height: 48px; }
+}
+
+/* The day row: the journey line, "Dag 4 van 6" at its right. */
+.mt-dayrow { display: flex; align-items: flex-end; gap: var(--space-4); min-width: 0; }
+.mt-dayrow .jl { flex: 1; }
+.mt-dayn { flex: none; margin: 0; padding-bottom: 22px; font-size: var(--text-body); font-weight: 800; font-variant-numeric: tabular-nums; color: var(--text); }
+.mt-dayn b { font-size: var(--text-title); }
+.mt-panel.is-trips .mt-today-facts { gap: var(--space-1) var(--space-5); font-size: var(--text-lead); font-weight: 600; color: var(--text-2); }
+.mt-today-facts svg { color: var(--umber-700); }
+
+/* Nothing planned: an invitation, a dotted path from the bed into Plan vandaag. */
+.mt-invite { display: grid; gap: var(--space-2); padding-top: var(--space-2); }
+.mt-panel .mt-invite .mt-today-empty { font-size: var(--text-lead); font-weight: 700; color: var(--text); }
+.mt-invite-row { display: grid; grid-template-columns: 40px minmax(24px, 1fr) auto auto; align-items: center; gap: var(--space-2) 10px; }
+.mt-invite-bed { display: grid; place-items: center; width: 40px; height: 40px; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); }
+.mt-invite-path { display: block; width: 100%; height: 4px; overflow: visible; }
+.mt-invite-path line { stroke: var(--umber-500); stroke-width: 3; stroke-linecap: round; stroke-dasharray: 0.1 9; }
+.mt-today.is-draw .mt-invite-path { animation: jl-wipe var(--dur-4) var(--ease-out) var(--dur-2) both; }
+@media (max-width: 599px) {
+  .mt-invite-row { grid-template-columns: 40px minmax(24px, 1fr) auto; }
+  .mt-invite-open { grid-column: 1 / -1; justify-self: start; }
+}
+
+/* A planned day as a drawn route: done beads filled, the next ringed, later outlined. */
+.mt-panel .mt-today .mt-tl::before { left: 8px; background: var(--umber-600); }
+.mt-panel .mt-today .mt-tl-dot { width: 14px; height: 14px; margin-left: 2px; border: 2px solid var(--umber-500); background: var(--surface-page); }
+.mt-panel .mt-today .mt-tl-item.is-done .mt-tl-dot { border-color: var(--umber-600); background: var(--umber-600); }
+.mt-panel .mt-today .mt-tl-item.is-next .mt-tl-dot { width: 18px; height: 18px; margin-left: 0; border: 4px solid var(--umber-800); background: var(--surface-page); }
+.mt-panel .mt-today .mt-tl-item.is-done .mt-tl-name { color: var(--text-3); text-decoration-color: var(--umber-300); }
+.mt-panel .mt-today .mt-tl-item.is-next .mt-tl-name { font-weight: 700; }
+.mt-panel .mt-today .mt-tl-next { color: var(--umber-700); }
+
+/* The Uitgaven door stays one quiet row: a line icon, no grey square; the
+   chevron nudges on hover and press. */
+.mt-panel .mt-spend-door-ico { width: 22px; height: 22px; background: none; color: var(--umber-700); }
+.mt-spend-door > svg:last-child { transition: translate var(--dur-1) var(--ease-out); }
+.mt-spend-door:active > svg:last-child { translate: 4px 0; }
+@media (hover: hover) { .mt-spend-door:hover > svg:last-child { translate: 4px 0; } }
+.mt-panel.is-trips .btn.mt-qk svg { color: var(--umber-700); }
+
+/* Desktop: the ledger in two columns of ruled rows with line icons; the
+   memory page across both. */
+@media (min-width: 1100px) {
+  .mt-panel.is-trips .mt-today-side { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); }
+  .mt-today-side > .mt-spend-door,
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk,
+  .mt-today-side > .mt-disc-row { grid-template-columns: 20px minmax(0, max-content) minmax(0, 1fr) 18px; min-height: 56px; font-size: var(--text-body); }
+  .mt-today-side > .mt-spend-door { grid-template-columns: 20px minmax(0, 1fr) 18px; border-bottom: 1px solid var(--border); }
+  .mt-panel.is-trips .mt-quick > .btn.mt-qk svg,
+  .mt-today-side > .mt-disc-row > .mt-disc-row-ico { width: 20px; height: 20px; padding: 0; border-radius: 0; background: none; color: var(--umber-700); }
+  .mt-panel.is-trips .mt-qk-t, .mt-today-side > .mt-disc-row > .mt-disc-row-t { font-size: var(--text-body); }
+  .mt-panel.is-trips .mt-qk-s, .mt-today-side > .mt-disc-row > .mt-disc-row-s { font-size: var(--text-label); }
+  .mt-today-side > .mt-disc-row, .mt-today-side > .mt-today-note { grid-column: 1 / -1; }
+}
+
+/* Today's trip map: the legs travelled thick, the legs to come thin and
+   dashed, and the umber "here" mark on today's stop. */
+.atlas-route.is-done .atlas-route-line { stroke: var(--umber-600); }
+.atlas-route.is-ahead .atlas-route-line { stroke: var(--umber-500); }
+.atlas-route.is-ahead .atlas-route-case { opacity: 0.6; }
+.atlas-here-halo { fill: none; stroke: var(--umber-800); stroke-width: 1.5; opacity: 0.5; vector-effect: non-scaling-stroke; }
+.atlas-here-dot { fill: var(--umber-800); stroke: var(--surface); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.atlas-plate.is-draw .atlas-here {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: jl-land var(--dur-3) var(--ease-settle) calc(var(--dur-draw) - var(--dur-1)) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jl.is-draw .jl-done, .jl.is-draw .jl-bead.is-today, .mt-today.is-draw .mt-sign,
+  .mt-today.is-draw .mt-invite-path, .atlas-plate.is-draw .atlas-here { animation: none; clip-path: none; }
+  .jl.is-spend .jl-bead, .mt-spend-door > svg:last-child { transition: none; }
 }

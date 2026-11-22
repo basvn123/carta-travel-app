@@ -346,6 +346,7 @@ Kinds of place have their own paint, for the kind's pictogram mark, swatch and t
 | `--text-headline` | 24 | 30 | 36 | 800, -0.018em | A page title |
 | `--text-title` | 19 | 21 | 22 | 800 | A section |
 | `--text-plate` | 21 | 22 | 22 | 700, plate face | A plate name |
+| `--text-signpost` | 32 | 38 | 44 | 800, plate face, capitals | The one signpost title: Today's place on My trips (G12) |
 | `--text-figure` | 18 | 18 | 19 | 800 | A row's day figure |
 | `--text-lead` | 16 / 1.5 | same | same | 400 | Reading text, fields (16 px so iOS never zooms) |
 | `--text-body` | 14 / 1.35 | same | same | 400 to 700 | Interface text: rows, controls, lists |
@@ -480,6 +481,8 @@ Character: **painted and placed**. Rules:
 | `--dur-sheet`, `--ease-sheet` | 420 ms, `cubic-bezier(0.32, 0.72, 0, 1)` | A sheet rising |
 | `--dur-1` to `--dur-4` | 120, 200, 320, 480 ms | Colour changes, routine changes, surfaces, one authored movement |
 | `--dur-note` | 4000 ms | A delta note ("+€328") |
+| `--dur-fill-step` | 240 ms | One year's step in Your Europe's fill on a tab change (at most 1200 ms in all; more than five years share the 1200 ms) |
+| `--dur-draw` | 640 ms (same as `--dur-reveal`) | A route on the My trips plate and the journey line drawing in on a tab change |
 
 The linear() easings are generated from `src/lib/motionTokens.js` (`SPRING`: tick, pop, settle, surface, route, reveal, fling) by `scripts/ci/spring-easings.mjs`, so CSS and Motion move alike.
 
