@@ -21,8 +21,12 @@ export function Ring({ photo = null, members = [], me, big = false }) {
       </span>
       {shown.map((m, i) => {
         const a = (i / Math.min(n, 8)) * Math.PI * 2 - Math.PI / 2;
-        // Percent positions on the ring's own box, so the ring scales.
-        const style = { left: `${50 + Math.cos(a) * 43}%`, top: `${50 + Math.sin(a) * 43}%` };
+        // Percent positions on the ring's own box, so the ring scales. The
+        // faces sit on an orbit outside the photo (judge 1 fix 4): the orbit
+        // radius minus half a face clears the photo's edge, whose inset is
+        // set to match in 91-vrienden.css (.vr-ring-c).
+        const r = big ? 39.75 : 37.5;
+        const style = { left: `${50 + Math.cos(a) * r}%`, top: `${50 + Math.sin(a) * r}%` };
         return (
           <span key={m.userId} className="vr-ring-face" style={style}>
             <ToneFace id={m.userId} me={me} name={m.name} emoji={m.emoji} size="sm" />

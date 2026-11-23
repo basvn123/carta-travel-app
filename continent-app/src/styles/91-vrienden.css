@@ -197,12 +197,15 @@
 .vr-groups { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
 .vr-ring { position: relative; display: block; width: 116px; aspect-ratio: 1; flex: none; }
 .vr-ring.is-big { width: min(200px, 56vw); }
-.vr-ring-c { position: absolute; inset: 12%; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--umber-800); }
+/* The photo's radius (50% minus the inset) stays 2% inside the orbit minus
+   half a face: small 37.5 - 12.5 - 2 = 23, big 39.75 - 10.25 - 2 = 27.5. */
+.vr-ring-c { position: absolute; inset: 27%; border-radius: 50%; overflow: hidden; border: 1.5px solid var(--umber-800); }
 .vr-ring-c img, .vr-ring-c .hero-blank, .vr-ring-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
 .vr-ring-blank { background: var(--border-soft); }
 .vr-ring-face { position: absolute; transform: translate(-50%, -50%); line-height: 0; }
 .vr-ring-face .frn-face { box-sizing: content-box; border: 2.5px solid var(--surface-page); }
 .vr-ring.is-big .vr-ring-face .frn-face { width: 36px; height: 36px; font-size: var(--text-caption); }
+.vr-ring.is-big .vr-ring-c { inset: 22.5%; }
 
 /* ── Rekeningen ─────────────────────────────────────────────────────── */
 .vr-bal { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
