@@ -38,7 +38,7 @@ function Milestones({ userId, friendCount }) {
   }, [userId, friendCount]);
   // An unreadable ledger hides the section: "nothing earned" would be a lie.
   if (!earned) return null;
-  const got = BADGES.filter((b) => earned.has(b.id)).length;
+  const got = BADGES.filter((b) => earned.has(b.id) || (b.target && friendCount >= b.target)).length;
   const picked = BADGES.find((b) => b.id === open);
   const when = (iso) => {
     try { return new Intl.DateTimeFormat(lang, { day: 'numeric', month: 'short', year: 'numeric' }).format(new Date(iso)); } catch { return ''; }
@@ -49,7 +49,9 @@ function Milestones({ userId, friendCount }) {
       <div className="vr-stamps">
         {BADGES.map((b) => {
           const Icon = ICONS[b.id];
-          const at = earned.get(b.id);
+          // A counted milestone whose count is complete is earned, even
+          // before the ledger's trigger has written it (judge 3 fix 5).
+          const at = earned.get(b.id) || (b.target && friendCount >= b.target ? 'reached' : null);
           const frac = at ? 1 : b.target ? Math.min(friendCount, b.target) / b.target : 0;
           const name = t(b.nameKey);
           const state = at ? t('vr.earned') : b.target ? t('vr.ofN', { i: Math.min(friendCount, b.target), n: b.target }) : t('vr.locked');
@@ -71,7 +73,7 @@ function Milestones({ userId, friendCount }) {
       </div>
       {picked && (
         <p className="vr-stamp-how" role="status">
-          {earned.get(picked.id) ? `${t('friends.badgeEarned')} ${when(earned.get(picked.id))}` : t(picked.howKey)}
+          {earned.get(picked.id) ? `${t('friends.badgeEarned')} ${when(earned.get(picked.id))}` : picked.target && friendCount >= picked.target ? t('vr.earned') : t(picked.howKey)}
         </p>
       )}
     </section>
