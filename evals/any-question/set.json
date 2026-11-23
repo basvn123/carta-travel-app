@@ -4999,9 +4999,10 @@
    "lang": "en",
    "q": "What is the best time to visit Tokyo?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5019,9 +5020,10 @@
    "lang": "en",
    "q": "What is the best time to visit New York?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5039,9 +5041,10 @@
    "lang": "en",
    "q": "What is the best time to visit Bangkok?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5059,9 +5062,10 @@
    "lang": "en",
    "q": "What is the best time to visit Sydney?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5079,9 +5083,10 @@
    "lang": "en",
    "q": "What is the best time to visit Cape Town?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5099,9 +5104,10 @@
    "lang": "nl",
    "q": "Wat is de beste reistijd voor Tokio?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5119,9 +5125,10 @@
    "lang": "nl",
    "q": "Wat is de beste reistijd voor New York?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5139,9 +5146,10 @@
    "lang": "nl",
    "q": "Wat is de beste reistijd voor Bangkok?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5159,9 +5167,10 @@
    "lang": "de",
    "q": "Wann ist die beste Reisezeit für Tokio?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5179,9 +5188,10 @@
    "lang": "de",
    "q": "Wann ist die beste Reisezeit für New York?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5199,9 +5209,10 @@
    "lang": "de",
    "q": "Wann ist die beste Reisezeit für Bangkok?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5219,9 +5230,10 @@
    "lang": "fr",
    "q": "Quelle est la meilleure période pour visiter Tokyo ?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5239,9 +5251,10 @@
    "lang": "fr",
    "q": "Quelle est la meilleure période pour visiter New York ?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5259,9 +5272,10 @@
    "lang": "fr",
    "q": "Quelle est la meilleure période pour visiter Bangkok ?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5279,9 +5293,10 @@
    "lang": "es",
    "q": "¿Cuál es la mejor época para visitar Tokio?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5299,9 +5314,10 @@
    "lang": "es",
    "q": "¿Cuál es la mejor época para visitar Nueva York?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5319,9 +5335,10 @@
    "lang": "es",
    "q": "¿Cuál es la mejor época para visitar Bangkok?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5339,9 +5356,10 @@
    "lang": "it",
    "q": "Qual è il periodo migliore per visitare Tokyo?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5359,9 +5377,10 @@
    "lang": "it",
    "q": "Qual è il periodo migliore per visitare New York?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5379,9 +5398,10 @@
    "lang": "it",
    "q": "Qual è il periodo migliore per visitare Bangkok?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
-     "door"
+     "decline-nearest",
+     "refuse"
     ],
     "outside": true
    },
@@ -5437,14 +5457,16 @@
    "lang": "nl",
    "q": "Wat is de hoofdstad van Australië?",
    "expect": {
-    "kind": "decline-nearest",
+    "kind": "decline",
     "also": [
+     "decline-nearest",
      "refuse"
-    ]
+    ],
+    "outside": true
    },
    "slice": {
     "country": "none",
-    "place": "none",
+    "place": "outside",
     "persona": "solo"
    },
    "label": "draft",

@@ -9,6 +9,8 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync, mkdtempSync, readFileSync as read, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
+import { fileURLToPath } from 'node:url';
+import { execFileSync } from 'node:child_process';
 import { join } from 'node:path';
 import { kindsOf, judge, tally, slices, worstSlice, counterfactual, fmtShare, metricsOf } from '../scripts/eval/any-question-lib.mjs';
 import { makeResult, validateResult, writeResult, historyLine } from '../scripts/eval/lib/results.mjs';
@@ -30,6 +32,14 @@ test('the set: 14 types with at least 20 cases, six languages, drafts, a checkab
     if (c.type === 'follow-up') assert.ok(c.prev?.ref?.id, `${c.id} needs prev.ref`);
     assert.ok(![0x2013, 0x2014].some((cp) => c.q.includes(String.fromCodePoint(cp))), `${c.id} has a dash`);
   }
+});
+
+test('the committed set.json is what build_set.mjs writes (the labels cannot drift from the generator)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'carta-aq-build-'));
+  // The catalogue guard only warns without a catalogue; the build itself needs none.
+  execFileSync(process.execPath, [fileURLToPath(new URL('../../evals/any-question/build_set.mjs', import.meta.url)), '--out', dir], { stdio: 'pipe' });
+  const strip = (t) => t.split('\r\n').join('\n');
+  assert.equal(strip(readFileSync(join(dir, 'set.json'), 'utf8')), strip(readFileSync(new URL('../../evals/any-question/set.json', import.meta.url), 'utf8')));
 });
 
 test('the set: counterfactual groups, at least 10 of each kind, whole', () => {
