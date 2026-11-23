@@ -29,6 +29,7 @@ import { roundTripNear } from './flights/flights.js';
 import { destAnchor } from './origins.js';
 import { rule } from './price/config.js';
 import { isOn } from './flags.js';
+import { standingOf } from './price/gaps.js';
 
 // A-11 (RC16): the search's numbers live in config/pricing.json `budget.search`.
 const BUDGET = rule('budget.search');
@@ -231,9 +232,10 @@ export function priceForBudget(dest, q, opts = {}) {
 
 /** Fits, tight or over, and what is left. */
 export function verdictOf(p, budget) {
-  if (p.total <= budget) return { group: 'fits', left: budget - p.total };
-  if (p.buffer > 0 && p.core <= budget) return { group: 'tight', left: budget - p.core };
-  return { group: 'over', left: budget - p.total };
+  // gaps.js decides fits, tight and over (E1); a search total is complete for what it prices.
+  const { state } = standingOf({ eur: p.total, core: p.core, complete: true }, budget);
+  if (state === 'tight') return { group: state, left: budget - p.core };
+  return { group: state === 'fits' ? state : 'over', left: budget - p.total };
 }
 
 const inMonth = (dest, month) => (dest?.climate?.best || []).includes(month);

@@ -46,7 +46,7 @@ export const isPartial = (t) => !t || t.complete === false || t.partial === true
  *           'over', or 'partial' (a gap, and the part we know is still within
  *           budget, so it cannot be called fits). A partial total already over
  *           budget is 'over': more parts only add.
- *   delta   eur minus budget (negative: money left); null when partial
+ *   delta   eur minus budget (negative: money left); null when partial and not over (a partial total already over still has its over-by figure)
  *   left    budget minus eur; null when partial
  * No budget gives state null.
  */
@@ -64,11 +64,18 @@ export function budgetStanding(total, budget, party = {}) {
 
 /** Like budgetStanding, with 'tight' (the buffer is what tips it) and the old rule when the flag is not on. */
 export function standingOf(total, budget, party = {}) {
-  if (!isOn('E1')) return budgetStanding({ ...total, complete: true, partial: false, noFare: false }, budget, party);
-  const s = budgetStanding(total, budget, party);
-  if (s.state === 'over' && known(total.core) && total.core <= budget && !isPartial(total)) return { ...s, state: 'tight' };
+  // Flag off: the shipped rule, which never looked at completeness.
+  const t = isOn('E1') ? total : { ...total, complete: true, partial: false, noFare: false };
+  const s = budgetStanding(t, budget, party);
+  if (s.state === 'over' && known(t.core) && t.core <= budget && !isPartial(t)) return { ...s, state: 'tight' };
   return s;
 }
+
+/** The key a price sort ranks a total by: [0 or 1 (partial), eur]; the array form comparePartialLast orders by. */
+export const partialLastKey = (total) => [isPartial(total) ? 1 : 0, known(total?.eur) ? total.eur : Infinity];
+
+/** What a total leaves out, of one kind ('bed', 'food'), from `quoteTrip().missing`. */
+export const leftOutOf = (missing, kind) => (missing || []).filter((m) => m.kind === kind);
 
 /** Sort order for two totals { eur, complete }: complete before partial, then cheaper first. */
 export function comparePartialLast(a, b) {

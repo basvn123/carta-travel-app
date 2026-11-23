@@ -28,7 +28,7 @@ import { chooseOption } from './slots.js';
 import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
-import { budgetCompared, slotsLeaveOut } from '../price/gaps.js';
+import { budgetCompared, partialLastKey, slotsLeaveOut } from '../price/gaps.js';
 import { isOn } from '../flags.js';
 import { MATCH } from '../match.js';
 import { flightLeverKeys } from './adapters/flight.js';
@@ -176,7 +176,7 @@ export function priorityPull(trips, settings, levers = null) {
   if (settings.priority === 'price') {
     // E1: a trip that leaves a part out sorts after the complete ones, not first as the cheapest.
     keys = new Map(trips.map((t) => [t.id, Number.isFinite(t.total?.perPerson)
-      ? (isOn('E1') ? [slotsLeaveOut(t.slots) ? 1 : 0, t.total.perPerson] : [t.total.perPerson]) : null]));
+      ? (isOn('E1') ? partialLastKey({ eur: t.total.perPerson, complete: !slotsLeaveOut(t.slots) }) : [t.total.perPerson]) : null]));
   } else if (settings.priority === 'comfort' && !levers?.flight) {
     keys = flightLeverKeys(trips, 'quickest');
   }

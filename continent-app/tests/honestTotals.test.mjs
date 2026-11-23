@@ -14,6 +14,8 @@ import { quoteTrip, tripLines } from "../src/lib/tripTotal.js";
 import { costTiles } from "../src/lib/price/tiles.js";
 import { quoteNights } from "../src/lib/price/nights.js";
 import { budgetSearch, normalizeQuery } from "../src/lib/budgetSearch.js";
+import { readFileSync, readdirSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
 import { synth, CATALOGUE, TODAY } from "../scripts/eval/lib/totals-engine.mjs";
 
 const NEW = (fn) => withFlags({ E1: "new" }, fn);
@@ -121,4 +123,25 @@ test("E1: the old path is untouched with the flag off (today's totals)", () => {
   const q = quoteTrip({ stops: [{ destinationId: "X", nights: 3, activities: [] }], tripStart: "2027-03-06", tripEnd: "2027-03-09", groupSize: 2, children: 0, babies: 0, transportPref: "owncar", baggage: "priority_10kg", ownFlight: null, carHome: null, stayTier: "home", lifestyle: null }, { data: { destinations: { X: d } } });
   assert.equal(q.complete, true);
   assert.equal(OLD(() => tripLines(q)).some((l) => l.key === "bedsMissing"), false);
+});
+
+test("E1: one decider: no fits or tight verdict is assigned anywhere in src/ but lib/price/gaps.js", () => {
+  const root = new URL("../src", import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, "$1");
+  const hits = [];
+  const walk = (dir) => {
+    for (const f of readdirSync(dir)) {
+      const p = join(dir, f);
+      if (statSync(p).isDirectory()) { if (f !== "i18n") walk(p); continue; }
+      if (!/\.(js|jsx)$/.test(f)) continue;
+      const rel = relative(root, p).split("\\").join("/");
+      // gaps.js decides; budgetSearch.verdictOf only maps its answer onto the search's three groups.
+      if (rel === "lib/price/gaps.js") continue;
+      const src = readFileSync(p, "utf8");
+      src.split(/\r?\n/).forEach((line, i) => {
+        if (/(group|state)\s*[:=]\s*['"](fits|tight)['"]/.test(line) || /(?:<=?|>=?)\s*budget\b.*['"](fits|tight)['"]/.test(line)) hits.push(`${rel}:${i + 1}`);
+      });
+    }
+  };
+  walk(root);
+  assert.deepEqual(hits, [], "a fits or tight decision outside lib/price/gaps.js");
 });
