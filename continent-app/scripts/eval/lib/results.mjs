@@ -16,7 +16,10 @@
  *             dashboard trends; value is a share from 0 to 1
  *   metrics   flat { "dotted.key": number | null }: every number of the run
  *   gate      { ok, rule, tolerance, baseline, failures: [{ key, was, now, why }] }
- *   cases     { n, passed } or null
+ *   cases     { n, passed } or null; optionally also items: [{ id, type, lang, ...slice keys,
+ *             accurate, kept, ... }], the per-case list (E1). writeResult puts items in
+ *             latest/<eval>.cases.jsonl, one case a line, and keeps them out of
+ *             latest/<eval>.json and out of history.jsonl.
  *   judge     null, or { backend, model, rubric_sha, n, agreement: {...} } (plan-day)
  *   inputs    free object: set version, scope, data the run read
  *   notes     [string]
@@ -93,6 +96,10 @@ export function validateResult(r) {
   else for (const [k, v] of Object.entries(r.metrics)) if (v !== null && typeof v !== 'number') bad.push(`metric ${k} not a number`);
   if (r.gate != null && (typeof r.gate.ok !== 'boolean' || !Array.isArray(r.gate.failures))) bad.push('gate needs ok and failures');
   if (!Array.isArray(r.notes)) bad.push('notes not a list');
+  if (r.cases?.items != null) {
+    if (!Array.isArray(r.cases.items)) bad.push('cases.items not a list');
+    else if (r.cases.items.some((x) => !x || typeof x.id !== 'string')) bad.push('every cases.items entry needs an id');
+  }
   return bad;
 }
 
@@ -101,7 +108,7 @@ export function historyLine(r) {
   return {
     schema: r.schema, eval: r.eval, at: r.at, git: r.git, status: r.status, gated: r.gated,
     headline: r.headline, gate_ok: r.gate ? r.gate.ok : null, failures: r.gate ? r.gate.failures.length : 0,
-    cases: r.cases, kappa: r.judge?.agreement?.judge_vs_human?.kappa ?? null,
+    cases: r.cases ? { n: r.cases.n, passed: r.cases.passed } : null, kappa: r.judge?.agreement?.judge_vs_human?.kappa ?? null,
   };
 }
 
@@ -109,7 +116,10 @@ export function writeResult(r, dir = RESULTS_DIR) {
   const problems = validateResult(r);
   if (problems.length) throw new Error(`eval result ${r?.eval} is not valid: ${problems.join('; ')}`);
   mkdirSync(join(dir, 'latest'), { recursive: true });
-  writeFileSync(join(dir, 'latest', `${r.eval}.json`), `${JSON.stringify(r, null, 1)}\n`);
+  // Per-case items go to their own file, one JSON line a case; the result file stays small.
+  const { items, ...cases } = r.cases || {};
+  if (Array.isArray(items)) writeFileSync(join(dir, 'latest', `${r.eval}.cases.jsonl`), items.map((x) => JSON.stringify(x)).join('\n') + '\n');
+  writeFileSync(join(dir, 'latest', `${r.eval}.json`), `${JSON.stringify(r.cases ? { ...r, cases } : r, null, 1)}\n`);
   appendFileSync(join(dir, 'history.jsonl'), `${JSON.stringify(historyLine(r))}\n`);
   return dir;
 }
