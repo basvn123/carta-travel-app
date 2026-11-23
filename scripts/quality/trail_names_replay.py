@@ -179,8 +179,38 @@ def mid_word_loss(n0: str, n1: str, cc: str | None = None, require_code: bool = 
     if len(words) < 2 or not tail:
         return False
     low = " " + " ".join(re.findall(r"[^\W_]+", n1.lower())) + " "
+    if names.squash(n1) == names.squash(r):
+        return False                # the wire's own name, unchanged
+    n1_seg0 = re.split(r"\s[-–]\s", n1)[0]
+    r_seg0 = re.sub(r"^\[[^\]]{1,3}\]\s+", "", segs[0])
+    if r_seg0.startswith(n1_seg0) and r_seg0[len(n1_seg0):len(n1_seg0) + 2] in (", ", ": ", " (", " ["):
+        return False                # cut at a natural boundary, allowed
+    if r_seg0 == n1_seg0:
+        return False                # the start is whole; only the end was shortened
+    if not r_seg0.startswith(n1_seg0):
+        return False                # the start was dropped or reshaped whole, not cut in part
     has = lambda w: " " + w.lower() + " " in low
     return has(words[0]) and not has(words[-1]) and has(tail[-1])
+
+
+def dangling_end(n1: str, n0_readable: str = "") -> bool:
+    """(judge 2) A name that ends on a separator or a joining word: "Rail Trail:
+    Birmingham International >", "...wokol", "...A Circular Walk Around"."""
+    t = n1.strip()
+    if not t or names.squash(t) == names.squash(n0_readable):
+        return False        # the wire's own name, unchanged, is not the cleaner's doing
+    if t[-1] in ">_|-:,/&(":
+        return True
+    last = re.findall(r"[^\W\d_]+", t.lower())
+    return bool(last) and t[-1].isalpha() and last[-1] in names._DANGLING and len(last) > 1         and len(t) < len(n0_readable)
+
+
+def cap_kept_long(n0: str, n1: str, cc: str | None = None) -> bool:
+    """(judge 2) The cap cut a name that has no boundary to cut at (no ", ", ": ",
+    " - " or bracket) at a word, after the function words were stripped. Reported
+    and allowed: the wire's own name is over 42 characters too."""
+    r = names.readable(n0, cc)
+    return len(n1) < len(r) and r.startswith(n1) and r[len(n1):len(n1) + 2] not in (", ", ": ", " -", " (", " [", " –")
 
 
 def end_too_long(n0: str, cc: str | None = None) -> bool:
@@ -220,8 +250,9 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "mid_word_loss": 0, "start_tail_cut": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
+    stc_ex, dang_ex = [], []
     dd_ex = collections.defaultdict(list)
     for r in hikes:
         n0, n1 = originals[r["id"]], r["name"] or ""
@@ -244,7 +275,15 @@ def replay(rows: list[dict]) -> dict:
             res["mid_word_loss"] += 1
             if len(mid_ex) < 25:
                 mid_ex.append([r["id"], n0, n1])
-        res["start_tail_cut"] += mid_word_loss(n0, n1, r.get("country"), False)
+        if mid_word_loss(n0, n1, r.get("country"), False):
+            res["start_tail_cut"] += 1
+            if len(stc_ex) < 25:
+                stc_ex.append([r["id"], n0, n1])
+        if dangling_end(n1, names.readable(n0, r.get("country"))):
+            res["dangling_end"] += 1
+            if len(dang_ex) < 25:
+                dang_ex.append([r["id"], n0, n1])
+        res["cap_kept_long"] += cap_kept_long(n0, n1, r.get("country"))
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
             if len(head_ex) < 25:
@@ -273,10 +312,11 @@ def replay(rows: list[dict]) -> dict:
     res["accept"] = (res["unclean_after"] <= MAX_UNCLEAN
                      and res["end_losses_unexplained"] == 0
                      and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
-                     and res["head_cut"] == 0 and res["mid_word_loss"] == 0
+                     and res["head_cut"] == 0 and res["mid_word_loss"] == 0 and res["start_tail_cut"] == 0
+                     and res["dangling_end"] == 0
                      and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
-    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "dedupe": dd_ex,
+    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "dedupe": dd_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}
     return res
 

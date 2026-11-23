@@ -433,12 +433,13 @@ def test_dedupe_keeps_the_place_and_every_title_fits():
         (191970, "IT", HEAD_ROWS[4][2]),
         (191975, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Perosa canavese")])
     assert all(len(n) <= names.TITLE_MAX for n in got.values())
-    assert got[191970] == "Alta Via dell’Anfiteatro, Fiorano Canavese"
+    # Judge 2: no cut inside "Anfiteatro Morenico", so the id (not a word cut) tells them apart.
+    assert got[191970] == "Alta Via dell’Anfiteatro Morenico, #191970"
     # The id is the last resort, and the title still fits.
     got = _dedupe([
         (191971, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Mercenasco Direzione Ovest"),
         (191972, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Mercenasco Direzione Sud")])
-    assert got == {191971: "Alta Via dell’Anfiteatro, no. 191971", 191972: "Alta Via dell’Anfiteatro, no. 191972"}
+    assert got == {191971: "Alta Via dell’Anfiteatro Morenico, #191971", 191972: "Alta Via dell’Anfiteatro Morenico, #191972"}
 
 
 def test_a_head_cut_at_a_comma_leaves_no_dangling_word():
@@ -564,3 +565,22 @@ def test_a_suspended_hyphen_is_not_split_and_a_code_does_not_eat_the_word_after_
     got = n.wire_name("Via Sancti Martini HW-33-01 Geisenhausen - Landshut", "DE")
     assert "Geisenhausen" in got and "Landshut" in got and "HW-33-01" not in got
     assert n.wire_name("[C] Moravský Krumlov - Suchohrdly u Miroslavi", "CZ").startswith("Moravský Krumlov")
+
+
+def test_a_cap_cuts_at_a_boundary_and_never_ends_on_a_joining_word_or_symbol():
+    """Judge 2 fix 1 (D7): a start is whole or cut at a boundary; a cut name never ends on a
+    separator or a function word. The wire shows each of these whole today."""
+    got = names.wire_name("Tour Du Mont Blanc - Variante du Col de Tricot", "FR")
+    assert "Tour Du Mont -" not in got and got in ("Variante du Col de Tricot", "Tour Du Mont Blanc")
+    assert "Sentiero dei -" not in names.wire_name("Sentiero dei Partigiani - Anello della Battaglia", "IT")
+    for src, cc in (("Ścieżka historyczno-przyrodnicza wokół Maślic", "PL"),
+                    ("Rail Trail: Birmingham International > Marston Green", "GB"),
+                    ("Below Kinder Scout: A Circular Walk Around Kinder Reservoir, High Peak", "GB"),
+                    ("Lynmouth Circular via Watersmeet & Countisbury", "GB"),
+                    ("Les Arbres remarquables de Bagnoles-de-l'Orne", "FR")):
+        out = names.wire_name(src, cc)
+        assert len(out) <= 42 and out[-1] not in ">_|-:,&(" and not out.lower().endswith(
+            (" wokół", " around", " de", " &")), out
+    got = _dedupe([(185498, "PL", "Ścieżka historyczno-przyrodnicza wokół Maślic"),
+                   (189276, "GB", "Rail Trail: Birmingham International > Marston Green")])
+    assert not got[185498].endswith("wokół") and not got[189276].endswith(">")
