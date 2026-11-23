@@ -1,3 +1,4 @@
+import { isOn } from '../../lib/flags.js';
 import { deviceSaveDecision, loadDeviceTrip, newDeviceKey, saveDeviceTrip, deviceMeetsAccount, clearDeviceTrip, ownTrips } from '../deviceTripStore.js';
 import { trackFunnel } from '../../lib/funnelCounts.js';
 import { fetchTripPlans } from '../../auth/tripPlanStorage.js';
@@ -85,6 +86,8 @@ export function useTripSave({
   // trip already there, the traveller chooses which one to keep.
   useEffect(() => {
     if (!user || migrating.current) return;
+    // E10 (J-7): the move-or-choose decision needs a KNOWN entitlement; unknown never reads as paid.
+    if (isOn('E10') && !paywall.entitlement?.known) return;
     const stored = loadDeviceTrip();
     if (!stored) return;
     migrating.current = true;
@@ -96,7 +99,7 @@ export function useTripSave({
       if (how === 'move') setPendingMove({ stored, asPlanId: null });
       else if (how === 'choose') setKeepChoice({ stored, account: existing[0] });
     })();
-  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps -- once per sign-in
+  }, [user, paywall.entitlement?.known]); // eslint-disable-line react-hooks/exhaustive-deps -- once per sign-in (and once the entitlement is known under E10)
 
   // The move itself waits one render: the device trip is put on the planner
   // first, then saved, so savePlan reads the trip it is saving.

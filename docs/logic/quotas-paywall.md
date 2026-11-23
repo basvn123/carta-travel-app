@@ -99,19 +99,19 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 - Decides: which buttons ask for a Pass.
 - Rule: hard gates `export` (every PDF), `exportCal`, `exportMap`, `import`, `save`, `plans`, `ground` and `browse` always open the Pass sheet for a traveller who has not paid. A payer passes every gate except `plans`, `ground` and `plansLow`, which open for anyone once the allowance is known. An unknown reason opens as `browse`. Planning together and sharing are not gated.
 - Constant: `GATES` in `continent-app/src/hooks/usePaywall.jsx:50`; `QUOTA_REASONS` in `usePaywall.jsx:48`; `require` in `usePaywall.jsx:220`
-- Test: no test
+- Test: `continent-app/tests/paywallDecision.test.mjs` (the matrix; E10, flag default old: with `old` the rule below is the shipped one, with `new` `decide()` in `continent-app/src/lib/paywallDecision.js` applies owner default 13)
 
 ### QUOTA-012 Paid fails open
 - Decides: that a slow status read never locks a paying traveller out.
 - Rule: a guest is not paid; signed in, paid while the entitlement is loading or unknown, else paid when the tier is not free; outside the provider everything is allowed. The metered AI surfaces stay enforced on the server.
 - Constant: `paid` in `continent-app/src/hooks/usePaywall.jsx:193`; `FALLBACK` in `usePaywall.jsx` (end of file)
-- Test: no test
+- Test: `continent-app/tests/paywallDecision.test.mjs`. With flag E10 on (owner default 13, 2026-11-19): signed in and unknown, a traveller whose last read (kept on the device) was a paid tier passes the hard gates; one who never paid is gated for export, save, import, calendar and map when the read failed, and held (`wait`) while it loads; the sign-in migration of a device trip decides only on a known entitlement (J-7). The server's refusal for plans and ground is unchanged (QUOTA-012 above)
 
 ### QUOTA-013 Soft offers, once a session, snoozed a month
 - Decides: how often an unasked offer may appear.
 - Rule: soft reasons are `plansLow` and `expiring`. `nudge` shows one only to a non-payer, once a session, and not within 30 days of dismissing the same reason; dismissing a soft sheet writes the snooze, dismissing a hard one never does.
 - Constant: `SNOOZE_DAYS` in `continent-app/src/hooks/usePaywall.jsx:73` = 30; `SESSION_KEY` in `usePaywall.jsx:76`; `nudge` in `usePaywall.jsx:232`
-- Test: no test
+- Test: `continent-app/tests/paywallDecision.test.mjs` (the matrix; E10, flag default old: with `old` the rule below is the shipped one, with `new` `decide()` in `continent-app/src/lib/paywallDecision.js` applies owner default 13)
 
 ### QUOTA-014 When the allowance offers appear
 - Decides: where a traveller is told plans or searches are running out.

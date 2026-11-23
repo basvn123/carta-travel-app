@@ -22,6 +22,16 @@ import { trackPaywall, markCheckoutRedirect } from './paywallEvents.js';
  *   has no gate, and the per-gate breakdown can only ever show who was ASKED,
  *   never who paid, which is the half that decides anything.
  */
+/** This page's own path, query and hash without `pass`, for the way back from Stripe. */
+function returnPath() {
+  if (typeof window === 'undefined') return '/';
+  const { pathname, search, hash } = window.location;
+  const params = new URLSearchParams(search);
+  params.delete('pass');
+  const qs = params.toString();
+  return `${pathname}${qs ? `?${qs}` : ''}${hash || ''}`;
+}
+
 export async function startCheckout(tier, reason = '') {
   // The client loads on first use; a chunk that fails to arrive is the
   // network failing, and reads as one.
@@ -36,7 +46,8 @@ export async function startCheckout(tier, reason = '') {
   trackPaywall('checkout', reason, tier);
   try {
     const { data, error } = await supabase.functions.invoke('checkout', {
-      body: { tier, reason: reason || '' },
+      // J-5: the page to come back to; the server keeps only a same-origin path and builds the host itself.
+      body: { tier, reason: reason || '', returnTo: returnPath() },
     });
     if (error) {
       let code = 'stripe_error';
