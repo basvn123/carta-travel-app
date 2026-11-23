@@ -29,7 +29,7 @@
      "bnb_room": 119
     },
     "q": "modelled",
-    "captured": "2026-10-23",
+    "captured": null,
     "supply": {
      "hostel": false,
      "hotel": true,
@@ -87,7 +87,7 @@
      "bnb_room": 64
     },
     "q": "modelled",
-    "captured": "2026-10-23",
+    "captured": null,
     "supply": {
      "hostel": true,
      "hotel": true,
@@ -144,7 +144,7 @@
      "bnb_room": 137
     },
     "q": "modelled",
-    "captured": "2026-10-23",
+    "captured": null,
     "supply": {
      "hostel": true,
      "hotel": true,
@@ -317,7 +317,7 @@
      "bnb_room": 74
     },
     "q": "modelled",
-    "captured": "2026-10-23",
+    "captured": null,
     "supply": {
      "hostel": true,
      "hotel": true,
@@ -376,7 +376,7 @@
      "bnb_room": 166
     },
     "q": "modelled",
-    "captured": "2026-10-23",
+    "captured": null,
     "supply": {
      "hostel": true,
      "hotel": true,

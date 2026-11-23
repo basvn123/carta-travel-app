@@ -77,3 +77,18 @@ test("REQ-data-2: a bed is measured only when the pipeline's is_measured says so
   assert.equal(isMeasured({ q: "measured", beds: {}, captured: "2026-10-23" }), false);
   assert.equal(isMeasured(null), false);
 });
+
+test("REQ-data-2: the day price's bed quality uses the one measured rule", async () => {
+  const { priceDay } = await import("../src/lib/price/priceDay.js");
+  const { DEFAULT_PRICE_REQUEST } = await import("../src/lib/price/request.js");
+  const quality = (id, captured, q) => {
+    const dest = { ...TOWNS[id], accommodation: { ...TOWNS[id].accommodation, ...(q ? { q } : {}), captured } };
+    const day = priceDay(dest, { ...DEFAULT_PRICE_REQUEST, stay: "hotel3" }, { [dest.id]: dest });
+    const bed = day.lines.find((line) => line.key === "bed");
+    return { quality: bed.quality, modelled: !!bed.modelled };
+  };
+  assert.deepEqual(quality("MAD", "2026-10-23"), { quality: "measured", modelled: false });
+  assert.deepEqual(quality("MAD", null), { quality: "modelled", modelled: true }, "a legacy undated block");
+  assert.deepEqual(quality("MAD", undefined), { quality: "modelled", modelled: true }, "a missing capture date is undated");
+  assert.deepEqual(quality("MAD", "2026-10-23", "modelled"), { quality: "modelled", modelled: true }, "a modelled block with a date is still not measured");
+});

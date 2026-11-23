@@ -64,7 +64,7 @@
 import {
   DEFAULT_LIFESTYLE, CLUB_DRINKS_PER_NIGHT, groundSpendPerPerson,
 } from './runtime_pricing.js';
-import { bedPrice, cheapestMonths } from './stayPrice.js';
+import { bedPrice, cheapestMonths, isMeasured } from './stayPrice.js';
 import { staysDataVersion } from './staysData.js';
 import { foodShare, partyOf } from './party.js';
 import { formatMoney } from './money.js';
@@ -387,6 +387,8 @@ export function costRow(d, ctx) {
     stayScaled: !!at.bed?.scaled,
     // T662: what the engine (lib/price/) reports as each line's basis.
     stayRepaired: repaired,
+    // REQ-data-2: the one rule, the pipeline's is_measured (stayPrice.isMeasured): q measured, beds, a capture date.
+    stayMeasured: !repaired && isMeasured(a),
     stayUnits: at.bed ? { unit: at.bed.unit, units: at.bed.units, tier: at.bed.tier, basis: at.bed.basis } : null,
   };
 }

@@ -42,9 +42,9 @@ export const isThin = (n) => n != null && Number.isFinite(n) && n <= THIN;
 
 function bedQuality(row) {
   if (row.stayEur == null) return 'missing';
-  // REQ-data-2: the pipeline's own rule (bed_rules.is_measured) wants a capture date too; a row whose
-  // block has none (captured null) is not a measurement we can date.
-  return row.stayLevel === 'city' && !row.stayRepaired && row.captured !== null ? 'measured' : 'modelled';
+  // REQ-data-2: one rule, stayPrice.isMeasured (the pipeline's bed_rules.is_measured): q measured, beds
+  // and a capture date. A modelled block is never measured; a block with no capture date is undated.
+  return row.stayMeasured === true ? 'measured' : 'modelled';
 }
 
 // The month a hire is priced in: the exact start, the month's middle, or
