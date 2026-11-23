@@ -6,6 +6,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { deviceKeys } from '../src/lib/stateKeys.js';
 
 const P = await import('../src/lib/taste/profile.js');
 const S = await import('../src/lib/taste/store.js');
@@ -238,8 +239,8 @@ test('the taxonomy map is current with pipeline/taxonomy (YAML)', (t) => {
 });
 
 test('the traveller\'s taste key is one of their things, and the export carries account things', () => {
-  const dd = readFileSync(new URL('../src/lib/deviceData.js', import.meta.url), 'utf8');
-  assert.ok(dd.includes(`'${S.TASTE_KEY}'`));
+  // The device clear reads its keys from the one state table (E9, lib/stateKeys.js).
+  assert.ok(deviceKeys().includes(S.TASTE_KEY));
   const auth = readFileSync(new URL('../src/auth/AuthContext.jsx', import.meta.url), 'utf8');
   assert.ok(/accountThings/.test(auth), 'export keeps accountThings (taste rows ride in it)');
   const mig = readFileSync(new URL('../../supabase/migrations/072_taste_profile.sql', import.meta.url), 'utf8');

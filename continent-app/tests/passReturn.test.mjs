@@ -5,6 +5,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
+import { ownUrlKeys } from '../src/lib/stateKeys.js';
 
 const src = readFileSync(new URL('../src/hooks/useEntitlement.js', import.meta.url), 'utf8');
 
@@ -31,7 +32,6 @@ test('the poll reads the boot value, and the strip is its own one-shot effect', 
   assert.match(strip, /stripped\.current = true;\s*passReturn\(\);/, 'the boot value is read before the strip');
   assert.match(strip, /replaceState/);
   assert.match(strip, /\}, \[\]\);/, 'no user dependency: a user change cannot re-run or cancel it');
-  const urlState = readFileSync(new URL('../src/lib/urlState.js', import.meta.url), 'utf8');
-  const own = /const OWN_KEYS = \[([^\]]*)\]/.exec(urlState)[1];
-  assert.doesNotMatch(own, /'pass'/);
+  // The address keys the app owns come from the one state table (E9, lib/stateKeys.js).
+  assert.ok(!ownUrlKeys().includes('pass'), 'the app does not own pass, so the strip is the only writer');
 });
