@@ -412,22 +412,26 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 
 /* flights */
 .vr-flwrap { overflow-x: auto; min-width: 0; }
-.vr-fl { width: 100%; border-collapse: separate; border-spacing: 0; font-size: var(--text-body); }
+.vr-fl { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-size: var(--text-body); }
+.vr-fl thead .vr-fl-who { width: 84px; }
+@media (min-width: 768px) { .vr-fl thead .vr-fl-who { width: 132px; } }
 .vr-fl th, .vr-fl td { padding: 0 var(--space-1); }
 .vr-fl thead th { vertical-align: bottom; padding-bottom: var(--space-2); font-size: var(--text-micro); font-weight: 800; color: var(--text-3); text-align: start; }
-.vr-fl-dest { text-align: center; width: 27%; }
+.vr-fl-dest { text-align: center; }
 .vr-fl thead .vr-fl-dest { text-align: center; padding-top: var(--space-1); }
 .vr-fl-ph { display: block; aspect-ratio: 4 / 3; border-radius: var(--radius-control); overflow: hidden; margin-bottom: var(--space-1); }
 .vr-fl-ph img, .vr-fl-ph .hero-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
 .vr-fl-n { display: block; font-size: var(--text-caption); color: var(--text); overflow-wrap: anywhere; }
 .vr-fl tbody th, .vr-fl tbody td, .vr-fl tfoot th, .vr-fl tfoot td { height: 56px; border-top: var(--stroke-hair) solid var(--border); }
 .vr-fl-who { text-align: start; white-space: nowrap; font-weight: 700; }
-.vr-fl tbody .vr-fl-who { display: flex; align-items: center; gap: var(--space-1); height: 56px; }
+.vr-fl tbody .vr-fl-who { display: flex; flex-wrap: wrap; align-items: center; gap: 2px var(--space-1); height: auto; min-height: 56px; padding-block: var(--space-1); }
 .vr-ap { display: inline-block; padding: 1px 4px; border: 1.5px solid var(--text); border-radius: var(--radius-sm); font: 800 14px/1.1 var(--plate-face); letter-spacing: 0.04em; }
 .vr-fl-none { font-size: var(--text-micro); color: var(--text-2); white-space: normal; }
 .vr-fl-p { text-align: center; }
 .vr-fl-p b { font: 800 20px/1 var(--plate-face); color: var(--text); }
-.vr-fl-p .ink-noprice { font-size: var(--text-micro); justify-content: center; }
+/* In a fare cell the empty square stands over its words, so three
+   proposals fit 360 px without the table scrolling. */
+.vr-fl-p .ink-noprice { flex-direction: column; gap: var(--space-1); font-size: var(--text-micro); white-space: normal; text-align: center; }
 .vr-fl-bar { display: block; height: 4px; width: calc(var(--w) * 100%); margin: 6px auto 0; border-radius: var(--radius-sm); background: var(--umber-600); }
 .vr-fl tfoot th, .vr-fl tfoot td { border-top: 1.5px solid var(--umber-800); font-size: var(--text-micro); color: var(--text-3); }
 .vr-fl-avg { font-size: var(--text-title); }

@@ -22,7 +22,7 @@ export function mockCircles() {
       { userId: 'u-sam', status: 'joined', handle: 'sam_m', name: 'Sam Martens', emoji: '', homeAirport: 'BRU' },
       { userId: 'u-jo', status: 'joined', handle: 'jo_p', name: 'Jo Peeters', emoji: '', homeAirport: 'EIN' },
       { userId: 'u-lea', status: 'joined', handle: 'lea_d', name: 'Léa Dubois', emoji: '', homeAirport: 'CRL' },
-      { userId: 'u-ana', status: 'joined', handle: 'ana_r', name: 'Ana Rocha', emoji: '', homeAirport: null },
+      { userId: 'u-ana', status: 'joined', handle: 'ana_r', name: 'Ana Rocha', emoji: '', homeAirport: 'BRU' },
     ],
     proposals: [
       { id: 'p-spu', destId: 'SPU', createdBy: 'u-sam', created_at: at('10-02') },
