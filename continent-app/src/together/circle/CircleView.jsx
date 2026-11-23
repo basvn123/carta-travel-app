@@ -445,7 +445,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
   const avgFor = (pid) => { const r = fair.rows.find((x) => x.id === pid); return r?.complete ? Math.round(r.avg) : null; };
   const figures = [
     [leadName || t('vr.noLead'), lead ? t('vr.leadsWith', { n: lead.score }) : ''],
-    [winText || t('vr.noDays'), canLine],
+    [winText || t('vr.noDays'), win ? `${canLine}, ${t(win.nights === 1 ? 'vr.night1' : 'tg.nightsN', { n: win.nights })}` : ''],
     faresOn && leadRow?.complete ? [eur(Math.round(leadRow.avg)), `${t('vr.avgPP')}, ${leadName}`] : [win ? t('vr.flightPP') : t('vr.datesFirst'), ''],
   ];
   const isOwner = c.ownerId === s.userId;
@@ -490,12 +490,10 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
     <aside className="vr-kside">
       <span className="vr-kring">
         <Ring photo={leadPhoto} members={joined} me={s.userId} big />
-        {lead && <Stamp place={t('vr.leadsPlace', { place: leadName })} small />}
       </span>
+      {/* The tiles carry the leading place and the dates once each (judge 2
+          fix 4): no stamp or result line repeats them. */}
       <StepTiles step={step} onView={onView} circleId={c.id} figures={figures} />
-      {win && (
-        <p className="vr-res"><b className="num">{winText}</b><span>{canLine}</span><span>{t((win.nights) === 1 ? 'vr.night1' : 'tg.nightsN', { n: win.nights })}</span></p>
-      )}
     </aside>
   );
 
