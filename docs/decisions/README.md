@@ -26,4 +26,5 @@ Each file here records one decision that still matters, so nobody has to guess l
 | [0013](0013-my-trips-atlas.md) | My trips as one atlas: examples behind a button, prices you follow | accepted | 2026-11-21 |
 | [0014](0014-spend-on-device.md) | Uitgaven: one page, a Reiskas split, capture on the device without AI | accepted | 2026-11-22 |
 | [0015](0015-my-trips-journey-line.md) | My trips speaks the map's language: the journey line, the wish hatch, past trips under the map | accepted | 2026-11-22 |
-| [0016](0016-ai-cheapest-layer-first.md) | AI: cheapest layer first, proven by paired tests | accepted | 2026-11-19 |
+| [0016](0016-my-trips-ink-and-photo.md) | My trips in ink and photo: larger photos, line and ink controls, no beige | accepted | 2026-11-22 |
+| [0017](0017-ai-cheapest-layer-first.md) | AI: cheapest layer first, proven by paired tests | accepted | 2026-11-19 |

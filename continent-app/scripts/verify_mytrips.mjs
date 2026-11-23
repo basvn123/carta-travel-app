@@ -151,28 +151,29 @@ async function reducedMotion(browser, v) {
   return res;
 }
 
-// G12 wow: Your Europe's past trips sit under the map from 1100 x 720 (a
-// focusable region inside the slot, after the content in the DOM) and stay
-// inline in a shorter window.
-async function pastPlacement(browser, v, height) {
+// G12 flow (owner review 2026-11-22): from 1100 px each tab's hero stands
+// beside the map, top-aligned, and the rest runs the full width under both;
+// Your Europe's past trips (the one list, also the trip log) open the rest on
+// the left and never sit inside the map slot, and the trip log is gone.
+async function flowPlacement(browser, v, tab, height) {
   const { ctx, page } = await open(browser, v, 1440, { viewport: { width: 1440, height } });
-  await showTab(page, 2);
+  await showTab(page, tab);
   await page.waitForTimeout(1500);
   const r = await page.evaluate(() => {
-    const h = document.getElementById('mt-past-h');
-    const region = document.querySelector('.atlas-slot .atlas-past');
-    const body = document.querySelector('.atlas-body');
-    const kids = body ? [...body.children].map((c) => c.className) : [];
+    const box = (s) => { const e = document.querySelector(s); if (!e) return null; const b = e.getBoundingClientRect(); return { l: b.left, r: b.right, t: b.top, b: b.bottom }; };
+    const hero = box('.atlas-hero') || box('.atlas-lead');
+    const slot = box('.atlas-slot');
+    const rest = box('.atlas-rest') || box('.atlas-main');
     return {
-      heading: !!h,
-      inSlot: !!(h && h.closest('.atlas-slot')),
-      region: region ? { tabindex: region.getAttribute('tabindex'), role: region.getAttribute('role'), label: region.getAttribute('aria-labelledby') } : null,
-      contentFirst: kids.findIndex((c) => c.includes('atlas-content')) < kids.findIndex((c) => c.includes('atlas-slot')),
-      overscroll: region ? getComputedStyle(region).overscrollBehaviorY : '',
+      hero: !!hero,
+      beside: !!(hero && slot && (document.querySelector('.atlas-lead') ? slot.t >= hero.b - 1 && rest.r <= slot.l + 1 : hero.r <= slot.l + 1 && Math.abs(hero.t - slot.t) < 2)),
+      under: !!(rest && slot && (document.querySelector('.atlas-lead') ? Math.abs(rest.t - slot.t) < 2 : rest.t >= Math.max(hero.b, slot.b) - 1)),
+      pastInSlot: !!document.querySelector('.atlas-slot #mt-past-h'),
+      log: !!document.getElementById('mt-log-h'),
     };
   });
   await ctx.close();
-  return { v, height, ...r };
+  return { v, tab, height, ...r };
 }
 
 const browser = await chromium.launch();
@@ -193,16 +194,17 @@ if (WIDTHS.includes(390)) {
   }
 }
 const placement = [];
-if (WIDTHS.includes(1440) && VARIANTS.includes('years')) {
-  for (const hgt of [900, 700]) {
-    try { placement.push(await pastPlacement(browser, 'years', hgt)); } catch (e) { placement.push({ v: 'years', height: hgt, error: e.message }); }
+if (WIDTHS.includes(1440)) {
+  const cases = [['years', 2], ['spend', 0], ['lots', 1]].filter(([v]) => VARIANTS.includes(v));
+  for (const [v, tab] of cases) {
+    for (const hgt of [900, 700]) {
+      try { placement.push(await flowPlacement(browser, v, tab, hgt)); } catch (e) { placement.push({ v, tab, height: hgt, error: e.message }); }
+    }
   }
 }
 await browser.close();
-const placeBad = placement.filter((p) => p.error || !p.heading || (p.height >= 720
-  ? !(p.inSlot && p.contentFirst && p.region?.tabindex === '0' && p.region?.role === 'region' && p.region?.label === 'mt-past-h' && p.overscroll !== 'contain')
-  : p.inSlot));
-console.log(`past list placement checks ${placement.length}, ${placeBad.length} fail`);
+const placeBad = placement.filter((p) => p.error || !p.hero || !p.beside || !p.under || p.pastInSlot || p.log);
+console.log(`flow placement checks ${placement.length}, ${placeBad.length} fail`);
 for (const p of placeBad) console.log(`FAIL placement ${JSON.stringify(p)}`);
 
 const bad = results.filter((r) => !r.skip && !r.ok);

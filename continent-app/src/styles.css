@@ -73,6 +73,8 @@
 @import './styles/71-friends.css';
 /* G12: My trips as your atlas, the parts every tab shares. */
 @import './styles/72-atlas.css';
+/* G12, decision 0016: My trips in ink and photo, the shared parts. */
+@import './styles/73-mytrips-ink.css';
 /* T928: Together, the header door and the friend signals. */
 @import './styles/90-together.css';
 @import './styles/86-plan-flow.css';

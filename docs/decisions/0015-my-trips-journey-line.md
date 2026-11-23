@@ -49,4 +49,11 @@ We chose **A, with B's countdown numeral and hover fan.** The owner approved the
 
 ## How we'll know it works
 - Travellers share screenshots of Today and Jouw Europa.
-- `verify_mytrips.mjs` stays at 0 fail in all six languages, including its past-list placement and stamp-spill checks.
+- `verify_mytrips.mjs` stays at 0 fail in all six languages, including its flow placement and stamp-spill checks.
+
+## Amendment 2026-11-22: the flow layout
+The owner found Eerdere reizen under the map cramped (a short scroll region at 1180 x 800), the trip log a repeat of the past list, and the right side of every tab empty below the map. So:
+- Eerdere reizen no longer sits in the map slot. From 1100 px each tab has a hero beside the map and a rest under both, at full width.
+- The trip log is folded into Eerdere reizen, which sorts by year or by grade.
+- Saved's followed prices and lists span the width above the rows and the sticky map.
+- Cost: the left column is no longer one long scroll beside a fixed map. The nested scroll region and its `pastBeside` hook are gone.
