@@ -173,8 +173,12 @@ TASKS = [
         "writes_app_data": False,
         "writes_wire": True,
         "soft": True,
+        # D25 i: photographs for the quota-sized shortlists, no Overpass
+        # (beach_context fills the context), and a day's budget so a slow
+        # Commons day cannot hold the box's queue; the gate judges the rest.
         "cmds": [[PY, PUBLISH, "--layer", "beaches", *REBUILD_GATE, "--",
-                  PY, "pipeline/beaches/build_beaches.py"]],
+                  PY, "pipeline/beaches/build_beaches.py",
+                  "--no-context", "--max-hours", "24"]],
         "guard": guard_beaches,
         "note": ("the Beaches category on the Destinations tab. Three stages "
                  "in one command (harvest -> enrich -> export), each cached "

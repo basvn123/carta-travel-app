@@ -255,7 +255,7 @@ Beaches: named coves + the beauty index -> public/beaches
 - Commands:
 
 ```
-python <PUBLISH> --layer beaches <...> -- python pipeline/beaches/build_beaches.py
+python <PUBLISH> --layer beaches <...> -- python pipeline/beaches/build_beaches.py --no-context --max-hours 24
 ```
 
 ### <a id="lakes"></a>`lakes`
