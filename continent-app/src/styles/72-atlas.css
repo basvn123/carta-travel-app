@@ -2353,10 +2353,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 
 /* The extremes as a compass: N on top, W and O beside the rose, Z under it. */
 .atlas-extremes { grid-template-columns: minmax(0, 1fr) 76px minmax(0, 1fr); grid-template-rows: auto 76px auto; gap: var(--space-2); align-items: center; }
-.atlas-rose { grid-column: 2; grid-row: 2; width: 76px; height: 76px; }
-.atlas-rose circle { fill: none; stroke: var(--umber-300); stroke-width: 1.5; }
-.atlas-rose path { fill: var(--umber-700); }
-.atlas-rose path.is-l { fill: var(--umber-300); }
 .atlas-ext.is-n { grid-column: 1 / -1; grid-row: 1; justify-self: center; }
 .atlas-ext.is-s { grid-column: 1 / -1; grid-row: 3; justify-self: center; }
 .atlas-ext.is-w { grid-column: 1; grid-row: 2; }
@@ -2453,7 +2449,6 @@ form.mt-scard-note { background: none; border: 0; padding: 0; cursor: auto; }
 .atlas-zoom.is-sweep-1 .mt-eumap-wishover { animation: atlas-sweep-b var(--dur-3) var(--ease-out) both; }
 @media (max-width: 599px) {
   .atlas-extremes { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto auto; }
-  .atlas-rose { display: none; }
   /* North and south on the rows, west and east on the columns: N | E over W | S (judge round 2). */
   .atlas-ext.is-n { grid-column: 1; grid-row: 1; justify-self: stretch; }
   .atlas-ext.is-e { grid-column: 2; grid-row: 1; }

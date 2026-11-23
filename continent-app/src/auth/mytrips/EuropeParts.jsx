@@ -183,21 +183,16 @@ export function Extremes({ ex }) {
   const { t } = useI18n();
   const cells = [
     ['n', 'N', ex.n, t('mt.degN', { n: nf(Math.abs(ex.n.lat), 1) })],
-    ['s', t('mt.compassS'), ex.s, t(ex.s.lat < 0 ? 'mt.degS' : 'mt.degN', { n: nf(Math.abs(ex.s.lat), 1) })],
     ['e', t('mt.compassE'), ex.e, t(ex.e.lon < 0 ? 'mt.degW' : 'mt.degE', { n: nf(Math.abs(ex.e.lon), 1) })],
+    ['s', t('mt.compassS'), ex.s, t(ex.s.lat < 0 ? 'mt.degS' : 'mt.degN', { n: nf(Math.abs(ex.s.lat), 1) })],
     ['w', t('mt.compassW'), ex.w, t(ex.w.lon < 0 ? 'mt.degW' : 'mt.degE', { n: nf(Math.abs(ex.w.lon), 1) })],
   ];
   return (
     <Sect id="mt-ext-h" title={t('mt.extremes')}>
       <div className="atlas-extremes">
-        {/* G12 atlas: the four tiles stand as a compass around a rose. */}
-        <svg className="atlas-rose" viewBox="-50 -50 100 100" aria-hidden="true">
-          <circle className="is-ring" r="46" />
-          <circle className="is-dash" r="33" />
-          <path className="is-star" d="M0-44 7-7 44 0 7 7 0 44-7 7-44 0-7-7Z" />
-          <path className="is-shade" d="M0-44 7-7 0 0ZM44 0 7 7 0 0ZM0 44-7 7 0 0ZM-44 0-7-7 0 0Z" />
-          <circle className="is-hub" r="3.5" />
-        </svg>
+        {/* G16 (owner 2026-11-23): the house style bans a compass rose, so
+            the four extremes are ruled rows, N, E, S, W, each a framed
+            letter tile, the place and its degrees. */}
         {cells.map(([k, letter, s, deg]) => (
           <div className={`atlas-ext is-${k}`} key={k}>
             <b><i aria-hidden="true">{letter}</i>{s.city}</b>
