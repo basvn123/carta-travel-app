@@ -178,7 +178,12 @@ export function InviteQr() {
   const { t } = useI18n();
   const a = useLinkActions();
   if (!a.link) return null;
-  return <div className="vr-qr is-hero"><QrCode url={a.link} label={t('tg.qrLabel')} /></div>;
+  return (
+    <div className="vr-qr is-hero">
+      <QrCode url={a.link} label={t('tg.qrLabel')} />
+      <p className="vr-qr-cap">{t('vr.scanQr')}</p>
+    </div>
+  );
 }
 
 /** Signed out, opened from a friend's link. */

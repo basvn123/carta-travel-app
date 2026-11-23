@@ -99,7 +99,9 @@
 .vr-fc-ph:not(.is-none):not(.is-add) { display: block; }
 /* The largest own copy is 1280 px wide, so a lone wide photo stays at 640 px
    or less: sharp on a 2x screen (judge 1 fix 5). */
-.vr-meet-ph, .vr-pick-ph { max-width: 640px; }
+.vr-pick-ph { max-width: 640px; }
+/* Samen onderweg keeps its photo and its lanes on one width (judge 2 fix 7). */
+.vr-meet { max-width: 640px; }
 
 /* ── Wie gaat waarheen: the rail ────────────────────────────────────── */
 .vr-rail {
@@ -270,6 +272,8 @@
 .vr-qr .tg-qr { display: block; width: 168px; padding: 10px; border: var(--stroke-hair) solid var(--umber-800); border-radius: var(--radius-panel); background: var(--surface); }
 .vr-qr .tg-qr svg { display: block; width: 100%; height: auto; }
 .vr-qr .tg-qr { box-sizing: border-box; height: auto; aspect-ratio: 1; }
+.vr-qr.is-hero { display: grid; gap: var(--space-2); justify-items: start; }
+.vr-qr-cap { margin: 0; font-size: var(--text-caption); color: var(--text-2); max-width: 168px; }
 .vr-zero-acts .vr-lnk, .vr-sees + .vr-lnk { padding-inline: 0; }
 
 /* ── the invite sheet and popover ───────────────────────────────────── */
@@ -318,6 +322,9 @@
 .vr-me .vr-col { display: grid; gap: var(--space-5); }
 /* What friends see: ruled rows on the ground, no white card (decision 0017). */
 .vr-me .tg-toggles { padding: 0; background: none; box-shadow: none; border-radius: 0; border-top: var(--stroke-hair) solid var(--border); }
+/* An inset, so a row's words never touch the rules (judge 2 fix 7). */
+.vr-me .tg-toggles > * { padding-inline: var(--space-3); }
+.vr-me .tg-toggles { border-bottom: var(--stroke-hair) solid var(--border); }
 .vr-stamps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-1); }
 .vr-stamp { position: relative; display: grid; justify-items: center; align-content: start; gap: var(--space-1); min-height: var(--tap); padding: 0; border: 0; background: none; font: inherit; color: var(--text-2); cursor: pointer; text-align: center; min-width: 0; }
 .vr-stamp:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
