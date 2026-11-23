@@ -2,7 +2,7 @@
    Carta service worker: makes the app installable and usable offline.
 
    Strategy (GET on this origin or the data host; anything else passes through):
-     • navigations      → network-first, fall back to the cached app shell
+     • navigations      → network-first, one stored copy per PATH (not per query string), falling back to the stored app shell
      • /boot.json       → stale-while-revalidate (instant repeat opens; see below)
      • /dest/*.json     → stale-while-revalidate, one cached copy per path (per
                           region shard, and one of the rank tier)
@@ -28,7 +28,9 @@
 // the page hands over what it already loaded, and /api/* plus any request that
 // carries a credential are never cached. The bump drops /api answers that the
 // old catch-all had kept.
-const CACHE_VERSION = 'carta-v8';
+// v9 (logic wave 2, E9, J-16): navigations are stored by path. Every query string the app wrote
+// used to add a copy of the page; the bump evicts those piles.
+const CACHE_VERSION = 'carta-v9';
 
 // The data host the shards move to (CARTA_CLOUD_ARCHITECTURE.md 5.2, T054).
 // Its objects sit under /data/ in the bucket; the prefix is stripped before
@@ -161,6 +163,25 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+function navigationKey(request) {
+  const u = new URL(request.url);
+  return new Request(u.origin + u.pathname);
+}
+
+async function navigationNetworkFirst(request) {
+  const store = await caches.open(CACHE_VERSION);
+  const key = navigationKey(request);
+  try {
+    const fresh = await fetch(request);
+    if (fresh && fresh.ok) store.put(key, fresh.clone());
+    return fresh;
+  } catch (err) {
+    const kept = await store.match(key);
+    if (kept) return kept;
+    throw err;
+  }
+}
+
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_VERSION);
   try {
@@ -233,7 +254,7 @@ self.addEventListener('fetch', (event) => {
   if (sameOrigin && NEVER.test(path)) return; // the API: network only, never stored
 
   if (sameOrigin && request.mode === 'navigate') {
-    event.respondWith(networkFirst(request).catch(() => caches.match('/index.html')));
+    event.respondWith(navigationNetworkFirst(request).catch(() => caches.match('/index.html')));
     return;
   }
   // activities_full.json is ~33 MB. Cached alongside app_data.json (~13 MB)

@@ -1,8 +1,7 @@
 // E9 phase A (logic wave 2, ROADMAP I5): the service worker update and its navigation store.
 //  J-15  a new worker no longer reloads the page mid-task: the reload waits for the next navigation.
 //  J-16  the worker stores one copy of a navigation per path, not one per query string.
-// J-16 is { todo: true }: it needs the change in continent-app/public/sw.js, which the crew guard
-// protects (docs/owner/owner-checks.md, "wave 2 sw.js"). The patch is in the wave 2 changes.md.
+// J-16: the sw.js change was applied by the owner on 2026-11-23.
 // Run: node --test tests/swNavigation.test.mjs (continent-app/)
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -49,7 +48,7 @@ test('J-15: or when the tab is left, not while it is shown', () => {
   assert.equal(win.reloads, 1);
 });
 
-test('J-16: two navigations that differ only by query string leave one stored copy', { todo: true }, async () => {
+test('J-16: two navigations that differ only by query string leave one stored copy', async () => {
   const handlers = {};
   const stored = new Map();
   const store = {
