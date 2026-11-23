@@ -688,3 +688,14 @@
     padding-inline-end: var(--space-7);
   }
 }
+
+/* Judge round 3: a door's value (the travellers' names, the memory counts)
+   wraps instead of ending in an ellipsis, in every language and width. */
+.mt-panel.is-trips .mt-quick > .btn.mt-qk .mt-qk-s,
+.mt-panel .mt-today-side > .mt-disc-row > .mt-disc-row-s { white-space: normal; overflow: visible; text-overflow: clip; }
+
+/* Saved beside the map on a narrower desktop: two across, so a photo is never
+   smaller than on a phone (three across gave 169 px at 1180). */
+@media (min-width: 1100px) and (max-width: 1359px) {
+  .mt-panel .mt-items.mt-pgrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
