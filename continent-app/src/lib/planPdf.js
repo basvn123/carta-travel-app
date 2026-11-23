@@ -33,6 +33,7 @@ const LINE_KEY = {
   between: 'plan.lineBetween',
   car: 'plan.lineCar',
   beds: 'plan.lineBeds',
+  bedsMissing: 'plan.lineBedsMissing',
   days: 'plan.lineDays',
 };
 
@@ -99,7 +100,7 @@ export async function downloadPlanPdf({
       : l.kind === 'yours' ? `${money(l.eur)} (${t('plan.yours')})`
         : l.kind === 'flight' ? money(l.eur)
           : est(l.eur);
-    kit.moneyRow(t(LINE_KEY[l.key]), value);
+    kit.moneyRow(t(LINE_KEY[l.key], { city: (l.cities || []).join(', ') }), value);
   }
   kit.moneyRow(t('receipt.total', { people }), est(priced.grandTotal), { bold: true });
   if (priced.groupSize > 1) kit.moneyRow(t('plan.perPerson'), est(priced.perPerson), { bold: true });

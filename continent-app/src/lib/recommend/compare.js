@@ -22,6 +22,7 @@
  * no React, no words. Roadmap 5.13 (the vote link) reads the same rows.
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
+import { slotsLeaveOut } from '../price/gaps.js';
 
 export const MAX_COMPARE = 4;
 
@@ -38,7 +39,7 @@ export function daysEur(trip) {
 }
 
 /** Does the total leave a slot out (the card's "without the flight")? */
-const leavesOut = (trip) => trip.slots.some((s) => s.eur == null && s.id !== 'activities');
+const leavesOut = (trip) => slotsLeaveOut(trip.slots);
 
 /** Door to door in minutes: the outbound flight plus the gateway transfer; null when either is missing. */
 export function doorMinutes(trip) {

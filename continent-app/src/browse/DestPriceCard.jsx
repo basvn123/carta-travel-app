@@ -5,6 +5,7 @@ import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
+import { isOn } from '../lib/flags.js';
 import { priceNotes } from '../lib/price/notes.js';
 import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
@@ -525,6 +526,10 @@ export function DestPriceCard({
             <CostSum className="tcard-line is-total" label={t('place.total')} value={<Money value={price.total} />} live={false} />
             {/* T1075 (D10): a part with no figure yet says so in words; the
                 total above does not include it, and is never padded. */}
+            {/* E1 (A-17): the plane is the way and no flight is in the total: say so in the same words, never drop the way silently. */}
+            {isOn('E1') && !flightOff && mode === 'plane' && price.noWay && (
+              <CostRow tone="missing" className="tcard-line is-unmeasured" label={t('price.item.flight')} value={<NotMeasuredValue />} />
+            )}
             {priceNotes(costRow).unmeasured.map((key) => (
               <CostRow key={key} tone="missing" className="tcard-line is-unmeasured"
                 label={t(`price.item.${key}`)} value={<NotMeasuredValue />} />

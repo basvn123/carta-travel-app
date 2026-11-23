@@ -195,6 +195,8 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
       perSeat: round2(flightRt.perSeat), bags: round2(flightRt.bags), bagsKnown: flightRt.bagsKnown,
     } : null,
     flight_total:       round2(flightTotal),
+    // E1 (B-4): a plane total with no fare in it leaves the flight out; callers sort it after complete totals and keep it out of price bounds.
+    no_fare:            mode === 'plane' && planeGrand != null && !flightRt,
 
     // Airport->destination transfer (bus/shuttle), round-trip. 0 when you fly
     // straight in (no anchor). Included in the plane total.

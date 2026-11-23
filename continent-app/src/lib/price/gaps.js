@@ -93,6 +93,26 @@ export function orderByTotal(rows, valueOf = (r) => r.eur) {
   return out.sort((a, b) => comparePartialLast(view(a), view(b)));
 }
 
+const slotEur = (slots, id) => (slots || []).find((s) => s.id === id)?.eur ?? null;
+
+/**
+ * What a finder trip's budget is held against (E1, H-8). A budget of a whole
+ * trip is held against the whole total; a budget of a day (kind 'day') against
+ * what a day is: bed plus food a person a night, never the flights. With E1
+ * off it is the whole total either way, as before.
+ */
+export function budgetCompared(trip, kind) {
+  if (kind === 'day' && isOn('E1')) return (slotEur(trip.slots, 'stay') || 0) + (slotEur(trip.slots, 'food') || 0);
+  return trip.total?.perPerson;
+}
+
+/** Does the part of the trip its budget is held against leave something out? False with E1 off. */
+export function budgetPartial(trip, kind) {
+  if (!isOn('E1')) return false;
+  if (kind === 'day') return slotEur(trip.slots, 'stay') == null || slotEur(trip.slots, 'food') == null;
+  return slotsLeaveOut(trip.slots);
+}
+
 /**
  * Does a finder trip leave a priced slot out (a way, a bed, a car with no
  * figure)? Activities are optional and never count. Slots: { id, eur }.

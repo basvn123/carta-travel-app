@@ -28,6 +28,7 @@ import { addDays } from './dates.js';
 import { roundTripNear } from './flights/flights.js';
 import { destAnchor } from './origins.js';
 import { rule } from './price/config.js';
+import { isOn } from './flags.js';
 
 // A-11 (RC16): the search's numbers live in config/pricing.json `budget.search`.
 const BUDGET = rule('budget.search');
@@ -183,9 +184,16 @@ export function priceForBudget(dest, q, opts = {}) {
       { paying: q.head, bagKey: opts.bagKey || 'priority_10kg' })
     : null;
   if (fly && !flight) return null;
+  // E1 (A-9): priced inside the whole catalogue when the caller hands it in
+  // (opts.destinations or opts.dests, one object so the country medians are worked out once),
+  // so a bed scraped out of bounds gets its country repair as it does on the
+  // place page; priced alone it had none and the place dropped out.
+  // The Ask context hands it in as `dests`, the tests as `destinations`.
+  const whole = opts.destinations || opts.dests;
+  const catalogue = isOn('E1') && whole?.[dest.id] ? whole : { [dest.id]: dest };
   const priced = quoteTrip(
     budgetTripState(dest.id, q, opts),
-    { data: { destinations: { [dest.id]: dest } } },
+    { data: { destinations: catalogue } },
   );
   const stay = priced.stayCosts[0];
   if (!stay?.accom || !stay?.ground) return null;
@@ -239,6 +247,10 @@ const inMonth = (dest, month) => (dest?.climate?.best || []).includes(month);
 export function budgetSearch(dests, query, opts = {}, today = new Date()) {
   const q = query?.head ? query : normalizeQuery(query, today);
   const out = { query: q, fits: [], tight: [], over: { count: 0, more: 0 }, priced: 0 };
+  // E1 (A-10, owner default 1): a total that leaves getting there out says so.
+  // 'counted' when the search priced the flight, else 'before'; the screen
+  // words every fits, tight and over line "before getting there" for the latter.
+  if (isOn('E1')) out.there = fliesPriced(q, opts) ? 'counted' : 'before';
   if (!q.budget) return out;
   let worstNear = 0;
   for (const dest of dests || []) {

@@ -19,6 +19,7 @@
  */
 import { addDays } from './dates.js';
 import { MAX_PARTY, PLANNER_BAG } from './price/trip.js';
+import { isOn } from './flags.js';
 
 // T702: the trip price lives in the engine (lib/price/trip.js); the names
 // the screens import from here stay.
@@ -67,6 +68,16 @@ export function tripLines(priced) {
   const bedsOwn = bedRows.length > 0 && bedRows.every((s) => s.ownAccom);
   lines.push({ key: 'beds', eur: parts.beds, kind: bedsOwn ? 'yours' : 'est', mixed: !bedsOwn && bedRows.some((s) => s.ownAccom) });
   lines.push({ key: 'days', eur: parts.days, kind: 'est' });
+  // E1 (price/gaps.js): a stop with no bed price added nothing to the beds line
+  // above, so the receipt names it ("Without beds in {city}") and the total
+  // reads as partial. The figure itself stays the engine's (V1).
+  const noBed = isOn('E1') ? (priced.missing || []).filter((m) => m.kind === 'bed') : [];
+  if (noBed.length) {
+    lines.push({
+      key: 'bedsMissing', eur: 0, kind: 'missing', stops: noBed.map((m) => m.stop),
+      cities: noBed.map((m) => priced.stopDetails?.[m.stop]?.dest?.city).filter(Boolean),
+    });
+  }
   return lines;
 }
 

@@ -9,6 +9,8 @@
  * the currency it was paid in, and only the totals are converted.
  */
 
+import { isOn } from './flags.js';
+
 /** Approximate EUR value of one unit of each supported currency. */
 export const EUR_RATES = {
   EUR: 1, GBP: 1.17, CHF: 1.05, PLN: 0.23, CZK: 0.041, HUF: 0.0025,
@@ -17,12 +19,20 @@ export const EUR_RATES = {
 
 export const CURRENCIES = Object.keys(EUR_RATES);
 
-/** An amount in `currency`, valued in euro. */
+/**
+ * An amount in `currency`, valued in euro. A code with no rate here is not
+ * converted: null with E1 on (price/gaps.js rule 6), never valued at par as it
+ * was; `isConverted` tells a caller to say so.
+ */
 export function toEur(amount, currency) {
   const n = Number(amount);
   if (!Number.isFinite(n)) return 0;
+  if (EUR_RATES[currency] == null && isOn('E1')) return null;
   return n * (EUR_RATES[currency] ?? 1);
 }
+
+/** True when `currency` has a rate here (EUR counts). */
+export const isConverted = (currency) => EUR_RATES[currency] != null;
 
 /** A typed amount ("12,50") as a number, or null when it isn't one. */
 export function parseAmount(input) {

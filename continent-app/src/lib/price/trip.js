@@ -33,6 +33,7 @@ import { ticketShare, BABY_LAP_FEE_LEG } from '../party.js';
 import { rule } from './config.js';
 import { carHire, carLocalCost, carModelOf } from './car.js';
 import { tripRequest, quoteStay } from './stay.js';
+import { sumParts } from './gaps.js';
 
 const CAR = rule('car.model');   // T691: the one car model's fallbacks
 
@@ -589,6 +590,20 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   };
   const grandTotal = round2(Object.values(parts).reduce((n, v) => n + v, 0));
 
+  // E1 (price/gaps.js): what the total leaves out. A stop with nights and no
+  // bed (or food) price adds 0 to the parts above, so it is named here and
+  // never read as complete. A bed the traveller typed is a price. The way
+  // there and home keep their own states (costTiles `missing`, tripLines).
+  const { leftOut: missing } = sumParts(stopDetails.flatMap((s, i) => {
+    if (!s.dest || !(s.nights > 0)) return [];
+    const c = stayCosts[i];
+    if (!c) return [{ kind: 'bed', stop: i, eur: null }, { kind: 'food', stop: i, eur: null }];
+    return [
+      { kind: 'bed', stop: i, eur: c.ownAccom || !c.accomMissing ? 0 : null },
+      { kind: 'food', stop: i, eur: c.groundMissing ? null : 0 },
+    ];
+  }));
+
   // The way there and the way home, apart (T432 critique: a fare typed one
   // way made "there and home" read as settled while the way back was not in
   // the total). An older record holds one figure for the pair: `legacy`.
@@ -602,7 +617,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   return {
     stopDetails, plannedNights, windowNights: tripDaysBetween(state?.tripStart, state?.tripEnd),
     routedFlight, flight, cartaFlight, legs, anchorLegs, flightTransfer, driveLegs, carRental, carLocal, vignettes,
-    stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit, dayTrips,
+    stayCosts, tripHasCar, groupSize, parts, grandTotal, missing, complete: missing.length === 0, travelSplit, dayTrips,
     party: { adults, children, babies, head: groupSize, seats, weight },
     request,
     perPerson: round2(grandTotal / groupSize),

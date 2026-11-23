@@ -20,6 +20,7 @@ import { flightStateOf, partySize, tradeoffsOf } from '../../planner/flow/tripSe
 import { buildCandidates, wantsNoCar, FINDER_INPUTS } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
 import { planOf, finderState } from '../../planner/finder/planOf.js';
+import { budgetCompared } from '../price/gaps.js';
 
 /** A short stable hash (FNV-1a, base 36) of a string. */
 export function stableHash(s) {
@@ -194,7 +195,7 @@ export function repriceTrip(trip) {
     ...trip,
     slots: owned,
     total,
-    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : trip.budget,
+    budget: trip.budget ? { ...trip.budget, delta: budgetCompared({ slots: owned, total }, trip.budget.kind) - trip.budget.eur } : trip.budget,
   };
   Object.defineProperty(out, 'quote', { value: quote, enumerable: false });
   Object.defineProperty(out, 'state', { value: state, enumerable: false });

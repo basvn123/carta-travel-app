@@ -28,6 +28,8 @@ import { chooseOption } from './slots.js';
 import { buildTrips, keepHidden, repriceTrip } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
+import { budgetCompared, slotsLeaveOut } from '../price/gaps.js';
+import { isOn } from '../flags.js';
 import { MATCH } from '../match.js';
 import { flightLeverKeys } from './adapters/flight.js';
 import { personaOf, picksOf, personaReason, tripPersona, personaShapes } from './persona.js';
@@ -67,7 +69,10 @@ export function budgetOf(settings, nights) {
 /** The ruler: { eur, delta } a person, delta < 0 under budget; null with no budget. */
 export function budgetRuler(trip, settings) {
   const eur = budgetOf(settings, trip.nights);
-  return eur ? { eur, delta: trip.total.perPerson - eur } : null;
+  // E1 (H-8): a day budget is held against bed plus food, not the flights too; `kind` rides along for the recomputing sites.
+  const kind = settings.guide.budget?.kind || null;
+  if (!eur) return null;
+  return isOn('E1') ? { eur, delta: budgetCompared(trip, kind) - eur, kind } : { eur, delta: trip.total.perPerson - eur };
 }
 
 /** The slots and shapes after the levers. Unknown or unset levers change nothing. */
@@ -169,7 +174,9 @@ export function priorityPull(trips, settings, levers = null) {
   const out = new Map();
   let keys = null;
   if (settings.priority === 'price') {
-    keys = new Map(trips.map((t) => [t.id, Number.isFinite(t.total?.perPerson) ? [t.total.perPerson] : null]));
+    // E1: a trip that leaves a part out sorts after the complete ones, not first as the cheapest.
+    keys = new Map(trips.map((t) => [t.id, Number.isFinite(t.total?.perPerson)
+      ? (isOn('E1') ? [slotsLeaveOut(t.slots) ? 1 : 0, t.total.perPerson] : [t.total.perPerson]) : null]));
   } else if (settings.priority === 'comfort' && !levers?.flight) {
     keys = flightLeverKeys(trips, 'quickest');
   }
