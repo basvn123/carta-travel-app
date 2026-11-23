@@ -123,6 +123,7 @@ Written 2026-11-04 (T1045) from the code, config and migrations on `main` at com
    - [Catalogue gaps: add and prune places (D15)](#catalogue-gaps-add-and-prune-places-d15)
    - [Hand corrections (pipeline overrides)](#hand-corrections-pipeline-overrides)
    - [Evals (one runner, one results format)](#evals-one-runner-one-results-format)
+   - [Logic engines: flags and golden sets](#logic-engines-flags-and-golden-sets)
    - [Travel taxonomy and tagging](#travel-taxonomy-and-tagging)
    - [Why this place and refreshed dates](#why-this-place-and-refreshed-dates)
    - [Carta Intelligence API](#carta-intelligence-api)
@@ -1284,7 +1285,7 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 
 ### Money formatting
 
-**What it does.** Every euro on screen is written one way, in the reader's language. Estimates look the same as any other figure.
+**What it does.** Every euro on screen is written one way, in the reader's language, and never as a signed zero ("-€0", A-18). Estimates look the same as any other figure.
 
 **How it works.**
 1. `formatMoney(value, { precision, locale, missing })` uses `Intl.NumberFormat` with currency EUR.
@@ -1651,7 +1652,7 @@ Planning is everything that turns "I want to go somewhere" into a dated, priced 
 5. Three paces (relaxed, balanced, packed) change the shape, not a label: relaxed builds fewer bases with at least 3 nights each. Two scales: "icons" (metro and city seeds, `min_seed` 7.2) and "hidden" (town, village and area seeds, `min_seed` 6.6).
 6. Day trips (`trip_model.py`): 12 to 150 km away (`DAYTRIP_MIN_KM`, `DAYTRIP_MAX_KM`), a door-to-door day of at most `DAY_LENGTH_H = 11.0` hours, at least `MIN_ON_SITE_H = 4.0` hours on site (5.0 by car), at most `MAX_DAYTRIPS_PER_BASE = 4`, spread at least `DAYTRIP_BEARING_SPREAD = 55` degrees apart. Legs use a Python port of the app's own transport estimator, so a trip and the planner agree on travel times.
 7. Export (`export_trips.py`) runs 11 hard checks from `validate_trips.py` (stops, no repeats, nights, legs, loop closes, day trips, plan, enough to do, hero, images, cost). A failing trip is dropped and counted. Soft checks add a warning (`warned`) and trim the score. `top.json` keeps `TOP_PER_COUNTRY = 9` (at most 3 per pace, 6 per scale), `TOP_TOTAL = 400`. A full export that would keep less than `MIN_KEEP_SHARE = 0.5` of the trips on the wire refuses before it deletes a file (`--allow-shrink` for an intended cut); the task is soft, so the shipped trips stay and the run goes on.
-8. In the app, `ReadyTripsStep.jsx` filters to the ticked countries and the traveller's days, and folds the same route at several lengths into one card with length chips.
+8. In the app, `ReadyTripsStep.jsx` filters to the ticked countries and the traveller's days, and folds the same route at several lengths into one card with length chips (the key is shape, way and ordered cities, H-14).
 
 **Data behind it.** `continent-app/public/trips/index.json`, `top.json`, `{CC}.json` (cards, about 600 bytes each), `trip/{id}.json` (about 12 KB). Current index: model `trips_v1`, 3,984 trips, 19 dropped, 43 countries, generated 2026-09-15. Inputs: `app_data/app_data.json`, `cache/wikivoyage.json`, `cache/trips/routes.json`, `cache/dest_pageviews.json`, `cache/eurostat_nights_nuts3.json`.
 
@@ -3222,6 +3223,18 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Where it lives.** `continent-app/scripts/eval/run.mjs`, `lib/results.mjs`, `lib/kappa.mjs`, `adapters/`, `plan-day/` (`plan-day-lib.mjs`, `judge.mjs`, `cases.json`, `sample.json`, `sample-key.json`, `labels.json`, `judgments/`; the rubric is `prompts/eval-judge/v1.md`), `langfuse/`; the page `docs/reference/evals.md`. Tests: `continent-app/tests/evalPlatform.test.mjs`, `continent-app/tests/askEval.test.mjs`, `continent-app/tests/evalAdapters.test.mjs` (the T1206 evals and the judge score refusal).
 
 **Limits.** The hand labels are not in yet, so the judge has no kappa against a human (T1148-a); the session judge on rubric 2 agrees with the rule checks at kappa 0.898, which says the rubric and the rules read plans alike, not that either is right. The plan-day cases score the reference planner; scoring the live model needs recorded plans, and generating them offline needs plan-day's prompt exported from `index.ts` (T1148-c). CI runs Ask through its own workflow; no workflow runs the runner yet (T1148-d). Register rows `T1148-a` and on.
+
+### Logic engines: flags and golden sets
+
+**What it does.** The ten logic engines of the 2026-11 audit (E1 honest totals to E10 entitlement) ship beside the old code and switch per engine, and each wave shows its effect as a measured diff (G1, G7, ROADMAP G4).
+
+**How it works.**
+1. `continent-app/config/flags.json` names one mode per engine, `old`, `new` or `shadow`, all `old` today; `src/lib/flags.js` reads it (`flag`, `isOn`, `inShadow`) and throws on an unknown engine. No address or storage parameter flips an engine.
+2. `node scripts/eval/shadow-diff.mjs <engine> --out <folder>` runs the old and new path over the twelve gate-7 personas and writes the diff as markdown. `noop` proves the report; an engine without a new path says so.
+3. The `logic-engines` eval (`scripts/eval/adapters/logic-engines.mjs`, in the one runner) scores three golden sets on real places in `tests/fixtures/logic-golden/` (month fit, ranking with P@k and nDCG@k, day feasibility). A case marked `current` is a regression guard and is gated; a `target` case is the audit's right answer that fails today and is reported, so the gap each wave closes is a number. Results are per country, place class and persona with the worst slice; the bar is `config/logic-golden.json`. `node scripts/eval/logic-report.mjs --out <folder>` writes the slices and the grouped errors.
+4. The "no number outside config" guard covers all of `src/lib/` (PRICE-048); the budget search's numbers are `budget.search` in `config/pricing.json`.
+5. Ten parity tests (`honestTotals`, `party`, `stayLadder`, `wayParity`, `monthFit`, `rankPlaces`, `selectionParity`, `dayClocks`, `urlPlacesParity`, `paywallDecision`) are written first as `{ todo: true }` with the audit's real inputs; a wave turns its own into plain tests.
+6. Quick wins of logic wave 0b (tests in `tests/quickWins0b.test.mjs`): a country whose stays files both failed is asked again; no "-€0"; a food level `region` reads as region; imported stay prices keep their cents; a booking matches a stop by its whole folded name; the finder memo key follows `FINDER_INPUTS`; "Hot in {months}" where crowds are unknown; the place page reads one month and guards the dossier's best months; templates never answer how to get around and a couple fits two adults only; the account language does not override an address language; empty SAC and Reachable trail chips are not drawn; a POI named like the town is not a stop; the PDF reads each leg between placed stops; the chat deck is 12 plus 10 a day, at most 28; a flat month curve names no cheapest months; the admin funnel card lists the two Ask steps.
 
 ### Ask the docs
 

@@ -397,6 +397,11 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Constant: `sanitizeShared` baggage in `continent-app/src/lib/shareLink.js:178`
 - Test: `continent-app/tests/travelStyles.test.mjs` :: "the bag survives every hand-over: finder answer key, card, trip page, share link"
 
+### PRICE-048 No number outside config in lib/
+- Decides: where a number that is not a plain limit may live.
+- Rule: a top-level numeric constant in any file of `continent-app/src/lib/` fails the guard unless it is in `config/pricing.json` or listed with a reason in `continent-app/tests/fixtures/libNumberAllowlist.json` (RC16). The budget search's own numbers (buffer, days, adults, near-over, round-up step, budget cap) are `budget.search` in `config/pricing.json` (A-11). A negative or rounded-away amount never prints "-€0" (A-18), and the receipt's whole-euro lines plus its Rounding line equal the printed total (`receiptRounding`, A-8).
+- Test: `continent-app/tests/priceConfig.test.mjs` :: "RC16: no number outside config anywhere in lib/ unless the allowlist says why"
+
 ## Rules with no test
 
 PRICE-018, PRICE-032

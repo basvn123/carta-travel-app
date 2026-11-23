@@ -47,6 +47,9 @@ The fix programs run without stops (`.work/2026-11-19-fix-programs/plan.md` sect
 
 | Program | Default applied | How to reverse |
 |---|---|---|
+| logic | A baby takes a car seat: baby under 2, child 2 to 11, teen 12 to 17; a family with teens stays a family; a couple fits two adults only (default 2, wave 0b `kindFits`) | change `kindFits` in `travelStyles.js` |
+| logic | The Explore month stays app-wide and is named on the settings line (default 7) | say so; the month source is `lib/when.js` |
+| logic | For you is offered only where it can score, and stays behind persona gate 7 for the default sort (default 10, wave 0b `forYouOffered`) | change `forYouOffered` in `taste.js` |
 | ai | North-star decision section 13 recommendations taken as approved (owner, 2026-11-17); owner-only steps are in `docs/owner/ai.md` and their gates stay open | say which recommendation to drop |
 | ai | Per-user daily AI limit, the same for every tier: 20 plans and 10 grounded a day (wave 1, `ai_models.json` `capacity.user_daily_limit`) | change the two numbers in `ai_models.json`, run `node continent-app/scripts/ai/gen_ai_config.mjs`, deploy the functions; 0 means no limit |
 | ai | Spend breaker: Ask guests cut at half the shared daily ceiling (lane 6), free accounts at the ceiling, Pass holders never (`capacity.breaker`) | change `guest_share` or `free_share` in `ai_models.json` and regenerate |
