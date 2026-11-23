@@ -9,6 +9,7 @@ import {
 } from '../../components/Icons.jsx';
 import { priceUnit, setSpan, setPeople, stepNights, MAX_PEOPLE } from '../../lib/price/priceView.js';
 import { formatMoney } from '../../lib/money.js';
+import { Frame2, Silhouette } from './atlas/Ink.jsx';
 
 /* Reizen (G12, Phase C): the parts of the approved reference's Trips tab
    that the trip card, the rows and the panel share. */
@@ -100,10 +101,12 @@ export function PriceControl({ choices, setChoices, withNights = true }) {
   const set = (fn) => setChoices?.(fn);
   return (
     <div className="atlas-pricectl" role="group" aria-label={t('ac.showPrices')}>
-      <span className="atlas-seg2">
-        <Pressable aria-pressed={u.span === 'day'} onClick={() => set(setSpan('day'))}>{t('mt.perDay')}</Pressable>
-        <Pressable aria-pressed={u.span === 'trip'} onClick={() => set(setSpan('trip'))}>{t('mt.wholeTrip')}</Pressable>
-      </span>
+      <Frame2
+        label={t('mt.spanGroup')}
+        options={[['day', t('mt.perDay')], ['trip', t('mt.wholeTrip')]]}
+        value={u.span}
+        onChange={(v) => set(setSpan(v))}
+      />
       <PeopleButton choices={choices} setChoices={setChoices} />
       {withNights && u.span === 'trip' && (
         <span className="atlas-nights" role="group" aria-label={t('mt.nightsGroup')}>
@@ -223,16 +226,6 @@ export function ExampleBar({ onClose }) {
   );
 }
 
-/** The bounds of an SVG path written in absolute coordinates (the plate's countries). */
-const boundsOf = (d) => {
-  const n = (String(d).match(/-?\d+(?:\.\d+)?/g) || []).map(Number);
-  let x0 = Infinity; let y0 = Infinity; let x1 = -Infinity; let y1 = -Infinity;
-  for (let i = 0; i + 1 < n.length; i += 2) {
-    x0 = Math.min(x0, n[i]); x1 = Math.max(x1, n[i]); y0 = Math.min(y0, n[i + 1]); y1 = Math.max(y1, n[i + 1]);
-  }
-  return Number.isFinite(x0) ? [x0, y0, x1 - x0, y1 - y0] : null;
-};
-
 /**
  * "Hoe was {trip}?": ten taps, the traveller's own grade (decision 8). G12
  * atlas: a map scale bar on the ground, the country's silhouette from the
@@ -241,16 +234,10 @@ const boundsOf = (d) => {
 export function RateTrip({ title, onRate, shape = '' }) {
   const { t } = useI18n();
   const [pre, setPre] = useState(0);
-  const box = shape ? boundsOf(shape) : null;
-  const pad = box ? Math.max(box[2], box[3]) * 0.06 : 0;
   return (
     <section className="mt-rate" aria-labelledby="mt-rate-h">
       <div className="mt-rate-h">
-        {box && (
-          <svg className="mt-rate-shape" viewBox={`${box[0] - pad} ${box[1] - pad} ${box[2] + pad * 2} ${box[3] + pad * 2}`} aria-hidden="true">
-            <path d={shape} />
-          </svg>
-        )}
+        <Silhouette d={shape} className="mt-rate-shape" />
         <b id="mt-rate-h">{t('mt.rateQ', { trip: title })}</b>
       </div>
       <div className="mt-rate-scale" role="group" aria-labelledby="mt-rate-h" onMouseLeave={() => setPre(0)}>

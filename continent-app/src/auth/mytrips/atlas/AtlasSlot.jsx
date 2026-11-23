@@ -26,7 +26,7 @@ const FILL_KEY = 'mt-eu-filled';
  *   onToggleCountry(iso)  a hand mark (T972, useVisitedCountries)
  *   onList, listRef       "Countries as a list" (VisitedCountriesSheet)
  */
-export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, pastHost = null, year = null, onYear, onToggleCountry, onCountry, onList, listRef, children }) {
+export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHost = null, year = null, onYear, onToggleCountry, onCountry, onList, listRef, children }) {
   const { t } = useI18n();
   const [picked, setPicked] = useState('');
   const first = useRef(tab);
@@ -142,10 +142,6 @@ export function AtlasSlot({ tab, geo, trips, europe, savedEmpty = false, savedHo
     <div className={`atlas-slot is-${tab}${empty ? ' is-empty' : ''}`}>
       <div className="atlas-map" style={plateColours()}>{plate}</div>
       {under}
-      {pastHost && tab === 'europe' && (
-        // The past trips' own scroll region under the map (from 1100 x 720).
-        <div className="atlas-past" ref={pastHost} tabIndex={0} role="region" aria-labelledby="mt-past-h" />
-      )}
       {children}
     </div>
   );
