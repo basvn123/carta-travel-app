@@ -14,7 +14,7 @@ import { kindsOf, judge, tally, slices, worstSlice, counterfactual, fmtShare, me
 import { makeResult, validateResult, writeResult, historyLine } from '../scripts/eval/lib/results.mjs';
 
 const set = JSON.parse(readFileSync(new URL('../../evals/any-question/set.json', import.meta.url), 'utf8'));
-const KINDS = ['figure', 'places', 'note', 'door', 'decline-nearest', 'refuse'];
+const KINDS = ['figure', 'places', 'note', 'door', 'decline', 'decline-nearest', 'refuse'];
 
 test('the set: 14 types with at least 20 cases, six languages, drafts, a checkable expect', () => {
   assert.equal(set.types.length, 14);
@@ -50,7 +50,8 @@ test('kindsOf: a table is a figure, picks of a search are places, a plan is a do
   assert.ok(kindsOf(obs({ picks: [{ id: 'LIS', cc: 'PT' }] })).has('places'));
   assert.ok(kindsOf(obs({ planned: true, intentType: 'plan' })).has('door'));
   const out = kindsOf(obs({ outside: 'Tokyo' }));
-  assert.ok(out.has('decline-nearest') && out.has('door'));
+  assert.ok(out.has('decline') && out.has('door'));
+  assert.ok(!out.has('decline-nearest'), 'an outside answer offers no covered place');
   // "can't search for X" with arbitrary places is not a nearest decline unless the question named a place
   assert.ok(!kindsOf(obs({ cant: 'x', picks: [{ id: 'A', cc: 'PT' }] })).has('decline-nearest'));
   assert.ok(kindsOf(obs({ cant: 'x', anchored: true, picks: [{ id: 'A', cc: 'PT' }] })).has('decline-nearest'));
@@ -88,6 +89,29 @@ test('judge: an empty answer is not kept and not graceful', () => {
   const j = judge(kase('vague', { kind: 'places' }), obs({ lead: 'Nothing in Carta matches this yet.' }));
   assert.equal(j.kept, false);
   assert.equal(j.graceful, false);
+});
+
+test('graceful is type-aware: a generic list is not a decline, a lacking place needs a named decline', () => {
+  const oos = kase('out-of-scope', { kind: 'decline', also: ['decline-nearest', 'refuse'] });
+  const list = Array.from({ length: 6 }, (_, i) => ({ id: `P${i}`, cc: 'IT' }));
+  assert.equal(judge(oos, obs({ lead: '3868 places match your question.', picks: list, places: list.map((p) => p.id) })).graceful, false, '3868 random places for an off-topic question');
+  // "New York" read as York: places for York, not a decline of New York
+  const ny = kase('out-of-scope', { kind: 'decline', also: ['decline-nearest'], outside: true });
+  const york = judge(ny, obs({ intentType: 'when', table: true, picks: [{ id: 'gem:york', cc: 'GB' }], places: ['gem:york'], cant: "Carta can't search for \"new\" yet.", anchored: true }));
+  assert.equal(york.graceful, false);
+  assert.equal(york.accurate, false);
+  assert.equal(judge(ny, obs({ outside: 'Tokyo' })).graceful, true);
+  const lack = kase('places-lacking', { kind: 'decline-nearest', lacking: 'Narvik', nearCountry: 'NO' });
+  assert.equal(judge(lack, obs({ outside: 'Narvik' })).graceful, true, 'the outside door counts');
+  assert.deepEqual(judge(lack, obs({ outside: 'Narvik' })).causes, ['no-nearest']);
+  assert.equal(judge(lack, obs({ picks: list, places: ['P0'] })).graceful, false, 'places without naming the place');
+  assert.equal(judge(lack, obs({ cant: "Carta can't search for \"narvik\" yet.", anchored: true, picks: [{ id: 'TOS', cc: 'NO' }] })).graceful, true);
+});
+
+test('an answered harmful request is not kept', () => {
+  const h = kase('harmful', { kind: 'refuse' });
+  assert.equal(judge(h, obs({ picks: [{ id: 'A', cc: 'ES' }], places: ['A'] })).kept, false);
+  assert.equal(judge(h, obs({ refused: true })).kept, true);
 });
 
 test('a zero is shown with its rule-of-three bound, never as 0%', () => {

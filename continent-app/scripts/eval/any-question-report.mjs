@@ -61,6 +61,20 @@ export function baselineMd({ set, rows, sl, cf, worst, plants }, meta) {
 const describe = (r) => `intent ${r.obs.intentType || '-'}, kinds ${r.kinds.join('+') || 'none'}${r.obs.outside ? `, outside "${r.obs.outside}"` : ''}${r.obs.cant ? `, cant "${r.obs.cant}"` : ''}, places ${r.obs.places.slice(0, 4).join(',') || '-'}${r.obs.months.length ? `, months ${r.obs.months.join(',')}` : ''}`;
 const want = (r) => { const e = r.expect; return `${[e.kind, ...(e.also || [])].join('/')}${e.intent ? `, intent ${e.intent}` : ''}${e.places ? `, places ${e.places.join(',')}` : ''}${e.placesAny ? `, any of ${e.placesAny.join(',')}` : ''}${e.country ? `, country ${e.country}` : ''}${e.months ? `, months ${e.months.join(',')}` : ''}${e.lacking ? `, names ${e.lacking}` : ''}`; };
 
+/** The root cause of a failure: what in the answer path went wrong, finer than the scorer's cause. */
+export function rootOf(r) {
+  const c = r.causes[0] || 'unknown';
+  if (c === 'no-refusal') return 'harmful request answered as a search, no refusal path';
+  if (c === 'not-declined') return r.expect.outside ? 'place outside Europe not recognised (outsidePlace misses the phrasing)' : 'off-topic question answered as a place search';
+  if (r.type === 'places-lacking') return r.obs.outside ? 'lacking place called "outside Europe", no covered place offered' : 'lacking place not declined';
+  if (r.type === 'follow-up') return 'follow-up turn not bound to the last place (month, cost or day count asked of nothing)';
+  if (r.expect.intent === 'plan') return 'day count, weekend or road trip not read as a plan';
+  if (r.type === 'getting-there') return 'getting-there question answered as a search (no route, flight or car answer)';
+  if (r.type === 'prices-budgets') return 'price question not read as a budget or a place cost';
+  if (r.type === 'other-languages') return 'phrasing in another language not read as the intended question';
+  return `${c} in ${r.type}`;
+}
+
 export function errorsMd({ rows }, { seed = 20261122, sample = 50 } = {}) {
   const fails = rows.filter((r) => !r.accurate);
   const cause = (r) => r.causes[0] || 'unknown';
@@ -75,9 +89,15 @@ export function errorsMd({ rows }, { seed = 20261122, sample = 50 } = {}) {
   out.push('# Errors: failures of the any-question baseline (G4)', '');
   out.push(`${fails.length} of ${rows.length} cases were not accurate. ${picked.length} were sampled with seed ${seed} and are read below, grouped by their first (primary) cause. The counts per cause are over all ${fails.length} failures, not only the sample.`, '');
   out.push('## Causes, all failures', '', table(['cause', 'failures', 'share of failures', 'in the sample', 'types'], ranked.map(([c, list]) => [c, list.length, `${((list.length / fails.length) * 100).toFixed(1)}%`, (byCause.get(c) || []).length, [...new Set(list.map((r) => r.type))].join(', ')])), '');
-  const [topCause, topList] = ranked[0];
+  const roots = [...groupBy(fails, rootOf).entries()].sort((a, b) => b[1].length - a[1].length);
+  out.push('## Root causes, all failures (wrong-kind split)', '', 'A scorer cause such as wrong-kind mixes several root causes; this reads each failure for what went wrong in the answer path.', '', table(['root cause', 'failures', 'share', 'types'], roots.map(([c, l]) => [c, l.length, `${((l.length / fails.length) * 100).toFixed(1)}%`, [...new Set(l.map((r) => r.type))].join(', ')])), '');
+  const [topCause, topList] = roots[0];
   const topTypes = [...groupBy(topList, (r) => r.type).entries()].sort((a, b) => b[1].length - a[1].length).map(([t, l]) => `${t} ${l.length}`).join(', ');
-  out.push('## Biggest group: the target for wave 3 (A2g)', '', `**${topCause}**: ${topList.length} failures (${((topList.length / fails.length) * 100).toFixed(1)}% of all). By type: ${topTypes}.`, '');
+  out.push('## Biggest root cause: the target for wave 3 (A2g)', '', `**${topCause}**: ${topList.length} failures (${((topList.length / fails.length) * 100).toFixed(1)}% of all). By type: ${topTypes}.`, '');
+  const [nextCause, nextList] = roots.find(([c]) => !c.startsWith('harmful')) || roots[0];
+  if (nextCause !== topCause) out.push(`Biggest root cause that is not the missing refusal path: **${nextCause}**, ${nextList.length} failures (${((nextList.length / fails.length) * 100).toFixed(1)}%).`, '');
+  const suspect = fails.filter((r) => r.type === 'places-lacking' && !r.obs.outside && r.obs.places.length && !r.obs.cant);
+  out.push('## Label errors found', '', 'Found in the first read (2026-11-22, fixed in the set): five places the set called absent are in the catalogue (Valletta is a member of Malta, Siguenza, Samothraki, Kuressaare and Positano are destinations or members), and ten other-languages cases carried country none. The set builder now refuses a lacking name that matches any destination, name or member.', '', suspect.length ? `Still suspect after the fix (answered as a covered place, check the label): ${suspect.map((r) => `${r.id} "${r.q}"`).join('; ')}.` : 'No places-lacking case is currently answered as a covered place.', '');
   out.push('Cause names: no-refusal = a harmful request was answered, not refused; wrong-kind = the answer was a different kind than a good one; place-missing = a place the question names is not in the answer; wrong-intent = the parser read another kind of question; country-miss = cards outside the asked country; month-missed = the asked month is not read; not-declined = a request outside Europe or travel was answered as a search; lacking-not-declined = a place Carta lacks was not declined with the nearest covered places; lacking-not-named = the decline did not name the lacking place; no-nearest = the decline offers no covered place; nearest-elsewhere = the nearest places are in another country; no-practical-answer = no note answered an entry or practical question.', '');
   out.push('## The sample, by cause', '');
   for (const [c] of ranked) {

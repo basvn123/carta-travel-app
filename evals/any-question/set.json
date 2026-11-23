@@ -6133,8 +6133,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "IT",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6154,8 +6154,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "IT",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6175,8 +6175,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "IT",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6196,8 +6196,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "IT",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6217,8 +6217,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "IT",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6238,8 +6238,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "ES",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6259,8 +6259,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "ES",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6280,8 +6280,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "ES",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6301,8 +6301,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "ES",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6322,8 +6322,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "ES",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6342,8 +6342,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "CZ",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6362,8 +6362,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "CZ",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6382,8 +6382,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "CZ",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6402,8 +6402,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "CZ",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6422,8 +6422,8 @@
     ]
    },
    "slice": {
-    "country": "none",
-    "place": "none",
+    "country": "CZ",
+    "place": "hub",
     "persona": "solo"
    },
    "label": "draft",
@@ -6496,25 +6496,7 @@
    "id": "aq-places-lacking-001",
    "type": "places-lacking",
    "lang": "en",
-   "q": "What is there to do in Valletta?",
-   "expect": {
-    "kind": "decline-nearest",
-    "lacking": "Valletta",
-    "nearCountry": "MT"
-   },
-   "slice": {
-    "country": "MT",
-    "place": "lacking",
-    "persona": "solo"
-   },
-   "label": "draft",
-   "drafted_by": "claude-code offline 2026-11-22"
-  },
-  {
-   "id": "aq-places-lacking-002",
-   "type": "places-lacking",
-   "lang": "nl",
-   "q": "Wat kan ik doen in Gimmelwald?",
+   "q": "What is there to do in Gimmelwald?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Gimmelwald",
@@ -6529,10 +6511,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-003",
+   "id": "aq-places-lacking-002",
    "type": "places-lacking",
-   "lang": "de",
-   "q": "Was kann man in Mürren unternehmen?",
+   "lang": "nl",
+   "q": "Wat kan ik doen in Mürren?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Mürren",
@@ -6547,10 +6529,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-004",
+   "id": "aq-places-lacking-003",
    "type": "places-lacking",
-   "lang": "fr",
-   "q": "Que faire à Wengen ?",
+   "lang": "de",
+   "q": "Was kann man in Wengen unternehmen?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Wengen",
@@ -6565,46 +6547,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-005",
+   "id": "aq-places-lacking-004",
    "type": "places-lacking",
-   "lang": "es",
-   "q": "¿Qué hacer en Sigüenza?",
-   "expect": {
-    "kind": "decline-nearest",
-    "lacking": "Sigüenza",
-    "nearCountry": "ES"
-   },
-   "slice": {
-    "country": "ES",
-    "place": "lacking",
-    "persona": "solo"
-   },
-   "label": "draft",
-   "drafted_by": "claude-code offline 2026-11-22"
-  },
-  {
-   "id": "aq-places-lacking-006",
-   "type": "places-lacking",
-   "lang": "it",
-   "q": "Cosa fare a Frigiliana?",
-   "expect": {
-    "kind": "decline-nearest",
-    "lacking": "Frigiliana",
-    "nearCountry": "ES"
-   },
-   "slice": {
-    "country": "ES",
-    "place": "lacking",
-    "persona": "solo"
-   },
-   "label": "draft",
-   "drafted_by": "claude-code offline 2026-11-22"
-  },
-  {
-   "id": "aq-places-lacking-007",
-   "type": "places-lacking",
-   "lang": "en",
-   "q": "What is there to do in Quimper?",
+   "lang": "fr",
+   "q": "Que faire à Quimper ?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Quimper",
@@ -6619,10 +6565,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-008",
+   "id": "aq-places-lacking-005",
    "type": "places-lacking",
-   "lang": "nl",
-   "q": "Wat kan ik doen in Husum?",
+   "lang": "es",
+   "q": "¿Qué hacer en Husum?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Husum",
@@ -6637,10 +6583,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-009",
+   "id": "aq-places-lacking-006",
    "type": "places-lacking",
-   "lang": "de",
-   "q": "Was kann man in Narvik unternehmen?",
+   "lang": "it",
+   "q": "Cosa fare a Narvik?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Narvik",
@@ -6655,10 +6601,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-010",
+   "id": "aq-places-lacking-007",
    "type": "places-lacking",
-   "lang": "fr",
-   "q": "Que faire à Hammerfest ?",
+   "lang": "en",
+   "q": "What is there to do in Hammerfest?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Hammerfest",
@@ -6673,10 +6619,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-011",
+   "id": "aq-places-lacking-008",
    "type": "places-lacking",
-   "lang": "es",
-   "q": "¿Qué hacer en Hirtshals?",
+   "lang": "nl",
+   "q": "Wat kan ik doen in Hirtshals?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Hirtshals",
@@ -6691,10 +6637,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-012",
+   "id": "aq-places-lacking-009",
    "type": "places-lacking",
-   "lang": "it",
-   "q": "Cosa fare a Jokkmokk?",
+   "lang": "de",
+   "q": "Was kann man in Jokkmokk unternehmen?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Jokkmokk",
@@ -6709,28 +6655,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-013",
+   "id": "aq-places-lacking-010",
    "type": "places-lacking",
-   "lang": "en",
-   "q": "What is there to do in Kuressaare?",
-   "expect": {
-    "kind": "decline-nearest",
-    "lacking": "Kuressaare",
-    "nearCountry": "EE"
-   },
-   "slice": {
-    "country": "EE",
-    "place": "lacking",
-    "persona": "solo"
-   },
-   "label": "draft",
-   "drafted_by": "claude-code offline 2026-11-22"
-  },
-  {
-   "id": "aq-places-lacking-014",
-   "type": "places-lacking",
-   "lang": "nl",
-   "q": "Wat kan ik doen in Cavtat?",
+   "lang": "fr",
+   "q": "Que faire à Cavtat ?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Cavtat",
@@ -6745,10 +6673,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-015",
+   "id": "aq-places-lacking-011",
    "type": "places-lacking",
-   "lang": "de",
-   "q": "Was kann man in Medjugorje unternehmen?",
+   "lang": "es",
+   "q": "¿Qué hacer en Medjugorje?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Medjugorje",
@@ -6763,28 +6691,10 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-016",
+   "id": "aq-places-lacking-012",
    "type": "places-lacking",
-   "lang": "fr",
-   "q": "Que faire à Samothraki ?",
-   "expect": {
-    "kind": "decline-nearest",
-    "lacking": "Samothraki",
-    "nearCountry": "GR"
-   },
-   "slice": {
-    "country": "GR",
-    "place": "lacking",
-    "persona": "solo"
-   },
-   "label": "draft",
-   "drafted_by": "claude-code offline 2026-11-22"
-  },
-  {
-   "id": "aq-places-lacking-017",
-   "type": "places-lacking",
-   "lang": "es",
-   "q": "¿Qué hacer en Vlorë?",
+   "lang": "it",
+   "q": "Cosa fare a Vlorë?",
    "expect": {
     "kind": "decline-nearest",
     "lacking": "Vlorë",
@@ -6799,25 +6709,7 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-018",
-   "type": "places-lacking",
-   "lang": "it",
-   "q": "Cosa fare a Positano?",
-   "expect": {
-    "kind": "decline-nearest",
-    "lacking": "Positano",
-    "nearCountry": "IT"
-   },
-   "slice": {
-    "country": "IT",
-    "place": "lacking",
-    "persona": "solo"
-   },
-   "label": "draft",
-   "drafted_by": "claude-code offline 2026-11-22"
-  },
-  {
-   "id": "aq-places-lacking-019",
+   "id": "aq-places-lacking-013",
    "type": "places-lacking",
    "lang": "en",
    "q": "What is there to do in Konstanz?",
@@ -6835,17 +6727,17 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-020",
+   "id": "aq-places-lacking-014",
    "type": "places-lacking",
-   "lang": "en",
-   "q": "Best time to visit Valletta?",
+   "lang": "nl",
+   "q": "Wat kan ik doen in Tornio?",
    "expect": {
     "kind": "decline-nearest",
-    "lacking": "Valletta",
-    "nearCountry": "MT"
+    "lacking": "Tornio",
+    "nearCountry": "FI"
    },
    "slice": {
-    "country": "MT",
+    "country": "FI",
     "place": "lacking",
     "persona": "solo"
    },
@@ -6853,17 +6745,17 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-021",
+   "id": "aq-places-lacking-015",
    "type": "places-lacking",
-   "lang": "en",
-   "q": "How much does a day in Positano cost?",
+   "lang": "de",
+   "q": "Was kann man in Piteå unternehmen?",
    "expect": {
     "kind": "decline-nearest",
-    "lacking": "Positano",
-    "nearCountry": "IT"
+    "lacking": "Piteå",
+    "nearCountry": "SE"
    },
    "slice": {
-    "country": "IT",
+    "country": "SE",
     "place": "lacking",
     "persona": "solo"
    },
@@ -6871,7 +6763,43 @@
    "drafted_by": "claude-code offline 2026-11-22"
   },
   {
-   "id": "aq-places-lacking-022",
+   "id": "aq-places-lacking-016",
+   "type": "places-lacking",
+   "lang": "en",
+   "q": "Best time to visit Narvik?",
+   "expect": {
+    "kind": "decline-nearest",
+    "lacking": "Narvik",
+    "nearCountry": "NO"
+   },
+   "slice": {
+    "country": "NO",
+    "place": "lacking",
+    "persona": "solo"
+   },
+   "label": "draft",
+   "drafted_by": "claude-code offline 2026-11-22"
+  },
+  {
+   "id": "aq-places-lacking-017",
+   "type": "places-lacking",
+   "lang": "en",
+   "q": "How much does a day in Quimper cost?",
+   "expect": {
+    "kind": "decline-nearest",
+    "lacking": "Quimper",
+    "nearCountry": "FR"
+   },
+   "slice": {
+    "country": "FR",
+    "place": "lacking",
+    "persona": "solo"
+   },
+   "label": "draft",
+   "drafted_by": "claude-code offline 2026-11-22"
+  },
+  {
+   "id": "aq-places-lacking-018",
    "type": "places-lacking",
    "lang": "de",
    "q": "Wann ist die beste Reisezeit für Konstanz?",
@@ -6882,6 +6810,78 @@
    },
    "slice": {
     "country": "DE",
+    "place": "lacking",
+    "persona": "solo"
+   },
+   "label": "draft",
+   "drafted_by": "claude-code offline 2026-11-22"
+  },
+  {
+   "id": "aq-places-lacking-019",
+   "type": "places-lacking",
+   "lang": "fr",
+   "q": "Quand aller à Cavtat ?",
+   "expect": {
+    "kind": "decline-nearest",
+    "lacking": "Cavtat",
+    "nearCountry": "HR"
+   },
+   "slice": {
+    "country": "HR",
+    "place": "lacking",
+    "persona": "solo"
+   },
+   "label": "draft",
+   "drafted_by": "claude-code offline 2026-11-22"
+  },
+  {
+   "id": "aq-places-lacking-020",
+   "type": "places-lacking",
+   "lang": "nl",
+   "q": "Is Husum de moeite waard in de winter?",
+   "expect": {
+    "kind": "decline-nearest",
+    "lacking": "Husum",
+    "nearCountry": "DE"
+   },
+   "slice": {
+    "country": "DE",
+    "place": "lacking",
+    "persona": "solo"
+   },
+   "label": "draft",
+   "drafted_by": "claude-code offline 2026-11-22"
+  },
+  {
+   "id": "aq-places-lacking-021",
+   "type": "places-lacking",
+   "lang": "es",
+   "q": "¿Cuándo es mejor ir a Wengen?",
+   "expect": {
+    "kind": "decline-nearest",
+    "lacking": "Wengen",
+    "nearCountry": "CH"
+   },
+   "slice": {
+    "country": "CH",
+    "place": "lacking",
+    "persona": "solo"
+   },
+   "label": "draft",
+   "drafted_by": "claude-code offline 2026-11-22"
+  },
+  {
+   "id": "aq-places-lacking-022",
+   "type": "places-lacking",
+   "lang": "it",
+   "q": "Quanto costa una giornata a Jokkmokk?",
+   "expect": {
+    "kind": "decline-nearest",
+    "lacking": "Jokkmokk",
+    "nearCountry": "SE"
+   },
+   "slice": {
+    "country": "SE",
     "place": "lacking",
     "persona": "solo"
    },

@@ -61,6 +61,17 @@ test('seeded self-test: a seeded 10-point loss fails at delta 5, an identical pa
   assert.equal(seededSelfTest({ n: 470, loss: 0.01, delta: 0.05 }).lossFails, false);
 });
 
+test('seeded self-test with mixed gains and losses: a borderline net loss fails on the lower bound, not on the point estimate', () => {
+  // 10% of cases lost and 7% gained: the mean difference is about -3 points, inside the 5 point margin,
+  // but the interval is wide. Only the 2.5th percentile fails it; a median or the mean would pass it.
+  const t = seededSelfTest({ n: 470, loss: 0.1, gain: 0.07, delta: 0.05 });
+  assert.ok(t.loss.mean > -0.05, `mean ${t.loss.mean} would pass`);
+  assert.ok(t.loss.lower < -0.05, `lower ${t.loss.lower} must fail`);
+  assert.equal(t.lossFails, true);
+  assert.equal(t.identicalPasses, true);
+  assert.ok(t.loss.discordant > 0.15, 'mixed differences');
+});
+
 test('nonInferiority reads delta as points or as a share', () => {
   const a = Array(200).fill(1);
   assert.equal(nonInferiority(a, a, { delta: 5 }).delta, 0.05);

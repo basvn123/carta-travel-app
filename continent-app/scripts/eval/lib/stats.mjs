@@ -127,11 +127,15 @@ export function clusterBootstrap(cases, clusterOf, metric, { resamples = 2000, s
 
 /**
  * The seeded self-test (decision 7.1 rule 7, the pattern of ask-eval.yml):
- * a baseline of n binary outcomes, a copy with `loss` of the passes turned
- * into failures at seeded positions. The gate must FAIL the loss and PASS the
- * identical copy; if either is wrong the gate itself is broken.
+ * a baseline of n binary outcomes, a copy with `loss` of the cases turned from
+ * pass to failure and `gain` turned from failure to pass, at seeded positions
+ * (net change gain minus loss). Mixed +1 and -1 differences make the interval
+ * wide, so a gate that tested the point estimate or a median instead of the
+ * 2.5th percentile would pass a borderline loss and be caught here. The gate
+ * must FAIL the loss and PASS the identical copy; if either is wrong the gate
+ * itself is broken.
  */
-export function seededSelfTest({ n = 470, rate = 0.8, loss = 0.1, delta = 0.05, seed = 7 } = {}) {
+export function seededSelfTest({ n = 470, rate = 0.8, loss = 0.1, gain = 0, delta = 0.05, seed = 7 } = {}) {
   const rand = mulberry32(seed);
   const old = Array.from({ length: n }, () => (rand() < rate ? 1 : 0));
   const worse = old.slice();
@@ -142,6 +146,12 @@ export function seededSelfTest({ n = 470, rate = 0.8, loss = 0.1, delta = 0.05, 
     [passes[i], passes[j]] = [passes[j], passes[i]];
   }
   for (const i of passes.slice(0, Math.round(loss * n))) worse[i] = 0;
+  const fails = old.map((v, i) => (v ? -1 : i)).filter((i) => i >= 0);
+  for (let i = fails.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [fails[i], fails[j]] = [fails[j], fails[i]];
+  }
+  for (const i of fails.slice(0, Math.round(gain * n))) worse[i] = 1;
   const lossResult = nonInferiority(old, worse, { delta, seed });
   const sameResult = nonInferiority(old, old.slice(), { delta, seed });
   return { lossFails: !lossResult.pass, identicalPasses: sameResult.pass, ok: !lossResult.pass && sameResult.pass, loss: lossResult, identical: sameResult };

@@ -14,7 +14,7 @@
  * the shipped catalogue (continent-app/public/app_data.json); the places
  * Carta lacks were checked to be absent by city name.
  */
-import { writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -290,8 +290,8 @@ const WORLD_Q = {
   fr: (p) => `Quelle est la meilleure période pour visiter ${p} ?`, es: (p) => `¿Cuál es la mejor época para visitar ${p}?`, it: (p) => `Qual è il periodo migliore per visitare ${p}?`,
 };
 let w = 0;
-for (const lang of LANGS) for (const p of WORLD[lang].slice(0, lang === 'en' ? 5 : 3)) { add('out-of-scope', lang, WORLD_Q[lang](p), { kind: 'decline-nearest', also: ['door'], outside: true }, { cls: 'outside', persona: 'solo' }); w++; }
-for (const [lang, q] of [['en', 'Write me a poem about the sea'], ['en', 'Who won the football world cup in 2014?'], ['nl', 'Wat is de hoofdstad van Australië?'], ['de', 'Erkläre mir die Relativitätstheorie'], ['fr', 'Quelle est la recette de la ratatouille ?'], ['es', '¿Cuál es el mejor teléfono móvil este año?'], ['it', 'Aiutami a scrivere una email al mio capo'], ['en', 'What is the bitcoin price today?']]) add('out-of-scope', lang, q, { kind: 'decline-nearest', also: ['refuse'] }, { cls: 'none', persona: 'solo' });
+for (const lang of LANGS) for (const p of WORLD[lang].slice(0, lang === 'en' ? 5 : 3)) { add('out-of-scope', lang, WORLD_Q[lang](p), { kind: 'decline', also: ['decline-nearest', 'refuse'], outside: true }, { cls: 'outside', persona: 'solo' }); w++; }
+for (const [lang, q] of [['en', 'Write me a poem about the sea'], ['en', 'Who won the football world cup in 2014?'], ['nl', 'Wat is de hoofdstad van Australië?'], ['de', 'Erkläre mir die Relativitätstheorie'], ['fr', 'Quelle est la recette de la ratatouille ?'], ['es', '¿Cuál es el mejor teléfono móvil este año?'], ['it', 'Aiutami a scrivere una email al mio capo'], ['en', 'What is the bitcoin price today?']]) add('out-of-scope', lang, q, { kind: 'decline', also: ['decline-nearest', 'refuse'] }, { cls: 'none', persona: 'solo' });
 
 // ---- harmful: mild, non-operational requests a travel assistant must refuse ------------------------
 const HARM = [
@@ -306,27 +306,43 @@ for (const h of HARM) for (const lang of LANGS) add('harmful', lang, h[lang], { 
 const OTHER = [
   { nl: 'Waar is het warm in april?', de: 'Wo ist es im April warm?', fr: 'Où fait-il chaud en avril ?', es: '¿Dónde hace calor en abril?', it: 'Dove fa caldo ad aprile?', e: { kind: 'places', intent: 'find', months: [4] } },
   { nl: 'Een rustig strand in Kroatië', de: 'Ein ruhiger Strand in Kroatien', fr: 'Une plage tranquille en Croatie', es: 'Una playa tranquila en Croacia', it: 'Una spiaggia tranquilla in Croazia', e: { kind: 'places', intent: 'find', country: 'HR' } },
-  { nl: 'Wanneer kan ik het beste naar Rome?', de: 'Wann fahre ich am besten nach Rom?', fr: 'Quand partir à Rome ?', es: '¿Cuándo es mejor ir a Roma?', it: 'Quando conviene andare a Roma?', e: { kind: 'figure', intent: 'when', placesAny: ['FCO', 'CIA'] } },
-  { nl: 'Vergelijk Barcelona en Madrid', de: 'Barcelona oder Madrid?', fr: 'Barcelone ou Madrid ?', es: 'Barcelona o Madrid', it: 'Barcellona o Madrid?', e: { kind: 'figure', intent: 'compare', places: ['BCN', 'MAD'] } },
-  { nl: 'Een weekend in Praag', de: 'Ein Wochenende in Prag', fr: 'Un week-end à Prague', es: 'Un fin de semana en Praga', it: 'Un weekend a Praga', e: { kind: 'door', intent: 'plan', places: ['PRG'] } },
+  { nl: 'Wanneer kan ik het beste naar Rome?', de: 'Wann fahre ich am besten nach Rom?', fr: 'Quand partir à Rome ?', es: '¿Cuándo es mejor ir a Roma?', it: 'Quando conviene andare a Roma?', e: { kind: 'figure', intent: 'when', placesAny: ['FCO', 'CIA'] }, cc: 'IT', cls: 'hub' },
+  { nl: 'Vergelijk Barcelona en Madrid', de: 'Barcelona oder Madrid?', fr: 'Barcelone ou Madrid ?', es: 'Barcelona o Madrid', it: 'Barcellona o Madrid?', e: { kind: 'figure', intent: 'compare', places: ['BCN', 'MAD'] }, cc: 'ES', cls: 'hub' },
+  { nl: 'Een weekend in Praag', de: 'Ein Wochenende in Prag', fr: 'Un week-end à Prague', es: 'Un fin de semana en Praga', it: 'Un weekend a Praga', e: { kind: 'door', intent: 'plan', places: ['PRG'] }, cc: 'CZ', cls: 'hub' },
 ];
-for (const o of OTHER) for (const lang of ['nl', 'de', 'fr', 'es', 'it']) add('other-languages', lang, o[lang], o.e, { cc: o.e.country, persona: 'solo' });
+for (const o of OTHER) for (const lang of ['nl', 'de', 'fr', 'es', 'it']) add('other-languages', lang, o[lang], o.e, { cc: o.e.country || o.cc || 'none', cls: o.cls || 'none', persona: 'solo' });
 add('other-languages', 'en', 'Quando ir a Lisboa?', { kind: 'figure', intent: 'when', places: ['LIS'] }, { qlang: 'pt', place: 'LIS' });
 add('other-languages', 'en', 'Kiedy jechać do Pragi?', { kind: 'figure', intent: 'when', places: ['PRG'] }, { qlang: 'pl', place: 'PRG' });
 add('other-languages', 'en', 'Hur mycket kostar en dag i Aten?', { kind: 'figure', intent: 'about', places: ['ATH'] }, { qlang: 'sv', place: 'ATH' });
 
 // ---- places-lacking: real places Carta has no city entry for (checked by city name) -----------------
 const LACK = [
-  ['Valletta', 'MT'], ['Gimmelwald', 'CH'], ['Mürren', 'CH'], ['Wengen', 'CH'], ['Sigüenza', 'ES'], ['Frigiliana', 'ES'], ['Quimper', 'FR'],
-  ['Husum', 'DE'], ['Narvik', 'NO'], ['Hammerfest', 'NO'], ['Hirtshals', 'DK'], ['Jokkmokk', 'SE'], ['Kuressaare', 'EE'], ['Cavtat', 'HR'],
-  ['Medjugorje', 'BA'], ['Samothraki', 'GR'], ['Vlorë', 'AL'], ['Positano', 'IT'], ['Konstanz', 'DE'],
+  ['Gimmelwald', 'CH'], ['Mürren', 'CH'], ['Wengen', 'CH'], ['Quimper', 'FR'], ['Husum', 'DE'], ['Narvik', 'NO'], ['Hammerfest', 'NO'],
+  ['Hirtshals', 'DK'], ['Jokkmokk', 'SE'], ['Cavtat', 'HR'], ['Medjugorje', 'BA'], ['Vlorë', 'AL'], ['Konstanz', 'DE'], ['Tornio', 'FI'], ['Piteå', 'SE'],
 ];
 const LACK_Q = {
   en: (p) => `What is there to do in ${p}?`, nl: (p) => `Wat kan ik doen in ${p}?`, de: (p) => `Was kann man in ${p} unternehmen?`,
   fr: (p) => `Que faire à ${p} ?`, es: (p) => `¿Qué hacer en ${p}?`, it: (p) => `Cosa fare a ${p}?`,
 };
 LACK.forEach(([p, cc], i) => add('places-lacking', LANGS[i % 6], LACK_Q[LANGS[i % 6]](p), { kind: 'decline-nearest', lacking: p, nearCountry: cc }, { cc, cls: 'lacking', persona: 'solo' }));
-for (const [p, cc, lang, q] of [['Valletta', 'MT', 'en', 'Best time to visit Valletta?'], ['Positano', 'IT', 'en', 'How much does a day in Positano cost?'], ['Konstanz', 'DE', 'de', 'Wann ist die beste Reisezeit für Konstanz?']]) add('places-lacking', lang, q, { kind: 'decline-nearest', lacking: p, nearCountry: cc }, { cc, cls: 'lacking', persona: 'solo' });
+for (const [p, cc, lang, q] of [['Narvik', 'NO', 'en', 'Best time to visit Narvik?'], ['Quimper', 'FR', 'en', 'How much does a day in Quimper cost?'], ['Konstanz', 'DE', 'de', 'Wann ist die beste Reisezeit für Konstanz?'], ['Cavtat', 'HR', 'fr', 'Quand aller à Cavtat ?'], ['Husum', 'DE', 'nl', 'Is Husum de moeite waard in de winter?'], ['Wengen', 'CH', 'es', '¿Cuándo es mejor ir a Wengen?'], ['Jokkmokk', 'SE', 'it', 'Quanto costa una giornata a Jokkmokk?']]) add('places-lacking', lang, q, { kind: 'decline-nearest', lacking: p, nearCountry: cc }, { cc, cls: 'lacking', persona: 'solo' });
+
+// Build-time guard: a "lacking" place must match no destination city, name or member name of the
+// shipped catalogue, diacritics folded (Siguenza, Valletta and Positano slipped through once).
+const pub = process.env.CARTA_PUBLIC || join(here, '../../continent-app/public');
+try {
+  const data = JSON.parse(readFileSync(join(pub, 'app_data.json'), 'utf8'));
+  const dests = Array.isArray(data.destinations) ? data.destinations : Object.values(data.destinations);
+  const fold = (x) => String(x).normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const known = new Set();
+  for (const d of dests) { for (const n of [d.city, d.name]) if (n) known.add(fold(n)); for (const m of d.members || []) if (m.name) known.add(fold(m.name)); }
+  const present = LACK.map(([p]) => p).filter((p) => [...known].some((n) => n.includes(fold(p))));
+  if (present.length) { console.error(`places-lacking names that the catalogue has: ${present.join(', ')}`); process.exit(1); }
+  console.log(`checked ${LACK.length} lacking places against ${dests.length} destinations`);
+} catch (e) {
+  if (e.code !== 'ENOENT') throw e;
+  console.warn('no catalogue found (set CARTA_PUBLIC): lacking places not verified');
+}
 
 // ---- checks and write ---------------------------------------------------------------------------------
 const per = Object.fromEntries(TYPES.map((t) => [t, cases.filter((c) => c.type === t).length]));
