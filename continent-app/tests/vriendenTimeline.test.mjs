@@ -175,3 +175,23 @@ test('example: pure, it reads no storage and sends nothing', () => {
   assert.deepEqual(touched, []);
   assert.ok(Object.isFrozen(CATALOGUE.LIS), 'the catalogue is untouched');
 });
+
+test('timeline: only accepted friends are named; no friends, no names (judge v3-1 fix 1)', () => {
+  const input = {
+    me: ME,
+    links: [{ id: 'l1', kind: 'incoming', userId: 'lea' }],
+    friendTrips: [trip('sam', 't1', 'LIS', 20, 24)],
+    myPlans: [plan('p1', 'LIS', 19, 25)],
+    coplans: { p1: [{ id: 'sam', name: 'Sam' }] },
+    sharedLists: [{ id: 'sl', name: 'Porto', items: [], members: [{ id: 'sv', name: 'Sofie' }, { id: ME, name: 'Me' }] }],
+    waiting: [],
+  };
+  const tl = buildTimeline(input, TODAY);
+  const all = [...tl.bands.flatMap((b) => b.moments), ...tl.undated];
+  assert.deepEqual(all.flatMap((m) => m.people), []);
+  assert.equal(tl.next, null, 'the status never names somebody who is not your friend');
+  assert.deepEqual(all.map((m) => m.kind).sort(), ['list', 'myTrip']);
+  const one = buildTimeline({ ...input, links: [{ id: 'l2', kind: 'friend', userId: 'sam' }] }, TODAY);
+  const names = [...one.bands.flatMap((b) => b.moments), ...one.undated].flatMap((m) => m.people.map((p) => p.id));
+  assert.deepEqual([...new Set(names)], ['sam']);
+});

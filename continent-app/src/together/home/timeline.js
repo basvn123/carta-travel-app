@@ -122,15 +122,22 @@ function addPeople(into, people) {
   for (const p of people) if (p && !into.some((x) => x.id === p.id)) into.push(p);
 }
 
-function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = [], groupTrips = [], sharedLists = [], coplans = {}, me }, today, waitingSubjects) {
+function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = [], groupTrips = [], sharedLists = [], coplans = {}, me, links }, today, waitingSubjects) {
   const out = [];
+  // Only accepted friends (and you) are named or shown as a face on the
+  // line (judge v3-1 fix 1): a co-planner, a list member or a kring member
+  // who is not your friend stays out. With no links given (a test), all pass.
+  const friends = Array.isArray(links) ? new Set(links.filter((l) => l.kind === 'friend').map((l) => l.userId)) : null;
+  const known = (id) => !friends || friends.has(id);
+  const only = (people) => people.filter((p) => p && known(p.id));
   const coveredTrips = new Set(overlaps.map((o) => o.theirs?.tripPlanId).filter(Boolean));
   const coveredPlans = new Map();
   overlaps.forEach((o, i) => {
+    if (!known(o.friendId)) return;
     const people = [{ id: o.friendId, name: o.friendName || '', emoji: o.emoji || '' }];
     const pid = o.mine?.planId;
     if (pid) {
-      addPeople(people, coplans[pid] || []);
+      addPeople(people, only(coplans[pid] || []));
       if (!coveredPlans.has(pid)) coveredPlans.set(pid, i);
     }
     out.push({
@@ -139,7 +146,7 @@ function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = []
     });
   });
   for (const tr of friendTrips) {
-    if (coveredTrips.has(tr.tripPlanId)) continue;
+    if (coveredTrips.has(tr.tripPlanId) || !known(tr.ownerId)) continue;
     const end = isIso(tr.endDate) ? tr.endDate : tr.startDate;
     if (!isIso(tr.startDate) || end < today) continue;
     out.push({
@@ -150,7 +157,7 @@ function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = []
   }
   for (const p of myPlans) {
     if (coveredPlans.has(p.id)) continue;
-    const co = coplans[p.id] || [];
+    const co = only(coplans[p.id] || []);
     const dated = isIso(p.start_date);
     const end = isIso(p.end_date) ? p.end_date : p.start_date;
     if (dated && end < today) continue;
@@ -171,7 +178,7 @@ function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = []
     out.push({
       id: `k:${c.id}`, kind: 'circle', start: dated ? win.start : null, end: dated ? win.end : null,
       placeIds: lead ? [lead.destId] : [], city: '',
-      people: joined.filter((m) => m.userId !== me).map((m) => ({ id: m.userId, name: m.name || '', emoji: m.emoji || '' })),
+      people: only(joined.filter((m) => m.userId !== me).map((m) => ({ id: m.userId, name: m.name || '', emoji: m.emoji || '' }))),
       withYou: true, src: c, lead, window: dated ? win : null, merged: [],
     });
   }
@@ -183,13 +190,13 @@ function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = []
     out.push({
       id: `g:${g.id}`, kind: 'group', start: dated ? when.start : null, end: dated ? when.end || when.start : null,
       placeIds: where?.destId ? [where.destId] : [], city: '',
-      people: g.members.filter((m) => m.userId !== me).map((m) => ({ id: m.userId, name: m.name || '', emoji: m.emoji || '' })),
+      people: only(g.members.filter((m) => m.userId !== me).map((m) => ({ id: m.userId, name: m.name || '', emoji: m.emoji || '' }))),
       withYou: true, src: g, merged: [],
     });
   }
   for (const l of sharedLists) {
-    const people = (l.members || l.people || []).filter((p) => (p.id || p.userId) !== me)
-      .map((p) => ({ id: p.id || p.userId, name: p.name || p.displayName || '', emoji: p.emoji || '' }));
+    const people = only((l.members || l.people || []).filter((p) => (p.id || p.userId) !== me)
+      .map((p) => ({ id: p.id || p.userId, name: p.name || p.displayName || '', emoji: p.emoji || '' })));
     out.push({
       id: `l:${l.id}`, kind: 'list', start: null, end: null,
       // A saved list's items are keyed 'dest:OPO'; only places give a photo.

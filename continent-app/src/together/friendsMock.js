@@ -154,7 +154,8 @@ export function mockState() {
     mockVisited: ['Belgium', 'Netherlands', 'France', 'Germany', 'Austria', 'Italy', 'Spain', 'Czechia'],
     mockSaves: ['dest:OPO', 'dest:LJU'],
     // Accepted co-planners on your own trips, for My trips' "Sam joins".
-    coplannersByPlan: { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
+    // None with nobody yet (empty and one): a co-planner is a friend (judge v3-1 fix 1).
+    coplannersByPlan: empty ? {} : { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
   };
 }
 

@@ -115,8 +115,8 @@ async function open(browser, v, w, lang) {
 }
 
 /* Version 3 rules on the home (see the header). */
-async function timelineRules(page) {
-  return page.evaluate(() => {
+async function timelineRules(page, v) {
+  return page.evaluate((variant) => {
     const root = document.querySelector('.tg-panel');
     const out = [];
     const wide = window.innerWidth >= 1100;
@@ -143,8 +143,17 @@ async function timelineRules(page) {
       const c = card.getBoundingClientRect();
       if (wide ? p.bottom > c.top + 1 : Math.abs(p.top - c.top) > 1) out.push(`plate ${Math.round(p.top)} vs card ${Math.round(c.top)}`);
     }
+    // Judge v3-1 fix 1: with nobody, no face but yours and no next trip; with
+    // one friend, only that friend (Sam Martens, SM).
+    const allowed = { empty: [], one: ['SM'] }[variant];
+    if (allowed) {
+      const faces = [...root.querySelectorAll('.frn-face')].filter((f) => vis(f) && !f.classList.contains('tg-tone-you'))
+        .map((f) => f.textContent.trim()).filter((x) => x && !allowed.includes(x));
+      if (faces.length) out.push(`faces of people who are not friends: ${[...new Set(faces)].join(',')}`);
+      if (variant === 'empty' && root.querySelector('.vr-status-r')) out.push('status names a next trip with no friends');
+    }
     return out;
-  });
+  }, v);
 }
 
 const SAFFRON = 'rgb(242, 179, 61)';
@@ -264,7 +273,7 @@ async function runOne(browser, v, w, lang) {
   const fails = [];
   try {
     if (HOME.has(v)) {
-      const tl = await timelineRules(page);
+      const tl = await timelineRules(page, v);
       if (tl.length) fails.push(`timeline: ${tl.slice(0, 3).join(' | ')}`);
     }
     if (sent) {
