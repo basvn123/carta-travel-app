@@ -607,6 +607,10 @@ def test_a_cut_name_never_ends_on_a_short_or_joining_word_or_an_open_quote():
         assert names.trim_dangling("Wanderweg Alpenblick " + word) == "Wanderweg Alpenblick", word
     assert names.trim_dangling("Walk Round Burghclere 'Footsteps") == "Walk Round Burghclere"
     assert names.trim_dangling("Nickelsdorfer Rad-, Lauf-") == "Nickelsdorfer Rad-, Lauf-"
+    # An abbreviation keeps its dot (judge 1: "Śl.", "pl.", "1241 r.").
+    for kept in ("Szlak Śl.", "Droga pl.", "Trasa 1241 r."):
+        assert names.trim_dangling(kept) == kept, kept
+    assert names.trim_dangling("Szlak w") == "Szlak"
 
 
 def test_142161_takes_its_readable_original_without_the_network_prefix_before_an_id():

@@ -6,6 +6,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
+sys.path.insert(0, str(ROOT / "pipeline" / "mountains"))
 
 import grades  # noqa: E402
 import nature_tiers as nt  # noqa: E402
@@ -26,6 +27,19 @@ def test_one_sac_table_and_t3_is_hard_everywhere():
     assert nt.facts_of("trails", {"distance_m": 5000}, lab)["difficulty"] == "hard"
     assert set(grades.SAC_GRADE.values()) <= set(grades.GRADES)
     assert set(grades.MOUNTAIN_DIFFICULTY.values()) <= set(grades.GRADES)
+
+
+def test_peak_and_trail_tables_agree_on_every_sac_word():
+    import peak_index
+    for word, code in peak_index.SAC_TO_DIFF.items():
+        peak = grades.GRADE_RANK[grades.MOUNTAIN_DIFFICULTY[code]]
+        trail = grades.GRADE_RANK[grades.SAC_GRADE[word]]
+        # T4 must be very_hard on both sides; T5 is the one documented step
+        # lower on a summit (the peak code folds T4 and T5).
+        assert peak == trail or word == "demanding_alpine_hiking", word
+        assert peak <= trail, word
+    assert grades.MOUNTAIN_DIFFICULTY["alpine"] == grades.SAC_GRADE["alpine_hiking"]
+    assert {"viaFerrata", "technical"} <= set(grades.MOUNTAIN_DIFFICULTY)
 
 
 def test_facts_read_f_g_first():

@@ -219,6 +219,19 @@ def _close_brackets(out):
 
 
 def trim_dangling(out):
+    """_trim_dangling, but a final abbreviation with its dot ("Szlak Śl.",
+    "Trasa 1241 r.", "Droga pl.") stays when the name before it is clean: the
+    dot makes it a word, not a stray one or two letter token."""
+    res = _trim_dangling(out)
+    m = re.search(r"\s[^\W\d_]{1,4}\.$", out)
+    if m and len(res) < len(out):
+        head = out[:m.start()]
+        if _trim_dangling(head) == head:
+            return out
+    return res
+
+
+def _trim_dangling(out):
     """What a cut name must not end on, taken off (D7, wave 3 step 0): a last
     token of two letters or fewer (no digit), a word of `_DANGLING` (joining
     words and articles per language), a lone "&", an open quote or bracket.

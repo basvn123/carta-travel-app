@@ -8,8 +8,8 @@ inline and the dossier copies it verbatim.
 
     {"v5": {"score", "band", "rank"}, "g", "d", "up_m", "km", "min", "rt"}
 
-A key is absent when the kind has no such fact or the row has no value, never
-0 and never null: a lake has no climb, and "0 m" is a claim.
+A key is absent when the kind has no such fact or the row has no value: never
+null, and a measured 0 is kept. A lake has no climb, and "0 m" would be a claim.
 """
 import grades
 

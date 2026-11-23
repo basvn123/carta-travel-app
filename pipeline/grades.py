@@ -27,12 +27,20 @@ SAC_GRADE = {
 # Mountains carry the peak_index difficulty key, not a SAC word. Same five
 # words. Every row on the wire is marked est today, and facts_of drops an
 # estimate, so this only speaks once a source states a difficulty.
+#
+# peak_index.SAC_TO_DIFF folds T4 and T5 into one code, "alpine", so the code
+# cannot say which. It takes the lower grade, very_hard (the trail table's T4),
+# so a summit is never shown harder than its tag proves; T5 on a summit reads
+# one step lower than T5 on a trail until peak_index splits the code.
+# T6 ("technical") and a via ferrata are alpine in both tables.
 MOUNTAIN_DIFFICULTY = {
     "walkUp": "easy",
     "hike": "easy",
     "mountainHike": "moderate",
     "scramble": "hard",
-    "alpine": "alpine",
+    "alpine": "very_hard",
+    "viaFerrata": "alpine",
+    "technical": "alpine",
 }
 
 # The highest grade a guess may show. Alpine needs a tag (SAC T5 or T6) or a
