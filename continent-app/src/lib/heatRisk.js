@@ -6,6 +6,7 @@
  * config/pricing.json `when.heat`; the app only reads the lists.
  */
 import { rule } from './price/config.js';
+import { normalizeStyles, activeStyle } from './travelStyles.js';
 
 const { min_best: MIN_BEST } = rule('when.heat');
 
@@ -16,6 +17,16 @@ export function riskMonths(climate) {
   const heat = list(climate?.heat);
   const fire = list(climate?.fire);
   return { heat, fire, any: [...new Set([...heat, ...fire])].sort((a, b) => a - b) };
+}
+
+/**
+ * What the active travel style avoids (the Style Studio's "avoid" step), for
+ * the settings value: the "Avoid heat" answer reaches `guardsHeat` through it
+ * (REQ-data-3). A shared link or a fresh device has no style: nothing avoided.
+ */
+export function styleAvoids(travelStyles) {
+  const a = activeStyle(normalizeStyles(travelStyles));
+  return Array.isArray(a?.explore?.avoid) ? a.explore.avoid : [];
 }
 
 /** True for a party with children or babies, or an "avoid heat" answer. */

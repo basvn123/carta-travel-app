@@ -3,6 +3,7 @@ import { readSettings } from '../lib/settings/model.js';
 import { makeSettingsSetters } from '../lib/settings/setters.js';
 import { monthFrom as monthFromOf } from '../lib/settings/monthFrom.js';
 import { useStartNames } from '../lib/search/startNames.js';
+import { styleAvoids } from '../lib/heatRisk.js';
 
 export function useAppSettingsValue({
   availableCountries, choices, countryFilter, countryNot, data, dateBounds, dateFlex,
@@ -46,6 +47,9 @@ export function useAppSettingsValue({
       return known.get(ym);
     };
   }, [data, fromKey]); // eslint-disable-line react-hooks/exhaustive-deps
+  // REQ-data-3 (D20): the style's "avoid" answers; the destination page's
+  // heat guard (lib/heatRisk.js guardsHeat) reads `avoid` from here.
+  const avoid = useMemo(() => styleAvoids(choices.travel_styles), [choices.travel_styles]);
   const settings = useMemo(() => ({
     model, set,
     monthFrom,
@@ -71,6 +75,7 @@ export function useAppSettingsValue({
     party: choices.group_size,
     children: choices.children || 0,
     babies: choices.babies || 0,
+    avoid,
     setParty,
     setPartyParts,
     transportMode: choices.transport_mode || 'any',
@@ -85,6 +90,6 @@ export function useAppSettingsValue({
     stayTier: choices.stay_tier || 'home',
     lifestyle: choices.lifestyle,
     openStyleSpend,
-  }), [model, set, monthFrom, data, choices.origin, choices.drive_home, choices.origins, choices.airport_hours, choices.group_size, choices.children, choices.babies, choices.transport_mode, choices.price_view, choices.price_excluded, choices.stay_tier, choices.lifestyle, setOrigin, setFrom, setAirports, sweptOrigins, departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds, ownDates, dateFlex, setDateFlex, travelMonth, when, request, exploreMonth, setExploreMonth, setParty, setPartyParts, setTransportMode, setPriceView, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot, availableCountries, openStyleSpend]);
+  }), [model, set, monthFrom, data, choices.origin, choices.drive_home, choices.origins, choices.airport_hours, choices.group_size, choices.children, choices.babies, avoid, choices.transport_mode, choices.price_view, choices.price_excluded, choices.stay_tier, choices.lifestyle, setOrigin, setFrom, setAirports, sweptOrigins, departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds, ownDates, dateFlex, setDateFlex, travelMonth, when, request, exploreMonth, setExploreMonth, setParty, setPartyParts, setTransportMode, setPriceView, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot, availableCountries, openStyleSpend]);
   return { settings };
 }
