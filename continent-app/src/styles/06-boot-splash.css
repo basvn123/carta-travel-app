@@ -182,3 +182,8 @@
 @keyframes boot-fade { from { opacity: 0; transform: translateY(6px); } }
 @keyframes boot-appear { from { opacity: 0; } }
 @keyframes boot-reveal { from { opacity: 0; clip-path: inset(100% 0 0 0); } }
+
+/* Temporarily off (owner, 2026-11-22): the opening screen never shows, from
+   the first paint on. Remove this rule and set SPLASH_OFF in
+   src/lib/bootSplash.js back to false to bring it back. */
+.boot-splash { display: none !important; }
