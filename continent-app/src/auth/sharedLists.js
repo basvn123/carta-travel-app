@@ -115,7 +115,8 @@ const mockPerson = (f) => ({ userId: f.userId, handle: f.handle, name: f.display
 const ME = { userId: MOCK_ME, handle: 'you', name: 'You', emoji: '' };
 const ago = (d) => new Date(Date.now() - d * 864e5).toISOString();
 let mockLists = [{
-  id: 'sl1', name: 'Porto with friends', ownerId: MOCK_ME, mine: true,
+  // A list name with no English in it, so the seam reads right in every language (G16).
+  id: 'sl1', name: 'Porto 2027', ownerId: MOCK_ME, mine: true,
   members: [ME, mockPerson(MOCK_FRIENDS[0]), mockPerson(MOCK_FRIENDS[1])],
   items: [
     { id: 'si1', key: 'dest:OPO', kind: 'dest', name: 'Porto', cc: 'PT', img: null, note: 'Rooftop bar Sofie found', addedBy: 'u-sofie', at: ago(9), votes: ['u-sofie', 'u-jonas', MOCK_ME] },

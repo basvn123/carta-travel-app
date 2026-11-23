@@ -13,7 +13,8 @@ import { bestWindow, dayCounts, dayNumber } from '../../lib/circles/window.js';
 import { fairest } from '../../lib/circles/fairest.js';
 import { useTogether, togetherActions } from '../useTogether.js';
 import { ToneFace, ToneFaces, fmtShort, firstName } from '../parts.jsx';
-import { placeOf, placeName } from '../vrienden.js';
+import { placeOf } from '../vrienden.js';
+import { usePlaceNames } from '../PlaceName.jsx';
 import { Ring } from './Ring.jsx';
 import { useCircleFares, useSweptAirports } from './useCircleFares.js';
 
@@ -76,7 +77,7 @@ function Stamp({ place, dates, small = false }) {
 
 /* ---------------------------------------------------------- vote */
 
-function VoteList({ c, ranked, me, destinations, fareOf, canRemove }) {
+function VoteList({ c, ranked, me, destinations, fareOf, canRemove, name }) {
   const { t } = useI18n();
   const box = useRef(null);
   const before = useRef(null);
@@ -99,7 +100,7 @@ function VoteList({ c, ranked, me, destinations, fareOf, canRemove }) {
     for (const el of box.current?.querySelectorAll('[data-id]') || []) m.set(el.dataset.id, el.getBoundingClientRect().top);
     before.current = m;
     const value = nextVote(p.mine, pressed);
-    const place = placeName(destinations, p.destId);
+    const place = name(p.destId);
     setLive(t('vr.scoreOf', { place, n: p.score - p.mine + value }));
     togetherActions.voteCircle(c.id, p.id, value).catch(() => {});
   };
@@ -108,7 +109,7 @@ function VoteList({ c, ranked, me, destinations, fareOf, canRemove }) {
     <>
       <ol className="vr-vlist" ref={box}>
         {ranked.map((p, i) => {
-          const place = placeName(destinations, p.destId);
+          const place = name(p.destId);
           const { photo } = placeOf(destinations, [p.destId]);
           const fare = fareOf(p.id);
           return (
@@ -336,7 +337,7 @@ function HomeAirport({ c, me }) {
 
 /* ---------------------------------------------------------- flights */
 
-function FareTable({ c, top, fares, fair, destinations, me }) {
+function FareTable({ c, top, fares, fair, destinations, me, name }) {
   const { t } = useI18n();
   const joined = c.members.filter((m) => m.status === 'joined');
   const all = fares.rows.flatMap((r) => Object.values(r.fares)).filter((v) => v != null);
@@ -357,7 +358,7 @@ function FareTable({ c, top, fares, fair, destinations, me }) {
                   <span className="vr-fl-ph">
                     <HeroImage url={photo?.image?.url || null} image={photo?.image} className="vr-fl-img" maxWidth={640} sizes="(min-width: 1100px) 200px, 28vw" ratio={[4, 3]} />
                   </span>
-                  <span className="vr-fl-n">{placeName(destinations, p.destId)}</span>
+                  <span className="vr-fl-n">{name(p.destId)}</span>
                   {fair.fairestId === p.id && <span className="vr-tag is-solid">{t('vr.fairest')}</span>}
                 </th>
               );
@@ -408,6 +409,8 @@ function FareTable({ c, top, fares, fair, destinations, me }) {
 export function CircleView({ circleId, step = 'circle', onView, headRef, destinations, onOpenTripPlan }) {
   const { t, lang } = useI18n();
   const { s, c, joined, ids, ranked, win } = useCircle(circleId);
+  // Places in the reader's language (judge 1 fix 2).
+  const name = usePlaceNames(destinations, c ? c.proposals.map((p) => p.destId) : []);
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState([]);
   const [draftStart, setDraftStart] = useState('');
@@ -432,7 +435,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
     );
   }
   const lead = ranked[0] || null;
-  const leadName = lead ? placeName(destinations, lead.destId) : '';
+  const leadName = lead ? name(lead.destId) : '';
   const { photo: leadPhoto } = placeOf(destinations, lead ? [lead.destId] : []);
   const winText = win ? fmtShort(win.start, win.end, lang, j) : '';
   const canLine = win ? (win.count === win.total ? t('vr.everyone') : t('vr.nOfCan', { n: win.count, total: win.total })) : '';
@@ -499,7 +502,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
     body = (
       <section className="vr-sect" aria-labelledby="vr-props-h">
         <SectHead id="vr-props-h" as="h2" title={t('vr.proposals')} count={ranked.length || null} />
-        <VoteList c={c} ranked={ranked} me={s.userId} destinations={destinations} fareOf={fareOf} canRemove={canRemove} />
+        <VoteList c={c} ranked={ranked} me={s.userId} destinations={destinations} fareOf={fareOf} canRemove={canRemove} name={name} />
         <Propose c={c} destinations={destinations} />
       </section>
     );
@@ -526,7 +529,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
         ) : (
           <>
             <p className="vr-sub num">{t('vr.returnDates', { dates: winText })}</p>
-            <FareTable c={c} top={top} fares={fares} fair={fair} destinations={destinations} me={s.userId} />
+            <FareTable c={c} top={top} fares={fares} fair={fair} destinations={destinations} me={s.userId} name={name} />
           </>
         )}
       </section>
@@ -567,7 +570,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
                   <span className="vr-row-ph">
                     <HeroImage url={photo?.image?.url || null} image={photo?.image} className="vr-row-img" maxWidth={320} sizes="96px" ratio={[4, 3]} />
                   </span>
-                  <span className="vr-row-tx"><b>{placeName(destinations, p.destId)}</b><span>{t('vr.by', { name: firstName(by) })}</span></span>
+                  <span className="vr-row-tx"><b>{name(p.destId)}</b><span>{t('vr.by', { name: firstName(by) })}</span></span>
                   <b className="vr-row-sc num">{p.score}</b>
                 </li>
               );

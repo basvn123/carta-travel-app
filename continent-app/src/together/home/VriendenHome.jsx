@@ -21,7 +21,13 @@ import { IS_FRIENDS_MOCK } from '../friendsMock.js';
 import { InviteButton, InviteQr } from '../Invite.jsx';
 import { Ring } from '../circle/Ring.jsx';
 import { ToneFace, ToneFaces, fmtShort, firstName, nameOf } from '../parts.jsx';
-import { placeOf, daysUntil, leadFill, placeName } from '../vrienden.js';
+import { placeOf, daysUntil, leadFill } from '../vrienden.js';
+import { usePlaceNames, joinNames } from '../PlaceName.jsx';
+
+// Every place on the page in the reader's language (judge 1 fix 2), from one
+// lookup in VriendenHome, read by each section.
+const NamesCtx = React.createContext((id, fallback) => fallback || id);
+const useName = () => React.useContext(NamesCtx);
 
 /**
  * The Vrienden home (G16, decision 0017, build-spec block 2): people first,
@@ -47,7 +53,8 @@ const today = () => new Date().toISOString().slice(0, 10);
 function GoCard({ trip, destinations, me, mine, open, onToggle }) {
   const { t } = useI18n();
   const { dest, photo } = placeOf(destinations, trip.destinationIds);
-  const place = dest?.city || (trip.cities || [])[0] || trip.label || '';
+  const name = useName();
+  const place = name(dest?.id || (trip.destinationIds || [])[0], dest?.city || (trip.cities || [])[0] || trip.label || '');
   const days = daysUntil(trip.startDate);
   const who = trip.ownerName || `@${trip.ownerHandle}`;
   return (
@@ -105,11 +112,12 @@ function WhoGoes({ s, destinations, meets }) {
 /* ---------------------------------------------------------- the deck */
 
 function useTodo(s, onView) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const name = useName();
   const items = [];
   const myPlanName = (r) => {
     const p = s.myPlans.find((x) => x.id === r.tripPlanId);
-    return r.label || p?.label || fmtWhere(p?.cities || []) || t('tg2.yourTrip');
+    return r.label || p?.label || joinNames((p?.destination_ids || []).map((id) => name(id)), lang) || fmtWhere(p?.cities || []) || t('tg2.yourTrip');
   };
   for (const l of s.links.filter((x) => x.kind === 'incoming')) {
     items.push({ key: `f:${l.id}`, kind: t('vr.kFriend'), face: { id: l.userId, name: nameOf(l), emoji: l.avatarEmoji },
@@ -245,6 +253,7 @@ function Lanes({ o, me, meName }) {
 
 function OnTheRoad({ s, meets, destinations, onPlanDay }) {
   const { t, lang } = useI18n();
+  const name = useName();
   if (!meets.length) return null;
   const [o, ...rest] = meets;
   const { photo } = placeOf(destinations, [o.destId]);
@@ -258,7 +267,7 @@ function OnTheRoad({ s, meets, destinations, onPlanDay }) {
           <HeroImage url={photo?.image?.url || null} image={photo?.image} className="vr-meet-img" maxWidth={1280}
             sizes="(min-width: 1100px) 520px, 92vw" ratio={[16, 10]} />
         </span>
-        <h3 className="vr-meet-t">{t('vr.youAndIn', { who, city: o.city })}</h3>
+        <h3 className="vr-meet-t">{t('vr.youAndIn', { who, city: name(o.destId, o.city) })}</h3>
         <span className="vr-meet-d num">{fmtShort(o.start, o.end, lang, j)}</span>
         <Lanes o={o} me={s.userId} meName={nameOf(s.me)} />
         <span className="vr-meet-acts">
@@ -271,7 +280,7 @@ function OnTheRoad({ s, meets, destinations, onPlanDay }) {
           {rest.slice(0, 4).map((m) => (
             <div key={m.key} className="vr-row">
               <ToneFace id={m.friendId} me={s.userId} name={m.friendName} emoji={m.emoji} size="md" />
-              <span className="vr-row-tx"><b>{t('vr.youAndIn', { who: firstName(m.friendName), city: m.city })}</b><span className="num">{fmtShort(m.start, m.end, lang, j)}</span></span>
+              <span className="vr-row-tx"><b>{t('vr.youAndIn', { who: firstName(m.friendName), city: name(m.destId, m.city) })}</b><span className="num">{fmtShort(m.start, m.end, lang, j)}</span></span>
               <Button variant="quiet" size="sm" className="vr-lnk" onClick={() => togetherActions.hideMeet(m.key)}>{t('tg.hide')}</Button>
             </div>
           ))}
@@ -287,11 +296,12 @@ function FriendCard({ link, s, destinations, meets, onOpen }) {
   const { t } = useI18n();
   const { next } = friendFacts(s.friendTrips, link.userId);
   const { dest, photo } = placeOf(destinations, next?.destinationIds);
-  const place = dest?.city || (next?.cities || [])[0] || '';
+  const placeName = useName();
+  const place = next ? placeName(dest?.id || (next.destinationIds || [])[0], dest?.city || (next.cities || [])[0] || '') : '';
   const days = next ? daysUntil(next.startDate) : null;
   const meet = meets.find((o) => o.friendId === link.userId);
   const name = nameOf(link);
-  const fact = meet ? t('vr.withYouIn', { place: meet.city }) : next ? place : t('vr.nothingShared');
+  const fact = meet ? t('vr.withYouIn', { place: placeName(meet.destId, meet.city) }) : next ? place : t('vr.nothingShared');
   return (
     <Pressable type="button" className="vr-fc" onClick={onOpen}>
       {photo?.image?.url ? (
@@ -348,6 +358,7 @@ function FriendsGrid({ s, destinations, meets, onView, inviteTile }) {
 
 function CircleCard({ c, s, destinations, onOpen }) {
   const { t } = useI18n();
+  const name = useName();
   const ranked = rankProposals(c.proposals, c.votes);
   const lead = ranked[0] || null;
   const { photo } = placeOf(destinations, lead ? [lead.destId] : []);
@@ -359,7 +370,7 @@ function CircleCard({ c, s, destinations, onOpen }) {
         <b className="vr-kr-t">{c.name}</b>
         <span>{[t('vr.members', { n: joined.length }), c.proposals.length ? t('vr.proposalsN', { n: c.proposals.length }) : ''].filter(Boolean).join(', ')}</span>
         {lead && (
-          <span className="vr-kr-lead"><b>{placeName(destinations, lead.destId)}</b><span>{t('vr.leadsWith', { n: lead.score })}</span></span>
+          <span className="vr-kr-lead"><b>{name(lead.destId)}</b><span>{t('vr.leadsWith', { n: lead.score })}</span></span>
         )}
       </span>
     </Pressable>
@@ -412,7 +423,8 @@ function Circles({ s, destinations, onView, hasFriends }) {
 /* ---------------------------------------------------------- gedeeld */
 
 function Shared({ s, onOpenSaved, onOpenTripPlan }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
+  const name = useName();
   const { user } = useAuth();
   const lists = useSharedLists(user, { mock: IS_FRIENDS_MOCK });
   const rows = [];
@@ -432,7 +444,7 @@ function Shared({ s, onOpenSaved, onOpenTripPlan }) {
     rows.push(
       <Pressable key={`p:${p.id}`} type="button" className="vr-row is-link" onClick={() => onOpenTripPlan?.(p.id)}>
         <ToneFaces me={s.userId} size="sm" people={co.map((c) => ({ id: c.userId, name: c.name, emoji: c.emoji }))} />
-        <span className="vr-row-tx"><b>{p.label || fmtWhere(p.cities)}</b><span>{t('vr.plannedWith', { who: co.map((c) => firstName(c.name)).join(', ') })}</span></span>
+        <span className="vr-row-tx"><b>{p.label || joinNames((p.destination_ids || []).map((id) => name(id)), lang) || fmtWhere(p.cities)}</b><span>{t('vr.plannedWith', { who: joinNames(co.map((c) => firstName(c.name)), lang) })}</span></span>
         <ChevronRightIcon size={16} className="vr-chev" />
       </Pressable>,
     );
@@ -567,12 +579,19 @@ export function VriendenHome({
       variant={variant} block={block} />
   );
   const meName = nameOf(s.me) || t('vr.you');
+  const name = usePlaceNames(destinations, [
+    ...s.friendTrips.flatMap((tr) => tr.destinationIds || []),
+    ...meets.map((o) => o.destId),
+    ...s.myPlans.flatMap((p) => p.destination_ids || []),
+    ...(s.circles || []).flatMap((c) => c.proposals.map((p) => p.destId)),
+  ]);
   const tile = friends.length === 1 ? (
     <span className="vr-fc is-add">
       <span className="vr-fc-ph is-add">{invite('secondary', true)}</span>
     </span>
   ) : null;
   return (
+    <NamesCtx.Provider value={name}>
     <div className="tg-page vr-page vr-home">
       <div className="vr-head">
         <h1 className="vr-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
@@ -598,5 +617,6 @@ export function VriendenHome({
         </div>
       </div>
     </div>
+    </NamesCtx.Provider>
   );
 }
