@@ -36,11 +36,14 @@ function fakeRunner(codes = {}) {
 
 test('the steps are CLAUDE.md\'s deploy, in its order', () => {
   const steps = shipSteps({ repoRoot: '/repo' });
-  assert.deepEqual(steps.map((s) => s.id), ['build', 'css', 'data', 'preview', 'main', 'prune']);
+  assert.deepEqual(steps.map((s) => s.id), ['build', 'css', 'guard', 'data', 'preview', 'main', 'prune']);
   const line = (id) => commandLine(steps.find((s) => s.id === id));
   assert.equal(line('build'), 'VITE_E2E_SEAMS="" npm run build:pages');
   assert.equal(line('css'), 'node scripts/css-routes.mjs --check dist/assets');
   assert.equal(line('data'), 'node scripts/r2/push-data.mjs --live');
+  // D1/D2/D10: the guard sits before the upload and reads the served and the staged tree.
+  assert.match(line('guard'), /^python scripts\/quality\/publish_guard\.py --public ".*public" --staged ".*dist-data"$/);
+  assert.ok(steps.findIndex((s) => s.id === 'guard') < steps.findIndex((s) => s.id === 'data'));
   assert.equal(line('preview'), 'npx wrangler pages deploy dist --project-name carta-app --branch preview');
   assert.equal(line('main'), 'npx wrangler pages deploy dist --project-name carta-app --branch main');
   // The prune keeps its typed "delete": no --yes.
@@ -52,7 +55,7 @@ test('a dry run runs only the two read-only twins and prints the rest', () => {
   const lines = [];
   const res = runShip({ live: false, runner: f.run, checks: OK, log: (l) => lines.push(l) });
   assert.equal(res.ok, true);
-  assert.deepEqual(res.ran, ['build', 'css', 'data', 'preview', 'main', 'prune']);
+  assert.deepEqual(res.ran, ['build', 'css', 'guard', 'data', 'preview', 'main', 'prune']);
   assert.deepEqual(f.calls.map((s) => s.label), ['fast build into .fastbuild', 'css-routes proof on .fastbuild/assets']);
   for (const s of f.calls) assert.doesNotMatch(s.args.join(' '), /--live|wrangler/);
   assert.ok(lines.some((l) => /would run {2}npx wrangler pages deploy dist .*--branch main/.test(l)));
@@ -62,7 +65,23 @@ test('a live ship runs every step in order', () => {
   const f = fakeRunner();
   const res = runShip({ live: true, runner: f.run, checks: OK, log: quiet });
   assert.equal(res.ok, true);
-  assert.deepEqual(f.calls.map((s) => s.args.at(-1)), ['build:pages', 'dist/assets', '--live', 'preview', 'main', '--prune']);
+  assert.deepEqual(f.calls.map((s) => s.id), ['build', 'css', 'guard', 'data', 'preview', 'main', 'prune']);
+});
+
+test('the guard step takes a stated override from the environment, never silently', () => {
+  const plain = shipSteps({ repoRoot: '/repo', override: '' }).find((s) => s.id === 'guard');
+  assert.ok(!plain.args.includes('--override'));
+  const forced = shipSteps({ repoRoot: '/repo', override: 'stopgap 0.2' }).find((s) => s.id === 'guard');
+  assert.deepEqual(forced.args.slice(-2), ['--override', 'stopgap 0.2']);
+});
+
+test('a refused guard stops the ship before the data upload (D1, D2, D10)', () => {
+  const f = fakeRunner({ 'publish guard on the wire to upload': 1 });
+  const res = runShip({ live: true, runner: f.run, checks: OK, log: quiet });
+  assert.equal(res.ok, false);
+  assert.equal(res.failed, 'guard');
+  assert.deepEqual(res.skipped, ['data', 'preview', 'main', 'prune']);
+  assert.ok(!f.calls.some((s) => s.id === 'data'), 'nothing reached R2');
 });
 
 test('a failed step stops the ship: nothing after it runs', () => {
@@ -72,9 +91,9 @@ test('a failed step stops the ship: nothing after it runs', () => {
   assert.equal(res.ok, false);
   assert.equal(res.failed, 'data');
   assert.equal(res.code, 3);
-  assert.deepEqual(res.ran, ['build', 'css']);
+  assert.deepEqual(res.ran, ['build', 'css', 'guard']);
   assert.deepEqual(res.skipped, ['preview', 'main', 'prune']);
-  assert.equal(f.calls.length, 3);
+  assert.equal(f.calls.length, 4);
   assert.ok(lines.some((l) => l.includes('--live --from data')));
 });
 
@@ -84,7 +103,7 @@ test('a seeded failure stops a dry run at that step', () => {
     const res = runShip({ live: false, failAt: at, runner: f.run, checks: OK, log: quiet });
     assert.equal(res.ok, false, at);
     assert.equal(res.failed, at);
-    const ids = ['build', 'css', 'data', 'preview', 'main', 'prune'];
+    const ids = ['build', 'css', 'guard', 'data', 'preview', 'main', 'prune'];
     assert.deepEqual(res.ran, ids.slice(0, ids.indexOf(at)));
   }
 });
@@ -93,7 +112,7 @@ test('--from resumes at a step and skips the ones before', () => {
   const f = fakeRunner();
   const res = runShip({ live: true, from: 'preview', runner: f.run, checks: OK, log: quiet });
   assert.equal(res.ok, true);
-  assert.deepEqual(res.skipped, ['build', 'css', 'data']);
+  assert.deepEqual(res.skipped, ['build', 'css', 'guard', 'data']);
   assert.deepEqual(res.ran, ['preview', 'main', 'prune']);
 });
 
