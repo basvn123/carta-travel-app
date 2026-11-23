@@ -509,7 +509,6 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
         <section className="vr-sect" aria-labelledby="vr-cal-h">
           <h2 className="sr-only" id="vr-cal-h">{t('vr.dates')}</h2>
           <HeatCalendar c={c} ids={ids} win={win} editing={editing} onPickDay={pickDay} draftStart={draftStart} />
-          {win && <p className="vr-res is-inline"><b className="num">{winText}</b><span>{canLine}</span><span>{t('tg.nightsN', { n: win.nights })}</span></p>}
         </section>
         <div className="vr-dates-side">
           <MemberLanes c={c} ids={ids} me={s.userId} />
