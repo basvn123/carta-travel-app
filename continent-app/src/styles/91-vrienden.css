@@ -243,6 +243,10 @@
 
 /* ── Rekeningen ─────────────────────────────────────────────────────── */
 .vr-bal { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+/* The side words sit over the two bar columns of .vr-bal-row, on its grid. */
+.vr-bal-key { display: grid; grid-template-columns: 24px minmax(0, 1fr) 1fr 1fr 72px; gap: var(--space-2); margin: 0 0 calc(-1 * var(--space-1)); font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
+.vr-bal-key span:first-child { grid-column: 3; text-align: end; }
+.vr-bal-key span:last-child { grid-column: 4; }
 .vr-bal-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) 1fr 1fr 72px; align-items: center; gap: var(--space-2); min-height: var(--tap); }
 .vr-bal-nm { font-size: var(--text-body); font-weight: 700; overflow-wrap: anywhere; min-width: 0; }
 .vr-bal-l, .vr-bal-r { position: relative; height: 14px; }
