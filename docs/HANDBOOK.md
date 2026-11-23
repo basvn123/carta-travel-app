@@ -1020,7 +1020,7 @@ Worked example: 2 adults and 1 child. Seats = 3. Food share = (2 + 0.6) / 3 = 0.
 
 **Data behind it.** `pricing.json` rules `party.limits`, `party.shares`, `party.baby_lap_fee_leg`, `stay.people_per_room`, `stay.dorm_child_weight`, `stay.dorm_child_weight_before_e3`, `stay.room_occupancy`. All marked estimate.
 
-**Where it lives.** `continent-app/src/lib/party.js` (`partyOf`, `carsFor`, `kindFits`), `continent-app/src/lib/price/request.js`, `continent-app/src/lib/travelWay.js`, `continent-app/src/planner/flow/budget.js`.
+**Where it lives.** `continent-app/src/lib/party.js` (`partyOf`, `carsFor`, `kindFits`), `continent-app/src/lib/price/request.js`, `continent-app/src/lib/travelWay.js`, `continent-app/src/planner/flow/budget.js`. The style (`styleFromChoices`) and the planner (`quoteTrip`) read their counts through `partyOf` (the planner keeps its total-room rule for babies); the car capacity fallback is `car.model car_capacity`.
 
 **Limits.** All shares are Carta estimates, not measured. Party size lives in the URL and app state, not across sessions (T100-b).
 

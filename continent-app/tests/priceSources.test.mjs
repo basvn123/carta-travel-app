@@ -31,6 +31,8 @@ export const ALLOWED = {
   ...KERNEL_FILES,
   // Eval harness, not app code: it runs the real E1 sites (groundSpendPerPerson among them) twice, old and new, to score the totals golden set.
   "scripts/eval/lib/totals-engine.mjs": "eval harness (E1 golden set)",
+  // Eval harness, not app code: it runs the real bedPrice and costRow twice, E3 old and new, to score the stay-ladder golden set.
+  "scripts/eval/lib/stay-engine.mjs": "eval harness (E3 golden set)",
 };
 
 function walk(dir, out = []) {

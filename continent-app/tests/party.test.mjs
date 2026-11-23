@@ -111,3 +111,20 @@ test("E2: a style with teens keeps its kind family when the choices carry no chi
   assert.equal(next.who.teens, 2);
   assert.equal(withFlags({ E2: "old" }, () => styleFromChoices(style, { group_size: 4 })).who.kind, "friends", "old: teens read as adults, so friends");
 });
+
+test("E2: a style and the planner give the same party as partyOf for the persona set", async () => {
+  const { PERSONA_PARTY } = await import("../scripts/eval/lib/party-engine.mjs");
+  const { CATALOGUE } = await import("../scripts/eval/lib/totals-engine.mjs");
+  const { quoteTrip } = await import("../src/lib/tripTotal.js");
+  const parties = [...Object.values(PERSONA_PARTY), [2, 0, 0], [2, 3, 6], [10, 0, 9], [1, 2, 0]];
+  for (const [adults, children, babies] of parties) {
+    const seats = adults + children;
+    const want = partyOf({ group_size: seats, children, babies });
+    const style = NEW(() => styleFromChoices({ who: { kind: "family", adults: 2, kids: 0, babies: 0 } }, { group_size: seats, children, babies }));
+    const state = { stops: [{ destinationId: "BCN", nights: 3, activities: [] }], tripStart: "2027-03-06", tripEnd: "2027-03-09", groupSize: adults, children, babies, transportPref: "owncar", baggage: "priority_10kg", ownFlight: null, carHome: null, stayTier: "home", lifestyle: null };
+    const q = NEW(() => quoteTrip(state, { data: { destinations: CATALOGUE } }));
+    const tag = `${adults}+${children}+${babies}`;
+    assert.deepEqual([style.who.adults, style.who.kids, style.who.babies], [want.adults, want.children, want.babies], `style ${tag}`);
+    assert.deepEqual([q.party.adults, q.party.children, q.party.babies], [want.adults, want.children, want.babies], `planner ${tag}`);
+  }
+});

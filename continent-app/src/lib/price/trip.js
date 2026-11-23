@@ -29,7 +29,7 @@ import { accessCost, homeCandidates } from '../airportReach.js';
 import { pickLeg, legCost, fitsHours, fitsPrefs } from '../flights/flights.js';
 import { addDays } from '../dates.js';
 import { round2 } from '../math.js';
-import { ticketShare, carsOf, BABY_LAP_FEE_LEG } from '../party.js';
+import { ticketShare, carsOf, partyOf, BABY_LAP_FEE_LEG } from '../party.js';
 import { isOn } from '../flags.js';
 import { rule } from './config.js';
 import { carHire, carLocalCost, carModelOf } from './car.js';
@@ -144,11 +144,16 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   // babies 0 to 2 sit on a lap. Cars are priced per car and need a seat for
   // everyone. `groupSize` (the seats Carta prices beds and legs for) is
   // adults plus children.
-  const adults = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
-  const children = Math.max(0, Math.min(MAX_PARTY - adults, Math.round(state?.children || 0)));
+  // The planner's counts go through partyOf, the one normaliser (E2): adults and children come out as they
+  // went in (they are clamped to the seats first, so partyOf keeps them), the baby cap is its limit.
+  const adultsIn = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
+  const childrenIn = Math.max(0, Math.min(MAX_PARTY - adultsIn, Math.round(state?.children || 0)));
+  const norm = partyOf({ group_size: adultsIn + childrenIn, children: childrenIn, babies: state?.babies });
+  const adults = norm.adults;
+  const children = norm.children;
   // E2 (G-9): the baby cap is config party.limits max_babies, the one every screen reads; before, the room left in the party.
-  const babyRoom = isOn('E2') ? Math.min(rule('party.limits').max_babies, MAX_PARTY - adults - children) : MAX_PARTY - adults - children;
-  const babies = Math.max(0, Math.min(babyRoom, Math.round(state?.babies || 0)));
+  const babyRoom = MAX_PARTY - adults - children;
+  const babies = isOn('E2') ? Math.max(0, Math.min(norm.babies, babyRoom)) : Math.max(0, Math.min(babyRoom, Math.round(state?.babies || 0)));
   const groupSize = adults + children;
   const seats = groupSize + babies;
   const party = { adults, children, babies, seats: groupSize };
@@ -430,7 +435,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     const fuelByIso = carModel?.fuel_price_by_iso2 || {};
     const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
     const consumption = carModel?.consumption_l_per_100km ?? CAR.consumption_l_per_100km;
-    const capacity = carModel?.car_capacity ?? 4;
+    const capacity = carModel?.car_capacity ?? CAR.car_capacity;
     const hasRental = transportPref === 'car';
     const kmOf = (eurPp, minutes) => (minutes > 0 ? (minutes / 60) * 42 : Math.max(1, (eurPp || 0) / 0.15));
     const legOf = (eurPp, minutes) => (eurPp > 0

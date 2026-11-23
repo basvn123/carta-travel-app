@@ -30,7 +30,7 @@
 import { PROFILES } from './lifestyleProfiles.js';
 import { DEFAULT_LIFESTYLE } from './runtime_pricing.js';
 import RECOMMEND from '../../config/recommend.json' with { type: 'json' };
-import { kindOfCounts, kindFits } from './party.js';
+import { kindOfCounts, kindFits, partyOf } from './party.js';
 import { isOn } from './flags.js';
 import { rule } from './price/config.js';
 
@@ -362,18 +362,22 @@ export function styleWays(style) {
  * Returns `style` itself when nothing moved.
  */
 export function styleFromChoices(style, choices = {}) {
-  const seats = clampInt(choices.group_size, 1, 20, 2);
-  const kids = clampInt(choices.children, 0, 19, 0);
-  // E2 (G-9): one baby cap for every screen, config party.limits.
-  const babies = clampInt(choices.babies, 0, isOn('E2') ? rule('party.limits').max_babies : 10, 0);
-  const adults = Math.max(1, seats - kids);
   const base = normalizeStyle(style) || normalizeStyle({});
-  // E2 (G-8): teens ride inside the adults; the choices do not carry them, so the style's own count stays.
-  const teens = isOn('E2') ? clampInt(choices.teens ?? base.who.teens, 0, adults - 1, 0) : 0;
-  // The kind stays the traveller's word ("friends" for three) while it still
-  // fits the counts; a family with no children left is no longer a family.
-  const young = kids + babies;
-  const kind = kindFits(base.who.kind, { adults, kids, babies, teens }) ? base.who.kind : kindOfCounts(adults, kids, babies, teens);
+  let adults; let kids; let babies; let teens; let kind;
+  if (isOn('E2')) {
+    // E2: the party is partyOf's (caps from config party.limits, G-9). Teens ride inside the adults and the
+    // choices do not carry them, so the style's own count stays (G-8). The kind stays the traveller's word
+    // ("friends" for three) while it still fits the counts, a family with no children left is no longer one.
+    const p = partyOf({ group_size: choices.group_size, children: choices.children, babies: choices.babies, teens: choices.teens ?? base.who.teens, kind: base.who.kind });
+    ({ adults, children: kids, babies, teens, kind } = p);
+  } else {
+    const seats = clampInt(choices.group_size, 1, 20, 2);
+    kids = clampInt(choices.children, 0, 19, 0);
+    babies = clampInt(choices.babies, 0, 10, 0);
+    adults = Math.max(1, seats - kids);
+    teens = 0;
+    kind = kindFits(base.who.kind, { adults, kids, babies }) ? base.who.kind : kindOfCounts(adults, kids, babies);
+  }
   const next = normalizeStyle({
     ...base,
     who: { ...base.who, kind, adults, kids, babies, ...(teens > 0 ? { teens } : {}) },
