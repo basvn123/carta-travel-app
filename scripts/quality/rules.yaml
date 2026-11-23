@@ -166,6 +166,15 @@ invariants:
   - {id: place.taste_on_rated, check: rated_without_taste, max: 0, kind: hard, on: wire}  # 0
   - {id: hero.wrong_tokens, check: wrong_hero_tokens, max: 0, kind: soft, on: wire}  # 29 (hero_bans.py)
   - {id: poi.must_see_square, check: must_see_square_mislabelled, max: 0, kind: soft, on: wire}  # see checks.md
+# Drift gate (D2, wave 2 step 8, G3): scripts/quality/drift.py compares the last
+# published wire with a new build (publish_guard.py --previous). PSI is over 10
+# bins with the old wire's quantile edges; a share is the measured-bed share and
+# the photo share. Either limit breached fails the publish.
+drift:
+  psi_max: 0.25
+  share_drop_points: 2
+  bins: 10
+  epsilon: 0.0001
 # Layer rules (T1214, register row T1142-b): the card's other three numbers per
 # layer. `layers` is `all` or a list of scorecard layers; a layer the card did
 # not measure for the metric (no records, accuracy n/a) is skipped.

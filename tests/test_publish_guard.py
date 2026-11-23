@@ -26,7 +26,7 @@ def acc(i, dorm=None):
     beds = {"hotel3": 100, "hotel4": 140}
     if dorm is not None:
         beds["dorm"] = dorm
-    return {"q": "measured", "captured": "2026-11-03", "beds": beds, "supply": {}}
+    return {"q": "measured", "captured": "2026-11-03", "beds": beds, "supply": {}, "_asof": "2026-11-03"}
 
 
 def make_public(tmp: Path, n=100, measured=87, dorm_bad=0) -> Path:
@@ -36,7 +36,8 @@ def make_public(tmp: Path, n=100, measured=87, dorm_bad=0) -> Path:
     for i in range(n):
         d = {"id": f"p{i:03d}", "tier": "gem", "city": f"P{i}", "country": "Belgium", "iso2": "BE",
              "lat": 50.8, "lon": 4.4, "categories": ["city"], "blurb": "A town.",
-             "rating": {"score": 6.0}, "taste": {"likes": {"hiking": [0.5]}},
+             "rating": {"score": 6.0 + i % 3, "_asof": "2026-11-01"}, "taste": {"likes": {"hiking": [0.5]}},
+             "climate": {"best": [6, 7, 8], "_asof": "2026-10-01"},
              "image": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Town_hall.jpg/900px-Town_hall.jpg"}}
         if i < measured:
             d["accommodation"] = acc(i, dorm=200 if i < dorm_bad else 30)
