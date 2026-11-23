@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
-  PlusIcon, CompassIcon, LinkIcon, FriendsIcon, BoltIcon,
+  PlusIcon, CompassIcon, LinkIcon, BoltIcon,
 } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { BADGES, fetchAchievements } from './achievements.js';
 
@@ -28,7 +29,8 @@ import { BADGES, fetchAchievements } from './achievements.js';
 
 const ICONS = {
   icebreaker: PlusIcon,
-  well_connected: FriendsIcon,
+  // G16: the one people glyph of Vrienden.
+  well_connected: HouseIcon.people,
   copilot: CompassIcon,
   local_guide: LinkIcon,
   catalyst: BoltIcon,

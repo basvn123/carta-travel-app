@@ -37,6 +37,12 @@ export const HouseIcon = {
   ticket: glyph('ticket', <><path d="M3.5 6.5h17v3a2.5 2.5 0 0 0 0 5v3h-17v-3a2.5 2.5 0 0 0 0-5z" /><path d="M15 6.5v11" strokeDasharray="1.6 2.2" strokeLinecap="butt" /><path d="M7 10.5h4.5M7 13.5h3" /></>),
   search: glyph('search', <><circle cx="10.5" cy="10.5" r="6.5" /><path d="M15.5 15.5l5.5 5.5" /></>),
   people: glyph('people', <><circle cx="9" cy="7.5" r="3.5" /><path d="M2.5 20.5v-2a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5v2" /><path d="M16 4.5a3.5 3.5 0 0 1 0 6.5" /><path d="M19 13.8a5 5 0 0 1 2.5 4.4v2.3" /></>),
+  // Vrienden (G16, decision 0017): one person and a plus, only on the
+  // Uitnodigen button and always with its word.
+  invite: glyph('invite', <><circle cx="9.5" cy="7.5" r="3.5" /><path d="M3 20.5v-2a5 5 0 0 1 5-5h3a5 5 0 0 1 3.2 1.2" /><path d="M18.5 13v8M14.5 17h8" /></>),
+  // The kring tool's vote arrows: a stem and a head, one up, one down.
+  voteUp: glyph('voteUp', <><path d="M12 19.5V5" /><path d="M5.5 11.5L12 5l6.5 6.5" /></>),
+  voteDown: glyph('voteDown', <><path d="M12 4.5V19" /><path d="M5.5 12.5L12 19l6.5-6.5" /></>),
   calendar: glyph('calendar', <><path d="M3.5 5.5h17v15h-17z" /><path d="M3.5 10h17" /><path d="M8 3v4.5M16 3v4.5" /></>),
   from: glyph('from', <><path d="M6 21.5V3" /><path d="M6 4h12l-2.5 3.5L18 11H6" /></>),
   lifestyle: glyph('lifestyle', <><path d="M4 6.5h10M18 6.5h2M4 12h3M11 12h9M4 17.5h11M19 17.5h1" /><path d="M14 4.5h4v4h-4zM7 10h4v4H7zM15 15.5h4v4h-4z" /></>),

@@ -121,7 +121,9 @@
   outline: 1.5px solid var(--umber-300);
   outline-offset: -1.5px;
 }
-@media (min-width: 769px) and (max-width: 1099px) {
+/* G16 (decision 0017): the glyph and the badge on every width, the word
+   "Vrienden" from 1100 px. */
+@media (max-width: 1099px) {
   .tg-door.hdr-pill { width: var(--tap); padding: 0; justify-content: center; }
   .tg-door-word { display: none; }
 }

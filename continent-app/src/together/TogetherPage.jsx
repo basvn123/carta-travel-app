@@ -2,8 +2,9 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, IconButton, Blaze } from '../components/ui/index.js';
 import {
-  ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon, TogetherIcon,
+  ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon,
 } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { listGuides } from '../community/guides.js';
@@ -184,7 +185,7 @@ export function TogetherPage({
         <div className="tg-out">
           <div className="tg-out-art" aria-hidden="true">
             <Blaze size="lg" state="blank" />
-            <TogetherIcon size={28} />
+            <HouseIcon.people size={28} />
           </div>
           <div className="tg-out-body">
             <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
