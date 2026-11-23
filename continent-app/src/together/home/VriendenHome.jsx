@@ -588,7 +588,7 @@ export function VriendenHome({
   useLayoutEffect(() => {
     const empty = !!leftRef.current && leftRef.current.childElementCount === 0;
     if (empty !== leftEmpty) setLeftEmpty(empty);
-  });
+  }, [s, meets, leftEmpty]);
   const name = usePlaceNames(destinations, [
     ...s.friendTrips.flatMap((tr) => tr.destinationIds || []),
     ...meets.map((o) => o.destId),
