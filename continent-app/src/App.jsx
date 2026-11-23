@@ -61,6 +61,7 @@ import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './li
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl, holdFriendHandle } from './auth/friends.js';
 import { readCircleFromUrl, stripCircleFromUrl, holdCircle } from './auth/circles.js';
+import { OPEN_VRIENDEN } from './together/openVrienden.js';
 import { IconButton } from './components/ui/index.js';
 import { readCoplanTokenFromUrl, stripCoplanTokenFromUrl, holdCoplanToken, acceptCoplanLink } from './auth/coplanners.js';
 import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
@@ -267,6 +268,14 @@ function TravelApp() {
     setTogetherOpen(true);
     holdFriendHandle(user ? null : pendingFriend);
   }, [pendingFriend, user, setAccountOpen, setSavedTripsOpen]);
+
+  // G16 (block 6): any surface can open a friend or a Vrienden view
+  // (together/openVrienden.js) without a prop chain.
+  useEffect(() => {
+    const on = (e) => openTogether(e.detail?.view || 'home', e.detail?.id || '');
+    window.addEventListener(OPEN_VRIENDEN, on);
+    return () => window.removeEventListener(OPEN_VRIENDEN, on);
+  });
 
   // A kring link (#circle=<id>, G16): held through sign-in like the friend
   // handle, then the kring opens for its members. RLS answers nothing to a

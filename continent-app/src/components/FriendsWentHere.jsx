@@ -1,5 +1,6 @@
 import React from 'react';
 import { FriendsHere } from '../together/signals.jsx';
+import { ProposeInCircle } from '../together/ProposeInCircle.jsx';
 
 /**
  * Friends on a destination page (T466; T929 made it the "Friends here"
@@ -13,5 +14,11 @@ import { FriendsHere } from '../together/signals.jsx';
  *   destinations  the catalogue, for the trip panel's map and stops
  */
 export function FriendsWentHere({ destId, destinations }) {
-  return <FriendsHere destId={destId} destinations={destinations} />;
+  // G16: a member of a kring can propose this place there.
+  return (
+    <>
+      <FriendsHere destId={destId} destinations={destinations} />
+      <ProposeInCircle destId={destId} />
+    </>
+  );
 }

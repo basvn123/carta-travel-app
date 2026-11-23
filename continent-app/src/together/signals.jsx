@@ -8,6 +8,17 @@ import { computeOverlaps, friendStaysIn } from './overlaps.js';
 import { useTogether, friendIdsOf, stopsByTripOf, shareOf } from './useTogether.js';
 import { IS_FRIENDS_MOCK } from './friendsMock.js';
 import { ToneFace, ToneFaces, fmtShort, firstName, Block } from './parts.jsx';
+import { openFriend } from './openVrienden.js';
+
+/** A friend's face that opens their page in Vrienden (G16, block 6). */
+function FriendFaceLink({ id, name, emoji }) {
+  const { t } = useI18n();
+  return (
+    <button type="button" className="tg-face-link" aria-label={t('vr.openFriend', { who: firstName(name) })} onClick={() => openFriend(id)}>
+      <ToneFace id={id} name={name} emoji={emoji} size="sm" />
+    </button>
+  );
+}
 
 /**
  * Friends where decisions happen (T929): one line each, and only with data.
@@ -107,7 +118,7 @@ export function FriendsHere({ destId, destinations }) {
     const showing = openTrip === r.trip.tripPlanId;
     return (
       <div className="tg-here-row" key={`${r.trip.tripPlanId}`}>
-        <ToneFace id={r.friendId} name={r.name} emoji={r.emoji} size="sm" />
+        <FriendFaceLink id={r.friendId} name={r.name} emoji={r.emoji} />
         <span>
           <Button variant="quiet" size="sm" className="tg-here-trip" aria-expanded={showing}
             onClick={() => setOpenTrip(showing ? '' : r.trip.tripPlanId)}>
@@ -126,7 +137,7 @@ export function FriendsHere({ destId, destinations }) {
         {going.map((r) => tripRow(r, t('tg.goes', { who: firstName(r.name), dates: fmtShort(r.trip.startDate, r.trip.endDate, lang, t('friends.dateJoin')) })))}
         {saved.map((r) => (
           <div className="tg-here-row" key={`s-${r.friendId}`}>
-            <ToneFace id={r.friendId} name={r.name} emoji={r.emoji} size="sm" />
+            <FriendFaceLink id={r.friendId} name={r.name} emoji={r.emoji} />
             <span><b>{t('tg.savedIt', { who: firstName(r.name) })}</b></span>
           </div>
         ))}
