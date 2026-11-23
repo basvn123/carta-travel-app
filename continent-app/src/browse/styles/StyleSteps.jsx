@@ -9,6 +9,7 @@ import {
   PiggyIcon,
 } from '../../components/Icons.jsx';
 import { PartyEditor } from '../../planner/PartyEditor.jsx';
+import { isOn } from '../../lib/flags.js';
 import { radioGroupKeyDown, useRovingRadios } from '../../components/ui/radioGroup.js';
 import {
   AROUND, AVOID, LIKES, MORNINGS, PACE, PRIORITIES, QUIET, SHAPES, SIZES, TRADEOFF_DEFAULTS, WHO_KINDS,
@@ -86,8 +87,9 @@ export function StepName({ draft, set, onWho, focusTitle, autoName }) {
         <div className="sst-party">
           <PartyEditor
             compact
-            value={{ adults: draft.who.adults, children: draft.who.kids, babies: draft.who.babies }}
-            onChange={(v) => set('name', { ...draft, who: { ...draft.who, adults: v.adults, kids: v.children, babies: v.babies } })}
+            withTeens={isOn('E2')}
+            value={{ adults: draft.who.adults, teens: draft.who.teens || 0, children: draft.who.kids, babies: draft.who.babies }}
+            onChange={(v) => set('name', { ...draft, who: { ...draft.who, adults: v.adults, kids: v.children, babies: v.babies, ...(v.teens ? { teens: v.teens } : { teens: undefined }) } })}
           />
         </div>
       )}

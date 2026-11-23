@@ -7799,6 +7799,7 @@ export const en = {
   "plan.addBookingPrice": "Add your booking price",
   "plan.addTicketPrice": "Add your ticket price",
   "plan.adultsSub": "12 and over",
+  "plan.adultsOverSub": "18 and over",
   "plan.children": "Children",
   "plan.childrenSub": "3 to 11",
   "plan.babies": "Babies",

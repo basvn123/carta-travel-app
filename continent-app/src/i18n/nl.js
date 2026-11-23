@@ -7092,6 +7092,7 @@ export const nl = {
   "plan.addBookingPrice": "Voeg je boekingsprijs toe",
   "plan.addTicketPrice": "Voeg je ticketprijs toe",
   "plan.adultsSub": "12 jaar en ouder",
+  "plan.adultsOverSub": "18 jaar en ouder",
   "plan.children": "Kinderen",
   "plan.childrenSub": "3 tot 11 jaar",
   "plan.babies": "Baby's",

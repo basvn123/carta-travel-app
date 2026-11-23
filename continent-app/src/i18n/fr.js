@@ -7081,6 +7081,7 @@ export const fr = {
   "plan.addBookingPrice": "Ajouter le prix de votre réservation",
   "plan.addTicketPrice": "Ajouter le prix de votre billet",
   "plan.adultsSub": "12 ans et plus",
+  "plan.adultsOverSub": "18 ans et plus",
   "plan.children": "Enfants",
   "plan.childrenSub": "3 à 11 ans",
   "plan.babies": "Bébés",

@@ -90,3 +90,10 @@ test("W3-L1: the teens stepper keeps teens inside the adult seats and a family a
   assert.equal(p.kind, "family");
   assert.notEqual(partyOf({ group_size: 3, children: 0, babies: 0 }).kind, "family");
 });
+
+test("W3-L1: the Style Studio's party editor takes the teens row only behind E2", () => {
+  const editor = readFileSync(new URL("../src/planner/PartyEditor.jsx", import.meta.url), "utf8");
+  const steps = readFileSync(new URL("../src/browse/styles/StyleSteps.jsx", import.meta.url), "utf8");
+  assert.match(editor, /withTeens \? \[\{ key: 'teens'/);
+  assert.match(steps, /withTeens=\{isOn\('E2'\)\}/);
+});

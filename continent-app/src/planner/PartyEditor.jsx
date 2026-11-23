@@ -2,6 +2,7 @@ import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Stepper } from '../components/FilterControls.jsx';
 import { MAX_PARTY } from '../lib/tripTotal.js';
+import { partsAfter } from '../lib/partyParts.js';
 
 /**
  * Who is going, in the three groups the trip is priced for (T458): adults
@@ -11,12 +12,17 @@ import { MAX_PARTY } from '../lib/tripTotal.js';
  * size="main" gives the plus and minus the 48 px of a main action (the
  * planner's first step, T500); the price card keeps the 44 px floor.
  */
-export function PartyEditor({ value, onChange, compact = false, size = '' }) {
+export function PartyEditor({ value, onChange, compact = false, size = '', withTeens = false }) {
   const { t } = useI18n();
-  const { adults = 1, children = 0, babies = 0 } = value || {};
-  const room = MAX_PARTY - adults - children - babies;
+  const { adults: seatsAdult = 1, children = 0, babies = 0 } = value || {};
+  // W3-L1 (E2): with a Teens row (12 to 17) the adults row is the others (18 and
+  // over); `value.adults` and `onChange` keep counting every adult seat, teens in.
+  const teens = withTeens ? Math.min(value?.teens || 0, seatsAdult - 1) : 0;
+  const adults = seatsAdult - teens;
+  const room = MAX_PARTY - seatsAdult - children - babies;
   const rows = [
-    { key: 'adults', label: t('plan.adults'), sub: t('plan.adultsSub'), v: adults, min: 1 },
+    { key: 'adults', label: t('plan.adults'), sub: t(withTeens ? 'plan.adultsOverSub' : 'plan.adultsSub'), v: adults, min: 1 },
+    ...(withTeens ? [{ key: 'teens', label: t('party.teens'), sub: t('party.teensSub'), v: teens, min: 0 }] : []),
     { key: 'children', label: t('plan.children'), sub: t('plan.childrenSub'), v: children, min: 0 },
     { key: 'babies', label: t('plan.babies'), sub: t('plan.babiesSub'), v: babies, min: 0 },
   ];
@@ -32,7 +38,7 @@ export function PartyEditor({ value, onChange, compact = false, size = '' }) {
             value={r.v}
             min={r.min}
             max={r.v + Math.max(0, room)}
-            onChange={(n) => onChange({ adults, children, babies, [r.key]: n })}
+            onChange={(n) => onChange(partsAfter({ adults, teens, children, babies }, r.key, n, withTeens))}
             ariaLabel={r.label}
             decLabel={t('trip.fewer')}
             incLabel={t('trip.more')}
