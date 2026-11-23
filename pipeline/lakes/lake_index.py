@@ -380,8 +380,10 @@ def water_temp_estimate(lake):
         base = (1.0 - lag) * air + lag * prev
         gain = 3.0 * max(0.0, min(1.0, (air - 10.0) / 11.0))
         warm = gain > 0.05
-        out.append(round(base + gain + (shallow if warm else 0.0)
-                         - deep - alt - glacier, 1))
+        # Water under 0 C is ice, not a temperature to print (D-10: Engolasters
+        # read -6). The season test reads 18 and up, so it does not move.
+        out.append(max(0.0, round(base + gain + (shallow if warm else 0.0)
+                                  - deep - alt - glacier, 1)))
     return out
 
 

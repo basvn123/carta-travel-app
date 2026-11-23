@@ -511,6 +511,10 @@ def suitability_of(row, grade, season):
     if season and season.get("n", 0) >= 11 \
             and GRADE_RANK.get(grade, 9) <= GRADE_RANK["moderate"]:
         derived.append("winter")
+        # D-16: the claim is "walkable all year" (the season estimate is open
+        # 11+ months), not winter conditions. Both ship for one release; the
+        # app moves its chip to allYear and `winter` is then retired.
+        derived.append("allYear")
 
     out = {"tagged": tagged, "derived": derived}
     keep = {k: round(float(v), 3) for k, v in cover.items()

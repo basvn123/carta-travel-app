@@ -991,9 +991,11 @@ def filter_model():
         "suitability": {
             "key": "f.su", "derived_key": "f.sd",
             "values": ["family", "dog", "stroller", "wheelchair", "winter",
-                       "beginner"],
+                       "allYear", "beginner"],
             "note": "f.su is tagged in OSM, f.sd is derived by us. "
-                    "wheelchair is never derived.",
+                    "wheelchair is never derived. allYear is what winter "
+                    "always meant (walkable 11+ months); both ship for one "
+                    "release, then winter goes.",
         },
         "extras": {
             "designation": "network",
