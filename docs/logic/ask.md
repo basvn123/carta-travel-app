@@ -48,9 +48,15 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### ASK-007 A place outside Europe is named, not replaced
 - Decides: whether "a trip to Dubai" gets "Carta does not cover Dubai" instead of a Balkan week.
-- Rule: with no known place, near or country, an unknown word right after "to/in/naar/nach/à/a/para/per/verso" (not a verb such as "stay") is the destination; following capitalised unknown words join it ("New York"). Skipped when the turn points back to a previous place.
-- Constant: `BEFORE`, `VERBS` in `continent-app/src/lib/ask/outside.js:14` and `:20`
+- Rule: with no known place, near or country, an unknown word right after "to/in/naar/nach/à/a/para/per/verso" (not a verb such as "stay") is the destination; following capitalised unknown words join it ("New York"). Skipped when the turn points back to a previous place. Since E7 (wave 3) `outside.js` only finds the candidate name (`placeCandidate`): a country or city outside Europe is `sure`, any other name is a European place Carta lacks (ASK-041), never "outside Europe".
+- Constant: `BEFORE`, `WEAK`, `WORLD_CITIES`, `VERBS` in `continent-app/src/lib/ask/outside.js`
 - Test: `continent-app/tests/askChat.test.mjs` :: "a destination outside Carta's Europe is named, a European one is not"
+
+### ASK-041 What Ask refuses, declines and offers instead (E7)
+- Decides: whether a question is answered as a search, refused, declined as off topic, outside Europe or a European place Carta lacks, and what door the decline ends in.
+- Rule: `askScope` runs first. A refusal needs a cue to evade a check, fake a paper, dodge a fare, overstay unnoticed, smuggle or harm, together with the thing it is done to (so "border crossing times" is answered). Off topic needs a listed topic and no place and no travel word. A place on the outside list is `outside`; any other candidate name is `lacking`, placed by the gazetteer town (nearest covered places, same country first) or by the catalogue text that names it, else the Explore door. A follow-up that points back is never declined for its place. Every decline ends in a door: nearest places, flights link, example questions.
+- Constant: `RULES`, `OFFTOPIC`, `NEAR_OUTSIDE` in `continent-app/src/lib/ask/scope.js`; the lines are `askChat.refuse.*`, `askChat.offtopic.*`, `askChat.lacking.*`, `askChat.scope.near`
+- Test: `continent-app/tests/askScope.test.mjs`; gated by the any-question eval (`continent-app/scripts/eval/any-question-baseline.json`)
 
 ### ASK-008 Which sources are searched per question type
 - Decides: whether passages about sights, trails and highlights can back an answer.

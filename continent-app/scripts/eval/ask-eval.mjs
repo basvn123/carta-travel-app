@@ -68,6 +68,10 @@ const pubDir = () => (process.env.CARTA_PUBLIC ? resolve(process.env.CARTA_PUBLI
 const pub = (p) => join(pubDir(), p);
 /** True when the shipped catalogue can be read: the any-question eval skips loudly without it. */
 export const catalogueAvailable = () => existsSync(pub('app_data.json')) && existsSync(pub('search/guided.json')) && existsSync(pub('search_index.json'));
+/** True when the shipped gazetteer (public/search/places/) can be read: the any-question eval places European towns with it (E7). */
+export const gazetteerAvailable = () => existsSync(pub('search/places/index.json'));
+/** A path inside the catalogue folder in use (public/ or CARTA_PUBLIC). */
+export const publicPath = pub;
 const J = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const argv = process.argv.slice(2);
 const flag = (n) => argv.includes(n);

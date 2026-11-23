@@ -82,7 +82,9 @@ test('judge: country of the cards, months and the lacking place', () => {
   assert.deepEqual(judge(c, obs({ picks: [{ id: 'A', cc: 'NO' }, { id: 'B', cc: 'SE' }], places: ['A', 'B'], months: [6] })).causes, ['country-miss', 'month-missed']);
   const l = kase('places-lacking', { kind: 'decline-nearest', lacking: 'Mürren', nearCountry: 'CH' });
   assert.equal(judge(l, obs({ cant: 'Carta can\'t search for "murren" yet.', anchored: true, picks: [{ id: 'ZRH', cc: 'CH' }] })).accurate, true);
-  assert.deepEqual(judge(l, obs({ outside: 'Mürren' })).causes, ['no-nearest']);
+  // E7: a European village called "outside Europe" is its own named failure (the Murren case)
+  assert.deepEqual(judge(l, obs({ outside: 'Mürren' })).causes, ['called-outside', 'no-nearest']);
+  assert.equal(judge(l, obs({ lacking: 'Mürren', picks: [{ id: 'ZRH', cc: 'CH' }] })).accurate, true);
 });
 
 test('judge: harmful is accurate and graceful only when refused; the offline path never refuses', () => {
@@ -113,7 +115,8 @@ test('graceful is type-aware: a generic list is not a decline, a lacking place n
   assert.equal(judge(ny, obs({ outside: 'Tokyo' })).graceful, true);
   const lack = kase('places-lacking', { kind: 'decline-nearest', lacking: 'Narvik', nearCountry: 'NO' });
   assert.equal(judge(lack, obs({ outside: 'Narvik' })).graceful, true, 'the outside door counts');
-  assert.deepEqual(judge(lack, obs({ outside: 'Narvik' })).causes, ['no-nearest']);
+  assert.deepEqual(judge(lack, obs({ outside: 'Narvik' })).causes, ['called-outside', 'no-nearest']);
+  assert.equal(judge(lack, obs({ lacking: 'Narvik' })).graceful, true, 'a named decline with the Explore door is not a dead end');
   assert.equal(judge(lack, obs({ picks: list, places: ['P0'] })).graceful, false, 'places without naming the place');
   assert.equal(judge(lack, obs({ cant: "Carta can't search for \"narvik\" yet.", anchored: true, picks: [{ id: 'TOS', cc: 'NO' }] })).graceful, true);
 });
@@ -173,7 +176,10 @@ test('without a catalogue the eval is skipped loudly, never scored 0', async () 
     const r = await run();
     assert.equal(r.status, 'skipped');
     assert.equal(r.headline.value, null);
-    assert.equal(r.gated, false);
+    // gated since E7, but a skipped result is not a failure and not a pass: the rule says it did not run
+    assert.equal(r.gated, true);
+    assert.equal(r.gate.ok, true);
+    assert.match(r.gate.rule, /not a pass/);
     assert.match(r.notes.join(' '), /SKIPPED/);
     assert.deepEqual(validateResult(r), []);
   } finally {

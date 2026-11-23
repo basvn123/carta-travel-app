@@ -23,6 +23,24 @@
 
 // The word before a destination, in the six languages (lower case).
 const BEFORE = new Set(['to', 'in', 'into', 'naar', 'nach', 'à', 'au', 'aux', 'en', 'a', 'para', 'per', 'verso']);
+// Words that are also ordinary words ("a day", "en" is "and" in Dutch): the name after them must be capitalised.
+const NEEDS_CAPITAL = new Set(['a', 'en', 'per', 'para', 'verso']);
+// E7 (wave 3): a weaker lead-in ("best time to visit Bangkok", "Reisezeit für Tokio", "voor Tokio").
+// A common noun can follow these ("für Kinder"), so the name counts only when it is a place we can
+// positively name: a country or city outside Europe, or a town the gazetteer knows (scope.js).
+const WEAK = new Set(['visit', 'visiting', 'visiter', 'visitar', 'visitare', 'besuchen', 'bezoeken', 'voor', 'fur', 'pour']);
+
+// Cities outside Europe a traveller asks about, six languages, folded. Countries come from Intl below.
+// No name that is also a European town (Lagos, Santiago, Valencia, Cordoba) and none of an ordinary word.
+const WORLD_CITIES = [
+  'tokyo', 'tokio', 'osaka', 'kyoto', 'kioto', 'bangkok', 'sydney', 'sidney', 'melbourne', 'cape town', 'kaapstad', 'kapstadt', 'le cap',
+  'ciudad del cabo', 'citta del capo', 'new york', 'nueva york', 'nieuw york', 'neu york', 'los angeles', 'san francisco', 'las vegas', 'miami',
+  'chicago', 'toronto', 'vancouver', 'mexico city', 'ciudad de mexico', 'beijing', 'peking', 'pekin', 'shanghai', 'hong kong', 'hongkong',
+  'seoul', 'seoel', 'seul', 'dubai', 'abu dhabi', 'doha', 'mumbai', 'bombay', 'delhi', 'new delhi', 'hanoi', 'ho chi minh city', 'rio de janeiro',
+  'buenos aires', 'marrakech', 'marrakesh', 'marrakesch', 'marrakech', 'cairo', 'kairo', 'le caire', 'el cairo', 'il cairo', 'nairobi', 'kathmandu',
+  'jakarta', 'manila', 'auckland', 'havana', 'la habana', 'cancun', 'honolulu', 'phuket', 'tel aviv', 'jerusalem', 'jeruzalem', 'jerusalen',
+  'gerusalemme', 'casablanca', 'tunis', 'sao paulo', 'kuala lumpur', 'taipei',
+].map((n) => n.split(' ')).sort((a, b) => b.length - a.length);
 
 // Articles that can stand between that word and the name: "in den Alpen",
 // "in the Maldives", "naar de Ardennen", "dans les Alpes", "a la playa".
@@ -55,7 +73,7 @@ const VERBS = new Set([
 // Europe as Carta reads it, wider than the catalogue so that a European
 // country Carta has no places in yet is never called "outside Europe".
 const EUROPE = new Set(('AD AL AM AT AX AZ BA BE BG BY CH CY CZ DE DK EE ES FI FO FR GB GE GG GI GL GR HR HU IE IM IS IT JE '
-  + 'LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS RU SE SI SJ SK SM TR UA VA XK').split(' '));
+  + 'LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS RU SE SI SJ SK SM TR UA UK VA XK IC EA').split(' '));
 // Codes Intl names that are not a country somewhere else (EU, UN, ...).
 const NOT_COUNTRY = new Set(['EU', 'EZ', 'UN', 'QO', 'ZZ', 'XA', 'XB', 'AQ', 'BV', 'HM', 'UM', 'TF', 'IO']);
 const LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
@@ -112,20 +130,38 @@ function outsideCountries() {
 }
 
 const titled = (name) => name.charAt(0).toUpperCase() + name.slice(1);
+const nameKey = (name) => fold(name).split(/[^\p{L}]+/u).filter(Boolean).join(' ');
 
-export function outsidePlace(text, intent) {
+let outsideKeys = null;
+/** True for a country or a city outside Europe, by name, in any of the six languages. */
+export function isOutsideName(name) {
+  if (!outsideKeys) outsideKeys = new Set([...outsideCountries(), ...WORLD_CITIES].map((k) => k.join(' ')));
+  return outsideKeys.has(nameKey(name));
+}
+
+/**
+ * The name a traveller meant as a destination that Carta may not cover, or null.
+ *   { name, sure, weak }
+ *   sure  the name is a country or city outside Europe (a list, not a guess)
+ *   weak  found after a weak lead-in ("visit", "für"), so only `sure` counts
+ * A name that is not `sure` may be a European town Carta lacks: scope.js asks the gazetteer.
+ */
+export function placeCandidate(text, intent, { bare = false } = {}) {
   if (!intent || intent.compare?.length) return null;
   const unknown = new Set((intent.unknown || []).map(fold));
   if (!unknown.size) return null;
   const words = String(text || '').split(/[\s,.;:!?()"]+/).filter(Boolean);
   const known = !!(intent.places?.length || intent.facets?.near || intent.facets?.country);
   for (let i = 0; i < words.length - 1; i++) {
-    if (!BEFORE.has(words[i].toLowerCase())) continue;
+    const lead = words[i].toLowerCase();
+    const weak = !BEFORE.has(lead) && WEAK.has(fold(words[i]));
+    if (!BEFORE.has(lead) && !weak) continue;
     let j = i + 1;
     while (j < words.length - 1 && ARTICLES.has(fold(words[j]))) j++;
     const w = words[j];
     const f = fold(w);
     if (!unknown.has(f) || VERBS.has(f) || ARTICLES.has(f)) continue;
+    if (NEEDS_CAPITAL.has(lead) && !capital(w)) continue;
     const next = words[j + 1];
     // An unknown word before a known name makes another place: "New York".
     const head = next && capital(next) && !unknown.has(fold(next)) && (capital(w) || NAME_HEADS.has(f));
@@ -139,17 +175,39 @@ export function outsidePlace(text, intent) {
     }
     // A European name the parser does not know yet is not outside Europe.
     if (inEurope(name)) continue;
-    return titled(name);
+    const sure = isOutsideName(name);
+    return { name: titled(name), sure, weak };
   }
-  if (known) return null;
-  // A country outside Europe, wherever it stands ("the capital of australia").
+  // A country or city outside Europe, wherever it stands ("the capital of australia").
+  // A one-word city must be unknown to the parser; "New York" has York in it, so it need not be.
   const toks = words.map(fold);
-  for (const key of outsideCountries()) {
+  const world = [...outsideCountries(), ...WORLD_CITIES];
+  for (const key of world) {
+    if (known && key.length === 1) continue;
     for (let i = 0; i + key.length <= toks.length; i++) {
-      if (key.every((k, n) => toks[i + n] === k && unknown.has(k))) {
-        return words.slice(i, i + key.length).map(titled).join(' ');
+      if (key.every((k, n) => toks[i + n] === k && (key.length > 1 || unknown.has(k)))) {
+        return { name: words.slice(i, i + key.length).map(titled).join(' '), sure: true, weak: false };
       }
     }
   }
+  // "Is Husum worth it in winter?": a capitalised word the parser does not know, no lead-in.
+  // Never positive on its own (not `sure`): scope.js keeps it only if the gazetteer knows the town.
+  // Off for German, where every noun is capitalised.
+  if (bare && !known) {
+    for (let i = 1; i < words.length; i++) {
+      const f = fold(words[i]);
+      if (!capital(words[i]) || !unknown.has(f) || VERBS.has(f) || ARTICLES.has(f)) continue;
+      let name = words[i];
+      while (i + 1 < words.length && capital(words[i + 1]) && unknown.has(fold(words[i + 1]))) name += ` ${words[++i]}`;
+      if (inEurope(name)) continue;
+      return { name: titled(name), sure: isOutsideName(name), weak: true };
+    }
+  }
   return null;
+}
+
+/** The old question: a place outside Europe, or null (T571). scope.js is the one caller in the app. */
+export function outsidePlace(text, intent) {
+  const c = placeCandidate(text, intent);
+  return c && (c.sure || !c.weak) ? c.name : null;
 }
