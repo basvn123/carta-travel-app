@@ -442,6 +442,9 @@ def cap_title(text, limit=TITLE_MAX):
         out = trim_dangling(out)    # "Bagnoles-de", "Watersmeet &", "Route der", an open quote
     if out and not out.endswith("-") and re.search(r"\w-,\s[^\s]+-$", str(text or "").strip()) and len(out) >= len(s) - 1:
         out += "-"              # the whole name already ended on its suspended hyphen
+    whole = str(text or "").strip()
+    if out and whole == out + "." and len(whole) <= limit and _ABBREV_END.search(out):
+        out = whole             # D7: "1241 r.", "Śl." keep the dot of a closing abbreviation
     return out
 
 
@@ -523,7 +526,7 @@ def split_code(name):
         code = code or " - ".join(peeled)
     # An opening bracket at the start is part of the name ("[M] Taborskeho
     # cesta"), as in cap_title.
-    out = s.lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT)
+    out = _rstrip_keep_abbrev(s.lstrip(_LEAD_PUNCT))
     if re.search(r"\w-,\s[^\s]+-$", s):
         out += "-"                      # "Rad-, Lauf-": a suspended hyphen is a word
     return out, code
@@ -686,6 +689,20 @@ _PART_RE = re.compile(r"\s*[-\u2013:]\s*(?:part|teil|deel|partie|parte|"
                       r"\u010d\u00e1st|cz\u0119\u015b\u0107)\s+", re.IGNORECASE)
 
 
+_ABBREV_END = re.compile(r"(?:^|\s)[^\W\d_]{1,3}$")
+
+
+def _rstrip_keep_abbrev(s):
+    """Trailing punctuation off, except the dot of a closing abbreviation.
+
+    D7 (wave 3, judge 2): "Szlak Bitwy 1241 r." and "... Śl." read wrong
+    as "1241 r" and "Śl"; a dot after a short final word is part of it."""
+    out = s.rstrip(_TRAIL_PUNCT)
+    if s[len(out):].startswith(".") and _ABBREV_END.search(out):
+        return out + "."
+    return out
+
+
 def strip_network(text):
     """The name with a long network prefix folded to its code. Unchanged
     when no pattern matches; never empty when the input was not."""
@@ -699,7 +716,7 @@ def strip_network(text):
             s = short(m) + (rest if not rest or rest[0] in ",:" else " " + rest)
             break
     s = _PART_RE.sub(", ", s, count=1)
-    return s.lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT) or str(text or "").strip()
+    return _rstrip_keep_abbrev(s.lstrip(_LEAD_PUNCT)) or str(text or "").strip()
 
 
 # Cyrillic to Latin. One base table (the BGN style most English maps use)
