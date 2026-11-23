@@ -339,7 +339,10 @@ function Band({ id, label, head = null, className = '', moments, hidden = [], mo
 
 /* ---------------------------------------------------------- the strip, the status */
 
-function FaceButton({ person, me, label, line, onPress, kind = 'friend' }) {
+// The name a face is read by holds its visible word (WCAG 2.5.3): the
+// visible first name or "Gevraagd", with the rest of the name for screen
+// readers only.
+function FaceButton({ person, me, line, before = '', after = '', onPress, kind = 'friend' }) {
   const ex = useContext(ExCtx);
   const ref = useRef(null);
   const inner = (
@@ -347,27 +350,33 @@ function FaceButton({ person, me, label, line, onPress, kind = 'friend' }) {
       <span className="vr-face-d" data-shared="">
         <ToneFace id={person.id} me={me} name={person.name} emoji={person.emoji} />
       </span>
-      <span className="vr-face-n" aria-hidden="true">{line}</span>
+      <span className="vr-face-n">
+        {before && <span className="sr-only">{before}</span>}{line}{after && <span className="sr-only">{after}</span>}
+      </span>
     </>
   );
-  if (ex || !onPress) return <span className={`vr-face is-${kind}`} role="img" aria-label={label}>{inner}</span>;
-  return <Pressable ref={ref} className={`vr-face is-${kind}`} aria-label={label} onClick={() => onPress(ref.current)}>{inner}</Pressable>;
+  if (ex || !onPress) return <span className={`vr-face is-${kind}`}>{inner}</span>;
+  return <Pressable ref={ref} className={`vr-face is-${kind}`} onClick={() => onPress(ref.current)}>{inner}</Pressable>;
 }
+const restOf = (full, first) => (full && full !== first && full.startsWith(first) ? full.slice(first.length) : '');
 
 function Strip({ items, me, meName, meEmoji, onMe, onFriend, onCircle, onPending }) {
   const { t } = useI18n();
+  const ex = useContext(ExCtx);
   const [all, setAll] = useState(false);
   const rest = items.length - STRIP_CAP;
   const shown = all || rest <= 0 ? items : items.slice(0, STRIP_CAP);
+  // In the example nothing in the row is a control, so the row itself
+  // takes focus to be scrolled by keyboard.
   return (
-    <nav className="vr-strip" aria-label={t('vr.peopleNav')}>
+    <nav className="vr-strip" aria-label={t('vr.peopleNav')} tabIndex={ex ? 0 : undefined}>
       <ul>
-        <li><FaceButton person={{ id: me, name: meName, emoji: meEmoji }} me={me} label={t('vr.you')} line={t('vr.you')} kind="me" onPress={onMe} /></li>
+        <li><FaceButton person={{ id: me, name: meName, emoji: meEmoji }} me={me} line={t('vr.you')} kind="me" onPress={onMe} /></li>
         {shown.map((p) => (
           <li key={`${p.kind}:${p.id}`}>
-            {p.kind === 'friend' && <FaceButton person={p} me={me} label={p.name} line={firstName(p.name)} onPress={(el) => onFriend(p.id, el)} />}
-            {p.kind === 'pending' && <FaceButton person={p} me={me} kind="pending" label={`${p.name}, ${t('vr.asked')}`} line={t('vr.asked')} onPress={() => onPending(p)} />}
-            {p.kind === 'circle' && <FaceButton person={{ id: p.id, name: p.name }} me={me} kind="circle" label={p.name} line={p.name} onPress={() => onCircle(p.id)} />}
+            {p.kind === 'friend' && <FaceButton person={p} me={me} line={firstName(p.name)} after={restOf(p.name, firstName(p.name))} onPress={(el) => onFriend(p.id, el)} />}
+            {p.kind === 'pending' && <FaceButton person={p} me={me} kind="pending" before={`${p.name}, `} line={t('vr.asked')} onPress={() => onPending(p)} />}
+            {p.kind === 'circle' && <FaceButton person={{ id: p.id, name: p.name }} me={me} kind="circle" line={p.name} onPress={() => onCircle(p.id)} />}
           </li>
         ))}
         {rest > 0 && !all && (

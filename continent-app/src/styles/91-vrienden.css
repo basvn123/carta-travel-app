@@ -379,7 +379,8 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-panel .atlas-example button { min-height: var(--tap); }
 
 /* the face strip: a nav of buttons, one row that scrolls sideways */
-.vr-strip { min-width: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+/* Positioned, so the screen-reader-only name parts stay inside the scroller. */
+.vr-strip { position: relative; min-width: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
 .vr-strip::-webkit-scrollbar { display: none; }
 .vr-strip ul { display: flex; gap: var(--space-2); margin: 0; padding: 2px 2px var(--space-1); list-style: none; }
 .vr-strip li { flex: none; scroll-snap-align: start; }
@@ -392,8 +393,8 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-face-d .frn-face { width: 44px; height: 44px; }
 .vr-face-n { max-width: 64px; font-size: var(--text-micro); font-weight: 700; line-height: 1.2; color: var(--text-2); text-align: center; overflow-wrap: anywhere; }
 .vr-face.is-me .vr-face-n { color: var(--text); }
-.vr-face.is-me .frn-face { box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 3.5px var(--umber-800); }
-.vr-face.is-pending .frn-face { background: var(--surface-page); box-shadow: inset 0 0 0 1.5px var(--text-3); color: var(--text-2); }
+.vr-face.is-me .frn-face { outline: var(--stroke-edge) solid var(--umber-800); outline-offset: 2px; }
+.vr-face.is-pending .frn-face { box-sizing: border-box; background: var(--surface-page); border: var(--stroke-edge) solid var(--text-3); color: var(--text-2); }
 .vr-face.is-circle .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); }
 .vr-face.is-all .frn-face { background: var(--surface-sunken); color: var(--text); font-weight: 800; }
 .vr-pending { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
@@ -426,7 +427,7 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-plate { position: relative; display: grid; justify-items: center; width: 44px; padding-bottom: var(--space-1); background: var(--surface-page); }
 .vr-plate b { font: 800 26px/1 var(--plate-face); color: var(--text); }
 .vr-plate span { font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
-.vr-dot { position: relative; width: 11px; height: 11px; margin-top: 16px; border-radius: 50%; background: var(--surface-page); box-shadow: inset 0 0 0 2px var(--umber-600); }
+.vr-dot { position: relative; width: 11px; height: 11px; margin-top: 16px; box-sizing: border-box; border-radius: 50%; background: var(--surface-page); border: 2px solid var(--umber-600); }
 .vr-dot.is-now { background: var(--umber-600); }
 .vr-mo-panel { grid-column: 2; margin-top: var(--space-3); min-width: 0; }
 .vr-more { justify-self: start; margin-inline-start: calc(44px + var(--space-3)); }
@@ -446,7 +447,8 @@ span.vr-m-go { display: block; min-height: 0; }
 /* The title is the card's one link; its hit area covers the card, and the
    actions sit above it (no button inside a button). */
 button.vr-m-go::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
-button.vr-m-go:focus-visible { outline: none; }
+/* The ring is drawn on the card-wide hit area below, not on the title. */
+button.vr-m-go:focus-visible { outline: var(--stroke-focus) solid transparent; }
 button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
 .vr-m-f { font-size: var(--text-body); color: var(--text-2); overflow-wrap: anywhere; }
 .vr-m-f.is-you { color: var(--umber-700); font-weight: 700; }
@@ -459,6 +461,8 @@ button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--f
 .vr-tick { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-inline-end: var(--space-1); border-radius: 50%; background: var(--action-text); color: var(--umber-700); }
 
 /* row scale: a 96 x 64 photo at the left, the same lines at the right */
+/* Below 1100 a full card stays at 640 px or less, so its 1280 px photo is sharp at 2x. */
+.vr-m.is-full { max-width: 640px; }
 .vr-m.is-row { grid-template-columns: 96px minmax(0, 1fr); column-gap: var(--space-3); align-items: start; }
 .vr-m.is-row .vr-m-ph { border-radius: var(--radius-control); }
 .vr-m.is-row .vr-m-none .frn-face { width: 40px; height: 40px; }
@@ -469,7 +473,7 @@ button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--f
 .vr-new { position: relative; display: inline-flex; }
 .vr-new-menu {
   position: absolute; inset-inline-end: 0; top: 100%; z-index: 4; display: grid; min-width: 232px; padding: var(--space-1);
-  border-radius: var(--radius-panel); background: var(--surface); box-shadow: var(--shadow-2);
+  border-radius: var(--radius-panel); background: var(--surface); box-shadow: var(--elev-2);
 }
 .vr-new-row {
   display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); padding: 0 var(--space-3);
@@ -529,6 +533,7 @@ span.vr-ro-row { cursor: default; }
   .vr-main .vr-gut::before { display: none; }
   .vr-main .vr-gut:not(:has(.vr-plate)) { display: none; }
   .vr-main .vr-plate { display: flex; align-items: baseline; gap: var(--space-1); width: auto; padding: 0; background: none; }
+  .vr-main .vr-m.is-full { max-width: none; }
   .vr-main .vr-mo.is-wide { grid-column: span 2; }
   .vr-main .vr-mo.is-wide .vr-m-ph { aspect-ratio: 2 / 1; }
   .vr-main .vr-mo-panel { grid-column: 1; margin-top: 0; }

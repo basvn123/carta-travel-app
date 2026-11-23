@@ -8,6 +8,14 @@
  * h1, axe serious and critical 0, layout shift under 0.05, and that nothing
  * animates at the first paint (a deep link shows end states).
  *
+ * Version 3 (one timeline) adds, on the home variants: one sticky element at
+ * most below 1100 px, the status line exists, no .vr-me-door and no "Vraag
+ * om mee te gaan" on the home, every card photo at 3:2 (the soonest overlap
+ * at 2:1 from 1100), every date plate on its card's top (above it from
+ * 1100). The example variant opens ?friendsmock=empty, presses "Bekijk een
+ * voorbeeld", checks the example bar shows, and that nothing is written to
+ * storage and no request but a GET for a file goes out from then on.
+ *
  * Needs a build with VITE_E2E_SEAMS=1 served with the data:
  *   node scripts/verify_vrienden.mjs --port 5853 [--widths 360,390] [--variants rich,vote]
  *     [--langs nl,en] [--out <dir>] [--shots]
@@ -32,6 +40,8 @@ const VARIANTS = {
   rich: '?tab=together&friendsmock',
   one: '?tab=together&friendsmock=one',
   empty: '?tab=together&friendsmock=empty',
+  example: '?tab=together&friendsmock=empty',
+  many: '?tab=together&friendsmock=many',
   invite: '?tab=together&friendsmock&tv=invite',
   guest: '?tab=together&friendsmock=guest#friend=sam_m',
   me: '?tab=together&friendsmock&tv=me&badgemock=some',
@@ -43,6 +53,7 @@ const VARIANTS = {
   newcircle: '?tab=together&friendsmock&tv=newcircle',
 };
 const PICK = arg('variants', Object.keys(VARIANTS).join(',')).split(',');
+const HOME = new Set(['rich', 'one', 'empty', 'example', 'many', 'invite']);
 const LOCALE = { nl: 'nl-NL', en: 'en-GB', de: 'de-DE', fr: 'fr-FR', es: 'es-ES', it: 'it-IT' };
 
 async function open(browser, v, w, lang) {
@@ -80,7 +91,60 @@ async function open(browser, v, w, lang) {
       .map((a) => `${a.animationName || a.constructor.name} on ${String(a.effect.target.className).split(' ')[0]}`);
   });
   await page.waitForTimeout(1800);
-  return { ctx, page, errors, firstAnims };
+  let sent = null;
+  if (v === 'example') {
+    // From the press on, every storage write and every request but a GET
+    // for a file counts as something the example saved or sent.
+    sent = [];
+    await page.evaluate(() => {
+      window.__writes = [];
+      for (const st of [localStorage, sessionStorage]) {
+        const set = st.setItem.bind(st);
+        st.setItem = (k, val) => { window.__writes.push(k); return set(k, val); };
+      }
+    });
+    page.on('request', (r) => {
+      const u = r.url();
+      if (r.method() !== 'GET' || /supabase|\/functions\/|\/api\//.test(u)) sent.push(`${r.method()} ${u.slice(0, 80)}`);
+    });
+    await page.locator('.vr-first .btn').first().click();
+    await page.locator('.mt-exbar').waitFor({ timeout: 5000 });
+    await page.waitForTimeout(1500);
+  }
+  return { ctx, page, errors, firstAnims, sent };
+}
+
+/* Version 3 rules on the home (see the header). */
+async function timelineRules(page) {
+  return page.evaluate(() => {
+    const root = document.querySelector('.tg-panel');
+    const out = [];
+    const wide = window.innerWidth >= 1100;
+    const vis = (el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none'; };
+    if (!wide) {
+      const sticky = [...root.querySelectorAll('*')].filter((el) => getComputedStyle(el).position === 'sticky' && vis(el));
+      if (sticky.length > 1) out.push(`sticky ${sticky.length}: ${sticky.map((el) => String(el.className).split(' ')[0]).join(',')}`);
+    }
+    if (!root.querySelector('.vr-status[role="status"]')) out.push('no status line');
+    if (root.querySelector('.vr-me-door')) out.push('.vr-me-door present');
+    if (/Vraag om mee te gaan/.test(root.innerText) || root.querySelector('.vr-go-ask')) out.push('Vraag om mee te gaan on the home');
+    const cards = [...root.querySelectorAll('.vr-m-ph')].filter(vis);
+    for (const ph of cards) {
+      const r = ph.getBoundingClientRect();
+      const isWide = wide && ph.closest('.vr-mo.is-wide');
+      const want = isWide ? 2 : 1.5;
+      if (Math.abs(r.width / r.height - want) > 0.03) out.push(`photo ${Math.round(r.width)}x${Math.round(r.height)} not ${isWide ? '2:1' : '3:2'}`);
+    }
+    for (const li of root.querySelectorAll('.vr-mo')) {
+      const plate = li.querySelector(':scope > .vr-gut .vr-plate');
+      const card = li.querySelector(':scope > .vr-m');
+      if (!plate || !card || !vis(plate)) continue;
+      const p = plate.getBoundingClientRect();
+      const c = card.getBoundingClientRect();
+      if (wide ? p.bottom > c.top + 1 : Math.abs(p.top - c.top) > 1) out.push(`plate ${Math.round(p.top)} vs card ${Math.round(c.top)}`);
+    }
+    return out;
+  });
 }
 
 const SAFFRON = 'rgb(242, 179, 61)';
@@ -154,11 +218,13 @@ async function sharpness(page) {
 async function photoRows(page) {
   return page.evaluate(() => {
     const out = [];
-    const groups = [['.vr-rail', '.vr-go', '.vr-go-ph'], ['.vr-fgrid', '.vr-fc', '.vr-fc-ph'], ['.vr-krail', '.vr-kr', '.vr-ring']];
+    // v3: the desktop grid of moments (the soonest overlap at 2:1 is left out).
+    const groups = [['.vr-main', '.vr-mo:not(.is-wide)', '.vr-m-ph']];
     for (const [wrap, card, ph] of groups) {
       for (const w of document.querySelectorAll(`.tg-panel ${wrap}`)) {
+        if (getComputedStyle(w).display !== 'grid' || getComputedStyle(w).gridTemplateColumns.split(' ').length < 2) continue;
         const rows = new Map();
-        for (const c of w.querySelectorAll(`:scope > ${card}`)) {
+        for (const c of w.querySelectorAll(card)) {
           const box = c.querySelector(ph);
           if (!box) continue;
           const cr = c.getBoundingClientRect();
@@ -194,9 +260,18 @@ async function axe(page) {
 }
 
 async function runOne(browser, v, w, lang) {
-  const { ctx, page, errors, firstAnims } = await open(browser, v, w, lang);
+  const { ctx, page, errors, firstAnims, sent } = await open(browser, v, w, lang);
   const fails = [];
   try {
+    if (HOME.has(v)) {
+      const tl = await timelineRules(page);
+      if (tl.length) fails.push(`timeline: ${tl.slice(0, 3).join(' | ')}`);
+    }
+    if (sent) {
+      const writes = await page.evaluate(() => window.__writes || []);
+      if (writes.length) fails.push(`example wrote storage: ${writes.slice(0, 3).join(', ')}`);
+      if (sent.length) fails.push(`example sent: ${sent.slice(0, 2).join(' | ')}`);
+    }
     const r = await inspect(page);
     if (errors.length) fails.push(`page error: ${errors[0]}`);
     if (r.overflow > 1) fails.push(`overflow ${r.overflow}px`);
