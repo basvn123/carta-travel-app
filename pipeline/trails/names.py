@@ -247,12 +247,15 @@ def _trim_dangling(out):
         if re.search(r"\w-,\s[^\s]+-$", out):
             return out              # "Rad-, Lauf-": the hyphen is a word
         out = _close_brackets(out)
-        out = re.sub(r"(?:^|\s)'[^']*$", "", out).rstrip(_TRAIL_PUNCT)
+        # A Sardinian "'e" or elided "'n" is a word ("Janna 'e Ferulargiu"); an open quote goes.
+        if not re.search(r"(?:^|\s)'[a-z]{1,2}\s\S", out):
+            out = re.sub(r"(?:^|\s)'[^']*$", "", out).rstrip(_TRAIL_PUNCT)
         m = re.search(r"(?:^|[\s\-&/]+)([^\s\-&/]+)$", out)
         if m:
             tok = m.group(1)
             low = tok.lower().strip(".,;:")
-            short = len(tok) <= 2 and not any(c.isdigit() for c in tok) and not re.fullmatch(r"-+", m.group(0)[:-len(tok)].strip(" "))
+            unit = low in ("km", "h", "m", "mi") and bool(re.search(r"\d\s*$", out[:m.start(1)]))
+            short = len(tok) <= 2 and not unit and not any(c.isdigit() for c in tok) and not re.fullmatch(r"-+", m.group(0)[:-len(tok)].strip(" "))
             after_number = low == "bis" and bool(re.search(r"\d\s+\S+$", out))
             if (low in _DANGLING and not after_number) or short:
                 cut = out[:m.start()].rstrip(_TRAIL_PUNCT)
@@ -436,10 +439,10 @@ def _keep_the_start(s, limit):
     return a
 
 
-def cap_title(text, limit=TITLE_MAX, keep_note=False):
+def cap_title(text, limit=TITLE_MAX, keep_note=False, safe=False):
     """cap_title_plain, then a suspended hyphen kept: "Rad-, Lauf- und Wander"
     cut after "Lauf" reads "Rad-, Lauf", a word lost; the hyphen stays."""
-    out = _cap_title_plain(text, limit, keep_note)
+    out = _cap_title_plain(text, limit, keep_note, safe)
     s = re.sub(r"\s+", " ", str(text or "")).lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT)
     if out and len(out) < len(s) and s.startswith(out + "-") and s[len(out) + 1:len(out) + 2] in (" ", ","):
         out += "-"
@@ -449,12 +452,20 @@ def cap_title(text, limit=TITLE_MAX, keep_note=False):
     if out and not out.endswith("-") and re.search(r"\w-,\s[^\s]+-$", str(text or "").strip()) and len(out) >= len(s) - 1:
         out += "-"              # the whole name already ended on its suspended hyphen
     whole = str(text or "").strip()
+    # D7 (wave 3b, judge 2 fix 3): "... - 11.1 km" cut after its number leaves a
+    # bare number that reads as a route or stage number; the number goes with its unit.
+    if out and len(out) < len(s):
+        um = re.search(r"[\s,\-\u2013]+\d+(?:[.,]\d+)?$", out)
+        if um and re.match(r"\s*(?:km|h|mi|m)\b", s[len(out):], re.IGNORECASE):
+            bare = out[:um.start()].rstrip(_TRAIL_PUNCT)
+            if len(bare) >= 3 and not is_code(bare):
+                out = trim_dangling(bare)
     if out and whole.endswith(out + ".") and len(out) < limit and _ends_in_abbrev(out):
         out += "."              # D7: "1241 r.", "Śl.", "v.W." keep the dot of a closing abbreviation
     return out
 
 
-def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False):
+def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False, safe=False):
     """Shorten to `limit` on a word boundary, trailing separators dropped.
 
     No ellipsis: the full string is on the ref chip, and a title that ends in
@@ -468,12 +479,19 @@ def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False):
     # D7 (wave 1): "P (Agfalva, foter - ...)" is a waymark and then the name;
     # cutting inside the bracket left "P".
     m = _CODE_THEN_NAME_RE.match(s)
-    if m and is_code(m.group(1)) and not is_code(m.group(2)):
+    if not safe and m and is_code(m.group(1)) and not is_code(m.group(2)):
         return cap_title(m.group(2), limit)
+    # D7 (wave 3b, judge 2 fix 4): 'Natura Trail "Krofdorfer Forst - Im Reich
+    # der Wildkatze"': a quoted "A - B" is the walk's name when it fits; a cut
+    # inside the quote left a stray closing mark.
+    q = re.search(r'[\u201e\u201c"\u00ab]([^\u201e\u201c\u201d"\u00ab\u00bb]+)[\u201c\u201d"\u00bb]$', s)
+    if (not safe and q and s[:q.start()].strip() and _DASH_SEP_RE.search(q.group(1))
+            and len(q.group(1).strip()) <= limit and not is_code(q.group(1))):
+        return q.group(1).strip()
     # D7 (wave 3b, judge 4 fix 2): "A - B (note)" is "A - B" once the trailing
     # bracket goes, when that fits; a segment cut would lose a place and keep
     # the noise. A bracket that holds its own "A - B" is _keep_the_end's case.
-    if not keep_note and s.endswith((")", "]")) and not _final_bracket(s):
+    if not safe and not keep_note and s.endswith((")", "]")) and not _final_bracket(s):
         at_open = max(s.rfind("(") if s.endswith(")") else -1,
                       s.rfind("[") if s.endswith("]") else -1)
         plain = s[:at_open].rstrip(_TRAIL_PUNCT) if at_open > 0 else ""
@@ -486,7 +504,7 @@ def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False):
             return plain
     # The start is kept before the end is: when B alone is over the limit,
     # shortening A to make room for a B that is cut anyway loses both.
-    kept = _keep_the_start(s, limit) or _keep_the_end(s, limit)
+    kept = None if safe else (_keep_the_start(s, limit) or _keep_the_end(s, limit))
     if kept:
         return kept
     cut = s[:limit + 1]
@@ -555,17 +573,21 @@ def split_code(name):
 def _drop_stray_closers(out):
     """A closer whose opener went with a lead code ("Wm 03 (Untergrafenrieder
     Weg)" is "Untergrafenrieder Weg)" once "Wm 03" and the "(" are peeled) is
-    taken off, so no name is made unbalanced (D7, wave 3b)."""
-    depth = {"(": 0, "[": 0}
+    taken off, so no name is made unbalanced (D7, wave 3b). Quotes count as
+    brackets: the closing marks of \u201e\u201c and \u201c\u201d."""
+    # The guillemets are left out: they are used both ways round.
+    depth = {"(": 0, "[": 0, "\u201e": 0, "\u201c": 0}
+    pair = {")": "(", "]": "[", "\u201d": "\u201c"}
     keep = []
     for ch in out:
-        if ch in depth:
+        if ch in "\u201c\u201d" and depth["\u201e"]:
+            depth["\u201e"] -= 1           # the closer of a German or Polish quote
+        elif ch in depth:
             depth[ch] += 1
-        elif ch in ")]":
-            op = "(" if ch == ")" else "["
-            if depth[op] == 0:
+        elif ch in pair:
+            if depth[pair[ch]] == 0:
                 continue
-            depth[op] -= 1
+            depth[pair[ch]] -= 1
         keep.append(ch)
     res = "".join(keep)
     return re.sub(r"\s+", " ", res).lstrip(_LEAD_PUNCT).rstrip() if res != out else out
@@ -939,10 +961,94 @@ def wire_name(title, country=None):
     built before the ladder re-ran still reads clean; on a ladder title it
     changes nothing. "" for a title that was only a fixme placeholder: no
     name is honest, the placeholder is not."""
-    s = cap_title(readable(title, country))
+    rd = readable(title, country)
+    base = rd
+    if len(rd) > TITLE_MAX:
+        # D7 (wave 3b, judge 2 fix 1): the lead code rides the chip, so it is
+        # off before the cut: "10 - Rifugio Maria Luisa - Piano delle Creste"
+        # is 40 characters without its code and must not lose a place.
+        free = split_code(rd)[0]
+        if free and not is_code(free):
+            base = free
+    s = cap_title(base)
     if not s and _FIXME_RE.search(str(title or "")):
         return ""
-    return s or str(title or "").strip() or None
+    return never_worse(title, s or str(title or "").strip() or None, country)
+
+
+_NOISE_WORDS = frozenset({"fixme"})
+_UNIT_RE = re.compile(r"(?<![\w.])(\d+(?:[.,]\d+)?)\s*(km|h|mi|m)\b", re.IGNORECASE)
+_QUOTE_CHARS = "\u201e\u201c\u201d\u00ab\u00bb\""
+
+
+def _balanced(t):
+    """Brackets and quotes pair up. A German or English double quote opens and
+    closes with a mark from the same set, so those count as one run."""
+    return (t.count("(") == t.count(")") and t.count("[") == t.count("]")
+            and t.count('"') % 2 == 0 and t.count("\u00ab") == t.count("\u00bb")
+            and (t.count("\u201e") + t.count("\u201c") + t.count("\u201d")) % 2 == 0)
+
+
+def worse_reason(original, cleaned, country=None, content=True):
+    """Why `cleaned` is worse than the wire's own readable name, or None (D7,
+    wave 3b, judge 2). Worse is: empty; only a code; brackets or quotes
+    unbalanced where the original's are balanced; a number that kept its unit
+    in the original but lost it; with `content`, a word of three letters or
+    more from the code-free original missing while the readable original fits
+    in 42 characters. Codes, network prefixes, fixme, ALL CAPS and the dedupe
+    suffix are not losses (readable has done the first four; a suffix only adds)."""
+    rd = readable(original, country)
+    if not rd.strip():
+        return None             # a fixme-only name has no honest original
+    c = str(cleaned or "").strip()
+    if not c:
+        return "empty"
+    if is_code(c) and not is_code(rd):
+        return "code_only"
+    if not _balanced(c) and _balanced(rd):
+        return "unbalanced"
+    for num, unit in _UNIT_RE.findall(rd):
+        has_num = re.search(r"(?<![\w.])" + re.escape(num) + r"(?![\w]|\.\d)", c)
+        if has_num and not re.search(r"(?<![\w.])" + re.escape(num) + r"\s*" + unit + r"\b", c, re.IGNORECASE):
+            return "unit_dropped"
+    if content and len(rd) <= TITLE_MAX:
+        free = split_code(rd)[0]
+        base = free if free and not is_code(free) else rd
+        folded = squash(c)
+        for m in _WORD_RE.finditer(base):
+            if m.group(0).casefold() not in _NOISE_WORDS and squash(m.group(0)) not in folded:
+                return "content_missing"
+    return None
+
+
+def _safe_name(rd):
+    """The readable original as a name: itself when it fits and pairs up, else
+    its quotes off, a lead code off, and the old plain word cut."""
+    if len(rd) <= TITLE_MAX and _balanced(rd):
+        return rd
+    s = re.sub("[" + _QUOTE_CHARS + "]", "", rd)
+    s = _close_brackets(re.sub(r"\s+", " ", s).strip().strip("'’ "))
+    free = split_code(s)[0]
+    if free and not is_code(free):
+        s = free
+    toks = s.split(" ")
+    while len(toks) > 1 and is_code(toks[0]) and not is_code(" ".join(toks[1:])):
+        toks.pop(0)
+    s = " ".join(toks)
+    return s if len(s) <= TITLE_MAX else cap_title(s, safe=True)
+
+
+def never_worse(original, cleaned, country=None, content=True):
+    """`cleaned`, unless it is worse than the wire's own name (worse_reason):
+    then the readable original, capped by the old plain rule when it does not
+    fit. Pure; the last step of wire_name, of dedupe_names and of the export.
+    The cleaner's own result stays when nothing better can be built."""
+    if not worse_reason(original, cleaned, country, content):
+        return cleaned
+    safe = _safe_name(readable(original, country))
+    if not safe or is_code(safe):
+        return cleaned
+    return safe
 
 
 # ---------------------------------------------------------------------------
@@ -1260,7 +1366,19 @@ def dedupe_names(rows, originals=None):
                 break
         if out is None:         # the id is unique, so only a name another row took
             out = cand
+        # D7 (wave 3b): the last step, never_worse, unless the safe name meets another
+        # row's. The base cut that makes room for a suffix is the documented dedupe
+        # trim, so the content test stays off here.
+        final = []
         for r, new in zip(rs, out):
+            safe = never_worse(originals.get(r.get("id")) or new, new, cc, content=False)
+            key = (cc, squash(safe))
+            if (safe != new and key != (cc, own) and key not in others
+                    and key not in {(cc, squash(x)) for x in out if x != new}
+                    and key not in {(cc, squash(x)) for x in final}):
+                new = safe
+            final.append(new)
+        for r, new in zip(rs, final):
             r["name"] = new
             taken.add((cc, squash(new)))
             changed[r.get("id")] = new

@@ -83,14 +83,22 @@ def run_one(n0: str, cc: str) -> str:
     s, _code = names.split_code(n1)
     if s and not names.is_code(s):
         n1 = names.cap_title(s)
-    return n1
+    return names.never_worse(n0, n1, cc)     # the last step, as in the export
+
+
+def codefree(n0: str, cc: str | None = None) -> str:
+    """The readable name without its lead code: what the cap now gets, so the
+    end counters measure the name a 42 character title could hold."""
+    r = names.readable(n0, cc)
+    free = names.split_code(r)[0]
+    return free if free and not names.is_code(free) else r
 
 
 def end_lost(n0: str, n1: str, cc: str | None = None) -> bool:
     # The end is read from the readable original, the string the cap gets:
     # "E3 - part Belgium" is "E3, Belgium" and "Saulcy - fixme" is "Saulcy"
     # before any shortening, by design (strip_network, _strip_fixme).
-    tail = names.readable(n0, cc).split(": ", 1)[-1]
+    tail = codefree(n0, cc).split(": ", 1)[-1]
     segs = names._DASH_SEP_RE.split(tail)
     if len(segs) != 2:
         return False
@@ -106,7 +114,7 @@ def head_cut(n0: str, n1: str, cc: str | None = None) -> bool:
     fits a title: A must stand whole in the new name. Cutting inside A and
     then adding a piece of B's code ("Il Cammino di santa, CSG-T002_V26
     Valle") is worse than dropping B."""
-    tail = names.readable(n0, cc).split(": ", 1)[-1]
+    tail = codefree(n0, cc).split(": ", 1)[-1]
     segs = names._DASH_SEP_RE.split(tail)
     if len(segs) != 2:
         return False
@@ -214,7 +222,51 @@ def dangling_end(n1: str, n0_readable: str = "") -> bool:
 
 
 def _unbalanced(t: str) -> bool:
-    return t.count("(") != t.count(")") or t.count("[") != t.count("]")
+    """Brackets or quotes that do not pair up (the quote marks of a language
+    open and close with a mark of the same set, so they count as one run)."""
+    return (t.count("(") != t.count(")") or t.count("[") != t.count("]")
+            or t.count('"') % 2 or t.count("«") != t.count("»")
+            or (t.count("„") + t.count("“") + t.count("”")) % 2 == 1)
+
+
+_UNIT = re.compile(r"(?<![\w.])(\d+(?:[.,]\d+)?)\s*(km|h|mi|m)", re.I)
+
+
+def unit_dropped(n0: str, n1: str, cc: str | None = None) -> bool:
+    """A number that had its unit in the wire's readable name and has none now."""
+    for num, unit in _UNIT.findall(names.readable(n0, cc)):
+        pos = re.search(r"(?<![\w.])" + re.escape(num) + r"(?![\w]|\.\d)", n1)
+        if pos and not re.search(r"(?<![\w.])" + re.escape(num) + r"\s*" + unit + r"", n1, re.I):
+            return True
+    return False
+
+
+def emptied(n0: str, n1: str, cc: str | None = None) -> bool:
+    """A readable name with a word of three letters or more became nothing or a bare code."""
+    r = names.readable(n0, cc)
+    return bool(names._WORD_RE.search(r)) and not names.is_code(r) and (not n1.strip() or names.is_code(n1))
+
+
+def worse_than_wire(n0: str, n1: str, cc: str | None, dedupe_touched: bool) -> str | None:
+    """The guard's test, written again here so a fault in names.never_worse
+    shows: the reason a shipped name is worse than the wire's readable one, else None.
+    A name the dedupe touched keeps its documented base trim (no content test)."""
+    r = names.readable(n0, cc)
+    if not r.strip():
+        return None
+    if emptied(n0, n1, cc):
+        return "emptied"
+    if _unbalanced(n1) and not _unbalanced(r):
+        return "unbalanced"
+    if unit_dropped(n0, n1, cc):
+        return "unit_dropped"
+    if not dedupe_touched and len(r) <= names.TITLE_MAX:
+        base = codefree(n0, cc)
+        fold = names.squash(n1)
+        for m in names._WORD_RE.finditer(base):
+            if names.squash(m.group(0)) not in fold:
+                return "content_missing"
+    return None
 
 
 def cap_kept_long(n0: str, n1: str, cc: str | None = None) -> bool:
@@ -228,7 +280,7 @@ def cap_kept_long(n0: str, n1: str, cc: str | None = None) -> bool:
 def end_too_long(n0: str, cc: str | None = None) -> bool:
     """The end segment alone is longer than a title may be, so no 42
     character title can hold it whole. Counted apart; still a loss."""
-    segs = names._DASH_SEP_RE.split(names.readable(n0, cc).split(": ", 1)[-1])
+    segs = names._DASH_SEP_RE.split(codefree(n0, cc).split(": ", 1)[-1])
     end = segs[-1].strip()
     if len(segs) != 2:
         return False
@@ -262,9 +314,9 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "worse_than_wire": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
-    stc_ex, dang_ex = [], []
+    stc_ex, dang_ex, worse_ex = [], [], []
     dd_ex = collections.defaultdict(list)
     for r in hikes:
         n0, n1 = originals[r["id"]], r["name"] or ""
@@ -297,6 +349,12 @@ def replay(rows: list[dict]) -> dict:
                 dang_ex.append([r["id"], n0, n1])
         # D7 (wave 3b): a name unbalanced by the cleaner while the wire's own is balanced.
         res["stray_bracket"] += bool(_unbalanced(n1) and not _unbalanced(n0))
+        res["unit_dropped"] += unit_dropped(n0, n1, r.get("country"))
+        res["emptied"] += emptied(n0, n1, r.get("country"))
+        why = worse_than_wire(n0, n1, r.get("country"), n1 != pre[r["id"]])
+        if why:
+            res["worse_than_wire"] += 1
+            worse_ex.append([r["id"], why, n0, n1])
         res["cap_kept_long"] += cap_kept_long(n0, n1, r.get("country"))
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
@@ -327,10 +385,11 @@ def replay(rows: list[dict]) -> dict:
                      and res["end_losses_unexplained"] == 0
                      and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
                      and res["head_cut"] == 0 and res["mid_word_loss"] == 0 and res["start_tail_cut"] == 0
-                     and res["dangling_end"] == 0 and res["stray_bracket"] == 0
+                     and res["dangling_end"] == 0 and res["stray_bracket"] == 0 and res["unit_dropped"] == 0
+                     and res["emptied"] == 0 and res["worse_than_wire"] == 0
                      and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
-    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "dedupe": dd_ex,
+    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "worse_than_wire": worse_ex, "dedupe": dd_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}
     return res
 

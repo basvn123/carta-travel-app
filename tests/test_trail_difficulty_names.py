@@ -11,6 +11,7 @@ Pure functions only: no lab, no network.
     python -m pytest tests/test_trail_difficulty_names.py -q
 """
 
+import re
 import sys
 from pathlib import Path
 
@@ -647,7 +648,7 @@ def test_a_name_never_ends_on_a_joining_word_bis_or_durch():
     ended on a joining word the list did not know."""
     cases = {
         235061: ("Thalasso-Kurweg 10 -- Hohe Düne bis Markgrafenheide", "Thalasso-Kurweg 10 -- Hohe Düne"),
-        245310: ("12 – A bis Z-Tour – Von A wie Arnach bis Z wie Ziegel", "12 – A bis Z-Tour – Von A wie Arnach"),
+        245310: ("12 – A bis Z-Tour – Von A wie Arnach bis Z wie Ziegel", "Von A wie Arnach bis Z wie Ziegel"),
         211293: ("Raute 2 Wanderung in Rinkerode und durch die Davert", "Raute 2 Wanderung in Rinkerode"),
     }
     for rid, (src, want) in cases.items():
@@ -690,3 +691,55 @@ def test_a_lead_code_peeled_before_a_bracket_leaves_no_stray_closer():
         got = names.cap_title(s) if s and not names.is_code(s) else n1
         assert got == want, (rid, got)
         assert got.count("(") == got.count(")") and got.count("[") == got.count("]")
+
+
+def _ship(src, cc):
+    """wire_name, the ladder's code split and cap, then the guard: what the replay ships."""
+    n1 = names.wire_name(src, cc) or ""
+    s, _code = names.split_code(n1)
+    if s and not names.is_code(s):
+        n1 = names.cap_title(s)
+    return names.never_worse(src, n1, cc)
+
+
+def test_the_lead_code_is_off_before_the_cut():
+    """Judge 2 fix 1: the code rides the chip, so a place is not cut to make room for it."""
+    cases = [
+        (8534, "IT", "10 - Rifugio Maria Luisa - Piano delle Creste", "Rifugio Maria Luisa - Piano delle Creste"),
+        (7618, "IT", "G24a - Laghi del Boden - Passo di San Giacomo", "Laghi del Boden - Passo di San Giacomo"),
+        (74263, "GR", "M4A Agapi-Sklavochori - Skalados - Koumaros", "Agapi-Sklavochori - Skalados - Koumaros"),
+        (76441, "RO", "DN10-Crasna - Urlătoarea - Poarta Vânturilor", "Crasna - Urlătoarea - Poarta Vânturilor"),
+        (225185, "DE", "Weg 3 - gelb - Wanderung im Loccumer Klosterwald", "gelb - Wanderung im Loccumer Klosterwald"),
+    ]
+    for rid, cc, src, want in cases:
+        assert _ship(src, cc) == want, rid
+
+
+def test_a_cut_never_leaves_a_bare_number_where_a_unit_was():
+    """Judge 2 fix 3: "3 km" is not "3"; 27360 and 77470 keep no number without its unit."""
+    for src, cc in (("Buzet-sur-Baïse, randonnée autour du Château - 11.1 km", "FR"),
+                    ("Løberuter i Albertslund - Rød rute i Kongsholmparken 3 km", "DK"),
+                    ("Tour du Mont Fallère - Deuxième étape - un tour très long de 34 km", "FR")):
+        got = _ship(src, cc)
+        assert not re.search(r"\d$", got) or got.endswith(" km"), got
+    assert _ship("Buzet-sur-Baïse, randonnée autour du Château - 11.1 km", "FR").startswith("Buzet-sur-Baïse")
+    assert names.worse_reason("Rote Route 3 km", "Rote Route 3", "DE") == "unit_dropped"
+
+
+def test_quotes_pair_up_and_nothing_is_emptied():
+    """Judge 2 fix 4: 240768 keeps its quoted name whole, 117724 and 75370 are not emptied."""
+    assert _ship("Natura Trail „Krofdorfer Forst - Im Reich der Wildkatze“", "DE") == "Krofdorfer Forst - Im Reich der Wildkatze"
+    got = _ship("'Langs wad, plas, duin, strand en vuurtoren\"", "NL")
+    assert got == "Langs wad, plas, duin, strand en vuurtoren"
+    got = _ship('N#3 "В подножието на угасналия вулкан при Варвара" (губи се)', "BG")
+    assert got and not names.is_code(got) and names.is_latin(got) and "\"" not in got
+
+
+def test_never_worse_reverts_a_worse_name_and_keeps_a_better_one():
+    assert names.never_worse("Rifugio Maria Luisa", "", "IT") == "Rifugio Maria Luisa"
+    assert names.never_worse("Rifugio Maria Luisa", "Rifugio", "IT") == "Rifugio Maria Luisa"      # a content word lost
+    assert names.never_worse("Tour 11 (orange 11)", "orange 11)", "DE") == "Tour 11 (orange 11)"    # unbalanced
+    assert names.never_worse("Rifugio Maria Luisa", "Rifugio Maria Luisa, 7.5 km", "IT") == "Rifugio Maria Luisa, 7.5 km"
+    assert names.never_worse("Weg 3 - gelb - Wald", "gelb - Wald", "DE") == "gelb - Wald"            # a lead code is no loss
+    long_src = "Via Sancti Martini HW-37-02 Neustadt an der Weinstraße - Neustadt an der Weinstraße"
+    assert names.never_worse(long_src, "Via Sancti Martini, stage 2", "DE") == "Via Sancti Martini, stage 2"
