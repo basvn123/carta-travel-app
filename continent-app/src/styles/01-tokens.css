@@ -193,6 +193,7 @@
   --text-headline:   24px;    /* a page title: 24, 30, 36 */
   --text-display:    40px;    /* a total figure: 40, 48, 54 */
   --text-figure:     18px;    /* a row's day figure */
+  --text-figure-lg:  28px;    /* a followed price on its tile (My trips, decision 0016) */
   --text-plate:      21px;    /* a plate name */
   --text-signpost:   32px;    /* the one signpost title: Today's place (G12) */
   --leading-tight:   1.2;

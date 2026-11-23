@@ -57,7 +57,7 @@ export function YearCard({ model, geo, width = 210, example = '' }) {
 /** A row of pressed-state buttons, the reference's seg2. */
 function Seg({ label, value, options, onPick }) {
   return (
-    <div className="atlas-seg2 is-wide" role="group" aria-label={label}>
+    <div className="ink-frame is-wide" role="group" aria-label={label}>
       {options.map(([k, l]) => <Pressable key={k} aria-pressed={value === k} onClick={() => onPick(k)}>{l}</Pressable>)}
     </div>
   );

@@ -6,7 +6,7 @@ import { Pressable } from '../../components/ui/Pressable.jsx';
 import { HeroImage } from '../../components/HeroImage.jsx';
 import { CountryFlag } from '../../components/CountryFlag.jsx';
 import {
-  ArrowDownIcon, ArrowUpIcon, CalendarIcon, ChevronRightIcon, GlobeIcon, MountainIcon, PencilIcon, ShareIcon, TrainIcon,
+  CalendarIcon, ChevronRightIcon, GlobeIcon, MountainIcon, PencilIcon, ShareIcon, TrainIcon,
 } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { RateTrip } from './TripParts.jsx';
@@ -15,6 +15,7 @@ import { EuropeMap } from './atlas/AtlasPlate.jsx';
 import { CardMenu } from './parts.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { YearCard } from './YearStudio.jsx';
+import { SectHead, Frame2, MoveInk, GradeCells, GradeEmpty } from './atlas/Ink.jsx';
 
 /**
  * The parts of Your Europe with a record (G12 Phase E), drawn as the
@@ -43,10 +44,10 @@ function useWidth(fallback = 358) {
 
 const nf = (n, d = 0) => Number(n).toLocaleString(activeLocale(), { minimumFractionDigits: d, maximumFractionDigits: d });
 
-export function Sect({ title, action = null, full = false, children, id }) {
+export function Sect({ title, count = null, action = null, full = false, children, id }) {
   return (
     <section className={`atlas-sect${full ? ' is-full' : ''}`} aria-labelledby={id}>
-      <div className="atlas-sect-h"><h3 id={id}>{title}</h3>{action}</div>
+      <SectHead id={id} title={title} count={count} action={action} />
       {children}
     </section>
   );
@@ -56,18 +57,19 @@ export function Sect({ title, action = null, full = false, children, id }) {
 export function YearBars({ data, ramp = {}, year, onYear }) {
   const { t } = useI18n();
   const [ref, w] = useWidth();
-  const h = 128;
+  const h = 108;
   const n = Math.max(1, data.length);
   const bw = Math.max(14, Math.min(46, (w - 20) / n - 12));
   const gap = (w - n * bw) / (n + 1);
   const max = Math.max(1, ...data.map((d) => d.nights));
+  const base = h - 20;
   return (
     <div ref={ref} className="atlas-chartbox">
       <svg className="atlas-chart atlas-bars" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="group" aria-label={t('mt.nightsPerYear')}>
+        <line className="atlas-base" x1="0" x2={w} y1={base + 0.5} y2={base + 0.5} />
         {data.map((d, i) => {
           const bh = ((h - 40) * d.nights) / max;
           const x = gap + i * (bw + gap);
-          const on = year == null || year === d.year;
           const pick = () => onYear?.(year === d.year ? null : d.year);
           return (
             <g
@@ -81,7 +83,9 @@ export function YearBars({ data, ramp = {}, year, onYear }) {
               onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } }}
             >
               <rect className="atlas-bar-hit" x={x - gap / 2} y="0" width={bw + gap} height={h} />
-              <rect className={on ? `is-r${ramp[d.year] ?? 2}` : 'is-off'} x={x} y={h - 20 - bh} width={bw} height={Math.max(2, bh)} rx="5" />
+              {/* Every bar keeps its year's paint; a picked year is ringed, never the others dimmed. */}
+              <rect className={`is-r${ramp[d.year] ?? 2}`} x={x} y={base - Math.max(2, bh)} width={bw} height={Math.max(2, bh)} rx="2" />
+              {year === d.year && <rect className="atlas-bar-ring" x={x - 3.5} y={base - Math.max(2, bh) - 3.5} width={bw + 7} height={Math.max(2, bh) + 3.5} rx="4" />}
               {/* One text with the year first and a space, so the visible text ("2025 9") sits inside the name
                   ("2025: 9 nights"); two text elements read as "20259" (axe label-content-name-mismatch). */}
               <text textAnchor="middle">
@@ -100,21 +104,27 @@ export function YearBars({ data, ramp = {}, year, onYear }) {
 export function MonthsChart({ months }) {
   const { t } = useI18n();
   const [ref, w] = useWidth();
-  const h = 76;
-  const bw = (w - 11 * 5) / 12;
+  const h = 70;
+  const slot = w / 12;
+  const bw = Math.min(16, slot - 6);
   const max = Math.max(1, ...months);
+  const top = months.indexOf(Math.max(...months));
+  const base = h - 18;
   const fmt = new Intl.DateTimeFormat(activeLocale(), { month: 'narrow', timeZone: 'UTC' });
   const long = new Intl.DateTimeFormat(activeLocale(), { month: 'long', timeZone: 'UTC' });
   const label = months.map((v, i) => `${long.format(Date.UTC(2020, i, 1))} ${v}`).join(', ');
   return (
     <div ref={ref} className="atlas-chartbox">
       <svg className="atlas-chart" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="img" aria-label={t('mt.monthsAria', { list: label })}>
+        <line className="atlas-base" x1="0" x2={w} y1={base + 0.5} y2={base + 0.5} />
         {months.map((v, i) => {
-          const bh = v ? Math.max(6, ((h - 22) * v) / max) : 3;
+          const bh = v ? Math.max(6, ((h - 22) * v) / max) : 2;
+          const x = i * slot + (slot - bw) / 2;
           return (
             <g key={i}>
-              <rect className={v ? 'is-on' : 'is-off'} x={i * (bw + 5)} y={h - 18 - bh} width={bw} height={bh} rx="3" />
-              <text x={i * (bw + 5) + bw / 2} y={h - 3} textAnchor="middle">{fmt.format(Date.UTC(2020, i, 1))}</text>
+              {/* An empty month is a short tick on the baseline; the busiest month in umber 800. */}
+              <rect className={!v ? 'is-zero' : i === top ? 'is-top' : 'is-on'} x={x} y={base - bh} width={bw} height={bh} rx={v ? 2 : 0} />
+              <text x={i * slot + slot / 2} y={h - 3} textAnchor="middle">{fmt.format(Date.UTC(2020, i, 1))}</text>
             </g>
           );
         })}
@@ -135,10 +145,7 @@ export function CostChart({ trips, per, onPer, missing = 0, onFill }) {
   const max = Math.max(1, ...rows.map((r) => r.v));
   const avg = rows.length ? rows.reduce((s, r) => s + r.v, 0) / rows.length : null;
   const seg = (
-    <div className="atlas-seg2" role="group" aria-label={t('mt.costTitle')}>
-      <Pressable aria-pressed={per === 'day'} onClick={() => onPer('day')}>{t('mt.costPerDay')}</Pressable>
-      <Pressable aria-pressed={per === 'trip'} onClick={() => onPer('trip')}>{t('mt.costPerTrip')}</Pressable>
-    </div>
+    <Frame2 label={t('mt.costTitle')} options={[['day', t('mt.costPerDay')], ['trip', t('mt.costPerTrip')]]} value={per} onChange={onPer} />
   );
   return (
     <Sect id="mt-cost-h" full title={t('mt.costTitle')} action={rows.length ? seg : null}>
@@ -147,15 +154,18 @@ export function CostChart({ trips, per, onPer, missing = 0, onFill }) {
       ) : (
         <>
           <div className="atlas-costkey">
-            <span><i aria-hidden="true" />{t('mt.costKey')}</span>
-            {avg != null && <b>{t('mt.costAvg', { price: formatMoney(avg) })}</b>}
+            <span>{t('mt.costKey')}</span>
+            {avg != null && <b><i aria-hidden="true" />{t('mt.costAvg', { price: formatMoney(avg) })}</b>}
           </div>
           <ul className="atlas-cost">
             {rows.map((r) => (
               <li key={r.x.id} className="atlas-crow">
                 <span className="atlas-cname">{r.x.title} <small>{r.x.year}</small></span>
                 <span className="atlas-cval">{formatMoney(r.v)}</span>
-                <span className="atlas-ctrack" aria-hidden="true"><span className="atlas-cbar" style={{ width: `${((r.v / max) * 100).toFixed(1)}%` }} /></span>
+                <span className="atlas-ctrack" aria-hidden="true">
+                  <span className="atlas-cbar" style={{ width: `${((r.v / max) * 100).toFixed(1)}%` }} />
+                  {avg != null && <i className="atlas-cavg" style={{ left: `${((avg / max) * 100).toFixed(1)}%` }} />}
+                </span>
               </li>
             ))}
           </ul>
@@ -181,15 +191,16 @@ export function Extremes({ ex }) {
     <Sect id="mt-ext-h" title={t('mt.extremes')}>
       <div className="atlas-extremes">
         {/* G12 atlas: the four tiles stand as a compass around a rose. */}
-        <svg className="atlas-rose" viewBox="0 0 76 76" aria-hidden="true">
-          <circle cx="38" cy="38" r="30" />
-          <path d="M38 6 44 38H32z" /><path className="is-l" d="M38 70 32 38h12z" />
-          <path className="is-l" d="M6 38 38 32v12z" /><path d="M70 38 38 44V32z" />
+        <svg className="atlas-rose" viewBox="-50 -50 100 100" aria-hidden="true">
+          <circle className="is-ring" r="46" />
+          <circle className="is-dash" r="33" />
+          <path className="is-star" d="M0-44 7-7 44 0 7 7 0 44-7 7-44 0-7-7Z" />
+          <path className="is-shade" d="M0-44 7-7 0 0ZM44 0 7 7 0 0ZM0 44-7 7 0 0ZM-44 0-7-7 0 0Z" />
+          <circle className="is-hub" r="3.5" />
         </svg>
         {cells.map(([k, letter, s, deg]) => (
           <div className={`atlas-ext is-${k}`} key={k}>
-            <i aria-hidden="true">{letter}</i>
-            <b>{s.city}</b>
+            <b><i aria-hidden="true">{letter}</i>{s.city}</b>
             <span>{deg}</span>
           </div>
         ))}
@@ -218,45 +229,6 @@ export function GradeBadge({ n, top = false, stamp = '' }) {
       <span className="atlas-grade-n" aria-hidden="true"><b>{n}</b><small>/10</small></span>
       <span className="atlas-grade-m" aria-hidden="true"><i style={{ width: top ? '100%' : `${Math.max(0, Math.min(10, n)) * 10}%` }} /></span>
     </span>
-  );
-}
-
-/** Je reislog: rated trips by the traveller's grade; an unrated trip is rated in place. */
-export function TripLog({ rated, unrated, ask, onAsk, rate }) {
-  const { t } = useI18n();
-  const [all, setAll] = useState(false);
-  const shown = all ? rated : rated.slice(0, 5);
-  return (
-    <Sect
-      id="mt-log-h"
-      full
-      title={t('mt.tripLog')}
-      action={rated.length > 5 ? (
-        <Pressable className="atlas-lnk" aria-expanded={all} onClick={() => setAll((v) => !v)}>
-          {all ? t('mt.logLess') : t('mt.logAll', { n: rated.length })}
-        </Pressable>
-      ) : null}
-    >
-      {rate}
-      {shown.length > 0 && (
-        <ol className="atlas-log">
-          {shown.map((x, i) => (
-            <li className="atlas-lrow" key={x.id}>
-              <span className="atlas-rk">{i + 1}</span>
-              <span className="atlas-lt">
-                <b>{x.title} <small>{x.year}</small></b>
-              </span>
-              <GradeBadge n={x.grade} top={i === 0} />
-            </li>
-          ))}
-        </ol>
-      )}
-      {unrated.length > 0 && !ask && (
-        <Pressable className="atlas-lnk is-start" onClick={() => onAsk(unrated[0].id)}>
-          {t(unrated.length === 1 ? 'mt.unrated1' : 'mt.unratedN', { n: unrated.length })}
-        </Pressable>
-      )}
-    </Sect>
   );
 }
 
@@ -316,62 +288,66 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
   );
 }
 
-/** One past trip on the ground (G12 polish): the media row Saved uses, a
- *  photo, name and flags, "{n} nachten, {month}" and the move against
- *  Carta's estimate; on the right the grade badge (the best trip on umber
- *  600), or "Geef een cijfer", which opens the ten taps in the row. A tap on
- *  the row opens its memory. */
-export function PastRow({ x, top = false, rating = false, onRateOpen, onRate, onLift = null, geo = null, trip = null }) {
+/** One past trip as the Saved photo card (decision 0016): the photo (or its
+ *  route on the plate) with the menu as a paper disc, the name, the flags and
+ *  "{n} nachten, {month}", the grade as ten cells (the best trip in umber
+ *  800), or dashed empty cells and "Geef een cijfer", which opens the ten taps
+ *  across the grid under the card. A tap opens its memory there, with the
+ *  move against Carta's estimate in ink above it. */
+export function PastRow({ x, top = false, withYear = false, rating = false, onRateOpen, onRate, onLift = null, geo = null, trip = null }) {
   const { t } = useI18n();
   const month = monthShort(x.start);
   const meta = [
     x.nights > 0 ? t(x.nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: x.nights }) : '',
-    month,
+    // Ranked by grade the year headings are gone, so the card says its year.
+    withYear && x.year ? [month, x.year].filter(Boolean).join(' ') : month,
   ].filter(Boolean).join(', ');
+  const moved = x.vs != null && Math.round(x.vs) !== 0;
   return (
-    <div
-      className="atlas-prow-wrap mt-jcard"
-      // G12 atlas: pointing at a past trip lifts its route on the map.
-      onMouseEnter={onLift ? () => onLift(x.id) : undefined}
-      onMouseLeave={onLift ? () => onLift('') : undefined}
-      onFocus={onLift ? () => onLift(x.id) : undefined}
-      onBlur={onLift ? () => onLift('') : undefined}
-    >
-      <Pressable className="atlas-prow mt-jcard-title" onClick={x.onOpen} aria-expanded={x.open}>
-        <span className="atlas-th">
-          {!x.img && geo && trip?.stops?.length ? <MiniRoute geo={geo} trip={trip} /> : (
-            <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="atlas-th-img" maxWidth={240} ratio={[1, 1]} sizes="(min-width: 1100px) 120px, 96px" />
-          )}
-        </span>
-        <span className="atlas-prow-t">
-          <b className="atlas-prow-name">{x.title}</b>
-          <span className="atlas-prow-m">
-            {(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={16} />)}
-            {meta}
+    <>
+      <div
+        className={`mt-pcard is-past${x.open ? ' is-open' : ''}`}
+        // G12 atlas: pointing at a past trip lifts its route on the map.
+        onMouseEnter={onLift ? () => onLift(x.id) : undefined}
+        onMouseLeave={onLift ? () => onLift('') : undefined}
+        onFocus={onLift ? () => onLift(x.id) : undefined}
+        onBlur={onLift ? () => onLift('') : undefined}
+      >
+        <span className="mt-pcard-ph">
+          <span className="mt-pcard-img" onClick={x.onOpen} aria-hidden="true">
+            {!x.img && geo && trip?.stops?.length ? <MiniRoute geo={geo} trip={trip} /> : (
+              <HeroImage url={x.img} city={x.title} iso2={x.iso2} className="mt-pcard-imgel" maxWidth={480} ratio={[4, 3]} sizes="(min-width: 768px) 240px, 50vw" />
+            )}
           </span>
-          {x.vs != null && Math.round(x.vs) !== 0 && (
-            <span className="atlas-prow-est">
-              <span className={`atlas-move${x.vs > 0 ? ' is-up' : ''}`}>
-                {x.vs < 0 ? <ArrowDownIcon size={12} /> : <ArrowUpIcon size={12} />}
-                {t(x.vs < 0 ? 'mt.vsUnder' : 'mt.vsOver', { price: formatMoney(Math.abs(x.vs)) })}
-              </span>
-            </span>
+          {(x.menuActions?.length > 0 || x.onRemove) && (
+            <CardMenu actions={x.menuActions || []} onRemove={x.onRemove} removeLabel={x.removeLabel} />
           )}
         </span>
-      </Pressable>
-      <span className="atlas-prow-end">
-        {x.grade != null ? <GradeBadge n={x.grade} top={top} stamp={x.id} /> : onRate ? (
-          <Pressable className="atlas-rateit" aria-expanded={rating} onClick={onRateOpen}>{t('mt.giveGrade')}</Pressable>
+        <Pressable className="mt-pcard-name is-past" onClick={x.onOpen} aria-expanded={x.open}><span>{x.title}</span></Pressable>
+        <span className="mt-pcard-pm">
+          {(x.flags || []).map((c) => <CountryFlag key={c} country={c} size={14} />)}
+          <span>{meta}</span>
+        </span>
+        {x.grade != null ? <GradeCells n={x.grade} top={top} label={t('mt.gradeAria', { n: x.grade })} /> : onRate ? (
+          <GradeEmpty>
+            <Pressable className="ink-give" aria-expanded={rating} onClick={onRateOpen}>{t('mt.giveGrade')}</Pressable>
+          </GradeEmpty>
         ) : null}
-        {(x.menuActions?.length > 0 || x.onRemove) && (
-          <CardMenu actions={x.menuActions || []} onRemove={x.onRemove} removeLabel={x.removeLabel} />
-        )}
-      </span>
+      </div>
       {rating && x.grade == null && onRate && (
-        <div className="atlas-ratebox"><RateTrip title={x.title} onRate={onRate} /></div>
+        <div className="mt-pgrid-open atlas-ratebox"><RateTrip title={x.title} onRate={onRate} /></div>
       )}
-      {x.below}
-    </div>
+      {/* Open, the trip shows its move against Carta's estimate above its memory
+          (on the card it repeated on almost every trip). */}
+      {(x.below || (x.open && moved)) && (
+        <div className="mt-pgrid-open">
+          {x.open && moved && (
+            <MoveInk delta={x.vs} className="mt-past-est">{t(x.vs < 0 ? 'mt.vsUnder' : 'mt.vsOver', { price: formatMoney(Math.abs(x.vs)) })}</MoveInk>
+          )}
+          {x.below}
+        </div>
+      )}
+    </>
   );
 }
 

@@ -5,7 +5,8 @@ import { useAuth } from '../AuthContext.jsx';
 import { Button, Switch } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { BedIcon, PlaneIcon, SunIcon, BellIcon, ArrowDownIcon, ArrowUpIcon } from '../../components/Icons.jsx';
+import { BedIcon, PlaneIcon, SunIcon, BellIcon } from '../../components/Icons.jsx';
+import { SectHead, MoveInk } from './atlas/Ink.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { activeLocale } from '../../lib/localeState.js';
 import {
@@ -46,15 +47,17 @@ export function WatchChart({ pts, w, h, axis = false, label }) {
   const vals = pts.map((p) => p.eur);
   const g = chartGeometry(vals, w, h, { axis });
   if (!g) return null;
-  const { d, area, last, min, foot, pad, X, Y } = g;
+  const { d, last, min, foot, pad, X, Y } = g;
   const mi = g.lowest;
   return (
     <svg className="atlas-chart" viewBox={`0 0 ${w} ${h}`} width={w} height={h} role="img" aria-label={label}>
-      <path className="atlas-chart-area" d={area} />
+      {/* Ink (decision 0016): the line and a square per measured week, the
+          latest the larger umber square; no area under the line. */}
       <path className="atlas-chart-line" d={d} />
-      {g.dots.map((p, i) => (
-        <circle key={i} className={p.now ? 'is-now' : ''} cx={p.x} cy={p.y} r={p.now ? 4.5 : 2.6} />
-      ))}
+      {g.dots.map((p, i) => {
+        const r = (p.now ? 6 : 4) / 2;
+        return <rect key={i} className={p.now ? 'is-now' : ''} x={p.x - r} y={p.y - r} width={r * 2} height={r * 2} />;
+      })}
       {axis && (
         <>
           <line className="atlas-chart-axis" x1={pad} x2={w - pad} y1={h - foot} y2={h - foot} />
@@ -76,16 +79,6 @@ function moveWords(t, delta) {
   return t(delta < 0 ? 'watch.lower' : 'watch.higher', { price: formatMoney(Math.abs(delta)) });
 }
 
-/** The price move as a pill with an arrow icon (never a glyph). */
-export function MovePill({ delta, children }) {
-  const Arrow = delta < 0 ? ArrowDownIcon : ArrowUpIcon;
-  return (
-    <span className={`atlas-move${delta > 0 ? ' is-up' : ''}`}>
-      {delta ? <Arrow size={12} /> : null}{children}
-    </span>
-  );
-}
-
 function WatchCard({ item, onOpen }) {
   const { t } = useI18n();
   const Icon = KIND_ICON[item.kind] || SunIcon;
@@ -100,7 +93,7 @@ function WatchCard({ item, onOpen }) {
       </span>
       <span className="atlas-watch-n">{item.label}</span>
       {item.pts.length > 1 ? (
-        <WatchChart pts={item.pts} w={222} h={54} label={t('watch.chartAria', { name: item.label, from: formatMoney(first), to: formatMoney(now) })} />
+        <WatchChart pts={item.pts} w={208} h={44} label={t('watch.chartAria', { name: item.label, from: formatMoney(first), to: formatMoney(now) })} />
       ) : (
         // One measurement is no line and no move: the empty frame says when
         // the next point comes instead of "gelijk" (never an invented point).
@@ -108,7 +101,7 @@ function WatchCard({ item, onOpen }) {
       )}
       <span className="atlas-watch-p">
         <b className="num">{formatMoney(now)}</b>
-        {item.pts.length > 1 && <MovePill delta={delta}>{moveWords(t, delta)}</MovePill>}
+        {item.pts.length > 1 && <MoveInk delta={delta}>{moveWords(t, delta)}</MoveInk>}
       </span>
     </Pressable>
   );
@@ -120,10 +113,7 @@ export function WatchRail({ items, onOpen }) {
   if (!items.length) return null;
   return (
     <section className="atlas-sect" aria-labelledby="atlas-watch-h">
-      <div className="atlas-sect-h">
-        <h3 id="atlas-watch-h">{t('watch.title')}</h3>
-        <span className="atlas-sect-n">{items.length}</span>
-      </div>
+      <SectHead id="atlas-watch-h" title={t('watch.title')} count={items.length} />
       <div className="atlas-rail">
         {items.map((it) => <WatchCard key={it.id} item={it} onOpen={onOpen} />)}
       </div>

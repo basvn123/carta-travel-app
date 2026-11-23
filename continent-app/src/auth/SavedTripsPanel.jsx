@@ -13,7 +13,7 @@ import { shareReceiptOn } from '../lib/share/flag.js';
 const ShareReceiptSheet = lazy(() => import('../components/ShareReceiptSheet.jsx').then((m) => ({ default: m.ShareReceiptSheet })));
 // T1215 (T1152-g): the taste card, its profile code and the taxonomy map load
 // with the Your Europe tab, not with My trips.
-import { Button, Chip } from '../components/ui/index.js';
+import { Button } from '../components/ui/index.js';
 import { loadDeviceTrip, clearDeviceTrip } from '../planner/deviceTripStore.js';
 import { PastTripForm } from './PastTripForm.jsx';
 import { TripMemoryView } from './TripMemoryView.jsx';
@@ -48,7 +48,6 @@ import '../styles/70-mytrips.css';
 import { InstallHint } from './InstallHint.jsx';
 import { KeptTrips } from './mytrips/KeptTrips.jsx';
 import { SavedJourneys } from './mytrips/SavedJourneys.jsx';
-import { useSavedJourneys } from '../lib/journeySaves.js';
 import { holdPlan, useKept } from '../lib/recommend/keptStore.js';
 import {
   localToday, addDaysIso, classifyTrips, whenParts, dayPlanEndDate, orderedUnique, daysUntil,
@@ -62,6 +61,7 @@ import { MyTripsHead, TripsTab, VisitedCountriesSheet, MT_TABS } from './mytrips
 import { BAND_CUTOFFS } from '../lib/rating.js';
 import { YourEurope } from './mytrips/YourEurope.jsx';
 import { AtlasSlot } from './mytrips/atlas/AtlasSlot.jsx';
+import { NoPrice } from './mytrips/atlas/Ink.jsx';
 import { useEuropeMap, NAME_OF } from './mytrips/atlas/plateData.js';
 import { tripsLayer, europeLayer } from './mytrips/atlas/layers.js';
 import { exportYearCard } from './mytrips/YearRecap.jsx';
@@ -77,7 +77,6 @@ import { sharedKeys } from '../lib/sharedListModel.js';
 import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '../lib/savedLists.js';
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
-import { usePastBeside } from './mytrips/atlas/pastBeside.js';
 import { UnitSheet, UnitButton, RateTrip, tripInUnit, unitWords } from './mytrips/TripParts.jsx';
 import { shareRouteImage } from './mytrips/atlas/routeImage.js';
 import { project } from './mytrips/atlas/project.js';
@@ -288,9 +287,6 @@ export function SavedTripsPanel({
   const todayIso = localToday();
   useState(seedMock);
 
-  const keptCount = useKept().length;
-  // T831: Carta's own trips saved from their page count as something kept.
-  const savedWeeks = useSavedJourneys().length;
   const [tab, setTab] = useState(readTab);
   const pickedRef = useRef(false);
   const pickTab = (v) => { pickedRef.current = true; setTab(v); writeStored(TAB_KEY, v); };
@@ -372,10 +368,7 @@ export function SavedTripsPanel({
   const [unitOpen, setUnitOpen] = useState(false);
   // G12 Phase D: the slot's host for Saved's live map.
   const [savedMapEl, setSavedMapEl] = useState(null);
-  // G12 atlas: Your Europe's past trips under the map (1100 x 720 and up).
-  const [europePastEl, setEuropePastEl] = useState(null);
   const [euLift, setEuLift] = useState('');
-  const pastWide = usePastBeside();
   const [example, setExample] = useState(false);
   const [lift, setLift] = useState('');
   const [friends, setFriends] = useState([]);
@@ -811,7 +804,7 @@ export function SavedTripsPanel({
     return {
       ...common,
       meta: [whenText(t, when), fmtRange(p.start_date, p.end_date)].filter(Boolean).join(', '),
-      figure: figure ? <TripPrice figure={figure} unitValue={tripInUnit(figure, choices)} /> : <span className="mt-muted">{t('saved.factNoPrice')}</span>,
+      figure: figure ? <TripPrice figure={figure} unitValue={tripInUnit(figure, choices)} /> : <NoPrice>{t('saved.factNoPrice')}</NoPrice>,
       menuActions: planMenu(p, parts, device),
     };
   };
@@ -841,7 +834,7 @@ export function SavedTripsPanel({
       img: resolveImage({ ids: p.destination_ids || [], cities: planCities(p), countries: parts.countries }),
       iso2: isoFor(parts.countries),
       meta: [t('saved.noDatesYet'), nights > 0 ? t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights }) : ''].filter(Boolean).join(', '),
-      chip: <Chip kind="status" tone="neutral">{t('mt.draft')}</Chip>,
+      chip: <span className="ink-tag">{t('mt.draft')}</span>,
       onOpen: p.device ? () => onOpenDeviceTrip?.() : () => onLoadTripPlan?.(p.id),
     };
   };
@@ -855,7 +848,7 @@ export function SavedTripsPanel({
       img: x.meta.cover || resolveImage({ ids }),
       iso2: destinations[ids[0]]?.iso2 || '',
       meta: [t('saved.noDatesYet'), nights > 0 ? t(nights === 1 ? 'saved.nights1' : 'saved.nightsN', { n: nights }) : ''].filter(Boolean).join(', '),
-      chip: <Chip kind="status" tone="neutral">{t('mt.draft')}</Chip>,
+      chip: <span className="ink-tag">{t('mt.draft')}</span>,
       onOpen: () => { tripsStore.open(x.id); onGoToTab?.('trip'); },
     };
   };
@@ -1269,7 +1262,6 @@ export function SavedTripsPanel({
     };
   })), [euExample, exGrades]);
   const euTrips = euExample ? exampleEurope : atlasPast;
-  const pastBeside = pastWide && tab === 'europe' && euTrips.length > 0;
   const euBeen = useMemo(() => (euExample ? new Set(exampleEurope.flatMap((x) => x.countries)) : beenIso), [euExample, exampleEurope, beenIso]);
   const europeMap = useMemo(() => {
     const trips = euTrips;
@@ -1474,11 +1466,6 @@ export function SavedTripsPanel({
           <MyTripsHead
             tab={tab}
             onTab={pickTab}
-            counts={{
-              trips: tripsCount,
-              saved: shortRows.length + savedWeeks + keptCount,
-              europe: beenIso.size,
-            }}
             onNewTrip={() => onGoToTab?.('planstart')}
             onAddBooking={() => setBook({ planId: '' })}
           />
@@ -1490,7 +1477,7 @@ export function SavedTripsPanel({
           {/* The section's name as the page's h2, for the heading outline; the
               tab above already shows it. */}
           <h2 className="sr-only" id="mytrips-panel-title">{t(tab === 'trips' ? 'mt.tabTrips' : tab === 'saved' ? 'mt.tabSaved' : 'mt.tabEurope')}</h2>
-          <div className={`atlas-body is-${tab}${pastBeside ? ' has-past' : ''}`}>
+          <div className={`atlas-body is-${tab}`}>
           {/* G12 atlas: with the past trips under the map, the slot follows the
               content in the DOM, so a screen reader meets the left column first;
               keys keep both mounted when they swap. */}
@@ -1512,7 +1499,6 @@ export function SavedTripsPanel({
             listRef={countriesRef}
             savedEmpty={!shortRows.length && !example}
             savedHost={setSavedMapEl}
-            pastHost={pastBeside ? setEuropePastEl : null}
           />
             </React.Fragment>,
             <React.Fragment key="content">
@@ -1604,7 +1590,6 @@ export function SavedTripsPanel({
               pastForm={pastForm}
               error={tripPlansError}
               fmtMonth={fmtMonth}
-              pastHost={pastBeside ? europePastEl : null}
               onLift={setEuLift}
               example={euExample}
               onExample={() => setExample(true)}
@@ -1613,7 +1598,7 @@ export function SavedTripsPanel({
           )}
           </div></div>
             </React.Fragment>,
-          ][pastBeside ? 'reverse' : 'slice']()}
+          ]}
           </div>
         </div>
 
