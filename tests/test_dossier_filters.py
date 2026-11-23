@@ -11,10 +11,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
-sys.path.insert(0, str(ROOT / "pipeline" / "dossier"))
+DOSSIER = str(ROOT / "pipeline" / "dossier")
+sys.path.insert(0, DOSSIER)
+# build_dossier imports the dossier's own `common`; pipeline/stays/tests import
+# another `common` by the bare name, so the dossier one must not stay cached.
+_prior_common = sys.modules.pop("common", None)
 
 import build_dossier as bd  # noqa: E402
 import festival_filter as ff  # noqa: E402
+
+sys.modules.pop("common", None)
+if _prior_common is not None:
+    sys.modules["common"] = _prior_common
+sys.path.remove(DOSSIER)
 
 
 def test_brussels_stadiums_and_disaster_are_not_highlights():
