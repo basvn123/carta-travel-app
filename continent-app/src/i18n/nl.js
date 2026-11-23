@@ -8003,6 +8003,7 @@ export const nl = {
   "pass.backImport": "Je kunt het nu importeren.",
   "pass.backSave": "Je kunt nu meer reizen opslaan.",
   "pass.backDone": "Doorgaan",
+  "pass.backAgain": "Doe het nu",
   "pass.terms": "Voorwaarden",
   "pass.holdTrip": "Je Trip Pass loopt tot {date}.",
   "pass.holdYear": "Je Year Pass loopt tot {date}.",

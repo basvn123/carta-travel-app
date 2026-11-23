@@ -110,3 +110,19 @@ test("W3-L2: a bed read from a nearby block is not the town's own, even when the
   const nearby = { ...ctx, atById: new Map([["LIS", { ...base, bed: { ...base.bed, q: "nearby" } }]]) };
   assert.equal(costRow(dests.LIS, nearby).stayMeasured, false);
 });
+
+test("W1-L1: the way back offers the blocked action again, once: a registered resume runs from the primary button", () => {
+  const hook = readFileSync(new URL("../src/hooks/usePaywall.jsx", import.meta.url), "utf8");
+  const back = readFileSync(new URL("../src/components/PassBack.jsx", import.meta.url), "utf8");
+  // The provider hands PassBack the registered action for the kept reason, and closes the sheet before running it.
+  assert.match(hook, /const again = back && resumers\.current\.get\(back\.reason\)/);
+  assert.match(hook, /onAgain=\{again \? \(\) => \{ setBack\(null\); again\(\); \} : null\}/);
+  assert.match(hook, /export function useResume\(reason, fn\)/);
+  // PassBack: with an action the primary runs it (pass.backAgain) and Done is the quiet one; without, Done is primary.
+  assert.match(back, /onAgain && <Button[^>]*variant="primary"[^>]*onClick=\{onAgain\}>\{t\('pass\.backAgain'\)\}/);
+  assert.match(back, /variant=\{onAgain \? 'ghost' : 'primary'\}/);
+  // The surfaces whose button was blocked register themselves.
+  for (const f of ["browse/DestinationPage.jsx", "planner/days/useDayExports.js"]) {
+    assert.match(readFileSync(new URL(`../src/${f}`, import.meta.url), "utf8"), /useResume\('export'/, f);
+  }
+});

@@ -7992,6 +7992,7 @@ export const it = {
   "pass.backImport": "Ora puoi importarlo.",
   "pass.backSave": "Ora puoi salvare altri viaggi.",
   "pass.backDone": "Continua",
+  "pass.backAgain": "Fallo ora",
   "pass.terms": "Condizioni",
   "pass.holdTrip": "Il tuo Trip Pass vale fino al {date}.",
   "pass.holdYear": "Il tuo Year Pass vale fino al {date}.",

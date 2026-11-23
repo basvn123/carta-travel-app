@@ -7,6 +7,7 @@ import { openDayPlanKml } from '../dayPlanKml.js';
 import { openDayPlanIcs } from '../dayPlanIcs.js';
 import { buildDayShareUrl } from '../../lib/shareLink.js';
 import { trackFunnel } from '../../lib/funnelCounts.js';
+import { useResume } from '../../hooks/usePaywall.jsx';
 
 export function useDayExports({
   aiGroupSize, assignedItems, assignments, costs, daySaveState, gmapsShareParts, isNarrow,
@@ -142,5 +143,7 @@ export function useDayExports({
       setTimeout(() => setShareState('idle'), 2000);
     } catch { /* clipboard unavailable */ }
   };
+  // W1-L1: back from a pass bought at the day's PDF button, "Do it now" prints it.
+  useResume('export', downloadPdf);
   return { saveToSavedTrips, downloadPdf, downloadKmlFile, downloadIcsFile, shareDayLink, shareDay };
 }

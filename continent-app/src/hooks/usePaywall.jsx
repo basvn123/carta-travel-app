@@ -211,12 +211,20 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
   // counts; a return that never lands a paid tier shows nothing.
   const [back, setBack] = useState(null);
   const welcomed = useRef(false);
+  // The actions a surface can run again, by gate reason (useResume): a gate that
+  // blocked a press is offered back once the pass has landed.
+  const resumers = useRef(new Map());
+  const registerResume = useCallback((why, fn) => {
+    resumers.current.set(why, fn);
+    return () => { if (resumers.current.get(why) === fn) resumers.current.delete(why); };
+  }, []);
   useEffect(() => {
     if (!E10 || welcomed.current || passReturn() !== 'ok') return;
     if (!signedIn || !entitlement.known || !isPaidTier(entitlement.tier)) return;
     welcomed.current = true;
     setBack({ reason: takeBlocked(window.sessionStorage) });
   }, [E10, signedIn, entitlement.known, entitlement.tier]);
+  const again = back && resumers.current.get(back.reason);
   useEffect(() => {
     if (!signedIn) { try { localStorage.removeItem(LAST_TIER_KEY); } catch { /* private mode */ } return; }
     if (!entitlement.known) return;
@@ -327,14 +335,14 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
   const openPricingPage = hasPricing ? goPricing : null;
   const value = useMemo(() => ({
     paid, signedIn, entitlement, reason,
-    require, nudge, openPrices, close, signIn, openPricingPage,
+    require, nudge, openPrices, close, signIn, openPricingPage, registerResume,
     tier: entitlement.tier,
-  }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close, signIn, openPricingPage]);
+  }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close, signIn, openPricingPage, registerResume]);
 
   return (
     <PaywallContext.Provider value={value}>
       {children}
-      {back && <Suspense fallback={null}><PassBack reason={back.reason} onClose={() => setBack(null)} /></Suspense>}
+      {back && <Suspense fallback={null}><PassBack reason={back.reason} onClose={() => setBack(null)} onAgain={again ? () => { setBack(null); again(); } : null} /></Suspense>}
       {reason && (
         <div onClick={(e) => e.stopPropagation()}>
           <Suspense fallback={null}>
@@ -365,6 +373,19 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
 export function usePaywall() {
   const ctx = useContext(PaywallContext);
   return ctx || FALLBACK;
+}
+
+/**
+ * Offer `fn` again when a pass lands for a press the gate `reason` blocked
+ * (W1-L1): the way back from Stripe shows "Do it now" and runs it. Register
+ * the same function the press runs; it is read at the moment of the click.
+ */
+// eslint-disable-next-line react-refresh/only-export-components -- a hook beside its provider, as usePaywall
+export function useResume(reason, fn) {
+  const { registerResume } = usePaywall();
+  const ref = useRef(fn);
+  ref.current = fn;
+  useEffect(() => registerResume?.(reason, () => ref.current?.()), [registerResume, reason]);
 }
 
 const FALLBACK = {

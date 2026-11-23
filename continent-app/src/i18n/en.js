@@ -8626,6 +8626,7 @@ export const en = {
   "pass.backImport": "You can import it now.",
   "pass.backSave": "You can save more trips now.",
   "pass.backDone": "Continue",
+  "pass.backAgain": "Do it now",
   "pass.terms": "Terms",
   "pass.holdTrip": "Your Trip Pass runs until {date}.",
   "pass.holdYear": "Your Year Pass runs until {date}.",

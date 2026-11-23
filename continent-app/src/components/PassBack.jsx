@@ -12,7 +12,7 @@ import '../styles/71-pass.css';
  * them is now open. The page behind it is the one they left (the checkout
  * returns to it), so the button they pressed is there to press again.
  */
-export function PassBack({ reason = '', onClose }) {
+export function PassBack({ reason = '', onClose, onAgain = null }) {
   const { t } = useI18n();
   const cardRef = useRef(null);
   const doneRef = useRef(null);
@@ -24,7 +24,8 @@ export function PassBack({ reason = '', onClose }) {
           <h2 className="pass-title" id="pass-back-title"><CheckIcon size={18} /> {t('pass.backTitle')}</h2>
         </div>
         <p className="pass-sub">{t(backKey(reason))}</p>
-        <Button ref={doneRef} variant="primary" block onClick={onClose}>{t('pass.backDone')}</Button>
+        {onAgain && <Button ref={doneRef} variant="primary" block onClick={onAgain}>{t('pass.backAgain')}</Button>}
+        <Button ref={onAgain ? undefined : doneRef} variant={onAgain ? 'ghost' : 'primary'} block onClick={onClose}>{t('pass.backDone')}</Button>
       </div>
     </div>
   );

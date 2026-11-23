@@ -18,7 +18,7 @@ import { classRankLine, poiLabel } from '../lib/rating.js';
 import { fetchDestPois } from '../lib/appData.js';
 import { visitLength } from '../lib/nearby.js';
 import { countryName } from '../lib/countryName.js';
-import { usePaywall } from '../hooks/usePaywall.jsx';
+import { usePaywall, useResume } from '../hooks/usePaywall.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { MatchLine } from './WhyItMatches.jsx';
@@ -200,6 +200,9 @@ export function DestinationPage({
 }) {
   const { t, lang, languages } = useI18n();
   const paywall = usePaywall();
+  // W1-L1: back from a pass bought at the PDF button, "Do it now" prints the page.
+  const exportRef = React.useRef(null);
+  useResume('export', () => exportRef.current?.());
   const pageRef = React.useRef(null);
   const scrollRef = React.useRef(null);
   const [stuck, setStuck] = React.useState(false);
@@ -481,6 +484,7 @@ export function DestinationPage({
       setPdfBusy(false);
     }
   };
+  exportRef.current = exportPdf;
 
   const onScroll = (e) => {
     const next = e.currentTarget.scrollTop > 160;
