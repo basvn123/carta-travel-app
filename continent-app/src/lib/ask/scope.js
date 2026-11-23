@@ -225,10 +225,22 @@ export function townNamed(towns, name) {
  * The name the question holds that only the gazetteer can place (a town Carta
  * may lack), or null. The caller loads that name's towns, then calls askScope.
  */
+// Covered countries by nickname and travel areas, six languages, folded: never a place Carta lacks
+// ("the UK", "the Schengen area", "the Riviera"). The parser may not know the word; the answer then
+// stays the normal search (a country alias is not resolved to its country facet here: parser work).
+const AREA_NAMES = [
+  'uk', 'gb', 'vk', 'eu', 'ue', 'schengen', 'riviera', 'benelux', 'balkans', 'balkan', 'balcanes', 'balcani', 'baltics', 'baltikum', 'baltische staten', 'baltes', 'balticos', 'paesi baltici',
+  'scandinavia', 'scandinavie', 'skandinavien', 'escandinavia', 'lapland', 'lappland', 'laponie', 'laponia', 'lapponia', 'alps', 'alpen', 'alpes', 'alpi',
+  'dolomites', 'dolomieten', 'dolomiten', 'dolomitas', 'dolomiti', 'cote d azur', 'costa azul', 'costa azzurra', 'azurkuste', 'algarve', 'tirol', 'tyrol', 'tirolo',
+  'highlands', 'hooglanden', 'hochland', 'tierras altas', 'hautes terres', 'cotswolds', 'tuscany', 'toscane', 'toskana', 'toscana',
+  'verenigd koninkrijk', 'vereinigtes konigreich', 'royaume uni', 'reino unido', 'regno unito',
+];
+const isArea = (name) => AREA_NAMES.includes(foldName(name).replace(/[^\p{L}\p{N}]+/gu, ' ').trim());
+
 export function needsGazetteer(text, raw, ref = null, { lang = 'en' } = {}) {
   if (refusalFor(text) || (ref && pointsBack(text))) return null;
   const c = placeCandidate(text, raw, { bare: lang !== 'de' });
-  return c && !c.sure ? c.name : null;
+  return c && !c.sure && !isArea(c.name) ? c.name : null;
 }
 
 // Languages and nationalities: capitalised in English and after "into", but never a place.
@@ -248,6 +260,8 @@ export function askScope(text, raw, { ref = null, towns = null, rows = null, lan
       const near = NEAR_OUTSIDE.find(([names]) => names.includes(key));
       return { kind: 'outside', place: c.name, nearest: near ? nearestCovered(near[1], rows) : [] };
     }
+    // A covered country nickname or travel area is never a place Carta lacks.
+    if (isArea(c.name)) return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
     // Not on the outside list, so never "outside Europe": a place Carta lacks. The gazetteer
     // (towns above a size) gives its country and spot; a village it misses (Murren) is placed
     // by the catalogue's own words, the places whose text mentions it; else only the Explore door.

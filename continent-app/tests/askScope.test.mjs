@@ -114,6 +114,19 @@ test('a town the gazetteer knows is lacking, with the nearest covered places of 
   assert.equal(townNamed(towns, 'Konstanz').cc, 'DE');
 });
 
+test('a covered country nickname or travel area is never a place Carta lacks (E7 re-judge)', () => {
+  const towns = [town(['UK'], 'GB', 54, -2), town(['Riviera'], 'IT', 44, 8)];
+  const asked = [
+    ['Best castles in the UK', ['uk']], ['Beste kastelen in het VK', ['kastelen', 'vk']], ['Do I need a visa for the Schengen area?', ['need', 'visa', 'schengen', 'area']],
+    ['Visa rules for Americans visiting Schengen countries', ['visa', 'rules', 'americans', 'schengen']], ['Is the Riviera expensive in August?', ['riviera', 'expensive']],
+    ['Three days in the Benelux by train', ['benelux']], ['Weekend in the Cotswolds', ['cotswolds']],
+  ];
+  for (const [q, unknown] of asked) {
+    for (const t of [null, [], towns]) assert.equal(askScope(q, intent(unknown), { rows: ROWS, towns: t }).kind, 'answer', q);
+    assert.equal(needsGazetteer(q, intent(unknown)), null, q);
+  }
+});
+
 test('a common word is not a place Carta lacks: a language, a lowercase word', () => {
   const rows = ROWS;
   const j = askScope('Translate good morning into Japanese', intent(['translate', 'good', 'morning', 'japanese']), { rows, towns: [] });
