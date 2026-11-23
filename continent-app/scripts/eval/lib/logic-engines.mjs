@@ -4,11 +4,12 @@
  * (adapters/logic-engines.mjs) turns this into a carta-eval/1 result; the
  * shadow diff (shadow-diff.mjs) runs the same registry over the personas.
  *
- * Three sets, one per engine family of the logic audit
+ * Four sets, one per engine family of the logic audit
  * (.work/2026-11-17-app-logic-audit/proposal-simplify.md):
  *   month-fit        E5   is a place fine in a month (tests/fixtures/logic-golden/month-fit.json)
  *   rank             E6   P@k and nDCG@k of the For you order, and tie order (rank.json)
  *   day-feasibility  E8   a day ends before the day does, legs in order (day-feasibility.json)
+ *   totals           E1   no total prints lower for a missing part (totals.json; the real E1 sites, synthetic places)
  *
  * Every case states its answer and its source, and is one of two kinds:
  *   expect "current"  today's engine gives the stated answer: a regression guard, GATED
@@ -29,12 +30,13 @@ import { sortForYou } from '../../../src/lib/match.js';
 import { bestMonthsFor } from '../../../src/lib/heatRisk.js';
 import { buildDaySchedule, DAY_END_MIN, DINNER_EARLIEST_MIN } from '../../../src/planner/daySchedule.js';
 import { flag } from '../../../src/lib/flags.js';
+import { totalsPaths } from './totals-engine.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const APP = resolve(here, '../../..');
 export const GOLDEN_DIR = resolve(APP, 'tests/fixtures/logic-golden');
 export const CONFIG = JSON.parse(readFileSync(resolve(APP, 'config/logic-golden.json'), 'utf8'));
-export const SETS = { 'month-fit': 'E5', rank: 'E6', 'day-feasibility': 'E8' };
+export const SETS = { 'month-fit': 'E5', rank: 'E6', 'day-feasibility': 'E8', totals: 'E1' };
 
 const read = (name) => JSON.parse(readFileSync(resolve(GOLDEN_DIR, name), 'utf8'));
 export const PLACES = Object.fromEntries(read('places.json').places.map((p) => [p.id, p]));
@@ -76,7 +78,7 @@ function dayOld(c) {
 }
 
 /** The registry: a wave registers its engine's new path here and flips config/flags.json. */
-export const ENGINE_PATHS = { E5: { old: monthFitOld, new: null }, E6: { old: rankOld, new: null }, E8: { old: dayOld, new: null } };
+export const ENGINE_PATHS = { E1: totalsPaths, E5: { old: monthFitOld, new: null }, E6: { old: rankOld, new: null }, E8: { old: dayOld, new: null } };
 
 export function pathFor(engine, which) {
   const p = which || (flag(engine) === 'new' ? 'new' : 'old');

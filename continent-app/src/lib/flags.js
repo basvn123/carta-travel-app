@@ -20,10 +20,23 @@ for (const [engine, mode] of Object.entries(FLAGS.engines)) {
   if (!MODES.includes(mode)) throw new Error(`config/flags.json: ${engine} is "${mode}", want one of ${MODES.join(', ')}`);
 }
 
+// Set only by withFlags, for tests and the eval harness, which run the old and
+// the new path of one engine in one process. Not reachable from the address,
+// storage or any component.
+let override = null;
+
 export function flag(engine) {
-  const mode = FLAGS.engines[engine];
+  const mode = override?.[engine] ?? FLAGS.engines[engine];
   if (!mode) throw new Error(`engine "${engine}" is not in config/flags.json`);
+  if (!MODES.includes(mode)) throw new Error(`flag ${engine}: "${mode}" is not one of ${MODES.join(', ')}`);
   return mode;
+}
+
+/** Run `fn` (synchronous) with some engines forced, then put the file's values back. */
+export function withFlags(forced, fn) {
+  const was = override;
+  override = { ...(was || {}), ...forced };
+  try { return fn(); } finally { override = was; }
 }
 
 export const isOn = (engine) => flag(engine) === 'new';

@@ -6,7 +6,7 @@
  * flips its flag in config/flags.json.
  *
  *   node scripts/eval/shadow-diff.mjs <engine> --out <folder>
- *   engine: E5 (months fine per persona), E6 (top 10 For you per persona), noop (the fixture engine)
+ *   engine: E1 (budget search and trip label per persona), E5 (months fine per persona), E6 (top 10 For you per persona), noop (the fixture engine)
  *
  * An engine's new path is registered in scripts/eval/lib/logic-engines.mjs
  * (ENGINE_PATHS). Until a wave registers it, the engine reports "no new path
@@ -17,6 +17,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ENGINE_PATHS, PERSONAS, PLACES } from './lib/logic-engines.mjs';
+import { personaTotals } from './lib/totals-engine.mjs';
 
 const places = () => Object.values(PLACES);
 /** What one persona sees from an engine path: a short list of place ids. */
@@ -24,9 +25,11 @@ export const VIEWS = {
   E5: (fn, p) => places().filter((pl) => fn(pl, p.month, { guard: p.taste?.party === 'family' })).map((pl) => pl.id),
   E6: (fn, p) => fn(places(), p.taste, p.month).slice(0, 10),
   noop: (fn, p) => fn(places(), p.taste, p.month).slice(0, 10),
+  // E1 (logic wave 1): what the budget search offers and the two-stop trip's label, per persona; fn is 'old' or 'new'.
+  E1: (which, p) => { const r = personaTotals(p, which); return [`budget ${r.budget}`, ...r.fits.map((x) => `fits ${x}`), ...r.tight.map((x) => `tight ${x}`), `getting there: ${r.there || 'not said'}`, `trip: ${r.trip}`]; },
 };
 const NOOP_PATH = (pool) => pool.map((x) => x.id);
-const pathsOf = (engine) => (engine === 'noop' ? { old: NOOP_PATH, new: NOOP_PATH } : ENGINE_PATHS[engine]);
+const pathsOf = (engine) => (engine === 'noop' ? { old: NOOP_PATH, new: NOOP_PATH } : engine === 'E1' ? { old: 'old', new: 'new' } : ENGINE_PATHS[engine]);
 
 /** The diff as data: one row per persona with the old and new lists. */
 export function shadowDiff(engine) {
@@ -61,6 +64,8 @@ if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.ur
     mkdirSync(dir, { recursive: true });
     const file = join(dir, `shadow-${engine}.md`);
     writeFileSync(file, toMarkdown(engine, rows));
+    writeFileSync(join(dir, `shadow-${engine}.json`), `${JSON.stringify(rows, null, 1)}
+`);
     console.log(`${file}: ${rows.filter((r) => !r.same).length} of ${rows.length} personas changed`);
   } catch (e) { console.error(e.message); process.exit(1); }
 }

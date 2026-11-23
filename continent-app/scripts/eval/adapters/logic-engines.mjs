@@ -62,7 +62,7 @@ export async function run({ which = null } = {}) {
     cases: { n: results.length, passed: allPass },
     inputs: { which: which || 'follows config/flags.json', sets: Object.keys(SETS).join(', ') },
     notes: [
-      `${tgt.length - tgt.filter((r) => r.pass).length} of ${tgt.length} target cases fail today: the gap the engine waves close (E5 month fit, E6 ranking, E8 day).`,
+      `${tgt.length - tgt.filter((r) => r.pass).length} of ${tgt.length} target cases fail today: the gap the engine waves close (E1 totals, E5 month fit, E6 ranking, E8 day).`,
       worst ? `Worst slice: ${worst.dim}=${worst.value}, ${worst.currentPass + worst.targetPass} of ${worst.current + worst.target} cases pass.` : 'No slice with two cases.',
     ],
   });
