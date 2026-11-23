@@ -151,11 +151,21 @@ text_checks:
 # figure only the next stays apply removes. Values on 2026-11-19 in comments.
 #   dorm_above_hotel3      places whose dorm bed is dearer than a 3-star room
 #                          (pipeline/stays/bed_rules.py; local wire 35, box master 589)
-#   generated_at_age_days  days since meta.generated_at. Soft until the stamp is
-#                          fixed (research step 1.3, D3): the wire says June.
+#   generated_at_age_days  days since meta.generated_at, hard against the T1099-d
+#                          limit (D3, D12: the writers that build the master re-stamp it)
+#   rated_without_taste    rated places with no taste likes; not measured (a
+#                          failure) when no place is rated
+#   wrong_hero_tokens      heroes whose file name trips hero_bans.py (soft: a place
+#                          whose whole ladder is banned waits for T1198-f)
+#   must_see_square_mislabelled  must-see POIs of kind Square with no "square" in the
+#                          name, from the POI shards (soft)
+# `on: wire` runs a check on the served wire only (the staged rows are a slice).
 invariants:
   - {id: beds.dorm_above_hotel3, check: dorm_above_hotel3, max: 0, kind: hard}  # 35
-  - {id: wire.generated_at_age_days, check: generated_at_age_days, max: 16, kind: soft}  # 165
+  - {id: wire.generated_at_age_days, check: generated_at_age_days, max: 16, kind: hard}  # 165 (T1099-d: app_data 16 days)
+  - {id: place.taste_on_rated, check: rated_without_taste, max: 0, kind: hard, on: wire}  # 0
+  - {id: hero.wrong_tokens, check: wrong_hero_tokens, max: 0, kind: soft, on: wire}  # 29 (hero_bans.py)
+  - {id: poi.must_see_square, check: must_see_square_mislabelled, max: 0, kind: soft, on: wire}  # see checks.md
 # Layer rules (T1214, register row T1142-b): the card's other three numbers per
 # layer. `layers` is `all` or a list of scorecard layers; a layer the card did
 # not measure for the metric (no records, accuracy n/a) is skipped.

@@ -4,6 +4,7 @@ from __future__ import annotations
 import importlib.util
 import json
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
@@ -34,11 +35,17 @@ def make_public(tmp: Path, n=100, measured=87, dorm_bad=0) -> Path:
     dests = {}
     for i in range(n):
         d = {"id": f"p{i:03d}", "tier": "gem", "city": f"P{i}", "country": "Belgium", "iso2": "BE",
-             "lat": 50.8, "lon": 4.4, "categories": ["city"], "blurb": "A town."}
+             "lat": 50.8, "lon": 4.4, "categories": ["city"], "blurb": "A town.",
+             "rating": {"score": 6.0}, "taste": {"likes": {"hiking": [0.5]}},
+             "image": {"url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Town_hall.jpg/900px-Town_hall.jpg"}}
         if i < measured:
             d["accommodation"] = acc(i, dorm=200 if i < dorm_bad else 30)
         dests[d["id"]] = d
-    meta = {"generated_at": "2026-11-18T00:00:00+00:00"}
+    # Now, not a date: the age rule is hard (16 days), a fixed date would rot.
+    meta = {"generated_at": datetime.now(timezone.utc).isoformat()}
+    (tmp / "poi").mkdir(exist_ok=True)
+    (tmp / "poi" / "p000.json").write_text(json.dumps([
+        {"name": "Town hall", "kind": "Building", "label": "must_see"}]), encoding="utf-8")
     (tmp / "app_data.json").write_text(json.dumps({"meta": meta, "destinations": dests}), encoding="utf-8")
     return tmp
 
@@ -83,7 +90,9 @@ def test_shipped_rules_carry_the_bed_rule_and_invariants(guard):
     assert r["kind"] == "hard" and r["level"] == "must_see" and 0.8 <= r["min"] < 0.87
     inv = {c["id"]: c for c in cfg["invariants"]}
     assert inv["beds.dorm_above_hotel3"]["kind"] == "hard" and inv["beds.dorm_above_hotel3"]["max"] == 0
-    assert inv["wire.generated_at_age_days"]["kind"] == "soft"
+    assert inv["wire.generated_at_age_days"]["kind"] == "hard" and inv["wire.generated_at_age_days"]["max"] == 16
+    assert inv["place.taste_on_rated"]["kind"] == "hard" and inv["hero.wrong_tokens"]["kind"] == "soft"
+    assert inv["poi.must_see_square"]["kind"] == "soft"
 
 
 def test_a_clean_tree_passes(guard, tmp_path, capsys):
@@ -149,3 +158,24 @@ def test_an_unknown_invariant_is_a_config_error(guard, tmp_path):
     p.write_text(yaml.safe_dump(d), encoding="utf-8")
     with pytest.raises(ValueError, match="check must be one of"):
         guard._engine().load_rules(p)
+
+
+def test_d2_wave2_rules_fail_and_warn(guard, tmp_path, capsys):
+    """Step 1.2: taste on a rated place and the age are hard, a banned hero and a
+    Square must-see are warnings, and a wire with no rated place is not a pass."""
+    pub = make_public(tmp_path / "pub")
+    wire = json.loads((pub / "app_data.json").read_text(encoding="utf-8"))
+    wire["destinations"]["p001"]["taste"] = {}
+    wire["destinations"]["p002"]["image"]["url"] = "https://x/commons/a/a1/Flag_of_Town.svg.png"
+    wire["meta"]["generated_at"] = "2026-06-01T00:00:00+00:00"
+    (pub / "app_data.json").write_text(json.dumps(wire), encoding="utf-8")
+    (pub / "poi" / "p000.json").write_text(json.dumps([
+        {"name": "Manneken Pis", "kind": "Square", "label": "must_see"}]), encoding="utf-8")
+    assert call(guard, tmp_path, pub) == 1
+    out = capsys.readouterr().out
+    assert "FAIL wire.place.taste_on_rated: rated_without_taste is 1" in out
+    assert "FAIL wire.wire.generated_at_age_days" in out
+    assert "warn wire.hero.wrong_tokens: wrong_hero_tokens is 1" in out
+    assert "warn wire.poi.must_see_square: must_see_square_mislabelled is 1" in out
+    eng = guard._engine()
+    assert eng._rated_without_taste({"destinations": {"a": {"id": "a"}}}, None) is None

@@ -106,7 +106,8 @@ def seed_break(dests: dict, seed: str, br) -> str:
     return "no place with a hotel3 price to break"
 
 
-def bed_checks(label: str, data: dict, floor: float, invariants: list, now: datetime) -> tuple[list, list]:
+def bed_checks(label: str, data: dict, floor: float, invariants: list, now: datetime,
+               public: Path | None = None) -> tuple[list, list]:
     eng = _engine()
     br = eng._scorecard()._bed_rules()
     stats = br.bed_stats(data.get("destinations") or {})
@@ -118,7 +119,7 @@ def bed_checks(label: str, data: dict, floor: float, invariants: list, now: date
         failures.append({"id": f"{label}.{MEASURED_RULE}", "kind": "hard",
                          "why": f"measured beds {stats['measured_share']:.1%} of {stats['places']} places, "
                                 f"under the floor {floor:.0%}"})
-    ifail, iwarn = eng.invariants_gate(invariants, data, now)
+    ifail, iwarn = eng.invariants_gate(invariants, data, now, public, label)
     failures += [{**f, "id": f"{label}.{f['id']}"} for f in ifail]
     return failures, [{**w, "id": f"{label}.{w['id']}"} for w in iwarn]
 
@@ -185,7 +186,7 @@ def main(argv=None) -> int:
     for label, tree in trees:
         if seed:
             print(f"  SEED BREAK {seed} on {label}: {seed_break(tree['destinations'], seed, br)}")
-        f, w = bed_checks(label, tree, rule["min"], cfg.get("invariants") or [], now)
+        f, w = bed_checks(label, tree, rule["min"], cfg.get("invariants") or [], now, public)
         failures += f
         warnings += w
 
