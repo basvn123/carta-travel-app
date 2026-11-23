@@ -11,10 +11,11 @@
  */
 
 import { seasonCurve } from './stayPrice.js';
+import { rule } from './price/config.js';
 
 export const MAX_KM = 30;
-export const CHEAP_BELOW = 0.92;   // a month this far under the year's mean reads cheap
-export const DEAR_ABOVE = 1.08;    // and this far over reads dear
+export const CHEAP_BELOW = rule('months.price_band').cheap_below;   // a month this far under the year's mean reads cheap
+export const DEAR_ABOVE = rule('months.price_band').dear_above;    // and this far over reads dear
 
 function haversineKm(lat1, lon1, lat2, lon2) {
   const p = Math.PI / 180;

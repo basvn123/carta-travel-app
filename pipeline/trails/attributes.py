@@ -69,7 +69,9 @@ from psycopg.types.json import Jsonb
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(ROOT / "pipeline"))
 
+import grades  # noqa: E402
 from db import connect  # noqa: E402
 from schema import ensure  # noqa: E402
 from way_tags import SAC_RANK, VIS_RANK, ferrata_value, sac_value  # noqa: E402
@@ -95,20 +97,11 @@ ROUTE_CLASSES = frozenset({"Q2143825", "Q17008256", "Q1826691"})
 # 1. Difficulty
 # ---------------------------------------------------------------------------
 
-GRADES = ["easy", "moderate", "hard", "very_hard", "alpine"]
-GRADE_RANK = {g: i for i, g in enumerate(GRADES)}
-
-# SAC scale to the published grade. The two alpine grades collapse: a walker
-# choosing a filter chip does not distinguish T5 from T6, and a list with a
-# chip nobody can fill is worse than one value fewer.
-SAC_GRADE = {
-    "hiking": "easy",
-    "mountain_hiking": "moderate",
-    "demanding_mountain_hiking": "hard",
-    "alpine_hiking": "very_hard",
-    "demanding_alpine_hiking": "alpine",
-    "difficult_alpine_hiking": "alpine",
-}
+# The vocabulary and the SAC table live in pipeline/grades.py (D24): one
+# table for the score facts, the wire and this module.
+GRADES = grades.GRADES
+GRADE_RANK = grades.GRADE_RANK
+SAC_GRADE = grades.SAC_GRADE
 
 # trail_visibility raises a floor rather than setting the grade: a marked T2
 # path where the waymarks stop is a harder day than its terrain grade says,
@@ -140,10 +133,9 @@ DEM_LADDER = [
     ("hard", 22.0, 120.0),
     ("moderate", 14.0, 70.0),
 ]
-# A derived alpine grade needs height as well as steepness. A 45 percent
-# gradient on a 300 m hill is a staircase in a wood, not the Alps, and the
-# DEM cannot tell the difference from the profile alone.
-DERIVED_ALPINE_MIN_TOP_M = 1500.0
+# A derived grade is never alpine (grades.cap_derived): a 45 percent gradient
+# is a staircase in a wood as often as the Alps, and the DEM cannot tell the
+# difference from the profile alone. Alpine comes from a tag or a ferrata.
 
 # A derived (DEM) terrain grade above moderate needs this much relief between
 # the lowest and highest point of the line. One 90 m span at 26 percent on a
@@ -214,14 +206,17 @@ def dem_grade(row):
 
     grade = "easy"
     for name, grade_pct, ascent_km in DEM_LADDER:
-        if (max_grade is not None and float(max_grade) >= grade_pct) \
-                or per_km >= ascent_km:
+        # Both terms, as the ladder comment says (D24): one steep 90 m span
+        # (a lock, a bridge, a tree edge on the DSM) is not hard ground. A
+        # row with no max_grade_pct reads on ascent per km alone.
+        steep = max_grade is None or float(max_grade) >= grade_pct
+        if steep and per_km >= ascent_km:
             grade = name
             break
-    if grade == "alpine" and (top is None
-                              or float(top) < DERIVED_ALPINE_MIN_TOP_M):
-        grade = "very_hard"
-        parts["alpine_capped"] = "top below 1500 m"
+    capped = grades.cap_derived(grade)
+    if capped != grade:
+        grade = capped
+        parts["alpine_capped"] = "derived grades stop at very_hard"
     bottom = elev.get("ele_min_m")
     if GRADE_RANK[grade] > GRADE_RANK["moderate"] and top is not None \
             and bottom is not None \
@@ -516,6 +511,10 @@ def suitability_of(row, grade, season):
     if season and season.get("n", 0) >= 11 \
             and GRADE_RANK.get(grade, 9) <= GRADE_RANK["moderate"]:
         derived.append("winter")
+        # D-16: the claim is "walkable all year" (the season estimate is open
+        # 11+ months), not winter conditions. Both ship for one release; the
+        # app moves its chip to allYear and `winter` is then retired.
+        derived.append("allYear")
 
     out = {"tagged": tagged, "derived": derived}
     keep = {k: round(float(v), 3) for k, v in cover.items()

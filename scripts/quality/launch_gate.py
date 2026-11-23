@@ -43,7 +43,16 @@ def _load(name, rel):
     spec = importlib.util.spec_from_file_location(name, ROOT / rel)
     mod = importlib.util.module_from_spec(spec)
     sys.path.insert(0, str((ROOT / rel).parent))
-    spec.loader.exec_module(mod)
+    # Two modules in this repo are named `common` (pipeline/dossier and
+    # pipeline/stays/tests): a cached one made this load, or the next test
+    # collection, import the wrong file.
+    saved = sys.modules.pop("common", None)
+    try:
+        spec.loader.exec_module(mod)
+    finally:
+        sys.modules.pop("common", None)
+        if saved is not None:
+            sys.modules["common"] = saved
     return mod
 
 

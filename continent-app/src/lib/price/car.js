@@ -11,6 +11,7 @@
  */
 import { round2 } from '../math.js';
 import { rule } from './config.js';
+import { carsOf } from '../party.js';
 
 const CAR = rule('car.model');
 
@@ -31,7 +32,7 @@ export function rentalEstimate(carModel, iso2, days, startDate, groupSize = 1) {
   const month = startDate ? Number(startDate.slice(5, 7)) : null;
   const season = month ? (carModel.rental_seasonality?.[String(month)] ?? 1) : 1;
   rate *= season;
-  const cars = Math.max(1, Math.ceil((groupSize || 1) / Math.max(1, carModel.car_capacity || 4)));
+  const cars = carsOf(groupSize, carModel.car_capacity);
   let total = rate * days * cars;
   if (days >= 7 && carModel.rental_weekly_discount_pct) {
     total *= 1 - carModel.rental_weekly_discount_pct / 100;

@@ -4,6 +4,7 @@ import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { Segmented } from '../../components/ui/index.js';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { formatMoney } from '../../lib/money.js';
+import { todayISO } from '../../lib/dates.js';
 import { RangeCalendar } from './RangeCalendar.jsx';
 import { NightsStepper, nightsText } from './settingsBits.jsx';
 import { addMonths, nightsBetween } from './calendarModel.js';
@@ -11,7 +12,7 @@ import { addMonths, nightsBetween } from './calendarModel.js';
 const MODES = ['dates', 'month', 'any', 'cheapest'];
 
 /** The next twelve months from this one, as 'YYYY-MM'. */
-function nextMonths(today = new Date().toISOString().slice(0, 10)) {
+function nextMonths(today = todayISO()) {
   const first = today.slice(0, 7);
   return Array.from({ length: 12 }, (_, i) => addMonths(first, i));
 }
@@ -44,7 +45,7 @@ export function WhenStep({ model, onChange }) {
     onChange();
   };
   const months = React.useMemo(() => nextMonths(), []);
-  const thisYear = new Date().toISOString().slice(0, 4);
+  const thisYear = todayISO().slice(0, 4);
 
   return (
     <div className="set-step set-when">

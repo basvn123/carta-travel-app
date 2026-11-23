@@ -22,8 +22,9 @@ test("the mode button cycles through every way and back to any", () => {
 });
 
 test("the party: seats are adults plus children, babies ride on a lap", () => {
-  assert.deepEqual(partyOf({ group_size: 4, children: 2, babies: 1 }), { adults: 2, children: 2, babies: 1, seats: 4 });
-  assert.deepEqual(partyOf({}), { adults: 2, children: 0, babies: 0, seats: 2 });
+  const lim = (p) => ({ ...p, limits: undefined });
+  assert.deepEqual(lim(partyOf({ group_size: 4, children: 2, babies: 1 })), lim({ adults: 2, teens: 0, children: 2, babies: 1, seats: 4, paying: 4, carSeats: 5, cars: 2, kind: "family" }));
+  assert.deepEqual(lim(partyOf({})), lim({ adults: 2, teens: 0, children: 0, babies: 0, seats: 2, paying: 2, carSeats: 2, cars: 1, kind: "couple" }));
   // Never a party of children only.
   assert.equal(partyOf({ group_size: 2, children: 5 }).adults, 1);
 });

@@ -177,6 +177,7 @@
 }
 .ask-receipt-sum::-webkit-details-marker { display: none; }
 .ask-receipt-total { margin-left: auto; font-size: var(--text-lead); font-weight: 600; color: var(--text); font-variant-numeric: tabular-nums; }
+.ask-receipt-before { font-size: var(--text-caption); color: var(--text-2); }
 .ask-receipt-chev { color: var(--text-2); transition: transform var(--dur-2) var(--ease-out); }
 details[open] > summary .ask-receipt-chev { transform: rotate(180deg); }
 .ask-receipt-lines {

@@ -73,7 +73,7 @@ def test_freshness_inside_and_over_cadence(sc, tmp_path):
     fresh = layer(sc.build(make_public(tmp_path / "a", age_days=10), NOW), "core")
     stale = layer(sc.build(make_public(tmp_path / "b", age_days=70), NOW), "core")
     assert fresh["freshness"] == 1.0
-    assert stale["freshness"] == 0.5  # app_data cadence 35 days, 70 days old
+    assert stale["freshness"] == 0.2286  # app_data limit 16 days (T1099-d), 70 days old: 16 / 70
 
 
 def test_shard_wire_basic_checks(sc, tmp_path):

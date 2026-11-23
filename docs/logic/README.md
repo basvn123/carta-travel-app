@@ -14,3 +14,18 @@ ROADMAP item B3. Every rule the code applies that a traveller would notice (a fo
 | [quotas-paywall.md](quotas-paywall.md) | QUOTA | AI quotas and caps, the Pass, paywall gates, checkout and webhook | 30 | 13 |
 
 Not yet done (the second half of B3): the IDs are catalogue IDs only. Tagging each rule in the code (`// LOGIC: PRICE-012`, `# LOGIC: RATING-004`) and the two-way CI check `scripts/docs/logic_check.py` are open (register row T1132-dx). Until then line numbers drift; the constant name is the stable handle. A task that changes a rule updates its entry in the same commit.
+
+## State scope rules (logic wave 2, E9 phase A)
+
+Rules a traveller notices after a reload, a sign-in or a link. Table: `continent-app/src/lib/stateKeys.js`. Flag `E9` (default old) in `continent-app/config/flags.json`; tests in `continent-app/tests/stateScope.test.mjs`, `stateKeys.test.mjs`, `urlPlacesParity.test.mjs`.
+
+| ID | Rule | Where |
+|---|---|---|
+| STATE-001 | Every address and storage key has one scope; a key in `src` the table does not name fails a test | `lib/stateKeys.js`, `tests/stateKeys.test.mjs` |
+| STATE-002 | An address is someone else's link only when it carries a setting the device's mirror does not hold; a place or a seed alone is not (E9) | `isForeignLink` in `lib/urlState.js` |
+| STATE-003 | With a style active and no priced key in the address, the data load keeps the style's party, bed, Lifestyle and way (E9) | `initForLoad` in `lib/urlState.js` |
+| STATE-004 | Sign-in keeps this device's choices and holds the style when they differ from the merged account style; a device with no style takes the account's (E9) | `mergeAccountChoices` in `lib/taste.js` |
+| STATE-005 | A new trip lifts a hold (E9) | `newTripChoices` in `lib/travelStyles.js` |
+| STATE-006 | The account's language is replaced only after the picker was used (E9) | `langToPush` in `lib/langPath.js` |
+| STATE-007 | `rr mt mb tb big top` are not read from an address, mirror or account and not pushed (E9) | `decodeState`, `useAccountSync` |
+| STATE-008 | The home point is read and stored at 0.01 degree (about 1 km), never in a share link | `roundHomePoint` in `lib/shareKeys.js` |

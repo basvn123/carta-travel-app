@@ -1,0 +1,13 @@
+{
+  "_about": "Towns for the E3 stay-ladder golden set (stay-ladder.json) and the persona view. Real cities; the bed prices are the shipped wire's (public/app_data.json, rounded, read 2026-11-23). The wire ships one home size, the entire place for two (bnb_home 2), so a group books as many places for two as it fills. supply is what the town has: VCE and BDS no hostel, JTR no hostel and no 3-star, GOT no Airbnb, CRL no 5-star. WARM is a legacy block (q measured, captured null) and COLD a modelled one, for the not-yet-measured label (pipeline/stays/bed_rules.py is_measured).",
+  "towns": {
+    "MAD": { "city": "Madrid", "iso2": "ES", "beds": { "dorm": 25, "private": 136, "hotel2": 94, "hotel3": 96, "hotel4": 142, "hotel5": 324, "bnb_home": { "2": 104 } }, "supply": { "hostel": true, "hotel": true, "hotel5": true, "bnb": true } },
+    "BRU": { "city": "Brussels", "iso2": "BE", "beds": { "dorm": 24, "private": 44, "hotel2": 83, "hotel3": 140, "hotel4": 154, "hotel5": 216, "bnb_home": { "2": 141 } }, "supply": { "hostel": true, "hotel": true, "hotel5": true, "bnb": true } },
+    "CRL": { "city": "Charleroi", "iso2": "BE", "beds": { "dorm": 25, "private": 50, "hotel2": 86, "hotel3": 100, "hotel4": 130, "bnb_home": { "2": 88 } }, "supply": { "hostel": true, "hotel": true, "hotel5": false, "bnb": true } },
+    "VCE": { "city": "Venice (Marco Polo)", "iso2": "IT", "beds": { "hotel3": 84, "hotel4": 169, "bnb_home": { "2": 194 } }, "supply": { "hostel": false, "hotel": true, "hotel5": false, "bnb": true } },
+    "JTR": { "city": "Santorini", "iso2": "GR", "beds": { "hotel2": 62, "hotel4": 318, "hotel5": 292, "bnb_home": { "2": 115 } }, "supply": { "hostel": false, "hotel": true, "hotel5": true, "bnb": true } },
+    "GOT": { "city": "Gothenburg", "iso2": "SE", "beds": { "dorm": 23, "private": 97, "hotel2": 72, "hotel3": 83, "hotel4": 138 }, "supply": { "hostel": true, "hotel": true, "hotel5": false, "bnb": false } },
+    "WARM": { "city": "Legacy block", "iso2": "ES", "beds": { "hotel3": 90, "bnb_home": { "2": 100 } }, "captured": null, "supply": { "hostel": false, "hotel": true, "hotel5": false, "bnb": true } },
+    "COLD": { "city": "Modelled block", "iso2": "ES", "q": "modelled", "beds": { "hotel3": 90, "bnb_home": { "2": 100 } }, "supply": { "hostel": false, "hotel": true, "hotel5": false, "bnb": true } }
+  }
+}

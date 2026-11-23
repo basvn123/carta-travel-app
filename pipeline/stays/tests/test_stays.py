@@ -113,10 +113,14 @@ def _scraped_obs(dest="PMI"):
     obs = []
     for day in SCRAPE_DAYS:
         f = _season(day.month)
-        for j, (base, stars) in enumerate([(80, 3), (90, 3), (140, 4), (150, 4)]):
+        # Three properties behind each tier: bed_rules.MIN_PROPS (D10, 1.4)
+        # drops a tier priced by fewer, h0 and h1 are the weekend pairs.
+        for j, (base, stars) in enumerate([(80, 3), (90, 3), (100, 3), (140, 4), (150, 4), (160, 4)]):
             obs.append(_obs(dest, f"h{j}", "hotel", "room", day, base * f, stars))
-        obs.append(_obs(dest, "a0", "apartment", "home", day, 120 * f))
-        obs.append(_obs(dest, "hs", "hostel", "dorm", day, 25 * f, adults=1, src="hostelworld"))
+        for j, base in enumerate((120, 125, 130)):
+            obs.append(_obs(dest, f"a{j}", "apartment", "home", day, base * f))
+        for j, base in enumerate((25, 27, 29)):
+            obs.append(_obs(dest, f"hs{j}", "hostel", "dorm", day, base * f, adults=1, src="hostelworld"))
     # The weekend probe: the Friday of the May week, two pairs.
     fri = date(2027, 5, 21)
     obs.append(_obs(dest, "h0", "hotel", "room", fri, 80 * 1.2, 3))
@@ -130,7 +134,7 @@ def test_model_season_weekend_and_stars():
     assert h3[7] > 2 * h3[0]                          # August vs January
     assert h3[6] == h3[7] and h3[11] == h3[9]         # Jul takes Aug, Dec takes Oct
     assert rec["season_q"] == "mfmfmffmfmff"
-    assert rec["src"]["hotel3"] == {"q": "measured", "n": 2}
+    assert rec["src"]["hotel3"] == {"q": "measured", "n": 3}
     assert rec["beds"]["hotel4"] > rec["beds"]["hotel3"]
     assert "hotel5" not in rec["beds"] and "hotel2" not in rec["beds"]   # never scaled in
     assert rec["weekend"] > 1.1
@@ -153,14 +157,14 @@ def test_an_unscraped_place_has_no_record():
 
 
 def test_one_hotel_is_not_a_star_class():
-    obs = [o for o in _scraped_obs() if o["key"] != "h1"]
+    obs = [o for o in _scraped_obs() if o["key"] not in ("h1", "h2")]
     rec = B.build([_dest("PMI", 39.57, 2.65)], obs)["PMI"]
     assert "hotel3" not in rec["beds"] and "hotel4" in rec["beds"]
 
 
 def test_build_drops_dorm_above_hotel3():
     # D10 (wave 1): a dorm dearer than the 3-star room is dropped, not shipped.
-    obs = [dict(o, price=o["price"] * 20) if o["key"] == "hs" else o for o in _scraped_obs()]
+    obs = [dict(o, price=o["price"] * 20) if o["key"].startswith("hs") else o for o in _scraped_obs()]
     rec = B.build([_dest("PMI", 39.57, 2.65)], obs)["PMI"]
     assert "dorm" not in rec["beds"] and "dorm" not in rec["month"] and "dorm" not in rec["src"]
     assert rec["beds"]["hotel3"] and rec["supply"]["hostel"] is False

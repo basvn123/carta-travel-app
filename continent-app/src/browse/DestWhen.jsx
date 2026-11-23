@@ -37,7 +37,8 @@ import '../styles/94-when-stay.css';
 const MONTHS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
 function Verdict({ t, verdict, monthList }) {
-  const { best, range, quieter, hot, cold } = verdict;
+  const { best, range, quieter, hot, hotUnknown = [], cold } = verdict;
+  const hotBusy = hot.filter((m) => !hotUnknown.includes(m));
   if (!best.length) return null;
   return (
     <div className="when-verdict">
@@ -45,7 +46,8 @@ function Verdict({ t, verdict, monthList }) {
       <ul className="when-why">
         {range && <li className="is-good">{t('when.mild', { lo: range.lo, hi: range.hi })}</li>}
         {quieter.length > 0 && <li className="is-good">{t('when.quieter', { months: monthList(quieter) })}</li>}
-        {hot.length > 0 && <li className="is-warn">{t('when.hot', { months: monthList(hot) })}</li>}
+        {hotBusy.length > 0 && <li className="is-warn">{t('when.hot', { months: monthList(hotBusy) })}</li>}
+        {hotUnknown.length > 0 && <li className="is-warn">{t('when.hotOnly', { months: monthList(hotUnknown) })}</li>}
         {cold.length > 0 && <li className="is-cold">{t('when.cold', { months: monthList(cold) })}</li>}
       </ul>
     </div>

@@ -25,12 +25,15 @@ import { useI18n } from '../i18n/index.jsx';
 const ORDER = ['appeal', 'depth', 'beauty', 'recognition'];
 
 function useRatingWhy(id, rating, lang) {
-  const [why, setWhy] = React.useState(rating?.why || '');
+  const wire = rating?.why || '';
+  const [why, setWhy] = React.useState(wire);
+  // C-15: ratingWhy reads only `rating.why`, and the page hands a new rating
+  // object every render, so the effect keys on the text, not the object.
   React.useEffect(() => {
     let live = true;
-    ratingWhy(id, rating, lang).then((w) => { if (live) setWhy(w); });
+    ratingWhy(id, { why: wire }, lang).then((w) => { if (live) setWhy(w); });
     return () => { live = false; };
-  }, [id, lang, rating]);
+  }, [id, lang, wire]);
   return why;
 }
 

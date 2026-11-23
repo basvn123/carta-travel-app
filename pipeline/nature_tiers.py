@@ -57,7 +57,9 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
+import grades  # noqa: E402
 import rating_config  # noqa: E402
+from outdoor_row import outdoor_row  # noqa: E402
 from rating_config import cfg, section  # noqa: E402
 
 PUBLIC = ROOT / "continent-app" / "public"
@@ -340,16 +342,14 @@ def raw_parts(kind, rows):
 # Facts, next to the score
 # ---------------------------------------------------------------------------
 
-SAC_GRADE = {"strolling": "easy", "hiking": "easy",
-             "mountain_hiking": "moderate", "demanding_mountain_hiking": "moderate",
-             "alpine_hiking": "hard", "demanding_alpine_hiking": "hard",
-             "difficult_alpine_hiking": "hard"}
+# One table with the wire's grade (pipeline/grades.py, D24): T3 is hard here
+# as it is on the trail page, not moderate.
+SAC_GRADE = grades.SAC_GRADE
 SURFACE_FACT = {"sand": "sand", "pebble": "pebble", "gravel": "pebble",
                 "fineGravel": "pebble", "shingle": "pebble", "rock": "rock"}
 WAY_UP = {"cableCar": "lift", "gondola": "lift", "funicular": "lift",
           "rackRailway": "lift", "chairlift": "lift", "road": "drive"}
-MOUNTAIN_DIFFICULTY = {"walkUp": "easy", "hike": "easy", "mountainHike": "moderate",
-                       "scramble": "hard", "alpine": "hard"}
+MOUNTAIN_DIFFICULTY = grades.MOUNTAIN_DIFFICULTY
 
 
 def facts_of(kind, row, lab=None):
@@ -358,7 +358,10 @@ def facts_of(kind, row, lab=None):
         loop = (True if rt in ("loop", "figure8") else False if rt in ("point", "out_back")
                 else row.get("is_loop"))
         return {
-            "difficulty": SAC_GRADE.get((lab or {}).get("sac_worst")),
+            # The grade the traveller reads is f.g, the one the score used;
+            # the SAC word is only the fallback for a row without one.
+            "difficulty": ((row.get("f") or {}).get("g")
+                           or SAC_GRADE.get((lab or {}).get("sac_worst"))),
             "km": round(row["distance_m"] / 1000, 1) if row.get("distance_m") else None,
             "climb_m": row.get("ascent_m"),
             "hours": round(row["duration_min"] / 60, 1) if row.get("duration_min") else None,
@@ -596,11 +599,21 @@ def write_kind(kind, v5):
         changed = False
         for row in data.get(key) or []:
             v = v5.get(row.get("id"))
-            if v is None:
-                continue
-            new = public_v5(v)
-            if row.get("v5") != new:
-                row["v5"] = new
+            if v is not None:
+                new = public_v5(v)
+                if row.get("v5") != new:
+                    row["v5"] = new
+                    changed = True
+            # `o` is rebuilt on every write, not only when v5 moved: f.g, km
+            # or minutes can change under an unchanged score, and an `o` that
+            # disagrees with the row's own grade is the bug this block ends.
+            # Rows with no v5 get one too (grade, km, climb only).
+            o = outdoor_row(kind, row)
+            if o and row.get("o") != o:
+                row["o"] = o
+                changed = True
+            elif not o and "o" in row:
+                del row["o"]
                 changed = True
         if changed:
             write_json(path, data)

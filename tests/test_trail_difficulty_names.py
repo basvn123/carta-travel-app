@@ -68,8 +68,10 @@ def test_a_flat_286_km_path_reads_long_not_very_hard():
     assert src == "derived"
     assert parts["days"] == 14
     assert parts["effort"] == "moderate"
-    assert parts["terrain"] == "moderate"
-    assert parts["relief_capped"] == 102
+    # One 26% span on 10 m of climb per km is no terrain grade: both DEM terms
+    # must clear (D24), so the relief cap has nothing left to catch here.
+    assert parts["terrain"] == "easy"
+    assert "relief_capped" not in parts
     assert app_reads_long(grade, parts["days"])
     # The wire ships the days beside the grade.
     assert export_wire.days_of_trip(VELUWE) == 14
@@ -115,7 +117,7 @@ def test_a_steep_multi_day_route_is_graded_by_its_ground():
     # the published grade is the harder of the two. It does not read long.
     row = {"distance_m": 80000, "ascent_m": 10000, "descent_m": 10000,
            "elevation": {"status": "ok", "ele_min_m": 500, "ele_max_m": 2400,
-                         "max_grade_pct": 18.0}}
+                         "max_grade_pct": 24.0}}
     day = difficulty.day_effort(row)
     assert day["days"] >= 2 and day["grade"] == "moderate"
     grade, _src, parts = attributes.grade_of(row)
@@ -133,7 +135,7 @@ def test_terrain_still_wins_on_a_long_route():
 
 
 def test_relief_cap_only_touches_derived_terrain_on_low_ground():
-    low = {"distance_m": 10000, "ascent_m": 200,
+    low = {"distance_m": 10000, "ascent_m": 1900,
            "elevation": {"status": "ok", "ele_min_m": 0, "ele_max_m": 150,
                          "max_grade_pct": 35.0}}
     assert attributes.dem_grade(low)[0] == "moderate"

@@ -195,6 +195,8 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
       perSeat: round2(flightRt.perSeat), bags: round2(flightRt.bags), bagsKnown: flightRt.bagsKnown,
     } : null,
     flight_total:       round2(flightTotal),
+    // E1 (B-4): a plane total with no fare in it leaves the flight out; callers sort it after complete totals and keep it out of price bounds.
+    no_fare:            mode === 'plane' && planeGrand != null && !flightRt,
 
     // Airport->destination transfer (bus/shuttle), round-trip. 0 when you fly
     // straight in (no anchor). Included in the plane total.
@@ -218,7 +220,6 @@ export function quoteComposed(dest, departDate, returnDate, choices, allDests = 
     // v18 (T534): how the bed was found, measured | nearby | modelled.
     accom_level:        bedLine.quality,
     accom_source:       bedLine.provenance?.from || null,
-    accom_entire_home_night_eur: dest.accommodation?.beds?.bnb_home?.['4'] ?? null,
     accom_per_person:   round2(accomPerPerson),
     accom_total:        round2(accomTotal),
     // Stay tier actually priced ('home' when no tier chosen or none measured)

@@ -25,6 +25,8 @@ function world() {
   const w = resetWorld();
   w.users[ALICE] = { email: 'alice@example.test' };
   w.users[BOB] = { email: 'bob@example.test' };
+  // E10 (J-5): checkout builds its way back from the server's own origin and refuses without one.
+  w.env.APP_ORIGIN = 'https://www.carta-europetravel.com';
   return w;
 }
 
@@ -100,6 +102,37 @@ test('checkout: the pass is checked and sold to the token user, whatever user th
   assert.equal(create.args[0].client_reference_id, ALICE);
   assert.equal(create.args[0].metadata.user_id, ALICE);
   assert.ok(!JSON.stringify(w.log).includes(BOB), 'the body user id reached a call');
+});
+
+test('checkout: with no APP_ORIGIN and no CHECKOUT_*_URL it refuses, never guessing the host (E10 J-5)', async () => {
+  const handler = await loadEdge('checkout');
+  const w = world();
+  delete w.env.APP_ORIGIN;
+  w.env.STRIPE_PRICE_TRIP = 'price_trip';
+  w.rpc.pass_can_buy = { data: { ok: true }, error: null };
+  w.tables.entitlements = { data: null, error: null };
+  w.stripe['checkout.sessions.create'] = { url: 'https://checkout.stripe.test/s' };
+  const res = await handler(post({ tier: 'trip' }, { Authorization: `Bearer ${userToken(ALICE)}` }));
+  assert.equal(res.status, 503);
+  assert.equal((await res.json()).code, 'not_configured');
+  assert.ok(!w.log.some((e) => e.stripe === 'checkout.sessions.create'), 'no session was opened');
+});
+
+test('checkout: the way back is the allow-listed origin plus a same-origin returnTo (E10 J-5)', async () => {
+  const handler = await loadEdge('checkout');
+  const w = world();
+  w.env.STRIPE_PRICE_TRIP = 'price_trip';
+  w.rpc.pass_can_buy = { data: { ok: true }, error: null };
+  w.tables.entitlements = { data: null, error: null };
+  w.stripe['checkout.sessions.create'] = { url: 'https://checkout.stripe.test/s' };
+  const res = await handler(post({ tier: 'trip', returnTo: 'https://evil.example/x' }, { Authorization: `Bearer ${userToken(ALICE)}` }));
+  assert.equal(res.status, 200, await res.clone().text());
+  const s = w.log.find((e) => e.stripe === 'checkout.sessions.create').args[0];
+  assert.equal(s.success_url, 'https://www.carta-europetravel.com/?pass=ok');
+  const res2 = await handler(post({ tier: 'trip', returnTo: '/trip?id=3' }, { Authorization: `Bearer ${userToken(ALICE)}` }));
+  assert.equal(res2.status, 200);
+  const s2 = w.log.filter((e) => e.stripe === 'checkout.sessions.create')[1].args[0];
+  assert.equal(s2.cancel_url, 'https://www.carta-europetravel.com/trip?id=3&pass=cancel');
 });
 
 test('checkout: the Year Pass is a one-off payment, never a subscription (decision 0010, ROADMAP I-f)', async () => {

@@ -16,6 +16,7 @@
  */
 import { haversineKm, cityCoords } from '../lib/runtime_pricing.js';
 import { poiLabel } from '../lib/rating.js';
+import { cityFold } from '../lib/placeName.js';
 import RATING from '../../config/rating.json' with { type: 'json' };
 
 /** Reorders a day's assigned activity indices to minimize backtracking, a
@@ -911,16 +912,19 @@ export const DAY_STYLES = [
   },
 ];
 
+/** I-11: a POI named exactly like the town ("Paris", kind Square) is the town, not a stop. */
+export const isTownNamed = (item, town) => Boolean(town) && cityFold(item?.name) === cityFold(town);
+
 /**
  * Ranked candidate deck for the guided picker: the stops Carta would stand
  * behind for this style, best first. Only worthwhile places make the deck,  * rate-2+ sights, heritage sites, and (for active styles) matching outdoor
  * kinds, so the traveller is never asked to judge filler.
  */
-export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) {
+export function candidateDeck(items, interests, limit = 16, eligibleIdx = null, town = null) {
   const iset = interests instanceof Set ? interests : new Set(interests || []);
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
-      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item)
+      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item) && !isTownNamed(item, town)
       && (!eligibleIdx || eligibleIdx.has(idx)));
   // Worth-the-day score, independent of the chosen mood: sights ride the
   // composite poiScore (rate + heritage + Wikipedia presence/fame) with a
@@ -950,12 +954,12 @@ export function candidateDeck(items, interests, limit = 16, eligibleIdx = null) 
  * beaches and viewpoints, not just its towns. Near-duplicate entries (the same
  * place under two names) are folded out.
  */
-export function pickerDeck(items, interests, limit = 32, eligibleIdx = null) {
+export function pickerDeck(items, interests, limit = 32, eligibleIdx = null, town = null) {
   const iset = interests instanceof Set ? interests : new Set(interests || []);
   const suppressed = duplicatePoiIndices(items || []);
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
-      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item)
+      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item) && !isTownNamed(item, town)
       && !suppressed.has(idx)
       && (!eligibleIdx || eligibleIdx.has(idx)));
   // Category-agnostic quality on an absolute scale: sights and nature/active
@@ -1056,7 +1060,7 @@ const WALK_EST_MIN = 15; // rough inter-stop walking allowance while drafting
  * Days beyond the available material come back empty rather than padded with
  * filler, better an honest half-empty day 3 than three mediocre days.
  */
-export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMax, budgetMin, maxKmFromCentroid, eligibleIdx }) {
+export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMax, budgetMin, maxKmFromCentroid, eligibleIdx, town = null }) {
   const paceBase = PACES.find((p) => p.key === paceKey) || PACES[1];
   // Feasibility overrides (day length, walking appetite) win over the pace.
   const pace = {
@@ -1066,7 +1070,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
   const maxKm = maxKmFromCentroid || 3.5;
   const all = (items || []).map((item, idx) => ({ item, idx }))
     .filter(({ item, idx }) => item.lat != null && item.lon != null
-      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item)
+      && !isTransportInfraPoi(item) && !isCommercialNoisePoi(item) && !isTownNamed(item, town)
       && (!eligibleIdx || eligibleIdx.has(idx)));
 
   // Rank: interest-matching actives join the sights; direct interest matches

@@ -27,13 +27,14 @@
  * when the question named no place the vocabulary knows, on the words left
  * unknown, and takes a confident link alone. Without ctx.link nothing changes.
  */
+import { rule } from '../price/config.js';
 import {
   buildVocab, parseQuery, partsToFacets, budgetStep, words,
   VIBE_WORDS_I18N, STOP,
 } from '../guidedSearch.js';
 
 export const LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
-export const BUDGET_STEPS = [40, 60, 80, 100, 130];
+export const BUDGET_STEPS = rule('ask.budget_steps');
 
 // ---- Word lists (folded: lower case, no accents, apostrophes as spaces) ----
 

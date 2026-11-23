@@ -6,6 +6,15 @@ import { matchesAnyKind } from '../lib/trip_kinds.js';
 import { isFullRatingRange } from '../lib/rating.js';
 import { isBigPlace } from '../lib/placeSize.js';
 import { placeLinkingOn } from '../lib/linking/flag.js';
+import { isOn } from '../lib/flags.js';
+import { orderByTotal } from '../lib/price/gaps.js';
+
+// E1: the rows a price range is drawn from: those with their fare, unless that leaves none (no flights loaded).
+function boundsRows(rows) {
+  if (!isOn('E1')) return rows;
+  const priced = rows.filter((r) => !r.noFare);
+  return priced.length ? priced : rows;
+}
 
 // Accent- and case-insensitive text key, so "malaga" matches "Málaga".
 // The inputs of a hook that has never been enabled: nothing to price.
@@ -162,11 +171,13 @@ export function useDestinationSearch({
           // without a flight near the dates the total leaves it out, and the
           // card's title says so.
           flight: b.transport_mode === 'plane' ? b.flight : null,
+          // E1 (B-4): the plane total that leaves the fare out; sorted last, out of the price bounds and filter.
+          noFare: b.no_fare,
         });
       }
     }
-    const dedupedReach = dedupeGateways(reach);
-    dedupedReach.sort((a, b) => a.total - b.total);
+    // E1: complete totals first, cheapest first; a total without its fare after them, never the cheapest.
+    const dedupedReach = orderByTotal(dedupeGateways(reach), (r) => r.total);
     // Unreachable cities (e.g. London's four airports with no Ryanair route from
     // home) collapse the same way, they have no price, so the first gateway wins.
     const dedupedUnreach = dedupeGateways(unreach);
@@ -192,7 +203,7 @@ export function useDestinationSearch({
     // Single pass, not Math.min(...vals): spreading tens of thousands of values
     // as call arguments can overflow the argument limit and throw a RangeError.
     let mn = Infinity, mx = -Infinity;
-    for (const p of pricedAll) {
+    for (const p of boundsRows(pricedAll)) {
       const v = priceMode === 'pp' ? p.pp : p.total;
       if (v < mn) mn = v;
       if (v > mx) mx = v;
@@ -212,7 +223,7 @@ export function useDestinationSearch({
     const span = hi - lo;
     if (!(span > 0)) return null;
     const bins = new Array(PRICE_BINS).fill(0);
-    for (const p of pricedAll) {
+    for (const p of boundsRows(pricedAll)) {
       const v = priceMode === 'pp' ? p.pp : p.total;
       let i = Math.floor(((v - lo) / span) * PRICE_BINS);
       if (i < 0) i = 0;
@@ -284,7 +295,9 @@ export function useDestinationSearch({
       if (countryFilter.length && countryFilter.includes(p.iso2) === countryNot) return false;
       if (priceRange) {
         const v = priceMode === 'pp' ? p.pp : p.total;
-        if (v < priceRange[0] || v > priceRange[1]) return false;
+        // E1: a total without its fare has no price to filter on; it stays while the slider is at its full width.
+        const narrowed = priceBounds && (priceRange[0] > priceBounds[0] || priceRange[1] < priceBounds[1]);
+        if (p.noFare && isOn('E1')) { if (narrowed) return false; } else if (v < priceRange[0] || v > priceRange[1]) return false;
       }
       if (tripKinds.length > 0) {
         if (!matchesAnyKind(p.categories, tripKinds)) return false;
@@ -305,7 +318,7 @@ export function useDestinationSearch({
       }
       return true;
     });
-  }, [pricedAll, q, linkHits, countryFilter, countryNot, priceRange, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
+  }, [pricedAll, q, linkHits, countryFilter, countryNot, priceRange, priceBounds, priceMode, tripKinds, ratingActive, rLo, rHi, gemOnly, unescoOnly, topBeachOnly, bigOnly, reachActive, reachCutoffMin, reachMinutes]);
 
   // "Top picks" trims the filtered set to the N best by price or beauty. Applied
   // here (not just in the list) so the map and stats reflect the shortlist too.

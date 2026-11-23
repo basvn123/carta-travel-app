@@ -81,3 +81,27 @@ def test_report_runs_on_shipped_data():
     assert rep["meta"]["n_wires"] == len(fr.WIRES)
     shipped = [r for r in rep["wires"] if r["status"] != "missing_file"]
     assert shipped and all(r["built_at"] for r in shipped)
+
+
+def test_weekly_writers_of_the_master_stamp_it_so_the_16_day_age_rule_holds():
+    """Judge 1 fix 5 (D3, D12): the monthly rating run is not the only stamp. The
+    weekly tasks that write app_data (country_context, rating_v5_profile) set
+    meta.generated_at through build_stamp(), and a master they wrote passes the
+    hard `wire.generated_at_age_days` rule (max 16)."""
+    import importlib.util
+    for f in ("pipeline/country_context_layer.py", "pipeline/place_taste_profile.py"):
+        src = (ROOT / f).read_text(encoding="utf-8")
+        assert 'generated_at"] = build_stamp()' in src, f
+        assert src.index('generated_at"] = build_stamp()') < src.index("atomic_write_json(", src.index('generated_at"] = build_stamp()')), f
+    spec = importlib.util.spec_from_file_location("engine_t", ROOT / "scripts" / "quality" / "engine.py")
+    eng = importlib.util.module_from_spec(spec)
+    sys.modules["engine_t"] = eng
+    spec.loader.exec_module(eng)
+    from datetime import datetime, timedelta, timezone
+    from wire_stamp import build_stamp
+    now = datetime.now(timezone.utc)
+    week_old = build_stamp(now - timedelta(days=7))
+    rules = {c["check"]: c for c in eng.load_rules()["invariants"]}
+    age = eng._generated_at_age_days({"meta": {"generated_at": week_old}}, now)
+    assert age <= rules["generated_at_age_days"]["max"] == 16
+    assert eng._generated_at_age_days({"meta": {"generated_at": build_stamp(now - timedelta(days=30))}}, now) > 16

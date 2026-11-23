@@ -24,6 +24,7 @@
 import { foldName } from './searchIndex.js';
 import { formatMoney } from './money.js';
 import { quietFor } from './crowdMonth.js';
+import { resolveWhen } from './when.js';
 import { noCarOk } from './mobility.js';
 
 /** A vibe counts from the top tenth of its text scores (T439 maps them to
@@ -95,7 +96,8 @@ export function matchAll(p, f, ctx) {
   if (f.month && !monthOk(f.month)(p)) return false;
   if (f.budget && !underOk(f.budget)(p)) return false;
   if (f.nocar && !noCarOk(p)) return false;
-  if (f.quiet && !quietOk(p)) return false;
+  // E-12: the same month the list judges quiet by (ctx.when, else the example's own month).
+  if (f.quiet && !quietOk(p, ctx?.when ?? (f.month ? resolveWhen({ xm: f.month }) : null))) return false;
   return matchGuided(p, f, ctx);
 }
 

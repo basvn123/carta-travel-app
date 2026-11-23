@@ -47,6 +47,13 @@ export function cityKeyName(city) {
   return city.replace(/\s*\([^()]*\)\s*$/, '').trim();
 }
 
+/** A city folded for comparing two spellings: no trailing parenthetical, no
+ *  accents, lower case ("Heraklion (Crete)" and "heraklion", "Nîmes" and "Nimes"
+ *  are one place; "Nice" and "Venice" are not). H-11. */
+export function cityFold(city) {
+  return cityKeyName(String(city || '')).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().trim();
+}
+
 /** cityLabel for a destination row. */
 export function destCityLabel(dest) {
   return cityLabel(dest?.city);

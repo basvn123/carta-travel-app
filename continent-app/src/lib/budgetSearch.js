@@ -27,24 +27,30 @@ import { quoteTrip, MAX_PARTY } from './tripTotal.js';
 import { addDays } from './dates.js';
 import { roundTripNear } from './flights/flights.js';
 import { destAnchor } from './origins.js';
+import { rule } from './price/config.js';
+import { isOn } from './flags.js';
+import { standingOf } from './price/gaps.js';
 
-export const BUFFER_DEFAULT = 0.1;
-export const BUFFER_STEPS = [0, 0.05, 0.1, 0.15, 0.2];
-export const DAYS_MIN = 2;
-export const DAYS_MAX = 21;
-export const DAYS_DEFAULT = 5;
-export const ADULTS_DEFAULT = 2;
+// A-11 (RC16): the search's numbers live in config/pricing.json `budget.search`.
+const BUDGET = rule('budget.search');
+
+export const BUFFER_DEFAULT = BUDGET.buffer_default;
+export const BUFFER_STEPS = BUDGET.buffer_steps;
+export const DAYS_MIN = BUDGET.days_min;
+export const DAYS_MAX = BUDGET.days_max;
+export const DAYS_DEFAULT = BUDGET.days_default;
+export const ADULTS_DEFAULT = BUDGET.adults_default;
 /** How you get there: your own car, a train or a bus, or a flight (only
  *  'fly' is priced, T518, and only when the home airport's flights are loaded). */
 export const MODES = ['car', 'public', 'fly'];
 export const MODE_DEFAULT = 'public';
 /** "Just over": a place whose total is at most this share above the budget. */
-export const NEAR_OVER = 0.15;
+export const NEAR_OVER = BUDGET.near_over;
 /** The "with {price} more" figure rounds up to this many euros. */
-export const MORE_STEP = 50;
+export const MORE_STEP = BUDGET.more_step_eur;
 /** The lines the receipt names without an amount, in this order. */
 export const UNPRICED = ['there', 'local', 'tickets'];
-const BUDGET_MAX = 999999;
+const BUDGET_MAX = BUDGET.budget_max_eur;
 
 /**
  * A typed budget as whole euros, or null. Accepts "1500", "1.500", "1,500",
@@ -97,7 +103,7 @@ export function nextMonth(today = new Date()) {
  * Every input of a search, filled in and clamped. Only the budget has no
  * default; a query without one is not run.
  *   budget   whole euros for the whole group, everything Carta prices
- *   adults   12 and over; children 3 to 11 count half for beds and food
+ *   adults   12 and over; children 2 to 11 share the parents' room (up to 2 a room) and take a child's share of food (E3 owner default 4; a baby is under 2)
  *   days     trip days; nights = days - 1 (5 days is 4 nights)
  *   month    1 to 12
  *   mode     'car' | 'public' | 'fly', how they get there ('fly' is priced
@@ -179,9 +185,16 @@ export function priceForBudget(dest, q, opts = {}) {
       { paying: q.head, bagKey: opts.bagKey || 'priority_10kg' })
     : null;
   if (fly && !flight) return null;
+  // E1 (A-9): priced inside the whole catalogue when the caller hands it in
+  // (opts.destinations or opts.dests, one object so the country medians are worked out once),
+  // so a bed scraped out of bounds gets its country repair as it does on the
+  // place page; priced alone it had none and the place dropped out.
+  // The Ask context hands it in as `dests`, the tests as `destinations`.
+  const whole = opts.destinations || opts.dests;
+  const catalogue = isOn('E1') && whole?.[dest.id] ? whole : { [dest.id]: dest };
   const priced = quoteTrip(
     budgetTripState(dest.id, q, opts),
-    { data: { destinations: { [dest.id]: dest } } },
+    { data: { destinations: catalogue } },
   );
   const stay = priced.stayCosts[0];
   if (!stay?.accom || !stay?.ground) return null;
@@ -219,9 +232,10 @@ export function priceForBudget(dest, q, opts = {}) {
 
 /** Fits, tight or over, and what is left. */
 export function verdictOf(p, budget) {
-  if (p.total <= budget) return { group: 'fits', left: budget - p.total };
-  if (p.buffer > 0 && p.core <= budget) return { group: 'tight', left: budget - p.core };
-  return { group: 'over', left: budget - p.total };
+  // gaps.js decides fits, tight and over (E1); a search total is complete for what it prices.
+  const { state } = standingOf({ eur: p.total, core: p.core, complete: true }, budget);
+  if (state === 'tight') return { group: state, left: budget - p.core };
+  return { group: state === 'fits' ? state : 'over', left: budget - p.total };
 }
 
 const inMonth = (dest, month) => (dest?.climate?.best || []).includes(month);
@@ -235,6 +249,10 @@ const inMonth = (dest, month) => (dest?.climate?.best || []).includes(month);
 export function budgetSearch(dests, query, opts = {}, today = new Date()) {
   const q = query?.head ? query : normalizeQuery(query, today);
   const out = { query: q, fits: [], tight: [], over: { count: 0, more: 0 }, priced: 0 };
+  // E1 (A-10, owner default 1): a total that leaves getting there out says so.
+  // 'counted' when the search priced the flight, else 'before'; the screen
+  // words every fits, tight and over line "before getting there" for the latter.
+  if (isOn('E1')) out.there = fliesPriced(q, opts) ? 'counted' : 'before';
   if (!q.budget) return out;
   let worstNear = 0;
   for (const dest of dests || []) {

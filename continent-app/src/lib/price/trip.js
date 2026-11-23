@@ -29,10 +29,12 @@ import { accessCost, homeCandidates } from '../airportReach.js';
 import { pickLeg, legCost, fitsHours, fitsPrefs } from '../flights/flights.js';
 import { addDays } from '../dates.js';
 import { round2 } from '../math.js';
-import { ticketShare, BABY_LAP_FEE_LEG } from '../party.js';
+import { ticketShare, carsOf, partyOf, BABY_LAP_FEE_LEG } from '../party.js';
+import { isOn } from '../flags.js';
 import { rule } from './config.js';
 import { carHire, carLocalCost, carModelOf } from './car.js';
 import { tripRequest, quoteStay } from './stay.js';
+import { sumParts } from './gaps.js';
 
 const CAR = rule('car.model');   // T691: the one car model's fallbacks
 
@@ -142,9 +144,16 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   // babies 0 to 2 sit on a lap. Cars are priced per car and need a seat for
   // everyone. `groupSize` (the seats Carta prices beds and legs for) is
   // adults plus children.
-  const adults = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
-  const children = Math.max(0, Math.min(MAX_PARTY - adults, Math.round(state?.children || 0)));
-  const babies = Math.max(0, Math.min(MAX_PARTY - adults - children, Math.round(state?.babies || 0)));
+  // The planner's counts go through partyOf, the one normaliser (E2): adults and children come out as they
+  // went in (they are clamped to the seats first, so partyOf keeps them), the baby cap is its limit.
+  const adultsIn = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
+  const childrenIn = Math.max(0, Math.min(MAX_PARTY - adultsIn, Math.round(state?.children || 0)));
+  const norm = partyOf({ group_size: adultsIn + childrenIn, children: childrenIn, babies: state?.babies });
+  const adults = norm.adults;
+  const children = norm.children;
+  // E2 (G-9): the baby cap is config party.limits max_babies, the one every screen reads; before, the room left in the party.
+  const babyRoom = MAX_PARTY - adults - children;
+  const babies = isOn('E2') ? Math.max(0, Math.min(norm.babies, babyRoom)) : Math.max(0, Math.min(babyRoom, Math.round(state?.babies || 0)));
   const groupSize = adults + children;
   const seats = groupSize + babies;
   const party = { adults, children, babies, seats: groupSize };
@@ -426,7 +435,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     const fuelByIso = carModel?.fuel_price_by_iso2 || {};
     const petrol = fuelByIso[iso2] ?? carModel?.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
     const consumption = carModel?.consumption_l_per_100km ?? CAR.consumption_l_per_100km;
-    const capacity = carModel?.car_capacity ?? 4;
+    const capacity = carModel?.car_capacity ?? CAR.car_capacity;
     const hasRental = transportPref === 'car';
     const kmOf = (eurPp, minutes) => (minutes > 0 ? (minutes / 60) * 42 : Math.max(1, (eurPp || 0) / 0.15));
     const legOf = (eurPp, minutes) => (eurPp > 0
@@ -533,7 +542,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     }
     const items = [...isoSet].filter((iso) => prices[iso] != null).map((iso) => ({ iso2: iso, eur: prices[iso] }));
     if (items.length) {
-      const cars = Math.max(1, Math.ceil(seats / Math.max(1, carModel?.car_capacity || CAR.car_capacity)));
+      const cars = carsOf(seats, carModel?.car_capacity);
       vignettes = { items, cars, eur_total: round2(items.reduce((n, v) => n + v.eur, 0) * cars) };
     }
   }
@@ -589,6 +598,20 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   };
   const grandTotal = round2(Object.values(parts).reduce((n, v) => n + v, 0));
 
+  // E1 (price/gaps.js): what the total leaves out. A stop with nights and no
+  // bed (or food) price adds 0 to the parts above, so it is named here and
+  // never read as complete. A bed the traveller typed is a price. The way
+  // there and home keep their own states (costTiles `missing`, tripLines).
+  const { leftOut: missing } = sumParts(stopDetails.flatMap((s, i) => {
+    if (!s.dest || !(s.nights > 0)) return [];
+    const c = stayCosts[i];
+    if (!c) return [{ kind: 'bed', stop: i, eur: null }, { kind: 'food', stop: i, eur: null }];
+    return [
+      { kind: 'bed', stop: i, eur: c.ownAccom || !c.accomMissing ? 0 : null },
+      { kind: 'food', stop: i, eur: c.groundMissing ? null : 0 },
+    ];
+  }));
+
   // The way there and the way home, apart (T432 critique: a fare typed one
   // way made "there and home" read as settled while the way back was not in
   // the total). An older record holds one figure for the pair: `legacy`.
@@ -602,7 +625,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   return {
     stopDetails, plannedNights, windowNights: tripDaysBetween(state?.tripStart, state?.tripEnd),
     routedFlight, flight, cartaFlight, legs, anchorLegs, flightTransfer, driveLegs, carRental, carLocal, vignettes,
-    stayCosts, tripHasCar, groupSize, parts, grandTotal, travelSplit, dayTrips,
+    stayCosts, tripHasCar, groupSize, parts, grandTotal, missing, complete: missing.length === 0, travelSplit, dayTrips,
     party: { adults, children, babies, head: groupSize, seats, weight },
     request,
     perPerson: round2(grandTotal / groupSize),

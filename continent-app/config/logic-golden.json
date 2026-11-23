@@ -1,0 +1,12 @@
+{
+  "_about": "Thresholds of the logic engines' golden harness (G1, ROADMAP G4; scripts/eval/adapters/logic-engines.mjs). Only cases marked expect 'current' are gated; 'target' cases are the gap an engine wave closes and are reported. Edit the bar here, not in the code.",
+  "version": 1,
+  "gate": {
+    "current_pass_min": 1,
+    "worst_slice_current_pass_min": 1,
+    "rank_mean_p_at_k_min": 0.3
+  },
+  "report": {
+    "errors_sample": 50
+  }
+}

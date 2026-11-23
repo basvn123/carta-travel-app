@@ -40,6 +40,7 @@ from pathlib import Path
 
 import beauty_layer
 from pipeline_io import atomic_write_json
+from wire_stamp import build_stamp
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -200,6 +201,9 @@ def main():
         raise SystemExit(f"countries badged below min({MIN_BADGED}, held): {thin}")
 
     data["meta"]["country_context_model"] = COUNTRY_CONTEXT_MODEL
+    # A weekly writer of the master stamps it: the age rule is 16 days and the
+    # monthly rating run alone would leave it stale from day 17 (D3, D12).
+    data["meta"]["generated_at"] = build_stamp()
     atomic_write_json(master, data)
     print(f"{master.name}: context on {len(ctx)} dests, "
           f"{sum(badged.values())} badges across {len(badged)} countries, "
@@ -214,6 +218,7 @@ def main():
             d.update(ctx[did])
             n += 1
     served["meta"]["country_context_model"] = COUNTRY_CONTEXT_MODEL
+    served["meta"]["generated_at"] = data["meta"]["generated_at"]
     atomic_write_json(served_path, served, indent=None, separators=(",", ":"))
     print(f"{served_path.name}: mirrored context onto {n} dests")
 

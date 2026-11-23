@@ -40,13 +40,52 @@
       "test": "tests/stayPrice.test.mjs"
     },
     "stay.dorm_child_weight": {
+      "value": 1,
+      "unit": "beds per child",
+      "kind": "estimate",
+      "source": "Owner default 4 (2026-11-23, E3): a child in a dorm gets one bed; read when flag E3 is new",
+      "date": "2026-11-23",
+      "review": "2027-04-24",
+      "test": "tests/stayLadder.test.mjs"
+    },
+    "stay.dorm_child_weight_before_e3": {
       "value": 0.5,
       "unit": "beds per child",
       "kind": "estimate",
-      "source": "Carta rule: two children share a dorm bed (T534)",
+      "source": "Carta rule: two children share a dorm bed (T534); read while flag E3 is old, deleted with the old path when E3 is flipped for good",
       "date": "2026-10-21",
       "review": "2027-04-24",
-      "test": "tests/priceEngine.test.mjs"
+      "test": "tests/stayLadder.test.mjs"
+    },
+    "stay.room_occupancy": {
+      "value": {
+        "adults": 2,
+        "children": 2
+      },
+      "unit": "people per room: adults, and children on top of them",
+      "kind": "estimate",
+      "source": "Owner default 4 (2026-11-23, E3): children share the parents room, up to 2 children a room; so 2 adults and 1 child book one room",
+      "date": "2026-11-23",
+      "review": "2027-04-24",
+      "test": "tests/stayLadder.test.mjs"
+    },
+    "stay.fallback_order": {
+      "value": {
+        "dorm": ["dorm", "private", "hotel2", "hotel3", "home"],
+        "private": ["private", "hotel2", "hotel3", "home"],
+        "room": ["room", "private", "hotel2", "hotel3", "home"],
+        "hotel2": ["hotel2", "hotel3", "private", "home"],
+        "hotel3": ["hotel3", "hotel2", "hotel4", "home"],
+        "hotel4": ["hotel4", "hotel5", "hotel3", "hotel2"],
+        "hotel5": ["hotel5", "hotel4", "hotel3"],
+        "home": ["home", "hotel3", "hotel4", "hotel2", "hotel5"]
+      },
+      "unit": "tiers, first offered wins",
+      "kind": "estimate",
+      "source": "Owner default 3 (2026-11-23, E3): a cheap request falls dorm, private room, 2-star, 3-star and an entire place only last, labelled; a dear request falls 5-star, 4-star, 3-star. Read when flag E3 is new",
+      "date": "2026-11-23",
+      "review": "2027-04-24",
+      "test": "tests/stayLadder.test.mjs"
     },
     "stay.thin_obs": {
       "value": 2,
@@ -365,11 +404,15 @@
       "value": {
         "default_seats": 2,
         "max_seats": 20,
-        "max_babies": 4
+        "max_babies": 4,
+        "baby_under_age": 2,
+        "child_under_age": 12,
+        "teen_under_age": 18,
+        "friends_max_adults": 5
       },
-      "unit": "people",
+      "unit": "people; ages in years; friends_max_adults: adults of a party still read as friends, above it a group",
       "kind": "estimate",
-      "source": "One cap for every screen (T691): before 12 (settings line, price cards), 20 (planner, share links, AI day plan) and 99 (party.js); babies 4 (settings line) and 19 (share links)",
+      "source": "One cap for every screen (T691): before 12 (settings line, price cards), 20 (planner, share links, AI day plan) and 99 (party.js); babies 4 (settings line) and 19 (share links). Owner default 2 (2026-11-23, E2): baby under 2, child 2 to 11, teen 12 to 17, priced as an adult; friends_max_adults is the old kindOfCounts cut of five",
       "date": "2026-10-24",
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"
@@ -1427,6 +1470,73 @@
       "date": "2026-11-12",
       "review": "2027-05-12",
       "test": "tests/footprint.test.mjs"
+    },
+    "budget.search": {
+      "value": {
+        "buffer_default": 0.1,
+        "buffer_steps": [0, 0.05, 0.1, 0.15, 0.2],
+        "days_min": 2,
+        "days_max": 21,
+        "days_default": 5,
+        "adults_default": 2,
+        "near_over": 0.15,
+        "more_step_eur": 50,
+        "budget_max_eur": 999999
+      },
+      "unit": "share, days, people, EUR",
+      "kind": "estimate",
+      "source": "The budget search's own inputs (T518, ROADMAP A-11 / RC16): a buffer of 10 percent on the priced parts in steps up to 20, 2 to 21 days (5 default), 2 adults, a place is 'just over' up to 15 percent above the budget, the 'with more' figure rounds up to 50 EUR, a typed budget caps at 999,999. They were constants in lib/budgetSearch.js; now here so the one guard (tests/priceConfig.test.mjs) covers all of lib/",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/budgetSearch.test.mjs"
+    },
+    "transport.value_of_time": {
+      "value": 6,
+      "unit": "EUR per hour",
+      "kind": "estimate",
+      "source": "What an hour of a traveller's time is worth when the way there is picked by price plus time (lib/transport.js, T690 follow-up RC16): 6 EUR; it was a constant in transport.js, moved here by logic wave 0b so the one guard covers lib/",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/priceConfig.test.mjs"
+    },
+    "alerts.drop_min_eur": {
+      "value": 5,
+      "unit": "EUR",
+      "kind": "estimate",
+      "source": "The smallest fall in a saved price worth telling the traveller about (lib/priceDrop.js, with a share floor of 10 percent; the notify function keeps its own copy, tests/notify.test.mjs pins them equal)",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/priceConfig.test.mjs"
+    },
+    "trips.plan_nudge_min_eur": {
+      "value": 1,
+      "unit": "EUR",
+      "kind": "estimate",
+      "source": "The smallest gap between a planned bed price and a booked one that My trips mentions (lib/myTrips.js planBedNudge)",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/priceConfig.test.mjs"
+    },
+    "ask.budget_steps": {
+      "value": [40, 60, 80, 100, 130],
+      "unit": "EUR per day",
+      "kind": "estimate",
+      "source": "The day budgets Ask offers when a question names none (lib/ask/intent.js)",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/priceConfig.test.mjs"
+    },
+    "months.price_band": {
+      "value": {
+        "cheap_below": 0.92,
+        "dear_above": 1.08
+      },
+      "unit": "ratio to the year's mean",
+      "kind": "estimate",
+      "source": "A month this far under the year's mean price reads cheap, this far over reads dear (lib/priceMonths.js)",
+      "date": "2026-11-23",
+      "review": "2027-05-23",
+      "test": "tests/priceConfig.test.mjs"
     }
   }
 }

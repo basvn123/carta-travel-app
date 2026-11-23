@@ -383,3 +383,15 @@ export function minVerdict(verdicts) {
   }
   return low;
 }
+
+/**
+ * E-6: the one rating order. Score, best first; places with the same score go
+ * by fame (the more visited first), then by id, so a tie never follows the
+ * country file's order. E6's ranker puts the match score in front of this.
+ */
+export function byRating(a, b) {
+  const score = (p) => p?.rating?.score ?? p?.beauty?.score ?? 0;
+  return (score(b) - score(a))
+    || ((b?.rating?.fame ?? 0) - (a?.rating?.fame ?? 0))
+    || String(a?.id ?? '').localeCompare(String(b?.id ?? ''));
+}

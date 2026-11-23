@@ -13,10 +13,11 @@ test('trackFunnel never throws, ignores unknown steps and null', () => {
   trackFunnel(null);
   trackFunnel('nonsense');
   trackFunnel('shared');
-  assert.equal(FUNNEL_STEPS.length, 6);
+  assert.equal(FUNNEL_STEPS.length, 8);
+  assert.deepEqual(FUNNEL_STEPS.slice(6), ['ask_answer', 'ask_to_plan']); // REQ-ai-1
 });
 
-test('admin view: all six steps in order, shares against the first, weeks newest first', () => {
+test('admin view: all eight steps in order, shares against the first, weeks newest first', () => {
   const v = funnelWeeksView({ weeks: [
     { week: '2026-10-26', steps: [{ step: 'explore_opened', n: 1 }] },
     { week: '2026-11-02', steps: [{ step: 'trip_saved', n: 2 }, { step: 'explore_opened', n: 8 }, { step: 'place_opened', n: 4 }] },

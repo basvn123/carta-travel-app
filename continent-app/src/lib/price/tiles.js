@@ -5,6 +5,9 @@
 // no price yet says so (`missing`), and a tile with nothing in it says it is
 // not needed rather than showing €0 as a price.
 
+import { isOn } from '../flags.js';
+import { leftOutOf } from './gaps.js';
+
 const r2 = (n) => Math.round(n * 100) / 100;
 
 /**
@@ -38,10 +41,15 @@ export function costTiles(priced) {
   const travel = tile('travel', travelParts);
   travel.missing = wayMissing('out') || wayMissing('back');
   travel.empty = travel.eur <= 0 && !travel.missing;
+  // E1: the stay tile keeps its figure and names the stops with no bed price
+  // (`leftOut`, city names), so a partial stay never reads as the whole stay.
+  const stay = tile('stay', ['beds']);
+  const noBed = isOn('E1') ? leftOutOf(priced.missing, 'bed') : [];
+  stay.leftOut = noBed.map((m) => priced.stopDetails?.[m.stop]?.dest?.city).filter(Boolean);
   return [
     travel,
     tile('around', aroundParts),
-    tile('stay', ['beds']),
+    stay,
     tile('food', ['days']),
   ];
 }
@@ -50,7 +58,7 @@ export function costTiles(priced) {
 export function tileOfLine(lineKey, driving = false) {
   if (lineKey === 'out' || lineKey === 'back' || lineKey === 'travel' || lineKey === 'airport') return 'travel';
   if (lineKey === 'drive') return driving ? 'travel' : 'around';
-  if (lineKey === 'beds') return 'stay';
+  if (lineKey === 'beds' || lineKey === 'bedsMissing') return 'stay';
   if (lineKey === 'days') return 'food';
   return 'around';
 }

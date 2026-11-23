@@ -1,6 +1,6 @@
 import React from 'react';
 import { resolveWhen } from '../../lib/when.js';
-import { bandAtLeast } from '../../lib/rating.js';
+import { bandAtLeast, byRating } from '../../lib/rating.js';
 import { interleaveByCountry } from '../ExploreRails.jsx';
 import { vibeOf } from '../../lib/guidedData.js';
 import { noCarOk, quietOk, underOk } from '../../lib/guidedSearch.js';
@@ -42,7 +42,6 @@ export function useExploreRails({
     const inSeason = (p) => (p.climate?.best || []).includes(month);
     // T649: the same tier the Crowds stat shows, in the month the rail names.
     const railWhen = resolveWhen({ xm: month });
-    const byRating = (a, b) => (b.rating?.score || 0) - (a.rating?.score || 0);
     const ids = rows.map((p) => p.id).join(',');
     const prev = railLists.current;
     if (prev.ids !== ids || prev.guided !== guided || prev.month !== month) {

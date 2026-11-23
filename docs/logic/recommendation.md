@@ -308,6 +308,11 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Test: `continent-app/tests/doors.test.mjs` :: "Find my flight first is narrowed by the answers: a named country, the budget"
 - Test: `continent-app/tests/doors.test.mjs` :: "I know where: the named towns are the route, in the order named, the nights split"
 
+### REC-039 For you is offered only where it can score
+- Decides: when the Explore sort and the filter sheet list "For you".
+- Rule: only for a taste with a like, a size other than mix, or a quiet answer (`forYouOffered`, owner default 10, E-10). A party, a lifestyle or no car alone cannot move the order, so the sort is not offered. Equal ratings sort by fame, then id (`byRating`, E-6). The finder's memo key holds every settings field the build reads (`FINDER_INPUTS`, H-3); ready trips fold into one card only when shape, way and cities match (`variantKey`, H-14); with flights booked the whole-trip-or-flights-first question is not asked (H-9).
+- Test: `continent-app/tests/quickWins0b.test.mjs` :: "E-10: For you is offered only to a taste the match can score"
+
 ## Rules with no test
 
 REC-007, REC-008, REC-010

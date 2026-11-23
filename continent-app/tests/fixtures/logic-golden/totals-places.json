@@ -1,0 +1,21 @@
+{
+  "_about": "Synthetic catalogue for the E1 totals golden set (totals.json) and the persona view. A place with bed false has no bed price at all (never repaired: owner T1021); REUS has a scraped bed above the 400 a night bound, which only a catalogue's country median can repair (A-9).",
+  "places": {
+    "BCN": { "iso": "ES", "night": 55, "meal": 16 },
+    "PALMA": { "iso": "ES", "night": 70, "meal": 18 },
+    "REUS": { "iso": "ES", "night": 900, "meal": 14 },
+    "NOBED": { "iso": "ES", "bed": false, "meal": 14 },
+    "P": { "iso": "ES", "night": 60 },
+    "Q": { "iso": "ES", "night": 50 },
+    "R": { "iso": "ES", "night": 45 },
+    "LISB": { "iso": "PT", "night": 50, "meal": 14 },
+    "NOFOOD": { "iso": "PT", "night": 50, "food": false },
+    "CHEAP": { "iso": "IT", "night": 22, "meal": 9 },
+    "MID": { "iso": "IT", "night": 45, "meal": 15 },
+    "DEAR": { "iso": "IT", "night": 120, "meal": 30 }
+  },
+  "baskets": {
+    "complete": { "meal_mid_eur": 20, "meal_cheap_eur": 10, "fastfood_eur": 8, "drink_out_eur": 5, "coffee_eur": 2, "grocery_day_eur": 11, "club_entry_eur": 10, "cocktail_eur": 9 },
+    "noFastfood": { "meal_mid_eur": 20, "meal_cheap_eur": 10, "fastfood_eur": null, "drink_out_eur": 5, "coffee_eur": 2, "grocery_day_eur": 11, "club_entry_eur": 10, "cocktail_eur": 9 }
+  }
+}

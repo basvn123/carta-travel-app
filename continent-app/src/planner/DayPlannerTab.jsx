@@ -886,7 +886,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   const mapDeck = useMemo(
     () => (stop?.dest
-      ? pickerDeck(activities.items, [], 48, activities.walkable)
+      ? pickerDeck(activities.items, [], 48, activities.walkable, stop.dest?.city)
         .filter(({ idx }) => !assignedAnyDay.has(idx))
       : []),
     [activities, stop, assignedAnyDay],
@@ -1000,6 +1000,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
       walkable,
       excludeIdx: usedOtherDays,
       interests: style.interests,
+      town: stop.dest?.city,
     });
     if (candidates.length < 3) return { ok: false, code: 'too_few' };
     const centre = cityCoords(stop.dest);

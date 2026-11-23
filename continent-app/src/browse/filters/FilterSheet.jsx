@@ -6,7 +6,7 @@ import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { useDialogExit } from '../../lib/motion.js';
 import { formatMoney } from '../../lib/money.js';
 import { useFirstRun } from '../../lib/firstRunContext.js';
-import { isEmptyTaste } from '../../lib/taste.js';
+import { forYouOffered, isEmptyTaste } from '../../lib/taste.js';
 import {
   BUDGET_STEPS, GROUP_PICKS, MATCH_MIN, PICKS, SCORE_STEPS, TEMP_BANDS, bandLabel, parsePicks, sortOptionsFor, sortShown,
 } from './filterModel.js';
@@ -310,7 +310,8 @@ export function FilterGroups({ f, t }) {
   // one, For you leads the choices.
   const tasteRaw = useFirstRun()?.choices?.taste;
   const hasTaste = !!tasteRaw && !isEmptyTaste(tasteRaw);
-  const sortValue = sortShown(f.sortKey, hasTaste);
+  const canForYou = forYouOffered(tasteRaw); // E-10
+  const sortValue = sortShown(f.sortKey, canForYou);
 
   return (
     <div className="flt-body">
@@ -411,7 +412,7 @@ export function FilterGroups({ f, t }) {
                 segment: the choices (For you first) wrap in
                 every language at 360 px. */}
             <ChipGroup label={t('filters.sort')} className="flt-chips flt-sort">
-              {sortOptionsFor(hasTaste).map((o) => (
+              {sortOptionsFor(canForYou).map((o) => (
                 <Chip key={o.key} kind="choice" selected={sortValue === o.key} onClick={() => f.setSortKey(o.key)} className="flt-chip">
                   {t(o.labelKey, o.args)}
                 </Chip>

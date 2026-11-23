@@ -35,18 +35,39 @@ export function warmCache(sw = globalThis.navigator?.serviceWorker) {
   }).catch(() => false);
 }
 
+/**
+ * J-15: a reload that waits. `arm()` after a new worker took over; the page then
+ * reloads on the next popstate (back or forward) or when the tab goes hidden,
+ * once. Without `arm()` nothing happens. Takes the window and document so a
+ * test can pass its own.
+ */
+export function reloadOnNextNavigation(win = globalThis.window, doc = globalThis.document) {
+  let armed = false;
+  let done = false;
+  const go = () => {
+    if (!armed || done) return;
+    done = true;
+    win.location.reload();
+  };
+  win.addEventListener('popstate', go);
+  doc.addEventListener('visibilitychange', () => { if (doc.visibilityState === 'hidden') go(); });
+  return { arm() { armed = true; } };
+}
+
 export function registerServiceWorker({ prod = import.meta.env.PROD } = {}) {
   if (typeof navigator === 'undefined' || !('serviceWorker' in navigator) || !prod) return;
   // A new worker (skipWaiting + clients.claim in sw.js) takes the page over
   // while it is open; one reload then serves everything from the new cache.
   // Only when a controller is being REPLACED: the first install of all has
   // no previous controller and must not reload the page it just loaded.
-  let reloading = false;
+  // J-15: not at once. The page used to reload the moment control changed
+  // hands, in the middle of a form or a trip the traveller was editing. It now
+  // waits for the next navigation: the back or forward button, or the tab
+  // being left (hidden), whichever comes first.
+  const reload = reloadOnNextNavigation();
   const hadController = Boolean(navigator.serviceWorker.controller);
   navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!hadController || reloading) return;
-    reloading = true;
-    window.location.reload();
+    if (hadController) reload.arm();
   });
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js')

@@ -35,7 +35,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-004 Party limits and seats
 - Decides: how many people a price can hold and who takes a seat.
-- Rule: seats = adults + children (at least 1); babies sit on a lap, take no seat and no bed. App party (`partyOf`): seats default 2, clamped 1 to 20; children 0 to seats minus 1; babies 0 to 4. Planner (`quoteTrip`, `tripRequest`): adults 1 to 20, children and babies clamped to the seats left under 20.
+- Rule: seats = adults + children (at least 1); babies sit on a lap, take no seat and no bed. App party (`partyOf`, E2: also teens, paying, carSeats, cars, kind, limits): seats default 2, clamped 1 to 20; children 0 to seats minus 1; babies 0 to 4 on every screen (flag E2; before, the planner, the style and the address took more). A baby takes a car seat (carSeats = seats + babies, cars = carSeats over `car.model car_capacity`, `carsFor`/`carsOf`), so 4 adults and a baby are two cars everywhere (flag E2 for Explore and Places). Teens 12 to 17 are priced as adults and keep kind family (`partyFromAges`); the day budget divides by adults and children (flag E2). Planner (`quoteTrip`, `tripRequest`): adults 1 to 20, children and babies clamped to the seats left under 20.
 - Constant: `party.limits` in `continent-app/config/pricing.json:349` = { default_seats: 2, max_seats: 20, max_babies: 4 }
 - Constant: `partyOf` in `continent-app/src/lib/party.js:28`; `seatsOf` in `continent-app/src/lib/price/request.js:133`; `MAX_PARTY` in `continent-app/src/lib/price/trip.js` (from `party.limits.max_seats`)
 - Test: `continent-app/tests/priceConfig.test.mjs` :: "T691: one group cap and one baby cap"
@@ -74,9 +74,9 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-009 Bed units for the party
 - Decides: how many beds, rooms or places a party books.
-- Rule: dorm: one bed a sleeper, a child weighs 0.5 bed (adults + ceil(children x 0.5)); rooms (private, room, hotels): ceil(people / 2); entire place: the smallest measured place in caps 2, 4, 6, 8 that sleeps the group, else the largest, booked ceil(people / cap) times. One traveller in a hotel pays base x min(1, single.hotel) where a single-room ratio was measured.
+- Rule: dorm: one bed a sleeper, a child weighs 0.5 bed (adults + ceil(children x 0.5)); with flag E3 a child has a bed of its own (`stay.dorm_child_weight` = 1); rooms (private, room, hotels): ceil(people / 2), with E3 `roomsFor`: max(ceil(adults / 2), ceil(children / 2)) from `stay.room_occupancy`, so 2 + 1 is one room; a tier the town lacks falls down `stay.fallback_order` (E3, `pickTier`), the entire place last and labelled; entire place: the smallest measured place in caps 2, 4, 6, 8 that sleeps the group, else the largest, booked ceil(people / cap) times. One traveller in a hotel pays base x min(1, single.hotel) where a single-room ratio was measured.
 - Constant: `stay.people_per_room` in `continent-app/config/pricing.json:33` = 2
-- Constant: `stay.dorm_child_weight` in `continent-app/config/pricing.json:42` = 0.5
+- Constant: `stay.dorm_child_weight` in `continent-app/config/pricing.json` = 1 (E3); `stay.dorm_child_weight_before_e3` = 0.5 (old path); `stay.room_occupancy` = { adults: 2, children: 2 }; `stay.fallback_order` (a ladder per tier asked)
 - Constant: `stay.home_caps` in `continent-app/config/pricing.json:19` = [2, 4, 6, 8]
 - Constant: `nightFor`, `homeBucket` in `continent-app/src/lib/stayPrice.js:138`, `:88`
 - Test: `continent-app/tests/stayPrice.test.mjs` :: "rooms are sized to the party; a dorm is per bed; a solo hotel guest gets the single rate"
@@ -94,7 +94,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-011 Entire-place fees
 - Decides: an entire place carries cleaning and service fees and a weekly discount; a hotel does not.
-- Rule: for tier home and nights above 0: 7 nights or more take 8% off the lodging; cleaning = 0.5 x one annual night for the party's size; service = 14% x (lodging + cleaning). A `fees` argument overrides the defaults key by key. Per person per night = total / heads / nights.
+- Rule: for tier home and nights above 0: 7 nights or more take 8% off the lodging; cleaning = 0.5 x one annual night for the party's size, with flag E3 for every place booked (A-3); service = 14% x (lodging + cleaning). A `fees` argument overrides the defaults key by key. Per person per night = total / heads / nights.
 - Constant: `stay.fees` in `continent-app/config/pricing.json:5` = { service_fee_pct: 14, cleaning_fee_frac_of_night: 0.5, weekly_discount_pct: 8, min_nights_for_weekly: 7 }
 - Constant: `DEFAULT_FEES`, `bedPrice` in `continent-app/src/lib/stayPrice.js:47`, `:197`
 - Test: `continent-app/tests/stayPrice.test.mjs` :: "an entire place is sized to the group and carries Airbnb's fees; a hotel does not"
@@ -396,6 +396,17 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Constant: `bagTier` in `continent-app/src/lib/flights/bagFees.js:33`
 - Constant: `sanitizeShared` baggage in `continent-app/src/lib/shareLink.js:178`
 - Test: `continent-app/tests/travelStyles.test.mjs` :: "the bag survives every hand-over: finder answer key, card, trip page, share link"
+
+### PRICE-048 No number outside config in lib/
+- Decides: where a number that is not a plain limit may live.
+- Rule: a top-level numeric constant in any file of `continent-app/src/lib/` fails the guard unless it is in `config/pricing.json` or listed with a reason in `continent-app/tests/fixtures/libNumberAllowlist.json` (RC16). The budget search's own numbers (buffer, days, adults, near-over, round-up step, budget cap) are `budget.search` in `config/pricing.json` (A-11); so are the value of time (`transport.value_of_time`), the price-drop floor (`alerts.drop_min_eur`), the bed nudge floor (`trips.plan_nudge_min_eur`), Ask's budget steps (`ask.budget_steps`) and the cheap and dear month band (`months.price_band`). A number on the allowlist that behaves like a rule is tagged under `ruleNumbers` with the engine wave that moves it to config. A negative or rounded-away amount never prints "-€0" (A-18), and the receipt's whole-euro lines plus its Rounding line equal the printed total (`receiptRounding`, A-8).
+- Test: `continent-app/tests/priceConfig.test.mjs` :: "RC16: no number outside config anywhere in lib/ unless the allowlist says why"
+
+### PRICE-049 One missing-value rule for money (E1)
+- Decides: what a total, a "fits" and a price sort do when a part has no price.
+- Rule: a null is never 0 in a sum; the chain (typed, measured, country repair, typical fare) is walked first and nothing is invented below it; when it ends empty the total is partial and names what it leaves out (`sumParts`, `quoteTrip().missing`). A partial total is never "fits" or "under budget" (`budgetStanding`, `standingOf`), sorts after complete totals (`comparePartialLast`, `orderByTotal`) and stays out of price bounds, the histogram and the price filter; over budget it stays over, with its over-by figure. A day budget is held against bed plus food, never the flights (`budgetCompared`, H-8). An item the Lifestyle uses and the basket lacks makes the food spend null (A-13); an unknown currency is not converted (A-20); the budget search prices inside the whole catalogue (A-9) and says getting there is not in the total unless it prices the flight (A-10, owner default 1). The figure stays the engine's number (V1); only the label and the order are new. `gaps.js` is the only place that decides fits, tight, over and partial: the budget search's `verdictOf` and the finder's priority sort call `standingOf` and `partialLastKey`, and a test fails on a fits or tight verdict assigned anywhere else in `src/`. Behind flag E1 (`config/flags.json`, default old); with old every site answers as before.
+- Constant: `continent-app/src/lib/price/gaps.js`
+- Test: `continent-app/tests/honestTotals.test.mjs` and the `totals` golden set (`tests/fixtures/logic-golden/totals.json`)
 
 ## Rules with no test
 

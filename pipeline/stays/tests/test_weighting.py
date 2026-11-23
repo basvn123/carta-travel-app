@@ -48,7 +48,7 @@ def test_untaxed_and_discounted_prices_do_not_set_hotel_levels():
 def test_a_weekend_factor_needs_two_pairs():
     fri = date(2027, 1, 15)
     one = [ob("booking", "a", 100, stars=3), ob("booking", "a", 130, fri, stars=3),
-           ob("booking", "b", 100, stars=3)]
+           ob("booking", "b", 100, stars=3), ob("booking", "c", 100, stars=3)]   # 3 hotels: MIN_PROPS
     two = one + [ob("booking", "b", 120, fri, stars=3)]
     assert B.build(dests(), one)["X"]["weekend"] is None
     assert B.build(dests(), two)["X"]["weekend"] == 1.25
@@ -56,5 +56,5 @@ def test_a_weekend_factor_needs_two_pairs():
 
 def test_a_hotel_without_stars_sets_no_star_class():
     rec = B.build(dests(), [ob("booking", i, 100) for i in range(3)] +
-                  [ob("booking", "s", 60, kind="apartment", bed="home")])["X"]
+                  [ob("booking", f"s{i}", 60, kind="apartment", bed="home") for i in range(3)])["X"]
     assert not any(k.startswith("hotel") for k in rec["beds"])

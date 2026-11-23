@@ -32,6 +32,8 @@
 
 import { stayRecord } from './staysData.js';
 import { rule } from './price/config.js';
+import { isOn } from './flags.js';
+import { pickTier, roomsFor, dormBeds } from './price/ladder.js';
 
 export const STAY_TIERS = ['dorm', 'private', 'room', 'home', 'hotel2', 'hotel3', 'hotel4', 'hotel5'];
 
@@ -49,12 +51,20 @@ export const DEFAULT_FEES = rule('stay.fees');
 const HOME_CAPS = rule('stay.home_caps');
 const PEAKS = rule('stay.peaks');
 const PEOPLE_PER_ROOM = rule('stay.people_per_room');
-const DORM_CHILD = rule('stay.dorm_child_weight');
+// The half bed a child took in a dorm before E3 (config stay.dorm_child_weight_before_e3); E3 reads
+// stay.dorm_child_weight through price/ladder.js.
+const DORM_CHILD_OLD = rule('stay.dorm_child_weight_before_e3');
 const WEEKEND = rule('stay.weekend_nights');
 
 export function normaliseTier(t) {
   const k = ALIAS[t] || t;
   return STAY_TIERS.includes(k) ? k : 'home';
+}
+
+/** True for a block the current scrape build wrote (pipeline/stays/bed_rules.py is_measured): a legacy
+ *  block, q measured but with no capture date, is not a measurement we can date. */
+export function isMeasured(acc) {
+  return !!acc && typeof acc === 'object' && acc.q === 'measured' && !!acc.beds && Object.keys(acc.beds).length > 0 && !!acc.captured;
 }
 
 /** The annual nightly of a tier at a destination (EUR, per bed for a dorm,
@@ -135,7 +145,7 @@ function parseDay(s) {
  * Returns { rate, unit, units, night, season } where rate is the listed price
  * of one unit (bed, room or place) and night is what the party pays.
  */
-function nightFor(dest, rec, tier, people, ms, month) {
+function nightFor(dest, rec, tier, people, ms, month, rooms = null) {
   const key = WIRE[tier];
   const m = ms != null ? new Date(ms).getUTCMonth() + 1 : month;
   let base, annual, units, unit;
@@ -155,7 +165,7 @@ function nightFor(dest, rec, tier, people, ms, month) {
     const curve = rec?.month?.[key];
     base = m && curve?.[m - 1] ? curve[m - 1] : annual;
     if (tier === 'dorm') { units = people; unit = 'bed'; } else {
-      units = Math.ceil(people / PEOPLE_PER_ROOM);
+      units = rooms ?? Math.ceil(people / PEOPLE_PER_ROOM);
       unit = 'room';
       // One traveller in a hotel books a single room where it was measured.
       if (people === 1 && tier.startsWith('hotel') && rec?.single?.hotel) {
@@ -178,10 +188,11 @@ function nightFor(dest, rec, tier, people, ms, month) {
  * Everything a screen needs about the beds of one stay.
  *
  *   dest      the destination record (with .accommodation)
- *   tier      a STAY_TIERS id (aliases accepted); falls back to 'home' when
- *             the town cannot price it, and says so (fallback: true)
- *   adults, children   children count as half a person on a dorm bed and
- *             share rooms; babies are free and not passed in
+ *   tier      a STAY_TIERS id (aliases accepted); when the town cannot price it, falls down
+ *             config stay.fallback_order (E3; before: the entire place), and says so (fallback: true)
+ *   adults, children   with flag E3 children share the parents' room (a room holds 2 adults and up to
+ *             2 children, config stay.room_occupancy) and take a dorm bed each; before E3 they counted as
+ *             people for rooms and half a bed in a dorm. Babies are free and not passed in
  *   nights    0 prices nothing
  *   start     'YYYY-MM-DD' of the first night, or null
  *   month     1..12 when there is no start date (the Explore month filter)
@@ -199,13 +210,19 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
   if (!dest?.accommodation?.beds) return null;
   const want = normaliseTier(tier);
   const offered = tiersAt(dest);
-  const t = offered.includes(want) ? want
-    : offered.includes('home') ? 'home' : offered[0];
+  const e3 = isOn('E3');
+  // E3 (A-2, G-6): a tier the town lacks falls down the declared ladder (config stay.fallback_order),
+  // the entire place last; before, it was the entire place, else whatever came first.
+  const t = e3 ? pickTier(want, offered)?.tier
+    : offered.includes(want) ? want
+      : offered.includes('home') ? 'home' : offered[0];
   if (!t) return null;
   const rec = stayRecord(dest.id);
   const heads = Math.max(1, (adults || 0) + (children || 0));
   // Rooms are shared by whoever is travelling; a dorm bed is per sleeper.
-  const people = t === 'dorm' ? Math.max(1, (adults || 0) + Math.ceil((children || 0) * DORM_CHILD)) : heads;
+  // E3 (A-4, A-15): a room holds the adults and up to two children on top; a child has a dorm bed of its own.
+  const people = t === 'dorm' ? (e3 ? dormBeds(adults, children) : Math.max(1, (adults || 0) + Math.ceil((children || 0) * DORM_CHILD_OLD))) : heads;
+  const rooms = e3 && t !== 'dorm' && t !== 'home' ? roomsFor(adults, children) : null;
   const n = Math.max(0, Math.round(nights || 0));
   const f = { ...DEFAULT_FEES, ...(fees || {}) };
   const startMs = parseDay(start);
@@ -215,7 +232,7 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
   const count = Math.max(1, n);
   for (let i = 0; i < count; i += 1) {
     const ms = startMs != null ? startMs + i * DAY : null;
-    const one = nightFor(dest, rec, t, people, ms, month);
+    const one = nightFor(dest, rec, t, people, ms, month, rooms);
     if (!one) return null;
     if (!first) first = one;
     if (i < n) lodging += one.night;
@@ -227,7 +244,8 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
   if (t === 'home' && n > 0) {
     if (n >= (f.min_nights_for_weekly || 7)) weekly = 1 - (f.weekly_discount_pct || 0) / 100;
     lodging *= weekly;
-    cleaning = (f.cleaning_fee_frac_of_night || 0) * annualRate(dest, 'home', people);
+    // E3 (A-3): every place the party books is cleaned; before, the fee was charged once.
+    cleaning = (f.cleaning_fee_frac_of_night || 0) * annualRate(dest, 'home', people) * (e3 ? first.units : 1);
     service = (lodging + cleaning) * ((f.service_fee_pct || 0) / 100);
   }
   const total = lodging + cleaning + service;
@@ -248,6 +266,8 @@ export function bedPrice({ dest, tier, adults = 2, children = 0, nights = 1, sta
     service: round2(service),
     weeklyDiscount: weekly < 1,
     q: src.q || dest.accommodation.q || null,
+    // REQ-data-2: the pipeline's own test (bed_rules.is_measured): q measured, beds present, a capture date.
+    measured: isMeasured(dest.accommodation),
     from: src.from || null,
     km: src.km ?? null,
     n: src.n ?? null,
@@ -281,12 +301,18 @@ export function monthRates(dest, tier, people = 2) {
   return out;
 }
 
+/** A-14: a curve whose dearest month is within `when.guide.stay_flat` of its cheapest has no
+ *  cheap months to name (the same bar whenGuide's stayByMonth calls flat). */
+export function flatCurve(curve) {
+  return Math.max(...curve) / Math.min(...curve) < rule('when.guide').stay_flat;
+}
+
 /** The two cheapest months to stay (1-based), from the measured curve of the
- *  tier, or null without a measured curve. */
+ *  tier, or null without a measured curve or on a flat one. */
 export function cheapestMonths(dest, tier = 'home') {
   const rec = stayRecord(dest?.id);
   const curve = rec?.month?.[WIRE[normaliseTier(tier)]] || rec?.month?.hotel3 || rec?.month?.bnb_home;
-  if (!Array.isArray(curve) || curve.length !== 12 || !curve.every((v) => v > 0)) return null;
+  if (!Array.isArray(curve) || curve.length !== 12 || !curve.every((v) => v > 0) || flatCurve(curve)) return null;
   return curve.map((v, i) => [v, i + 1]).sort((a, b) => a[0] - b[0])
     .slice(0, 2).map(([, m]) => m).sort((a, b) => a - b);
 }

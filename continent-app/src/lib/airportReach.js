@@ -22,7 +22,7 @@
  *   accessCost(airport, party)            the way to it and back for a trip
  */
 import { haversineKm } from './runtime_pricing.js';
-import { ticketShare } from './party.js';
+import { ticketShare, carsOf } from './party.js';
 import { rule } from './price/config.js';
 
 const ACCESS = rule('origins.airport_access');
@@ -120,7 +120,7 @@ export function accessCost(airport, { adults = 1, children = 0, babies = 0, nigh
   if (!airport || !Number.isFinite(airport.roadKm)) return null;
   const road = airport.roadKm;
   const seats = Math.max(1, adults + children);
-  const cars = Math.ceil((seats + babies) / Math.max(1, car.car_capacity || 4));
+  const cars = carsOf(seats + babies, car.car_capacity);
   const perKm = (car.consumption_l_per_100km / 100) * car.fuel_price_eur_per_l + (car.toll_eur_per_100km || 0) / 100;
   const days = Math.max(1, Math.round(nights || 0) + 1);
   const parking = r2(ACCESS.parking_eur_per_day * days * cars);

@@ -36,6 +36,7 @@ export const RECEIPT_LINE_KEY = {
   car: 'plan.lineCar',
   daytrips: 'plan.lineDaytrips',
   beds: 'plan.lineBeds',
+  bedsMissing: 'plan.lineBedsMissing',
   days: 'plan.lineDays',
 };
 
@@ -181,7 +182,7 @@ export function receiptOps(model, { t, money, dateText = () => '', pricedOn = ''
   y += 28 + 72;
   const step = Math.round(Math.min(84, (dates ? 480 : 520) / Math.max(1, model.lines.length)));
   for (const l of model.lines) {
-    const label = t(RECEIPT_LINE_KEY[l.key] || 'plan.lineBetween') + (l.kind === 'yours' ? ` (${t('plan.yours')})` : '');
+    const label = t(RECEIPT_LINE_KEY[l.key] || 'plan.lineBetween', { city: (l.cities || []).join(', ') }) + (l.kind === 'yours' ? ` (${t('plan.yours')})` : '');
     // The line's wagon: a pill in its formation colour; a line without a
     // figure is the dashed wagon, outside the sum.
     const missing = l.kind === 'missing';

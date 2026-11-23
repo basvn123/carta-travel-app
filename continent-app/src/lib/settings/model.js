@@ -22,6 +22,7 @@
  * Pure: no React, no browser globals.
  */
 import { partyOf } from '../party.js';
+import { todayISO } from '../dates.js';
 import { tripDaysBetween } from '../runtime_pricing.js';
 import { rule } from '../price/config.js';
 import { activeStyle, normalizeStyles, holdChoices } from '../travelStyles.js';
@@ -59,7 +60,8 @@ export function addMonth(ym) {
   return m === 12 ? `${y + 1}-01` : `${y}-${pad2(m + 1)}`;
 }
 
-const todayIso = () => new Date().toISOString().slice(0, 10);
+// F-16: the traveller's local day, not UTC's: on the 1st just after midnight UTC is still last month.
+const todayIso = todayISO;
 
 /**
  * The model, from the choices and App's date state.

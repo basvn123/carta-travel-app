@@ -24,6 +24,19 @@ export function ThinBedNote({ className = '' }) {
   return <small className={`tcard-thin${className ? ` ${className}` : ''}`} data-testid="price-thin">{t('price.bedThin')}</small>;
 }
 
+/** REQ-data-2: beside a bed figure that is modelled, not measured; the figure stays. */
+export function ModelledBedNote({ className = '' }) {
+  const { t } = useI18n();
+  return <small className={`tcard-thin${className ? ` ${className}` : ''}`} data-testid="price-modelled">{t('price.noteBedModelled')}</small>;
+}
+
+/** E3: a bed priced at another tier because the town lacks the one asked for, the tier named. */
+export function BedFallbackNote({ fallback, className = '' }) {
+  const { t } = useI18n();
+  if (!fallback) return null;
+  return <small className={`tcard-thin${className ? ` ${className}` : ''}`} data-testid="price-fallback">{t('price.noteBedFallback', { asked: t(`tf.opt.stay.${fallback.asked}`), tier: t(`tf.opt.stay.${fallback.tier}`) })}</small>;
+}
+
 export function NotMeasuredValue({ className = '' }) {
   const { t } = useI18n();
   return (
@@ -40,6 +53,8 @@ export function PriceNotes({ row = null, notes = null, className = '' }) {
   return (
     <p className={`pnotes${className ? ` ${className}` : ''}`} data-testid="price-notes">
       {n.thinBed && <span className="pnotes-item" data-note="bed">{t('price.noteBed')}</span>}
+      {n.modelledBed && <span className="pnotes-item" data-note="bed-modelled">{t('price.noteBedModelled')}</span>}
+      {n.fallback && <span className="pnotes-item" data-note="bed-fallback">{t('price.noteBedFallback', { asked: t(`tf.opt.stay.${n.fallback.asked}`), tier: t(`tf.opt.stay.${n.fallback.tier}`) })}</span>}
       {n.unmeasured.map((key) => (
         <span className="pnotes-item" data-note={key} key={key}>
           {t('price.noteMissing', { part: t(`price.item.${key}`) })}

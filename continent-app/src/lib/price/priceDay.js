@@ -23,7 +23,8 @@
  *             internal views only (rule 5); a traveller sees the amount.
  *   request   the request the row was priced for
  */
-import { COST_SLICE, costContext, costContextSteps, costRow, runSteps } from '../costIndex.js';
+import { COST_SLICE, costContext, costContextSteps, costRow, dayBandOf, runSteps } from '../costIndex.js';
+import { isOn } from '../flags.js';
 import { groundSpendPerPerson } from '../runtime_pricing.js';
 import { foodShare, ticketShare } from '../party.js';
 import { DEFAULT_PRICE_REQUEST, carSeatsOf, costChoices, seatsOf } from './request.js';
@@ -42,7 +43,9 @@ export const isThin = (n) => n != null && Number.isFinite(n) && n <= THIN;
 
 function bedQuality(row) {
   if (row.stayEur == null) return 'missing';
-  return row.stayLevel === 'city' && !row.stayRepaired ? 'measured' : 'modelled';
+  // REQ-data-2: one rule, stayPrice.isMeasured (the pipeline's bed_rules.is_measured): q measured, beds
+  // and a capture date. A modelled block is never measured; a block with no capture date is undated.
+  return row.stayMeasured === true ? 'measured' : 'modelled';
 }
 
 // The month a hire is priced in: the exact start, the month's middle, or
@@ -110,8 +113,9 @@ function linesOf(row, req, iso2, dest = null) {
   return [
     {
       key: 'bed', status: st('bed', 'included'), eur: num(row.stayEur), quality: bedQuality(row),
+      ...(row.stayEur != null && bedQuality(row) === 'modelled' ? { modelled: true } : {}),
       thin: isThin(row.stayN),
-      basis: { tier: row.stayTier, tierFallback: !!row.tierFallback, nights: req.nights, seats: seatsOf(req),
+      basis: { tier: row.stayTier, tierAsked: row.stayTier, tierFallback: !!row.tierFallback, nights: req.nights, seats: seatsOf(req),
         when: req.when.kind, observations: row.stayN ?? null, ...(row.stayUnits || {}) },
       provenance: { level: row.stayLevel, source: row.stayBasis, from: row.source, km: row.stayKm,
         captured: row.captured, repaired: !!row.stayRepaired, scaled: !!row.stayScaled },
@@ -146,8 +150,14 @@ function answer(row, req, iso2 = null, dest = null) {
   // leaves the day unpriced rather than cheaper (rule 8).
   const dayEur = counted.length && counted.every((l) => l.eur != null)
     ? cents(counted.reduce((s, l) => s + l.eur, 0)) : null;
+  // E3 (A-7): the day band reads the bed and food lines that are on, food at the adult basis; before, the row's
+  // band counted every item and the party's average food.
+  const band = isOn('E3')
+    ? { dayBand: dayBandOf(lines[0].status === 'included' ? lines[0].eur : null, lines[1].status === 'included' ? row.foodAdultEur : null, req.lifestyle, req.stay) }
+    : {};
   return {
     ...row,
+    ...band,
     stayEur: lines[0].eur,
     foodEur: lines[1].eur,
     dayEur,

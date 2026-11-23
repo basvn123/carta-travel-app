@@ -15,6 +15,8 @@
  * keep the trip instead of claiming it did.
  */
 
+import { announceThingsChanged } from '../lib/thingsChanged.js';
+
 export const DEVICE_TRIP_KEY = 'carta.deviceTrip.v1';
 
 function store() {
@@ -52,6 +54,7 @@ export function saveDeviceTrip({ key, trip }, storage = store(), now = Date.now(
   try {
     const raw = JSON.stringify(rec);
     storage.setItem(DEVICE_TRIP_KEY, raw);
+    announceThingsChanged();
     return storage.getItem(DEVICE_TRIP_KEY) === raw;
   } catch {
     return false;

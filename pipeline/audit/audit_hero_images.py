@@ -447,12 +447,32 @@ def _km_pts(lat1, lon1, lat2, lon2):
     return 2 * r * math.asin(math.sqrt(h))
 
 
+def _hero_bans():
+    """The one ban list (D17), loaded by path: this file runs as a script, as
+    a module and from tests, and `photos` may not be importable as a package."""
+    import importlib.util as _u
+    spec = _u.spec_from_file_location("carta_hero_bans", Path(__file__).resolve().parents[1] / "photos" / "hero_bans.py")
+    mod = _u.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+HERO_BANS = _hero_bans()
+
+
 def classify(file_title, meta, url=None, dest=None):
     """Empty list = a usable hero. Otherwise the reasons it is not."""
     reasons = []
     name = readable(file_title)
     if re.search(r"\.svg$", file_title or "", re.I):
         reasons.append("svg")
+    # D17: the shared ban list on the file name from the title or the url, so a
+    # "960px-Flag_of_X.svg.png" thumbnail and a prime minister's portrait are
+    # caught whatever the metadata says; the place's own name is not read.
+    subject = (dest or {}).get("city") or (dest or {}).get("name") or ""
+    for tag in HERO_BANS.banned(file_title or url or "", subject):
+        if tag not in reasons:
+            reasons.append(tag)
     if not meta:
         return reasons or ["unknown_file"]
     # A TIFF or a GIF served through the thumbnailer arrives as a PNG and looks

@@ -17,9 +17,10 @@
 import { quoteTrip } from '../price/trip.js';
 import { wizardPlannerState } from '../tripTotal.js';
 import { flightStateOf, partySize, tradeoffsOf } from '../../planner/flow/tripSettings.js';
-import { buildCandidates, wantsNoCar } from './candidates.js';
+import { buildCandidates, wantsNoCar, FINDER_INPUTS } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
 import { planOf, finderState } from '../../planner/finder/planOf.js';
+import { budgetCompared } from '../price/gaps.js';
 
 /** A short stable hash (FNV-1a, base 36) of a string. */
 export function stableHash(s) {
@@ -40,7 +41,7 @@ export function tripId(c) {
 export function answerKey(input) {
   const s = input.settings;
   return stableHash(JSON.stringify([
-    s.guide, s.when, s.party, s.priority, tradeoffsOf(s), input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
+    FINDER_INPUTS.map((k) => s[k] ?? null), tradeoffsOf(s), input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
     input.lifestyle || null, input.stayTier || null, input.baggage || null, input.ownFlight || null, input.flights?.checked || null,
     input.taste || null, Boolean(input.countryInsights),
     // T861: the home airports in reach and when each one's file was checked.
@@ -194,7 +195,7 @@ export function repriceTrip(trip) {
     ...trip,
     slots: owned,
     total,
-    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : trip.budget,
+    budget: trip.budget ? { ...trip.budget, delta: budgetCompared({ slots: owned, total }, trip.budget.kind) - trip.budget.eur } : trip.budget,
   };
   Object.defineProperty(out, 'quote', { value: quote, enumerable: false });
   Object.defineProperty(out, 'state', { value: state, enumerable: false });

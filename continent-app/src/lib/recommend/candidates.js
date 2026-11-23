@@ -298,6 +298,14 @@ export function tasteFor(settings, saved = null) {
 }
 
 /**
+ * H-3: every settings field the build reads, so the memo key (trips.js
+ * answerKey) cannot forget one: a build that reads `settings.way` while the
+ * key ignores it hands back the last answer's trips. tests/recommendTrips.test.mjs
+ * fails when this file reads a settings field that is not listed. E7 extends the list.
+ */
+export const FINDER_INPUTS = ['guide', 'when', 'party', 'priority', 'way', 'places', 'booked', 'answered', 'kind', 'now'];
+
+/**
  * The candidate trips for one answer set, best country first, at most
  * config candidates.max.
  *

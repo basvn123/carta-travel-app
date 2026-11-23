@@ -1,4 +1,4 @@
-import { DAY_START_MIN, fmtClockLoose } from '../daySchedule.js';
+import { DAY_START_MIN, deckSize, fmtClockLoose } from '../daySchedule.js';
 import { cityLabel } from '../../lib/placeName.js';
 import { buildAiCandidates, requestAiDayPlan, decorateAiStops, splitAiPlan } from '../aiDayPlan.js';
 import { formatSteps, kmToSteps, stepsToKm } from '../../lib/steps.js';
@@ -78,7 +78,8 @@ export function useDayChatAi({
       walkable: info.walkable,
       excludeIdx: null,
       interests: chatInterests(a),
-      limit: 24,
+      limit: deckSize(newDayCount),
+      town: info.dest?.city,
       forceIdx,
     });
     if (candidates.length < 3) return { ok: false, code: 'too_few' };

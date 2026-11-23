@@ -20,6 +20,8 @@
  * pattern) so the node test runs them on a plain object.
  */
 
+import { announceThingsChanged } from '../lib/thingsChanged.js';
+
 export const TRIPS_KEY = 'carta.trips.v1';
 
 /** The keys that together are "the trip in progress". */
@@ -105,7 +107,7 @@ function readRec(storage) {
 }
 
 function writeRec(storage, rec) {
-  try { storage?.setItem(TRIPS_KEY, JSON.stringify(rec)); return true; } catch { return false; }
+  try { storage?.setItem(TRIPS_KEY, JSON.stringify(rec)); announceThingsChanged(); return true; } catch { return false; }
 }
 
 function clearKeys(storage) {

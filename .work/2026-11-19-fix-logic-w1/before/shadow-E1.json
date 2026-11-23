@@ -1,0 +1,302 @@
+[
+ {
+  "persona": "family-toddler",
+  "month": 7,
+  "was": [
+   "budget 1700",
+   "fits CHEAP:866",
+   "fits R:1396",
+   "fits MID:1425",
+   "fits LISB:1481",
+   "fits Q:1481",
+   "fits BCN:1620",
+   "fits P:1649",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 1700",
+   "fits CHEAP:866",
+   "fits R:1396",
+   "fits MID:1425",
+   "fits LISB:1481",
+   "fits Q:1481",
+   "fits BCN:1620",
+   "fits P:1649",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "hiking-couple",
+  "month": 9,
+  "was": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "friends-out",
+  "month": 6,
+  "was": [
+   "budget 1700",
+   "fits CHEAP:989",
+   "fits R:1554",
+   "fits MID:1590",
+   "fits LISB:1639",
+   "fits Q:1639",
+   "tight BCN:1793",
+   "tight P:1807",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 1700",
+   "fits CHEAP:989",
+   "fits R:1554",
+   "fits MID:1590",
+   "fits LISB:1639",
+   "fits Q:1639",
+   "tight BCN:1793",
+   "tight P:1807",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "slow-culture",
+  "month": 10,
+  "was": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "backpacker",
+  "month": 8,
+  "was": [
+   "budget 425",
+   "fits CHEAP:403",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 425",
+   "fits CHEAP:403",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "beach-family",
+  "month": 7,
+  "was": [
+   "budget 1700",
+   "fits CHEAP:866",
+   "fits R:1396",
+   "fits MID:1425",
+   "fits LISB:1481",
+   "fits Q:1481",
+   "fits BCN:1620",
+   "fits P:1649",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 1700",
+   "fits CHEAP:866",
+   "fits R:1396",
+   "fits MID:1425",
+   "fits LISB:1481",
+   "fits Q:1481",
+   "fits BCN:1620",
+   "fits P:1649",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "cyclist",
+  "month": 5,
+  "was": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "foodie",
+  "month": 4,
+  "was": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "skier",
+  "month": 2,
+  "was": [
+   "budget 1700",
+   "fits CHEAP:989",
+   "fits R:1554",
+   "fits MID:1590",
+   "fits LISB:1639",
+   "fits Q:1639",
+   "tight BCN:1793",
+   "tight P:1807",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 1700",
+   "fits CHEAP:989",
+   "fits R:1554",
+   "fits MID:1590",
+   "fits LISB:1639",
+   "fits Q:1639",
+   "tight BCN:1793",
+   "tight P:1807",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "wellness",
+  "month": 11,
+  "was": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "island-hopper",
+  "month": 6,
+  "was": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 850",
+   "fits CHEAP:557",
+   "tight R:904",
+   "tight MID:922",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "no-car-rail",
+  "month": 5,
+  "was": [
+   "budget 425",
+   "fits CHEAP:403",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "now": [
+   "budget 425",
+   "fits CHEAP:403",
+   "getting there: not said",
+   "trip: 1092.9"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ }
+]

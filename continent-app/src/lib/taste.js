@@ -12,7 +12,7 @@
  * writing and merging only, so the sign-in merge is unit-tested.
  */
 import { LIKES, PARTY_KINDS } from '../planner/flow/tripSettings.js';
-import { activeStyle, choicesFromStyle, mergeStyles } from './travelStyles.js';
+import { activeStyle, choicesFromStyle, choicesMatchStyle, mergeStyles, normalizeStyles } from './travelStyles.js';
 
 export const MAX_LIKES = 3;
 /** Where do you like to stay: big cities, towns, villages and countryside, a mix. */
@@ -78,6 +78,9 @@ export function hasMatchSignal(raw) {
   return t.likes.length > 0 || (t.size != null && t.size !== 'mix') || t.quiet != null;
 }
 
+/** E-10 (owner default 10): the For you sort is offered only to a taste the match can weigh. */
+export const forYouOffered = (raw) => !!raw && hasMatchSignal(raw);
+
 /** A copy with one answer set; null is "No preference". */
 export function setTasteAnswer(raw, key, value) {
   const t = normalizeTaste(raw);
@@ -117,8 +120,15 @@ export function mergeTaste(local, account) {
  * every other choice keeps its old rule (the account's copy wins), and the
  * taste merges key by key through mergeTaste, so a taste set on this device
  * before signing in survives where the account says nothing.
+ *
+ * `hold` (E9, G-19): when this device has a style and its priced choices differ
+ * from the merged active style (a party or bed changed signed out, an older
+ * copy of the style on the account), the account no longer overwrites them in
+ * silence: this device's choices stay and the style is held, so the header
+ * says "changed" and offers Keep or Back. A device with no style of its own
+ * (a new phone) still takes the account's.
  */
-export function mergeAccountChoices(local, incoming) {
+export function mergeAccountChoices(local, incoming, { hold = false } = {}) {
   const out = { ...(local || {}), ...(incoming || {}) };
   // A hold is this device's state of the moment, never the account's.
   out.style_held = Boolean(local?.style_held);
@@ -132,7 +142,12 @@ export function mergeAccountChoices(local, incoming) {
     const a = activeStyle(out.travel_styles);
     // Unless this device holds the style for a trip: the trip's party, bed,
     // Lifestyle and way stay this device's, the hold with them.
-    if (a && !local?.style_held) Object.assign(out, choicesFromStyle(a), { style_held: false });
+    const edited = hold && a && !local?.style_held && activeStyle(normalizeStyles(local?.travel_styles))
+      && !choicesMatchStyle(a, local);
+    if (edited) {
+      for (const k of Object.keys(choicesFromStyle(a))) if (k in local) out[k] = local[k];
+      out.style_held = true;
+    } else if (a && !local?.style_held) Object.assign(out, choicesFromStyle(a), { style_held: false });
     else if (a) for (const k of Object.keys(choicesFromStyle(a))) if (k in local) out[k] = local[k];
   }
   return out;

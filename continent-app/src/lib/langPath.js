@@ -21,6 +21,29 @@ export function langFromPath(pathname) {
   return m ? m[1] : null;
 }
 
+/**
+ * G-16, J-13 (pull half): the language to take from the account at sign-in, or
+ * null. A visit the address named (/nl/...) keeps its language; the account's
+ * only fills in where the address said nothing, and only if the app ships it.
+ */
+export function langToPull(accountLang, shipped, addressLang) {
+  if (addressLang) return null;
+  return accountLang && shipped.some((l) => l.code === accountLang) ? accountLang : null;
+}
+
+/**
+ * G-16, J-13 (push half; E9): the language to write into the account's settings.
+ * The address's /nl/ prefix names a visit, not a preference, so with flag E9 new
+ * the app language is pushed only after the traveller picked it in a language
+ * picker; until then the account keeps the language it already had (undefined
+ * when it had none, so the push carries no `lang`). Old behaviour: always the
+ * language on screen.
+ */
+export function langToPush({ lang, picked, accountLang, e9 }) {
+  if (!e9 || picked) return lang;
+  return accountLang || undefined;
+}
+
 /** The pathname without its language prefix, always starting with `/`. */
 export function stripLang(pathname) {
   const p = String(pathname || '/');

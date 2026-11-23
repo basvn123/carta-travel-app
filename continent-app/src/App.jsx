@@ -51,7 +51,8 @@ import { partyOf } from './lib/party.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { normalizeTaste } from './lib/taste.js';
-import { loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash } from './lib/urlState.js';
+import { loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash, isForeignLink, readMirror } from './lib/urlState.js';
+import { isOn } from './lib/flags.js';
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { noteSaved, noteUnsaved, loadSavedLists } from './lib/savedLists.js';
@@ -614,7 +615,6 @@ function TravelApp() {
     babies: init.babies ?? 0,
     trip_days: 7,
     baggage_key: init.baggage_key ?? 'priority_10kg',
-    baggage_per_direction_eur: 25,
     // 'any' | 'plane' | 'train' | 'bus' | 'car' (T582: the settings line's
     // way button; any way prices the cheapest that reaches a place).
     transport_mode: init.transport_mode ?? 'any',
@@ -680,10 +680,13 @@ function TravelApp() {
   // Same idea for a multi-stop trip plan chosen from the Saved-trips overview,
   // handed to TripPlannerTab.
   const [pendingTripPlanId, setPendingTripPlanId] = useState(null);
-  // A shared link (URL query present at load) always wins over a signed-in
-  // user's synced settings, so opening someone's link never gets silently
-  // overridden by your own saved preferences.
-  const [cameFromUrl] = useState(() => typeof window !== 'undefined' && !!window.location.search);
+  // A shared link always wins over a signed-in user's synced settings, so
+  // opening someone's link never gets silently overridden by your own saved
+  // preferences. Old: any query counted, so a reload of the device's own
+  // address skipped the account pull (J-2). E9 new: only a query this device's
+  // mirror does not already hold is someone else's (lib/urlState.js isForeignLink).
+  const [cameFromUrl] = useState(() => typeof window !== 'undefined'
+    && (isOn('E9') ? isForeignLink(window.location.search, readMirror()) : !!window.location.search));
 
   // A whole TRIP shared as a link (see lib/shareLink.js): the hash payload is
   // captured synchronously before useUrlSync's first URL write would drop it,
@@ -1250,7 +1253,7 @@ function TravelApp() {
   const pricingChoices = useMemo(
     () => choices,
     // eslint-disable-next-line react-hooks/exhaustive-deps -- value key: the fields composeTrip reads, so a trip_days write does not reprice the catalogue
-    [choices.group_size, choices.baggage_key, choices.baggage_per_direction_eur,
+    [choices.group_size, choices.baggage_key,
       choices.transport_mode, choices.stay_tier, choices.origin, choices.home, choices.lifestyle,
       choices.children, choices.babies,
       choices.origin_pref, choices.car_model, choices.accommodation_model, choices.drive_home],

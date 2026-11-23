@@ -63,6 +63,7 @@
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { PAID_TIERS, stripePriceFor, checkoutModeFor, waiverText } from '../_shared/passes.mjs';
+import { checkoutUrls } from '../_shared/checkoutUrls.mjs';
 
 import { withCors, readJson, bodyProblem } from '../_shared/http.mjs';
 
@@ -126,6 +127,15 @@ Deno.serve(withCors(async (req) => {
     .select('stripe_customer_id').eq('user_id', user.id).maybeSingle();
   const customer = ent?.stripe_customer_id || '';
 
+  // J-5 (E10): the way back comes from the server's own APP_ORIGIN (or the
+  // full CHECKOUT_*_URL secrets), never from the request's host, and `returnTo`
+  // is a path on it. With neither set the function refuses rather than guess.
+  const urls = checkoutUrls(
+    { APP_ORIGIN: env('APP_ORIGIN'), CHECKOUT_SUCCESS_URL: env('CHECKOUT_SUCCESS_URL'), CHECKOUT_CANCEL_URL: env('CHECKOUT_CANCEL_URL') },
+    typeof body.returnTo === 'string' ? body.returnTo : '',
+  );
+  if (!urls) return json(503, { code: 'not_configured' });
+
   const stripe = new Stripe(SECRET, { apiVersion: '2025-10-29.clover' });
 
   // The waiver checkbox. Off until the Terms URL is configured, see the header.
@@ -155,8 +165,8 @@ Deno.serve(withCors(async (req) => {
       // Required for automatic_tax to resolve a rate for digital goods: the
       // rate follows where the CUSTOMER is, not where we are.
       billing_address_collection: 'required',
-      success_url: env('CHECKOUT_SUCCESS_URL') || `${new URL(req.url).origin}/?pass=ok`,
-      cancel_url: env('CHECKOUT_CANCEL_URL') || `${new URL(req.url).origin}/?pass=cancel`,
+      success_url: urls.success,
+      cancel_url: urls.cancel,
       // A dead session should not hold a price quote open forever.
       expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
       ...consent,

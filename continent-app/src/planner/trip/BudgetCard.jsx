@@ -3,7 +3,7 @@ import { useI18n } from '../../i18n/index.jsx';
 import { Button, Field, Money, Segmented } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
 import { formatMoney } from '../../lib/money.js';
-import { budgetCheck } from '../flow/budget.js';
+import { budgetCheck, daySpent } from '../flow/budget.js';
 
 /**
  * The trip's total against its budget (T846, owner board panel 3, after
@@ -35,7 +35,7 @@ export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave, comp
   const has = budget?.eur > 0;
   const check = has ? budgetCheck(priced, budget, { party, nights }) : null;
   const spent = has
-    ? (budget.kind === 'total' ? priced?.perPerson : ((priced?.parts?.beds || 0) + (priced?.parts?.days || 0)) / Math.max(1, party) / Math.max(1, nights))
+    ? (budget.kind === 'total' ? priced?.perPerson : daySpent(priced, party, nights))
     : null;
   const share = has && Number.isFinite(spent) ? Math.min(1, spent / budget.eur) : 0;
   const money = (v, p = 'cents') => formatMoney(v, { precision: p, locale: lang });

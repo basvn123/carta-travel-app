@@ -64,6 +64,8 @@ from common import (  # noqa: E402
 from derive_do import derive  # noqa: E402
 import derive_practical  # noqa: E402  (T641: emergency, transit, swim bans)
 import derive_place_page  # noqa: E402  (T911: essentials, eat, walk, similar)
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import outdoor_row  # noqa: E402  (D7: one outdoor row for every kind)
 
 
 def _load_place_gallery():
@@ -802,6 +804,23 @@ ROUTES_ATTACH = os.path.join(os.path.dirname(REPORTS), "derived",
                              "routes_attach.json")
 
 
+ROUTES_LINE_KM = os.path.join(os.path.dirname(REPORTS), "derived",
+                              "routes_line_km.json")
+
+
+def load_routes_line_km():
+    """{dest id: {"hiking"|"cycling": {route id: km to the line}}} (D-14),
+    written by pipeline/trails/attach.py. Absent: Around falls back to the
+    bbox centre and says so per row."""
+    try:
+        with open(ROUTES_LINE_KM, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        print("  no data/derived/routes_line_km.json: Around distances are "
+              "measured to the bbox centre (run pipeline/trails/attach.py)")
+        return {}
+
+
 def load_routes_attach():
     try:
         with open(ROUTES_ATTACH, encoding="utf-8") as fh:
@@ -851,9 +870,7 @@ def join_nearby(dest, layer_index):
                 "bearing": bearing8(clat, clon, f["lat"], f["lon"]),
                 "lat": round(f["lat"], 5), "lon": round(f["lon"], 5),
             }
-            for k in ("tier", "score", "thumb", "elev_m", "km_len",
-                      "duration_min", "difficulty", "water", "ascent_m",
-                      "descent_m", "sac_scale"):
+            for k in outdoor_row.ROW_COPY_KEYS:
                 if f.get(k) is not None:
                     entry[k] = f[k]
             picked.append(entry)
@@ -871,7 +888,16 @@ AROUND_CAP = 24
 AROUND_LAYERS = ("trails", "cycling", "mountains", "lakes", "beaches")
 
 
-def compose_around(dest, layer_index):
+def row_score(f):
+    """The score a row ranks on: the v5 score in `o`, else the legacy one."""
+    v5 = (f.get("o") or {}).get("v5") or {}
+    return v5.get("score") if v5.get("score") is not None else f.get("score")
+
+
+LINE_ACTIVITY = {"trails": "hiking", "cycling": "cycling"}
+
+
+def compose_around(dest, layer_index, line_km=None):
     """Everything the Destinations tab knows within 20 km, per layer.
 
     `nearby` is the shortlist (a radius by place class, capped small, tier
@@ -892,8 +918,8 @@ def compose_around(dest, layer_index):
                 if f.get("name")]
         if not rows:
             continue
-        rows.sort(key=lambda t: (0 if t[1].get("score") else 1,
-                                 -(t[1].get("score") or 0), t[0]))
+        rows.sort(key=lambda t: (0 if row_score(t[1]) else 1,
+                                 -(row_score(t[1]) or 0), t[0]))
         picked, name_seen = [], set()
         for km, f in rows:
             key = norm_name(PAREN_TAIL_RE.sub("", f.get("name") or ""))
@@ -906,9 +932,14 @@ def compose_around(dest, layer_index):
                 "bearing": bearing8(clat, clon, f["lat"], f["lon"]),
                 "lat": round(f["lat"], 5), "lon": round(f["lon"], 5),
             }
-            for k in ("tier", "score", "thumb", "elev_m", "km_len",
-                      "duration_min", "difficulty", "water", "ascent_m",
-                      "descent_m", "sac_scale", "listed"):
+            # A route is a line: its distance is to the line when attach
+            # measured it, else to the bbox centre, and the row says which.
+            if layer in LINE_ACTIVITY:
+                line = ((line_km or {}).get(LINE_ACTIVITY[layer]) or {}).get(
+                    str(f["id"]))
+                entry["km"] = line if line is not None else entry["km"]
+                entry["km_from"] = "line" if line is not None else "centre"
+            for k in outdoor_row.ROW_COPY_KEYS + ("listed",):
                 if f.get(k) is not None:
                     entry[k] = f[k]
             picked.append(entry)
@@ -1377,9 +1408,24 @@ def compose_credits(sections, designations=None):
 # ---------------------------------------------------------------- context
 
 
+O_MISSING = Counter()
+
+
+def o_of(layer, raw):
+    """The `o` block of a wire row: copied verbatim from the file when the
+    stamp pass wrote it, else (an older file) built by the same function from
+    the raw wire row, and counted so the build says so."""
+    o = raw.get("o")
+    if isinstance(o, dict):
+        return o
+    O_MISSING[layer] += 1
+    return outdoor_row.outdoor_row(layer, raw) or None
+
+
 def load_layer_index():
     """One GridIndex per feature layer across every country file."""
     index = {}
+    O_MISSING.clear()
 
     def add(layer, cc, rows):
         idx = index.setdefault(layer, GridIndex())
@@ -1413,6 +1459,7 @@ def load_layer_index():
                     "thumb": direct_commons_url(img.get("u"), 500) if img.get("u") else None,
                     "elev_m": f.get("elev_m") or f.get("ele"),
                     "water": water if isinstance(water, str) else None,
+                    "o": o_of(layer, f),
                 })
             add(layer, fn[:2], rows)
 
@@ -1435,6 +1482,7 @@ def load_layer_index():
                 lon = (bbox[0] + bbox[2]) / 2
                 img = t.get("img") or {}
                 score = t.get("score") if t.get("score") is not None else t.get("rating")
+                o = o_of("trails", t)
                 rows.append({
                     "cc": fn[:2], "id": str(t.get("id")), "name": t.get("name"),
                     "lat": lat, "lon": lon,
@@ -1443,11 +1491,14 @@ def load_layer_index():
                     "thumb": direct_commons_url(img.get("u"), 500) if img.get("u") else None,
                     "km_len": round((t.get("distance_m") or 0) / 1000, 1) or None,
                     "duration_min": t.get("duration_min"),
-                    "difficulty": t.get("difficulty"),
+                    # The grade the score used (f.g, in `o`); an old wire's
+                    # `difficulty` is a different, older ladder (D-1).
+                    "difficulty": (o or {}).get("g") or t.get("difficulty"),
                     # T640 (T630-h): the Around strip's four slots.
                     "ascent_m": t.get("ascent_m"),
                     "descent_m": t.get("descent_m"),
                     "sac_scale": t.get("sac_scale"),
+                    "o": o,
                 })
             for t in data.get("listed", []) or []:
                 bbox = t.get("bbox") or []
@@ -1464,6 +1515,7 @@ def load_layer_index():
                     "ascent_m": t.get("ascent_m"),
                     "descent_m": t.get("descent_m"),
                     "sac_scale": t.get("sac_scale"),
+                    "o": o_of("trails", t),
                 })
             add("trails", fn[:2], rows)
 
@@ -1501,11 +1553,17 @@ def load_layer_index():
                         "ascent_m": t.get("asc"),
                         # T640 (T630-h): riding time, the wire's dur.min.
                         "duration_min": (t.get("dur") or {}).get("min"),
+                        "o": o_of("cycling", t),
                     }
                     if listed:
                         row["listed"] = True
                     rows.append(row)
             add("cycling", fn[:2], rows)
+    if O_MISSING:
+        # Loud on purpose: these rows come from an older export, so their `o`
+        # was built here from the raw row, and the next export stamps it.
+        print(f"WARNING: {sum(O_MISSING.values())} wire rows carry no `o` "
+              f"(built in memory): {dict(O_MISSING)}")
     return index
 
 
@@ -1563,6 +1621,7 @@ def load_context():
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
         "dest_index": dest_index, "layer_index": layer_index,
         "routes_attach": load_routes_attach(),
+        "routes_line_km": load_routes_line_km(),
         "similar": derive_place_page.Similar(dests),
         "trip_model": _load_trip_model(), "tasl": TaslStore(),
         "meta": app.get("meta", {}),
@@ -1640,7 +1699,8 @@ def build_one(dest, ctx, refusal_log):
     gallery = compose_gallery(
         dest, highlights, nearby, ctx["tasl"], refusals, landmarks=landmarks,
         extras=place_gallery.extras_for(ctx["place_gallery"], dest.get("id")))
-    around = compose_around(dest, ctx["layer_index"])
+    around = compose_around(dest, ctx["layer_index"],
+                            (ctx.get("routes_line_km") or {}).get(did))
     cl0 = dest.get("climate") or {}
     intro_facts = {
         "sights": [h["name"] for h in sorted(

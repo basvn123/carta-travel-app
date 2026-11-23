@@ -40,6 +40,7 @@ from __future__ import annotations
 
 import argparse
 import glob
+import importlib.util
 import json
 import math
 import os
@@ -50,8 +51,15 @@ import urllib.parse
 import urllib.request
 from datetime import date
 
-sys.path.insert(0, os.path.dirname(__file__))
-from common import DCACHE, PUB, atomic_write_json, load_json, norm_name  # noqa: E402
+# Loaded by file path, under its own module name: the trips pipeline has a
+# `common` too, and `from common import` took whichever one was imported first
+# (in pytest and on main), so DCACHE came from the wrong module.
+_spec = importlib.util.spec_from_file_location(
+    "dossier_common", os.path.join(os.path.dirname(os.path.abspath(__file__)), "common.py"))
+_common = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_common)
+DCACHE, PUB = _common.DCACHE, _common.PUB
+atomic_write_json, load_json, norm_name = _common.atomic_write_json, _common.load_json, _common.norm_name
 
 OUT = os.path.join(DCACHE, "place_intros.json")
 APIS = (

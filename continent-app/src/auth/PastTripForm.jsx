@@ -673,6 +673,7 @@ export function PastTripForm({ destinations, todayIso, busy, error, initial, fri
             </div>
           )}
           {summary.foreign && <p className="pasttrip-note">{t('saved.pastRateNote')}</p>}
+          {summary.notConverted && <p className="pasttrip-note">{t('saved.pastNotConverted')}</p>}
         </Fold>
 
         <Fold
