@@ -30,7 +30,7 @@ import { answerFacts, monthsOf } from '../../../src/lib/ask/rank.js';
 import { composeAnswer, unknownNote, scopeLines } from '../../../src/lib/ask/compose.js';
 import { buildPack } from '../../../src/lib/ask/context.js';
 import { askScope, needsGazetteer } from '../../../src/lib/ask/scope.js';
-import { shardsFor, prepareTowns } from '../../../src/lib/search/gazetteer.js';
+import { shardsFor, prepareTowns, prepareAreas } from '../../../src/lib/search/gazetteer.js';
 import { foldName } from '../../../src/lib/searchIndex.js';
 import { bindFollowUp } from '../../../src/lib/ask/followup.js';
 import { makeLabels } from '../../../src/lib/guidedSearch.js';
@@ -69,6 +69,16 @@ function townsFor(name) {
   return out;
 }
 
+// The gazetteer's admin regions and countries (the covered-region test of scope.js, wave 3b): areas.json
+// where the gazetteer is there, the committed slice in towns.json where it is not (CI).
+let areasPrepared = null;
+function areasFor() {
+  areasPrepared ||= prepareAreas(gazetteerAvailable()
+    ? JSON.parse(readFileSync(publicPath('search/places/areas.json'), 'utf8'))
+    : JSON.parse(readFileSync(TOWNS_PATH, 'utf8')).areas);
+  return areasPrepared;
+}
+
 /** One question through the offline path; returns what it answered (see any-question-lib.mjs) and its context pack. */
 export function observe(c, kit, today) {
   const { cat, vocabs, tFor, linkFn } = kit;
@@ -79,7 +89,7 @@ export function observe(c, kit, today) {
   const ref = c.prev?.ref || null;
   // The chat's own question, asked of the same function: refuse, decline, or answer.
   const name = needsGazetteer(c.q, raw, ref, { lang: c.lang });
-  const scope = askScope(c.q, raw, { ref, lang: c.lang, rows: cat.rows, towns: name ? townsFor(name) : null });
+  const scope = askScope(c.q, raw, { ref, lang: c.lang, rows: cat.rows, towns: name ? townsFor(name) : null, areas: name ? areasFor() : null });
   if (scope.kind !== 'answer') {
     const lines = scopeLines(scope, t);
     const picks = (scope.nearest || []).map((p) => ({ id: p.id, cc: p.cc }));

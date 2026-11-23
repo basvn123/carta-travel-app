@@ -40,6 +40,21 @@ const WORLD_CITIES = [
   'buenos aires', 'marrakech', 'marrakesh', 'marrakesch', 'marrakech', 'cairo', 'kairo', 'le caire', 'el cairo', 'il cairo', 'nairobi', 'kathmandu',
   'jakarta', 'manila', 'auckland', 'havana', 'la habana', 'cancun', 'honolulu', 'phuket', 'tel aviv', 'jerusalem', 'jeruzalem', 'jerusalen',
   'gerusalemme', 'casablanca', 'tunis', 'sao paulo', 'kuala lumpur', 'taipei',
+  // E7 (wave 3b): famous places outside Europe that Intl does not name, several with a tiny European
+  // namesake (Bali, Lima, Goa) that the gazetteer would otherwise place in Europe. Matched before any
+  // gazetteer town, so "Two weeks in Bali" stays outside Europe. A hand list because the catalogue only
+  // knows Europe. Never a name that is also a sizeable European town (Cartagena, Perth, Guadalajara).
+  'bali', 'lombok', 'sumatra', 'borneo', 'ubud', 'langkawi', 'penang', 'siem reap', 'angkor wat', 'luang prabang', 'chiang mai', 'pattaya', 'koh samui',
+  'krabi', 'hoi an', 'da nang', 'saigon', 'colombo', 'kandy', 'kerala', 'goa', 'jaipur', 'agra', 'varanasi', 'rishikesh', 'petra', 'wadi rum', 'luxor', 'aswan',
+  'giza', 'sharm el sheikh', 'hurghada', 'dahab', 'amman', 'beirut', 'beyrouth', 'muscat', 'riyadh', 'jeddah', 'mecca', 'johannesburg', 'durban', 'okavango',
+  'masai mara', 'maasai mara', 'serengeti', 'kilimanjaro', 'arusha', 'mombasa', 'zanzibar', 'sansibar', 'zanzibar', 'victoria falls', 'viktoriafalle', 'chutes victoria',
+  'cataratas victoria', 'cascate vittoria', 'lusaka', 'accra', 'dakar', 'abuja', 'addis ababa', 'kigali', 'sahara', 'lima', 'cusco', 'cuzco', 'machu picchu',
+  'arequipa', 'patagonia', 'patagonie', 'patagonien', 'patagonie', 'galapagos', 'santiago de chile', 'santiago du chili', 'bogota', 'quito', 'caracas',
+  'montevideo', 'medellin', 'cartagena de indias', 'yucatan', 'tulum', 'oaxaca', 'playa del carmen', 'acapulco', 'panama city', 'maui', 'oahu', 'hawaii', 'alaska',
+  'yellowstone', 'yosemite', 'grand canyon', 'orlando', 'seattle', 'boston', 'washington dc', 'new orleans', 'nashville', 'san diego', 'montreal', 'quebec city',
+  'whistler', 'calgary', 'ottawa', 'brisbane', 'adelaide', 'gold coast', 'uluru', 'tasmania', 'fiji', 'tahiti', 'bora bora', 'rotorua', 'queenstown', 'nagoya',
+  'sapporo', 'hiroshima', 'okinawa', 'busan', 'jeju', 'macau', 'macao', 'chengdu', 'xian', 'guangzhou', 'shenzhen', 'lhasa', 'tibet', 'ulaanbaatar', 'almaty',
+  'tashkent', 'samarkand', 'bukhara', 'tehran', 'isfahan', 'shiraz', 'himalaya', 'himalayas', 'bangalore', 'chennai', 'kolkata',
 ].map((n) => n.split(' ')).sort((a, b) => b.length - a.length);
 
 // Articles that can stand between that word and the name: "in den Alpen",
@@ -152,6 +167,7 @@ export function placeCandidate(text, intent, { bare = false } = {}) {
   if (!unknown.size) return null;
   const words = String(text || '').split(/[\s,.;:!?()"]+/).filter(Boolean);
   const known = !!(intent.places?.length || intent.facets?.near || intent.facets?.country);
+  const areaKnown = !!intent.facets?.area;
   for (let i = 0; i < words.length - 1; i++) {
     const lead = words[i].toLowerCase();
     const weak = !BEFORE.has(lead) && WEAK.has(fold(words[i]));
@@ -163,6 +179,9 @@ export function placeCandidate(text, intent, { bare = false } = {}) {
     if (!unknown.has(f) || VERBS.has(f) || ARTICLES.has(f)) continue;
     if (NEEDS_CAPITAL.has(lead) && !capital(w)) continue;
     const next = words[j + 1];
+    // A question that already names a covered area has no second destination: "Sardegna in barca" is
+    // not a trip to "Barca". Only a name known to be outside Europe still counts.
+    if (areaKnown && !capital(w) && !isOutsideName(w)) continue;
     // An unknown word before a known name makes another place: "New York".
     const head = next && capital(next) && !unknown.has(fold(next)) && (capital(w) || NAME_HEADS.has(f));
     if (known && !head) continue;
@@ -175,6 +194,11 @@ export function placeCandidate(text, intent, { bare = false } = {}) {
     }
     // A European name the parser does not know yet is not outside Europe.
     if (inEurope(name)) continue;
+    // A longer outside name wins over its first word: "Santiago de Chile" is not Santiago (Spain).
+    for (let n = 1; n <= 2 && j + n < words.length && !isOutsideName(name); n++) {
+      const longer = `${name} ${words.slice(j + 1, j + 1 + n).join(' ')}`;
+      if (isOutsideName(longer)) { name = longer; break; }
+    }
     const sure = isOutsideName(name);
     return { name: titled(name), sure, weak, typed: capital(w) };
   }

@@ -4,7 +4,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { askScope, refusalFor, isOfftopic, needsGazetteer, nearestCovered, mentionedBy, townNamed } from '../src/lib/ask/scope.js';
+import { askScope, refusalFor, isOfftopic, needsGazetteer, nearestCovered, mentionedBy, townNamed, coveredName } from '../src/lib/ask/scope.js';
 import { scopeLines } from '../src/lib/ask/compose.js';
 import { gateOf, FLOORS } from '../scripts/eval/any-question-lib.mjs';
 
@@ -116,15 +116,69 @@ test('a town the gazetteer knows is lacking, with the nearest covered places of 
 
 test('a covered country nickname or travel area is never a place Carta lacks (E7 re-judge)', () => {
   const towns = [town(['UK'], 'GB', 54, -2), town(['Riviera'], 'IT', 44, 8)];
+  // The words the catalogue's own text never uses stay on AREA_NAMES: UK, VK, Schengen, Benelux.
   const asked = [
     ['Best castles in the UK', ['uk']], ['Beste kastelen in het VK', ['kastelen', 'vk']], ['Do I need a visa for the Schengen area?', ['need', 'visa', 'schengen', 'area']],
-    ['Visa rules for Americans visiting Schengen countries', ['visa', 'rules', 'americans', 'schengen']], ['Is the Riviera expensive in August?', ['riviera', 'expensive']],
-    ['Three days in the Benelux by train', ['benelux']], ['Weekend in the Cotswolds', ['cotswolds']],
+    ['Visa rules for Americans visiting Schengen countries', ['visa', 'rules', 'americans', 'schengen']],
+    ['Three days in the Benelux by train', ['benelux']],
   ];
   for (const [q, unknown] of asked) {
     for (const t of [null, [], towns]) assert.equal(askScope(q, intent(unknown), { rows: ROWS, towns: t }).kind, 'answer', q);
     assert.equal(needsGazetteer(q, intent(unknown)), null, q);
   }
+});
+
+// Rows whose text names a region the way the shipped catalogue does: three places each (the REGION_MENTIONS rule).
+const named = (region, extra = {}) => ['a', 'b', 'c'].map((x, i) => ({ id: `gem:${region.toLowerCase()}-${x}`, city: `${region} ${x}`, iso2: 'FR', lat: 47 + i / 10, lon: 4 + i / 10, blurb: `A small town in ${region}, known for its food.`, ...extra }));
+const REGION_ROWS = [...ROWS, ...['Burgundy', 'Loire', 'Galicia', 'Eifel', 'Veluwe', 'Champagne', 'Riviera', 'Cotswolds', 'Ardennes'].flatMap((r) => named(r))];
+
+test('a region the catalogue covers is answered, never "Carta does not have it yet" (E7, wave 3b)', () => {
+  const asked = [
+    ['Wine tasting in Burgundy', ['burgundy', 'wine', 'tasting']], ['Les châteaux de la Loire', ['loire', 'chateaux']], ['Qué ver en Galicia', ['galicia']],
+    ['Wandern in der Eifel', ['eifel', 'wandern']], ['Fietsen in de Veluwe', ['veluwe', 'fietsen']], ['Week-end en Champagne', ['champagne', 'week', 'end']],
+    ['Is the Riviera expensive in August?', ['riviera', 'expensive']], ['Weekend in the Cotswolds', ['cotswolds']], ['Week in de Ardennen', ['ardennen']],
+  ];
+  // a tiny gazetteer namesake (a village called Champagne, 3000 people) does not make a region a town
+  const tiny = [town(['Champagne'], 'FR', 46, 5, 3475), town(['Veluwe'], 'NL', 52, 5.8, 900)];
+  for (const [q, unknown] of asked) {
+    for (const t of [null, [], tiny]) assert.equal(askScope(q, intent(unknown), { rows: REGION_ROWS, towns: t }).kind, 'answer', q);
+  }
+  // a town of 10000 people or more is a town, whatever the text says
+  assert.equal(askScope('Wine tasting in Burgundy', intent(['burgundy']), { rows: REGION_ROWS, towns: [town(['Burgundy'], 'FR', 47, 4, 15000)] }).kind, 'lacking');
+  // a region the text names once, or never, is covered only if the gazetteer's regions hold it
+  const areas = { regions: [{ folds: ['la rioja', 'rioja'] }, { folds: ['warmia masuria', 'warmian masurian voivodeship'] }], countries: [] };
+  assert.equal(askScope('Wine tasting in Rioja', intent(['rioja']), { rows: ROWS, towns: [], areas }).kind, 'answer');
+  assert.equal(askScope('Kayaking in Masuria', intent(['masuria']), { rows: ROWS, towns: [], areas }).kind, 'answer');
+  assert.equal(askScope('Wine tasting in Rioja', intent(['rioja']), { rows: ROWS, towns: [] }).kind, 'lacking'); // no areas, no text: the old verdict
+  // places Carta truly lacks still decline: not in the text, not a region (Gimmelwald, Mürren, Husum)
+  for (const [q, name, cc] of [['What is there to do in Gimmelwald?', 'gimmelwald', null], ['Is Husum worth a visit?', 'husum', 'DE'], ['Wat kan ik doen in Mürren?', 'murren', null]]) {
+    const s = askScope(q, intent([name]), { rows: REGION_ROWS, areas, towns: cc ? [town(['Husum'], 'DE', 54.5, 9.05, 23000)] : [] });
+    assert.equal(s.kind, 'lacking', q);
+  }
+  assert.deepEqual(mentionedBy(REGION_ROWS, 'Ardennen').map((p) => p.id), []); // exact words only...
+  assert.equal(coveredName(REGION_ROWS, 'Ardennen'), true); // ...but the six-letter stem finds Ardennes for the covered test
+  assert.equal(coveredName(REGION_ROWS, 'Husum'), false);
+});
+
+test('a lower-case common word is not a place: "Sardegna in barca" (E7, wave 3b)', () => {
+  const barca = [town(['Barca'], 'RO', 46, 25, 3000)];
+  const raw = intent(['barca'], { facets: { area: 'sardinia' } });
+  assert.equal(askScope('Sardegna in barca', raw, { rows: ROWS, towns: barca, lang: 'it' }).kind, 'answer');
+  // without the area, a lower-case word is a place only for a real city (20000 people or more)
+  assert.equal(askScope('vakantie in barca', intent(['barca']), { rows: ROWS, towns: barca, lang: 'nl' }).kind, 'answer');
+  assert.equal(askScope('what to do in konstanz', intent(['konstanz']), { rows: ROWS, towns: [town(['Konstanz'], 'DE', 47.7, 9.2, 81275)] }).kind, 'lacking');
+});
+
+test('a famous place outside Europe stays outside, even with a tiny European namesake (E7, wave 3b)', () => {
+  // the gazetteer holds a village called Bali, Lima and Goa: the outside list wins before it is asked
+  const namesakes = [town(['Bali'], 'ES', 38.5, -0.2, 300), town(['Lima'], 'IT', 44, 10.7, 200), town(['Goa'], 'ES', 38, -1, 150)];
+  for (const [q, unknown, place] of [['Two weeks in Bali', ['bali'], 'Bali'], ['Reis naar Bali', ['bali'], 'Bali'], ['Best time to visit Lima?', ['lima'], 'Lima'], ['Voyage à Goa en hiver', ['goa'], 'Goa'],
+    ['Qué hacer en Santiago de Chile', ['santiago'], 'Santiago de Chile'], ['A trip to Victoria Falls', ['falls'], 'Victoria Falls']]) {
+    const s = askScope(q, intent(unknown), { rows: ROWS, towns: namesakes });
+    assert.equal(s.kind, 'outside', q);
+    assert.equal(s.place, place, q);
+  }
+  assert.equal(needsGazetteer('Two weeks in Bali', intent(['bali'])), null); // no gazetteer lookup for a name known to be outside
 });
 
 test('a common word is not a place Carta lacks: a language, a lowercase word', () => {

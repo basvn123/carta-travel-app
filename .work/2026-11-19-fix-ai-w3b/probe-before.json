@@ -1,0 +1,377 @@
+{
+  "ordinary": {
+    "n": 95,
+    "falseLacking": {
+      "k": 18,
+      "n": 95,
+      "p": 0.18947368421052632,
+      "lo": 0.12334753468178353,
+      "hi": 0.2797378059035571,
+      "ruleOfThree": null
+    },
+    "falseOutside": {
+      "k": 0,
+      "n": 95,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.038866226366226365,
+      "ruleOfThree": 0.031578947368421054
+    },
+    "falseRefusal": {
+      "k": 0,
+      "n": 95,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.038866226366226365,
+      "ruleOfThree": 0.031578947368421054
+    },
+    "fails": {
+      "falseLacking": [
+        {
+          "q": "Wine tasting in Rioja",
+          "place": "Rioja",
+          "nearest": [
+            "gem:almeria",
+            "gem:roquetas-de-mar",
+            "gem:cabo-de-gata"
+          ]
+        },
+        {
+          "q": "Things to do in Transylvania",
+          "place": "Transylvania",
+          "nearest": [
+            "SBZ",
+            "CLJ",
+            "TGM"
+          ]
+        },
+        {
+          "q": "What to see in Umbria?",
+          "place": "Umbria",
+          "nearest": [
+            "PEG",
+            "gem:orvieto",
+            "gem:assisi"
+          ]
+        },
+        {
+          "q": "Visiting the Wachau valley by bike",
+          "place": "Wachau",
+          "nearest": [
+            "DRS",
+            "gem:meissen",
+            "gem:bad-schandau"
+          ]
+        },
+        {
+          "q": "Two days in Istria",
+          "place": "Istria",
+          "nearest": [
+            "CND",
+            "gem:mamaia-sat",
+            "gem:tulcea"
+          ]
+        },
+        {
+          "q": "Weekend in Flanders",
+          "place": "Flanders",
+          "nearest": [
+            "gem:mechelen",
+            "gem:ypres",
+            "BRU"
+          ]
+        },
+        {
+          "q": "Wandelen in de Eifel",
+          "place": "Eifel",
+          "nearest": [
+            "gem:monschau",
+            "gem:aachen",
+            "gem:ninglinspo"
+          ]
+        },
+        {
+          "q": "Een week Bourgogne met de fiets",
+          "place": "Bourgogne",
+          "nearest": [
+            "gem:reims",
+            "gem:cormicy",
+            "gem:epernay"
+          ]
+        },
+        {
+          "q": "Vakantie in de Dordogne met kinderen",
+          "place": "Dordogne",
+          "nearest": [
+            "gem:sarlat-la-caneda",
+            "EGC",
+            "gem:saint-emilion"
+          ]
+        },
+        {
+          "q": "Naar de Auvergne in mei",
+          "place": "Auvergne",
+          "nearest": [
+            "LYS",
+            "gem:le-puy-en-velay",
+            "gem:puy-de-dome"
+          ]
+        },
+        {
+          "q": "Natur in der Sächsischen Schweiz",
+          "place": "Sächsischen Schweiz",
+          "nearest": []
+        },
+        {
+          "q": "Séjour en Ardèche avec des enfants",
+          "place": "Ardèche",
+          "nearest": [
+            "gem:gorges-de-lardeche",
+            "gem:vallon-pont-d-arc",
+            "gem:jaujac"
+          ]
+        },
+        {
+          "q": "Ruta por la Ribera del Duero",
+          "place": "Ribera",
+          "nearest": [
+            "gem:sambuca-di-sicilia",
+            "gem:scala-dei-turchi",
+            "gem:porto-empedocle"
+          ]
+        },
+        {
+          "q": "Qué hacer en Cantabria en verano",
+          "place": "Cantabria",
+          "nearest": [
+            "SDR",
+            "gem:santillana-del-mar",
+            "gem:comillas"
+          ]
+        },
+        {
+          "q": "Pueblos bonitos de La Rioja",
+          "place": "Rioja",
+          "nearest": [
+            "gem:almeria",
+            "gem:roquetas-de-mar",
+            "gem:cabo-de-gata"
+          ]
+        },
+        {
+          "q": "Cosa vedere in Umbria",
+          "place": "Umbria",
+          "nearest": [
+            "PEG",
+            "gem:orvieto",
+            "gem:assisi"
+          ]
+        },
+        {
+          "q": "Un giro in Borgogna",
+          "place": "Borgogna",
+          "nearest": []
+        },
+        {
+          "q": "Cosa fare in Friuli",
+          "place": "Friuli",
+          "nearest": [
+            "gem:cividale-del-friuli",
+            "gem:poffabro"
+          ]
+        }
+      ],
+      "falseOutside": [],
+      "falseRefusal": []
+    }
+  },
+  "judge10": {
+    "n": 10,
+    "falseLacking": {
+      "k": 10,
+      "n": 10,
+      "p": 1,
+      "lo": 0.7224598312333834,
+      "hi": 1,
+      "ruleOfThree": null
+    },
+    "falseOutside": {
+      "k": 0,
+      "n": 10,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.2775401687666166,
+      "ruleOfThree": 0.3
+    },
+    "falseRefusal": {
+      "k": 0,
+      "n": 10,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.2775401687666166,
+      "ruleOfThree": 0.3
+    },
+    "fails": {
+      "falseLacking": [
+        {
+          "q": "Week in de Ardennen",
+          "place": "Ardennen",
+          "nearest": []
+        },
+        {
+          "q": "Sardegna in barca",
+          "place": "Barca",
+          "nearest": [
+            "CRA",
+            "gem:iron-gates",
+            "gem:targu-jiu"
+          ]
+        },
+        {
+          "q": "Wine tasting in Burgundy",
+          "place": "Burgundy",
+          "nearest": [
+            "gem:beaune",
+            "gem:dijon",
+            "gem:vezelay"
+          ]
+        },
+        {
+          "q": "Fietsen in de Veluwe",
+          "place": "Veluwe",
+          "nearest": [
+            "gem:hoge-veluwe",
+            "gem:otterlo",
+            "gem:hoenderloo"
+          ]
+        },
+        {
+          "q": "Vakantie in Zeeland",
+          "place": "Zeeland",
+          "nearest": [
+            "gem:batenburg",
+            "gem:heijen",
+            "gem:hunnerberg"
+          ]
+        },
+        {
+          "q": "Les châteaux de la Loire",
+          "place": "Loire",
+          "nearest": [
+            "gem:saint-florent-le-vieil",
+            "gem:chateau-gontier",
+            "gem:savennieres"
+          ]
+        },
+        {
+          "q": "Wandern in der Eifel",
+          "place": "Eifel",
+          "nearest": [
+            "gem:monschau",
+            "gem:aachen",
+            "gem:ninglinspo"
+          ]
+        },
+        {
+          "q": "Qué ver en Galicia",
+          "place": "Galicia",
+          "nearest": [
+            "gem:cies-islands",
+            "gem:lugo",
+            "SCQ"
+          ]
+        },
+        {
+          "q": "Kayaking in Masuria",
+          "place": "Masuria",
+          "nearest": [
+            "gem:frombork"
+          ]
+        },
+        {
+          "q": "Week-end en Champagne",
+          "place": "Champagne",
+          "nearest": [
+            "gem:le-mans",
+            "gem:saint-calais",
+            "gem:montmirail"
+          ]
+        }
+      ],
+      "falseOutside": [],
+      "falseRefusal": []
+    }
+  },
+  "lacking": {
+    "n": 15,
+    "ok": {
+      "k": 15,
+      "n": 15,
+      "p": 1,
+      "lo": 0.7961107336956521,
+      "hi": 1,
+      "ruleOfThree": null
+    },
+    "wrong": []
+  },
+  "outside": {
+    "n": 10,
+    "ok": {
+      "k": 0,
+      "n": 10,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.2775401687666166,
+      "ruleOfThree": 0.3
+    },
+    "wrong": [
+      {
+        "q": "Two weeks in Bali",
+        "lacking": "Bali",
+        "outside": null
+      },
+      {
+        "q": "Reis naar Bali",
+        "lacking": "Bali",
+        "outside": null
+      },
+      {
+        "q": "Best time to visit Lima?",
+        "outside": null
+      },
+      {
+        "q": "Qué hacer en Santiago de Chile",
+        "lacking": "Santiago",
+        "outside": null
+      },
+      {
+        "q": "A trip to Victoria Falls",
+        "outside": null
+      },
+      {
+        "q": "Urlaub auf Sansibar",
+        "outside": null
+      },
+      {
+        "q": "Voyage à Goa en hiver",
+        "lacking": "Goa",
+        "outside": null
+      },
+      {
+        "q": "Vacanze a Cusco",
+        "lacking": "Cusco",
+        "outside": null
+      },
+      {
+        "q": "Hiking in Patagonia in March",
+        "lacking": "Patagonia",
+        "outside": null
+      },
+      {
+        "q": "Weekend in Queenstown",
+        "lacking": "Queenstown",
+        "outside": null
+      }
+    ]
+  }
+}

@@ -15,11 +15,17 @@
  *   rawIntent parseIntent's Intent for it (before the follow-up binding)
  *   ref       { id, city } the place the last answer was about, or null
  *   towns     the gazetteer's towns for the name the question holds (see needsGazetteer), or null
- *   rows      the catalogue rows (lat, lon, iso2, city, id) the nearest places come from
- *   lang      the interface language (a bare capitalised word is read as a place except in German)
+ *   rows      the catalogue rows (lat, lon, iso2, city, id) the nearest places come from, and whose text says which regions are covered
+ *   areas     the gazetteer's prepared admin regions and countries ({ regions, countries }), or null: a second way a region is known to be covered
+ *   lang     the interface language (a bare capitalised word is read as a place except in German)
  *
  * nearest is [{ id, city, cc }], at most three, from the catalogue by
  * country and distance: a door for the traveller, never a guess.
+ *
+ * The order for a place name the question holds: outside Europe (a list, checked before any gazetteer
+ * town, so Bali is never a Spanish village), then the area words, then coveredName (the catalogue
+ * covers it: answered), then the gazetteer town (lacking, with the nearest covered places), then a
+ * capitalised name no source knows (lacking, no cc). Covered things come from the catalogue, in code.
  *
  * The refusal and off-topic lists below are deterministic word lists in the
  * six languages, folded for accents. They are conservative on purpose: a
@@ -197,18 +203,73 @@ function textOf(p) {
   return t;
 }
 
-/** The covered places whose own text names `name` (a village Carta has no entry for), most mentions first. */
-export function mentionedBy(rows, name, { count = 3 } = {}) {
-  const key = ` ${foldName(name).replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `;
-  if (key.trim().length < 3) return [];
+const textKey = (name) => foldName(name).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+
+/**
+ * The catalogue rows whose own text names `name`, most mentions first. With `stem`, a long one-word
+ * name also matches the words that start with it minus two letters (Ardennen finds Ardennes: the
+ * text is English, the traveller's word may not be).
+ */
+function mentionHits(rows, name, { stem = false } = {}) {
+  const bare = textKey(name);
+  if (bare.length < 3) return [];
+  const key = ` ${bare} `;
+  const head = stem && bare.length >= 8 && !bare.includes(' ') ? ` ${bare.slice(0, -2)}` : null;
   const hits = [];
   for (const p of rows || []) {
     const t = textOf(p);
     let n = 0;
     for (let i = t.indexOf(key); i >= 0; i = t.indexOf(key, i + key.length - 1)) n++;
+    if (!n && head && t.includes(head)) n = 1;
     if (n) hits.push({ p, n });
   }
-  return hits.sort((a, b) => b.n - a.n).slice(0, count).map(({ p }) => ({ id: p.id, city: p.city, cc: p.iso2 }));
+  return hits.sort((a, b) => b.n - a.n);
+}
+
+/** The covered places whose own text names `name` (a village Carta has no entry for), most mentions first. */
+export function mentionedBy(rows, name, { count = 3 } = {}) {
+  return mentionHits(rows, name).slice(0, count).map(({ p }) => ({ id: p.id, city: p.city, cc: p.iso2 }));
+}
+
+// Covered-name test (E7, wave 3b). Measured on the shipped catalogue (probe-before.json, signals in the
+// wave 3b run folder): a region the catalogue covers is named in the text of 3 or more places (Burgundy 3,
+// Wachau 3, Veluwe 3, Zeeland 4, Eifel 7, Loire 34); every town Carta lacks is named in none, except
+// Murren (2) and Wengen (1), so 3 separates them with a margin of one. 4 would lose three regions.
+const REGION_MENTIONS = 3;
+// Second signal: a gazetteer town this size is a town whatever the text says (Konstanz, Vlore, Elgin),
+// while the tiny namesakes of regions (Zeeland 4750, Champagne 3475, Bourgogne 1018) are not.
+const TOWN_POP = 10000;
+// A lower-case word is a place only when it is a real city (a tiny "Barca" is the Italian word for boat).
+const LOWERCASE_TOWN_POP = 20000;
+// "Ribera del Duero": the capitalised word after a connector belongs to the name.
+const CONNECTOR = '(?:de|del|della|dei|delle|degli|di|von|sur|aux|des|du)(?: (?:la|el|los|las|le|les|il|lo))?'; // not "en" or "am": "Quimper en Bretagne" is the town in a region
+
+/** The longer name the text holds ("Ribera" -> "Ribera del Duero"), or `name`. */
+function phraseOf(text, name) {
+  const at = String(text || '').toLowerCase().indexOf(String(name).toLowerCase());
+  if (at < 0) return name;
+  const m = new RegExp(`^ ${CONNECTOR} \\p{Lu}[\\p{L}'’-]*`, 'u').exec(String(text).slice(at + name.length));
+  return m ? `${text.slice(at, at + name.length)}${m[0]}` : name;
+}
+
+/**
+ * True when the catalogue knows `name` as a region, area or country it covers, so it is never a place
+ * Carta lacks: (a) at least REGION_MENTIONS catalogue places name it in their text, or (b) it is a word
+ * of a gazetteer admin region or country name, six languages (`areas`, the gazetteer's areas.json).
+ * A gazetteer town of TOWN_POP people or more with that name is a town and wins. Without `areas`
+ * (a failed fetch, a bare test) only the text counts.
+ */
+export function coveredName(rows, name, { areas = null, towns = null, text = '' } = {}) {
+  const key = textKey(name);
+  // The town's own name, not an alias: "Tenerife" is an alias of Santa Cruz de Tenerife (211000 people), and the island is covered.
+  if (key.length < 3 || (towns || []).some((t) => (t.pop || 0) >= TOWN_POP && textKey(t.names?.[0] || '') === key)) return false;
+  const phrase = phraseOf(text, name);
+  for (const n of phrase === name ? [name] : [phrase, name]) if (mentionHits(rows, n, { stem: true }).length >= REGION_MENTIONS) return true;
+  if (key.length < 4) return false;
+  for (const a of [...(areas?.regions || []), ...(areas?.countries || [])]) {
+    if (a.folds?.some((f) => f === key || f.split(' ').includes(key))) return true;
+  }
+  return false;
 }
 
 /** The gazetteer town that is named `name`, the biggest when several are. */
@@ -221,21 +282,22 @@ export function townNamed(towns, name) {
   return best;
 }
 
-/**
- * The name the question holds that only the gazetteer can place (a town Carta
- * may lack), or null. The caller loads that name's towns, then calls askScope.
- */
-// Covered countries by nickname and travel areas, six languages, folded: never a place Carta lacks
-// ("the UK", "the Schengen area", "the Riviera"). The parser may not know the word; the answer then
-// stays the normal search (a country alias is not resolved to its country facet here: parser work).
-const AREA_NAMES = [
-  'uk', 'gb', 'vk', 'eu', 'ue', 'schengen', 'riviera', 'benelux', 'balkans', 'balkan', 'balcanes', 'balcani', 'baltics', 'baltikum', 'baltische staten', 'baltes', 'balticos', 'paesi baltici',
-  'scandinavia', 'scandinavie', 'skandinavien', 'escandinavia', 'lapland', 'lappland', 'laponie', 'laponia', 'lapponia', 'alps', 'alpen', 'alpes', 'alpi',
-  'dolomites', 'dolomieten', 'dolomiten', 'dolomitas', 'dolomiti', 'cote d azur', 'costa azul', 'costa azzurra', 'azurkuste', 'algarve', 'tirol', 'tyrol', 'tirolo',
-  'highlands', 'hooglanden', 'hochland', 'tierras altas', 'hautes terres', 'cotswolds', 'tuscany', 'toscane', 'toskana', 'toscana',
-  'verenigd koninkrijk', 'vereinigtes konigreich', 'royaume uni', 'reino unido', 'regno unito',
+// Covered country nicknames and travel areas that neither the catalogue text nor the parser carries,
+// six languages, folded: never a place Carta lacks ("the UK", "the Schengen area"). Since wave 3b this
+// is only what coveredName cannot know: the catalogue's English text never says "UK", "VK", "Schengen"
+// or "EU", and not the Dutch, German, Spanish or Italian spellings of the Balkans, the Baltics or the
+// Highlands. Every other area the old list held (the Riviera, Lapland, the Dolomites, Tuscany...) is
+// now found by the catalogue itself; .work/2026-11-19-fix-ai-w3b/prune.mjs found which entries stay.
+export const AREA_NAMES = [
+  'uk', 'gb', 'vk', 'eu', 'ue', 'schengen', 'benelux', 'balcanes', 'balcani', 'baltics', 'baltikum', 'baltische staten', 'baltes', 'paesi baltici',
+  'azurkuste', 'hooglanden', 'hochland', 'tierras altas',
 ];
 const isArea = (name) => AREA_NAMES.includes(foldName(name).replace(/[^\p{L}\p{N}]+/gu, ' ').trim());
+
+/**
+ * The name the question holds that only the gazetteer can place (a town Carta
+ * may lack), or null. The caller loads that name's towns and areas, then calls askScope.
+ */
 
 export function needsGazetteer(text, raw, ref = null, { lang = 'en' } = {}) {
   if (refusalFor(text) || (ref && pointsBack(text))) return null;
@@ -248,7 +310,7 @@ const NOT_PLACES = new Set(('japanese chinese english french german spanish ital
   + 'japans chinees engels frans duits spaans italiaans nederlands koreaans arabisch russisch portugees turks grieks pools japanisch chinesisch englisch franzosisch deutsch spanisch italienisch '
   + 'niederlandisch japonais chinois anglais francais allemand espagnol italien neerlandais japones chino ingles frances aleman espanol italiano holandes giapponese cinese inglese francese tedesco spagnolo olandese').split(' '));
 
-export function askScope(text, raw, { ref = null, towns = null, rows = null, lang = 'en' } = {}) {
+export function askScope(text, raw, { ref = null, towns = null, rows = null, areas = null, lang = 'en' } = {}) {
   const reason = refusalFor(text);
   if (reason) return { kind: 'refuse', reason };
   // A follow-up that points back ("there") is about the last place: never outside Europe.
@@ -262,16 +324,21 @@ export function askScope(text, raw, { ref = null, towns = null, rows = null, lan
     }
     // A covered country nickname or travel area is never a place Carta lacks.
     if (isArea(c.name)) return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
+    // A region the catalogue covers (Burgundy, the Veluwe, Galicia) is answered, not declined: asked of
+    // the catalogue's own words and the gazetteer's regions before any town or capital-name check.
+    if (coveredName(rows, c.name, { areas, towns, text })) return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
     // Not on the outside list, so never "outside Europe": a place Carta lacks. The gazetteer
     // (towns above a size) gives its country and spot; a village it misses (Murren) is placed
     // by the catalogue's own words, the places whose text mentions it; else only the Explore door.
-    const town = townNamed(towns, c.name);
-    if (town) return { kind: 'lacking', place: c.name, cc: town.cc, nearest: nearestCovered(town, rows) };
+    // "Ribera del Duero" is not the town Ribera: the longer name decides which town the gazetteer may give.
+    const phrase = phraseOf(text, c.name);
+    const town = townNamed(towns, phrase);
+    if (town && (c.typed || town.pop >= LOWERCASE_TOWN_POP)) return { kind: 'lacking', place: phrase, cc: town.cc, nearest: nearestCovered(town, rows) };
     // A weak lead-in or a bare capital word is a place only when the gazetteer knows the town.
     if (c.weak) return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
     // No town: only a name typed with a capital that is not a language or nationality is read as a
     // place ("into Japanese" and "to take home" are not places Carta lacks).
-    if (c.typed && !NOT_PLACES.has(foldName(c.name))) return { kind: 'lacking', place: c.name, cc: null, nearest: mentionedBy(rows, c.name) };
+    if (c.typed && !NOT_PLACES.has(foldName(c.name))) return { kind: 'lacking', place: phrase, cc: null, nearest: mentionedBy(rows, phrase) };
     return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
   }
   if (isOfftopic(text, raw)) return { kind: 'offtopic' };

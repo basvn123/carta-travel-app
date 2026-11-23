@@ -1,5 +1,5 @@
 {
- "about": "The towns the places-lacking cases of set.json name, copied from the shipped gazetteer (public/search/places/, GeoNames, CC BY 4.0, built 2026-11-18) on 2026-11-23, so the any-question eval can place them where public/ has no gazetteer (CI: it is gitignored). Row format as the shards: [geonameid, names, lat, lon, cc, admin1, pop]. Regenerate with the same filter if the lacking names change.",
+ "about": "The towns the places-lacking cases of set.json name, copied from the shipped gazetteer (public/search/places/, GeoNames, CC BY 4.0, built 2026-11-18) on 2026-11-23, so the any-question eval can place them where public/ has no gazetteer (CI: it is gitignored). Row format as the shards: [geonameid, names, lat, lon, cc, admin1, pop]. Regenerate with the same filter if the lacking names change. Wave 3b (2026-11-23) added the towns the region probe's lacking questions name and `areas`: the gazetteer's admin regions (areas.json rows, same format) that hold a region word the probe uses, so the covered-region test runs where the gazetteer is absent.",
  "source": "GeoNames, CC BY 4.0",
  "date": "2026-11-23",
  "towns": [
@@ -184,6 +184,889 @@
     "fr": "Vlora",
     "it": "Valona"
    }
+  ],
+  [
+   2657215,
+   [
+    "Arbroath"
+   ],
+   56.5632,
+   -2.5874,
+   "GB",
+   "SCT",
+   23640
+  ],
+  [
+   2725123,
+   [
+    "Arvika"
+   ],
+   59.6553,
+   12.5852,
+   "SE",
+   "22",
+   13926
+  ],
+  [
+   2650122,
+   [
+    "Elgin"
+   ],
+   57.6495,
+   -3.3184,
+   "GB",
+   "SCT",
+   25040
+  ],
+  [
+   2716437,
+   [
+    "Eksjö",
+    "Eksjoe"
+   ],
+   57.6664,
+   14.972,
+   "SE",
+   "08",
+   10157
+  ],
+  [
+   2647297,
+   [
+    "Hawick"
+   ],
+   55.4227,
+   -2.7867,
+   "GB",
+   "SCT",
+   13512
+  ],
+  [
+   2706184,
+   [
+    "Hjo"
+   ],
+   58.3013,
+   14.2878,
+   "SE",
+   "28",
+   6203
+  ],
+  [
+   2645970,
+   [
+    "Jedburgh"
+   ],
+   55.48,
+   -2.552,
+   "GB",
+   "SCT",
+   3860
+  ],
+  [
+   651943,
+   [
+    "Kokkola",
+    "Karleby"
+   ],
+   63.8385,
+   23.1307,
+   "FI",
+   "16",
+   48361
+  ],
+  [
+   2645849,
+   [
+    "Kelso"
+   ],
+   55.5981,
+   -2.4338,
+   "GB",
+   "SCT",
+   6870
+  ],
+  [
+   2878943,
+   [
+    "Lemgo"
+   ],
+   52.0279,
+   8.899,
+   "DE",
+   "07",
+   41943
+  ],
+  [
+   2696650,
+   [
+    "Leksand"
+   ],
+   60.7303,
+   14.9999,
+   "SE",
+   "10",
+   6107
+  ],
+  [
+   2692613,
+   [
+    "Mariestad"
+   ],
+   58.7097,
+   13.8237,
+   "SE",
+   "28",
+   16122
+  ],
+  [
+   2640526,
+   [
+    "Peebles"
+   ],
+   55.6519,
+   -3.1888,
+   "GB",
+   "SCT",
+   8380
+  ],
+  [
+   2682995,
+   [
+    "Rättvik",
+    "Raettvik"
+   ],
+   60.8863,
+   15.1179,
+   "SE",
+   "10",
+   5160
+  ],
+  [
+   2662881,
+   [
+    "Vimmerby"
+   ],
+   57.6659,
+   15.8552,
+   "SE",
+   "09",
+   8037
   ]
- ]
+ ],
+ "areas": {
+  "regions": [
+   [
+    "BE.VLG",
+    [
+     "Flanders",
+     "Vlaams Gewest",
+     "Région Flamande",
+     "Flemish Region",
+     "Vlaanderen",
+     "Flandre",
+     "Flandern",
+     "Flämische Region",
+     "Flandes",
+     "Regione fiamminga"
+    ],
+    [
+     2.544,
+     50.658,
+     5.873,
+     51.522
+    ],
+    8596951,
+    {
+     "de": "Flandern",
+     "en": "Flemish Region",
+     "es": "Flandes",
+     "fr": "Région Flamande",
+     "it": "Regione fiamminga",
+     "nl": "Vlaams Gewest"
+    }
+   ],
+   [
+    "DE.02",
+    [
+     "Bavaria",
+     "Baviera",
+     "Bayern",
+     "Bavière",
+     "Beieren",
+     "Free State of Bavaria"
+    ],
+    [
+     8.956,
+     47.357,
+     13.843,
+     50.571
+    ],
+    12581615,
+    {
+     "de": "Bayern",
+     "es": "Baviera",
+     "fr": "Bavière",
+     "it": "Baviera",
+     "nl": "Beieren"
+    }
+   ],
+   [
+    "DE.06",
+    [
+     "Lower Saxony",
+     "Niedersachsen",
+     "Basse-Saxe",
+     "Land Niedersachsen",
+     "Bassa Sassonia",
+     "State of Lower Saxony",
+     "Baja Sajonia",
+     "Nedersaksen"
+    ],
+    [
+     6.642,
+     51.365,
+     11.614,
+     53.918
+    ],
+    8381334,
+    {
+     "de": "Niedersachsen",
+     "es": "Baja Sajonia",
+     "fr": "Basse-Saxe",
+     "it": "Bassa Sassonia",
+     "nl": "Nedersaksen"
+    }
+   ],
+   [
+    "DE.13",
+    [
+     "Saxony",
+     "Sachsen",
+     "Saxe",
+     "République de Saxe",
+     "État libre de Saxe",
+     "Sassonia",
+     "Free State of Saxony",
+     "Saksen"
+    ],
+    [
+     11.878,
+     50.167,
+     15.039,
+     51.691
+    ],
+    4416355,
+    {
+     "de": "Sachsen",
+     "es": "Sachsen",
+     "fr": "État libre de Saxe",
+     "it": "Sassonia",
+     "nl": "Saksen"
+    }
+   ],
+   [
+    "DE.14",
+    [
+     "Saxony-Anhalt",
+     "Sachsen-Anhalt",
+     "Sajonia-Anhalt",
+     "Saxe-Anhalt",
+     "Sassonia-Anhalt",
+     "State of Saxony-Anhalt",
+     "Saksen-Anhalt"
+    ],
+    [
+     10.549,
+     50.927,
+     13.178,
+     52.99
+    ],
+    2618994,
+    {
+     "de": "Sachsen-Anhalt",
+     "es": "Sajonia-Anhalt",
+     "fr": "Saxe-Anhalt",
+     "it": "Sassonia-Anhalt",
+     "nl": "Saksen-Anhalt"
+    }
+   ],
+   [
+    "DE.15",
+    [
+     "Thuringia",
+     "Freistaat Thüringen",
+     "Thüringen",
+     "Thuringe",
+     "Free State of Thuringia",
+     "Turingia"
+    ],
+    [
+     9.898,
+     50.2,
+     12.679,
+     51.637
+    ],
+    2294257,
+    {
+     "de": "Thüringen",
+     "en": "Free State of Thuringia",
+     "es": "Thüringen",
+     "fr": "Thuringe",
+     "it": "Turingia"
+    }
+   ],
+   [
+    "ES.27",
+    [
+     "La Rioja",
+     "Rioja",
+     "Logroño",
+     "Comunidad Autónoma de La Rioja",
+     "Provincia de La Rioja"
+    ],
+    [
+     -3.147,
+     41.912,
+     -1.7,
+     42.677
+    ],
+    305756,
+    {
+     "es": "Comunidad Autónoma de La Rioja"
+    }
+   ],
+   [
+    "ES.32",
+    [
+     "Navarre",
+     "Navarra",
+     "el Viejo Reino",
+     "Alta Navarra",
+     "Comunidad Foral de Navarra",
+     "Autonome Region Navarra",
+     "Communauté Forale de Navarre",
+     "Autonomous Region of Navarre"
+    ],
+    [
+     -2.51,
+     41.873,
+     -0.876,
+     43.332
+    ],
+    636042,
+    {
+     "de": "Autonome Region Navarra",
+     "es": "Comunidad Foral de Navarra",
+     "fr": "Communauté Forale de Navarre",
+     "it": "Navarra",
+     "nl": "Navarra"
+    }
+   ],
+   [
+    "ES.34",
+    [
+     "Asturias",
+     "Principality of Asturias",
+     "Principado de Asturias",
+     "Fürstentum Asturien",
+     "Principauté des Asturies",
+     "Asturies",
+     "Comunidad Autónoma del Principado de Asturias",
+     "Principato delle Asturie",
+     "Prinsdom Asturië"
+    ],
+    [
+     -7.193,
+     42.89,
+     -4.705,
+     43.665
+    ],
+    1000399,
+    {
+     "de": "Fürstentum Asturien",
+     "en": "Principality of Asturias",
+     "es": "Principado de Asturias",
+     "fr": "Principauté des Asturies",
+     "it": "Principato delle Asturie",
+     "nl": "Prinsdom Asturië"
+    }
+   ],
+   [
+    "ES.39",
+    [
+     "Cantabria",
+     "La Montaña",
+     "Comunidad Autónoma de Cantabria",
+     "Provincia de Santander",
+     "Santander",
+     "Kantabrien",
+     "Cantabrie"
+    ],
+    [
+     -4.744,
+     42.779,
+     -3.17,
+     43.539
+    ],
+    491350,
+    {
+     "de": "Kantabrien",
+     "es": "Comunidad Autónoma de Cantabria",
+     "fr": "Cantabrie",
+     "nl": "Cantabrië"
+    }
+   ],
+   [
+    "ES.51",
+    [
+     "Andalusia",
+     "Andalucía",
+     "Andalusien",
+     "Andalousie",
+     "Andalusië",
+     "Comunidad Autónoma de Andalucía"
+    ],
+    [
+     -7.515,
+     35.964,
+     -1.695,
+     38.65
+    ],
+    8358200,
+    {
+     "de": "Andalusien",
+     "es": "Comunidad Autónoma de Andalucía",
+     "fr": "Andalousie",
+     "nl": "Andalusië"
+    }
+   ],
+   [
+    "ES.52",
+    [
+     "Aragon",
+     "Aragonien",
+     "Comunidad Autónoma de Aragón",
+     "Aragona"
+    ],
+    [
+     -2.2,
+     39.933,
+     0.796,
+     42.821
+    ],
+    1492969,
+    {
+     "de": "Aragonien",
+     "es": "Comunidad Autónoma de Aragón",
+     "it": "Aragona"
+    }
+   ],
+   [
+    "ES.56",
+    [
+     "Catalonia",
+     "Cataluña",
+     "Catalogne",
+     "Catalogna",
+     "Katalonien",
+     "La Catalogna",
+     "Comunidad Autónoma de Cataluña",
+     "Catalonië"
+    ],
+    [
+     0.2,
+     40.493,
+     3.327,
+     42.861
+    ],
+    10260945,
+    {
+     "de": "Katalonien",
+     "es": "Comunidad Autónoma de Cataluña",
+     "fr": "Catalogne",
+     "it": "Catalogna",
+     "nl": "Catalonië"
+    }
+   ],
+   [
+    "ES.58",
+    [
+     "Galicia",
+     "Galicien",
+     "Galice",
+     "Comunidad Autónoma de Galicia",
+     "Galizia",
+     "Galicië"
+    ],
+    [
+     -9.313,
+     41.825,
+     -6.94,
+     43.791
+    ],
+    2494451,
+    {
+     "de": "Galicien",
+     "es": "Comunidad Autónoma de Galicia",
+     "fr": "Galice",
+     "it": "Galizia",
+     "nl": "Galicië"
+    }
+   ],
+   [
+    "FR.24",
+    [
+     "Centre-Val de Loire",
+     "Centro-Valle della Loira",
+     "Centro-Valle de Loira",
+     "Région Centre-Val de Loire"
+    ],
+    [
+     0.074,
+     46.359,
+     3.109,
+     48.967
+    ],
+    2271548,
+    {
+     "es": "Centro-Valle de Loira",
+     "it": "Centro-Valle della Loira"
+    }
+   ],
+   [
+    "FR.27",
+    [
+     "Bourgogne-Franche-Comté",
+     "Borgogna-Franca Contea",
+     "Borgoña-Franco Condado"
+    ],
+    [
+     2.833,
+     46.125,
+     7.162,
+     48.398
+    ],
+    2288655,
+    {
+     "es": "Borgoña-Franco Condado",
+     "it": "Borgogna-Franca Contea"
+    }
+   ],
+   [
+    "FR.28",
+    [
+     "Normandy",
+     "Normandie",
+     "Normandia"
+    ],
+    [
+     -1.916,
+     48.176,
+     1.83,
+     50.11
+    ],
+    2738208,
+    {
+     "de": "Normandie",
+     "es": "Normandía",
+     "fr": "Normandie",
+     "it": "Normandia",
+     "nl": "Normandië"
+    }
+   ],
+   [
+    "FR.52",
+    [
+     "Pays de la Loire",
+     "Région Pays de la Loire",
+     "Países del Loira",
+     "Pays de la Loire Region",
+     "Paesi della Loira"
+    ],
+    [
+     -2.597,
+     46.265,
+     0.85,
+     48.592
+    ],
+    3264740,
+    {
+     "en": "Pays de la Loire Region",
+     "es": "Países del Loira",
+     "fr": "Région Pays de la Loire",
+     "it": "Paesi della Loira"
+    }
+   ],
+   [
+    "FR.53",
+    [
+     "Brittany",
+     "Bretaña",
+     "Bretagne",
+     "Région Bretagne",
+     "Bretagna",
+     "Brittany Region"
+    ],
+    [
+     -5.136,
+     47.264,
+     -0.987,
+     48.892
+    ],
+    2963827,
+    {
+     "de": "Bretagne",
+     "en": "Brittany Region",
+     "es": "Bretaña",
+     "fr": "Région Bretagne",
+     "it": "Bretagna",
+     "nl": "Bretagne"
+    }
+   ],
+   [
+    "FR.84",
+    [
+     "Auvergne-Rhône-Alpes",
+     "Alvernia-Rodano-Alpi",
+     "Auvernia-Ródano-Alpes"
+    ],
+    [
+     2.078,
+     44.187,
+     7.025,
+     46.806
+    ],
+    7310614,
+    {
+     "es": "Auvernia-Ródano-Alpes",
+     "it": "Alvernia-Rodano-Alpi"
+    }
+   ],
+   [
+    "HR.04",
+    [
+     "Istria",
+     "Istrien",
+     "County of Istria",
+     "Istria County",
+     "Gespanschaft Istrien",
+     "Regione istriana",
+     "Istrie"
+    ],
+    [
+     13.474,
+     44.751,
+     14.208,
+     45.502
+    ],
+    142037,
+    {
+     "de": "Gespanschaft Istrien",
+     "en": "Istria County",
+     "fr": "Istrie",
+     "it": "Regione istriana"
+    }
+   ],
+   [
+    "IT.06",
+    [
+     "Friuli Venezia Giulia",
+     "Friaul-Julisch Venetien",
+     "Frioul-Vénétie julienne",
+     "FVG",
+     "Friuli-Julisch Venetië",
+     "Friuli-Venecia Julia",
+     "Región de Friuli-Venecia Julia"
+    ],
+    [
+     12.321,
+     45.551,
+     13.913,
+     46.636
+    ],
+    1162732,
+    {
+     "de": "Friaul-Julisch Venetien",
+     "es": "Región de Friuli-Venecia Julia",
+     "fr": "Frioul-Vénétie julienne",
+     "nl": "Friuli-Julisch Venetië"
+    }
+   ],
+   [
+    "IT.09",
+    [
+     "Lombardy",
+     "Lombardia",
+     "Lombardei",
+     "Lombardie",
+     "Lombardije",
+     "Región de Lombardía"
+    ],
+    [
+     8.483,
+     44.701,
+     11.404,
+     46.6
+    ],
+    9899936,
+    {
+     "de": "Lombardei",
+     "es": "Región de Lombardía",
+     "fr": "Lombardie",
+     "it": "Lombardia",
+     "nl": "Lombardije"
+    }
+   ],
+   [
+    "IT.12",
+    [
+     "Piedmont",
+     "Regione Piemonte",
+     "Piemonte",
+     "Piamonte",
+     "Piemont",
+     "Región de Piamonte"
+    ],
+    [
+     6.649,
+     44.033,
+     9.226,
+     46.427
+    ],
+    5779560,
+    {
+     "de": "Piemont",
+     "es": "Región de Piamonte",
+     "fr": "Piémont",
+     "it": "Piemonte",
+     "nl": "Piëmont"
+    }
+   ],
+   [
+    "IT.14",
+    [
+     "Sardinia",
+     "Sardegna",
+     "Sardaigne",
+     "Sardinien",
+     "Sardinië",
+     "Cerdeña",
+     "Región de Cerdeña"
+    ],
+    [
+     8.17,
+     38.895,
+     9.801,
+     41.289
+    ],
+    1579415,
+    {
+     "de": "Sardinien",
+     "es": "Región de Cerdeña",
+     "fr": "Sardaigne",
+     "it": "Sardegna",
+     "nl": "Sardinië"
+    }
+   ],
+   [
+    "IT.16",
+    [
+     "Tuscany",
+     "Toscana",
+     "Toscane",
+     "Toskana",
+     "Región de Toscana"
+    ],
+    [
+     9.713,
+     42.308,
+     12.348,
+     44.425
+    ],
+    3409037,
+    {
+     "de": "Toskana",
+     "es": "Región de Toscana",
+     "fr": "Toscane",
+     "it": "Toscana",
+     "nl": "Toscane"
+    }
+   ],
+   [
+    "IT.18",
+    [
+     "Umbria",
+     "Umbrien",
+     "Ombrie",
+     "Umbrië",
+     "Región de Umbría"
+    ],
+    [
+     11.906,
+     42.354,
+     13.146,
+     43.597
+    ],
+    703267,
+    {
+     "de": "Umbrien",
+     "es": "Región de Umbría",
+     "fr": "Ombrie",
+     "nl": "Umbrië"
+    }
+   ],
+   [
+    "NL.10",
+    [
+     "Zeeland",
+     "Seeland",
+     "Zelanda",
+     "Zélande"
+    ],
+    [
+     3.336,
+     51.178,
+     4.271,
+     51.786
+    ],
+    339498,
+    {
+     "es": "Zelanda",
+     "fr": "Zélande",
+     "it": "Zelanda"
+    }
+   ],
+   [
+    "PL.85",
+    [
+     "Warmia-Masuria",
+     "Woiwodschaft Ermland-Masuren",
+     "voïvodie de Varmie-Mazurie",
+     "Voivodato de Varmia y Masuria",
+     "Warmian-Masurian Voivodeship",
+     "voivodato della Varmia-Masuria",
+     "Ermland-Mazurië",
+     "Warmia-Masuria Province",
+     "Warmian-Masurian"
+    ],
+    [
+     19.213,
+     53.118,
+     22.722,
+     54.43
+    ],
+    959701,
+    {
+     "de": "Woiwodschaft Ermland-Masuren",
+     "en": "Warmian-Masurian Voivodeship",
+     "es": "Voivodato de Varmia y Masuria",
+     "fr": "voïvodie de Varmie-Mazurie",
+     "it": "voivodato della Varmia-Masuria",
+     "nl": "Ermland-Mazurië"
+    }
+   ]
+  ],
+  "countries": []
+ }
 }

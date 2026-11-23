@@ -8,7 +8,7 @@ import { buildPack } from '../../lib/ask/context.js';
 import { writeAnswer } from '../../lib/ask/generate.js';
 import { useAiStyle } from '../../hooks/useAiStyle.js';
 import { askScope, needsGazetteer } from '../../lib/ask/scope.js';
-import { loadTownsFor } from '../../lib/search/gazetteer.js';
+import { loadTownsFor, loadAreas } from '../../lib/search/gazetteer.js';
 import { bindFollowUp } from '../../lib/ask/followup.js';
 import {
   SHOWN_PLACES, MIN_TYPING_MS, SLOW_MS, trimSentences, replyText, shortLine, revealPace, placeChips,
@@ -68,16 +68,20 @@ function useTurn(turn, vocab, ctx) {
   const refId = turn.ref?.id || null;
   const gaz = React.useMemo(() => (raw ? needsGazetteer(turn.q, raw, turn.ref, { lang }) : null), [raw, turn.q, lang]); // eslint-disable-line react-hooks/exhaustive-deps -- turn.ref is read by its id
   const [towns, setTowns] = React.useState(undefined);
+  // The gazetteer's regions too: a region the catalogue covers (Burgundy, Galicia) is answered, not declined (E7, wave 3b).
+  const [areas, setAreas] = React.useState(null);
   React.useEffect(() => {
     if (!gaz) return undefined;
     let live = true;
-    loadTownsFor(gaz).then((l) => { if (live) setTowns(l); }).catch(() => { if (live) setTowns(null); });
+    Promise.all([loadTownsFor(gaz), loadAreas().catch(() => null)])
+      .then(([l, a]) => { if (live) { setAreas(a); setTowns(l); } })
+      .catch(() => { if (live) setTowns(null); });
     return () => { live = false; };
   }, [gaz]);
   const scope = React.useMemo(
-    () => (raw && (!gaz || towns !== undefined) ? askScope(turn.q, raw, { ref: turn.ref, towns: gaz ? towns : null, rows: ctx.rows, lang }) : null),
+    () => (raw && (!gaz || towns !== undefined) ? askScope(turn.q, raw, { ref: turn.ref, towns: gaz ? towns : null, areas: gaz ? areas : null, rows: ctx.rows, lang }) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- turn.ref is read by its id
-    [raw, gaz, towns, turn.q, refId, ctx.rows, lang],
+    [raw, gaz, towns, areas, turn.q, refId, ctx.rows, lang],
   );
   const declined = !!scope && scope.kind !== 'answer';
   const parsed = React.useMemo(
