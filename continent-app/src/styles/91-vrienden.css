@@ -135,7 +135,7 @@
 .vr-go-bar { display: block; height: 4px; border-radius: var(--radius-sm); background: var(--border); overflow: hidden; }
 .vr-go-bar i { display: block; height: 100%; width: 100%; background: var(--umber-600); transform-origin: left; transform: scaleX(var(--fill, 0)); }
 .vr-go-who { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); min-width: 0; }
-.vr-go-who em { font-style: normal; font-weight: 600; color: var(--text-2); }
+.vr-go-who em { font-style: normal; font-weight: 700; color: var(--umber-700); margin-inline-start: calc(-1 * var(--space-1)); }
 .vr-go-ask { justify-self: start; }
 
 /* ── Te doen: the deck ──────────────────────────────────────────────── */

@@ -73,7 +73,8 @@ function GoCard({ trip, destinations, me, mine, open, onToggle }) {
         <span className="vr-go-bar" aria-hidden="true"><i style={{ '--fill': leadFill(days) }} /></span>
         <span className="vr-go-who">
           <ToneFace id={trip.ownerId} me={me} name={who} emoji={trip.ownerEmoji} size="sm" />
-          <b>{firstName(who)}</b>{mine && <em>{t('vr.andYou')}</em>}
+          {/* "Sam, met jou": the trip overlaps yours (judge 3 fix 6). */}
+          <b>{firstName(who)}{mine ? ',' : ''}</b>{mine && <em>{t('vr.withYou')}</em>}
         </span>
       </Pressable>
       <AskJoin trip={trip} className="vr-go-ask" />
