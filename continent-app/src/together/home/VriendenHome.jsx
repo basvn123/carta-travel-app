@@ -151,7 +151,7 @@ function useTodo(s, onView) {
         title: c.name, line: t('vr.circleFrom', { who: firstName(owner?.name || '') }),
         ok: [t('coplan.join'), () => togetherActions.respondCircle(c.id, true)], no: () => togetherActions.respondCircle(c.id, false) }
       : { key: `k:${c.id}`, kind: t('vr.kCircle'), face: { id: c.ownerId, name: owner?.name || '', emoji: owner?.emoji },
-        title: c.name, line: t('vr.votesWait', { n: unvotedIn(c, s.userId) }), ok: [t('vr.vote'), () => onView('circlevote', c.id)] });
+        title: c.name, line: t((unvotedIn(c, s.userId)) === 1 ? 'vr.voteWait1' : 'vr.votesWait', { n: unvotedIn(c, s.userId) }), ok: [t('vr.vote'), () => onView('circlevote', c.id)] });
   }
   return items;
 }
@@ -317,7 +317,7 @@ function FriendCard({ link, s, destinations, meets, onOpen }) {
         <ToneFace id={link.userId} me={s.userId} name={name} emoji={link.avatarEmoji} size="sm" />
         <b>{name}</b>
         {days != null && days >= 0 && <span className="vr-fc-d num" aria-hidden="true">{t('vr.dShort', { n: days })}</span>}
-        {days != null && days >= 0 && <span className="sr-only">{t('vr.inDays', { n: days })}</span>}
+        {days != null && days >= 0 && <span className="sr-only">{t((days) === 1 ? 'vr.inDay1' : 'vr.inDays', { n: days })}</span>}
       </span>
       <span className={`vr-fc-f${meet ? ' is-meet' : ''}`}>{fact}</span>
     </Pressable>
@@ -369,7 +369,7 @@ function CircleCard({ c, s, destinations, onOpen }) {
       <Ring photo={photo} members={joined} me={s.userId} />
       <span className="vr-kr-tx">
         <b className="vr-kr-t">{c.name}</b>
-        <span>{[t('vr.members', { n: joined.length }), c.proposals.length ? t('vr.proposalsN', { n: c.proposals.length }) : ''].filter(Boolean).join(', ')}</span>
+        <span>{[t((joined.length) === 1 ? 'vr.member1' : 'vr.members', { n: joined.length }), c.proposals.length ? t((c.proposals.length) === 1 ? 'vr.proposal1' : 'vr.proposalsN', { n: c.proposals.length }) : ''].filter(Boolean).join(', ')}</span>
         {lead && (
           <span className="vr-kr-lead"><b>{name(lead.destId)}</b><span>{t('vr.leadsWith', { n: lead.score })}</span></span>
         )}
@@ -409,7 +409,7 @@ function Circles({ s, destinations, onView, hasFriends }) {
               {groups.map((g) => (
                 <Pressable key={g.id} type="button" className="vr-row is-link" onClick={() => onView('group', g.id)}>
                   <ToneFaces me={s.userId} size="sm" people={g.members.map((m) => ({ id: m.userId, name: m.name, emoji: m.emoji }))} />
-                  <span className="vr-row-tx"><b>{g.title}</b><span>{t('vr.members', { n: g.members.length })}</span></span>
+                  <span className="vr-row-tx"><b>{g.title}</b><span>{t((g.members.length) === 1 ? 'vr.member1' : 'vr.members', { n: g.members.length })}</span></span>
                   <ChevronRightIcon size={16} className="vr-chev" />
                 </Pressable>
               ))}
@@ -434,7 +434,7 @@ function Shared({ s, onOpenSaved, onOpenTripPlan }) {
     rows.push(
       <Pressable key={`l:${l.id}`} type="button" className="vr-row is-link" onClick={() => { requestSavedList(l.id); onOpenSaved?.(); }}>
         <ToneFaces me={s.userId} size="sm" people={people.map((p) => ({ id: p.id || p.userId, name: p.name || p.displayName || '', emoji: p.emoji || '' }))} />
-        <span className="vr-row-tx"><b>{l.name}</b><span>{t('vr.placesN', { n: (l.items || []).length })}</span></span>
+        <span className="vr-row-tx"><b>{l.name}</b><span>{t(((l.items || []).length) === 1 ? 'vr.place1' : 'vr.placesN', { n: (l.items || []).length })}</span></span>
         <ChevronRightIcon size={16} className="vr-chev" />
       </Pressable>,
     );

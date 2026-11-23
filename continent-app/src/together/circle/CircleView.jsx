@@ -494,7 +494,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
       </span>
       <StepTiles step={step} onView={onView} circleId={c.id} figures={figures} />
       {win && (
-        <p className="vr-res"><b className="num">{winText}</b><span>{canLine}</span><span>{t('tg.nightsN', { n: win.nights })}</span></p>
+        <p className="vr-res"><b className="num">{winText}</b><span>{canLine}</span><span>{t((win.nights) === 1 ? 'vr.night1' : 'tg.nightsN', { n: win.nights })}</span></p>
       )}
     </aside>
   );
@@ -548,7 +548,7 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
           {lead && <Stamp place={leadName} dates={winText} />}
           <dl className="vr-facts">
             <div><dt>{t('vr.going')}</dt><dd className="num">{joined.length}</dd></div>
-            <div><dt>{t('vr.nightsWord')}</dt><dd className="num">{win ? win.nights : 0}</dd></div>
+            <div><dt>{t(win && win.nights === 1 ? 'vr.nightWord1' : 'vr.nightsWord')}</dt><dd className="num">{win ? win.nights : 0}</dd></div>
             <div><dt>{t('vr.flightPPWord')}</dt><dd className="num">{avg != null ? eur(avg) : <NoPrice>{t('vr.noPrice')}</NoPrice>}</dd></div>
           </dl>
           {isOwner && lead && win && <Button variant="primary" block iconStart={<RouteIcon size={18} />} onClick={make}>{t('vr.makeTrip')}</Button>}
