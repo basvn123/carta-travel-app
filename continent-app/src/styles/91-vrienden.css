@@ -242,6 +242,8 @@
 }
 .vr-qr .tg-qr { display: block; width: 168px; padding: 10px; border: var(--stroke-hair) solid var(--umber-800); border-radius: var(--radius-panel); background: var(--surface); }
 .vr-qr .tg-qr svg { display: block; width: 100%; height: auto; }
+.vr-qr .tg-qr { box-sizing: border-box; height: auto; aspect-ratio: 1; }
+.vr-zero-acts .vr-lnk, .vr-sees + .vr-lnk { padding-inline: 0; }
 
 /* ── the invite sheet and popover ───────────────────────────────────── */
 .vr-sheet-wrap { position: fixed; inset: 0; z-index: var(--z-modal); }
