@@ -19,10 +19,22 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-# name -> (file under public/, dotted path of the stamp, source-date keys, cadence in days)
-# Cadences are the owner's to tune (H9 schedules the runs).
+# T1099-d (owner, 2026-11-12), ROADMAP D12: a wire's limit is the cadence of
+# the task that produces it, plus slack, plus 7 days. One table: the three
+# cadence classes and their limits. A wire is held to the tighter of its class
+# limit and the number it had before this table (D12, wave 2 step 1.3), so no
+# wire gets looser than it was: app_data 35 to 16, the monthly wires keep 35
+# (class 41), the quarterly layers keep 45 (class 107) and reach keeps 90.
+CADENCE_LIMIT = {"app_data": 16, "monthly": 41, "quarterly": 107}
+WIRE_CLASS = {"app_data": "app_data", "destinfo": "monthly", "trips": "monthly", "journeys": "monthly",
+              "region": "monthly", "trails": "monthly", "coverage": "monthly", "joins": "monthly",
+              "beaches": "quarterly", "lakes": "quarterly", "mountains": "quarterly", "cycling": "quarterly",
+              "dossier": "quarterly", "guided": "quarterly", "reach": "quarterly", "ask": "quarterly"}
+
+# name -> (file under public/, dotted path of the stamp, source-date keys, limit in days)
+# The limit is min(CADENCE_LIMIT[WIRE_CLASS[name]], the earlier number): see above.
 WIRES = {
-    "app_data":   ("app_data.json", "meta.generated_at", [], 35),
+    "app_data":   ("app_data.json", "meta.generated_at", [], 16),
     "destinfo":   ("destinfo/index.json", "generated_at", [], 35),
     "trips":      ("trips/index.json", "generated_at", ["harvested_at"], 35),
     "journeys":   ("journeys/index.json", "generated_at", [], 35),

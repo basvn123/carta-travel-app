@@ -175,3 +175,56 @@ def test_every_key_block_of_the_shipped_wire_is_stamped():
     c = pv.count(data)
     assert all(v["stamped"] == v["total"] for v in c.values()), c
     assert sum(v["total"] for v in c.values()) > 40000
+
+
+# D3, D12 (wave 2, 1.3): a block is dated by its source, not by the write.
+BOX_MASTER = Path("C:/Users/Gebruiker/Documents/Portfolio/Travel App/app_data/app_data.box-2026-11-10.schema20-airports.json")
+
+
+def test_asof_for_reads_each_blocks_own_source_date():
+    meta = {"food_model": {"asof": "2026-09"}, "climate_model": {"period": "2001-2020"}}
+    dest = {"accommodation": {"captured": "2026-10-25T10:00:00", "beds": {}},
+            "crowding": {"year": 2024}, "bathing_water": {"year": "2025"},
+            "climate": {"period": "2001-2020"}, "costs": {}, "rating": {}}
+    assert pv.asof_for("accommodation", dest, meta) == "2026-10-25"
+    assert pv.asof_for("crowding", dest, meta) == "2024-12-31"
+    assert pv.asof_for("bathing_water", dest, meta) == "2025-12-31"
+    assert pv.asof_for("climate", dest, meta) == "2020-12-31"
+    assert pv.asof_for("climate", {"climate": {}}, meta) == "2020-12-31"      # period from the meta
+    assert pv.asof_for("costs", dest, meta) == "2026-09-01"
+    assert pv.asof_for("rating", dest, meta) is None                          # no rule: dated by the write
+    assert pv.asof_for("accommodation", {"accommodation": {"captured": None}}, meta) is None
+    assert pv.asof_for("crowding", {"crowding": {"year": "n/a"}}, meta) is None
+
+
+def _master_shaped():
+    return {"meta": {"food_model": {"asof": "2026-09"}, "climate_model": {"period": "2001-2020"}},
+            "destinations": {
+                "A": {"accommodation": {"captured": "2026-10-25", "beds": {"hotel3": 90}},
+                      "crowding": {"year": 2024}, "climate": {"period": "2001-2020"},
+                      "costs": {"meal_mid_eur": 20}, "rating": {"band": "good"}},
+                "B": {"accommodation": {"captured": "2026-10-30", "beds": {"hotel3": 80}},
+                      "bathing_water": {"year": 2025}, "rating": {"band": "good"}}}}
+
+
+def test_one_master_shaped_wire_ends_with_several_distinct_asof_values():
+    d = _master_shaped()
+    pv.stamp_payload(d, asof="2026-11-08")
+    asofs = {b["_asof"] for x in d["destinations"].values() for b in x.values() if isinstance(b, dict)}
+    assert asofs == {"2026-10-25", "2026-10-30", "2024-12-31", "2020-12-31", "2026-09-01", "2025-12-31", "2026-11-08"}
+    # and an already stamped block with the write's date is re-dated by its source
+    d["destinations"]["A"]["accommodation"]["_asof"] = "2026-11-08"
+    pv.stamp_payload(d, asof="2026-11-09")
+    assert d["destinations"]["A"]["accommodation"]["_asof"] == "2026-10-25"
+    assert d["destinations"]["A"]["rating"]["_asof"] == "2026-11-08"       # no rule: keeps its date
+
+
+@pytest.mark.skipif(not BOX_MASTER.is_file(), reason="the box master copy is on the laptop only")
+def test_an_in_memory_pass_over_the_box_master_gives_more_than_one_asof():
+    data = json.loads(BOX_MASTER.read_text(encoding="utf-8"))          # read only, never written
+    before = {b["_asof"] for x in data["destinations"].values() for b in x.values()
+              if isinstance(b, dict) and "_asof" in b}
+    pv.stamp_payload(data, asof="2026-11-23")
+    after = {b["_asof"] for x in data["destinations"].values() for b in x.values()
+             if isinstance(b, dict) and "_asof" in b}
+    assert len(before) == 1 and len(after) > 1

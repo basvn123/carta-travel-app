@@ -11,15 +11,23 @@ too (a request to the orchestrator: ship.mjs is not data-owned). It runs:
 3. the bed checks, on the served wire and on the staged tree push-data
    uploads (dist-data/dest/*.json, which carry `accommodation`): the
    measured share against rules.yaml `prices.accommodation_measured` and the
-   rules.yaml `invariants` (dorm above hotel3 hard, generated_at age soft).
+   rules.yaml `invariants` (dorm above hotel3, generated_at age, taste on rated
+   places hard; wrong hero tokens, Square must-sees soft);
+4. with `--previous <last published wire>`, the drift gate
+   (scripts/quality/drift.py): PSI or a measured-share drop over rules.yaml
+   `drift` refuses the publish.
 
 The staged tree has no app_data.json (stage-data.mjs cuts it into dest/
 shards), so steps 1 and 2 read public/, the tree this run's build staged
 from, and step 3 reads both.
 
-    python -I scripts/quality/publish_guard.py [--public DIR] [--staged DIR]
-    python -I scripts/quality/publish_guard.py --override "stopgap 0.2"
-    CARTA_PUBLISH_SEED_BREAK=beds python -I scripts/quality/publish_guard.py   # must FAIL
+    python scripts/quality/publish_guard.py [--public DIR] [--staged DIR]
+    python scripts/quality/publish_guard.py --override "stopgap 0.2"
+    CARTA_PUBLISH_SEED_BREAK=beds python scripts/quality/publish_guard.py   # must FAIL
+
+No `-I`: the guard imports yaml, and on the laptop yaml lives in the user
+site-packages, which -I skips (ModuleNotFoundError). On the box the venv has
+it, so `-I` works there too.
 
 Exit 0 pass (or failed with --override, which prints every failure and the
 reason), 1 refused, 2 configuration error. CARTA_PUBLISH_SEED_BREAK=beds|dorm
@@ -102,7 +110,15 @@ def seed_break(dests: dict, seed: str, br) -> str:
     return "no place with a hotel3 price to break"
 
 
-def bed_checks(label: str, data: dict, floor: float, invariants: list, now: datetime) -> tuple[list, list]:
+def _drift():
+    spec = importlib.util.spec_from_file_location("quality_drift", HERE / "drift.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def bed_checks(label: str, data: dict, floor: float, invariants: list, now: datetime,
+               public: Path | None = None) -> tuple[list, list]:
     eng = _engine()
     br = eng._scorecard()._bed_rules()
     stats = br.bed_stats(data.get("destinations") or {})
@@ -114,7 +130,7 @@ def bed_checks(label: str, data: dict, floor: float, invariants: list, now: date
         failures.append({"id": f"{label}.{MEASURED_RULE}", "kind": "hard",
                          "why": f"measured beds {stats['measured_share']:.1%} of {stats['places']} places, "
                                 f"under the floor {floor:.0%}"})
-    ifail, iwarn = eng.invariants_gate(invariants, data, now)
+    ifail, iwarn = eng.invariants_gate(invariants, data, now, public, label)
     failures += [{**f, "id": f"{label}.{f['id']}"} for f in ifail]
     return failures, [{**w, "id": f"{label}.{w['id']}"} for w in iwarn]
 
@@ -129,6 +145,8 @@ def main(argv=None) -> int:
                     help="the engine's history folder (baseline for the drop gate); nothing is written")
     ap.add_argument("--no-validation", action="store_true", help="leave the D23 validation gate out")
     ap.add_argument("--no-contract", action="store_true", help="skip the node contract step (tests)")
+    ap.add_argument("--previous", default="", help="the last published wire (dir or app_data.json): the drift gate "
+                    "(scripts/quality/drift.py) compares it with --public; left out, drift is not checked")
     ap.add_argument("--override", default="", help="publish anyway; give the reason (it is printed in the run log)")
     a = ap.parse_args(argv)
     public, staged = Path(a.public).resolve(), Path(a.staged).resolve()
@@ -170,8 +188,16 @@ def main(argv=None) -> int:
     failures += [{**f, "id": f"D2.{f['id']}"} for f in g["failures"]]
     warnings += [{**w, "id": f"D2.{w['id']}"} for w in g["warnings"]]
 
-    br = eng._scorecard()._bed_rules()
     wire = json.loads(app_data.read_text(encoding="utf-8"))
+    if a.previous:
+        try:
+            dr = _drift().compare(_drift().load_wire(a.previous), wire, _drift().load_config(Path(a.rules)))
+        except (OSError, ValueError) as e:
+            print(f"publish guard: cannot read the previous wire {a.previous}: {e}", file=sys.stderr)
+            return 2
+        print(f"  drift vs {a.previous}: {'pass' if dr['ok'] else 'FAIL'}, {len(dr['failures'])} failed")
+        failures += [{"id": f"drift.{f['field']}", "kind": "hard", "why": f["why"]} for f in dr["failures"]]
+    br = eng._scorecard()._bed_rules()
     trees = [("wire", wire)]
     rows = load_staged(staged)
     if rows is None:
@@ -181,7 +207,7 @@ def main(argv=None) -> int:
     for label, tree in trees:
         if seed:
             print(f"  SEED BREAK {seed} on {label}: {seed_break(tree['destinations'], seed, br)}")
-        f, w = bed_checks(label, tree, rule["min"], cfg.get("invariants") or [], now)
+        f, w = bed_checks(label, tree, rule["min"], cfg.get("invariants") or [], now, public)
         failures += f
         warnings += w
 

@@ -238,6 +238,8 @@ def load_rules(path: Path = RULES) -> dict:
             errors.append(f"{rid}: check must be one of {sorted(INVARIANT_CHECKS)}")
         if not isinstance(c.get("max"), (int, float)) or c["max"] < 0:
             errors.append(f"{rid}: max must be a number of at least 0")
+        if c.get("on", "wire") not in ("wire", "staged"):
+            errors.append(f"{rid}: on must be wire or staged")
     if errors:
         raise ValueError("rules.yaml: " + "; ".join(errors))
     gate = d.get("gate") or {}
@@ -261,14 +263,14 @@ def load_rules(path: Path = RULES) -> dict:
 # takes the loaded wire and the run's time, so the publish guard can hand it a
 # wire it changed in memory (CARTA_PUBLISH_SEED_BREAK) or the staged tree.
 
-def _dorm_above_hotel3(data: dict, now: datetime) -> int:
+def _dorm_above_hotel3(data: dict, now: datetime, public: Path | None = None) -> int:
     br = _scorecard()._bed_rules()
     return sum(1 for d in (data.get("destinations") or {}).values()
                if isinstance(d, dict) and not d.get("gateway_of")
                and br.dorm_above_hotel3((d.get("accommodation") or {}).get("beds")))
 
 
-def _generated_at_age_days(data: dict, now: datetime):
+def _generated_at_age_days(data: dict, now: datetime, public: Path | None = None):
     at = (data.get("meta") or {}).get("generated_at")
     if not isinstance(at, str):
         return None
@@ -278,17 +280,81 @@ def _generated_at_age_days(data: dict, now: datetime):
     return round((now - t).total_seconds() / 86400, 1)
 
 
+def _rated_without_taste(data: dict, now: datetime, public: Path | None = None):
+    """Rated places with no taste profile (D2 wave 2 step 1.2). The profile is
+    what the My trips chips and the place page's likes read. Paired with the
+    count of rated places: a wire with none rated has not been measured."""
+    rated = missing = 0
+    for d in (data.get("destinations") or {}).values():
+        if not isinstance(d, dict) or d.get("gateway_of") or not d.get("rating"):
+            continue
+        rated += 1
+        if not (d.get("taste") or {}).get("likes"):
+            missing += 1
+    return missing if rated else None
+
+
+def _hero_bans_module():
+    spec = importlib.util.spec_from_file_location("quality_hero_bans", ROOT / "pipeline" / "photos" / "hero_bans.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def _wrong_hero_tokens(data: dict, now: datetime, public: Path | None = None):
+    """Heroes whose file name trips pipeline/photos/hero_bans.py (a flag, a
+    map, a portrait...). Soft: a place whose whole ladder is banned keeps its
+    hero and waits for T1198-f."""
+    hb = _hero_bans_module()
+    n = places = 0
+    for d in (data.get("destinations") or {}).values():
+        if not isinstance(d, dict) or d.get("gateway_of"):
+            continue
+        url = (d.get("image") or {}).get("url")
+        if not url:
+            continue
+        places += 1
+        n += hb.is_banned(url, d.get("city") or d.get("name") or "")
+    return n if places else None
+
+
+def _must_see_square_mislabelled(data: dict, now: datetime, public: Path | None = None):
+    """Must-see POIs filed as kind "Square" whose name has no "square" in it
+    (Manneken Pis is a statue; the kind came from an OSM place=square tag on
+    the nearest feature). Read from the POI shards, so only on the served tree."""
+    shards = (public / "poi") if public else None
+    if shards is None or not shards.is_dir():
+        return None
+    n = seen = 0
+    for f in shards.glob("*.json"):
+        try:
+            items = json.loads(f.read_text(encoding="utf-8"))
+        except (OSError, ValueError):
+            continue
+        for p in items if isinstance(items, list) else []:
+            if isinstance(p, dict) and p.get("label") == "must_see":
+                seen += 1
+                n += p.get("kind") == "Square" and "square" not in str(p.get("name", "")).lower()
+    return n if seen else None
+
+
 INVARIANT_CHECKS = {"dorm_above_hotel3": _dorm_above_hotel3,
-                    "generated_at_age_days": _generated_at_age_days}
+                    "generated_at_age_days": _generated_at_age_days,
+                    "rated_without_taste": _rated_without_taste,
+                    "wrong_hero_tokens": _wrong_hero_tokens,
+                    "must_see_square_mislabelled": _must_see_square_mislabelled}
 
 
-def invariants_gate(checks: list[dict], data: dict, now: datetime) -> tuple[list, list]:
+def invariants_gate(checks: list[dict], data: dict, now: datetime, public: Path | None = None,
+                    label: str = "wire") -> tuple[list, list]:
     """Failures and warnings of the rules.yaml invariants over one loaded wire.
     A check that cannot be measured (no generated_at) breaks too: an
     unmeasured invariant must not read as a pass."""
     failures, warnings = [], []
     for c in checks:
-        v = INVARIANT_CHECKS[c["check"]](data, now)
+        if c.get("on", label) != label:
+            continue        # a check that reads fields the staged rows do not carry
+        v = INVARIANT_CHECKS[c["check"]](data, now, public)
         if v is not None and v <= c["max"]:
             continue
         why = (f"{c['check']} could not be measured" if v is None
@@ -572,7 +638,7 @@ def run(public: Path, now: datetime | None, out: Path, rules_path: Path = RULES,
     result["warnings"] += twarn
     if invariants and cfg.get("invariants"):
         wire = json.loads((public / "app_data.json").read_text(encoding="utf-8"))
-        ifail, iwarn = invariants_gate(cfg["invariants"], wire, _when(card["generated_at"]))
+        ifail, iwarn = invariants_gate(cfg["invariants"], wire, _when(card["generated_at"]), public)
         result["failures"] += ifail
         result["warnings"] += iwarn
     result["ok"] = not result["failures"]

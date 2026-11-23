@@ -144,9 +144,9 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### TRAIL-018 Terrain grade from the DEM
 - Decides: the grade of an untagged walk, marked estimated.
-- Rule: first row where the steepest sustained gradient or the ascent per km reaches it: alpine 40% / 250 m, very_hard 30% / 180 m, hard 22% / 120 m, moderate 14% / 70 m, else easy. A derived alpine needs a top of 1,500 m (else very_hard); a derived grade above moderate needs 200 m between lowest and highest point (else moderate). No grade when the elevation status is not ok.
+- Rule: first row where the steepest sustained gradient and the ascent per km both reach it (D24, wave 3; a row with no gradient reads on the ascent alone): alpine 40% / 250 m, very_hard 30% / 180 m, hard 22% / 120 m, moderate 14% / 70 m, else easy. A derived grade is never alpine (`grades.cap_derived`: very_hard at most; alpine needs a tag or a via ferrata); a derived grade above moderate needs 200 m between lowest and highest point (else moderate). No grade when the elevation status is not ok.
 - Constant: `DEM_LADDER` in `pipeline/trails/attributes.py:137`
-- Constant: `DERIVED_ALPINE_MIN_TOP_M` in `pipeline/trails/attributes.py:146` = 1500.0
+- Constant: `DERIVED_MAX` in `pipeline/grades.py` = very_hard
 - Constant: `DERIVED_HARD_MIN_RELIEF_M` in `pipeline/trails/attributes.py:153` = 200.0
 - Test: `tests/test_trail_difficulty_names.py` :: "test_relief_cap_only_touches_derived_terrain_on_low_ground"
 

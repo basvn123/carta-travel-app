@@ -68,6 +68,11 @@ from schema import ensure  # noqa: E402
 APP_DATA = ROOT / "continent-app" / "public" / "app_data.json"
 OUT = ROOT / "data" / "derived" / "routes_attach.json"
 REPORT = ROOT / "data" / "reports" / "routes_attach.json"
+# Distance to the LINE for every route inside the Around circle, uncapped
+# (D-14): the shortlist above keeps 8 and 6 rows, the Around list keeps up to
+# 24 per layer, and a bbox centre is not where the route is.
+OUT_LINES = ROOT / "data" / "derived" / "routes_line_km.json"
+LINE_KM_MAX = 20.0
 TRANSIT_SQL = ROOT / "tools" / "trailslab" / "initdb" / "10_transit.sql"
 
 # A route further than this is not "from here" by any reading.
@@ -344,6 +349,22 @@ def attach_row(row, dest, names, access):
     return out
 
 
+def line_km_of(rows, max_km=LINE_KM_MAX):
+    """{activity: {id: km}} for every candidate within max_km of the place,
+    measured to the line (dist_m), nearest wins when an id repeats. Runs on the
+    rows NEAR_SQL returned before pick() caps anything."""
+    out = {}
+    for row in rows:
+        if row["dist_m"] is None or row["dist_m"] > max_km * 1000.0:
+            continue
+        got = out.setdefault(row["activity"], {})
+        km = round(row["dist_m"] / 1000.0, 1)
+        key = str(row["id"])
+        if key not in got or km < got[key]:
+            got[key] = km
+    return out
+
+
 def pick(rows, activity, conn, dest, names):
     """The rules, in order: fold, rank, cap by tier, cap by count."""
     cap = CAP[activity]
@@ -416,6 +437,7 @@ def main():
         print("  no cycling wire on disk: the cycling half will be empty")
 
     out = {}
+    line_out = {}
     counts = {"hiking": Counter(), "cycling": Counter()}
     stats = Counter()
     t0 = time.time()
@@ -428,6 +450,10 @@ def main():
                                    "cycle_ids": cycle_ids})
             rows = [dict(zip(COLS, r)) for r in cur.fetchall()]
         conn.commit()
+        lines = line_km_of(rows)
+        if lines:
+            line_out[dest["id"]] = lines
+            stats["line_km_rows"] += sum(len(v) for v in lines.values())
         names = {}
         for activity in ("hiking", "cycling"):
             tops = [r["top_of"] for r in rows if r["activity"] == activity]
@@ -468,6 +494,7 @@ def main():
         "car_free_starts": {a: stats[f"{a}_car_free"]
                             for a in ("hiking", "cycling")},
         "node_network_summaries": stats["node_network"],
+        "line_km_rows": stats["line_km_rows"],
         "per_destination_distribution": {
             a: {str(k): v for k, v in sorted(counts[a].items())}
             for a in ("hiking", "cycling")},
@@ -479,6 +506,9 @@ def main():
         OUT.parent.mkdir(parents=True, exist_ok=True)
         OUT.write_text(json.dumps(out, ensure_ascii=False, separators=(",", ":")),
                        encoding="utf-8")
+        OUT_LINES.write_text(
+            json.dumps(line_out, ensure_ascii=False, separators=(",", ":")),
+            encoding="utf-8")
         REPORT.parent.mkdir(parents=True, exist_ok=True)
         REPORT.write_text(json.dumps(report, indent=1, ensure_ascii=False) + "\n",
                           encoding="utf-8")

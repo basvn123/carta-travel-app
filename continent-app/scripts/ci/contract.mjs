@@ -193,6 +193,26 @@ export function validateV19Pois(shards) {
   return problems;
 }
 
+const NATURE_GRADES = ['easy', 'moderate', 'hard', 'very_hard', 'alpine'];
+
+/** The optional, additive `o` block (pipeline/outdoor_row.py): keys absent, never null. */
+export function validateOutdoorRow(o, where) {
+  const problems = [];
+  if (!isObj(o)) return [`${where}.o is not an object`];
+  for (const [k, val] of Object.entries(o)) {
+    if (val === null || val === undefined) problems.push(`${where}.o.${k} is null`);
+  }
+  if ('g' in o && !NATURE_GRADES.includes(o.g)) problems.push(`${where}.o.g is ${JSON.stringify(o.g)}`);
+  if ('v5' in o) {
+    const s = o.v5 && o.v5.score;
+    if (!isFiniteNum(s) || s < 0 || s > 10) problems.push(`${where}.o.v5.score is ${JSON.stringify(s)}`);
+  }
+  for (const k of ['d', 'up_m', 'km', 'min']) {
+    if (k in o && !isFiniteNum(o[k])) problems.push(`${where}.o.${k} is ${JSON.stringify(o[k])}`);
+  }
+  return problems;
+}
+
 /** Nature rows ({kind: [row]}): every rated row carries v5 {score, band, rank, facts, confidence}. */
 export function validateNatureWires(byKind) {
   const problems = [];
@@ -202,6 +222,7 @@ export function validateNatureWires(byKind) {
       const v = row.v5;
       const where = `${kind}/${row.id}`;
       n += 1;
+      if ('o' in row) problems.push(...validateOutdoorRow(row.o, where));
       if (!isObj(v)) { problems.push(`${where}.v5 is missing`); continue; }
       if (!V19_NATURE_CONFIDENCE.includes(v.confidence)) problems.push(`${where}.v5.confidence is ${JSON.stringify(v.confidence)}`);
       if (!isObj(v.facts)) problems.push(`${where}.v5.facts is not an object`);

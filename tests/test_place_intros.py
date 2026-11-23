@@ -127,3 +127,22 @@ def test_merge_prefers_longer_ok_record_and_keeps_both_sources():
     bad = dict(rec, status="rejected")
     out2 = build_dossier.compose_intro(dest, wv, {}, {}, {}, {"ANY": bad})
     assert out2["body"] != rec["body"]
+
+
+def test_harvest_reads_its_own_common_even_when_another_common_was_imported_first():
+    """The wrong `common` (the trips pipeline's) must not give DCACHE (wave 2, 0b)."""
+    import importlib.util
+    import types
+    saved = sys.modules.get("common")
+    sys.modules["common"] = types.ModuleType("common")        # no DCACHE here
+    try:
+        spec = importlib.util.spec_from_file_location(
+            "hpi_fresh", os.path.join(DOS, "harvest_place_intros.py"))
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        assert mod.DCACHE.replace("\\", "/").endswith("cache/dossier")
+    finally:
+        if saved is None:
+            sys.modules.pop("common", None)
+        else:
+            sys.modules["common"] = saved

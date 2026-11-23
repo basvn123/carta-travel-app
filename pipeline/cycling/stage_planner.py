@@ -594,8 +594,11 @@ def season_for(lat, lon, max_km=120.0):
     months = best["months"]
     rideable, comforts = [], []
     for i, m in enumerate(months, 1):
-        if (m.get("t_high") or -99) >= RIDEABLE_T_HIGH \
-                and (m.get("t_low") or -99) >= RIDEABLE_T_LOW \
+        # 0.0 is a real temperature; only None is missing (D-15, `or -99`
+        # turned a frost-free 0.0 low into "no data").
+        t_high, t_low = m.get("t_high"), m.get("t_low")
+        if t_high is not None and t_high >= RIDEABLE_T_HIGH \
+                and t_low is not None and t_low >= RIDEABLE_T_LOW \
                 and (m.get("precip_mm") or 0) <= RIDEABLE_PRECIP_MM:
             rideable.append(i)
             comforts.append((m.get("comfort") or 0, i))

@@ -14,10 +14,21 @@
  * The steps are the Deploy line of CLAUDE.md, in its order:
  *   build      VITE_E2E_SEAMS= npm run build:pages
  *   css        node scripts/css-routes.mjs --check dist/assets
+ *   guard      python scripts/quality/publish_guard.py       the contract, D2 and bed checks (D1, D2, D10)
  *   data       node scripts/r2/push-data.mjs --live          data first
  *   preview    npx wrangler pages deploy dist --project-name carta-app --branch preview
  *   main       npx wrangler pages deploy dist --project-name carta-app --branch main
  *   prune      node scripts/r2/push-data.mjs --live --prune  asks for a typed "delete"
+ *
+ * The guard runs before the data upload and is refused (exit 1) when the wire
+ * about to go live fails a hard rule, as the 2026-11-13 bed incident would have:
+ * the ship stops there and nothing is uploaded. It reads the app's public/
+ * (the tree the build staged from; it holds app_data.json) and dist-data/
+ * (the tree push-data.mjs uploads). A dry run prints it. Override on purpose
+ * with CARTA_PUBLISH_OVERRIDE="<reason>" in the environment (it becomes the
+ * guard's --override and is printed in the run log); without it a refusal stops.
+ * With a previous wire (CARTA_PREVIOUS_WIRE or .published-wire/app_data.json) the guard also
+ * runs the drift gate, --previous <that file> (D2, G3).
  *
  * A step that exits non-zero stops the ship: nothing after it runs, and the
  * summary names the step and the --from line that resumes there. The prune
@@ -44,7 +55,18 @@ const GB = 1024 ** 3;
 export const LIVE_DISK_BYTES = 1.5 * GB;
 
 /** The deploy steps, in CLAUDE.md's order. */
-export function shipSteps({ repoRoot = REPO_ROOT, fastOut } = {}) {
+/** The last published wire the drift gate compares with (D2, G3): CARTA_PREVIOUS_WIRE,
+ *  else .published-wire/app_data.json in the repo when it exists, else '' (no drift check;
+ *  the dry run says so). The live site serves split shards, not one app_data.json, so the
+ *  owner keeps the copy: docs/owner/data-and-pipeline-runs.md step 11. */
+export function previousWire(repoRoot = REPO_ROOT, env = process.env) {
+  if (env.CARTA_PREVIOUS_WIRE) return env.CARTA_PREVIOUS_WIRE;
+  const kept = path.join(repoRoot, '.published-wire', 'app_data.json');
+  return fs.existsSync(kept) ? kept : '';
+}
+
+export function shipSteps({ repoRoot = REPO_ROOT, fastOut, override = process.env.CARTA_PUBLISH_OVERRIDE || '',
+  previous = previousWire(repoRoot) } = {}) {
   const app = path.join(repoRoot, 'continent-app');
   const out = fastOut || path.join(repoRoot, '.fastbuild');
   const node = process.execPath;
@@ -62,6 +84,10 @@ export function shipSteps({ repoRoot = REPO_ROOT, fastOut } = {}) {
       dry: { label: 'css-routes proof on .fastbuild/assets', cmd: node,
         args: ['scripts/css-routes.mjs', '--check', path.join(out, 'assets')] },
     },
+    { id: 'guard', label: 'publish guard on the wire to upload', cwd: repoRoot, cmd: 'python',
+      args: ['scripts/quality/publish_guard.py', '--public', path.join(app, 'public'), '--staged', path.join(app, 'dist-data'),
+        ...(previous ? ['--previous', previous] : []),
+        ...(override ? ['--override', override] : [])] },
     { id: 'data', label: 'data to R2 (phase 1)', cwd: app, cmd: node, args: ['scripts/r2/push-data.mjs', '--live'] },
     { id: 'preview', label: 'Pages deploy, preview', cwd: app, cmd: 'npx',
       args: ['wrangler', 'pages', 'deploy', 'dist', '--project-name', 'carta-app', '--branch', 'preview'] },

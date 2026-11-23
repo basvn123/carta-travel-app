@@ -256,3 +256,4 @@ scripts/open_data/out/
 # Basemap extract (G12): the Europe PMTiles, about 13 GB, rebuilt by
 # continent-app/scripts/maps/refresh-basemap.mjs, served from R2 data/maps/.
 cache/maps/*
+.published-wire/

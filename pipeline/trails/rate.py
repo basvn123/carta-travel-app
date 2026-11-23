@@ -80,6 +80,8 @@ from scenic import KINDS as SCENIC_WEIGHTS  # noqa: E402
 # The uphill rule itself, imported rather than copied a fourth time: a line
 # drawn summit to valley is read from the bottom (T108, spec 6.8).
 from attributes import uphill  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+import not_for  # noqa: E402
 
 # Weights sum to 1. Scenery leads because it is the only component that says
 # what you will actually look at; designation and relief describe the walk,
@@ -125,7 +127,9 @@ PAD = 0.12
 # "this one fits a Saturday" is a fact. It used to pay into the shape term as
 # well, which made length a quality (ROUTES.md R5 forbids it) and capped what
 # a long path could score. That is gone; see shape_raw.
-DAY_MIN_M, DAY_MAX_M = 6_000, 22_000
+# The numbers live in pipeline/not_for.py (D-5), so the rating and the app
+# agree where a day out stops.
+DAY_MIN_M, DAY_MAX_M = not_for.DAY_MIN_M, not_for.DAY_MAX_M
 
 # Reason thresholds. Each one is the point where a fact is worth a sentence.
 MANY_SUMMITS = 3
@@ -135,8 +139,8 @@ BIG_CLIMB_M = 800
 # the walking time inside the six hours the app calls a full day. The same
 # two numbers as continent-app/src/lib/trailStory.js isComfortableDay()
 # (COMFORT_MAX_CLIMB_M, COMFORT_MAX_MIN) and regression.py's watch (T286).
-COMFORT_MAX_CLIMB_M = BIG_CLIMB_M
-COMFORT_MAX_MIN = 360
+COMFORT_MAX_CLIMB_M = not_for.CLIMB_M
+COMFORT_MAX_MIN = not_for.MINUTES
 STEEP_M_PER_KM = 45
 HIGH_ALTITUDE_M = 1_800
 PHOTOGENIC = 4
@@ -177,7 +181,7 @@ def pct_rank(values):
 FETCH_SQL = """
     SELECT t.id, t.country, t.title, t.network, t.distance_m, t.ascent_m,
            t.descent_m, t.duration_min, t.is_loop, t.highlights, t.elevation, t.nuts3,
-           t.highlight_kinds, t.surface, t.route_type,
+           t.highlight_kinds, t.surface, t.route_type, t.grade,
            t.raw_tags->>'wikidata'  AS wikidata,
            t.raw_tags->>'wikipedia' AS wikipedia,
            p.score AS popularity,
@@ -204,7 +208,7 @@ CLEAR_LISTED_SQL = """
 
 COLS = ("id", "country", "title", "network", "distance_m", "ascent_m",
         "descent_m", "duration_min", "is_loop", "highlights", "elevation", "nuts3",
-        "highlight_kinds", "surface", "route_type", "wikidata", "wikipedia",
+        "highlight_kinds", "surface", "route_type", "grade", "wikidata", "wikipedia",
         "popularity", "n_photos")
 
 
@@ -395,10 +399,8 @@ def is_comfortable_day(row):
 
     Distance is the caller's test; this one is the climb and the hours. An
     unknown walking time does not fail it, the same as the app's check."""
-    if climb_of(row) > COMFORT_MAX_CLIMB_M:
-        return False
-    mins = row.get("duration_min")
-    return mins is None or mins <= COMFORT_MAX_MIN
+    return not_for.is_comfortable_day(climb_of(row), row.get("duration_min"),
+                                      row.get("grade"))
 
 
 def says_loop(row):
@@ -479,7 +481,7 @@ def reasons_for(row, parts):
     if says_loop(row):
         add("loop")
     d = row.get("distance_m") or 0
-    if DAY_MIN_M <= d <= DAY_MAX_M:
+    if not_for.in_day_band(d):
         # In the day band but over the climb or the hours: no line at all,
         # rather than "a comfortable day out" beside 1,568 m of climb.
         if is_comfortable_day(row):

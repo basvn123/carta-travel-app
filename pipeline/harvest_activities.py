@@ -897,6 +897,70 @@ def harvest(dests, resume=True):
     return cache
 
 
+def _fold(name):
+    """Name folded for matching: accents stripped, lower case, letters and digits only."""
+    import unicodedata
+    base = unicodedata.normalize("NFKD", str(name or "")).casefold()
+    return re.sub(r"[^a-z0-9]+", "", "".join(c for c in base if not unicodedata.combining(c)))
+
+
+def item_key(it):
+    """Identity of one activity: the wikidata QID, else folded name plus
+    lat/lon rounded to 4 decimals (about 10 m). Name-only items (Wikivoyage)
+    have no coordinates, so their key is the folded name alone."""
+    qid = it.get("wikidata")
+    if qid:
+        return ("q", qid)
+    lat, lon = it.get("lat"), it.get("lon")
+    pos = (round(lat, 4), round(lon, 4)) if isinstance(lat, (int, float)) and isinstance(lon, (int, float)) else None
+    return ("n", _fold(it.get("name")), pos)
+
+
+def merge_items(old, new):
+    """V-4 / I-17 (D9): merge a fresh fetch into the items already stored.
+
+    Old items keep their place in the list and their enrichment (img, desc,
+    wiki); a new item that matches one fills only the fields the old one lacks.
+    New items append. An empty or missing fetch keeps the old list, so a
+    failed run never wipes the layer or reshuffles the Day Planner's indexes.
+    Pure: neither argument is changed."""
+    old = [dict(i) for i in (old or []) if isinstance(i, dict)]
+    if not new:
+        return old
+    out = list(old)
+    at = {}
+    for i, it in enumerate(out):
+        at.setdefault(item_key(it), i)
+    for it in new:
+        if not isinstance(it, dict):
+            continue
+        k = item_key(it)
+        if k in at:
+            have = out[at[k]]
+            for f, v in it.items():
+                if have.get(f) in (None, "", []) and v not in (None, "", []):
+                    have[f] = v
+        else:
+            at[k] = len(out)
+            out.append(dict(it))
+    return out
+
+
+def merge_record(old, new):
+    """merge_items on `items` and `items_full` of one dest.activities record.
+    No new record with items keeps the old one; no old record takes the new."""
+    if not (new and new.get("items")):
+        return old if old else new
+    if not (old and old.get("items")):
+        return new
+    rec = dict(new)
+    rec["items"] = merge_items(old.get("items"), new.get("items"))
+    full = merge_items(old.get("items_full"), new.get("items_full"))
+    if full:
+        rec["items_full"] = full
+    return rec
+
+
 def patch(cache=None):
     if cache is None:
         cache = load_json(CACHE) if CACHE.exists() else {}
@@ -910,15 +974,18 @@ def patch(cache=None):
         for did, d in dests.items():
             rec = cache.get(did)
             if rec and rec.get("items"):
-                d["activities"] = rec
+                d["activities"] = merge_record(d.get("activities"), rec)
                 n_act += 1
                 srcs[rec["source"]] = srcs.get(rec["source"], 0) + 1
                 if rec.get("items_full"):
                     n_full += 1
             elif rec is not None:
-                # In the cache but genuinely empty (checked, none found): reflect
-                # the empty result so re-runs stay idempotent.
-                d["activities"] = None
+                # In the cache but empty (checked, none found, or a failed
+                # fetch): keep what the master has (merge_items, D9); only a
+                # dest with nothing stored takes the empty result, so re-runs
+                # stay idempotent.
+                if not (d.get("activities") or {}).get("items"):
+                    d["activities"] = None
             # else: not in this cache at all (e.g. a partial/resumed harvest).
             # Leave whatever is already there - do NOT wipe it to None, or a
             # `patch` with a cache that covers fewer dests than the master

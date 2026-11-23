@@ -62,7 +62,7 @@ Publication is not a score threshold. A route publishes when it passes the hard 
 
 ## Difficulty
 
-`attributes.py`: grades `easy, moderate, hard, very_hard, alpine`, worst segment wins. Tagged first (SAC via `SAC_GRADE`, visibility floor `VIS_FLOOR`, via ferrata floor `FERRATA_FLOOR`) when at least `MIN_GRADE_COVER = 0.15` of the line carries the tag; else the DEM (`DEM_LADDER`, derived alpine needs a top at or above `DERIVED_ALPINE_MIN_TOP_M = 1500`). Floor from effort (`EFFORT_LADDER`: very_hard over 40 km or 2,200 m, hard over 25 km or 1,400 m, moderate over 15 km or 800 m). A route drawn downhill is read uphill (`DOWNHILL_MIN_M = 300`, `DOWNHILL_RATIO = 2.0`). The wire `difficulty` equals `f.g` when set (`wire_difficulty` in `export_wire.py`); `pipeline/trails/difficulty_gate.py` fails an export where they differ or the row set changed.
+`attributes.py`: grades `easy, moderate, hard, very_hard, alpine`, worst segment wins. Tagged first (SAC via `SAC_GRADE`, visibility floor `VIS_FLOOR`, via ferrata floor `FERRATA_FLOOR`) when at least `MIN_GRADE_COVER = 0.15` of the line carries the tag; else the DEM (`DEM_LADDER`, both terms must clear, a derived grade stops at very_hard: `grades.DERIVED_MAX`). Floor from effort (`EFFORT_LADDER`: very_hard over 40 km or 2,200 m, hard over 25 km or 1,400 m, moderate over 15 km or 800 m). A route drawn downhill is read uphill (`DOWNHILL_MIN_M = 300`, `DOWNHILL_RATIO = 2.0`). The wire `difficulty` equals `f.g` when set (`wire_difficulty` in `export_wire.py`); `pipeline/trails/difficulty_gate.py` fails an export where they differ or the row set changed.
 
 ## Cycling chain (`pipeline/cycling/`)
 

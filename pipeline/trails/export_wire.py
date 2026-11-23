@@ -421,15 +421,23 @@ from credit import owes_credit  # noqa: E402
 
 
 from photo_licence import reusable  # noqa: E402
+from takedown import is_taken_down  # noqa: E402
+import grades  # noqa: E402
 
 
 def credited(rows):
     """The photographs of one trip that we can lawfully credit, in order.
 
-    Two gates, both must pass: the licence allows reuse with credit (CC0, CC BY,
-    CC BY-SA, public domain: photo_licence.reusable, T1093) and a licence that
-    owes a name has one (credit.owes_credit, T280)."""
-    return [r for r in rows if reusable(r.get("license")) and not owes_credit(r)]
+    Four gates, all must pass: the licence allows reuse with credit (CC0, CC BY,
+    CC BY-SA, public domain: photo_licence.reusable, T1093), a licence that
+    owes a name has one (credit.owes_credit, T280), the photo audit has not
+    rejected the file (REJECTED_PHOTOS, 2.2a: the gallery loses a waymark
+    photo too, which is the audit's call) and the takedown ledger does not
+    name it (T449-a: a takedown must survive every re-export)."""
+    return [r for r in rows
+            if reusable(r.get("license")) and not owes_credit(r)
+            and _file_of(r.get("u")) not in REJECTED_PHOTOS
+            and not is_taken_down(r.get("u"))]
 
 
 def card_img(hero):
@@ -608,7 +616,22 @@ def wire_summary(t):
     lead = summary_of(t.get("description"))
     if lead and t.get("category") != "citytrip" and RETIRED_LEAD.search(lead):
         return None
+    # 2.3: a lead that calls the walk easy beside a hard or worse grade is
+    # dropped. Narrow on purpose (grades.lead_contradicts): "moderate" on a
+    # hard row is a judgement, and true text is not worth losing.
+    if lead and t.get("category") != "citytrip" \
+            and grades.lead_contradicts(lead, wire_difficulty(t)):
+        return None
     return lead
+
+
+def difficulty_mismatches(items):
+    """Ids of wire rows whose `difficulty` differs from their own `f.g`
+    (2.3). Rows with no `f` (unrated) are skipped: there is no grade to differ
+    from. wire_difficulty returns the grade, so a non-empty list means a code
+    path set the two apart."""
+    return [i["id"] for i in items
+            if (i.get("f") or {}).get("g") and i.get("difficulty") != i["f"]["g"]]
 
 
 def anchor_of(raw_tags):
@@ -991,9 +1014,11 @@ def filter_model():
         "suitability": {
             "key": "f.su", "derived_key": "f.sd",
             "values": ["family", "dog", "stroller", "wheelchair", "winter",
-                       "beginner"],
+                       "allYear", "beginner"],
             "note": "f.su is tagged in OSM, f.sd is derived by us. "
-                    "wheelchair is never derived.",
+                    "wheelchair is never derived. allYear is what winter "
+                    "always meant (walkable 11+ months); both ship for one "
+                    "release, then winter goes.",
         },
         "extras": {
             "designation": "network",
@@ -1546,6 +1571,11 @@ def main():
     items_of = {country: [wire_item(t, len(stops.get(t["id"], [])), hier)
                           for t in by_country.get(country, [])]
                 for country in wanted}
+    bad = difficulty_mismatches([i for items in items_of.values() for i in items])
+    if bad:
+        # Loud, not fatal: the row is still shippable, but the traveller reads
+        # a grade the score did not use.
+        print(f"  WARNING difficulty != f.g on {len(bad)} row(s): {bad[:8]}")
     # D7 (wave 1, 0.4): two walks of one country never ship the same name;
     # before the treks, so a trek lists its stages by their shipped names.
     renamed = names.dedupe_names([i for items in items_of.values() for i in items],

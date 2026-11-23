@@ -69,6 +69,7 @@ import beauty_layer  # noqa: E402
 import nature_tiers  # noqa: E402
 import rating_config  # noqa: E402
 from pipeline_io import atomic_write_json, load_json  # noqa: E402
+from wire_stamp import build_stamp  # noqa: E402
 from rating_config import cfg  # noqa: E402
 
 DATA = ROOT / "app_data" / "app_data.json"
@@ -389,6 +390,8 @@ def main():
         data["destinations"][did]["taste"] = t
     print(f"taste profile for {len(taste):,} destinations")
     if not args.dry_run:
+        # Weekly writer of the master: it stamps generated_at (the 16 day age rule, D3, D12).
+        data.setdefault("meta", {})["generated_at"] = build_stamp()
         atomic_write_json(DATA, data, indent=None, ensure_ascii=False)
         print(f"  wrote {DATA}")
 

@@ -375,6 +375,11 @@ def cheap_check(subject, photo, meta=None, gaz=None, cfg=None):
             reasons.add("historical")
         if re.search(r"\.svg$", title, re.I):
             reasons.add("svg")
+    # D17: the shared hero ban list on the file name (url first: a thumbnail of
+    # a vector file is ".svg.png"), the subject's own words left out.
+    for tag in AUDIT.HERO_BANS.banned(photo.get("url") or title, subject["name"]):
+        if tag != "animal" or not named:
+            reasons.add(tag)
     # "seals" is an emblem word and an animal: on a photograph (not a
     # drawing format) it is the animal (Horsey Dunes seals).
     if "emblem" in reasons and ext.lower() not in ("svg", "png", "gif"):

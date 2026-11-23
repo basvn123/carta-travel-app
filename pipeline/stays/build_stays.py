@@ -49,7 +49,7 @@ from common import (BED_TYPES, CONTRACT_COLUMNS, JOURNAL_SCRAPE, OUT, ROOT,  # n
                     STATE, UNITS, journal, load_destinations, median, now_iso,
                     read_json, write_json)
 from booking.page import per_ok  # noqa: E402
-from bed_rules import clean_beds  # noqa: E402
+from bed_rules import clean_many  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from pricing_config import rule  # noqa: E402
@@ -302,13 +302,6 @@ def build(dests, obs):
                 rec["beds"][k] = round(lvl)
                 put(k, lvl, cur, n)
 
-        # D10 (wave 1): a dorm bed dearer than a 3-star room is a thin or
-        # mislabelled sample; "Not available yet" beats a wrong figure.
-        beds, month, dropped = clean_beds(rec["beds"], rec["month"])
-        if dropped:
-            rec["beds"], rec["month"] = beds, month
-            rec["src"].pop("dorm", None)
-
         hotels = [o for k, v in groups.items() if k.startswith("hotel") for o in v]
         h_lvl, _, _ = curve_and_level(hotels)
         s_lvl, _, _ = curve_and_level(groups.get("single", []))
@@ -327,15 +320,27 @@ def build(dests, obs):
         rec["weekend"] = wk if wk and wn >= MIN_PAIRS else None
         rec["peak"] = {}
         rec["season_q"] = "".join("m" if f else "f" for f in flags_any)
+        rec["q"] = "measured"
+        rec["captured"] = max(o["cap"] for v in groups.values() for o in v).isoformat()
+        records[d["id"]] = rec
+
+    # D10 (wave 1 and 2, 1.4): "Not available yet" beats a wrong figure. The
+    # build knows how many properties priced each tier (src.n), so it is the
+    # one place the thin-sample rule can act; the country median needs every
+    # record, hence a second pass. apply_stays runs the same clean_all.
+    iso_of = {d["id"]: d.get("iso2") for d in dests}
+    records, _dropped = clean_many(records, iso_of)
+    for did in list(records):
+        rec = records[did]
+        if not rec["beds"]:
+            del records[did]
+            continue
         rec["supply"] = {
             "hostel": "dorm" in rec["beds"] or "private" in rec["beds"],
             "hotel": any(k.startswith("hotel") for k in rec["beds"]),
             "hotel5": "hotel5" in rec["beds"],
             "bnb": "bnb_home" in rec["beds"],
         }
-        rec["q"] = "measured"
-        rec["captured"] = max(o["cap"] for v in groups.values() for o in v).isoformat()
-        records[d["id"]] = rec
     return records
 
 
