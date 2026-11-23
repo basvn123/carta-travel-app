@@ -85,10 +85,11 @@
 /* Every photo box is filled edge to edge by its photo, whatever element
    the image helper draws (a picture or an img, or the world tile), so a row
    of cards has one top and one height (judge 1 fix 6). */
-.vr-panel :is(.vr-go-ph, .vr-fc-ph, .vr-meet-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c) > :is(picture, img, .hero-blank) {
-  display: block; width: 100%; height: 100%;
+/* HeroImage puts the class on the img (its picture is display: contents)
+   or on the world tile, so the class alone sizes either. */
+.vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img {
+  display: block; width: 100%; height: 100%; object-fit: cover;
 }
-.vr-panel :is(.vr-go-ph, .vr-fc-ph, .vr-meet-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c) picture img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .vr-fc-ph:not(.is-none):not(.is-add) { display: block; }
 /* The largest own copy is 1280 px wide, so a lone wide photo stays at 640 px
    or less: sharp on a 2x screen (judge 1 fix 5). */

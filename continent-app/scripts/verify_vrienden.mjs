@@ -153,7 +153,8 @@ async function photoRows(page) {
           const r = box.getBoundingClientRect();
           if (!rows.has(k)) rows.set(k, []);
           // A photo fills its box; a face tile or the ring holds other things.
-          const pic = box.matches('.vr-ring') ? null : box.querySelector(':scope > :is(picture, img, .hero-blank)');
+          // The img, not its picture: the app draws picture as display: contents.
+          const pic = box.matches('.vr-ring') ? null : box.querySelector('img, .hero-blank');
           rows.get(k).push({ top: r.top, h: r.height, inner: pic ? pic.getBoundingClientRect().height : r.height });
         }
         for (const row of rows.values()) {
