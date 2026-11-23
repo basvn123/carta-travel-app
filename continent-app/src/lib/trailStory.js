@@ -1,3 +1,5 @@
+import { chooseLead } from './lakeStory.js';
+
 /**
  * trailStory.js, the trail explained to a walker rather than to a database.
  *
@@ -202,18 +204,28 @@ export function trailPlace(tr, detail, assocDest, countryName = () => null) {
  * to stay under rate.py's BIG_CLIMB_M, and the walking time, which has to
  * stay inside the six hours the story calls a full day. When the trip record
  * is not to hand, a bigClimb reason in the same list is the climb.
+ *
+ * REQ-data-5 (D-5): the numbers are pipeline/not_for.py's, one block for the
+ * rating and the app. A climb of 800 m is "not for", so the test is `>=`, and
+ * a grade above `hard` is never a comfortable day. tests/notForParity.test.mjs
+ * reads the Python file and fails when a number here drifts from it.
  */
 export const COMFORT_MAX_CLIMB_M = 800;
 export const COMFORT_MAX_MIN = 360;
+export const COMFORT_MAX_GRADE = 'hard';
+const GRADE_ORDER = ['easy', 'moderate', 'hard', 'very_hard', 'alpine'];
 export function isComfortableDay(trip, reasons = []) {
   let climb = trip ? trailClimb(trip).up : null;
   if (climb == null) {
     const big = (Array.isArray(reasons) ? reasons : []).find((r) => (r.code || r.k) === 'bigClimb');
     climb = big ? num(big.m) : null;
   }
-  if (climb != null && climb > COMFORT_MAX_CLIMB_M) return false;
+  if (climb != null && climb >= COMFORT_MAX_CLIMB_M) return false;
   const mins = num(trip?.duration_min);
   if (mins != null && mins > COMFORT_MAX_MIN) return false;
+  // An unknown grade does not fail it, the same as an unknown time.
+  const rank = GRADE_ORDER.indexOf(trailGrade(trip));
+  if (rank > GRADE_ORDER.indexOf(COMFORT_MAX_GRADE)) return false;
   return true;
 }
 
@@ -271,7 +283,8 @@ function reasonText(r, t) {
     case 'huts':
       return t(n > 1 ? 'trails.whyHuts' : 'trails.whyHut', { n });
     case 'water':
-      return t('trails.whyWater', { n });
+      // REQ-data-1: one point reads in the singular.
+      return t(n === 1 ? 'trails.whyWaterOne' : 'trails.whyWater', { n });
     case 'loop':
       return t('trails.whyLoop');
     case 'dayOut':
@@ -301,6 +314,11 @@ function reasonText(r, t) {
   }
 }
 
+// Codes true of most walks (a distance, a waymark, a water point, a road
+// share) state a fact the page already shows, so they never open the list.
+export const TRAIL_NEVER_LEAD = new Set(['dayOut', 'trek', 'waymarked', 'known', 'water', 'dense', 'roadWalk', 'loop', 'steady', 'bigClimb', 'high', 'unrated_coverage']);
+export const TRAIL_LEAD_ORDER = ['glacier', 'waterfall', 'gorge', 'summit', 'summits', 'lakes', 'coast', 'castle', 'ruins', 'monastery', 'lighthouse', 'cave', 'viewpoints', 'huts', 'varied', 'photogenic'];
+
 /**
  * The "why this one" lines for a trail, from the wire's reason codes.
  *
@@ -313,7 +331,6 @@ export function trailReasons(reasons, t, limit = 6, trip = null) {
   const list = Array.isArray(reasons) ? reasons : [];
   const comfortable = isComfortableDay(trip, list);
   for (const r of list) {
-    if (out.length >= limit) break;
     if ((r.code || r.k) === 'dayOut' && !comfortable) continue;
     // T430 (critique): a summit "on the way" that stands well above the
     // route's own high point is a peak the path passes below, so the
@@ -331,9 +348,11 @@ export function trailReasons(reasons, t, limit = 6, trip = null) {
     const text = reasonText(r, t);
     if (!text || seen.has(text)) continue;
     seen.add(text);
-    out.push({ key: `${r.code}:${out.length}`, icon: REASON_ICON[r.code] || 'check', text });
+    out.push({ key: `${r.code}:${out.length}`, code, icon: REASON_ICON[r.code] || 'check', text });
   }
-  return out;
+  // REQ-data-1 (D9): the line that opens the list is a place-specific one,
+  // not the distance or the waymark every walk shares.
+  return chooseLead(out, { neverLead: TRAIL_NEVER_LEAD, leadOrder: TRAIL_LEAD_ORDER, by: 'code' }).slice(0, limit);
 }
 
 const TEMPLATE_MARKS = [

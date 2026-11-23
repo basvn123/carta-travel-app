@@ -5,6 +5,7 @@
  * kinds that are empty, and the outdoor rows the PDF prints. No React, no
  * DOM, so tests/destOverview.test.mjs can run it in node.
  */
+import { outdoorScore } from './outdoorRow.js';
 
 /** The four tabs, always the same four, in order (owner answer T491-a). */
 export const DEST_TABS = ['overview', 'nearby', 'when', 'practical'];
@@ -55,8 +56,8 @@ export function hashWithTab(hash, destId, tab) {
 // dest.aroundKind.* label (six languages), its featureHref page and the
 // pipeline's AROUND_LAYERS / NEARBY_RULES that write its rows.
 export const AROUND_KINDS = [
-  { key: 'walks', layer: 'trails', loader: 'trail', facts: 'route', from: [['around', 'trails'], ['nearby', 'trails'], ['routes', 'hiking']] },
-  { key: 'rides', layer: 'cycling', loader: 'cycling', facts: 'route', from: [['around', 'cycling'], ['nearby', 'cycling'], ['routes', 'cycling']] },
+  { key: 'walks', layer: 'trails', loader: 'trail', facts: 'route', from: [['around', 'trails'], ['routes', 'hiking']] },
+  { key: 'rides', layer: 'cycling', loader: 'cycling', facts: 'route', from: [['around', 'cycling'], ['routes', 'cycling']] },
   { key: 'peaks', layer: 'mountains', loader: 'mountain', facts: 'height', from: [['around', 'mountains'], ['nearby', 'mountains']] },
   { key: 'lakes', layer: 'lakes', loader: 'lake', facts: 'water', from: [['around', 'lakes'], ['nearby', 'lakes']] },
   { key: 'beaches', layer: 'beaches', loader: 'beach', facts: 'water', from: [['around', 'beaches'], ['nearby', 'beaches']] },
@@ -86,7 +87,7 @@ export function aroundCategories({ around = null, nearby = null, routes = null, 
         // The first reading wins; a later one only fills what it lacked (a
         // route row has no photograph, the around row of the same path has).
         if (had) {
-          for (const k of ['thumb', 'score', 'tier', 'km_len', 'lat', 'lon']) {
+          for (const k of ['thumb', 'score', 'tier', 'km_len', 'lat', 'lon', 'o', 'v5']) {
             if (had[k] == null && f[k] != null) had[k] = f[k];
           }
           continue;
@@ -94,7 +95,8 @@ export function aroundCategories({ around = null, nearby = null, routes = null, 
         seen.set(id, { ...f, layer, key: `${layer}:${id}` });
       }
     }
-    const rows = [...seen.values()].sort((x, y) => (y.score ?? -1) - (x.score ?? -1)
+    // REQ-data-4: best first on the v5 score in `o`, the legacy score behind it.
+    const rows = [...seen.values()].sort((x, y) => outdoorScore(y) - outdoorScore(x)
       || (x.km ?? 99) - (y.km ?? 99));
     // `all` keeps every row for a reader that filters (the place page's
     // distance steps cut after filtering); `rows` is the capped best-first list.

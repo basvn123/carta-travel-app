@@ -118,13 +118,14 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### TRAIL-015 "A comfortable day out"
 - Decides: whether a walk is called a good day out.
-- Rule: 6 to 22 km, climb read uphill at most 800 m, and walking time at most 360 minutes (unknown time passes). The app's `isComfortableDay` uses the same two numbers.
+- Rule: 6 km up to but not including 20 km, climb read uphill under 800 m (800 is "not for"), walking time at most 360 minutes, grade at most `hard` (an unknown time or grade passes). Source: `pipeline/not_for.py` (D-5). The app's `isComfortableDay` mirrors the climb, time and grade; the distance band is the pipeline's `dayOut` reason.
 - Constant: `DAY_MIN_M, DAY_MAX_M` in `pipeline/trails/rate.py:128` = 6_000, 22_000
 - Constant: `COMFORT_MAX_CLIMB_M`, `COMFORT_MAX_MIN` in `pipeline/trails/rate.py:138` = 800, 360
-- Constant: `COMFORT_MAX_CLIMB_M`, `COMFORT_MAX_MIN` in `continent-app/src/lib/trailStory.js:206` = 800, 360
+- Constant: `COMFORT_MAX_CLIMB_M`, `COMFORT_MAX_MIN`, `COMFORT_MAX_GRADE` in `continent-app/src/lib/trailStory.js` = 800, 360, hard; `TRAIL_CLIMB_M`, `TRAIL_LONG_KM`, `TRAIL_ROAD_PCT` in `continent-app/src/lib/notFor.js` = 800, 20, 15
 - Test: `tests/test_trail_climb_consistency.py` :: "test_day_out_needs_a_comfortable_climb_and_time"
 - Test: `tests/test_trail_climb_consistency.py` :: "test_comfort_numbers_match_the_app"
 - Test: `continent-app/tests/trailStory.test.mjs` :: "a comfortable day out is never claimed over a big climb"
+- Test: `continent-app/tests/wave3aTrails.test.mjs` :: "REQ-data-5: the app's day-out numbers equal pipeline/not_for.py"
 
 ### TRAIL-016 Routes drawn downhill are read uphill
 - Decides: the climb a card prints and every grade, reason and suitability that judges effort.
@@ -178,7 +179,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 ### TRAIL-022 Grade step T1 to T6
 - Decides: the six-square grade card on the trail page.
 - Rule: the mapper's SAC tag as its T step (hiking 1 to difficult_alpine_hiking 6); otherwise Carta's grade as easy 1, moderate 2, hard 3, very_hard 4, alpine 5, marked estimated. A city day shows no step.
-- Constant: `GRADE_STEP` in `continent-app/src/browse/TrailPage.jsx:107`
+- Constant: `GRADE_STEP` in `continent-app/src/lib/trailCards.js` (`gradeStepOf`: a T step is exact only from a SAC tag or `f.gs == 'tagged'`; a derived alpine is no step)
 - Constant: `SAC_STEP` in `continent-app/src/browse/OutdoorParts.jsx:487`
 - Test: no test
 

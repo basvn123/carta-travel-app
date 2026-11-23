@@ -2316,7 +2316,7 @@ export const nl = {
   "trails.suitDog": "Honden",
   "trails.suitStroller": "Kinderwagen",
   "trails.suitWheelchair": "Rolstoel",
-  "trails.suitWinter": "Winter",
+  "trails.suitAllYear": "Het hele jaar",
   "trails.suitEstimated": "Onze schatting, niet iets wat op de kaart staat",
   "trails.suitTagged": "Vastgelegd op het pad zelf",
   "trails.listedNote": "Bestaat en is van begin tot eind in kaart gebracht. We hebben er nog geen cijfer aan gegeven, dus er staat er geen bij.",

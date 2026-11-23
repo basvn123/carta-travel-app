@@ -26,6 +26,11 @@
 import { count } from './format.js';
 
 const MAX_LINES = 2;
+// REQ-data-5 (D-5): the "not for" thresholds of a trail, pipeline/not_for.py's
+// numbers (tests/notForParity.test.mjs holds the two files together).
+export const TRAIL_CLIMB_M = 800;
+export const TRAIL_LONG_KM = 20;
+export const TRAIL_ROAD_PCT = 15;
 const FALLBACK = { key: 'notfor.conditions', params: {} };
 
 const num = (v) => (typeof v === 'number' && Number.isFinite(v) ? v : null);
@@ -77,17 +82,17 @@ const TRAIL_RULES = [
   (x, ctx) => {
     const road = (ctx.reasons || []).find((r) => (r.code || r.k) === 'roadWalk');
     const pct = road ? num(road.pct) : null;
-    return pct !== null && pct >= 15 ? line('notfor.trailRoad', { pct: Math.round(pct) }) : null;
+    return pct !== null && pct >= TRAIL_ROAD_PCT ? line('notfor.trailRoad', { pct: Math.round(pct) }) : null;
   },
   (x, ctx) => (ctx.grade === 'very_hard' || ctx.grade === 'alpine'
     ? line('notfor.trailGrade') : null),
   (x, ctx) => {
     const m = num(ctx.ascent);
-    return m !== null && m >= 800 ? line('notfor.trailClimb', { m: count(m) }) : null;
+    return m !== null && m >= TRAIL_CLIMB_M ? line('notfor.trailClimb', { m: count(m) }) : null;
   },
   (x, ctx) => {
     const km = num(ctx.totalM) !== null ? ctx.totalM / 1000 : null;
-    return km !== null && km >= 20 ? line('notfor.trailLong', { km: Math.round(km) }) : null;
+    return km !== null && km >= TRAIL_LONG_KM ? line('notfor.trailLong', { km: Math.round(km) }) : null;
   },
 ];
 

@@ -1,8 +1,7 @@
 import React from 'react';
 import { ScoreChip } from '../components/RatingBadge.jsx';
-import { natureRating } from '../lib/rating.js';
+import { outdoorRow, outdoorScore, outdoorRating, outdoorGradeKey } from '../lib/outdoorRow.js';
 import { tileUrl } from '../lib/mapTile.js';
-import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
 import { notYet } from '../components/NotYet.jsx';
 import { sacLabel, clock } from '../lib/routeEffort.js';
@@ -60,16 +59,15 @@ function rowMeta(row, layer, t) {
     // climb and time (a ride's riding time); a figure the row does not carry
     // says so instead of leaving the slot out.
     if (layer === 'trails') bits.push(sacLabel(row.sac_scale) || notYet(t));
-    bits.push(row.km_len != null ? `${Math.round(row.km_len)} km` : notYet(t));
+    const o = outdoorRow(row);
+    bits.push(o.km != null ? `${Math.round(o.km)} km` : notYet(t));
     // The climb read uphill and the grade: never the stored ascent of a line
     // drawn summit to valley, never a grade code without a label (T108-d,
     // T108-f). Both helpers read whatever the row carries, so a dossier
     // built from the current wire and one built from the next both work.
-    const up = trailClimbUp(row);
-    bits.push(up != null ? `${Math.round(up)} m up` : notYet(t));
-    const mins = row.duration_min ?? row.dur?.min;
-    bits.push(mins != null ? clock(mins) : notYet(t));
-    const gradeKey = gradeLabelKey(row);
+    bits.push(o.upM != null ? `${Math.round(o.upM)} m up` : notYet(t));
+    bits.push(o.minutes != null ? clock(o.minutes) : notYet(t));
+    const gradeKey = outdoorGradeKey(row);
     if (gradeKey) bits.push(t(gradeKey));
   } else if (layer === 'mountains') {
     if (row.elev_m != null) bits.push(`${Math.round(row.elev_m)} m`);
@@ -108,7 +106,7 @@ function Row({ href, onOpen, children }) {
 export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }) {
   const picks = React.useMemo(() => LAYER_ORDER
     .flatMap((layer) => ((nearby || {})[layer] || []).slice(0, 3).map((f) => ({ ...f, layer })))
-    .sort((a, b) => (b.v5?.score ?? -1) - (a.v5?.score ?? -1)), [nearby]);
+    .sort((a, b) => outdoorScore(b) - outdoorScore(a)), [nearby]);
   const layers = LAYER_ORDER.filter((l) => (around?.[l] || []).length > 0);
   const tabs = [
     ...(picks.length ? [{ key: 'picks', label: t('dest.aroundPicks'), n: picks.length }] : []),
@@ -166,7 +164,7 @@ export function AroundHere({ city, nearby, around, t, onOpenFeature, onShowMap }
           const Icon = LAYER_ICON[row.layer];
           // Rating v5 (T763): the dossier row's v5 block; a row without one
           // shows the NotYet slot (the dossier is rebuilt with v5, T754-a).
-          const rating = natureRating(row);
+          const rating = outdoorRating(row);
           const meta = rowMeta(row, row.layer, t);
           return (
             <li key={`${row.layer}|${row.id}`}>

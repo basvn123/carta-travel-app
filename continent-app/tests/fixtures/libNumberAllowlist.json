@@ -386,7 +386,10 @@
   "notFor.js": {
    "why": "screen, layout, image, storage or protocol size or timing; not a euro amount",
    "names": [
-    "MAX_LINES"
+    "MAX_LINES",
+    "TRAIL_CLIMB_M",
+    "TRAIL_LONG_KM",
+    "TRAIL_ROAD_PCT"
    ]
   },
   "openingScreen.js": {

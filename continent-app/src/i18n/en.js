@@ -3136,7 +3136,7 @@ export const en = {
   "trails.suitDog": "Dogs",
   "trails.suitStroller": "Pushchair",
   "trails.suitWheelchair": "Wheelchair",
-  "trails.suitWinter": "Winter",
+  "trails.suitAllYear": "All year",
   "trails.suitEstimated": "Our estimate, not something the map was told",
   "trails.suitTagged": "Recorded on the path itself",
   "trails.listedNote": "Verified to exist and mapped end to end. We have not scored it yet, so there is no rating on it.",

@@ -3,9 +3,8 @@ import { createPortal } from 'react-dom';
 import { Chip, ChipGroup, Segmented } from '../components/ui/index.js';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { CLASS_KEY as WATER_KEY } from '../components/WaterQualityBadge.jsx';
-import { natureRating } from '../lib/rating.js';
+import { outdoorRow, outdoorRating, outdoorGradeKey, outdoorScore } from '../lib/outdoorRow.js';
 import { featureHref, linkOpener } from '../lib/featureHref.js';
-import { trailClimbUp, gradeLabelKey } from '../lib/trailStory.js';
 import { clock } from '../lib/routeEffort.js';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { FeaturePhoto } from './AroundHere.jsx';
@@ -35,11 +34,11 @@ const RADII = [5, 10, 25];
 function kindFacts(f, style, t) {
   const bits = [];
   if (style === 'route') {
-    if (f.km_len != null) bits.push(t('dest.trackLong', { km: Math.round(f.km_len) }));
-    const up = trailClimbUp(f);
-    if (up != null && up >= 20) bits.push(t('dest.ascentUp', { m: Math.round(up) }));
-    const mins = f.duration_min ?? f.dur?.min;
-    if (mins != null) bits.push(clock(mins));
+    // REQ-data-4: length, climb and time read `o` first (lib/outdoorRow.js).
+    const o = outdoorRow(f);
+    if (o.km != null) bits.push(t('dest.trackLong', { km: Math.round(o.km) }));
+    if (o.upM != null && o.upM >= 20) bits.push(t('dest.ascentUp', { m: Math.round(o.upM) }));
+    if (o.minutes != null) bits.push(clock(o.minutes));
   } else if (style === 'height' && f.elev_m != null) {
     bits.push(t('ar.high', { m: Math.round(f.elev_m).toLocaleString(t.lang || 'en') }));
   }
@@ -50,7 +49,7 @@ function kindFacts(f, style, t) {
 /** The pill on the photograph: a route's grade, or the bathing water. */
 function kindStatus(f, style, t) {
   if (style === 'route') {
-    const g = gradeLabelKey(f);
+    const g = outdoorGradeKey(f);
     return g ? t(g) : null;
   }
   if (style === 'water' && WATER_KEY[f.water]) return t('ar.water', { q: t(WATER_KEY[f.water]) });
@@ -75,7 +74,7 @@ export function NearPage({ cat, city, t, onOpenFeature, onClose }) {
   const r = steps.includes(radius) ? radius : null;
   const shown = (r == null ? near : near.filter((f) => f.km != null && f.km <= r));
   const rows = sort === 'best'
-    ? [...shown].sort((x, y) => (y.score ?? -1) - (x.score ?? -1) || (x.km ?? 99) - (y.km ?? 99))
+    ? [...shown].sort((x, y) => outdoorScore(y) - outdoorScore(x) || (x.km ?? 99) - (y.km ?? 99))
     : shown;
   const kind = t(`dest.aroundKind.${cat.key}`);
   const title = t('ar.near', { kind, city });
@@ -98,7 +97,7 @@ export function NearPage({ cat, city, t, onOpenFeature, onClose }) {
                 <Chip kind="choice" selected={r == null} onClick={() => setRadius(null)}>{t('ar.within', { km: reach })}</Chip>
               </ChipGroup>
             )}
-            {rows.some((f) => f.score != null) && (
+            {rows.some((f) => outdoorScore(f) >= 0) && (
               <Segmented size="sm" label={t('ar.sort')} value={sort} onChange={setSort} className="near-sort"
                 options={[{ value: 'near', label: t('ar.sortNear') }, { value: 'best', label: t('ar.sortBest') }]} />
             )}
@@ -107,7 +106,7 @@ export function NearPage({ cat, city, t, onOpenFeature, onClose }) {
             {rows.map((f) => {
               const ref = { id: f.id, cc: f.cc };
               const href = onOpenFeature ? featureHref(f.layer, ref) : null;
-              const rating = natureRating(f);
+              const rating = outdoorRating(f);
               return (
                 <StoryCard key={f.key}
                   photo={<FeaturePhoto src={f.thumb} lat={f.lat} lon={f.lon} />}

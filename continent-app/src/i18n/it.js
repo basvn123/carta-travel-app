@@ -2307,7 +2307,7 @@ export const it = {
   "trails.suitDog": "Cani",
   "trails.suitStroller": "Passeggino",
   "trails.suitWheelchair": "Sedia a rotelle",
-  "trails.suitWinter": "Inverno",
+  "trails.suitAllYear": "Tutto l'anno",
   "trails.suitEstimated": "Una nostra stima, non un dato della mappa",
   "trails.suitTagged": "Rilevato sul sentiero stesso",
   "trails.listedNote": "Esiste ed e mappato da un capo all'altro. Non lo abbiamo ancora valutato, quindi non porta un voto.",

@@ -133,8 +133,17 @@ export function isTemplateBlurb(text) {
   // "known for its X and Y and Z": the harvest's category list, not prose.
   if (/known for its .+\band\b.+\band\b/i.test(s)) return true;
   if (/\b(landmark and historical building|church cathedral)\b/i.test(s)) return true;
+  // REQ-data-1: a bare Wikidata description is a label, not a sentence:
+  // "Italian comune.", "commune in Haute-Corse, France", "human settlement",
+  // "village in Serbia", "Italian comune. A member of I Borghi ...".
+  if (BARE_WIKIDATA.test(s)) return true;
   return false;
 }
+
+// The kinds Wikidata names a settlement by. One optional nationality word in
+// front, one optional "in/of/on <where>" behind, and nothing else: a blurb
+// that says more than that is prose and stays.
+const BARE_WIKIDATA = /^(?:an? )?(?:[a-z]+ )?(?:comune|commune|municipality|village|town|city|place|community|human settlement|settlement|hamlet|locality|civil parish|parish|borough|suburb|district|island|islands)(?: (?:in|of|on) [^.]{1,60})?\.?(?: A member of [^.]{1,60}\.?)?$/i;
 
 /**
  * The composed line, or null when there is not enough to say something

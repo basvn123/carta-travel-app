@@ -542,19 +542,20 @@ const NOT_A_HIGHLIGHT = new Set(['height', 'prominence', 'range', 'area', 'depth
  * order put the water class first on most pages, so 31% of lakes and 63% of
  * beaches opened on the same sentence. The lead is the eligible highlight
  * ranked first in `leadOrder` (rare, place-specific codes first; codes not
- * listed rank after, in wire order); the others keep wire order. Codes in
+ * listed rank after, in wire order); the others keep wire order. `by` names
+ * the field that holds the code (trail reasons keep it in `code`). Codes in
  * `neverLead` can still be highlights, never the first. With nothing
  * eligible the list comes back unchanged.
  */
-export function chooseLead(highlights, { neverLead = new Set(), leadOrder = [] } = {}) {
-  const rank = (key) => {
-    const i = leadOrder.indexOf(key);
+export function chooseLead(highlights, { neverLead = new Set(), leadOrder = [], by = 'key' } = {}) {
+  const rank = (code) => {
+    const i = leadOrder.indexOf(code);
     return i === -1 ? leadOrder.length : i;
   };
   let best = -1;
   highlights.forEach((h, i) => {
-    if (neverLead.has(h.key)) return;
-    if (best === -1 || rank(h.key) < rank(highlights[best].key)) best = i;
+    if (neverLead.has(h[by])) return;
+    if (best === -1 || rank(h[by]) < rank(highlights[best][by])) best = i;
   });
   if (best <= 0) return highlights;
   return [highlights[best], ...highlights.slice(0, best), ...highlights.slice(best + 1)];

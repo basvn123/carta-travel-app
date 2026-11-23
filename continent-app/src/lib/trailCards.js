@@ -198,6 +198,25 @@ export const GRADES = [
 
 export const tripGrade = (tr) => tr?.f?.g ?? null;
 export const gradeIsDerived = (tr) => (tr?.f?.gs ?? null) === 'derived';
+export const gradeIsTagged = (tr) => (tr?.f?.gs ?? null) === 'tagged';
+
+/** Carta's grade as a T step. */
+const GRADE_STEP = { easy: 1, moderate: 2, hard: 3, very_hard: 4, alpine: 5 };
+
+/**
+ * The T step the trail page prints and whether it is our estimate
+ * (REQ-data-7, D-4). A mapper's SAC tag is the step, exact. Otherwise Carta's
+ * grade gives it, exact only where `f.gs` says a tag stands behind it. A
+ * derived alpine is no step at all: the pipeline never derives one now, and a
+ * file from before that must not print "T5, estimated" for a walk nobody
+ * tagged.
+ */
+export function gradeStepOf({ sacTag = 0, grade = null, tagged = false, derived = false } = {}) {
+  if (sacTag) return { step: sacTag, est: false };
+  if (!grade) return { step: 0, est: true };
+  if (derived && grade === 'alpine') return { step: 0, est: true };
+  return { step: GRADE_STEP[grade] || 0, est: !tagged };
+}
 
 /**
  * Waymarked and the walking season, as the key facts band reads them (T386).
@@ -289,12 +308,17 @@ export const SUITABILITY = [
   { key: 'dog', labelKey: 'trails.suitDog' },
   { key: 'stroller', labelKey: 'trails.suitStroller' },
   { key: 'wheelchair', labelKey: 'trails.suitWheelchair', taggedOnly: true },
-  { key: 'winter', labelKey: 'trails.suitWinter' },
+  // REQ-data-6 (D-16): "walkable all year" is what `winter` always meant.
+  { key: 'allYear', labelKey: 'trails.suitAllYear' },
 ];
 
 /** Every suitability code on a trip, tagged and derived together. */
 export function tripSuitability(tr) {
-  return [...(tr?.f?.su || []), ...(tr?.f?.sd || [])];
+  const codes = [...(tr?.f?.su || []), ...(tr?.f?.sd || [])];
+  // One release: the wire ships `allYear` beside `winter`; a country file
+  // from before that still carries only `winter`, same rows.
+  if (codes.includes('winter') && !codes.includes('allYear')) codes.push('allYear');
+  return codes;
 }
 
 /** True when this code is a derivation rather than something OSM was told. */

@@ -8,7 +8,7 @@ import { loadTrail, loadTrails, loadTreks } from '../lib/trails.js';
 import { trekCountry, trekOfRow } from '../lib/treks.js';
 import {
   haversineKm, stopNameFromRef, trailRating,
-  tripGrade, gradeIsDerived, tripHighlights, ROUTE_TYPES, tripRouteType,
+  tripGrade, gradeIsDerived, gradeIsTagged, gradeStepOf, tripHighlights, ROUTE_TYPES, tripRouteType,
   trailWaymarked, trailSeason,
 } from '../lib/trailCards.js';
 import { trailStory, trailReasons, trailPlace, isLongWalk, trailDays } from '../lib/trailStory.js';
@@ -110,8 +110,6 @@ const duration = (min) => {
 };
 
 const ROUTE_LABEL = Object.fromEntries(ROUTE_TYPES.map(({ key, labelKey }) => [key, labelKey]));
-/** Carta's grade where no mapper tagged an SAC scale: its T step, estimated. */
-const GRADE_STEP = { easy: 1, moderate: 2, hard: 3, very_hard: 4, alpine: 5 };
 const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const TRANSIT_ICON = { bus: BusIcon, train: TrainIcon, tram: TrainIcon, ferry: FerryIcon };
 
@@ -614,8 +612,10 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   // The grade as a T step: the mapper's SAC tag when the route carries one,
   // Carta's own grade otherwise (then marked as estimated).
   const sacTag = SAC_STEP[src.sac_scale] || SAC_STEP[tr.sac_scale] || 0;
-  const gradeStep = isCityDay ? 0 : (sacTag || GRADE_STEP[grade] || 0);
-  const gradeEst = !sacTag && (derivedGrade || !grade);
+  const { step: gradeStepRaw, est: gradeEst } = gradeStepOf({
+    sacTag, grade, derived: derivedGrade, tagged: gradeIsTagged(src) || gradeIsTagged(tr),
+  });
+  const gradeStep = isCityDay ? 0 : gradeStepRaw;
   // T1092 (D7): a multi-day walk on easy ground reads "Long, 14 days"
   // where Carta's own grade would stand. A mapper's SAC tag still wins.
   const longDays = !isCityDay && !sacTag && (isLongWalk(src) || isLongWalk(tr))

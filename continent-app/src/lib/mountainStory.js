@@ -1,3 +1,5 @@
+import { chooseLead } from './lakeStory.js';
+
 /**
  * mountainStory.js, the mountain explained to a traveller rather than to a
  * scorer.
@@ -525,6 +527,12 @@ export function floorNote(index, cc, t, countryName) {
 // lead and are not highlights: they are already on the page as figures.
 const NOT_A_HIGHLIGHT = new Set(['height', 'prominence', 'range', 'area', 'depth', 'elevation', 'length', 'surface', 'season', 'difficulty', 'graded', 'parking', 'transit', 'roadAccess', 'unrated_coverage', 'no_photo_map_card', 'water_unknown_no_source', 'swimUnknown', 'photographed', 'curated', 'editorial_pick', 'shared']);
 
+// REQ-data-1 (D9): the page opens on the rarest thing up there, not on the
+// protected-area or hiking line most summits share.
+export const MOUNTAIN_NEVER_LEAD = new Set(['park', 'protected', 'hiking', 'wikiFame', 'climbersMountain', 'ski', 'film']);
+export const MOUNTAIN_LEAD_ORDER = ['glacier', 'activeVolcano', 'volcanic', 'viaFerrata', 'observatory', 'summitFood', 'lift', 'wideView', 'waterView', 'lakeBelow', 'hut', 'unesco', 'viewpoint', 'peaksInView', 'summitCross', 'wildlife', 'highpoint'];
+
 export function mountainHighlights(mountain, t, max = 4) {
-  return mountainWhy(mountain, t, 12, true).filter((h) => !NOT_A_HIGHLIGHT.has(h.key)).slice(0, max);
+  const all = mountainWhy(mountain, t, 12, true).filter((h) => !NOT_A_HIGHLIGHT.has(h.key));
+  return chooseLead(all, { neverLead: MOUNTAIN_NEVER_LEAD, leadOrder: MOUNTAIN_LEAD_ORDER }).slice(0, max);
 }
