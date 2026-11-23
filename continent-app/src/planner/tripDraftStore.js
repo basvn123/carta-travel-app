@@ -12,6 +12,8 @@
    returnAnchorId, ownFlight, planId, planLabel, planned }
  */
 
+import { announceThingsChanged } from '../lib/thingsChanged.js';
+
 const DRAFT_KEY = 'carta.tripDraft.v1';
 
 /** The draft to RESTORE into the planner: null when absent, corrupt, or
@@ -44,6 +46,7 @@ export function persistTripDraft(draft) {
   if (typeof window === 'undefined') return;
   try {
     window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    announceThingsChanged();
   } catch { /* private mode */ }
 }
 

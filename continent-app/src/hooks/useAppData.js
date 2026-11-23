@@ -4,6 +4,7 @@ import {
 import {
   firstPaintPromise, catalogue, CATALOGUE_MODE, loadFullCatalogue,
 } from '../lib/appData.js';
+import { initForLoad } from '../lib/urlState.js';
 import { withOriginRoutes, defaultOrigin, originHome } from '../lib/origins.js';
 import { loadFlightFile, loadAirlines } from '../lib/flights/flightData.js';
 import { homeAirports } from '../lib/airportReach.js';
@@ -83,14 +84,17 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
         const originDefault = init.origin ?? defaultOrigin(j);
         setChoices((prev) => {
           // URL/stored values (held in `init`) win over the data defaults.
-          const baggageKey = init.baggage_key ?? def?.baggage ?? prev.baggage_key;
+          // E9 (G-1): `fromInit` is `init` without the mirror's priced values when
+          // an active style already set them (lib/urlState.js initForLoad).
+          const fromInit = initForLoad(init, { prev, search: typeof window === 'undefined' ? '' : window.location.search });
+          const baggageKey = fromInit.baggage_key ?? def?.baggage ?? prev.baggage_key;
           const chosenOrigin = prev.origin ?? originDefault;
           return {
             ...prev,
             origin: chosenOrigin,
             // Two people unless the URL says otherwise (T100). The generated
             // meta.defaults.group_size is 7 and is deliberately not read here.
-            group_size: init.group_size ?? prev.group_size,
+            group_size: fromInit.group_size ?? prev.group_size,
             // Restored dates already drove trip_days (the sync effect in App
             // runs before this fetch resolves); overriding it with the data's
             // default here left "Nights" stuck on the configured default until
@@ -99,12 +103,12 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
               ? prev.trip_days
               : (def?.trip_length_days ?? prev.trip_days),
             baggage_key: baggageKey,
-            transport_mode: init.transport_mode ?? prev.transport_mode,
+            transport_mode: fromInit.transport_mode ?? prev.transport_mode,
             // An active travel style already set the Lifestyle (hooks/
             // useTravelStyles.js); the data's default must not undo it.
-            lifestyle: prev.travel_styles?.active && !init.lifestyle
+            lifestyle: prev.travel_styles?.active && !fromInit.lifestyle
               ? prev.lifestyle
-              : { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(init.lifestyle || {}) },
+              : { ...prev.lifestyle, ...(def?.lifestyle || {}), ...(fromInit.lifestyle || {}) },
             // v18 (T534): Airbnb's fee constants travel as meta.stays.fees.
             accommodation_model: j.meta.stays?.fees ?? j.meta.accommodation_model ?? prev.accommodation_model,
             car_model: j.meta.car_model ?? prev.car_model,

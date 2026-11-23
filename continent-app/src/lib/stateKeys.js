@@ -25,6 +25,8 @@
  *
  * `own: true`    persistState owns it: it replaces the key wholesale on every write.
  * `share: true`  a share-this-view link keeps it.
+ * `place: true`  it names a place, not a setting: a link carrying only these is no
+ *                one else's settings (isForeignLink in lib/urlState.js).
  * `strip: true`  person keys that go to the mirror (and the account) but, with
  *                flag E9 new, no longer ride in the address bar.
  * `sync`         'things' the account sync watches it for changes; 'settings' it
@@ -36,9 +38,9 @@ const store = (key, scope, flags = {}) => ({ key, kind: 'storage', scope, ...fla
 
 export const URL_KEYS = Object.freeze([
   // The place and its view.
-  url('tab', 'view', { own: true, share: true }),
-  url('mode', 'view', { own: true }),
-  url('cat', 'view', { own: true, share: true }),
+  url('tab', 'view', { own: true, share: true, place: true }),
+  url('mode', 'view', { own: true, place: true }),
+  url('cat', 'view', { own: true, share: true, place: true }),
   url('view', 'view'),
   url('tv', 'view'),
   url('tg', 'view'),
@@ -232,6 +234,9 @@ export const shareViewKeys = () => keys(URL_KEYS, (e) => e.share);
 /** Address keys that name the person (flag E9 new: of these, `stripUrlKeys` leave the address). */
 export const personUrlKeys = () => keys(URL_KEYS, (e) => e.scope === 'person');
 export const stripUrlKeys = () => keys(URL_KEYS, (e) => e.strip);
+
+/** Address keys that carry a setting: what makes a link someone else's. */
+export const settingUrlKeys = () => keys(URL_KEYS, (e) => e.own && !e.place && e.scope !== 'seed');
 
 /** Old filter keys no chip shows (audit E-3); flag E9 new stops reading them. */
 export const legacyFilterKeys = () => ['rr', 'mt', 'mb', 'tb', 'big', 'top'];

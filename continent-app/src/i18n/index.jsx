@@ -97,6 +97,8 @@ export const LANGUAGES = [
 ];
 
 const LANG_KEY = 'continent.lang.v1';
+/** Fired by setLang when the traveller (not the account pull) chose the language. */
+export const LANG_PICKED_EVENT = 'carta:lang-picked';
 
 function initialLang() {
   // T1212 (I12): a language prefix in the address (/nl/...) names the
@@ -183,8 +185,12 @@ export function I18nProvider({ children }) {
     } catch { /* sandboxed */ }
   }, [lang]);
 
-  const setLang = useCallback((code) => {
+  // `opts.fromAccount`: the account's saved language applied at sign-in. Anything
+  // else is the traveller picking a language, which the account sync pushes
+  // (E9, G-16); it hears it as this event.
+  const setLang = useCallback((code, opts) => {
     if (!isLang(code)) return;
+    if (!opts?.fromAccount) { try { window.dispatchEvent(new Event(LANG_PICKED_EVENT)); } catch { /* no window */ } }
     try { localStorage.setItem(LANG_KEY, code); } catch { /* storage unavailable */ }
     // Start the download on the click rather than waiting for the effect, so
     // the catalog is usually in hand by the time React commits.

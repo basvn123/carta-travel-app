@@ -10,6 +10,7 @@ import { QUESTIONS } from './questions.js';
 import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings } from './tripSettings.js';
 import { newTripSettings } from './styleSeed.js';
+import { isOn } from '../../lib/flags.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { markQuickStart } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
@@ -147,6 +148,8 @@ export function PlanFlow({
             // always, so an open draft too empty to be listed (answers with
             // no trip made yet) never hands its old answers to the new plan.
             tripsStore.startNew();
+            // G-7 (E9): a style held for the last trip does not price this one.
+            if (isOn('E9')) app?.travelStyles?.newTrip?.();
             // The traveller's travel style answers what it can (who, what
             // matters most, how they explore), so the planner asks only the
             // rest; the Who screen shows the style and can swap it.

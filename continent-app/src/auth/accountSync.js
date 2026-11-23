@@ -46,6 +46,7 @@ import {
 } from '../planner/tripsStore.js';
 import { DEVICE_TRIP_KEY, loadDeviceTrip } from '../planner/deviceTripStore.js';
 import { syncKeys } from '../lib/stateKeys.js';
+import { THINGS_CHANGED } from '../lib/thingsChanged.js';
 
 export const SYNC_KEY = 'carta.accountSync.v1';
 export const KINDS = ['kept', 'journey', 'trip', 'device_trip'];
@@ -476,6 +477,8 @@ export function bindAccountSync(userId, cloud) {
   if (typeof window !== 'undefined') {
     window.addEventListener('carta:kept', schedule);
     window.addEventListener('carta:journey-saves', schedule);
+    // J-11: a trip edited in this tab (the `storage` event reaches only the others).
+    window.addEventListener(THINGS_CHANGED, schedule);
     window.addEventListener('storage', onStorage);
     if (typeof document !== 'undefined') document.addEventListener('visibilitychange', onVisible);
   }
@@ -491,6 +494,7 @@ export function unbindAccountSync() {
   if (typeof window !== 'undefined') {
     window.removeEventListener('carta:kept', schedule);
     window.removeEventListener('carta:journey-saves', schedule);
+    window.removeEventListener(THINGS_CHANGED, schedule);
     window.removeEventListener('storage', onStorage);
     if (typeof document !== 'undefined') document.removeEventListener('visibilitychange', onVisible);
   }

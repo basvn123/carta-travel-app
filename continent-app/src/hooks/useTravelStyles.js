@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesMatchStyle, commitChoices, createChoices,
+  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, keepChoices, newTripChoices, switchChoices, choicesMatchStyle, commitChoices, createChoices,
   draftFromTemplate, duplicateStyle, emptyDraft, exploreFromTaste, normalizeStyles, removeChoices, studioOpen, styleFromDraft, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
-
-/** The query keys that carry a priced choice (lib/urlState.js: party g, gc,
- *  gb; stay st; Lifestyle ls; way t). */
-const PRICED_QUERY = /[?&](g|gc|gb|st|ls|t)=/;
+// The query keys that carry a priced choice (party g, gc, gb; stay st;
+// Lifestyle ls; way t) are named once, in lib/urlState.js.
+import { PRICED_QUERY } from '../lib/urlState.js';
 
 /**
  * The taste written with the style in the same update (rule 4), for the
@@ -159,6 +158,8 @@ export function useTravelStyles(choices, setChoices) {
   const keep = useCallback(() => {
     setChoices(keepChoices);
   }, [setChoices]);
+  /** E9 (G-7): a new trip is starting; a hold left from the last one is lifted. */
+  const newTrip = useCallback(() => { setChoices(newTripChoices); }, [setChoices]);
   /** Back to the active style's own values (the hold lifted). */
   const revert = useCallback(() => { if (store.active) switchTo(store.active); }, [store.active, switchTo]);
   // The choices differ from the active style (a trip's change, a link).
@@ -182,7 +183,8 @@ export function useTravelStyles(choices, setChoices) {
     hold,
     keep,
     revert,
+    newTrip,
     changed,
     held,
-  }), [store, active, openNow, setOpen, switchTo, createFrom, commit, update, remove, duplicate, hold, keep, revert, changed, held]);
+  }), [store, active, openNow, setOpen, switchTo, createFrom, commit, update, remove, duplicate, hold, keep, revert, newTrip, changed, held]);
 }

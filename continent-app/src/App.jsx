@@ -51,7 +51,8 @@ import { partyOf } from './lib/party.js';
 import { loadStaysFor, setLiveBase, useStaysVersion } from './lib/staysData.js';
 import { FirstRunContext } from './lib/firstRunContext.js';
 import { normalizeTaste } from './lib/taste.js';
-import { loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash } from './lib/urlState.js';
+import { loadInitialState, tabHref, routeFromSearch, placeOf, VIEW_KEYS, countryFromHash, isForeignLink, readMirror } from './lib/urlState.js';
+import { isOn } from './lib/flags.js';
 import { usePlaceRows } from './hooks/usePlaceRows.js';
 import { readFavList, isFav, favDestIds, favKey, toggleFav as toggleFavKey } from './lib/favorites.js';
 import { noteSaved, noteUnsaved, loadSavedLists } from './lib/savedLists.js';
@@ -679,10 +680,13 @@ function TravelApp() {
   // Same idea for a multi-stop trip plan chosen from the Saved-trips overview,
   // handed to TripPlannerTab.
   const [pendingTripPlanId, setPendingTripPlanId] = useState(null);
-  // A shared link (URL query present at load) always wins over a signed-in
-  // user's synced settings, so opening someone's link never gets silently
-  // overridden by your own saved preferences.
-  const [cameFromUrl] = useState(() => typeof window !== 'undefined' && !!window.location.search);
+  // A shared link always wins over a signed-in user's synced settings, so
+  // opening someone's link never gets silently overridden by your own saved
+  // preferences. Old: any query counted, so a reload of the device's own
+  // address skipped the account pull (J-2). E9 new: only a query this device's
+  // mirror does not already hold is someone else's (lib/urlState.js isForeignLink).
+  const [cameFromUrl] = useState(() => typeof window !== 'undefined'
+    && (isOn('E9') ? isForeignLink(window.location.search, readMirror()) : !!window.location.search));
 
   // A whole TRIP shared as a link (see lib/shareLink.js): the hash payload is
   // captured synchronously before useUrlSync's first URL write would drop it,

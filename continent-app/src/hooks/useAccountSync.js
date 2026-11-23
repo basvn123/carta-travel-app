@@ -2,16 +2,19 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { fetchUserSettings, saveUserSettings } from '../auth/tripStorage.js';
 import { clampRatingRange, rangeFromMinTier } from '../lib/rating.js';
 import { readFavList, writeFavList } from '../lib/favorites.js';
-import { useI18n } from '../i18n/index.jsx';
+import { useI18n, LANG_PICKED_EVENT } from '../i18n/index.jsx';
+import { isOn } from '../lib/flags.js';
+import { roundHomePoint } from '../lib/shareKeys.js';
 import { mergeVisitedCountries, useVisitedCountries } from '../lib/visitedCountries.js';
 import { mergeSavedListsIntoDevice, useSavedLists } from '../lib/savedLists.js';
 import { mergeAccountChoices, mergeTaste, tasteNeedsWriteBack } from '../lib/taste.js';
-import { mergeStyles } from '../lib/travelStyles.js';
-import { langFromPath, langToPull } from '../lib/langPath.js';
+import { mergeStylesForLink } from '../lib/travelStyles.js';
+import { langFromPath, langToPull, langToPush } from '../lib/langPath.js';
 
 /** Keeps a signed-in user's filter/lifestyle preferences synced with their
- *  account: pulls saved settings once right after login (never when a shared
- *  link is already driving the view), and pushes local changes back
+ *  account: pulls saved settings once right after login (never when someone
+ *  else's link is driving the view: `cameFromUrl` is lib/urlState.js
+ *  isForeignLink with flag E9 new, any query with old), and pushes local changes back
  *  (debounced) so they carry over to the next visit/device. Also exposes the
  *  "save this trip" / "load a saved trip" actions used by the detail panel
  *  and account panel.
@@ -40,6 +43,15 @@ export function useAccountSync({
   // G-16: the language the address named when this visit began (/nl/...), kept here
   // because the prefix is rewritten as soon as the language changes.
   const addressLangRef = useRef(typeof location === 'undefined' ? null : langFromPath(location.pathname));
+  // G-16, J-13 (E9): the push carries the language only once the traveller picked
+  // one; until then the account's own (pulled, or none) stays.
+  const langPickedRef = useRef(false);
+  const accountLangRef = useRef(null);
+  useEffect(() => {
+    const onPick = () => { langPickedRef.current = true; };
+    window.addEventListener(LANG_PICKED_EVENT, onPick);
+    return () => window.removeEventListener(LANG_PICKED_EVENT, onPick);
+  }, []);
   // Countries marked visited by hand on My trips (T434), synced with the rest.
   const visitedCountries = useVisitedCountries();
   // T925: the traveller's saved lists and the price each save was made at,
@@ -83,10 +95,12 @@ export function useAccountSync({
         const localTaste = choicesRef.current?.taste;
         // The travel styles are the traveller's too: merged by id, so the
         // push that follows never drops the account's other styles.
+        // G-2 (E9): a link drives the view, but the account's active style is the
+        // traveller's (see mergeStylesForLink).
         setChoices((prev) => ({
           ...prev,
           taste: mergeTaste(prev.taste, accountTaste),
-          ...(settings?.choices?.travel_styles ? { travel_styles: { ...mergeStyles(prev.travel_styles, settings.choices.travel_styles), active: prev.travel_styles?.active ?? '' } } : {}),
+          ...mergeStylesForLink(prev, settings?.choices?.travel_styles, { e9: isOn('E9') }),
         }));
         if (tasteNeedsWriteBack(localTaste, accountTaste)) setWriteBack((n) => n + 1);
       }).catch(() => {}).finally(() => { hydratedRef.current = true; });
@@ -105,7 +119,11 @@ export function useAccountSync({
           delete incoming.origin;
           delete incoming.home;
         }
-        setChoices((prev) => mergeAccountChoices(prev, incoming));
+        // G-4: a home point saved before wave 0a holds 4 decimals; read it at 0.01 degree.
+        const dh = incoming.drive_home;
+        if (dh && Number.isFinite(dh.lat) && Number.isFinite(dh.lon)) incoming.drive_home = { ...dh, ...roundHomePoint(dh.lat, dh.lon) };
+        // G-19 (E9): choices that differ from the account's are held, not overwritten.
+        setChoices((prev) => mergeAccountChoices(prev, incoming, { hold: isOn('E9') }));
       }
       if (settings.priceMode) setPriceMode(settings.priceMode);
       // Older accounts synced a single country string; normalize to the array shape.
@@ -119,7 +137,11 @@ export function useAccountSync({
       // ('minTier', 1-3) or an even older min-gems beauty floor ('minBeauty',
       // 1-5); both migrate onto the equivalent [cutoff, 10] band once, until
       // the next save overwrites them.
-      if (settings.ratingRange != null) setRatingRange(clampRatingRange(settings.ratingRange));
+      // E-3, V-6 (E9): the rating band and top beach have no chip on screen, so an
+      // account's copy of them is not applied (and not written back, below).
+      const legacyFilters = isOn('E9');
+      if (legacyFilters) { /* retired: see above */ }
+      else if (settings.ratingRange != null) setRatingRange(clampRatingRange(settings.ratingRange));
       else if (settings.minTier != null) setRatingRange(rangeFromMinTier(settings.minTier));
       else if (settings.minBeauty) {
         const mb = settings.minBeauty;
@@ -127,11 +149,12 @@ export function useAccountSync({
       }
       if (settings.gemOnly != null) setGemOnly(settings.gemOnly);
       if (settings.unescoOnly != null) setUnescoOnly(settings.unescoOnly);
-      if (settings.topBeachOnly != null) setTopBeachOnly(settings.topBeachOnly);
+      if (settings.topBeachOnly != null && !legacyFilters) setTopBeachOnly(settings.topBeachOnly);
       if (settings.sortKey) setSortKey(settings.sortKey);
       // Only a language the app ships, and never over one the address named.
+      accountLangRef.current = settings.lang || null;
       const pulled = langToPull(settings.lang, languages, addressLangRef.current);
-      if (pulled) setLang(pulled);
+      if (pulled) setLang(pulled, { fromAccount: true });
       // The shortlist MERGES rather than replaces. Every other setting here
       // is a single current value, so the account's copy can simply win; a
       // shortlist is an accumulating list, and letting the account's copy win
@@ -158,8 +181,13 @@ export function useAccountSync({
   useEffect(() => {
     if (!user || !hydratedRef.current) return;
     const t = setTimeout(() => {
+      const e9 = isOn('E9');
       saveUserSettings(user.id, {
-        choices, priceMode, countryFilter, tripKinds, ratingRange, gemOnly, unescoOnly, topBeachOnly, sortKey, lang,
+        choices, priceMode, countryFilter, tripKinds, gemOnly, unescoOnly, sortKey,
+        // E-3, V-6 (E9): filters with no chip are never written back.
+        ...(e9 ? {} : { ratingRange, topBeachOnly }),
+        // G-16, J-13 (E9): the language only after the picker was used.
+        lang: langToPush({ lang, picked: langPickedRef.current, accountLang: accountLangRef.current, e9 }),
         // The shortlist rides in the same settings blob rather than a table
         // of its own: it is small, it is per-user, and user_settings already
         // syncs on this debounce, so this needs no migration (several are

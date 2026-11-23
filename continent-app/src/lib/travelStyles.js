@@ -604,6 +604,34 @@ export function commitChoices(prev, id, style) {
   return { ...prev, ...choicesFromStyle(s), travel_styles: st };
 }
 
+/**
+ * The sign-in merge of the styles when a shared link drives the view (the
+ * account pull is skipped, but the traveller's styles still merge). Returns the
+ * part of `choices` to change. Old: the active style stays this device's,
+ * '' on a fresh one, and the next push writes that '' to the account (G-2).
+ * E9: a device with no active style adopts the account's, held, so the link's
+ * party and bed are not written into it; one that has an active style keeps it.
+ */
+export function mergeStylesForLink(prev, incoming, { e9 = false } = {}) {
+  if (!incoming) return {};
+  const merged = mergeStyles(prev.travel_styles, incoming);
+  const adopt = e9 && !prev.travel_styles?.active && Boolean(merged.active);
+  return {
+    travel_styles: { ...merged, active: adopt ? merged.active : (prev.travel_styles?.active ?? '') },
+    ...(adopt ? { style_held: true } : {}),
+  };
+}
+
+/**
+ * E9 (G-7): a new trip lifts a hold. The style the traveller holds for trip A
+ * (a 4-star bed, a longer party) must not price trip B, whose settings the
+ * style seeds: back to the active style's own values. Not held: `prev` itself.
+ */
+export function newTripChoices(prev) {
+  const a = activeStyle(normalizeStyles(prev.travel_styles));
+  return prev.style_held && a ? switchChoices(prev, a.id) : prev;
+}
+
 /** Switch (and Back): the style's stay half priced, the hold lifted. */
 export function switchChoices(prev, id) {
   const st = setActive(normalizeStyles(prev.travel_styles), id);
