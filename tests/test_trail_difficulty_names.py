@@ -526,3 +526,41 @@ def test_a_start_is_trimmed_by_whole_segments_never_inside_a_word():
     assert all(len(n) <= names.TITLE_MAX for n in got.values())
     # Never down to two words: the id sits beside a whole short start instead.
     assert names._fit_base("Ścieżka przyrodniczo-dydaktyczna", 20, True) is None
+
+
+def test_john_muir_way_keeps_its_main_row_and_its_stages_read_without_ids():
+    """Judge 1 fix 1 (D7): a main trail beside bracketed stages never ships a raw id."""
+    rows = [(185726, "GB", "John Muir Way"),
+            (190218, "GB", "John Muir Way (Balloch to Strathblane part 1)"),
+            (190219, "GB", "John Muir Way (Balloch to Strathblane part 2)"),
+            (190225, "GB", "John Muir Way (South Queensferry to Edinburgh part 1)"),
+            (190226, "GB", "John Muir Way (South Queensferry to Edinburgh part 2)"),
+            (190227, "GB", "John Muir Way (South Queensferry to Edinburgh)")]
+    got = _dedupe(rows)
+    assert got[185726] == "John Muir Way"
+    assert len(set(got.values())) == len(rows)
+    assert not any(", no." in n or "#" in n for n in got.values())
+    assert got[190225] != got[190226]
+
+
+def test_a_quoted_part_tells_generic_rows_apart_before_an_id():
+    """Judge 1 fix 2: 'Rundwanderweg "..."' rows take the quoted part, not an id."""
+    got = _dedupe([(184510, "PL", 'Ściezka dydaktyczna "Lubiatowskie Uroczyska"'),
+                   (185373, "PL", 'Ścieżka dydaktyczna "PRZEZ LEŚNE SIEDLISKA"'),
+                   (3, "PL", "Ściezka dydaktyczna"), (4, "PL", "Ścieżka dydaktyczna"),
+                   (208139, "DE", 'Rundwanderweg "Auf den Spuren der Eisenbahn" Mistelbach'),
+                   (5, "DE", "Rundwanderweg")])
+    assert "Lubiatowskie Uroczyska" in got[184510] and "Auf den Spuren der Eisenbahn" in got[208139]
+    assert all(", no." not in got[i] for i in (184510, 185373, 208139))
+
+
+def test_a_suspended_hyphen_is_not_split_and_a_code_does_not_eat_the_word_after_it():
+    """Judge 1 fixes 3 and 4."""
+    n = names
+    for rid, cc, src in ((17664, "AT", "Nickelsdorfer Rad-, Lauf- und Wanderstrecke L1"),):
+        out = _dedupe([(rid, cc, src), (rid + 1, cc, src)])[rid]
+        assert "Rad-, Lauf-" in out and "Rad-, Lauf," not in out.replace("Rad-, Lauf-", "")
+    assert n.wire_name("PRC43SMI Pico das Camarinhas - Ponta da Ferraria", "PT")         == "Pico das Camarinhas - Ponta da Ferraria"
+    got = n.wire_name("Via Sancti Martini HW-33-01 Geisenhausen - Landshut", "DE")
+    assert "Geisenhausen" in got and "Landshut" in got and "HW-33-01" not in got
+    assert n.wire_name("[C] Moravský Krumlov - Suchohrdly u Miroslavi", "CZ").startswith("Moravský Krumlov")

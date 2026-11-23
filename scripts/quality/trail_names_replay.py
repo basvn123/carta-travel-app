@@ -143,6 +143,46 @@ def dedupe_kind(pre: str, new: str, orig: str) -> str | None:
     return "cut"
 
 
+def mid_word_loss(n0: str, n1: str, cc: str | None = None, require_code: bool = True) -> bool:
+    """(judge 1 fix 4) The original's first "A - B" segment keeps its first word
+    and loses its last word, while B survives: "PRC43SMI Pico das Camarinhas -
+    Ponta da Ferraria" read "Pico das - Ponta da Ferraria". Code words are not
+    counted (they ride the chip), and a name that dropped the start whole is a
+    different matter (head_cut)."""
+    r = names.readable(n0, cc)
+    segs = re.split(r"\s[-–]\s", r)
+    if len(segs) < 2:
+        return False
+    # Only a start that carries a code or a waymark symbol is judged here: the
+    # code rides the chip and the word after it is the name ("PRC43SMI Pico das
+    # Camarinhas"). Other starts cut to fit are counted by start_tail_cut.
+    if require_code and not any(names.is_code(t) or re.fullmatch(r"\[.{1,3}\]", t) for t in segs[0].split()):
+        return False
+    if require_code:
+        if segs[0].count("(") != segs[0].count(")"):
+            return False        # the dash is inside a bracket: "N (A - B)" names the walk A - B
+        toks = segs[0].split()
+        last = max((i for i, t in enumerate(toks) if re.fullmatch(r"[A-Za-z]{1,5}-?\d[\w-]*|[A-Z\d]*\d[A-Z\d-]*[A-Z\d]|\[.{1,3}\]", t) and len(t) >= 4 or re.fullmatch(r"\[.{1,3}\]", t)), default=-1)
+        if last < 0:
+            return False
+        after = next((t for t in toks[last + 1:] if re.search(r"[^\W\d_]", t)), "")
+        tail = re.findall(r"[^\W\d_][\w'’]*", segs[-1])
+        low = " " + " ".join(re.findall(r"[^\W_]+", n1.lower())) + " "
+        w = " ".join(re.findall(r"[^\W_]+", after.lower()))
+        kept = any(" " + " ".join(re.findall(r"[^\W_]+", t.lower())) + " " in low
+                   for t in toks if len(t) > 2 and re.search(r"[^\W\d_]", t) and t != after and not names.is_code(t))
+        # A start kept in part and cut at the word after its code; a start
+        # dropped whole is a deliberate "keep the end" (names._keep_the_end).
+        return kept and bool(w and tail) and " " + w + " " not in low and " " + " ".join(re.findall(r"[^\W_]+", tail[-1].lower())) + " " in low
+    words = [w for w in re.findall(r"[^\W\d_][\w'’]*", segs[0]) if not names.is_code(w) and len(w) > 2]
+    tail = re.findall(r"[^\W\d_][\w'’]*", segs[-1])
+    if len(words) < 2 or not tail:
+        return False
+    low = " " + " ".join(re.findall(r"[^\W_]+", n1.lower())) + " "
+    has = lambda w: " " + w.lower() + " " in low
+    return has(words[0]) and not has(words[-1]) and has(tail[-1])
+
+
 def end_too_long(n0: str, cc: str | None = None) -> bool:
     """The end segment alone is longer than a title may be, so no 42
     character title can hold it whole. Counted apart; still a loss."""
@@ -180,8 +220,8 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
-    residual, end_ex, head_ex = collections.defaultdict(list), [], []
+           "mid_word_loss": 0, "start_tail_cut": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+    residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
     dd_ex = collections.defaultdict(list)
     for r in hikes:
         n0, n1 = originals[r["id"]], r["name"] or ""
@@ -200,6 +240,11 @@ def replay(rows: list[dict]) -> dict:
             res["dedupe_" + kind] += 1
             if len(dd_ex[kind]) < 40:
                 dd_ex[kind].append([r["id"], n0, pre[r["id"]], n1])
+        if mid_word_loss(n0, n1, r.get("country")):
+            res["mid_word_loss"] += 1
+            if len(mid_ex) < 25:
+                mid_ex.append([r["id"], n0, n1])
+        res["start_tail_cut"] += mid_word_loss(n0, n1, r.get("country"), False)
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
             if len(head_ex) < 25:
@@ -228,10 +273,10 @@ def replay(rows: list[dict]) -> dict:
     res["accept"] = (res["unclean_after"] <= MAX_UNCLEAN
                      and res["end_losses_unexplained"] == 0
                      and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
-                     and res["head_cut"] == 0
+                     and res["head_cut"] == 0 and res["mid_word_loss"] == 0
                      and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
-    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "dedupe": dd_ex,
+    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "dedupe": dd_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}
     return res
 
