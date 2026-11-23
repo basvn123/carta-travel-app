@@ -11,7 +11,7 @@
  */
 import { withFlags } from '../../../src/lib/flags.js';
 import {
-  afterChoicesChange, activeStyle, choicesFromStyle, holdChoices, normalizeStyles, styleFromTemplate,
+  afterChoicesChange, activeStyle, choicesFromStyle, holdChoices, normalizeStyles, styleFromTemplate, TEMPLATES,
 } from '../../../src/lib/travelStyles.js';
 import { decodeState, encodeState, loadInitialState, persistState } from '../../../src/lib/urlState.js';
 import { mergeAccountChoices } from '../../../src/lib/taste.js';
@@ -47,14 +47,16 @@ export function withWindow({ search = '', hash = '', pathname = '/', local = {} 
 }
 
 const PRICED = /[?&](g|gc|gb|st|ls|t)=/;
+/** The style a persona has: the template of its party kind (family, couple, friends, solo). */
+const templateOf = (p) => (TEMPLATES[p?.taste?.party] ? p.taste.party : 'solo');
 
 /** G-1: a held trip party, then a reload at "/" (the PWA start_url). Returns the style's adults after. */
-function reloadHeld(which) {
-  const solo = styleFromTemplate('solo');
+function reloadHeld(which, p) {
+  const solo = styleFromTemplate(templateOf(p));
   const store = normalizeStyles({ list: [solo], active: solo.id });
   let live = { ...choicesFromStyle(solo), travel_styles: store, style_held: false, taste: {} };
   live = holdChoices(live);
-  live = afterChoicesChange({ ...live, group_size: 4, children: 0 });
+  live = afterChoicesChange({ ...live, group_size: solo.who.adults + 3, children: 0 });
   const mirror = encodeState({ choices: live });
   const { result: init } = withWindow({ search: '', local: { 'continent.state.v1': mirror } }, () => loadInitialState());
   let c = {
@@ -95,20 +97,20 @@ function foreignLink(which) {
 }
 
 /** G-19: a party edited signed out, then a sign-in whose account has the same style with another party. */
-function signInEdited(which) {
-  const mine = styleFromTemplate('solo');
-  const theirs = { ...mine, who: { ...mine.who, adults: 3, kind: 'friends' } };
+function signInEdited(which, p) {
+  const mine = styleFromTemplate(templateOf(p));
+  const theirs = { ...mine, who: { ...mine.who, adults: mine.who.adults + 2, kind: 'friends' } };
   const local = {
-    ...choicesFromStyle(mine), group_size: 2, children: 0, travel_styles: normalizeStyles({ list: [mine], active: mine.id }), style_held: false, taste: {},
+    ...choicesFromStyle(mine), group_size: mine.who.adults + 1, children: 0, travel_styles: normalizeStyles({ list: [mine], active: mine.id }), style_held: false, taste: {},
   };
-  const account = { ...choicesFromStyle(theirs), group_size: 3, travel_styles: normalizeStyles({ list: [theirs], active: mine.id }), taste: {} };
+  const account = { ...choicesFromStyle(theirs), group_size: theirs.who.adults, travel_styles: normalizeStyles({ list: [theirs], active: mine.id }), taste: {} };
   const out = which === 'new' ? ext.mergeAccountChoicesHeld(local, account) : mergeAccountChoices(local, account);
   return { groupSize: out.group_size, held: Boolean(out.style_held) };
 }
 
 /** G-7: a new trip while the style is held with a bed of its own. */
-function newTripHeld(which) {
-  const s = styleFromTemplate('solo');
+function newTripHeld(which, p) {
+  const s = styleFromTemplate(templateOf(p));
   let c = { ...choicesFromStyle(s), travel_styles: normalizeStyles({ list: [s], active: s.id }), style_held: false, taste: {} };
   c = holdChoices({ ...c, stay_tier: 'hotel4' });
   const after = which === 'new' ? ext.newTripChoices(c) : c;
@@ -147,6 +149,6 @@ export const JOURNEYS = {
 };
 
 /** Every journey's observation, with flag E9 forced to `which` ('old' or 'new'). */
-export function replayJourneys(which) {
-  return withFlags({ E9: which }, () => Object.fromEntries(Object.entries(JOURNEYS).map(([name, fn]) => [name, fn(which)])));
+export function replayJourneys(which, persona = null) {
+  return withFlags({ E9: which }, () => Object.fromEntries(Object.entries(JOURNEYS).map(([name, fn]) => [name, fn(which, persona)])));
 }

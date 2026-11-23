@@ -6,7 +6,7 @@
  * flips its flag in config/flags.json.
  *
  *   node scripts/eval/shadow-diff.mjs <engine> --out <folder>
- *   engine: E1 (budget search and trip label per persona), E5 (months fine per persona), E6 (top 10 For you per persona), noop (the fixture engine)
+ *   engine: E1 (budget search and trip label per persona), E5 (months fine per persona), E6 (top 10 For you per persona), E1 (totals), E9 (state-scope journeys per persona), noop (the fixture engine)
  *
  * An engine's new path is registered in scripts/eval/lib/logic-engines.mjs
  * (ENGINE_PATHS). Until a wave registers it, the engine reports "no new path
@@ -18,6 +18,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ENGINE_PATHS, PERSONAS, PLACES } from './lib/logic-engines.mjs';
 import { personaTotals } from './lib/totals-engine.mjs';
+import { replayJourneys } from './lib/state-engine.mjs';
 
 const places = () => Object.values(PLACES);
 /** What one persona sees from an engine path: a short list of place ids. */
@@ -27,9 +28,11 @@ export const VIEWS = {
   noop: (fn, p) => fn(places(), p.taste, p.month).slice(0, 10),
   // E1 (logic wave 1): what the budget search offers and the two-stop trip's label, per persona; fn is 'old' or 'new'.
   E1: (which, p) => { const r = personaTotals(p, which); return [`budget ${r.budget}`, ...r.fits.map((x) => `fits ${x}`), ...r.tight.map((x) => `tight ${x}`), `getting there: ${r.there || 'not said'}`, `trip: ${r.trip}`]; },
+  // E9 (logic wave 2): what each state-scope journey leaves for a persona's travel style, one line per journey; fn is 'old' or 'new'.
+  E9: (which, p) => Object.entries(replayJourneys(which, p)).map(([j, o]) => `${j}: ${Object.entries(o).map(([k, v]) => `${k}=${Array.isArray(v) ? `[${v.join(',')}]` : v}`).join(' ')}`),
 };
 const NOOP_PATH = (pool) => pool.map((x) => x.id);
-const pathsOf = (engine) => (engine === 'noop' ? { old: NOOP_PATH, new: NOOP_PATH } : engine === 'E1' ? { old: 'old', new: 'new' } : ENGINE_PATHS[engine]);
+const pathsOf = (engine) => (engine === 'noop' ? { old: NOOP_PATH, new: NOOP_PATH } : (engine === 'E1' || engine === 'E9') ? { old: 'old', new: 'new' } : ENGINE_PATHS[engine]);
 
 /** The diff as data: one row per persona with the old and new lists. */
 export function shadowDiff(engine) {
