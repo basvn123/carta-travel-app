@@ -40,13 +40,52 @@
       "test": "tests/stayPrice.test.mjs"
     },
     "stay.dorm_child_weight": {
+      "value": 1,
+      "unit": "beds per child",
+      "kind": "estimate",
+      "source": "Owner default 4 (2026-11-23, E3): a child in a dorm gets one bed; read when flag E3 is new",
+      "date": "2026-11-23",
+      "review": "2027-04-24",
+      "test": "tests/stayLadder.test.mjs"
+    },
+    "stay.dorm_child_weight_before_e3": {
       "value": 0.5,
       "unit": "beds per child",
       "kind": "estimate",
-      "source": "Carta rule: two children share a dorm bed (T534)",
+      "source": "Carta rule: two children share a dorm bed (T534); read while flag E3 is old, deleted with the old path when E3 is flipped for good",
       "date": "2026-10-21",
       "review": "2027-04-24",
-      "test": "tests/priceEngine.test.mjs"
+      "test": "tests/stayLadder.test.mjs"
+    },
+    "stay.room_occupancy": {
+      "value": {
+        "adults": 2,
+        "children": 2
+      },
+      "unit": "people per room: adults, and children on top of them",
+      "kind": "estimate",
+      "source": "Owner default 4 (2026-11-23, E3): children share the parents room, up to 2 children a room; so 2 adults and 1 child book one room",
+      "date": "2026-11-23",
+      "review": "2027-04-24",
+      "test": "tests/stayLadder.test.mjs"
+    },
+    "stay.fallback_order": {
+      "value": {
+        "dorm": ["dorm", "private", "hotel2", "hotel3", "home"],
+        "private": ["private", "hotel2", "hotel3", "home"],
+        "room": ["room", "private", "hotel2", "hotel3", "home"],
+        "hotel2": ["hotel2", "hotel3", "private", "home"],
+        "hotel3": ["hotel3", "hotel2", "hotel4", "home"],
+        "hotel4": ["hotel4", "hotel5", "hotel3", "hotel2"],
+        "hotel5": ["hotel5", "hotel4", "hotel3"],
+        "home": ["home", "hotel3", "hotel4", "hotel2", "hotel5"]
+      },
+      "unit": "tiers, first offered wins",
+      "kind": "estimate",
+      "source": "Owner default 3 (2026-11-23, E3): a cheap request falls dorm, private room, 2-star, 3-star and an entire place only last, labelled; a dear request falls 5-star, 4-star, 3-star. Read when flag E3 is new",
+      "date": "2026-11-23",
+      "review": "2027-04-24",
+      "test": "tests/stayLadder.test.mjs"
     },
     "stay.thin_obs": {
       "value": 2,

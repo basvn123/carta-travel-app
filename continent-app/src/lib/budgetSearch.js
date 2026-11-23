@@ -103,7 +103,7 @@ export function nextMonth(today = new Date()) {
  * Every input of a search, filled in and clamped. Only the budget has no
  * default; a query without one is not run.
  *   budget   whole euros for the whole group, everything Carta prices
- *   adults   12 and over; children 2 to 11 count half for beds and food (owner default 2: a baby is under 2)
+ *   adults   12 and over; children 2 to 11 share the parents' room (up to 2 a room) and take a child's share of food (E3 owner default 4; a baby is under 2)
  *   days     trip days; nights = days - 1 (5 days is 4 nights)
  *   month    1 to 12
  *   mode     'car' | 'public' | 'fly', how they get there ('fly' is priced

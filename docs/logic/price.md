@@ -74,9 +74,9 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-009 Bed units for the party
 - Decides: how many beds, rooms or places a party books.
-- Rule: dorm: one bed a sleeper, a child weighs 0.5 bed (adults + ceil(children x 0.5)); rooms (private, room, hotels): ceil(people / 2); entire place: the smallest measured place in caps 2, 4, 6, 8 that sleeps the group, else the largest, booked ceil(people / cap) times. One traveller in a hotel pays base x min(1, single.hotel) where a single-room ratio was measured.
+- Rule: dorm: one bed a sleeper, a child weighs 0.5 bed (adults + ceil(children x 0.5)); with flag E3 a child has a bed of its own (`stay.dorm_child_weight` = 1); rooms (private, room, hotels): ceil(people / 2), with E3 `roomsFor`: max(ceil(adults / 2), ceil(children / 2)) from `stay.room_occupancy`, so 2 + 1 is one room; a tier the town lacks falls down `stay.fallback_order` (E3, `pickTier`), the entire place last and labelled; entire place: the smallest measured place in caps 2, 4, 6, 8 that sleeps the group, else the largest, booked ceil(people / cap) times. One traveller in a hotel pays base x min(1, single.hotel) where a single-room ratio was measured.
 - Constant: `stay.people_per_room` in `continent-app/config/pricing.json:33` = 2
-- Constant: `stay.dorm_child_weight` in `continent-app/config/pricing.json:42` = 0.5
+- Constant: `stay.dorm_child_weight` in `continent-app/config/pricing.json` = 1 (E3); `stay.dorm_child_weight_before_e3` = 0.5 (old path); `stay.room_occupancy` = { adults: 2, children: 2 }; `stay.fallback_order` (a ladder per tier asked)
 - Constant: `stay.home_caps` in `continent-app/config/pricing.json:19` = [2, 4, 6, 8]
 - Constant: `nightFor`, `homeBucket` in `continent-app/src/lib/stayPrice.js:138`, `:88`
 - Test: `continent-app/tests/stayPrice.test.mjs` :: "rooms are sized to the party; a dorm is per bed; a solo hotel guest gets the single rate"
@@ -94,7 +94,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-011 Entire-place fees
 - Decides: an entire place carries cleaning and service fees and a weekly discount; a hotel does not.
-- Rule: for tier home and nights above 0: 7 nights or more take 8% off the lodging; cleaning = 0.5 x one annual night for the party's size; service = 14% x (lodging + cleaning). A `fees` argument overrides the defaults key by key. Per person per night = total / heads / nights.
+- Rule: for tier home and nights above 0: 7 nights or more take 8% off the lodging; cleaning = 0.5 x one annual night for the party's size, with flag E3 for every place booked (A-3); service = 14% x (lodging + cleaning). A `fees` argument overrides the defaults key by key. Per person per night = total / heads / nights.
 - Constant: `stay.fees` in `continent-app/config/pricing.json:5` = { service_fee_pct: 14, cleaning_fee_frac_of_night: 0.5, weekly_discount_pct: 8, min_nights_for_weekly: 7 }
 - Constant: `DEFAULT_FEES`, `bedPrice` in `continent-app/src/lib/stayPrice.js:47`, `:197`
 - Test: `continent-app/tests/stayPrice.test.mjs` :: "an entire place is sized to the group and carries Airbnb's fees; a hotel does not"

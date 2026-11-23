@@ -7,7 +7,7 @@ import { addDays, fmtDate } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
 import { isOn } from '../lib/flags.js';
 import { priceNotes } from '../lib/price/notes.js';
-import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
+import { NotMeasuredValue, ThinBedNote, ModelledBedNote, BedFallbackNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import {
   Button, Money, Segmented, Plate, PlateGroup, Formation, Figure, CostRow, CostSum,
@@ -515,6 +515,8 @@ export function DestPriceCard({
                   <>
                     <Money value={l.eur} />
                     {l.thin && <ThinBedNote />}
+                    {l.modelled && !l.thin && <ModelledBedNote />}
+                    {l.key === 'bed' && l.basis?.tierFallback && <BedFallbackNote fallback={{ asked: l.basis.tierAsked, tier: l.basis.tier }} />}
                   </>
                 )}
               />

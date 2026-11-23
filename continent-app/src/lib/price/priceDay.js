@@ -42,7 +42,9 @@ export const isThin = (n) => n != null && Number.isFinite(n) && n <= THIN;
 
 function bedQuality(row) {
   if (row.stayEur == null) return 'missing';
-  return row.stayLevel === 'city' && !row.stayRepaired ? 'measured' : 'modelled';
+  // REQ-data-2: the pipeline's own rule (bed_rules.is_measured) wants a capture date too; a row whose
+  // block has none (captured null) is not a measurement we can date.
+  return row.stayLevel === 'city' && !row.stayRepaired && row.captured !== null ? 'measured' : 'modelled';
 }
 
 // The month a hire is priced in: the exact start, the month's middle, or
@@ -110,8 +112,9 @@ function linesOf(row, req, iso2, dest = null) {
   return [
     {
       key: 'bed', status: st('bed', 'included'), eur: num(row.stayEur), quality: bedQuality(row),
+      ...(row.stayEur != null && bedQuality(row) === 'modelled' ? { modelled: true } : {}),
       thin: isThin(row.stayN),
-      basis: { tier: row.stayTier, tierFallback: !!row.tierFallback, nights: req.nights, seats: seatsOf(req),
+      basis: { tier: row.stayTier, tierAsked: row.stayTier, tierFallback: !!row.tierFallback, nights: req.nights, seats: seatsOf(req),
         when: req.when.kind, observations: row.stayN ?? null, ...(row.stayUnits || {}) },
       provenance: { level: row.stayLevel, source: row.stayBasis, from: row.source, km: row.stayKm,
         captured: row.captured, repaired: !!row.stayRepaired, scaled: !!row.stayScaled },

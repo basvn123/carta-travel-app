@@ -8220,6 +8220,8 @@ export const fr = {
   "price.notMeasured": "Pas encore",
   "price.bedThin": "Peu d'offres relevées",
   "price.noteBed": "Prix du lit : peu d'offres relevées",
+  "price.noteBedModelled": "Prix du lit : pas encore relevé",
+  "price.noteBedFallback": "Pas de {asked} ici : prix calculé pour {tier}",
   "price.noteMissing": "{part} : pas encore",
   "price.item.flight": "Vol aller-retour",
   "price.item.way": "{mode} aller-retour",

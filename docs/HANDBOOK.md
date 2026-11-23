@@ -1013,12 +1013,12 @@ All rules that move a price live in one file, `continent-app/config/pricing.json
 3. Food share per seat: `(adults + 0.6 x children + 0.15 x babies) / seats` (`foodShare`).
 4. Ticket share per seat: `(adults + 0.5 x children) / seats` (`ticketShare`). Planes charge a child the full adult fare.
 5. Baby lap fee: `party.baby_lap_fee_leg` = EUR 30 per baby per flight leg. On Explore it is spread over the seats: `perSeat + babies x 30 x 2 / seats` (`flightPerSeat`).
-6. Beds: a room sleeps `stay.people_per_room` = 2. A dorm bed counts a child as `stay.dorm_child_weight` = 0.5 of a bed (two children share one).
+6. Beds: a room sleeps `stay.people_per_room` = 2 people. A dorm bed counts a child as `stay.dorm_child_weight_before_e3` = 0.5 of a bed (two children share one). With flag `E3` new (owner default 4): a room holds `stay.room_occupancy` = 2 adults and up to 2 children on top (2 adults + 1 child is one room, 2 + 3 two rooms) and a child takes `stay.dorm_child_weight` = 1 dorm bed (A-4, A-15, V-11).
 7. Cars: a party pays for as many cars as it fills, `car_capacity` = 4 seats (seven people are two cars). A baby takes a car seat, so `carSeats` = seats + babies and 4 adults and a baby are two cars on Explore, Places, the planner and the day card (`carsFor`; Explore and Places behind flag `E2`, owner default 2). A car's footprint is its grams times the cars, shared over the seats (D22, flag `E2`). The day budget divides by adults and children, never babies (H-8, flag `E2`). This is the one place a bigger party pays more per person.
 
 Worked example: 2 adults and 1 child. Seats = 3. Food share = (2 + 0.6) / 3 = 0.867, so each seat's food line is 86.7% of an adult day. Ticket share = (2 + 0.5) / 3 = 0.833.
 
-**Data behind it.** `pricing.json` rules `party.limits`, `party.shares`, `party.baby_lap_fee_leg`, `stay.people_per_room`, `stay.dorm_child_weight`. All marked estimate.
+**Data behind it.** `pricing.json` rules `party.limits`, `party.shares`, `party.baby_lap_fee_leg`, `stay.people_per_room`, `stay.dorm_child_weight`, `stay.dorm_child_weight_before_e3`, `stay.room_occupancy`. All marked estimate.
 
 **Where it lives.** `continent-app/src/lib/party.js` (`partyOf`, `carsFor`, `kindFits`), `continent-app/src/lib/price/request.js`, `continent-app/src/lib/travelWay.js`, `continent-app/src/planner/flow/budget.js`.
 
@@ -1096,7 +1096,7 @@ Worked example at the catalogue's frozen median prices (`bands.ref_prices`: dinn
 
 **How it works.**
 1. Tiers, cheapest first (`STAY_TIERS`): `dorm` (one hostel bed), `private` (hostel or guesthouse double), `room` (private room in a home), `home` (entire place), `hotel2` to `hotel5` (a double room by star class). Old ids `hotel`, `bnb_home`, `bnb_room` map to `hotel3`, `home`, `room`.
-2. A tier the town cannot price (no hostel, no 5 star hotel, supply flag false) is not offered. The engine then falls back to `home`, else the first tier offered, and says so (`fallback: true`).
+2. A tier the town cannot price (no hostel, no 5 star hotel, supply flag false) is not offered. The engine then falls back to `home`, else the first tier offered, and says so (`fallback: true`). With flag `E3` new (owner default 3, `lib/price/ladder.js` `pickTier`, config `stay.fallback_order`) it walks one ladder instead: a dorm request falls to a private room, a 2-star, a 3-star and only then the entire place; a 5-star request to 4-star, then 3-star; an entire place to a 3-star. Cleaning is charged for every place the party books (A-3). The price notes name the fallback ("No Hostel dorm here: priced as Hotel, 3 stars") and say "Not yet measured" next to a bed that is modelled, not measured (REQ-data-2, `bedIsModelled`, the pipeline rule `is_measured`: q measured, beds, a capture date). Bands (`bands.ref_stay`, A-5, A-7) are not re-cut yet: they need the shipped wire, which is not committed.
 3. Units: a dorm is priced per sleeper; rooms per `ceil(people / 2)`; an entire place picks the smallest measured place that sleeps the group from caps `stay.home_caps` = 2, 4, 6, 8, else the largest, and books `ceil(people / cap)` of them.
 4. Night by night (`nightFor`):
    - base = that month's measured price from the stays wire, else the annual median in `dest.accommodation.beds`.

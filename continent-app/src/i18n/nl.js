@@ -8231,6 +8231,8 @@ export const nl = {
   "price.notMeasured": "Nog niet",
   "price.bedThin": "Weinig aanbod gemeten",
   "price.noteBed": "Bedprijs: weinig aanbod gemeten",
+  "price.noteBedModelled": "Bedprijs: nog niet gemeten",
+  "price.noteBedFallback": "Geen {asked} hier: geprijsd als {tier}",
   "price.noteMissing": "{part}: nog niet",
   "price.item.flight": "Vlucht heen en terug",
   "price.item.way": "{mode} heen en terug",

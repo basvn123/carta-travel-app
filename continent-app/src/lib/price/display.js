@@ -77,6 +77,18 @@ export function unmeasuredParts(row) {
     .map((l) => l.key);
 }
 
+/** REQ-data-2: true when the bed figure is modelled, not measured: not a scrape of this town the pipeline
+ *  can date (bed_rules.is_measured). The figure stays; the note sits next to it. */
+export function bedIsModelled(row) {
+  return (row?.lines || []).find((x) => x.key === 'bed')?.modelled === true;
+}
+
+/** E3: the tier a bed was priced at when the town lacks the one asked for, { asked, tier }, else null. */
+export function bedFallback(row) {
+  const x = (row?.lines || []).find((y) => y.key === 'bed');
+  return x?.basis?.tierFallback && x.basis.tierAsked && x.basis.tier ? { asked: x.basis.tierAsked, tier: x.basis.tier } : null;
+}
+
 /** True when the bed price rests on few scraped properties (stay.thin_obs or fewer). */
 export function bedIsThin(row) {
   return !!(row?.lines || []).find((l) => l.key === 'bed')?.thin;
