@@ -427,14 +427,102 @@ def test_dedupe_keeps_the_place_and_every_title_fits():
         (186725, "GB", "King Charles III England Coast Path: Portland to Lulworth"),
         (186824, "GB", "King Charles III England Coast Path: Sea Palling to Weybourne")])
     assert got == {186725: "Portland to Lulworth", 186824: "Sea Palling to Weybourne"}
-    # The id is the last resort, and the title still fits.
+    # A 42 character start loses trailing words (never inside one) so the
+    # town, used whole, fits beside it; every title still fits.
     got = _dedupe([
         (191970, "IT", HEAD_ROWS[4][2]),
         (191975, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Perosa canavese")])
     assert all(len(n) <= names.TITLE_MAX for n in got.values())
-    assert got[191970] == "Alta Via dell’Anfiteatro, no. 191970"
+    assert got[191970] == "Alta Via dell’Anfiteatro, Fiorano Canavese"
+    # The id is the last resort, and the title still fits.
+    got = _dedupe([
+        (191971, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Mercenasco Direzione Ovest"),
+        (191972, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Mercenasco Direzione Sud")])
+    assert got == {191971: "Alta Via dell’Anfiteatro, no. 191971", 191972: "Alta Via dell’Anfiteatro, no. 191972"}
 
 
 def test_a_head_cut_at_a_comma_leaves_no_dangling_word():
     src = "Šetnica 4 - \"Okretaljka\", put Franja-Okretaljka-Livade-Trsisče (kružna 1 1/2h)"
     assert shipped(src, "HR") == "Šetnica 4 - \"Okretaljka\""
+
+
+# Judge 3 (D7, wave 2 step 0a): the cases that went wrong on the real wire.
+SANTA_GIULIA = [
+    (193943, "CSG-T001_V26 Livorno_Pian-di-Rota_Eremo-Sambuca_Valle-Benedetta"),
+    (194178, "CSG-T002_V26 Valle-Benedetta_Parrana-San-Martino_Collesalvetti-Loc-le-Badie"),
+    (194824, "CSG-T022_V24 Cicognara_Casalmaggiore_Sabbioneta"),
+    (203025, "CSG-T023_V24 Sabbioneta_Cividale_Rivarolo-Mantovano"),
+    (194832, "CSG-T024_V24 Rivarolo-Mantovano_Canneto-sull'Oglio"),
+    (199434, "CSG-T024VA_V24 Calvatone_Asola_Cascina-Cavalta"),
+    (194858, "CSG-T025_V24 Canneto-sull'Oglio_Fontanella-Grazioli_Isola-Dovarese_Monticelli-Ripa-d'Oglio"),
+    (199436, "CSG-T025VA_V24 Cascina-Cavalta_Fontanella-Grazioli"),
+    (194873, "CSG-T026_V24 Villarocca_Ostiano_Seniga_Alfiano-Nuovo"),
+    (199438, "CSG-T027_V25 Alfiano-Vecchio_RoBecco-d'Oglio_Pontevico_San-Gervasio-Bresciano"),
+    (199440, "CSG-T028_V24 San-Gervasio-Bresciano_Cigole_Pavone-del-Mella_Leno"),
+    (203052, "CSG-T028VA_V24 Verolanuova_Cadignano_Faverzano_Offlaga_Corticelle-Pieve"),
+    (194875, "CSG-T030_V24 Capriano-del-Colle_Flero_Villaggio-Sereno_Brescia-Museo-S-Giulia"),
+]
+
+
+def test_dedupe_santa_giulia_group_of_13_gets_stages_and_no_id():
+    got = _dedupe([(rid, "IT", "Il Cammino di santa Giulia - " + tail) for rid, tail in SANTA_GIULIA])
+    assert not any(", no." in n for n in got.values())
+    assert got[194832] == "Il Cammino di santa Giulia, stage 24"
+    assert got[199434] == "Il Cammino di santa Giulia, stage 24A"
+    assert got[203052] == "Il Cammino di santa Giulia, stage 28A"
+    assert len(set(got.values())) == 13
+
+
+MAIN_TRAILS = [
+    (185703, "GB", "West Highland Way", 185703),
+    (189982, "GB", "West Highland Way (Kinlochleven to Fort William)", 0),
+    (189977, "GB", "West Highland Way (Rowardennan to Inverarnan)", 0),
+]
+
+
+def test_the_main_row_of_a_long_trail_keeps_its_bare_name_not_an_id():
+    got = _dedupe([(rid, cc, src) for rid, cc, src, _ in MAIN_TRAILS])
+    assert got[185703] == "West Highland Way"
+    assert got[189982] == "West Highland Way, Kinlochleven"
+    assert got[189977] == "West Highland Way, Rowardennan"
+    # Two bare rows is a different case: the second needs something, never both bare.
+    got = _dedupe([(1, "GB", "Pentland Way"), (2, "GB", "Pentland Way"), (3, "GB", "Pentland Way")])
+    assert len(set(got.values())) == 3 and not any(n == "Pentland Way" for n in got.values())
+    # No main trail of the wire ever ships a raw id.
+    for rid, name in ((185697, "Coast to Coast Walk"), (187913, "Pentland Way"), (189308, "Shropshire Way")):
+        got = _dedupe([(rid, "GB", name), (rid + 1, "GB", name + " (Alpha to Beta)")])
+        assert got[rid] == name
+
+
+def test_an_end_is_used_whole_or_not_at_all():
+    got = _dedupe([
+        (187084, "GB", "Coast to Coast Walk (Richmond to Robin Hood’s Bay)"),
+        (187085, "GB", "Coast to Coast Walk (Kirkby Stephen to Keld)")])
+    assert got == {187084: "Coast to Coast Walk, Richmond", 187085: "Coast to Coast Walk, Kirkby Stephen"}
+    assert not any(n.endswith(("to Robin", "to Fort")) for n in got.values())
+    # A name that is the start of a hyphenated word is not finished with the next word.
+    got = _dedupe([(17664, "AT", "Nickelsdorfer Rad-, Lauf- und Wanderstrecke L1"),
+                   (17666, "AT", "Nickelsdorfer Rad-, Lauf- und Wanderstrecke L3")])
+    assert all("und Wanderstrecke" not in n for n in got.values())
+
+
+def test_a_quoted_or_bracketed_part_stands_in_for_a_start_that_cannot_take_a_suffix():
+    got = _dedupe([(185107, "PL", 'Ścieżka przyrodniczo-dydaktyczna "Czarnocińskie buczyny"'),
+                   (184470, "PL", 'Ścieżka przyrodniczo-dydaktyczna "Zielona Pętla"')])
+    assert got == {185107: "Czarnocińskie buczyny", 184470: "Zielona Pętla"}
+    got = _dedupe([(79384, "PT", "Passeio no vale por caminhos de almocreves (Trilho da Ribeira de Alportel)"),
+                   (79385, "PT", "Passeio no vale por caminhos de almocreves (Trilho da Alcaria)")])
+    assert got[79385] == "Trilho da Alcaria"
+
+
+def test_a_start_is_trimmed_by_whole_segments_never_inside_a_word():
+    got = _dedupe([
+        (74250, "GR", "Άγιος Κωνσταντίνος - Καταφύγιο Κορομηλιάς - Καταφύγιο Πετρόστρουγκας"),
+        (74251, "GR", "Άγιος Κωνσταντίνος - Καταφύγιο Κορομηλιάς")])
+    assert got[74250].startswith("Agios Konstantinos")
+    assert "Agios, " not in got[74250] and "Agios - " not in got[74250]
+    got = _dedupe([(191970, "IT", HEAD_ROWS[4][2]), (203554, "IT", "Alta Via dell'Anfiteatro Morenico di Ivrea Tappa 5A")])
+    assert got[191970].startswith("Alta Via dell’Anfiteatro")
+    assert all(len(n) <= names.TITLE_MAX for n in got.values())
+    # Never down to two words: the id sits beside a whole short start instead.
+    assert names._fit_base("Ścieżka przyrodniczo-dydaktyczna", 20, True) is None

@@ -15,9 +15,15 @@ and cap_title, then dedupe_names over each country) and counts:
 - new dup groups  (country, folded name) groups shared by two or more walks
                after the replay that were not shared before.
 
-Also printed: id_suffix, names ending ", no. <id>" (77 on the 2026-11-17 wire
-with the first dedupe; it must not rise without a reason), and too_long
-(0 required: every title fits TITLE_MAX).
+Also printed: id_suffix, names ending ", no. <id>" or ", #<id>" (77 on the
+2026-11-17 wire with the first dedupe, 57 with the second; it must not rise
+without a reason), and too_long (0 required: every title fits TITLE_MAX).
+
+dedupe_cut / dedupe_trim / dedupe_replaced (judge 3, fix 5) say what the
+dedupe did to the start of a name it had to change (dedupe_kind). dedupe_cut,
+a start cut inside a word or down to two words or fewer, must be 0.
+dedupe_trim, trailing words dropped at a word boundary with three words and 16
+characters kept, is capped at MAX_TRIM with the reason beside it.
 
 Accepts (exit 0, prints ACCEPT) when unclean <= MAX_UNCLEAN (1,312, the
 research's after-value on the 2026-11-17 wire), no end loss other than
@@ -45,6 +51,20 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 PUBLIC = ROOT / "continent-app" / "public"
 MAX_UNCLEAN = 1312
+# Rows the dedupe may trim at a word boundary (three or more words and 16
+# characters kept) so a suffix fits a 42 character title: "Alta Via
+# dell'Anfiteatro Morenico di Ivrea" (42) becomes "Alta Via dell'Anfiteatro,
+# Fiorano Canavese". No title can hold a 42 character start and a suffix; the
+# cap is the measured count on the 2026-11-17 wire (9, all Alta Via
+# dell'Anfiteatro Morenico di Ivrea) plus a little room, and a
+# cut inside a word or down to two words (dedupe_cut) is never allowed.
+MAX_TRIM = 12
+# Ends lost although start and end would fit in 42 together, each with the
+# reason it cannot be avoided:
+#   74251 "Agios Konstantinos - Katafygio Koromilias" is 41 characters and its
+#   twin 74250 has the same start, so a suffix needs room the name does not
+#   have; the id-free choice is "Agios Konstantinos, 4.1 km".
+END_LOSS_ALLOWED = {74251}
 
 
 def _names():
@@ -96,6 +116,33 @@ def head_cut(n0: str, n1: str, cc: str | None = None) -> bool:
     return names.squash(start) not in names.squash(n1)
 
 
+_SEG_AFTER = re.compile(r"^(?:\s[-–]\s|:\s|,\s|\s\()")
+
+
+def dedupe_kind(pre: str, new: str, orig: str) -> str | None:
+    """How dedupe_names changed a name, judged on the start it kept.
+
+    None      nothing changed, or the start is whole (the name before the last
+              ", suffix" is the old name, or the old name up to a segment
+              boundary: a comma part, an "A - B" or "A: B" segment, a bracket)
+    replaced  the new name is a part of the readable original on its own (a
+              quoted or bracketed part, the tail after ": ")
+    trim      the start loses trailing words at a word boundary and keeps
+              three or more words and 16 characters
+    cut       anything else: inside a word, or down to two words or fewer.
+              Required to be 0."""
+    if new == pre:
+        return None
+    base = new.rsplit(", ", 1)[0] if ", " in new else new
+    if pre == base or (pre.startswith(base) and _SEG_AFTER.match(pre[len(base):])):
+        return None
+    if names.squash(new) in names.squash(orig) and not pre.startswith(new):
+        return "replaced"
+    if pre.startswith(base) and pre[len(base):][:1] == " " and len(base.split()) >= 3 and len(base) >= 16:
+        return "trim"
+    return "cut"
+
+
 def end_too_long(n0: str, cc: str | None = None) -> bool:
     """The end segment alone is longer than a title may be, so no 42
     character title can hold it whole. Counted apart; still a loss."""
@@ -125,14 +172,17 @@ def replay(rows: list[dict]) -> dict:
     originals = {r["id"]: r.get("name") or "" for r in rows}
     for r in rows:
         r["name"] = run_one(originals[r["id"]], r.get("country"))
+    pre = {r["id"]: r["name"] for r in rows}
     # The export dedupes every row of a country, whatever its category.
     names.dedupe_names(rows, originals)
     hikes = [r for r in rows if r.get("category") == "hike" and r.get("_counted")]
     before, after = collections.Counter(), collections.Counter()
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
-           "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0}
+           "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
+           "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex = collections.defaultdict(list), [], []
+    dd_ex = collections.defaultdict(list)
     for r in hikes:
         n0, n1 = originals[r["id"]], r["name"] or ""
         p0, p1 = names.name_problems(n0), names.name_problems(n1)
@@ -144,14 +194,21 @@ def replay(rows: list[dict]) -> dict:
         res["unclean_before"] += bool(p0)
         res["unclean_after"] += bool(p1)
         res["changed"] += n1 != n0
-        res["id_suffix"] += bool(re.search(r", no\. \d+$", n1))
+        res["id_suffix"] += bool(re.search(r", (?:no\. |#)\d+$", n1))
+        kind = dedupe_kind(pre[r["id"]], n1, names.readable(n0, r.get("country")))
+        if kind:
+            res["dedupe_" + kind] += 1
+            if len(dd_ex[kind]) < 40:
+                dd_ex[kind].append([r["id"], n0, pre[r["id"]], n1])
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
             if len(head_ex) < 25:
                 head_ex.append([r["id"], n0, n1])
         if end_lost(n0, n1, r.get("country")):
             res["end_segment_losses"] += 1
-            res["end_losses_over_cap"] += end_too_long(n0, r.get("country"))
+            over = end_too_long(n0, r.get("country"))
+            res["end_losses_over_cap"] += over
+            res["end_losses_unexplained"] += not over and r["id"] not in END_LOSS_ALLOWED
             if len(end_ex) < 25:
                 end_ex.append([r["id"], n0, n1])
         if n0.strip():
@@ -169,11 +226,12 @@ def replay(rows: list[dict]) -> dict:
     # of a name is never cut (judge fix 1; the over-cap deviation is recorded
     # in the wave 1 report and printed with every run).
     res["accept"] = (res["unclean_after"] <= MAX_UNCLEAN
-                     and res["end_segment_losses"] == res["end_losses_over_cap"]
+                     and res["end_losses_unexplained"] == 0
+                     and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
                      and res["head_cut"] == 0
                      and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
-    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex,
+    res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "dedupe": dd_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}
     return res
 

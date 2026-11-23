@@ -804,43 +804,69 @@ def _sfx_code(row, original):
     return split_code(original)[1] or ""
 
 
-_STAGE_CODE_RES = (re.compile(r"\b[A-Z]{2,5}-[A-Z]+0*(\d+)[A-Z]*(?:_[A-Z]?\d+)?\b"),
-                   re.compile(r"\b[A-Z]{1,4}-\d+-0*(\d+)\b"))
+_STAGE_CODE_RES = (re.compile(r"\b[A-Z]{2,5}-[A-Z]+0*(\d+)([A-Z]*)(?:_[A-Z]?\d+)?\b"),
+                   re.compile(r"\b[A-Z]{1,4}-\d+-0*(\d+)()\b"))
 
 
 def _sfx_stage(row, original):
     """A stage code read as a stage: "CSG-T002_V26" and "HW-37-02" are "stage
-    2". Rows that share a number tell apart on a later level."""
+    2". The letters after the number are kept as a variant mark, so
+    "CSG-T024VA_V24" (a variant of stage 24) is "stage 24A" and does not read
+    as the same stage as "CSG-T024_V24". Rows that still share it tell apart
+    on a later level."""
     for rx in _STAGE_CODE_RES:
         m = rx.search(original)
         if m:
-            return f"stage {int(m.group(1))}"
+            letters = m.group(2)
+            if len(letters) > 1 and letters.startswith("V"):
+                letters = letters[1:]          # "VA" is a variant, A
+            return f"stage {int(m.group(1))}{letters}"
     return ""
 
 
+_TO_RE = re.compile(r"\s+(?:to|nach|bis|naar|till|\u00e0)\s+", re.IGNORECASE)
+_OF_RE = re.compile(r"\s+(?:di|de|del|della|von|van|du|des)\s+", re.IGNORECASE)
+
+
 def _sfx_end(row, original):
+    """The ways the end of the original can tell a row apart, best first; each
+    is used only whole (a cut end reads as noise: "Richmond to Robin"). The
+    caller takes the first that fits beside the name."""
     m = re.search(_STAGE_RE.pattern + r"\s*\.?\s*\d+[a-z]?", original, re.IGNORECASE)
     if m:
-        return m.group(0)
+        return [m.group(0)]
     segs = _DASH_SEP_RE.split(original)
     end = segs[-1].strip() if len(segs) > 1 else ""
     if not end and ": " in original:        # "England Coast Path: Portland to Lulworth"
         end = original.rsplit(": ", 1)[-1].strip()
     name = str(row.get("name") or "")
     if not end and name and original.strip().startswith(name) and original.strip() != name:
-        # What the cap cut off the name ("... Rundwanderweg Burgsinn").
-        end = original.strip()[len(name):].strip(" ,;:-()[]")
-        end = "" if is_code(end) else end
+        # What the cap cut off the name ("... Rundwanderweg Burgsinn"), only
+        # when the name is a prefix at a word boundary: "Rad-, Lauf" is the
+        # start of "Rad-, Lauf- und Wanderstrecke", not a name to finish.
+        rest = original.strip()[len(name):]
+        if rest[:1] in (" ", ",", ";", ":", "(", "["):
+            end = rest.strip(" ,;:-()[]")
+            end = "" if is_code(end) else end
     end = split_code(end)[0] if end else ""     # a code rides the chip, not the name
-    if end and squash(end) not in squash(row.get("name")):
-        # Room beside the first part of the name: named() drops trailing
-        # comma parts to make space.
-        room = min(20, TITLE_MAX - len(name.split(", ")[0]) - 2)
-        capped = cap_title(end, room) if room >= 8 else ""
-        # Squeezed beside a whole name, a cut end reads as noise
-        # ("Cicognara_Casa"): whole, or the next level.
-        return capped if room >= 20 or capped == end else ""
-    return ""
+    if not end or squash(end) in squash(name):
+        return []
+    out = [end]
+    if ", " in end:
+        out.append(end.split(", ")[0])
+    m = _TO_RE.search(end)
+    if m and m.start() >= 3:
+        x = end[:m.start()]
+        out += [x, x.split(", ")[0]]            # "Kinlochleven to Fort William"
+    parts = _OF_RE.split(end)
+    if len(parts) > 1:                          # "Itinerario di Collegamento di Fiorano"
+        out += [parts[-1], parts[-1].split(", ")[0]]
+    seen = []
+    for c in out:
+        c = c.strip(" ,;:-()[]")
+        if len(c) >= 3 and c not in seen and not is_code(c) and squash(c) not in squash(name):
+            seen.append(c)
+    return seen
 
 
 def _sfx_km(row, original):
@@ -851,18 +877,68 @@ def _sfx_km(row, original):
     return f"{km:g} km"
 
 
-def _sfx_id(row, original):
-    return f"no. {row.get('id')}"
+_BRACKET_RE = re.compile(r"[\(\[]([^()\[\]]{3,})[\)\]]\s*$|[\"\u201c\u201e\u00ab]([^\"\u201d\u201c\u00bb]{3,})[\"\u201d\u00bb]")
 
 
 def _rep_tail(row, original):
-    """The part after ": " as the whole name, when the name plus a suffix
-    cannot fit: "Portland to Lulworth" (the ref chip and the subtitle say it
-    is on the England Coast Path)."""
-    if ": " not in original:
-        return ""
-    tail = original.rsplit(": ", 1)[-1].strip()
-    return tail if tail and not is_code(tail) and len(tail) <= TITLE_MAX else ""
+    """A part of the original that can be the whole name, when the name plus
+    a suffix cannot fit: the part after ": " ("Portland to Lulworth": the ref
+    chip and the subtitle say it is on the England Coast Path), or a quoted or
+    bracketed part ("Trilho da Alcaria", "Czarnocinskie buczyny"), which is
+    the name the walk is known by."""
+    if ": " in original:
+        tail = original.rsplit(": ", 1)[-1].strip()
+        if tail and not is_code(tail) and len(tail) <= TITLE_MAX:
+            return tail
+    m = _BRACKET_RE.search(original)
+    if m:
+        part = split_code(next(g for g in m.groups() if g).strip())[0] or ""
+        if (part and not is_code(part) and 3 <= len(part) <= TITLE_MAX
+                and squash(part) != squash(row.get("name"))):
+            return part
+    return ""
+
+
+_SEG_RE = re.compile(r"\s[-–]\s|:\s")
+
+
+def _fit_base(base, room, cut):
+    """`base` shortened to `room`, or None. First the trailing comma parts go
+    ("Roter Schmetterling, Rundwanderweg" gives way to "Burgsinn"); with `cut`,
+    then trailing "A - B" and "A: B" segments (whole segments only), then
+    words, but only to three or more words and 16 characters, never inside a
+    hyphenated word: a start of two words or fewer is never cut."""
+    if len(base) <= room:
+        return base
+    while len(base) > room and ", " in base:
+        base = base[:base.rfind(", ")]
+    if len(base) <= room:
+        return base
+    if not cut:
+        return None
+    while len(base) > room:
+        seps = list(_SEG_RE.finditer(base))
+        if not seps:
+            break
+        base = base[:seps[-1].start()].rstrip(_TRAIL_PUNCT)
+    if len(base) <= room:
+        return base
+    head = _head_words(base, room)
+    # Three words and 16 characters: "Ruta de Pedra" is not a name worth
+    # keeping beside a suffix, the whole segment and the id are.
+    return head if len(head.split()) >= 3 and len(head) >= 16 else None
+
+
+def _named_id(r):
+    """The id as the last suffix: it is unique, so it always tells rows apart.
+    "no. 123456" first, "#123456" when the name is short of two words' room."""
+    base = r["name"]
+    for x in (f"no. {r.get('id')}", f"#{r.get('id')}"):
+        fit = _fit_base(base, TITLE_MAX - len(x) - 2, True)
+        if fit:
+            return fit + ", " + x
+    x = f"#{r.get('id')}"
+    return cap_title(base, TITLE_MAX - len(x) - 2) + ", " + x
 
 
 def dedupe_names(rows, originals=None):
@@ -872,10 +948,15 @@ def dedupe_names(rows, originals=None):
     items); originals: {id: the title before wire_name}. In each group of
     rows whose names fold the same (squash), every row gets a suffix from the
     first source that tells them all apart: the code split off the original
-    ("Mount Korab, 9/1"), the stage or end segment of the original, the
-    distance ("12 km"), the id. Rows are taken in id order, so a re-run gives
-    the same names; run on its own output it changes nothing. Mutates the
-    rows; returns {id: new name}."""
+    ("Mount Korab, 9/1"), the stage or end segment of the original ("stage
+    24A", used only whole), the distance ("12 km"), a quoted or bracketed
+    part as the whole name, then the same levels again with the start allowed
+    to lose trailing segments or words (_fit_base), the id last. A row a level
+    has nothing for keeps its bare name when it is the only one in the group
+    that has none ("West Highland Way" beside its stages); otherwise it takes
+    its distance, then its id. Rows are taken in id order, so a re-run gives the same names; run
+    on its own output it changes nothing. Mutates the rows; returns {id: new
+    name}."""
     originals = originals or {}
     groups = {}
     for r in sorted(rows, key=lambda r: str(r.get("id"))):
@@ -885,37 +966,45 @@ def dedupe_names(rows, originals=None):
     taken = set(groups)
     changed = {}
 
-    def named(r, x, last=False):
-        # Every title fits TITLE_MAX. The row's trailing comma parts go first
-        # ("Roter Schmetterling, Rundwanderweg" gives way to "Burgsinn"); the
-        # first part is cut only as the very last resort, when even the id
-        # cannot sit beside it.
-        base, room = r["name"], TITLE_MAX - len(x) - 2
-        while len(base) > room and ", " in base:
-            base = base[:base.rfind(", ")]
-        if len(base) > room:
-            if not last:
-                return None
-            base = cap_title(base, room)
-        return base + ", " + x
+    def named(r, xs, cut):
+        for x in xs:
+            fit = _fit_base(r["name"], TITLE_MAX - len(x) - 2, cut) if x else None
+            if fit:
+                return fit + ", " + x
+        return None
 
-    for (cc, _key), rs in groups.items():
+    levels = ([(lv, False) for lv in (_sfx_code, _sfx_stage, _sfx_end, _sfx_km)]
+              + [("tail", False)]
+              + [(lv, True) for lv in (_sfx_code, _sfx_stage, _sfx_end, _sfx_km)]
+              + [(_named_id, True)])
+    for (cc, own), rs in groups.items():
         if len(rs) < 2:
             continue
         origs = [readable(originals.get(r.get("id")) or r["name"], cc) for r in rs]
+        others = taken - {(cc, own)}
         out = None
-        for level in (_sfx_code, _sfx_stage, _sfx_end, _sfx_km, "tail", _sfx_id):
-            if level == "tail":
+        for level, cut in levels:
+            if level is _named_id:
+                cand = [_named_id(r) for r in rs]
+            elif level == "tail":
                 cand = [_rep_tail(r, o) for r, o in zip(rs, origs)]
             else:
                 sfx = [level(r, o) for r, o in zip(rs, origs)]
-                cand = [named(r, x, level is _sfx_id) if x else None for r, x in zip(rs, sfx)]
-            # A row this level has nothing for takes its id; the level is
-            # kept when at least half the group has something real.
-            if level != "tail" and sum(map(bool, cand)) * 2 >= len(rs):
-                cand = [c or named(r, _sfx_id(r, ""), True) for r, c in zip(rs, cand)]
+                cand = [named(r, x if isinstance(x, list) else [x], cut)
+                        for r, x in zip(rs, sfx)]
+                # The level is kept when at least half the group has
+                # something real. A row it has nothing for keeps its bare name
+                # when it is the only one; the others take their id.
+                if sum(map(bool, cand)) * 2 >= len(rs):
+                    bare = [i for i, c in enumerate(cand) if not c]
+                    for i in bare:
+                        # The distance beside the others' suffix is better
+                        # than an id; a name that lands twice drops the level.
+                        cand[i] = (rs[i]["name"] if len(bare) == 1
+                                   else named(rs[i], [_sfx_km(rs[i], "")], cut)
+                                   or _named_id(rs[i]))
             keys = {(cc, squash(c)) for c in cand if c}
-            if all(cand) and len(keys) == len(rs) and not keys & taken:
+            if all(cand) and len(keys) == len(rs) and not keys & others:
                 out = cand
                 break
         if out is None:         # the id is unique, so only a name another row took
