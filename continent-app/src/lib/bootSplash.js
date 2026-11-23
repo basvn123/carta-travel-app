@@ -36,6 +36,12 @@ export const SLOW_MS = 4000;
 const LIFT_MS = 720;
 const SEEN_KEY = 'carta.splash.seen.v1';
 
+/* Temporarily off (owner, 2026-11-22): the opening screen never shows. The
+   CSS hides it from the first paint (06-boot-splash.css, the last rule);
+   here nothing holds it, colours the browser bar or draws it. Set both back
+   to bring it back. */
+export const SPLASH_OFF = true;
+
 /**
  * How long the splash still waits before it lifts, once nothing holds it.
  * The opening plays to its end only the first time in a browser session;
@@ -214,7 +220,7 @@ function scheduleLift() {
 /** Keep the splash up (the app is still waiting). Returns nothing. */
 export function holdBootSplash() {
   const el = splash();
-  if (!el) return;
+  if (!el || SPLASH_OFF) return;
   holds += 1;
   clearTimeout(pendingLift);
   pendingLift = 0;
@@ -245,6 +251,7 @@ export function settleBootSplash() {
 (function boot() {
   const el = splash();
   if (!el) return;
+  if (SPLASH_OFF) { el.dataset.state = 'done'; restoreThemeColor(); return; }
   if (!isShown(el)) { restoreThemeColor(); return; }
   // Shown since the first paint (a plain app load, not a prerendered page).
   const paint = performance.getEntriesByName?.('first-contentful-paint')?.[0];
