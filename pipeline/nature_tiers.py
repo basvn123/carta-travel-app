@@ -59,6 +59,7 @@ sys.path.insert(0, str(HERE))
 
 import grades  # noqa: E402
 import rating_config  # noqa: E402
+from outdoor_row import outdoor_row  # noqa: E402
 from rating_config import cfg, section  # noqa: E402
 
 PUBLIC = ROOT / "continent-app" / "public"
@@ -598,11 +599,21 @@ def write_kind(kind, v5):
         changed = False
         for row in data.get(key) or []:
             v = v5.get(row.get("id"))
-            if v is None:
-                continue
-            new = public_v5(v)
-            if row.get("v5") != new:
-                row["v5"] = new
+            if v is not None:
+                new = public_v5(v)
+                if row.get("v5") != new:
+                    row["v5"] = new
+                    changed = True
+            # `o` is rebuilt on every write, not only when v5 moved: f.g, km
+            # or minutes can change under an unchanged score, and an `o` that
+            # disagrees with the row's own grade is the bug this block ends.
+            # Rows with no v5 get one too (grade, km, climb only).
+            o = outdoor_row(kind, row)
+            if o and row.get("o") != o:
+                row["o"] = o
+                changed = True
+            elif not o and "o" in row:
+                del row["o"]
                 changed = True
         if changed:
             write_json(path, data)
