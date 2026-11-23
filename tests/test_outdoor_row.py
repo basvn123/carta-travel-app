@@ -6,11 +6,21 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
-sys.path.insert(0, str(ROOT / "pipeline" / "dossier"))
+DOSSIER = str(ROOT / "pipeline" / "dossier")
+sys.path.insert(0, DOSSIER)
+# build_dossier imports the dossier's own `common`; other suites (pipeline/stays)
+# import a different `common` by the bare name, so the dossier one must not stay
+# cached or on the path after this import.
+_prior_common = sys.modules.pop("common", None)
 
 import nature_tiers as nt  # noqa: E402
 import outdoor_row as orow  # noqa: E402
 import build_dossier as bd  # noqa: E402
+
+sys.modules.pop("common", None)
+if _prior_common is not None:
+    sys.modules["common"] = _prior_common
+sys.path.remove(DOSSIER)
 
 V5 = {"score": 8.4, "band": "excellent",
       "rank": {"scope": "region", "rank": 2, "of": 9, "unit": "walks"},
