@@ -30,6 +30,10 @@ Data wave 3 (2026-11-23), in code and not yet on the box. Do 12 to 15 in order, 
 14. **D7: photos and takedowns (2.2b).** After 12: confirm that no file named in `data/reports/trail_photo_patch.json` as rejected appears in an exported trail gallery (`credited()` now drops them), and that `python pipeline/photos/takedown.py scrub` changes nothing. Done when it reports 0 changes.
 15. **D14: Around distance to the line (2.2c).** `CARTA_TRAILS_ROUTE_BRIDGE=1 python run_pipeline.py trails_route_bridge`, then `python run_pipeline.py trails_curate`, then `python pipeline/trails/attach.py`, which writes `data/derived/routes_line_km.json` (check its size; keep only ids that appear in Around if it is over 5 MB), then rebuild the dossiers. Done when the dossier build prints no "wire rows carry no `o`" warning and Around rows say `km_from: "line"`.
 
+Data wave 4 (2026-11-23), in code and not yet on the box. Do 16 after step 5 (the pull).
+
+16. **D15, D23: POI kinds, non-places, dossier highlights and festivals (wave 4).** On the box, after the pull: `python run_pipeline.py poi_significance`, then `python run_pipeline.py events` (only if you want the festival filter on the cached events; the wire filter works without it), then `python run_pipeline.py dossier`, then the app build step that writes `public/poi/*.json` from the master. Done when `python scripts/quality/replay_poi_rules.py --public <public dir> --repo <checkout> --rules before --out <json>` on the new wire prints `must_square_no_square_word_pct` of 2 or less (33.77 today), `festival_left` 0, and the Brussels dossier highlights no longer list King Baudouin Stadium, the Heysel disaster or Lotto Park. Do not run it while a harvest writes the same files.
+
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
 | ID | Item | Order |
