@@ -11,12 +11,15 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { CONFIG, runGolden, share, sliceTable } from './lib/logic-engines.mjs';
 
-const WAVE = { E5: 'E5 one month (fit, source, heat)', E6: 'E6 one place ranker', E8: 'E8 one day clock' };
+const WAVE = { E5: 'E5 one month (fit, source, heat)', E6: 'E6 one place ranker', E8: 'E8 one day clock', E1: 'E1 honest totals', E2: 'E2 one party model', E3: 'E3 one stay ladder' };
 
 /** The error group of a failing case, and the wave that closes it. */
 export function groupOf(r) {
   if (r.set === 'month-fit') return r.id.startsWith('coverage') ? 'no place is fine in the winter months (coverage)' : 'a fine month is missing from climate.best (shoulder season, ski, winter)';
   if (r.set === 'rank') return r.id.startsWith('tie') ? 'equal scores follow file order (no fame tiebreak)' : 'persona top 5 misses places a traveller would accept';
+  if (r.set === 'totals') return 'a total prints lower for a missing part';
+  if (r.set === 'party') return `a party is counted differently per screen (${r.id.split('-')[1]})`;
+  if (r.set === 'stay-ladder') return `a missing bed tier or a room count is not one ladder (${r.id.split('-')[1]})`;
   return 'the way back to the stay is not part of the day';
 }
 

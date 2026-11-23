@@ -6,7 +6,7 @@
  * flips its flag in config/flags.json.
  *
  *   node scripts/eval/shadow-diff.mjs <engine> --out <folder>
- *   engine: E1 (budget search and trip label per persona), E5 (months fine per persona), E6 (top 10 For you per persona), E1 (totals), E9 (state-scope journeys per persona), noop (the fixture engine)
+ *   engine: E2 (cars, footprint and day budget per persona party), E3 (the bed per persona in each stay-set town), E1 (budget search and trip label per persona), E5 (months fine per persona), E6 (top 10 For you per persona), E1 (totals), E9 (state-scope journeys per persona), noop (the fixture engine)
  *
  * An engine's new path is registered in scripts/eval/lib/logic-engines.mjs
  * (ENGINE_PATHS). Until a wave registers it, the engine reports "no new path
@@ -19,6 +19,8 @@ import { fileURLToPath } from 'node:url';
 import { ENGINE_PATHS, PERSONAS, PLACES } from './lib/logic-engines.mjs';
 import { personaTotals } from './lib/totals-engine.mjs';
 import { replayJourneys } from './lib/state-engine.mjs';
+import { personaParty } from './lib/party-engine.mjs';
+import { personaStay } from './lib/stay-engine.mjs';
 
 const places = () => Object.values(PLACES);
 /** What one persona sees from an engine path: a short list of place ids. */
@@ -30,9 +32,13 @@ export const VIEWS = {
   E1: (which, p) => { const r = personaTotals(p, which); return [`budget ${r.budget}`, ...r.fits.map((x) => `fits ${x}`), ...r.tight.map((x) => `tight ${x}`), `getting there: ${r.there || 'not said'}`, `trip: ${r.trip}`]; },
   // E9 (logic wave 2): what each state-scope journey leaves for a persona's travel style, one line per journey; fn is 'old' or 'new'.
   E9: (which, p) => Object.entries(replayJourneys(which, p)).map(([j, o]) => `${j}: ${Object.entries(o).map(([k, v]) => `${k}=${Array.isArray(v) ? `[${v.join(',')}]` : v}`).join(' ')}`),
+  // E2 (logic wave 3): the cars each screen counts, the footprint of 800 km by car and the day budget's verdict for a persona's party.
+  E2: (which, p) => Object.entries(personaParty(p, which)).map(([k, v]) => `${k}: ${v}`),
+  // E3 (logic wave 3): the bed of three nights the persona's tier gets in each town of the stay set.
+  E3: (which, p) => personaStay(p, which).map((r) => `${r.town} ${r.tier} for ${r.party}: ${r.got}`),
 };
 const NOOP_PATH = (pool) => pool.map((x) => x.id);
-const pathsOf = (engine) => (engine === 'noop' ? { old: NOOP_PATH, new: NOOP_PATH } : (engine === 'E1' || engine === 'E9') ? { old: 'old', new: 'new' } : ENGINE_PATHS[engine]);
+const pathsOf = (engine) => (engine === 'noop' ? { old: NOOP_PATH, new: NOOP_PATH } : (engine === 'E1' || engine === 'E2' || engine === 'E3' || engine === 'E9') ? { old: 'old', new: 'new' } : ENGINE_PATHS[engine]);
 
 /** The diff as data: one row per persona with the old and new lists. */
 export function shadowDiff(engine) {

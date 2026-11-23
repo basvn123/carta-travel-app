@@ -1,0 +1,230 @@
+[
+ {
+  "persona": "family-toddler",
+  "month": 7,
+  "was": [
+   "party: 2+0+1",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 33"
+  ],
+  "now": [
+   "party: 2+0+1",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 33"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "hiking-couple",
+  "month": 9,
+  "was": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "now": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "friends-out",
+  "month": 6,
+  "was": [
+   "party: 4+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 32.4",
+   "dayBudget: within by 47"
+  ],
+  "now": [
+   "party: 4+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 32.4",
+   "dayBudget: within by 47"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "slow-culture",
+  "month": 10,
+  "was": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "now": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "backpacker",
+  "month": 8,
+  "was": [
+   "party: 1+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 129.6",
+   "dayBudget: over by 81"
+  ],
+  "now": [
+   "party: 1+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 129.6",
+   "dayBudget: over by 81"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "beach-family",
+  "month": 7,
+  "was": [
+   "party: 2+2+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 32.4",
+   "dayBudget: within by 47"
+  ],
+  "now": [
+   "party: 2+2+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 32.4",
+   "dayBudget: within by 47"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "cyclist",
+  "month": 5,
+  "was": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "now": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "foodie",
+  "month": 4,
+  "was": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "now": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "skier",
+  "month": 2,
+  "was": [
+   "party: 4+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 32.4",
+   "dayBudget: within by 47"
+  ],
+  "now": [
+   "party: 4+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 32.4",
+   "dayBudget: within by 47"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "wellness",
+  "month": 11,
+  "was": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "now": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "island-hopper",
+  "month": 6,
+  "was": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "now": [
+   "party: 2+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 64.8",
+   "dayBudget: within by 4"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ },
+ {
+  "persona": "no-car-rail",
+  "month": 5,
+  "was": [
+   "party: 1+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 129.6",
+   "dayBudget: over by 81"
+  ],
+  "now": [
+   "party: 1+0+0",
+   "cars: explore 1, places 1, planner 1, day 1",
+   "kg: 129.6",
+   "dayBudget: over by 81"
+  ],
+  "same": true,
+  "added": [],
+  "dropped": []
+ }
+]
