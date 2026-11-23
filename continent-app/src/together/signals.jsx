@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { Pressable } from '../components/ui/Pressable.jsx';
 import { Button } from '../components/ui/index.js';
 import { favKey } from '../lib/favorites.js';
 import { listTripCoplanners } from '../auth/coplanners.js';
@@ -14,9 +15,9 @@ import { openFriend } from './openVrienden.js';
 function FriendFaceLink({ id, name, emoji }) {
   const { t } = useI18n();
   return (
-    <button type="button" className="tg-face-link" aria-label={t('vr.openFriend', { who: firstName(name) })} onClick={() => openFriend(id)}>
+    <Pressable type="button" className="tg-face-link" aria-label={t('vr.openFriend', { who: firstName(name) })} onClick={() => openFriend(id)}>
       <ToneFace id={id} name={name} emoji={emoji} size="sm" />
-    </button>
+    </Pressable>
   );
 }
 

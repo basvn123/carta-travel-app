@@ -13,3 +13,16 @@ export function openVrienden(view = 'home', id = '') {
 }
 
 export const openFriend = (userId) => openVrienden('friend', userId);
+
+/* The draw-in rule (G16): has the traveller pressed or typed anything since
+ * this page loaded? Listened for from the first module load (App imports
+ * this file eagerly), because the press that opens Vrienden comes before the
+ * page's own lazy chunk. navigator.userActivation is not used: headless
+ * Chromium reports it as active without any input. */
+let acted = false;
+if (typeof window !== 'undefined') {
+  const mark = () => { acted = true; };
+  window.addEventListener('pointerdown', mark, { capture: true, once: true });
+  window.addEventListener('keydown', mark, { capture: true, once: true });
+}
+export const hasActed = () => acted;

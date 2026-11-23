@@ -13,6 +13,7 @@
  *                                reduced motion
  *   airportsOf(dest)             a place's own airport codes, for fares
  */
+import { hasActed } from './openVrienden.js';
 
 export function placeOf(destinations, ids) {
   const all = (ids || []).map((id) => destinations?.[id]).filter(Boolean);
@@ -37,21 +38,13 @@ export function leadFill(days) {
 // A figure may draw in only once the traveller has done something on the
 // page (opened the door, followed a link inside the app): a deep link or a
 // reload straight onto Vrienden is the app's first paint and shows end
-// states. navigator.userActivation says exactly that; where it is missing,
-// a load that landed on Vrienden counts as the first paint.
-function landedHere() {
-  try {
-    const nav = window.performance?.getEntriesByType?.('navigation')?.[0];
-    return /[?&]tab=together\b/.test(nav?.name || window.location.search);
-  } catch { return true; }
-}
+// states (hasActed, openVrienden.js).
 export function drawAllowed() {
   if (typeof window === 'undefined') return false;
   try {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
   } catch { /* old browsers: no motion query, keep the rule below */ }
-  const ua = window.navigator?.userActivation;
-  return ua ? ua.hasBeenActive : !landedHere();
+  return hasActed();
 }
 
 const IATA = /^[A-Z]{3}$/;

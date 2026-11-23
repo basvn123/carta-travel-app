@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
+import { Pressable } from '../components/ui/Pressable.jsx';
 import { PlusIcon, LinkIcon, BoltIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
 import { BADGES, fetchAchievements } from '../auth/achievements.js';
@@ -53,7 +54,7 @@ function Milestones({ userId, friendCount }) {
           const name = t(b.nameKey);
           const state = at ? t('vr.earned') : b.target ? t('vr.ofN', { i: Math.min(friendCount, b.target), n: b.target }) : t('vr.locked');
           return (
-            <button key={b.id} type="button" className={`vr-stamp${at ? ' is-got' : ''}`} aria-expanded={open === b.id}
+            <Pressable key={b.id} type="button" className={`vr-stamp${at ? ' is-got' : ''}`} aria-expanded={open === b.id}
               onClick={() => setOpen(open === b.id ? '' : b.id)}>
               <svg viewBox="0 0 60 60" aria-hidden="true">
                 <circle className="vr-stamp-track" cx="30" cy="30" r={R} />
@@ -64,7 +65,7 @@ function Milestones({ userId, friendCount }) {
               <span className="vr-stamp-ic" aria-hidden="true"><Icon size={22} /></span>
               <span className="vr-stamp-n">{name}</span>
               {!at && b.target ? <span className="vr-stamp-p num">{state}</span> : <span className="sr-only">{state}</span>}
-            </button>
+            </Pressable>
           );
         })}
       </div>

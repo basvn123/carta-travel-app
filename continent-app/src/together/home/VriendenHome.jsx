@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useAuth } from '../../auth/AuthContext.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { ChevronRightIcon, CloseIcon, RouteIcon } from '../../components/Icons.jsx';
@@ -51,7 +52,7 @@ function GoCard({ trip, destinations, me, mine, open, onToggle }) {
   const who = trip.ownerName || `@${trip.ownerHandle}`;
   return (
     <article className={`vr-go${mine ? ' is-mine' : ''}${open ? ' is-open' : ''}`}>
-      <button type="button" className="vr-go-tap" aria-expanded={open} onClick={onToggle}>
+      <Pressable type="button" className="vr-go-tap" aria-expanded={open} onClick={onToggle}>
         <span className="vr-go-ph">
           <HeroImage url={photo?.image?.url || null} image={photo?.image} className="vr-go-img" maxWidth={1280}
             sizes="(min-width: 1100px) 24vw, (min-width: 768px) 30vw, 62vw" ratio={[4, 5]} />
@@ -66,7 +67,7 @@ function GoCard({ trip, destinations, me, mine, open, onToggle }) {
           <ToneFace id={trip.ownerId} me={me} name={who} emoji={trip.ownerEmoji} size="sm" />
           <b>{firstName(who)}</b>{mine && <em>{t('vr.andYou')}</em>}
         </span>
-      </button>
+      </Pressable>
       <AskJoin trip={trip} className="vr-go-ask" />
     </article>
   );
@@ -201,7 +202,7 @@ function TodoDeck({ s, onView, onError }) {
                 onClick={() => leave(front.key, () => run(front.no))}><CloseIcon size={16} /></IconButton>
             )}
             <span className="vr-card-acts">
-              <Button variant="primary" onClick={() => leave(front.key, () => run(front.ok[1]))}>{front.ok[0]}</Button>
+              <Button variant="primary" className="vr-card-go" onClick={() => leave(front.key, () => run(front.ok[1]))}>{front.ok[0]}</Button>
               {n > 1 && <Button variant="secondary" onClick={() => leave(front.key, () => setPos((p) => p + 1))}>{t('vr.later')}</Button>}
             </span>
           </div>
@@ -292,7 +293,7 @@ function FriendCard({ link, s, destinations, meets, onOpen }) {
   const name = nameOf(link);
   const fact = meet ? t('vr.withYouIn', { place: meet.city }) : next ? place : t('vr.nothingShared');
   return (
-    <button type="button" className="vr-fc" onClick={onOpen}>
+    <Pressable type="button" className="vr-fc" onClick={onOpen}>
       {photo?.image?.url ? (
         <span className="vr-fc-ph">
           <HeroImage url={photo.image.url} image={photo.image} className="vr-fc-img" maxWidth={1280}
@@ -308,7 +309,7 @@ function FriendCard({ link, s, destinations, meets, onOpen }) {
         {days != null && days >= 0 && <span className="sr-only">{t('vr.inDays', { n: days })}</span>}
       </span>
       <span className={`vr-fc-f${meet ? ' is-meet' : ''}`}>{fact}</span>
-    </button>
+    </Pressable>
   );
 }
 
@@ -352,7 +353,7 @@ function CircleCard({ c, s, destinations, onOpen }) {
   const { photo } = placeOf(destinations, lead ? [lead.destId] : []);
   const joined = c.members.filter((m) => m.status === 'joined');
   return (
-    <button type="button" className="vr-kr" onClick={onOpen}>
+    <Pressable type="button" className="vr-kr" onClick={onOpen}>
       <Ring photo={photo} members={joined} me={s.userId} />
       <span className="vr-kr-tx">
         <b className="vr-kr-t">{c.name}</b>
@@ -361,7 +362,7 @@ function CircleCard({ c, s, destinations, onOpen }) {
           <span className="vr-kr-lead"><b>{placeName(destinations, lead.destId)}</b><span>{t('vr.leadsWith', { n: lead.score })}</span></span>
         )}
       </span>
-    </button>
+    </Pressable>
   );
 }
 
@@ -394,11 +395,11 @@ function Circles({ s, destinations, onView, hasFriends }) {
           {groups.length > 0 && (
             <div className="vr-rows">
               {groups.map((g) => (
-                <button key={g.id} type="button" className="vr-row is-link" onClick={() => onView('group', g.id)}>
+                <Pressable key={g.id} type="button" className="vr-row is-link" onClick={() => onView('group', g.id)}>
                   <ToneFaces me={s.userId} size="sm" people={g.members.map((m) => ({ id: m.userId, name: m.name, emoji: m.emoji }))} />
                   <span className="vr-row-tx"><b>{g.title}</b><span>{t('vr.members', { n: g.members.length })}</span></span>
                   <ChevronRightIcon size={16} className="vr-chev" />
-                </button>
+                </Pressable>
               ))}
             </div>
           )}
@@ -418,22 +419,22 @@ function Shared({ s, onOpenSaved, onOpenTripPlan }) {
   for (const l of lists.missing ? [] : lists.lists || []) {
     const people = (l.members || l.people || []).filter((p) => (p.id || p.userId) !== s.userId);
     rows.push(
-      <button key={`l:${l.id}`} type="button" className="vr-row is-link" onClick={() => onOpenSaved?.()}>
+      <Pressable key={`l:${l.id}`} type="button" className="vr-row is-link" onClick={() => onOpenSaved?.()}>
         <ToneFaces me={s.userId} size="sm" people={people.map((p) => ({ id: p.id || p.userId, name: p.name || p.displayName || '', emoji: p.emoji || '' }))} />
         <span className="vr-row-tx"><b>{l.name}</b><span>{t('vr.placesN', { n: (l.items || []).length })}</span></span>
         <ChevronRightIcon size={16} className="vr-chev" />
-      </button>,
+      </Pressable>,
     );
   }
   for (const p of s.myPlans) {
     const co = s.coplannersByPlan?.[p.id] || [];
     if (!co.length) continue;
     rows.push(
-      <button key={`p:${p.id}`} type="button" className="vr-row is-link" onClick={() => onOpenTripPlan?.(p.id)}>
+      <Pressable key={`p:${p.id}`} type="button" className="vr-row is-link" onClick={() => onOpenTripPlan?.(p.id)}>
         <ToneFaces me={s.userId} size="sm" people={co.map((c) => ({ id: c.userId, name: c.name, emoji: c.emoji }))} />
         <span className="vr-row-tx"><b>{p.label || fmtWhere(p.cities)}</b><span>{t('vr.plannedWith', { who: co.map((c) => firstName(c.name)).join(', ') })}</span></span>
         <ChevronRightIcon size={16} className="vr-chev" />
-      </button>,
+      </Pressable>,
     );
   }
   if (!rows.length) return null;
@@ -576,9 +577,9 @@ export function VriendenHome({
       <div className="vr-head">
         <h1 className="vr-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
         {friends.length >= 2 && invite('umber', false)}
-        <button type="button" className="vr-me-door" aria-label={t('vr.you')} onClick={() => onView('me')}>
+        <Pressable type="button" className="vr-me-door" aria-label={t('vr.you')} onClick={() => onView('me')}>
           <ToneFace id={s.userId} me={s.userId} name={meName} emoji={s.me?.avatarEmoji} size="md" />
-        </button>
+        </Pressable>
       </div>
       {error && <div className="auth-error" role="alert">{error}</div>}
       {friends.length === 0 && <ZeroHero invite={invite('primary', true)} onFind={onFind} />}

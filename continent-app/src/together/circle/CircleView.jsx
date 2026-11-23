@@ -1,5 +1,6 @@
 import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
+import { Pressable } from '../../components/ui/Pressable.jsx';
 import { Button, IconButton } from '../../components/ui/index.js';
 import { ArrowLeftIcon, CloseIcon, RouteIcon, ShareIcon } from '../../components/Icons.jsx';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
@@ -53,12 +54,12 @@ function StepTiles({ step, onView, circleId, figures }) {
   return (
     <nav className="vr-steps3" aria-label={t('vr.steps')}>
       {STEPS.map(([v, k], i) => (
-        <button key={v} type="button" className={`vr-step3${step === v ? ' is-on' : ''}`} aria-current={step === v ? 'step' : undefined}
+        <Pressable key={v} type="button" className={`vr-step3${step === v ? ' is-on' : ''}`} aria-current={step === v ? 'step' : undefined}
           onClick={() => onView(v, circleId)}>
           <span className="vr-step3-k"><i aria-hidden="true">{i + 1}</i>{t(k)}</span>
           <b>{figures[i][0]}</b>
           <span>{figures[i][1]}</span>
-        </button>
+        </Pressable>
       ))}
     </nav>
   );
@@ -113,13 +114,13 @@ function VoteList({ c, ranked, me, destinations, fareOf, canRemove }) {
           return (
             <li key={p.id} data-id={p.id} className="vr-vote">
               <span className="vr-vrail">
-                <button type="button" className="vr-up" aria-pressed={p.mine === 1} aria-label={t('vr.up', { place })} onClick={() => vote(p, 1)}>
+                <Pressable type="button" className="vr-up" aria-pressed={p.mine === 1} aria-label={t('vr.up', { place })} onClick={() => vote(p, 1)}>
                   <HouseIcon.voteUp size={20} />
-                </button>
+                </Pressable>
                 <b className="vr-sc num" aria-hidden="true">{p.score}</b>
-                <button type="button" className="vr-dn" aria-pressed={p.mine === -1} aria-label={t('vr.down', { place })} onClick={() => vote(p, -1)}>
+                <Pressable type="button" className="vr-dn" aria-pressed={p.mine === -1} aria-label={t('vr.down', { place })} onClick={() => vote(p, -1)}>
                   <HouseIcon.voteDown size={20} />
-                </button>
+                </Pressable>
               </span>
               <span className="vr-vcard">
                 <span className="vr-vcard-ph">
@@ -170,9 +171,9 @@ function Propose({ c, destinations }) {
   }, [q, destinations, c.proposals]);
   if (!open) {
     return (
-      <button type="button" className="vr-addp" onClick={() => setOpen(true)}>
+      <Pressable type="button" className="vr-addp" onClick={() => setOpen(true)}>
         <HouseIcon.plus size={20} />{t('vr.propose')}
-      </button>
+      </Pressable>
     );
   }
   return (
@@ -185,10 +186,10 @@ function Propose({ c, destinations }) {
         <ul className="vr-hits">
           {hits.map((d) => (
             <li key={d.id}>
-              <button type="button" className="vr-row is-link" onClick={() => { togetherActions.propose(c.id, d.id); setQ(''); setOpen(false); }}>
+              <Pressable type="button" className="vr-row is-link" onClick={() => { togetherActions.propose(c.id, d.id); setQ(''); setOpen(false); }}>
                 <span className="vr-row-tx"><b>{d.city}</b><span>{d.country}</span></span>
                 <HouseIcon.plus size={18} />
-              </button>
+              </Pressable>
             </li>
           ))}
         </ul>
@@ -230,7 +231,7 @@ function HeatCalendar({ c, ids, win, editing, onPickDay, draftStart }) {
     const label = t('vr.dayLabel', { date: dayLabel(iso), n, total });
     const cls = `vr-day l${LEVEL(n, total)}${draftStart === iso ? ' is-start' : ''}`;
     cells.push(editing
-      ? <button key={iso} type="button" className={cls} style={pos} aria-label={label} onClick={() => onPickDay(iso)}>{d}</button>
+      ? <Pressable key={iso} type="button" className={cls} style={pos} aria-label={label} onClick={() => onPickDay(iso)}>{d}</Pressable>
       : <span key={iso} className={cls} style={pos} role="img" aria-label={label}>{d}</span>);
   }
   if (win) {
@@ -391,7 +392,7 @@ function FareTable({ c, top, fares, fair, destinations, me }) {
               const r = sum(p.id);
               return (
                 <td key={p.id} className={`vr-fl-p is-foot${win(p.id)}`}>
-                  {r?.complete ? <b className="num">{eur(Math.round(r.avg))}</b> : <span className="vr-fl-none">{t('vr.incomplete')}</span>}
+                  {r?.complete ? <b className="num vr-fl-avg">{eur(Math.round(r.avg))}</b> : <span className="vr-fl-none">{t('vr.incomplete')}</span>}
                 </td>
               );
             })}
