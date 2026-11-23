@@ -57,6 +57,20 @@ async function open(browser, v, w, lang) {
     new PerformanceObserver((l) => { for (const e of l.getEntries()) if (!e.hadRecentInput) window.__cls += e.value; })
       .observe({ type: 'layout-shift', buffered: true });
   }, lang);
+  // Dutch never shows an English place name, not even for a moment (judge 3
+  // fix 1): the page is read every 100 ms for its first 4 s.
+  if (lang === 'nl') {
+    await page.addInitScript(() => {
+      window.__englishSeen = [];
+      const t0 = performance.now();
+      const id = setInterval(() => {
+        const p = document.querySelector('.tg-panel');
+        const m = p && p.innerText.match(/\b(Lisbon|Ghent|Seville|Naples|Florence)\b/);
+        if (m) window.__englishSeen.push(`${m[1]} at ${Math.round(performance.now() - t0)} ms`);
+        if (performance.now() - t0 > 4000) clearInterval(id);
+      }, 100);
+    });
+  }
   await page.goto(`http://127.0.0.1:${PORT}/${VARIANTS[v]}`, { waitUntil: 'domcontentloaded' });
   await page.locator('.vr-panel, .tg-panel').first().waitFor({ timeout: 25000 });
   // First paint: no figure may be animating now.
@@ -191,6 +205,11 @@ async function runOne(browser, v, w, lang) {
     if (r.saffron > 1) fails.push(`saffron marks ${r.saffron}`);
     if (!r.h1) fails.push('no h1');
     if (firstAnims.length) fails.push(`animations at first paint: ${firstAnims.slice(0, 3).join(', ')}`);
+    if (lang === 'nl') {
+      await page.waitForFunction(() => performance.now() > 4100, null, { timeout: 15000 }).catch(() => {});
+      const seen = await page.evaluate(() => window.__englishSeen || []);
+      if (seen.length) fails.push(`English place name in nl: ${seen[0]}`);
+    }
     const rowsBad = await photoRows(page);
     if (rowsBad.length) fails.push(`photo rows: ${rowsBad.slice(0, 3).join(' | ')}`);
     const blurry = await sharpness(page);

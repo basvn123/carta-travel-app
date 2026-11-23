@@ -62,6 +62,8 @@ import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares
 import { readFriendHandleFromUrl, stripFriendHandleFromUrl, holdFriendHandle } from './auth/friends.js';
 import { readCircleFromUrl, stripCircleFromUrl, holdCircle } from './auth/circles.js';
 import { OPEN_VRIENDEN } from './together/openVrienden.js';
+import { resolveNames } from './together/placeNameCache.js';
+import { togetherDestIds } from './together/useTogether.js';
 import { IconButton } from './components/ui/index.js';
 import { readCoplanTokenFromUrl, stripCoplanTokenFromUrl, holdCoplanToken, acceptCoplanLink } from './auth/coplanners.js';
 import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
@@ -191,7 +193,7 @@ function useLatestHandlers(fns) {
 }
 
 function TravelApp() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const {
     configured: authConfigured, user, recoveryMode,
     loading: authLoading, emailConfirmed, dismissEmailConfirmed,
@@ -428,6 +430,9 @@ function TravelApp() {
   // each sub-screen one more, so Back walks out of a friend's page onto the
   // page, then off the page.
   function openTogether(view = 'home', id = '') {
+    // G16 (judge 3 fix 1): the place names start loading with the press, so
+    // Vrienden opens with them in the reader's language.
+    resolveNames(data?.destinations, togetherDestIds(), lang);
     setGuidesOpen(false);
     setSavedTripsOpen(false);
     setAccountOpen(false);

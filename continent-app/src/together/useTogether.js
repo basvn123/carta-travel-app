@@ -463,6 +463,16 @@ export function useTogether() {
   return { ...s, signedIn: s.userId === userId };
 }
 
+/** Every place Vrienden names (friends' trips, your plans, kring
+ *  proposals), so the door can start their names' lookup (G16). */
+export function togetherDestIds() {
+  return [
+    ...state.friendTrips.flatMap((tr) => tr.destinationIds || []),
+    ...state.myPlans.flatMap((p) => p.destination_ids || []),
+    ...(state.circles || []).flatMap((c) => (c.proposals || []).map((p) => p.destId)),
+  ];
+}
+
 /** Accepted friends' ids, from the links. */
 export function friendIdsOf(s) {
   return new Set(s.links.filter((l) => l.kind === 'friend').map((l) => l.userId));
