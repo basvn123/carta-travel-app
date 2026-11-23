@@ -46,7 +46,7 @@ const addressKeys = (page) => page.evaluate(() => [...new URLSearchParams(window
 const mirrorOf = async (page) => new globalThis.URLSearchParams(await page.evaluate(() => localStorage.getItem('continent.state.v1') || ''));
 const mirrorKeys = async (page) => [...(await mirrorOf(page)).keys()];
 
-for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 820, 1180], ['desktop 1440', 1440, 900]]) {
+for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 820, 1180], ['tablet 1180', 1180, 820], ['desktop 1440', 1440, 900]]) {
   try {
     const { page, errors } = await boot({ width, height });
     let keys = await addressKeys(page);
@@ -63,17 +63,28 @@ for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 82
     m = await mirrorOf(page);
     check(`${label}: a reload keeps the party, the shortlist and the home point`, m.get('g') === '3' && (m.get('fav') || '').includes('BRU') && (m.get('dh') || '').startsWith('50.85,4.35'), `g=${m.get('g')} fav=${m.get('fav')} dh=${m.get('dh')}`);
     check(`${label}: after the reload the address still has no person key`, PERSON.every((k) => !keys.includes(k)), keys.join(','));
-    // The share control, when the dock shows one: its link carries no person key.
-    await page.evaluate(() => { window.__copied = ''; navigator.clipboard.writeText = async (t) => { window.__copied = t; }; });
-    const share = page.getByRole('button', { name: /share/i }).first();
-    if (await share.isVisible().catch(() => false)) {
+    // The share control: Explore's applied row, the phone dock or the tab row. Its link is captured
+    // from the clipboard and navigator.share stubs; it keeps the view and carries no person key.
+    await page.goto(`${URL}?tab=explore&cf=IT&gem=1&sort=price`, { waitUntil: 'domcontentloaded' });
+    await page.locator('.explore-tab').waitFor({ timeout: 60000 }).catch(() => {});
+    await page.waitForTimeout(3000);
+    await page.evaluate(() => {
+      window.__copied = '';
+      const grab = async (t) => { window.__copied = typeof t === 'string' ? t : (t && t.url) || ''; };
+      try { Object.defineProperty(navigator, 'clipboard', { value: { writeText: grab }, configurable: true }); } catch { navigator.clipboard.writeText = grab; }
+      navigator.share = grab;
+    });
+    const share = page.locator('.band-share:visible, .xap-share:visible, .xcats-share:visible').first();
+    const found = await share.waitFor({ state: 'visible', timeout: 15000 }).then(() => true, () => false);
+    check(`${label}: a share control is on screen`, found);
+    if (found) {
       await share.click();
-      await page.waitForTimeout(600);
+      await page.waitForTimeout(800);
       const link = await page.evaluate(() => window.__copied);
       const q = new globalThis.URL(link || 'https://x.test/').searchParams;
-      check(`${label}: the share link carries no person key`, Boolean(link) && [...PERSON, 'g', 'o', 'st'].every((k) => !q.has(k)), link || 'no link copied');
-    } else {
-      check(`${label}: the share control is not on this screen (the link is pinned in tests/shareKeys.test.mjs)`, true, 'not visible');
+      const banned = ['fav', 'dh', 'ty', 'g', 'gc', 'gb', 'st', 'ls', 'o', 'b'].filter((k) => q.has(k));
+      check(`${label}: the share link carries no person key`, Boolean(link) && banned.length === 0, link || 'no link copied');
+      check(`${label}: the share link keeps the view keys (cf, gem, sort)`, q.get('cf') === 'IT' && q.get('gem') === '1' && q.get('sort') === 'price', link);
     }
     check(`${label}: no page error with E9 on`, errors.length === 0, errors.join(' | '));
     await page.close();
