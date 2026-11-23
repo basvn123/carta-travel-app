@@ -123,3 +123,15 @@ def test_apply_build_cleans_with_the_same_rules_as_the_build():
     assert "accommodation" not in data["destinations"]["p6"]      # both tiers of the broken pair went
     assert data["destinations"]["p0"]["accommodation"]["beds"] == {"hotel3": 100}
     assert n == 5 and after["out_of_order"] == 0
+
+
+def test_a_fully_reversed_star_chain_leaves_no_pair_out_of_order():
+    """hotel2 > hotel3 > hotel4 > hotel5: every broken pair drops both tiers
+    (nothing says which is right) and what is left is in order."""
+    beds = {"hotel2": 400, "hotel3": 300, "hotel4": 200, "hotel5": 100}
+    cleaned, dropped = clean_all(beds)
+    assert order_violations(cleaned) == []
+    assert {t for t, _w in dropped} >= {"hotel2", "hotel3"}
+    mixed = {"hotel2": 80, "hotel3": 120, "hotel4": 100, "hotel5": 300}
+    cleaned, dropped = clean_all(mixed)
+    assert cleaned == {"hotel2": 80, "hotel5": 300} and order_violations(cleaned) == []

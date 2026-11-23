@@ -45,7 +45,19 @@ except Exception:
     pass
 
 ROOT = Path(__file__).resolve().parents[1]
-CACHE = ROOT / "cache" / "wiki_images.json"
+
+
+def _hero_bans():
+    # By file path: `photos` is not a package on the box's sys.path (D17).
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("carta_hero_bans", ROOT / "pipeline" / "photos" / "hero_bans.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+HERO_BANS = _hero_bans()
+CACHE =ROOT / "cache" / "wiki_images.json"
 TARGETS = [
     ROOT / "app_data" / "app_data.json",                  # real dataset
     ROOT / "continent-app" / "public" / "app_data.json",  # what the dev app serves
@@ -242,6 +254,17 @@ def harvest(dests, resume=True):
     return cache
 
 
+def keeps_existing_hero(dest, rec):
+    """True when the harvested file is a banned hero (flag, map, portrait...,
+    D17) and the place already has a hero: the old one stays and the place is
+    left for the hero audit (T1198-f). A place with no hero yet takes the file,
+    a banned hero is still better shown than none until the audit swaps it."""
+    url = rec.get("original") or rec.get("thumb") or rec.get("title") or ""
+    if not (dest.get("image") or {}).get("url"):
+        return False
+    return HERO_BANS.is_banned(url, dest.get("city") or dest.get("name") or "")
+
+
 def patch(cache=None):
     if cache is None:
         cache = load_json(CACHE) if CACHE.exists() else {}
@@ -251,9 +274,12 @@ def patch(cache=None):
             continue
         data = load_json(path)
         dests = data.get("destinations", {})
-        n_img = 0
+        n_img = banned_kept = 0
         for did, d in dests.items():
             rec = cache.get(did)
+            if rec and keeps_existing_hero(d, rec):
+                banned_kept += 1
+                rec = None
             if rec:
                 d["image"] = {
                     "url": rec.get("thumb") or rec.get("original"),
@@ -278,6 +304,8 @@ def patch(cache=None):
         }
         data["meta"]["schema_version"] = max(10, data["meta"].get("schema_version", 0))
         atomic_write_json(path, data)
+        if banned_kept:
+            print(f"  {path.name}: {banned_kept} banned harvested heroes not applied (kept the old hero)")
         print(f"  {path.name}: {n_img}/{len(dests)} dests have an image "
               f"({path.stat().st_size / 1024 / 1024:.2f} MB)")
 
