@@ -36,7 +36,7 @@ import {
 } from '../lib/paywallEvents.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
 import { isOn } from '../lib/flags.js';
-import { decide, isPaidTier } from '../lib/paywallDecision.js';
+import { decide, isPaidTier, QUOTA_REASONS } from '../lib/paywallDecision.js';
 // T1171: keeps a ?pm=on preview of the Pass moment before the app rewrites the address.
 import '../pass/passMoment.js';
 
@@ -49,7 +49,7 @@ import '../pass/passMoment.js';
  * heading there and to all six locales.
  */
 // Gates asked only when a metered allowance is spent or nearly spent.
-const QUOTA_REASONS = new Set(['plans', 'ground', 'plansLow']);
+// (QUOTA_REASONS lives in lib/paywallDecision.js, the one definition.)
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const GATES = {
@@ -240,10 +240,11 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
     // one person most likely to buy again.
     if (E10 && !PAY_MOCK) {
       // E10: one decision (lib/paywallDecision.js). 'wait' holds the action while the
-      // entitlement is read; the read is asked again so the next press has the answer.
+      // entitlement is read: it asks again and shows the pass sheet meanwhile, which reads the
+      // entitlement live, so a press is never silent (a button that does nothing reads as a bug).
       const d = decide(why, snapshot, readLastTier());
       if (d === 'pass') return true;
-      if (d === 'wait') { entitlement.refresh(); return false; }
+      if (d === 'wait') entitlement.refresh();
     } else if (paid && !(QUOTA_REASONS.has(why) && entitlement.known)) return true;
     const gate = GATES[why] || GATES.browse;
     openedHard.current = gate.kind === 'hard';

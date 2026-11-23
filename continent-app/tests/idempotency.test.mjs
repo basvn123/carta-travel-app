@@ -8,6 +8,7 @@
 // Run: node --test tests/idempotency.test.mjs (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { eventAction, grantArgs } from "../../supabase/functions/_shared/stripeEvents.mjs";
 import { checkoutUrls, safeReturnTo, withPass } from "../../supabase/functions/_shared/checkoutUrls.mjs";
 import { syncAccountThings } from "../src/auth/accountSync.js";
@@ -105,4 +106,16 @@ test("J-5: returnTo is a same-origin path or it becomes the home page", () => {
   }
   assert.equal(safeReturnTo("/places?month=7#top"), "/places?month=7#top");
   assert.equal(withPass("/a?pass=old&x=1", "ok"), "/a?pass=ok&x=1");
+});
+
+test("G11: the real grant_pass is idempotent on the session id (migration 007 key, migration 044 guard), and the handler sends the session id", () => {
+  const read = (p) => readFileSync(new URL(p, import.meta.url), "utf8").replace(/\r\n/g, "\n");
+  const m007 = read("../../supabase/migrations/007_passes.sql");
+  assert.match(m007, /create table if not exists public\.pass_grants\s*\(\s*session_id\s+text primary key/, "pass_grants is keyed on the session id");
+  const m044 = read("../../supabase/migrations/044_payments_quota.sql");
+  const fn = m044.slice(m044.indexOf("function public.grant_pass"));
+  assert.match(fn, /if exists \(select 1 from public\.pass_grants where session_id = p_session_id\) then/, "the latest grant_pass returns early for a session it has applied");
+  assert.ok(fn.indexOf("pass_grants where session_id = p_session_id") < fn.indexOf("insert into public.pass_grants"), "the guard comes before the insert");
+  const hook = read("../../supabase/functions/stripe-webhook/index.ts");
+  assert.match(hook, /p_session_id: session\.id/, "the webhook calls grant_pass with the Checkout session id");
 });

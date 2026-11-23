@@ -105,7 +105,7 @@ How plan-day and suggest-city spend units (quota before cache, free refines, gro
 - Decides: that a slow status read never locks a paying traveller out.
 - Rule: a guest is not paid; signed in, paid while the entitlement is loading or unknown, else paid when the tier is not free; outside the provider everything is allowed. The metered AI surfaces stay enforced on the server.
 - Constant: `paid` in `continent-app/src/hooks/usePaywall.jsx:193`; `FALLBACK` in `usePaywall.jsx` (end of file)
-- Test: `continent-app/tests/paywallDecision.test.mjs`. With flag E10 on (owner default 13, 2026-11-19): signed in and unknown, a traveller whose last read (kept on the device) was a paid tier passes the hard gates; one who never paid is gated for export, save, import, calendar and map when the read failed, and held (`wait`) while it loads; the sign-in migration of a device trip decides only on a known entitlement (J-7). The server's refusal for plans and ground is unchanged (QUOTA-012 above)
+- Test: `continent-app/tests/paywallDecision.test.mjs`. With flag E10 on (owner default 13, 2026-11-19): signed in and unknown, a traveller whose last read (kept on the device) was a paid tier passes the hard gates; one who never paid is gated for export, save, import, calendar and map when the read failed, and held (`wait`) while it loads (the action does not run, the status is asked again and the pass sheet shows meanwhile, never a silent press); the sign-in migration of a device trip decides only on a known entitlement (J-7). The server's refusal for plans and ground is unchanged (QUOTA-012 above)
 
 ### QUOTA-013 Soft offers, once a session, snoozed a month
 - Decides: how often an unasked offer may appear.
