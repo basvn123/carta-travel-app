@@ -81,6 +81,57 @@ def asof_of(meta: dict) -> str | None:
     return None
 
 
+# D3, D12 (wave 2, 1.3): what a block's date means. A block built from a dated
+# source says the date of the source, not the day a layer last wrote it, so
+# one wire does not read "2026-11-08" on every block when stays were scraped
+# on 2026-10-25, the bathing data is the 2025 season and the climate is the
+# 2001-2020 normal. Each rule: (how, field in the block, or the path in meta).
+#   field_date   the block's own ISO date field (stays: `captured`)
+#   year_end     31 December of the block's `year` (crowding, bathing_water)
+#   period_end   31 December of the last year of the block's `period`
+#                ("2001-2020"; the meta climate_model.period when the block has none)
+#   meta_month   the first of a "YYYY-MM" kept in meta (the food model month)
+ASOF_RULES = {
+    "accommodation": ("field_date", "captured"),
+    "crowding": ("year_end", "year"),
+    "bathing_water": ("year_end", "year"),
+    "climate": ("period_end", "period", "climate_model.period"),
+    "costs": ("meta_month", "food_model.asof"),
+}
+
+
+def _meta_get(meta, path):
+    for k in path.split("."):
+        if not isinstance(meta, dict) or k not in meta:
+            return None
+        meta = meta[k]
+    return meta
+
+
+def asof_for(block_key: str, dest: dict, meta: dict | None = None) -> str | None:
+    """The date a block's values are known to hold, from the table above, or
+    None when the block has no rule or the source field is missing or odd (the
+    caller then dates it by the write, as before)."""
+    rule = ASOF_RULES.get(block_key)
+    block = (dest or {}).get(block_key)
+    if not rule or not isinstance(block, dict):
+        return None
+    how, field = rule[0], rule[1]
+    v = block.get(field)
+    if how == "field_date":
+        return v[:10] if isinstance(v, str) and DATE_RE.match(v[:10]) else None
+    if how == "year_end":
+        y = str(v)
+        return f"{y}-12-31" if re.fullmatch(r"(19|20)\d{2}", y) else None
+    if how == "period_end":
+        m = re.search(r"((?:19|20)\d{2})\s*$", str(v or _meta_get(meta, rule[2]) or ""))
+        return f"{m.group(1)}-12-31" if m else None
+    if how == "meta_month":
+        m = re.fullmatch(r"((?:19|20)\d{2})-(0[1-9]|1[0-2])", str(_meta_get(meta, field) or ""))
+        return f"{m.group(1)}-{m.group(2)}-01" if m else None
+    return None
+
+
 def is_stamped(block) -> bool:
     return (isinstance(block, dict) and isinstance(block.get(SRC), str)
             and isinstance(block.get(ASOF), str))
@@ -134,14 +185,23 @@ def stamp_payload(data: dict, *, asof: str | None = None, registry=None,
         return 0
     blocks = key_blocks(registry)
     when = asof or today_iso()
+    meta = data.get("meta")
     n = 0
     for d in data["destinations"].values():
         if not isinstance(d, dict):
             continue
         for b, src in blocks.items():
-            if stamp(d.get(b), src, when):
+            block = d.get(b)
+            if not isinstance(block, dict):
+                continue
+            # A block built from a dated source takes the source's date on
+            # every write, so it is right whatever wrote it last (no migration).
+            dated = asof_for(b, d, meta)
+            if dated and is_stamped(block) and block[ASOF] != dated:
+                block[ASOF] = dated
                 n += 1
-    meta = data.get("meta")
+            elif stamp(block, src, dated or when):
+                n += 1
     if bump_version and isinstance(meta, dict):
         v = meta.get("schema_version")
         if not isinstance(v, int) or v < SCHEMA_VERSION:
