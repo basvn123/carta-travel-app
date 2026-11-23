@@ -199,10 +199,15 @@ def dangling_end(n1: str, n0_readable: str = "") -> bool:
     t = n1.strip()
     if not t or names.squash(t) == names.squash(n0_readable):
         return False        # the wire's own name, unchanged, is not the cleaner's doing
+    if len(t) >= len(n0_readable):
+        return False        # not cut: the wire's own length
+    t = re.sub(r", (?:[\d.]+ km|no\. \d+|#\d+)$", "", t)    # the dedupe suffix is not the cut's end
+    if re.search(r"\w-,\s[^\s]+-$", t):
+        return False        # a suspended hyphen is a word
     if t[-1] in ">_|-:,/&(":
         return True
-    last = re.findall(r"[^\W\d_]+", t.lower())
-    return bool(last) and t[-1].isalpha() and last[-1] in names._DANGLING and len(last) > 1         and len(t) < len(n0_readable)
+    # The cut's own rule (names.trim_dangling), so the rule and the counter cannot drift apart.
+    return names.trim_dangling(t) != t
 
 
 def cap_kept_long(n0: str, n1: str, cc: str | None = None) -> bool:

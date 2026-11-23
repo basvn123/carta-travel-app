@@ -72,3 +72,13 @@ def test_coverage_counts_rows_the_draft_gave_up_and_few_kappa_rows_warn(tmp_path
     assert ag.main(["--draft", str(draft), "--sheet", str(sheet)]) == 0
     out = capsys.readouterr().out
     assert "coverage 1 of 3" in out and "WARNING: only 1 category rows, fewer than 20" in out
+
+
+def test_an_image_depicts_row_counts_toward_the_kappa(tmp_path):
+    """Judge 3 fix 3: image_depicts is a yes or no label (compare "yes")."""
+    draft, sheet = tmp_path / "draft.csv", tmp_path / "sheet.csv"
+    write(draft, [row(1, "image_depicts", "yes", "drafted"), row(2, "image_depicts", "yes", "drafted")])
+    write(sheet, [row(1, "image_depicts", "yes", "verified"), row(2, "image_depicts", "no", "verified")])
+    fields = ag.json.loads((ROOT / "evals/truth/fields.json").read_text(encoding="utf-8"))["fields"]
+    res = ag.compare_sheets(ag.read(draft), ag.read(sheet), fields, ag._truth())
+    assert res["kappa_rows"] == 2 and res["matched"] == 2

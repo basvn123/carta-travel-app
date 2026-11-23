@@ -142,7 +142,25 @@ _DANGLING = frozenset({
     "wokół", "przez", "koło", "obok", "dla", "około",
     "um", "rund", "bei", "mit", "auf", "aus", "entre", "hacia", "desde", "los", "las", "el",
     "alrededor", "rond", "door", "langs", "om", "til", "fra", "och", "kring", "runt",
-    "ve", "pro", "kolem", "okolo", "mezi", "és", "körül"})
+    "ve", "pro", "kolem", "okolo", "mezi", "és", "körül"}) | frozenset({
+    # D7 (wave 3 step 0): the joining words, articles and conjunctions of the data's
+    # languages (de nl fr it es pl cs sk sl hr hu da sv no fi et lt lv pt ro). One list
+    # for the cut (`trim_dangling`) and for the replay's `dangling_end`.
+    "der", "den", "dem", "die", "das", "ein", "eine", "einer", "oder", "zum", "zur", "vom", "mit", "bei", "aus", "f\u00fcr", "fur",
+    "het", "een", "voor", "met", "op", "tot", "uit", "onder", "tussen",
+    "un", "une", "les", "sous", "pour", "par", "ou", "entre", "chez", "vers",
+    "il", "lo", "gli", "le", "una", "ed", "nel", "nella", "nei", "nelle", "su", "tra", "fra",
+    "un", "unos", "unas", "por", "para", "sobre", "bajo", "tras", "ante",
+    "oraz", "od", "pod", "nad", "obok", "przed", "za", "bez", "ze",
+    "ve", "se", "ke", "u", "k", "p\u0159ed", "mezi", "bez", "pre", "so", "vo",
+    "ob", "pri", "sa", "kod", "iz", "uz",
+    "az", "egy", "meg", "\u00e9s",
+    "og", "af", "ved", "om", "med", "til", "p\u00e5", "fr\u00e5n", "\u00f6ver", "under", "vid", "och", "av", "mot", "ett", "f\u00f6r",
+    "ja", "ning", "ir", "un", "ei",
+    "o", "os", "as", "dos", "das", "do", "da", "ao", "aos", "\u00e0s", "no", "na", "nos", "nas", "com", "em", "sem",
+    "\u0219i", "si", "cu", "pe", "din", "pentru", "\u00een", "la", "de",
+    "n\u1d52", "n\u00ba", "nr", "son", "w", "z", "y", "e", "i"})
+
 _SEGMENT_SEPS = (" - ", " \u2013 ", ": ", ", ", " / ")
 
 # Landmark kinds in the order a reader would name the walk after them.
@@ -198,6 +216,33 @@ def _close_brackets(out):
         if out.count(q) > out.count(close):
             out = out[:out.rfind(q)]
     return out.rstrip(_TRAIL_PUNCT)
+
+
+def trim_dangling(out):
+    """What a cut name must not end on, taken off (D7, wave 3 step 0): a last
+    token of two letters or fewer (no digit), a word of `_DANGLING` (joining
+    words and articles per language), a lone "&", an open quote or bracket.
+    Used after every word cut and by the replay's `dangling_end`, so the rule
+    and the counter cannot drift apart. Keeps at least three characters."""
+    while True:
+        prev = out
+        if re.search(r"\w-,\s[^\s]+-$", out):
+            return out              # "Rad-, Lauf-": the hyphen is a word
+        out = _close_brackets(out)
+        out = re.sub(r"(?:^|\s)'[^']*$", "", out).rstrip(_TRAIL_PUNCT)
+        m = re.search(r"(?:^|[\s\-&/]+)([^\s\-&/]+)$", out)
+        if m:
+            tok = m.group(1)
+            low = tok.lower().strip(".,;:")
+            short = len(tok) <= 2 and not any(c.isdigit() for c in tok) and not re.fullmatch(r"-+", m.group(0)[:-len(tok)].strip(" "))
+            if low in _DANGLING or short:
+                cut = out[:m.start()].rstrip(_TRAIL_PUNCT)
+                if len(cut) >= 3:
+                    out = cut
+        if re.search(r"\s&$", out):
+            out = out[:-2].rstrip(_TRAIL_PUNCT)
+        if out == prev:
+            return out
 
 
 def _head_words(text, room):
@@ -381,14 +426,7 @@ def cap_title(text, limit=TITLE_MAX):
         out += "-"
 
     if out and len(out) < len(s):
-        # "Bagnoles-de" cut at a hyphen, "Watersmeet &": a joining word or a lone
-        # symbol is not an end (D7, wave 2, judge 2).
-        rx = re.compile(r"(?:^|[\s\-&/]+)(?:" + "|".join(sorted(map(re.escape, _DANGLING))) + r"|&)$", re.IGNORECASE)
-        while True:
-            m = rx.search(out)
-            if not m or m.start() < 3:
-                break
-            out = out[:m.start()].rstrip(_TRAIL_PUNCT)
+        out = trim_dangling(out)    # "Bagnoles-de", "Watersmeet &", "Route der", an open quote
     if out and not out.endswith("-") and re.search(r"\w-,\s[^\s]+-$", str(text or "").strip()) and len(out) >= len(s) - 1:
         out += "-"              # the whole name already ended on its suspended hyphen
     return out
@@ -1087,7 +1125,18 @@ def dedupe_names(rows, originals=None):
                 cand = []
                 for r, o in zip(rs, origs):
                     tail = _BRACKET_RE.search(o) and _rep_tail(r, o)
-                    cand.append((named(r, [tail], True) or tail) if tail else None)
+                    if tail:
+                        cand.append(named(r, [tail], True) or tail)
+                        continue
+                    # Judge 3 fix 2: the readable original without its network or
+                    # code prefix, when it fits, before an id ("WNW IJsseldelta -
+                    # IJsselmuiden/Station Kampen - groene route").
+                    up = split_code(o)[0]
+                    mp = re.match(r"^[A-Z]{2,5}\s+[^-\u2013]{1,30}?\s*[-\u2013]\s*(?=\S)", o)
+                    if mp:
+                        up = o[mp.end():].strip()
+                    cand.append(up if up and len(up) <= TITLE_MAX and not is_code(up)
+                                and squash(up) != squash(r["name"]) else None)
                 bare = [i for i, c in enumerate(cand) if not c]
                 for i in bare:         # the only row with nothing keeps its name
                     cand[i] = rs[i]["name"] if len(bare) == 1 else _named_id(rs[i])

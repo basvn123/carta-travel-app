@@ -82,7 +82,7 @@ def compare_sheets(draft: list[dict], sheet: list[dict], fields: dict, truth) ->
         bf = by_field.setdefault(f"{d['kind']}.{d['field']}", [0, 0])
         bf[0] += outcome == "right"
         bf[1] += 1
-        if spec["compare"] in ("exact", "category", "bool"):
+        if spec["compare"] in ("exact", "category", "bool", "yes"):
             labels_d.append(truth.fold(d["verified_value"]))
             labels_o.append(truth.fold(o["verified_value"]))
     k = cohen_kappa(labels_d, labels_o)

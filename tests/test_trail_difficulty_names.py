@@ -584,3 +584,33 @@ def test_a_cap_cuts_at_a_boundary_and_never_ends_on_a_joining_word_or_symbol():
     got = _dedupe([(185498, "PL", "Ścieżka historyczno-przyrodnicza wokół Maślic"),
                    (189276, "GB", "Rail Trail: Birmingham International > Marston Green")])
     assert not got[185498].endswith("wokół") and not got[189276].endswith(">")
+
+
+def test_a_cut_name_never_ends_on_a_short_or_joining_word_or_an_open_quote():
+    """Wave 3 step 0 (judge 3 fix 1): one rule, names.trim_dangling, for every language."""
+    cases = [
+        (255880, "DE", "Etappe 4 der Wiesengänger Route der Wandertrilogie Allgäu", " der"),
+        (182034, "ES", "Sendero de Ubiernaentre la Dehesa y el Cañón", " y"),
+        (64543, "LT", "Babėnų miško sveikatingumo trasa ir pažintinis rekreacinis takas", " ir"),
+        (89744, "BE", "Promenade à Ottignies-Louvain-la-Neuve nᵒ 1 : Céroux", "nᵒ"),
+        (24642, "NO", "Fottur til Frafjordhatten og Kjærlighetsstien", " og"),
+        (203885, "IT", "Sui pascoli del M.Comero fra Bruschete e Pian delle Riti", " e"),
+    ]
+    for rid, cc, src, bad in cases:
+        got = _dedupe([(rid, cc, src)])[rid]
+        assert not got.endswith(bad) and names.trim_dangling(got) == got, got
+    got = _dedupe([(229222, "DE", "Südheide 'Wacholderwald in der Teufelsheide' W1m (mittlere Tour)")])[229222]
+    assert got.count("'") % 2 == 0
+    for word in ("der", "den", "das", "y", "e", "i", "ja", "og", "ir", "w", "nr", "son", "und", "et", "ve"):
+        assert names.trim_dangling("Wanderweg Alpenblick " + word) == "Wanderweg Alpenblick", word
+    assert names.trim_dangling("Walk Round Burghclere 'Footsteps") == "Walk Round Burghclere"
+    assert names.trim_dangling("Nickelsdorfer Rad-, Lauf-") == "Nickelsdorfer Rad-, Lauf-"
+
+
+def test_142161_takes_its_readable_original_without_the_network_prefix_before_an_id():
+    """Judge 3 fix 2: 'IJsselmuiden/Station Kampen - groene route' is exactly 42 characters."""
+    got = _dedupe([(142161, "NL", "WNW IJsseldelta -IJsselmuiden/Station Kampen - groene route"),
+                   (159251, "NL", "WNW Twente- Mariaparochie/Harbrinkhoek - groene route"),
+                   (166611, "NL", "Groene route")])
+    assert ", no. " not in got[142161] and ", no. " not in got[159251]
+    assert got[142161] == "IJsselmuiden/Station Kampen - groene route"
