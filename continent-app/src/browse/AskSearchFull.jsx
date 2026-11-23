@@ -384,6 +384,7 @@ function Receipt({ t, price }) {
       <summary className="ask-receipt-sum">
         <span>{t('ask.totalFor')}</span>
         <span className="ask-receipt-total">{price.total}</span>
+        {price.before && <small className="ask-receipt-before">{price.before}</small>}
         <ChevronDownIcon size={16} className="ask-receipt-chev" />
       </summary>
       <dl className="ask-receipt-lines">

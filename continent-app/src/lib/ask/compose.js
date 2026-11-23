@@ -16,6 +16,7 @@
  */
 import { formatMoney, formatEst } from '../money.js';
 import { budgetReceipt } from '../budgetSearch.js';
+import { isOn } from '../flags.js';
 import { stripDashes } from '../format.js';
 
 const clean = (s) => stripDashes(String(s ?? ''));
@@ -88,6 +89,8 @@ function receiptText(price, q, t) {
     left: r.left != null ? formatMoney(r.left) : null,
     lines: r.lines.map((l) => ({ label: t(`ask.line.${l.key}`), eur: money(l.eur, l.est, t) })),
     unpriced: r.unpriced.map((u) => t(`ask.unpriced.${u.key}`)),
+    // E1 (A-10, owner default 1): a total that leaves getting there out says so beside the total.
+    before: isOn('E1') && r.unpriced.some((u) => u.key === 'there') ? t('ask.beforeThere') : null,
     dayPp: money(r.dayPp, r.est, t),
   };
 }
