@@ -43,7 +43,7 @@ const boot = async (viewport) => {
   return { page, errors };
 };
 const addressKeys = (page) => page.evaluate(() => [...new URLSearchParams(window.location.search).keys()]);
-const mirrorOf = (page) => page.evaluate(() => new URLSearchParams(localStorage.getItem('continent.state.v1') || ''));
+const mirrorOf = async (page) => new globalThis.URLSearchParams(await page.evaluate(() => localStorage.getItem('continent.state.v1') || ''));
 const mirrorKeys = async (page) => [...(await mirrorOf(page)).keys()];
 
 for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 820, 1180], ['desktop 1440', 1440, 900]]) {
