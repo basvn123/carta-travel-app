@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useAuth } from '../../auth/AuthContext.jsx';
@@ -580,6 +580,15 @@ export function VriendenHome({
       variant={variant} block={block} />
   );
   const meName = nameOf(s.me) || t('vr.you');
+  // With no Te doen, Samen onderweg or Rekeningen the left column is empty;
+  // the page is then one column (judge 2 fix 2). Read before paint, so the
+  // layout never jumps.
+  const leftRef = useRef(null);
+  const [leftEmpty, setLeftEmpty] = useState(false);
+  useLayoutEffect(() => {
+    const empty = !!leftRef.current && leftRef.current.childElementCount === 0;
+    if (empty !== leftEmpty) setLeftEmpty(empty);
+  });
   const name = usePlaceNames(destinations, [
     ...s.friendTrips.flatMap((tr) => tr.destinationIds || []),
     ...meets.map((o) => o.destId),
@@ -604,8 +613,8 @@ export function VriendenHome({
       {error && <div className="auth-error" role="alert">{error}</div>}
       {friends.length === 0 && <ZeroHero invite={invite('primary', true)} onFind={onFind} />}
       <WhoGoes s={s} destinations={destinations} meets={meets} />
-      <div className="vr-cols">
-        <div className="vr-col is-left">
+      <div className={`vr-cols${leftEmpty ? ' is-one' : ''}`}>
+        <div className="vr-col is-left" ref={leftRef}>
           <TodoDeck s={s} onView={onView} onError={onError} />
           <OnTheRoad s={s} meets={meets} destinations={destinations} onPlanDay={onPlanDay} />
           <Bills s={s} onView={onView} />
