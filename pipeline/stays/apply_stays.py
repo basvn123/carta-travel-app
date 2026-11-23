@@ -51,7 +51,7 @@ from pricing_config import rule  # noqa: E402
 FEES = rule("stay.fees")
 
 
-from bed_rules import bed_stats, clean_beds  # noqa: E402
+from bed_rules import bed_stats, clean_all, clean_many  # noqa: E402
 
 # D10 (wave 1, 0.1): an apply may not lose more than this share of measured
 # places. A partial build pops every block it does not price (T1021), so
@@ -59,11 +59,16 @@ from bed_rules import bed_stats, clean_beds  # noqa: E402
 MAX_MEASURED_LOSS = 0.02
 
 
-def compact(rec):
-    # A build made before bed_rules (or by hand) may still carry a dorm above
-    # hotel3; the block every first paint reads never does.
-    beds, _, _ = clean_beds(rec["beds"])
-    return {"beds": beds, "q": rec["q"], "captured": rec.get("captured"),
+def compact(rec, medians=None):
+    """The master block for a build record, or None when nothing is left.
+
+    A build made before bed_rules (or by hand) may carry tiers out of order, a
+    figure under the floor or a country outlier; the block every first paint
+    reads never does. Same clean_all as build_stays.build()."""
+    rec, _ = clean_all(rec, medians)
+    if not rec["beds"]:
+        return None
+    return {"beds": rec["beds"], "q": rec["q"], "captured": rec.get("captured"),
             "supply": rec.get("supply", {})}
 
 
@@ -88,10 +93,13 @@ def apply_build(data, records, manifest):
     """
     before = bed_stats(data["destinations"])
     n = 0
+    iso_of = {did: d.get("iso2") for did, d in data["destinations"].items()}
+    records, _dropped = clean_many({i: r for i, r in records.items() if r}, iso_of)
     for did, d in data["destinations"].items():
         rec = records.get(did)
-        if rec and rec.get("beds"):
-            d["accommodation"] = compact(rec)
+        block = compact(rec) if rec and rec.get("beds") else None
+        if block:
+            d["accommodation"] = block
             n += 1
         else:
             d.pop("accommodation", None)
