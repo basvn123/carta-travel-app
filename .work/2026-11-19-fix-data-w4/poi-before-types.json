@@ -1,0 +1,974 @@
+{
+ "rules": "before",
+ "shards": 3865,
+ "rows": 157775,
+ "must_sees_effective": 11161,
+ "kind_changed": 0,
+ "newly_noise_live_rows": 0,
+ "must_square_no_square_word": 3769,
+ "must_square_no_square_word_pct": 33.77,
+ "must_matching_research_not_visitable": 274,
+ "must_dropped": 0,
+ "must_dropped_by_class": {},
+ "must_dropped_by_country": {},
+ "must_by_class": {
+  "village": 3070,
+  "city": 3002,
+  "town": 2846,
+  "area": 1231,
+  "metro": 1008,
+  "?": 4
+ },
+ "sq_no_word_by_class": {
+  "town": 1063,
+  "city": 985,
+  "village": 950,
+  "area": 451,
+  "metro": 319,
+  "?": 1
+ },
+ "sq_no_word_by_country": {
+  "GB": 725,
+  "FR": 487,
+  "IT": 371,
+  "ES": 342,
+  "DE": 302,
+  "GR": 199,
+  "NL": 166,
+  "PT": 122,
+  "SE": 97,
+  "PL": 90,
+  "DK": 71,
+  "CZ": 71,
+  "BE": 68,
+  "RO": 67,
+  "SI": 46,
+  "NO": 45,
+  "CH": 45,
+  "HR": 43,
+  "BG": 37,
+  "HU": 37,
+  "IE": 34,
+  "AT": 33,
+  "LV": 29,
+  "FI": 28,
+  "AL": 25,
+  "EE": 23,
+  "RS": 19,
+  "BA": 18,
+  "LT": 18,
+  "SK": 17,
+  "MK": 16,
+  "IS": 15,
+  "CY": 13,
+  "XK": 12,
+  "MD": 11,
+  "ME": 10,
+  "MT": 8,
+  "LU": 4,
+  "FO": 3,
+  "??": 1,
+  "AD": 1
+ },
+ "research_hits_by_country": {
+  "FR": 49,
+  "IT": 45,
+  "ES": 32,
+  "GR": 20,
+  "GB": 17,
+  "BE": 15,
+  "DE": 14,
+  "NL": 11,
+  "PL": 7,
+  "BG": 7,
+  "CZ": 6,
+  "HR": 5,
+  "XK": 5,
+  "HU": 4,
+  "DK": 4,
+  "SE": 3,
+  "EE": 3,
+  "SK": 2,
+  "IE": 2,
+  "RS": 2,
+  "PT": 2,
+  "MK": 2,
+  "RO": 2,
+  "NO": 2,
+  "FI": 2,
+  "ME": 2,
+  "SI": 2,
+  "LV": 2,
+  "??": 1,
+  "LT": 1,
+  "CH": 1,
+  "BA": 1,
+  "AT": 1
+ },
+ "research_hits_samples": [
+  [
+   "AOI",
+   "Battle of Ancona",
+   "1944 battle of World War II",
+   [
+    "event"
+   ]
+  ],
+  [
+   "BIA",
+   "Battle of Borgo",
+   "1768 battle",
+   [
+    "event"
+   ]
+  ],
+  [
+   "BJZ",
+   "Battle of the Gebora",
+   "1811 battle during the Peninsular War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "BTS",
+   "Slovak National Theatre",
+   "Theatre and opera company in Bratislava, Slovakia",
+   [
+    "org"
+   ]
+  ],
+  [
+   "BUD",
+   "Siege of Budapest",
+   "1944-45 World War II battle",
+   [
+    "event"
+   ]
+  ],
+  [
+   "BZR",
+   "massacre at B\u00e9ziers",
+   "1209 killing of Cathars during the Albigensian Crusade",
+   [
+    "event"
+   ]
+  ],
+  [
+   "CHQ",
+   "Battle of 42nd Street",
+   "World War II battle on the island of Crete, Greece",
+   [
+    "event"
+   ]
+  ],
+  [
+   "CRL",
+   "Battle of Charleroi",
+   "Battle during the First World War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "CRV",
+   "Battle of Crotona",
+   "Battles in 204 and 203 BC",
+   [
+    "event"
+   ]
+  ],
+  [
+   "CRV",
+   "Battle of Stilo",
+   "982 battle between the Holy Roman Empire and the Emirate of Sicily",
+   [
+    "event"
+   ]
+  ],
+  [
+   "DUB",
+   "Battle of Clontarf",
+   "1014 battle between the Kingdom of Ireland and an Irish-Norse alliance",
+   [
+    "event"
+   ]
+  ],
+  [
+   "EGC",
+   "Battle of Bergerac",
+   "Battle during the Hundred Years' War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "FRA",
+   "Deutsche Bank",
+   "globales Bank- und Finanzdienstleistungsunternehmen aus Deutschland",
+   [
+    "org"
+   ]
+  ],
+  [
+   "GDN",
+   "Defense of the Polish Post Office in Danzig",
+   "1939 battle of the World War II",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:_CE_B1_CF_81_CE_B3_CE_BF_CF_82",
+   "Battle of Argos",
+   "272 BC battle between king Pyrrhus of Epirus and a Spartan-Argive-Macedonian alliance",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:aachen",
+   "Battle of Aachen",
+   "Battle on the Western Front of World War II",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:agrigento-valle-dei-templi",
+   "Battle of Agrigentum",
+   "262 BC naval battle between Carthage and Rome",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:albarracin",
+   "Battle of Albarrac\u00edn",
+   "Battle of the Spanish Civil War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:aleksinac",
+   "Battle of \u0160umatovac",
+   null,
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:alessandria",
+   "Battle of Alessandria",
+   "1391 battle in Italy",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:algeciras",
+   "Battle of Gibraltar (1607)",
+   "Eighty Years' war naval battle",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:algeciras",
+   "First Battle of Algeciras",
+   "Battle of the Algeciras campaign",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:alise-sainte-reine",
+   "Battle of Alesia",
+   "Part of the Gallic Wars",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:anghiari",
+   "Battle of Anghiari",
+   "1440 battle between Milan and the Italian League",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:anzio",
+   "Battle of Anzio",
+   "1944 battle in Italy",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:arkhaia-korinthos",
+   "Battle of Lechaeum",
+   "Athenian victory in the Corinthian War (391 BC)",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:arnhem",
+   "Battle of Arnhem",
+   "1944 British airborne operation in the Netherlands",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:augsburg",
+   "Battle of Lechfeld",
+   "Part of the Hungarian invasions of Europe, 955",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:auray",
+   "Battle of Auray",
+   "Part of the War of the Breton Succession (1364)",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:bacharach",
+   "Capture of Bacharach",
+   "1620 battle of the Thirty Years' War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:batalha",
+   "Battle of Aljubarrota",
+   "Decisive final battle of the Portuguese Interregnum of 1383-85",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:bauge-en-anjou",
+   "Battle of Baug\u00e9",
+   "1421 battle of the Hundred Years' War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:bayonne",
+   "Battle of Bayonne",
+   "1814 battle of the campaign in south-west France",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:belfort",
+   "Battle of H\u00e9ricourt",
+   "Part of the Burgundian Wars",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:belfort",
+   "Siege of Belfort",
+   "1870-71 Franco-Prussian War siege",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:belle-ile",
+   "Capture of Belle \u00cele",
+   "1761 battle of the Seven Years' War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:benevento",
+   "Battle of Benevento",
+   "Battle between the troops of Charles of Anjou and Manfred of Sicily",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:benevento",
+   "Battle of Beneventum (214 BC)",
+   "Roman victory in the Second Punic War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:bitola",
+   "Battle of Monastir",
+   "Battle during the First Balkan War",
+   [
+    "event"
+   ]
+  ],
+  [
+   "gem:bourg-charente",
+   "Battle of Jarnac",
+   "1569 battle in the French Wars of Religion",
+   [
+    "event"
+   ]
+  ]
+ ],
+ "must_keep": {
+  "Dam": [
+   [
+    "AMS",
+    "Dam",
+    "Palace",
+    "Palace",
+    "must_see",
+    false
+   ],
+   [
+    "AMS",
+    "Dam Square",
+    "Square",
+    "Square",
+    null,
+    false
+   ]
+  ],
+  "Parthenon": [
+   [
+    "ATH",
+    "Parthenon",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ]
+  ],
+  "Atomium": [
+   [
+    "BRU",
+    "Atomium",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ]
+  ],
+  "Manneken Pis": [
+   [
+    "BRU",
+    "Manneken Pis",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ]
+  ],
+  "Pere Lachaise": [
+   [
+    "BVA",
+    "P\u00e8re Lachaise Cemetery",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ],
+   [
+    "CDG",
+    "P\u00e8re Lachaise Cemetery",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ],
+   [
+    "ORY",
+    "P\u00e8re Lachaise Cemetery",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ]
+  ],
+  "Colosseum": [
+   [
+    "CIA",
+    "Colosseum",
+    "Theatre",
+    "Theatre",
+    "must_see",
+    false
+   ],
+   [
+    "FCO",
+    "Colosseum",
+    "Theatre",
+    "Theatre",
+    "must_see",
+    false
+   ],
+   [
+    "gem:opatija",
+    "Colosseum",
+    "Square",
+    "Square",
+    "worth_a_look",
+    false
+   ]
+  ],
+  "Waterloo": [
+   [
+    "gem:amersfoort",
+    "Naald van Waterloo",
+    "Square",
+    "Square",
+    "recommended",
+    false
+   ],
+   [
+    "gem:baarn",
+    "Naald van Waterloo",
+    "Square",
+    "Square",
+    "must_see",
+    false
+   ],
+   [
+    "gem:betws-y-coed",
+    "Waterloo Bridge Service Station",
+    "Bridge",
+    "Bridge",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:hallerbos",
+    "Battle of Waterloo",
+    "Square",
+    "Square",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:hallerbos",
+    "Lion's Mound",
+    "Square",
+    "Square",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:hallerbos",
+    "Church of Saint Joseph, Waterloo",
+    "Church",
+    "Church",
+    "worth_a_look",
+    false
+   ]
+  ],
+  "Auschwitz": [
+   [
+    "gem:auschwitz",
+    "Auschwitz",
+    "Museum",
+    "Museum",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:auschwitz",
+    "Auschwitz-Birkenau State Museum",
+    "Museum",
+    "Museum",
+    "must_see",
+    false
+   ],
+   [
+    "gem:auschwitz",
+    "Auschwitz III (Monowitz)",
+    "Square",
+    "Square",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:auschwitz",
+    "German Nazi Concentration and Extermination Camp Auschwitz II-Birkenau",
+    "Museum",
+    "Museum",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:auschwitz",
+    "German Nazi Concentration Camp Auschwitz (Auschwitz I)",
+    "Museum",
+    "Museum",
+    "worth_a_look",
+    false
+   ],
+   [
+    "gem:auschwitz",
+    "Auschwitz cross",
+    "Monastery",
+    "Monastery",
+    "must_see",
+    false
+   ]
+  ]
+ },
+ "must_keep_missing": [
+  "Berlin Wall Memorial"
+ ],
+ "must_keep_breaches": [],
+ "dossier": {
+  "highlights": 19186,
+  "banned_by_research_regex": 358,
+  "banned_left": 580,
+  "banned_left_by_country": {
+   "GB": 79,
+   "IT": 62,
+   "FR": 52,
+   "SE": 51,
+   "ES": 42,
+   "PT": 36,
+   "NL": 28,
+   "GR": 21,
+   "BE": 19,
+   "DE": 18,
+   "PL": 14,
+   "NO": 12,
+   "CH": 12,
+   "FI": 12,
+   "IE": 11
+  },
+  "banned_samples": [
+   [
+    "AGP",
+    "La Rosaleda Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "ALC",
+    "Estadio Jos\u00e9 Rico P\u00e9rez",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "AMS",
+    "Johan Cruyff Arena",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "AMS",
+    "Olympic Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "ARN",
+    "Skogskyrkog\u00e5rden",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "ARN",
+    "Strawberry Arena",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "ARN",
+    "Stockholm Olympic Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BEG",
+    "Rajko Miti\u0107 Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BGY",
+    "Giuseppe Meazza Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BHX",
+    "St Andrew's",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BIO",
+    "San Mam\u00e9s Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BIO",
+    "Madrid Arena",
+    "Theatre",
+    "kept"
+   ],
+   [
+    "BLQ",
+    "Stadio Renato Dall'Ara",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BMA",
+    "Skogskyrkog\u00e5rden",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BMA",
+    "Strawberry Arena",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BMA",
+    "Stockholm Olympic Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BNX",
+    "Gradski stadion",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BOD",
+    "Stade Atlantique",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BOD",
+    "Stade Chaban-Delmas",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BOO",
+    "Aspmyra Stadion",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BRN",
+    "Stadion Wankdorf",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BRU",
+    "King Baudouin Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BRU",
+    "Heysel Stadium disaster",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BRU",
+    "Lotto Park",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BSL",
+    "St. Jakob Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BTS",
+    "Slav\u00edn",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BVA",
+    "Stade de France",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "BVA",
+    "P\u00e8re Lachaise Cemetery",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CAG",
+    "Unipol Domus",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CAG",
+    "Sant'Elia stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CDG",
+    "Stade de France",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CDG",
+    "P\u00e8re Lachaise Cemetery",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CGN",
+    "Lanxess Arena",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CIA",
+    "Colosseum",
+    "Museum",
+    "kept"
+   ],
+   [
+    "CLJ",
+    "Cluj Arena",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CPH",
+    "Parken Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CRL",
+    "Stade du Pays de Charleroi",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CWL",
+    "Millennium Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "CWL",
+    "Cardiff City Stadium",
+    "Landmark",
+    "kept"
+   ],
+   [
+    "DUB",
+    "Croke Park",
+    "Landmark",
+    "kept"
+   ]
+  ],
+  "brussels_highlights": [
+   [
+    "King Baudouin Stadium",
+    true
+   ],
+   [
+    "Heysel Stadium disaster",
+    true
+   ],
+   [
+    "Lotto Park",
+    true
+   ],
+   [
+    "Cathedral of St. Michael and St. Gudula",
+    true
+   ],
+   [
+    "National Basilica of the Sacred Heart",
+    true
+   ],
+   [
+    "Royal Museums of Fine Arts of Belgium",
+    true
+   ],
+   [
+    "Royal Palace of Brussels",
+    true
+   ],
+   [
+    "Berlaymont building",
+    true
+   ],
+   [
+    "Royal Library of Belgium",
+    true
+   ],
+   [
+    "Horta Museum",
+    true
+   ],
+   [
+    "Cinquantenaire Park",
+    true
+   ],
+   [
+    "Royal Theatre of La Monnaie",
+    true
+   ]
+  ],
+  "festival_rows": 1415,
+  "festival_banned": 3,
+  "festival_left": 3,
+  "festival_samples": [
+   [
+    "BCN",
+    "festivals",
+    "Barcelona International Erotic Film Festival",
+    "kept"
+   ],
+   [
+    "BRU",
+    "festivals",
+    "Brussels International Festival of Eroticism",
+    "kept"
+   ],
+   [
+    "BRU",
+    "do",
+    "Brussels International Festival of Eroticism",
+    "kept"
+   ]
+  ]
+ },
+ "note": "must-sees after the rules approximate relabelling: a dropped one is replaced by the next recommended row by sig"
+}

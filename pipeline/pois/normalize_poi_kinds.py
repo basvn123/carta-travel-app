@@ -255,7 +255,9 @@ def noise_reason(item, wd=None):
     """Why a row is not a place to visit, or '' when it is (or may be)."""
     name = (item.get("name") or "").strip()
     desc = (item.get("desc") or "").strip()
-    if SHOP_NAME_RE.search(name):
+    # A chain's name with a museum desc is the Sainsbury Centre for Visual Arts,
+    # not a supermarket: the name rule gives way to a site word in desc.
+    if SHOP_NAME_RE.search(name) and not SITE_DESC_RE.search(desc):
         return "shop"
     if FONDALI_RE.search(name):
         return "seabed"

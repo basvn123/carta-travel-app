@@ -76,6 +76,12 @@ def test_battles_disasters_shops_and_seabed_are_noise():
     assert n.classify_poi(poi("AEK"))["noise_reason"] == "junk name"
 
 
+def test_a_chain_name_with_a_museum_desc_is_kept():
+    assert not n.classify_poi(poi("Sainsbury Centre for Visual Arts", kind="Museum",
+                                  desc="World art museum at the University of East Anglia",
+                                  heritage=True))["noise_reason"]
+
+
 def test_must_keep_rows_are_never_noise():
     keep = [
         poi("Colosseum", kind="Theatre", desc="Ancient amphitheatre in Rome", heritage=True),
