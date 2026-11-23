@@ -1,6 +1,6 @@
 # Report: data wave 3 (fix programs, data)
 
-Status: **paused at the end of the round's quota (3 waves).** Waves 1 to 3 are built on `p15-fix-data` (pushed, `26636d8f39`) and **not merged** into `p15-fix-programs`. After three judge loops in wave 3, nine of ten lines score 4. R8 (trail names, carried since wave 1) scored 3 on 4 names that lost an abbreviation dot. The fix is in (`26636d8f39`), measured on the whole wire: exactly those 4 names change and every counter stays the same. It came after the last loop, so it is not judged yet. The next round opens with one re-judge of R8. If it passes, waves 1 to 3 merge together with the merge protocol.
+Status: **merged into `p15-fix-programs` on 2026-11-23 (`ad1d243e2a`), with D7 left out.** Waves 1 to 3 are in, judged 4 on every line except trail names. The D7 rework failed one more re-judge (`judgement-4.md`: German joining words such as "bis" and "durch" end some cut names, and a trailing bracket is dropped before a place where cutting only the bracket would fit). So `names.py`, its replay and tests stay at the wave 1 version already on the integration branch (ACCEPT, unclean 3,937 to 1,203). The rework is kept on branch `p15-fix-data-d7`, and judgement-4 fixes 1 and 2 are its next step. Orchestrator instruction of 2026-11-23.
 
 This wave answers: does every outdoor row reach Around, the place page and the wire through one row contract and one difficulty vocabulary? It is measured by `scripts/quality/grade_replay.py` and the dossier fixture.
 
@@ -44,4 +44,4 @@ An answer to the orchestrator explains why waves 1 and 2 were not merged alone.
 `git revert` the wave commits (`git log --oneline --no-merges 094e62878d..26636d8f39`). The keys are additive only, schema stays 20, and there is no migration.
 
 ## Next step
-Next round: one fresh re-judge of R8 on `26636d8f39`. On a pass, merge `p15-fix-data` into `p15-fix-programs` with the merge protocol and log it in `merges.log`. Then wave 4 (E11 ratings, POI kinds).
+Next round: apply judgement-4 fixes 1 and 2 on `p15-fix-data-d7`, re-judge R8, merge it; then wave 4 (E11 ratings, POI kinds).
