@@ -118,10 +118,12 @@ def main():
     ap.add_argument("--rules", choices=("before", "after"), required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--dropped-sample", default="")
+    ap.add_argument("--repo", default="", help="checkout whose cache dir holds poi_wikidata.json (sitelinks, admin and station flags)")
     ap.add_argument("--limit", type=int, default=0, help="first N shards (debug)")
     a = ap.parse_args()
     pub = Path(a.public)
     norm, is_hl_ok, is_fest_ok = load_rules(a.rules)
+    wikidata = load(Path(a.repo) / "cache" / "poi_wikidata.json") if a.repo else {}
 
     # place meta from the dossiers (iso2, class) and the dossier checks
     meta, hl_all, hl_bad, hl_left = {}, Counter(), Counter(), Counter()
@@ -182,7 +184,7 @@ def main():
         before = rows
         rows = copy.deepcopy(rows)
         if norm is not None:
-            norm.normalize_items(rows)
+            norm.normalize_items(rows, wikidata)
         n_rows += len(rows)
         keys = [(r.get("kind"), b.get("kind")) for r, b in zip(rows, before)]
         n_kind_changed += sum(1 for x, y in keys if x != y)
@@ -198,7 +200,7 @@ def main():
                     dropped_by_class[cls] += 1
                     dropped.append({"shard": sid(f), "name": r.get("name"), "kind": b.get("kind"),
                                     "desc": r.get("desc"), "heritage": bool(r.get("heritage")),
-                                    "sig": r.get("sig"), "why": r.get("noise_reason")})
+                                    "sig": r.get("sig"), "why": norm.classify_poi(b, wikidata.get(b.get("wiki") or ""))["noise_reason"]})
                 else:
                     eff.append(r)
             elif r.get("noise") and was_live:

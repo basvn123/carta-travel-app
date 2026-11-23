@@ -242,6 +242,20 @@ def dedupe_dest(items):
                 if (toks[i] & toks[j]) and not year_clash(i, j):
                     union(i, j)
 
+    # the same Wikipedia article is identity on its own (D15): Dam and Dam
+    # Square carry one URL under two names and two kinds, which no name or kind
+    # key can join. Within the dupe radius, so a URL reused far away is not
+    # welded. The survivor's kind comes from classify_poi, which runs after.
+    wiki_users = defaultdict(list)
+    for i, it in enumerate(items):
+        if it.get('wiki'):
+            wiki_users[it['wiki']].append(i)
+    for idxs in wiki_users.values():
+        for x in range(len(idxs)):
+            for y in range(x + 1, len(idxs)):
+                if close(idxs[x], idxs[y], DUPE_RADIUS_KM):
+                    union(idxs[x], idxs[y])
+
     # fuzzy pass: near-identical names within 250 m (geo-blocked grid)
     grid = defaultdict(list)
     for i, it in enumerate(items):

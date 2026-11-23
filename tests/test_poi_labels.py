@@ -72,11 +72,13 @@ def test_rate_follows_label_and_category_is_set():
                 continue
             assert it["category"] in cfg("poi_categories.categories")
             assert isinstance(it.get("tags"), dict)
+            # C-10: the wire strips `rate`, so a shard row has none; the rate is
+            # then the one its label gives.
             if it["label"] is None:
                 assert it.get("dup") or it.get("noise")
-                assert it["rate"] == rate["worth_a_look"]
+                assert it.get("rate", rate["worth_a_look"]) == rate["worth_a_look"]
             else:
-                assert it["rate"] == rate[it["label"]], it
+                assert it.get("rate", rate[it["label"]]) == rate[it["label"]], it
 
 
 def test_label_rule_on_a_village():
