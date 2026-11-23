@@ -3,6 +3,7 @@
 //   D-7   no empty SAC or "Reachable" chip group is drawn on a trail list
 //   F-10  the place page's When block never says "Hot and busy" without a crowd figure
 //   H-9 / A-18 / A-8 are pinned in node (tests/quickWins0b.test.mjs, tests/flowGraph.test.mjs)
+// The phone has no Sort on the toolbar: its Sort list is checked inside the Filters sheet.
 // At 390, 820 and 1440, then a width sweep for horizontal overflow.
 //
 //   node scripts/verify_logic_0b.mjs [url]     (default http://localhost:$CARTA_PORT or 4173)
@@ -47,13 +48,41 @@ for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 82
       check(`${label}: a visitor with no taste is not offered For you`, items.length >= 3 && !items.some((x) => /for you/i.test(x)), items.join(' | '));
       await page.keyboard.press('Escape');
     } else {
-      // The phone keeps Sort inside the Filters sheet; the menu is the same list (filterModel.sortOptionsFor).
-      check(`${label}: the Sort control sits in the Filters sheet`, true, 'SKIP, not on the toolbar');
+      // The phone keeps Sort inside the Filters sheet: open it and read the Sort list there.
+      const filters = page.getByRole('button', { name: /^filters/i }).filter({ visible: true }).first();
+      await filters.click({ timeout: 8000 }).catch(() => {});
+      const sheet = page.locator('.fsheet[role="dialog"], [role="dialog"]').filter({ visible: true }).first();
+      await sheet.waitFor({ timeout: 8000 }).catch(() => {});
+      const sortOpts = (await sheet.locator('[role="radio"], [role="menuitemradio"], button').allInnerTexts()).map((x) => x.trim());
+      const hasSort = sortOpts.some((x) => /^score$|^rating$/i.test(x)) && sortOpts.some((x) => /a to z/i.test(x));
+      check(`${label}: the Filters sheet lists Sort, without For you for a visitor with no taste`, hasSort && !sortOpts.some((x) => /for you/i.test(x)), sortOpts.slice(0, 12).join(' | '));
+      await page.keyboard.press('Escape');
     }
     check(`${label}: no horizontal overflow on the list`, await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
     await page.close();
   } catch (e) {
     check(`${label}: the Explore pass ran`, false, String(e).split('\n')[0]);
+  }
+}
+
+// D-7: a trail list draws no SAC or Reachable group while no row can answer it.
+// F-10: the place page says "Hot in", never "Hot and busy", where crowds are unknown (Mostar).
+for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 820, 1180], ['desktop 1440', 1440, 900]]) {
+  try {
+    const page = await boot({ width, height });
+    await page.goto(`${URL}?tab=explore&cat=trails&dn=SI`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(6000);
+    const body = await page.locator('body').innerText();
+    check(`${label}: the Slovenia trail list is open`, /Slovenia/.test(body) && body.length > 400);
+    check(`${label}: no SAC or Reachable chip group is drawn`, !/SAC|Reachable by|Reachable on/i.test(body));
+    await page.goto(`${URL}#dest=gem:mostar-ba`, { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForTimeout(7000);
+    const when = (await page.locator('.when-verdict').allInnerTexts()).join(' | ');
+    check(`${label}: Mostar's When says "Hot in Jul to Aug" and never "Hot and busy"`, /Hot in /.test(when) && !/Hot and busy/.test(when), when.replace(/\n+/g, ' / ').slice(0, 160));
+    check(`${label}: the place page does not scroll sideways`, await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1));
+    await page.close();
+  } catch (e) {
+    check(`${label}: the trail and place pass ran`, false, String(e).split('\n')[0]);
   }
 }
 
