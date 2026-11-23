@@ -10,7 +10,7 @@ import { Button, Chip, IconButton } from './ui/index.js';
 import { TermsOfService } from './TermsOfService.jsx';
 import { tabHref } from '../lib/urlState.js';
 import {
-  REASON_COPY, SOFT, initialPick, FAIL_KEY, PENDING_PASS_KEY,
+  REASON_COPY, SOFT, initialPick, FAIL_KEY, PENDING_PASS_KEY, BLOCKED_PASS_KEY,
 } from '../lib/passMoments.js';
 import '../styles/71-pass.css';
 
@@ -76,6 +76,10 @@ export function PassModal({ entitlement, reason = '', onClose, onSignIn, signedI
     }
     setFailCode('');
     setBusy(true);
+    // W1-L1: what was blocked, so the way back from Stripe can say it is open.
+    if (reason && !SOFT.has(reason)) {
+      try { sessionStorage.setItem(BLOCKED_PASS_KEY, reason); } catch { /* private mode */ }
+    }
     const res = await startCheckout(pick, reason);
     if (!res.ok) { setFailCode(res.code || 'stripe_error'); setBusy(false); }
   };

@@ -13,6 +13,7 @@
  *     through the same links a traveller can open. The page never draws a
  *     copy of the app.
  */
+import { standingOf } from './price/gaps.js';
 
 /** The languages the clips are recorded in; anything else plays English. */
 export const CLIP_LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
@@ -193,6 +194,11 @@ export function searchRows(destinations, indices) {
     local_transport: d.local_transport,
     cost: indices.get(id) || null,
   }));
+}
+
+/** Whether a Try it place fits the budget a person a day: gaps.js decides (W1-L3, E1); a place missing its bed or its food is not counted. */
+export function homeFits(p, budget) {
+  return standingOf({ eur: p.day, complete: p.complete !== false }, budget).state === 'fits';
 }
 
 /** One place's day cost row ({ dayEur, stayEur, foodEur, stayLevel,

@@ -26,10 +26,12 @@
 import React, {
   createContext, useContext, useState, useCallback, useMemo, useRef, useEffect, Suspense, lazy,
 } from 'react';
-import { useEntitlement } from './useEntitlement.js';
+import { useEntitlement, passReturn } from './useEntitlement.js';
 import { useAuth } from '../auth/AuthContext.jsx';
 import { authConfigured } from '../lib/supabaseClient.js';
 // The panel and its stylesheet load when it first opens (T460), not with the app.
+import { takeBlocked } from '../lib/passMoments.js';
+const PassBack = lazy(() => import('../components/PassBack.jsx').then((m) => ({ default: m.PassBack })));
 const PassModal = lazy(() => import('../components/PassModal.jsx').then((m) => ({ default: m.PassModal })));
 import {
   trackPaywall, trackPaywallOnExit, isLeavingForCheckout,
@@ -204,6 +206,17 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
     signedIn, loading: entitlement.loading, known: entitlement.known, tier: entitlement.tier,
   }), [signedIn, entitlement.loading, entitlement.known, entitlement.tier]);
   const E10 = isOn('E10');
+  // W1-L1 (J-5, EN-10, behind E10): back from Stripe with the pass landed, say
+  // so once and name what was blocked. Not a gate, so nothing else opens or
+  // counts; a return that never lands a paid tier shows nothing.
+  const [back, setBack] = useState(null);
+  const welcomed = useRef(false);
+  useEffect(() => {
+    if (!E10 || welcomed.current || passReturn() !== 'ok') return;
+    if (!signedIn || !entitlement.known || !isPaidTier(entitlement.tier)) return;
+    welcomed.current = true;
+    setBack({ reason: takeBlocked(window.sessionStorage) });
+  }, [E10, signedIn, entitlement.known, entitlement.tier]);
   useEffect(() => {
     if (!signedIn) { try { localStorage.removeItem(LAST_TIER_KEY); } catch { /* private mode */ } return; }
     if (!entitlement.known) return;
@@ -321,6 +334,7 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
   return (
     <PaywallContext.Provider value={value}>
       {children}
+      {back && <Suspense fallback={null}><PassBack reason={back.reason} onClose={() => setBack(null)} /></Suspense>}
       {reason && (
         <div onClick={(e) => e.stopPropagation()}>
           <Suspense fallback={null}>

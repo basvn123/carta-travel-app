@@ -401,7 +401,8 @@ export function costRow(d, ctx) {
     // T662: what the engine (lib/price/) reports as each line's basis.
     stayRepaired: repaired,
     // REQ-data-2: the one rule, the pipeline's is_measured (stayPrice.isMeasured): q measured, beds, a capture date.
-    stayMeasured: !repaired && isMeasured(a),
+    // W3-L2: and the bed rate is the town's own: a tier read from a nearby or country block is not.
+    stayMeasured: !repaired && isMeasured(a) && levelOf(at.bed?.q || a.q, false) === 'city',
     stayUnits: at.bed ? { unit: at.bed.unit, units: at.bed.units, tier: at.bed.tier, basis: at.bed.basis } : null,
   };
 }

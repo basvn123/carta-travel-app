@@ -37,6 +37,35 @@ export function initialPick(reason, current, initialTier = '') {
 /** A guest's chosen plan, kept through sign-in (Google leaves the page). */
 export const PENDING_PASS_KEY = 'carta.pendingPass';
 
+/**
+ * W1-L1 (J-5, EN-10): what the traveller was blocked on when they left for
+ * Stripe, kept for the tab so the way back can say it is open now. Cleared
+ * once read; a soft offer blocked nothing, so it is never kept.
+ */
+export const BLOCKED_PASS_KEY = 'carta.passBlocked';
+
+/** The line the way back says for the gate that blocked, else the general one. */
+export const BACK_COPY = {
+  plans: 'pass.backPlans',
+  ground: 'pass.backGround',
+  export: 'pass.backExport',
+  exportCal: 'pass.backExport',
+  exportMap: 'pass.backExport',
+  import: 'pass.backImport',
+  save: 'pass.backSave',
+};
+export const backKey = (reason) => BACK_COPY[reason] || 'pass.backAny';
+
+/** The gate kept before checkout, read once and removed; '' when none. */
+export function takeBlocked(storage) {
+  let reason = '';
+  try {
+    reason = storage.getItem(BLOCKED_PASS_KEY) || '';
+    storage.removeItem(BLOCKED_PASS_KEY);
+  } catch { /* private mode: no memory of it, the general line stands */ }
+  return reason;
+}
+
 /** A checkout failure code to the one sentence that explains it. */
 export const FAIL_KEY = {
   auth: 'pass.errSignIn',

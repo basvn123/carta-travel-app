@@ -5,7 +5,7 @@ import { Blaze, Button, Figure, Formation } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { haptic } from '../../lib/haptics.js';
 import { formatMoney } from '../../lib/money.js';
-import { FILM, exploreHref, placeDay } from '../../lib/homeDemo.js';
+import { FILM, exploreHref, placeDay, homeFits } from '../../lib/homeDemo.js';
 import { MaskedText, Reveal, SPRING } from './motionKit.jsx';
 
 /**
@@ -26,7 +26,7 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
   const reduce = useReducedMotion();
   const list = React.useMemo(() => FILM
-    .map((f) => { const c = placeDay(rows, f.place); return { ...f, day: c?.dayEur ?? null, stay: c?.stayEur, food: c?.foodEur, name: places?.[f.place]?.city || f.label }; })
+    .map((f) => { const c = placeDay(rows, f.place); return { ...f, day: c?.dayEur ?? null, complete: c?.stayEur != null && c?.foodEur != null, stay: c?.stayEur, food: c?.foodEur, name: places?.[f.place]?.city || f.label }; })
     .filter((f) => f.day != null)
     .sort((a, b) => a.day - b.day)
     // Two whole cards a row on a phone: four places there, five wide.
@@ -36,7 +36,9 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
   const start = list.length > 2 ? Math.ceil(list[2].day / 5) * 5 : hi;
   const [budget, setBudget] = React.useState(start);
   React.useEffect(() => { setBudget(start); }, [start]);
-  const fit = list.filter((p) => p.day <= budget).length;
+  // W1-L3: gaps.js decides what fits; a place missing its bed or its food does not count.
+  const fits = (p) => homeFits(p, budget);
+  const fit = list.filter(fits).length;
   // A tick when the traveller lets go on a new budget (a commit), never
   // while dragging and never on pointerdown (DESIGN.md "Interaction").
   const grabbed = React.useRef(null);
@@ -56,7 +58,7 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
   const at = (v) => `${((v - lo) / (hi - lo)) * 100}%`;
   const facets = { budget };
   const go = (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; e.preventDefault(); onSearch({ facets }); };
-  const best = list[0].day <= budget ? list[0].id : null;
+  const best = fits(list[0]) ? list[0].id : null;
   return (
     <section className="hm-try" aria-labelledby="hm-try-title">
       <div className="hm-in">
@@ -72,9 +74,9 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
             <div className="hm-ruler" style={{ '--p': at(budget) }}>
               <span className="hm-ruler-track" aria-hidden="true"><i /></span>
               {list.map((p) => (
-                <m.span key={p.id} className={`hm-ruler-dot${p.day <= budget ? ' is-in' : ''}${p.id === best ? ' is-best' : ''}${Math.abs(p.day - budget) / (hi - lo) < 0.03 ? ' is-under' : ''}`}
+                <m.span key={p.id} className={`hm-ruler-dot${fits(p) ? ' is-in' : ''}${p.id === best ? ' is-best' : ''}${Math.abs(p.day - budget) / (hi - lo) < 0.03 ? ' is-under' : ''}`}
                   style={{ left: at(p.day) }} aria-hidden="true"
-                  animate={{ scale: p.day <= budget ? 1 : 0.75 }} transition={SPRING.settle} />
+                  animate={{ scale: fits(p) ? 1 : 0.75 }} transition={SPRING.settle} />
               ))}
               <input id="hm-budget" type="range" min={lo} max={hi} step={5} value={budget}
                 aria-valuetext={t('home.tryFitLive', { n: fit, total: list.length, price: money(budget) })}

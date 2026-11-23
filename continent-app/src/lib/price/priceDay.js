@@ -152,14 +152,17 @@ function answer(row, req, iso2 = null, dest = null) {
     ? cents(counted.reduce((s, l) => s + l.eur, 0)) : null;
   // E3 (A-7): the day band reads the bed and food lines that are on, food at the adult basis; before, the row's
   // band counted every item and the party's average food.
+  // W3-L2: the lines are found by key, so a line added or moved cannot shift the bed and food reads.
+  const bed = lines.find((l) => l.key === 'bed');
+  const food = lines.find((l) => l.key === 'food');
   const band = isOn('E3')
-    ? { dayBand: dayBandOf(lines[0].status === 'included' ? lines[0].eur : null, lines[1].status === 'included' ? row.foodAdultEur : null, req.lifestyle, req.stay) }
+    ? { dayBand: dayBandOf(bed.status === 'included' ? bed.eur : null, food.status === 'included' ? row.foodAdultEur : null, req.lifestyle, req.stay) }
     : {};
   return {
     ...row,
     ...band,
-    stayEur: lines[0].eur,
-    foodEur: lines[1].eur,
+    stayEur: bed.eur,
+    foodEur: food.eur,
     dayEur,
     lines,
     request: req,

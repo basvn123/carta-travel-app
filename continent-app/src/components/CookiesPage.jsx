@@ -31,6 +31,8 @@ import { useI18n } from '../i18n/index.jsx';
  *                 carta.ownFares, carta.finderPlan.once, carta.priceDropAsk.v1
  *                 (T944: the price drop ask stamp), carta.dock.recent,
  *                 carta.search.recent, carta.search.picked (logic wave 0a, N5)
+ *                 carta.watch.v1, carta.tasteInputs.v1, carta.kas.faces.v1 (W2-L1:
+ *                 the followed prices, the taste inputs, the faces on a trip)
  *     one-off notes  dismissed hints and banners, the paywall snooze, a
  *                 pending pass across a sign-in, the
  *                 chunk reload guard, a route cache (carta.route.*)

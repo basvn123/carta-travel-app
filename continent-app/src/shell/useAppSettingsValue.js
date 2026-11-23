@@ -75,6 +75,7 @@ export function useAppSettingsValue({
     party: choices.group_size,
     children: choices.children || 0,
     babies: choices.babies || 0,
+    teens: choices.teens || 0,
     avoid,
     setParty,
     setPartyParts,
@@ -90,6 +91,6 @@ export function useAppSettingsValue({
     stayTier: choices.stay_tier || 'home',
     lifestyle: choices.lifestyle,
     openStyleSpend,
-  }), [model, set, monthFrom, data, choices.origin, choices.drive_home, choices.origins, choices.airport_hours, choices.group_size, choices.children, choices.babies, avoid, choices.transport_mode, choices.price_view, choices.price_excluded, choices.stay_tier, choices.lifestyle, setOrigin, setFrom, setAirports, sweptOrigins, departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds, ownDates, dateFlex, setDateFlex, travelMonth, when, request, exploreMonth, setExploreMonth, setParty, setPartyParts, setTransportMode, setPriceView, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot, availableCountries, openStyleSpend]);
+  }), [model, set, monthFrom, data, choices.origin, choices.drive_home, choices.origins, choices.airport_hours, choices.group_size, choices.children, choices.babies, choices.teens, avoid, choices.transport_mode, choices.price_view, choices.price_excluded, choices.stay_tier, choices.lifestyle, setOrigin, setFrom, setAirports, sweptOrigins, departDate, returnDate, setDepartDate, setReturnDate, defaultDates, dateBounds, ownDates, dateFlex, setDateFlex, travelMonth, when, request, exploreMonth, setExploreMonth, setParty, setPartyParts, setTransportMode, setPriceView, setPriceExcluded, countryFilter, setCountryFilter, countryNot, setCountryNot, availableCountries, openStyleSpend]);
   return { settings };
 }

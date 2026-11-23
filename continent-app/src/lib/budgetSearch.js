@@ -29,7 +29,7 @@ import { roundTripNear } from './flights/flights.js';
 import { destAnchor } from './origins.js';
 import { rule } from './price/config.js';
 import { isOn } from './flags.js';
-import { standingOf } from './price/gaps.js';
+import { standingOf, leftOutOf } from './price/gaps.js';
 
 // A-11 (RC16): the search's numbers live in config/pricing.json `budget.search`.
 const BUDGET = rule('budget.search');
@@ -205,6 +205,10 @@ export function priceForBudget(dest, q, opts = {}) {
   // pays, plus the transfer between the airport and the town both ways.
   const transfers = fly ? Math.round(priced.parts.transfers || 0) : 0;
   const there = flight ? Math.round(flight.total) + transfers : null;
+  // W1-L2: a bed or a food line the quote could not price. `quoteTrip` names
+  // it in `missing`; the guards above catch the plain cases, this one carries
+  // the rest into the verdict instead of a claimed `complete: true`.
+  const complete = leftOutOf(priced.missing, 'bed').length === 0 && leftOutOf(priced.missing, 'food').length === 0;
   const core = beds + days + (there || 0);
   const buffer = Math.round(core * q.buffer);
   const total = core + buffer;
@@ -222,6 +226,7 @@ export function priceForBudget(dest, q, opts = {}) {
     core,
     buffer,
     total,
+    complete,
     // The day price a person under the group total (T475-c): bed plus food
     // and drink, the same basis as the Explore card, without the buffer and
     // without the flight.
@@ -232,8 +237,10 @@ export function priceForBudget(dest, q, opts = {}) {
 
 /** Fits, tight or over, and what is left. */
 export function verdictOf(p, budget) {
-  // gaps.js decides fits, tight and over (E1); a search total is complete for what it prices.
-  const { state } = standingOf({ eur: p.total, core: p.core, complete: true }, budget);
+  // gaps.js decides fits, tight and over (E1); a row that left a bed or a food
+  // line out is neither (group 'partial'), where the flag is off it never was.
+  const { state } = standingOf({ eur: p.total, core: p.core, complete: p.complete !== false }, budget);
+  if (state === 'partial') return { group: 'partial', left: null };
   if (state === 'tight') return { group: state, left: budget - p.core };
   return { group: state === 'fits' ? state : 'over', left: budget - p.total };
 }
@@ -260,6 +267,7 @@ export function budgetSearch(dests, query, opts = {}, today = new Date()) {
     if (!p) continue;
     out.priced += 1;
     const v = verdictOf(p, q.budget);
+    if (v.group === 'partial') continue;
     if (v.group === 'over') {
       if (p.total <= q.budget * (1 + NEAR_OVER)) {
         out.over.count += 1;

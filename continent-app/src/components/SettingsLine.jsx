@@ -12,6 +12,8 @@ import { FromPanel, fromPoint } from './FromPicker.jsx';
 import { AirportReach } from './AirportReach.jsx';
 import '../styles/77-settings-v2.css';
 import { rule } from '../lib/price/config.js';
+import { isOn } from '../lib/flags.js';
+import { partsAfter } from '../lib/partyParts.js';
 
 /**
  * The trip settings every priced view reads (T381), and the controls that
@@ -221,11 +223,18 @@ export function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate }) {
 export function PartyControl({ s }) {
   const { t } = useI18n();
   const children = s.children || 0;
-  const adults = Math.max(1, (s.party || 2) - children);
   const babies = s.babies || 0;
+  // W3-L1 (E2, G-8): a row for teens (12 to 17), who are priced as adults and
+  // keep a family a family. `party` counts them in the adults, so the adults
+  // row shows the others (18 and over); at least one stays.
+  const withTeens = isOn('E2');
+  const seatsAdult = Math.max(1, (s.party || 2) - children);
+  const teens = withTeens ? Math.min(s.teens || 0, seatsAdult - 1) : 0;
+  const adults = seatsAdult - teens;
   const rows = [
-    { key: 'adults', n: adults, min: 1, max: MAX_PARTY - children },
-    { key: 'children', n: children, min: 0, max: MAX_PARTY - adults, sub: 'party.childrenSub' },
+    { key: 'adults', n: adults, min: 1, max: MAX_PARTY - children - teens },
+    ...(withTeens ? [{ key: 'teens', n: teens, min: 0, max: MAX_PARTY - children - adults, sub: 'party.teensSub' }] : []),
+    { key: 'children', n: children, min: 0, max: MAX_PARTY - adults - teens, sub: 'party.childrenSub' },
     { key: 'babies', n: babies, min: 0, max: MAX_BABIES, sub: 'party.babiesSub' },
   ];
   return (
@@ -240,7 +249,7 @@ export function PartyControl({ s }) {
             value={r.n}
             min={r.min}
             max={r.max}
-            onChange={(n) => s.setPartyParts({ adults, children, babies, [r.key]: n })}
+            onChange={(n) => s.setPartyParts(partsAfter({ adults, teens, children, babies }, r.key, n, withTeens))}
             ariaLabel={t('party.countAria', { n: r.n, who: t(`party.${r.key}`) })}
             decLabel={t(`party.${r.key}Dec`)}
             incLabel={t(`party.${r.key}Inc`)}

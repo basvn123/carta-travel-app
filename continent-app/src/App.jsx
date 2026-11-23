@@ -1466,11 +1466,13 @@ function TravelApp() {
   }, []);
   // T579: the party as adults, children and babies. The seats (adults plus
   // children) stay group_size, which every price already reads.
-  const setPartyParts = useCallback(({ adults, children, babies }) => {
+  const setPartyParts = useCallback(({ adults, children, babies, teens }) => {
     setChoices((prev) => {
       const kids = Math.max(0, Math.round(children ?? prev.children ?? 0));
       const grown = Math.max(1, Math.round(adults ?? ((prev.group_size || 2) - (prev.children || 0))));
-      return { ...prev, group_size: grown + kids, children: kids, babies: Math.max(0, Math.round(babies ?? prev.babies ?? 0)) };
+      // W3-L1 (E2): teens are counted inside the adults, so they never exceed them less one.
+      const teen = isOn('E2') && teens != null ? { teens: Math.min(Math.max(0, Math.round(teens)), grown - 1) } : {};
+      return { ...prev, group_size: grown + kids, children: kids, babies: Math.max(0, Math.round(babies ?? prev.babies ?? 0)), ...teen };
     });
   }, []);
   const setTransportMode = useCallback((mode) => {

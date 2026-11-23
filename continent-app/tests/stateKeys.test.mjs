@@ -43,11 +43,13 @@ test('the table gives the lists the modules kept by hand: owned keys differ only
   assert.equal(ownUrlKeys().includes('pm'), false);
   assert.equal(scopeOf('pm', 'url'), 'preview');
 });
-test('share view keys, the device things and the sync WATCHED set are the old lists', () => {
+// W2-L1: the old list plus the three keys that name the person.
+const DEVICE_NOW = [...OLD_DEVICE_THING_KEYS, 'carta.watch.v1', 'carta.tasteInputs.v1', 'carta.kas.faces.v1'];
+test('share view keys and the sync WATCHED set are the old lists; the device things are those plus the W2-L1 three', () => {
   assert.deepEqual(sorted(shareViewKeys()), sorted(OLD_SHARE_VIEW_KEYS));
   assert.deepEqual(sorted(SHARE_VIEW_KEYS), sorted(OLD_SHARE_VIEW_KEYS));
-  assert.deepEqual(sorted(deviceKeys()), sorted(OLD_DEVICE_THING_KEYS));
-  assert.deepEqual(sorted(DEVICE_THING_KEYS), sorted(OLD_DEVICE_THING_KEYS));
+  assert.deepEqual(sorted(deviceKeys()), sorted(DEVICE_NOW));
+  assert.deepEqual(sorted(DEVICE_THING_KEYS), sorted(DEVICE_NOW));
   assert.deepEqual(sorted(syncKeys()), sorted(OLD_WATCHED));
 });
 test('no share key is a person key, and nothing is in the table twice', () => {
@@ -86,7 +88,8 @@ test('every carta.* and continent.* storage key in src is classified', () => {
   assert.ok(seen > 60, `only ${seen} storage keys found: did the pattern break?`);
   assert.deepEqual([...missing], [], 'name these in lib/stateKeys.js STORAGE_KEYS');
   // `carta.minimal` is an SDK name, not a storage key; it is listed so the grep stays honest.
-  assert.equal(isDeviceThing('carta.watch.v1'), false);
+  // W2-L1: these name the person, so sign-out clears them.
+  for (const k of ['carta.watch.v1', 'carta.tasteInputs.v1', 'carta.kas.faces.v1']) assert.equal(isDeviceThing(k), true, k);
 });
 
 test('every address key src reads or writes is classified', () => {

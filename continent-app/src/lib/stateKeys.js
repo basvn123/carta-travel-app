@@ -182,13 +182,17 @@ export const STORAGE_KEYS = Object.freeze([
   store('carta.plan.place.v1', 'setting'),
   store('carta.plan.quickStart', 'setting'),
   store('carta.studio.explainer', 'setting'),
-  // Left on the device by sign-out today. Review for wave 9: a price watch
-  // and the taste inputs name the person (ROADMAP C9, I5).
-  store('carta.watch.v1', 'setting'),
-  store('carta.tasteInputs.v1', 'setting'),
-  store('carta.kas.faces.v1', 'setting'),
+  // W2-L1 (ROADMAP C9, I5): each holds the person, so each is cleared with
+  // "remove from this device". The price watch names its owner and what they
+  // follow, the taste inputs hold their saves, trips and user id, and the
+  // faces are photographs of the people on a trip. None is synced from here:
+  // the watch and the taste inputs have their own account sync.
+  store('carta.watch.v1', 'person'),
+  store('carta.tasteInputs.v1', 'person'),
+  store('carta.kas.faces.v1', 'person'),
   store('carta.lastTier.v1', 'setting'),
   // One-off notes: dismissed hints and banners, guards, a pending pass.
+  store('carta.passBlocked', 'note'),
   store('carta.banner.dismissed.v1', 'note'),
   store('carta.installHintDismissed.v1', 'note'),
   store('carta.passExpiry.dismissed.v1', 'note'),

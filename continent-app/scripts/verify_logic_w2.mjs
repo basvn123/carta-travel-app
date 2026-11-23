@@ -1,4 +1,8 @@
 // Logic wave 2 (ROADMAP C9, I5, I12, G12, G4): DOM checks with flag E9 on (build with config/flags.json E9 "new").
+// W2-L2 (logic wave 3a): the share step carries g=3 in its address (the party prices a link, and the
+// link the control copies still must not carry a person key), and W2_E9=old runs the same script on a
+// build with E9 "old": only what holds in both modes is asserted (draws, no sideways scroll, the share
+// control keeps the view and no page error); the E9 rules are skipped and named as skipped.
 // At 390, 820 and 1440, and a width sweep:
 //   - a device with a party, shortlist and home point in its mirror keeps them across a reload
 //   - the address bar carries the party (it prices the link) but never the shortlist, home point or taste
@@ -16,6 +20,9 @@ const checks = [];
 const check = (label, ok, note = '') => checks.push({ label, ok, note });
 const noSideways = (page) => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1);
 const PERSON = ['fav', 'dh', 'ty'];
+const OLD = process.env.W2_E9 === 'old';
+// An E9 rule is asserted with the flag on and reported as skipped with it old.
+const rule = (label, ok, note = '') => (OLD ? check(`${label} (E9 old: skipped)`, true, 'skipped') : check(label, ok, note));
 // The device's own state: three adults, a two-place shortlist, a home point at four decimals (an old save).
 const MIRROR = 'g=3&sort=price&fav=dest%3ABRU.dest%3ALIS&dh=50.84673%2C4.35251%2CBrussels';
 
@@ -52,20 +59,20 @@ for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 82
     let keys = await addressKeys(page);
     check(`${label}: Explore draws and does not scroll sideways`, await noSideways(page));
     check(`${label}: the address keeps the party`, keys.includes('g'), keys.join(','));
-    check(`${label}: the address has no shortlist, home point or taste`, PERSON.every((k) => !keys.includes(k)), keys.join(','));
+    rule(`${label}: the address has no shortlist, home point or taste`, PERSON.every((k) => !keys.includes(k)), keys.join(','));
     let m = await mirrorOf(page);
-    check(`${label}: the mirror keeps the shortlist`, (m.get('fav') || '').includes('LIS'), m.get('fav') || 'none');
-    check(`${label}: the home point is stored at 0.01 degree`, /^50\.85,4\.35,Brussels$/.test(m.get('dh') || ''), m.get('dh') || 'none');
+    rule(`${label}: the mirror keeps the shortlist`, (m.get('fav') || '').includes('LIS'), m.get('fav') || 'none');
+    rule(`${label}: the home point is stored at 0.01 degree`, /^50\.85,4\.35,Brussels$/.test(m.get('dh') || ''), m.get('dh') || 'none');
     await page.reload({ waitUntil: 'domcontentloaded' });
     await page.locator('.explore-tab').waitFor({ timeout: 60000 }).catch(() => {});
     await page.waitForTimeout(3000);
     keys = await addressKeys(page);
     m = await mirrorOf(page);
-    check(`${label}: a reload keeps the party, the shortlist and the home point`, m.get('g') === '3' && (m.get('fav') || '').includes('BRU') && (m.get('dh') || '').startsWith('50.85,4.35'), `g=${m.get('g')} fav=${m.get('fav')} dh=${m.get('dh')}`);
-    check(`${label}: after the reload the address still has no person key`, PERSON.every((k) => !keys.includes(k)), keys.join(','));
+    rule(`${label}: a reload keeps the party, the shortlist and the home point`, m.get('g') === '3' && (m.get('fav') || '').includes('BRU') && (m.get('dh') || '').startsWith('50.85,4.35'), `g=${m.get('g')} fav=${m.get('fav')} dh=${m.get('dh')}`);
+    rule(`${label}: after the reload the address still has no person key`, PERSON.every((k) => !keys.includes(k)), keys.join(','));
     // The share control: Explore's applied row, the phone dock or the tab row. Its link is captured
     // from the clipboard and navigator.share stubs; it keeps the view and carries no person key.
-    await page.goto(`${URL}?tab=explore&cf=IT&gem=1&sort=price`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${URL}?tab=explore&cf=IT&gem=1&sort=price&g=3`, { waitUntil: 'domcontentloaded' });
     await page.locator('.explore-tab').waitFor({ timeout: 60000 }).catch(() => {});
     await page.waitForTimeout(3000);
     await page.evaluate(() => {
@@ -83,10 +90,10 @@ for (const [label, width, height] of [['phone 390', 390, 844], ['tablet 820', 82
       const link = await page.evaluate(() => window.__copied);
       const q = new globalThis.URL(link || 'https://x.test/').searchParams;
       const banned = ['fav', 'dh', 'ty', 'g', 'gc', 'gb', 'st', 'ls', 'o', 'b'].filter((k) => q.has(k));
-      check(`${label}: the share link carries no person key`, Boolean(link) && banned.length === 0, link || 'no link copied');
+      rule(`${label}: the share link carries no person key`, Boolean(link) && banned.length === 0, link || 'no link copied');
       check(`${label}: the share link keeps the view keys (cf, gem, sort)`, q.get('cf') === 'IT' && q.get('gem') === '1' && q.get('sort') === 'price', link);
     }
-    check(`${label}: no page error with E9 on`, errors.length === 0, errors.join(' | '));
+    check(`${label}: no page error with E9 ${OLD ? 'old' : 'on'}`, errors.length === 0, errors.join(' | '));
     await page.close();
   } catch (e) {
     check(`${label}: ran`, false, String(e).split('\n')[0]);
@@ -102,7 +109,7 @@ try {
     if (!(await noSideways(page))) bad.push(w);
   }
   check('width sweep 360 to 1600: no horizontal overflow', bad.length === 0, bad.join(','));
-  check('the mirror still lists the shortlist after the sweep', (await mirrorKeys(page)).includes('fav'));
+  rule('the mirror still lists the shortlist after the sweep', (await mirrorKeys(page)).includes('fav'));
 } catch (e) {
   check('the width sweep ran', false, String(e).split('\n')[0]);
 }
