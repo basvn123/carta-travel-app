@@ -4,6 +4,7 @@ Every L1 and L2 run in this project, newest first. Each line links to its full r
 
 Format: `date · level · playbook · title: one-line result → report path`
 
+- 2026-11-23 · L2 · deep-task · Logic wave 1 (D10, G9, I2, I5, I14): one honest-total rule (a missing part is named, sorted last, never fits) and one entitlement decision, allow-listed checkout way back, async payments granted once, replay-safe webhook and sync (G11); behind flags E1 and E10 at old; judged PASS on the second judge → `.work/2026-11-19-fix-logic-w1/report.md`
 - 2026-11-23 · L2 · deep-task · Logic wave 0b (G4, D10, G12): every app quick win of the logic audit fixed with a test or proven moot, engine golden harness on the one eval runner (G1), per-engine flags with a shadow diff (G7), number guard over all of lib/; judged PASS on the second judge → `.work/2026-11-19-fix-logic-w0b/report.md`
 - 2026-11-22 · L2 · feature · Uitgaven and Reiskas (G15): one quiet row on Today opens a page with Vandaag and Reiskas; add by keypad, speech (six languages, local parser) or a receipt read on the device (Tesseract, no AI), always "Klopt dit?"; split per person in cents, fewest transfers, Por by WhatsApp; judge 2 PASS 4.00; merged and shipped 2026-11-22 → `.work/2026-11-21-spend-capture/report.md`
 - 2026-11-22 · L2 · design · My trips as an atlas: the journey line, the wish hatch, past trips under the map (G12, merged and shipped 2026-11-22) → `.work/2026-11-22-mytrips-wow/report.md`
