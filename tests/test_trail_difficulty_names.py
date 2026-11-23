@@ -628,3 +628,14 @@ def test_abbreviation_dot_survives_the_wire_path():
         assert names.readable(name, "PL") == name
         assert names.wire_name(name, "PL") == name
     assert names.wire_name("Lake walk.", "GB") == "Lake walk"
+
+def test_dotted_initials_keep_their_dot():
+    # Judge 3 (wave 3): dotted initials and a 4 letter abbreviation beside
+    # another one; the cap path ("Goldsteig S8: ..." folded off) as well.
+    cases = {"[Z] Bítov - Podhradí n.D.": "CZ", "Partinico - Masseria Signora S.I.": "IT",
+             "Krosno Odrz.- Radnica Szkl.": "PL"}
+    for name, cc in cases.items():
+        assert names.wire_name(name, cc).endswith(name[-4:])
+    got = names.wire_name("Goldsteig S8: Verzweigung Kulzer Moos - Neunburg v.W.", "DE")
+    assert got.endswith("Neunburg v.W.") and len(got) <= names.TITLE_MAX
+    assert names.trim_dangling("Lake walk around the w.") == "Lake walk"

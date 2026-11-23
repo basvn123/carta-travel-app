@@ -223,9 +223,9 @@ def trim_dangling(out):
     "Trasa 1241 r.", "Droga pl.") stays when the name before it is clean: the
     dot makes it a word, not a stray one or two letter token."""
     res = _trim_dangling(out)
-    m = re.search(r"\s[^\W\d_]{1,4}\.$", out)
-    if m and len(res) < len(out):
-        head = out[:m.start()]
+    # One abbreviation rule with strip_network and cap_title: "Szkl.", "v.W.", "n.D.".
+    if out.endswith(".") and " " in out and _ends_in_abbrev(out[:-1]) and len(res) < len(out):
+        head = out.rsplit(" ", 1)[0]
         if _trim_dangling(head) == head:
             return out
     return res
@@ -443,8 +443,8 @@ def cap_title(text, limit=TITLE_MAX):
     if out and not out.endswith("-") and re.search(r"\w-,\s[^\s]+-$", str(text or "").strip()) and len(out) >= len(s) - 1:
         out += "-"              # the whole name already ended on its suspended hyphen
     whole = str(text or "").strip()
-    if out and whole == out + "." and len(whole) <= limit and _ABBREV_END.search(out):
-        out = whole             # D7: "1241 r.", "Śl." keep the dot of a closing abbreviation
+    if out and whole.endswith(out + ".") and len(out) < limit and _ends_in_abbrev(out):
+        out += "."              # D7: "1241 r.", "Śl.", "v.W." keep the dot of a closing abbreviation
     return out
 
 
@@ -689,7 +689,18 @@ _PART_RE = re.compile(r"\s*[-\u2013:]\s*(?:part|teil|deel|partie|parte|"
                       r"\u010d\u00e1st|cz\u0119\u015b\u0107)\s+", re.IGNORECASE)
 
 
-_ABBREV_END = re.compile(r"(?:^|\s)[^\W\d_]{1,3}$")
+_ABBREV_END = re.compile(r"(?:^|[\s.])([^\W\d_]{1,4})$")
+_ABBREV_EARLIER = re.compile(r"[^\W\d_]\.\s?\S")
+
+
+def _ends_in_abbrev(out):
+    """The last word is an abbreviation that owns a dot: 1 to 3 letters
+    ("r", "pl", the "D" of "n.D"), or 4 ("Szkl") when the name already has
+    another dotted abbreviation. "walk" alone is a word, not "walk."."""
+    m = _ABBREV_END.search(out)
+    if not m:
+        return False
+    return len(m.group(1)) <= 3 or bool(_ABBREV_EARLIER.search(out[:m.start(1)]))
 
 
 def _rstrip_keep_abbrev(s):
@@ -698,7 +709,7 @@ def _rstrip_keep_abbrev(s):
     D7 (wave 3, judge 2): "Szlak Bitwy 1241 r." and "... Śl." read wrong
     as "1241 r" and "Śl"; a dot after a short final word is part of it."""
     out = s.rstrip(_TRAIL_PUNCT)
-    if s[len(out):].startswith(".") and _ABBREV_END.search(out):
+    if s[len(out):].startswith(".") and _ends_in_abbrev(out):
         return out + "."
     return out
 
