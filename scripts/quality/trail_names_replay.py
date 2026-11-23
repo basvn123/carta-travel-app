@@ -95,7 +95,10 @@ def end_lost(n0: str, n1: str, cc: str | None = None) -> bool:
     if len(segs) != 2:
         return False
     end = names.split_code(segs[-1])[0] or segs[-1]
-    return names.squash(end) not in names.squash(n1)
+    # D7 (wave 3b): a note in brackets after the end place is not the place;
+    # "Concise - Vaumarcus" keeps its end when "(par Le Camp ...)" goes.
+    bare = re.sub(r"\s*[\(\[][^()\[\]]*[\)\]]\s*$", "", end).strip()
+    return names.squash(bare or end) not in names.squash(n1)
 
 
 def head_cut(n0: str, n1: str, cc: str | None = None) -> bool:

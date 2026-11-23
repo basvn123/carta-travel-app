@@ -635,7 +635,42 @@ def test_dotted_initials_keep_their_dot():
     cases = {"[Z] Bítov - Podhradí n.D.": "CZ", "Partinico - Masseria Signora S.I.": "IT",
              "Krosno Odrz.- Radnica Szkl.": "PL"}
     for name, cc in cases.items():
-        assert names.wire_name(name, cc).endswith(name[-4:])
+        assert names.wire_name(name, cc) == name      # the whole name, so a cut start cannot pass
+    assert names._ends_in_abbrev("Szabó-pallag-eh") and names.wire_name("Szabó-pallag-eh.", "HU") == "Szabó-pallag-eh."
     got = names.wire_name("Goldsteig S8: Verzweigung Kulzer Moos - Neunburg v.W.", "DE")
     assert got.endswith("Neunburg v.W.") and len(got) <= names.TITLE_MAX
     assert names.trim_dangling("Lake walk around the w.") == "Lake walk"
+
+
+def test_a_name_never_ends_on_a_joining_word_bis_or_durch():
+    """Judge 4 fix 1: "Hohe Düne bis" and "Rinkerode und durch" were cut names that
+    ended on a joining word the list did not know."""
+    cases = {
+        235061: ("Thalasso-Kurweg 10 -- Hohe Düne bis Markgrafenheide", "Thalasso-Kurweg 10 -- Hohe Düne"),
+        245310: ("12 – A bis Z-Tour – Von A wie Arnach bis Z wie Ziegel", "12 – A bis Z-Tour – Von A wie Arnach"),
+        211293: ("Raute 2 Wanderung in Rinkerode und durch die Davert", "Raute 2 Wanderung in Rinkerode"),
+    }
+    for rid, (src, want) in cases.items():
+        got = names.wire_name(src, "DE")
+        assert got == want and not got.endswith((" bis", " durch")), (rid, got)
+    for word in ("bis", "durch", "zu", "ins", "über", "unter", "gegen", "hinter", "vor", "ohne", "entlang", "przy"):
+        assert names.trim_dangling("Wanderweg Alpenblick " + word) == "Wanderweg Alpenblick", word
+    # "bis" after a number is a variant suffix, a real end.
+    assert names.wire_name("Sentiero Italia Tappa 19 bis", "IT") == "Sentiero Italia Tappa 19 bis"
+
+
+def test_a_trailing_bracket_goes_before_a_place_does():
+    """Judge 4 fix 2: "A - B (note)" is "A - B" once the note goes, when that fits."""
+    cases = [
+        (62609, "ME", "Kapetanovo Jezero – Zagradac (suggested trail, no trailmarks)", "Kapetanovo Jezero – Zagradac"),
+        (2641, "CH", "Concise - Vaumarcus (par Le Camp de Vaumarcus)", "Concise - Vaumarcus"),
+        (215780, "DE", "Östlicher Albrandweg Lichtenfels - Thurnau (Teil 1)", "Östlicher Albrandweg Lichtenfels - Thurnau"),
+        (9509, "DE", "Lörrach Bahnhof - Rührberg (Westweg Etappe 1 bis Basel)", "Lörrach Bahnhof - Rührberg"),
+    ]
+    for rid, cc, src, want in cases:
+        if want:
+            assert names.wire_name(src, cc) == want, rid
+    # The twin "A - B" and "A - B (variant)" still tell apart, and never end on an open bracket.
+    got = _dedupe([(1, "BE", "Via Brabantica, Antwerpen - Mechelen"),
+                   (2, "BE", "Via Brabantica, Antwerpen - Mechelen (variant)")])
+    assert got[1] != got[2] and "(" not in got[2].replace("(variant)", ""), got
