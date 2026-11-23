@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { runShip, shipSteps, commandLine, preflight, tomlTopKeys, checkPagesConfig } from '../../scripts/ship.mjs';
+import { runShip, shipSteps, previousWire, commandLine, preflight, tomlTopKeys, checkPagesConfig } from '../../scripts/ship.mjs';
 
 test('preflight refuses wrangler.toml keys that Pages rejects (H3, owner sweep 2026-11-12)', () => {
   const keys = tomlTopKeys('name = "x"\n# c = 1\n[[r2_buckets]]\nbinding = "B"\n[[ratelimits]]\nname = "RL"\n  [ratelimits.simple]\n  limit = 1\n[ai]\nbinding = "AI"\n');
@@ -73,6 +73,15 @@ test('the guard step takes a stated override from the environment, never silentl
   assert.ok(!plain.args.includes('--override'));
   const forced = shipSteps({ repoRoot: '/repo', override: 'stopgap 0.2' }).find((s) => s.id === 'guard');
   assert.deepEqual(forced.args.slice(-2), ['--override', 'stopgap 0.2']);
+});
+
+test('the guard step adds the drift gate when a previous wire is given or kept (D2, G3)', () => {
+  const none = shipSteps({ repoRoot: '/repo', override: '', previous: '' }).find((s) => s.id === 'guard');
+  assert.ok(!none.args.includes('--previous'));
+  const withPrev = shipSteps({ repoRoot: '/repo', override: 'x', previous: '/keep/app_data.json' }).find((s) => s.id === 'guard');
+  assert.deepEqual(withPrev.args.slice(-4), ['--previous', '/keep/app_data.json', '--override', 'x']);
+  assert.equal(previousWire('/repo', { CARTA_PREVIOUS_WIRE: '/x/app_data.json' }), '/x/app_data.json');
+  assert.equal(previousWire('/definitely/not/a/repo', {}), '');
 });
 
 test('a refused guard stops the ship before the data upload (D1, D2, D10)', () => {
