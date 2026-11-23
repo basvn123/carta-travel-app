@@ -273,6 +273,9 @@ def _keep_the_end(s, limit):
     return None if is_code(b) else b
 
 
+_MID_CODE_RE = re.compile(r"\s+[A-Z]{1,4}-\d+(?:-\d+)+\b")
+
+
 def _keep_the_start(s, limit):
     """D7 (judge fix 1): a two-part name "A - B" whose end B alone is over the
     limit keeps its start A whole, never cut and never followed by a piece of
@@ -288,10 +291,16 @@ def _keep_the_start(s, limit):
     # B is measured as written, code included: "CSG-T022_V24 Cicognara_..."
     # is 47 characters whatever chip the code later rides on.
     raw_b = b
+    sep = _DASH_SEP_RE.search(body).group(0)
+    # "Via Sancti Martini HW-37-02 Speyer - Neustadt ...": the name is what
+    # stands before the stage code, the town after it is the walk's own start
+    # and the stage code tells the rows apart (dedupe_names).
+    mid = _MID_CODE_RE.search(a)
+    if mid and mid.start() >= 8 and mid.start() + len(sep) + len(b) > limit:
+        return a[:mid.start()]
     a, b = split_code(a)[0] or a, split_code(b)[0] or b
     if not a or is_code(a) or len(a) > limit or len(raw_b) <= limit:
         return None
-    sep = _DASH_SEP_RE.search(body).group(0)
     if b.endswith(")") and b.count("(") == b.count(")"):
         # A note in brackets goes before the place does: "Lorrach Bahnhof -
         # Rohrberg (Westweg ...)" fits once the note is gone, so it is no
@@ -300,7 +309,13 @@ def _keep_the_start(s, limit):
         if note_less and len(a) + len(sep) + len(note_less) <= limit:
             return None
     head = _head_words(b, limit - len(a) - len(sep))
-    if head and len(head.split()) >= 2 and len(a) + len(sep) + len(head) <= limit:
+    # A cut that leaves '"Okretaljka", put' hangs on a comma: cut at the
+    # comma, so the part kept is a whole piece of the name.
+    at_mark = ", " in head
+    if at_mark:
+        head = head[:head.rfind(", ")].rstrip(_TRAIL_PUNCT)
+    if (head and not is_code(head) and (at_mark or len(head.split()) >= 2)
+            and len(a) + len(sep) + len(head) <= limit):
         return a + sep + head
     return a
 
@@ -789,15 +804,38 @@ def _sfx_code(row, original):
     return split_code(original)[1] or ""
 
 
+_STAGE_CODE_RES = (re.compile(r"\b[A-Z]{2,5}-[A-Z]+0*(\d+)[A-Z]*(?:_[A-Z]?\d+)?\b"),
+                   re.compile(r"\b[A-Z]{1,4}-\d+-0*(\d+)\b"))
+
+
+def _sfx_stage(row, original):
+    """A stage code read as a stage: "CSG-T002_V26" and "HW-37-02" are "stage
+    2". Rows that share a number tell apart on a later level."""
+    for rx in _STAGE_CODE_RES:
+        m = rx.search(original)
+        if m:
+            return f"stage {int(m.group(1))}"
+    return ""
+
+
 def _sfx_end(row, original):
     m = re.search(_STAGE_RE.pattern + r"\s*\.?\s*\d+[a-z]?", original, re.IGNORECASE)
     if m:
         return m.group(0)
     segs = _DASH_SEP_RE.split(original)
     end = segs[-1].strip() if len(segs) > 1 else ""
+    if not end and ": " in original:        # "England Coast Path: Portland to Lulworth"
+        end = original.rsplit(": ", 1)[-1].strip()
+    name = str(row.get("name") or "")
+    if not end and name and original.strip().startswith(name) and original.strip() != name:
+        # What the cap cut off the name ("... Rundwanderweg Burgsinn").
+        end = original.strip()[len(name):].strip(" ,;:-()[]")
+        end = "" if is_code(end) else end
     end = split_code(end)[0] if end else ""     # a code rides the chip, not the name
     if end and squash(end) not in squash(row.get("name")):
-        room = min(20, TITLE_MAX - len(row.get("name") or "") - 2)
+        # Room beside the first part of the name: named() drops trailing
+        # comma parts to make space.
+        room = min(20, TITLE_MAX - len(name.split(", ")[0]) - 2)
         capped = cap_title(end, room) if room >= 8 else ""
         # Squeezed beside a whole name, a cut end reads as noise
         # ("Cicognara_Casa"): whole, or the next level.
@@ -815,6 +853,16 @@ def _sfx_km(row, original):
 
 def _sfx_id(row, original):
     return f"no. {row.get('id')}"
+
+
+def _rep_tail(row, original):
+    """The part after ": " as the whole name, when the name plus a suffix
+    cannot fit: "Portland to Lulworth" (the ref chip and the subtitle say it
+    is on the England Coast Path)."""
+    if ": " not in original:
+        return ""
+    tail = original.rsplit(": ", 1)[-1].strip()
+    return tail if tail and not is_code(tail) and len(tail) <= TITLE_MAX else ""
 
 
 def dedupe_names(rows, originals=None):
@@ -837,28 +885,45 @@ def dedupe_names(rows, originals=None):
     taken = set(groups)
     changed = {}
 
-    def named(r, x):
-        # The row's own name stays whole: a suffix too long for it is not a
-        # suffix (the id is the last resort and may run past TITLE_MAX).
-        return r["name"] + ", " + x if len(r["name"]) + len(x) + 2 <= TITLE_MAX             or x.startswith("no. ") else cap_title(r["name"], TITLE_MAX - len(x) - 2) + ", " + x
-
-    def fits(r, x):
-        return len(r["name"]) + len(x) + 2 <= TITLE_MAX
+    def named(r, x, last=False):
+        # Every title fits TITLE_MAX. The row's trailing comma parts go first
+        # ("Roter Schmetterling, Rundwanderweg" gives way to "Burgsinn"); the
+        # first part is cut only as the very last resort, when even the id
+        # cannot sit beside it.
+        base, room = r["name"], TITLE_MAX - len(x) - 2
+        while len(base) > room and ", " in base:
+            base = base[:base.rfind(", ")]
+        if len(base) > room:
+            if not last:
+                return None
+            base = cap_title(base, room)
+        return base + ", " + x
 
     for (cc, _key), rs in groups.items():
         if len(rs) < 2:
             continue
-        for level in (_sfx_code, _sfx_end, _sfx_km, _sfx_id):
-            sfx = [level(r, readable(originals.get(r.get("id")) or r["name"], cc)) for r in rs]
-            if level is not _sfx_id and not all(x and fits(r, x) for r, x in zip(rs, sfx)):
-                continue
-            new = {(cc, squash(named(r, x))) for r, x in zip(rs, sfx) if x}
-            if all(sfx) and len(new) == len(rs) and not new & taken:
+        origs = [readable(originals.get(r.get("id")) or r["name"], cc) for r in rs]
+        out = None
+        for level in (_sfx_code, _sfx_stage, _sfx_end, _sfx_km, "tail", _sfx_id):
+            if level == "tail":
+                cand = [_rep_tail(r, o) for r, o in zip(rs, origs)]
+            else:
+                sfx = [level(r, o) for r, o in zip(rs, origs)]
+                cand = [named(r, x, level is _sfx_id) if x else None for r, x in zip(rs, sfx)]
+            # A row this level has nothing for takes its id; the level is
+            # kept when at least half the group has something real.
+            if level != "tail" and sum(map(bool, cand)) * 2 >= len(rs):
+                cand = [c or named(r, _sfx_id(r, ""), True) for r, c in zip(rs, cand)]
+            keys = {(cc, squash(c)) for c in cand if c}
+            if all(cand) and len(keys) == len(rs) and not keys & taken:
+                out = cand
                 break
-        for r, x in zip(rs, sfx):
-            r["name"] = named(r, x)
-            taken.add((cc, squash(r["name"])))
-            changed[r.get("id")] = r["name"]
+        if out is None:         # the id is unique, so only a name another row took
+            out = cand
+        for r, new in zip(rs, out):
+            r["name"] = new
+            taken.add((cc, squash(new)))
+            changed[r.get("id")] = new
     return changed
 
 

@@ -15,6 +15,10 @@ and cap_title, then dedupe_names over each country) and counts:
 - new dup groups  (country, folded name) groups shared by two or more walks
                after the replay that were not shared before.
 
+Also printed: id_suffix, names ending ", no. <id>" (77 on the 2026-11-17 wire
+with the first dedupe; it must not rise without a reason), and too_long
+(0 required: every title fits TITLE_MAX).
+
 Accepts (exit 0, prints ACCEPT) when unclean <= MAX_UNCLEAN (1,312, the
 research's after-value on the 2026-11-17 wire), no end loss other than
 those over the cap (still printed: end_losses_over_cap), head_cut == 0 (the
@@ -34,6 +38,7 @@ import argparse
 import collections
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -84,7 +89,9 @@ def head_cut(n0: str, n1: str, cc: str | None = None) -> bool:
         return False
     start = names.split_code(segs[0].strip())[0] or segs[0].strip()
     end = segs[-1].strip()      # as written, code included (cap_title measures it so)
-    if len(end) <= names.TITLE_MAX or len(start) > names.TITLE_MAX or names.is_code(start):
+    # A start longer than TITLE_MAX less the shortest id suffix (", no. 123456")
+    # cannot stay whole when the dedupe has to add something: no title can.
+    if len(end) <= names.TITLE_MAX or len(start) > names.TITLE_MAX - 12 or names.is_code(start):
         return False
     return names.squash(start) not in names.squash(n1)
 
@@ -94,7 +101,12 @@ def end_too_long(n0: str, cc: str | None = None) -> bool:
     character title can hold it whole. Counted apart; still a loss."""
     segs = names._DASH_SEP_RE.split(names.readable(n0, cc).split(": ", 1)[-1])
     end = segs[-1].strip()
-    return len(segs) == 2 and len(end) > names.TITLE_MAX
+    if len(segs) != 2:
+        return False
+    # Over the cap: the end alone, or the whole start and the end together
+    # ("Via Sancti Martini HW-37-02 ..." keeps its name, not half of it).
+    start = names.split_code(segs[0].strip())[0] or segs[0].strip()
+    return len(end) > names.TITLE_MAX or len(start) + 3 + len(end) > names.TITLE_MAX
 
 
 def load_rows(public: Path) -> list[dict]:
@@ -119,7 +131,7 @@ def replay(rows: list[dict]) -> dict:
     before, after = collections.Counter(), collections.Counter()
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
-           "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0}
+           "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0}
     residual, end_ex, head_ex = collections.defaultdict(list), [], []
     for r in hikes:
         n0, n1 = originals[r["id"]], r["name"] or ""
@@ -132,6 +144,7 @@ def replay(rows: list[dict]) -> dict:
         res["unclean_before"] += bool(p0)
         res["unclean_after"] += bool(p1)
         res["changed"] += n1 != n0
+        res["id_suffix"] += bool(re.search(r", no\. \d+$", n1))
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
             if len(head_ex) < 25:
@@ -158,6 +171,7 @@ def replay(rows: list[dict]) -> dict:
     res["accept"] = (res["unclean_after"] <= MAX_UNCLEAN
                      and res["end_segment_losses"] == res["end_losses_over_cap"]
                      and res["head_cut"] == 0
+                     and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
     res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}

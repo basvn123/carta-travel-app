@@ -400,13 +400,41 @@ def test_a_stage_code_is_a_code_fragment_and_goes_to_the_chip():
     assert name.startswith("Valle-Benedetta")
 
 
-def test_dedupe_keeps_the_start_whole_and_falls_to_the_id():
-    # Three stages of one path: the stage's end does not fit beside the whole
-    # name, so the id tells them apart, never "Il Cammino di santa, CSG-...".
-    rows = [{"id": rid, "country": cc, "name": shipped(src, cc)}
-            for rid, cc, src, _w in HEAD_ROWS[:3]]
-    originals = {rid: src for rid, _cc, src, _w in HEAD_ROWS[:3]}
-    names.dedupe_names(rows, originals)
-    assert [r["name"] for r in rows] == ["Il Cammino di santa Giulia, no. 194178",
-                                         "Il Cammino di santa Giulia, no. 194858",
-                                         "Il Cammino di santa Giulia, no. 199440"]
+def _dedupe(group):
+    rows = [{"id": rid, "country": cc, "name": shipped(src, cc)} for rid, cc, src in group]
+    names.dedupe_names(rows, {rid: src for rid, _cc, src in group})
+    return {r["id"]: r["name"] for r in rows}
+
+
+def test_dedupe_reads_a_stage_code_as_a_stage_not_an_id():
+    got = _dedupe([
+        (194178, "IT", HEAD_ROWS[0][2]), (194858, "IT", HEAD_ROWS[1][2]), (199440, "IT", HEAD_ROWS[2][2])])
+    assert got == {194178: "Il Cammino di santa Giulia, stage 2",
+                   194858: "Il Cammino di santa Giulia, stage 25",
+                   199440: "Il Cammino di santa Giulia, stage 28"}
+    got = _dedupe([
+        (231963, "DE", "Via Sancti Martini HW-37-02 Neustadt an der Weinstraße - Neustadt an der Weinstraße"),
+        (231961, "DE", "Via Sancti Martini HW-37-01 Speyer - Neustadt an der Weinstraße")])
+    assert got == {231963: "Via Sancti Martini, stage 2", 231961: "Via Sancti Martini, stage 1"}
+
+
+def test_dedupe_keeps_the_place_and_every_title_fits():
+    got = _dedupe([
+        (222934, "DE", "Roter Schmetterling, Rundwanderweg Burgsinn"),
+        (224117, "DE", "Roter Schmetterling, Rundwanderweg Mechenhard")])
+    assert got == {222934: "Roter Schmetterling, Burgsinn", 224117: "Roter Schmetterling, Mechenhard"}
+    got = _dedupe([
+        (186725, "GB", "King Charles III England Coast Path: Portland to Lulworth"),
+        (186824, "GB", "King Charles III England Coast Path: Sea Palling to Weybourne")])
+    assert got == {186725: "Portland to Lulworth", 186824: "Sea Palling to Weybourne"}
+    # The id is the last resort, and the title still fits.
+    got = _dedupe([
+        (191970, "IT", HEAD_ROWS[4][2]),
+        (191975, "IT", "Alta Via dell’Anfiteatro Morenico di Ivrea - Itinerario di Collegamento di Perosa canavese")])
+    assert all(len(n) <= names.TITLE_MAX for n in got.values())
+    assert got[191970] == "Alta Via dell’Anfiteatro, no. 191970"
+
+
+def test_a_head_cut_at_a_comma_leaves_no_dangling_word():
+    src = "Šetnica 4 - \"Okretaljka\", put Franja-Okretaljka-Livade-Trsisče (kružna 1 1/2h)"
+    assert shipped(src, "HR") == "Šetnica 4 - \"Okretaljka\""
