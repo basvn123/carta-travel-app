@@ -5,6 +5,8 @@ import { quoteTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY, PLANNER_B
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { planBedOf, localToday } from '../lib/myTrips.js';
 import { addDays } from '../lib/dates.js';
+import { isOn } from '../lib/flags.js';
+import { rule } from '../lib/price/config.js';
 import { useLiveFlights } from '../lib/flights/useLiveFlights.js';
 import { useStaysVersion } from '../lib/staysData.js';
 import {
@@ -52,7 +54,8 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const setParty = useCallback(({ adults, children: c, babies: b }) => {
     if (adults != null) setGroupSize(Math.max(1, Math.min(MAX_PARTY, adults)));
     if (c != null) setChildren(Math.max(0, Math.min(MAX_PARTY, c)));
-    if (b != null) setBabies(Math.max(0, Math.min(MAX_PARTY, b)));
+    // E2 (G-9): the baby cap is config party.limits max_babies, the one every screen reads.
+    if (b != null) setBabies(Math.max(0, Math.min(isOn('E2') ? rule('party.limits').max_babies : MAX_PARTY, b)));
   }, []);
   // How the traveller wants to get between stops: 'auto' lets Carta pick the
   // best mode per leg, 'car' assumes one rental for the whole trip, 'owncar'

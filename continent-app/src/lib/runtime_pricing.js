@@ -18,6 +18,7 @@ import { buildAviasalesLink } from './affiliate.js';
 import { bedPrice, STAY_TIERS as STAY_TIER_LIST } from './stayPrice.js';
 import { rule } from './price/config.js';
 import { isOn } from './flags.js';
+import { carsOf } from './party.js';
 
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
@@ -86,8 +87,9 @@ export function withCityCoords(dest) {
 }
 
 // How many cars a group needs (split by seats used per car).
+// E2: the one count is party.js carsOf; this name stays for its callers.
 export function carsForGroup(groupSize, capacity) {
-  return Math.max(1, Math.ceil(Math.max(1, groupSize) / Math.max(1, capacity || 4)));
+  return carsOf(groupSize, capacity);
 }
 
 const isPoint = (p) => !!p && Number.isFinite(p.lat) && Number.isFinite(p.lon);
@@ -137,7 +139,9 @@ export function drivingEstimate(dest, home, choices, model, tollFrom = null) {
   if (roadKm > (m.max_drive_km || DEFAULT_CAR_MODEL.max_drive_km)) return null;
 
   const group = Math.max(1, choices.group_size || 1);
-  const cars = carsForGroup(group, m.car_capacity);
+  // E2 (B-9, owner default 2): a baby takes a car seat, so the cars are counted over every car seat;
+  // the cost is still shared over the paying seats (group).
+  const cars = carsForGroup(group + (isOn('E2') ? Math.max(0, choices.babies || 0) : 0), m.car_capacity);
   const rtKm = roadKm * 2;                            // round trip
   const fuelPrice = (m.fuel_price_by_iso2 && m.fuel_price_by_iso2[dest.iso2]) || m.fuel_price_eur_per_l;
   const fuel = cars * rtKm * ((m.consumption_l_per_100km || 0) / 100) * fuelPrice;

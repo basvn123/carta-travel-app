@@ -30,6 +30,12 @@
 import { PROFILES } from './lifestyleProfiles.js';
 import { DEFAULT_LIFESTYLE } from './runtime_pricing.js';
 import RECOMMEND from '../../config/recommend.json' with { type: 'json' };
+import { kindOfCounts, kindFits } from './party.js';
+import { isOn } from './flags.js';
+import { rule } from './price/config.js';
+
+// One party model (E2): the kind readers live in party.js; kept here for the callers that import them from the styles.
+export { kindOfCounts, kindFits };
 
 export const STYLES_VERSION = 1;
 export const STYLES_KEY = 'carta.travelStyles.v1';
@@ -207,7 +213,10 @@ export function normalizeStyle(raw) {
       kind,
       adults,
       kids: clampInt(w.kids, 0, 19, 0),
-      babies: clampInt(w.babies, 0, 10, 0),
+      // E2 (G-9): the baby cap is config party.limits for every screen; before it was 10 here.
+      babies: clampInt(w.babies, 0, isOn('E2') ? rule('party.limits').max_babies : 10, 0),
+      // E2 (G-8): teens are adults for the price and keep a family a family; the key exists only when there are some.
+      ...(isOn('E2') && clampInt(w.teens, 0, adults - 1, 0) > 0 ? { teens: clampInt(w.teens, 0, adults - 1, 0) } : {}),
       slowWalkers: Boolean(w.slowWalkers),
     },
     stay: oneOf(raw.stay, STAY_TIERS, 'home'),
@@ -345,24 +354,6 @@ export function styleWays(style) {
   return s ? [...s.ways] : [];
 }
 
-/** The party kind the head counts read as, for a style made from choices. */
-export function kindOfCounts(adults, kids, babies = 0) {
-  if (kids > 0 || babies > 0) return 'family';
-  if (adults <= 1) return 'solo';
-  if (adults === 2) return 'couple';
-  return adults <= 5 ? 'friends' : 'group';
-}
-
-/** Whether a kind of party still fits the counts (G-10): a family needs a child
- *  or a baby, solo is one adult, a couple is two adults, a group has no children. */
-export function kindFits(kind, { adults = 1, kids = 0, babies = 0 } = {}) {
-  const young = kids + babies;
-  if (kind === 'family') return young > 0;
-  if (kind === 'solo') return adults === 1 && young === 0;
-  if (kind === 'couple') return adults === 2 && young === 0;
-  return young === 0 || kind === 'group';
-}
-
 /**
  * The style with its "how you stay" half read from the app's choices. Called
  * whenever those choices move, so the active style follows every edit made
@@ -373,16 +364,19 @@ export function kindFits(kind, { adults = 1, kids = 0, babies = 0 } = {}) {
 export function styleFromChoices(style, choices = {}) {
   const seats = clampInt(choices.group_size, 1, 20, 2);
   const kids = clampInt(choices.children, 0, 19, 0);
-  const babies = clampInt(choices.babies, 0, 10, 0);
+  // E2 (G-9): one baby cap for every screen, config party.limits.
+  const babies = clampInt(choices.babies, 0, isOn('E2') ? rule('party.limits').max_babies : 10, 0);
   const adults = Math.max(1, seats - kids);
   const base = normalizeStyle(style) || normalizeStyle({});
+  // E2 (G-8): teens ride inside the adults; the choices do not carry them, so the style's own count stays.
+  const teens = isOn('E2') ? clampInt(choices.teens ?? base.who.teens, 0, adults - 1, 0) : 0;
   // The kind stays the traveller's word ("friends" for three) while it still
   // fits the counts; a family with no children left is no longer a family.
   const young = kids + babies;
-  const kind = kindFits(base.who.kind, { adults, kids, babies }) ? base.who.kind : kindOfCounts(adults, kids, babies);
+  const kind = kindFits(base.who.kind, { adults, kids, babies, teens }) ? base.who.kind : kindOfCounts(adults, kids, babies, teens);
   const next = normalizeStyle({
     ...base,
-    who: { ...base.who, kind, adults, kids, babies },
+    who: { ...base.who, kind, adults, kids, babies, ...(teens > 0 ? { teens } : {}) },
     stay: choices.stay_tier || base.stay,
     lifestyle: choices.lifestyle || base.lifestyle,
     way: choices.transport_mode || base.way,
@@ -392,7 +386,7 @@ export function styleFromChoices(style, choices = {}) {
 
 function sameStay(a, b) {
   return a.who.kind === b.who.kind && a.who.adults === b.who.adults && a.who.kids === b.who.kids
-    && a.who.babies === b.who.babies && a.stay === b.stay && a.way === b.way
+    && a.who.babies === b.who.babies && (a.who.teens || 0) === (b.who.teens || 0) && a.stay === b.stay && a.way === b.way
     && JSON.stringify(a.lifestyle) === JSON.stringify(b.lifestyle);
 }
 

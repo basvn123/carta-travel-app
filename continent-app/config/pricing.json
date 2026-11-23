@@ -365,11 +365,15 @@
       "value": {
         "default_seats": 2,
         "max_seats": 20,
-        "max_babies": 4
+        "max_babies": 4,
+        "baby_under_age": 2,
+        "child_under_age": 12,
+        "teen_under_age": 18,
+        "friends_max_adults": 5
       },
-      "unit": "people",
+      "unit": "people; ages in years; friends_max_adults: adults of a party still read as friends, above it a group",
       "kind": "estimate",
-      "source": "One cap for every screen (T691): before 12 (settings line, price cards), 20 (planner, share links, AI day plan) and 99 (party.js); babies 4 (settings line) and 19 (share links)",
+      "source": "One cap for every screen (T691): before 12 (settings line, price cards), 20 (planner, share links, AI day plan) and 99 (party.js); babies 4 (settings line) and 19 (share links). Owner default 2 (2026-11-23, E2): baby under 2, child 2 to 11, teen 12 to 17, priced as an adult; friends_max_adults is the old kindOfCounts cut of five",
       "date": "2026-10-24",
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"

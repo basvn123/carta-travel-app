@@ -12,6 +12,7 @@ import { decodeTaste, encodeTaste, isEmptyTaste } from './taste.js';
 import { HOME_POINT_DP, roundHomePoint } from './shareKeys.js';
 import { ownUrlKeys, settingUrlKeys, stripUrlKeys, legacyFilterKeys } from './stateKeys.js';
 import { isOn } from './flags.js';
+import { rule } from './price/config.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -282,7 +283,8 @@ export function decodeState(search) {
   if (has('r')) out.returnDate = q.get('r');
   if (has('g')) out.group_size = Math.max(1, parseInt(q.get('g'), 10) || 1);
   if (has('gc')) out.children = Math.max(0, parseInt(q.get('gc'), 10) || 0);
-  if (has('gb')) out.babies = Math.max(0, parseInt(q.get('gb'), 10) || 0);
+  // E2 (G-9): a link cannot carry more babies than the one cap, config party.limits max_babies.
+  if (has('gb')) out.babies = Math.min(isOn('E2') ? rule('party.limits').max_babies : Infinity, Math.max(0, parseInt(q.get('gb'), 10) || 0));
   if (has('df')) out.dateFlex = q.get('df') === 'm' ? 'month' : q.get('df') === 'a' ? 'any' : null;
   if (has('b')) out.baggage_key = q.get('b');
   if (has('t')) out.transport_mode = q.get('t');

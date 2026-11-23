@@ -22,6 +22,7 @@
  */
 import { legTransportOptions } from './transport.js';
 import { partyOf, flightPerSeat, CHILD_TICKET_SHARE } from './party.js';
+import { isOn } from './flags.js';
 import { chooseWay, wayKm, transferMinutesOf } from './wayChoice.js';
 
 export { partyOf, foodShare, ticketShare, flightPerSeat, BABY_LAP_FEE_LEG } from './party.js';
@@ -90,7 +91,9 @@ export function groundReturn(dest, home, mode, party) {
   const p = party || partyOf(null);
   let leg;
   try {
-    leg = legTransportOptions(home, dest, p.seats);
+    // E2 (B-9, owner default 2): a baby takes a car seat, so the cars a drive pays are counted over
+    // every car seat, the same count the planner and the day card use; a ticket is still per seat.
+    leg = legTransportOptions(home, dest, mode === 'car' && isOn('E2') ? p.carSeats : p.seats);
   } catch {
     return null;
   }

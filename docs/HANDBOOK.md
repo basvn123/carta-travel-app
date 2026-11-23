@@ -1008,19 +1008,19 @@ All rules that move a price live in one file, `continent-app/config/pricing.json
 **What it does.** You say how many adults, children and babies travel. Children eat less and pay less for trains and buses; babies fly on a lap for a small fee and need no bed.
 
 **How it works.**
-1. Limits (`party.limits`): default 2 seats, at most 20 seats, at most 4 babies. One cap for every screen.
+1. Limits (`party.limits`): default 2 seats, at most 20 seats, at most 4 babies, a baby under 2, a child 2 to 11, a teen 12 to 17 (priced as an adult, keeps kind family: `partyFromAges`). One cap for every screen: the style, the planner settings, the address and the planner read it behind flag `E2` (G-9).
 2. Shares of an adult (`party.shares`): child food 0.6, baby food 0.15, child train or bus ticket 0.5.
 3. Food share per seat: `(adults + 0.6 x children + 0.15 x babies) / seats` (`foodShare`).
 4. Ticket share per seat: `(adults + 0.5 x children) / seats` (`ticketShare`). Planes charge a child the full adult fare.
 5. Baby lap fee: `party.baby_lap_fee_leg` = EUR 30 per baby per flight leg. On Explore it is spread over the seats: `perSeat + babies x 30 x 2 / seats` (`flightPerSeat`).
 6. Beds: a room sleeps `stay.people_per_room` = 2. A dorm bed counts a child as `stay.dorm_child_weight` = 0.5 of a bed (two children share one).
-7. Cars: a party pays for as many cars as it fills, `car_capacity` = 4 seats (seven people are two cars). This is the one place a bigger party pays more per person.
+7. Cars: a party pays for as many cars as it fills, `car_capacity` = 4 seats (seven people are two cars). A baby takes a car seat, so `carSeats` = seats + babies and 4 adults and a baby are two cars on Explore, Places, the planner and the day card (`carsFor`; Explore and Places behind flag `E2`, owner default 2). A car's footprint is its grams times the cars, shared over the seats (D22, flag `E2`). The day budget divides by adults and children, never babies (H-8, flag `E2`). This is the one place a bigger party pays more per person.
 
 Worked example: 2 adults and 1 child. Seats = 3. Food share = (2 + 0.6) / 3 = 0.867, so each seat's food line is 86.7% of an adult day. Ticket share = (2 + 0.5) / 3 = 0.833.
 
 **Data behind it.** `pricing.json` rules `party.limits`, `party.shares`, `party.baby_lap_fee_leg`, `stay.people_per_room`, `stay.dorm_child_weight`. All marked estimate.
 
-**Where it lives.** `continent-app/src/lib/party.js`, `continent-app/src/lib/price/request.js`, `continent-app/src/lib/travelWay.js`.
+**Where it lives.** `continent-app/src/lib/party.js` (`partyOf`, `carsFor`, `kindFits`), `continent-app/src/lib/price/request.js`, `continent-app/src/lib/travelWay.js`, `continent-app/src/planner/flow/budget.js`.
 
 **Limits.** All shares are Carta estimates, not measured. Party size lives in the URL and app state, not across sessions (T100-b).
 

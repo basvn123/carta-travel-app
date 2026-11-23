@@ -62,8 +62,8 @@ function answer(c) {
   if (c.kind === 'footprint') return { kg: r1(legKg('car', c.km, { seats: seatsOf(c.party), babies: c.party.babies || 0 })) };
   if (c.kind === 'dayBudget') {
     const p = c.party;
-    const priced = { perPerson: 0, parts: { beds: c.beds, days: c.days } };
-    const r = budgetCheck(priced, { kind: 'day', eur: c.budget }, { party: p.adults + (p.children || 0) + (p.babies || 0), babies: p.babies || 0, nights: c.nights });
+    const priced = { perPerson: 0, parts: { beds: c.beds, days: c.days }, party: { babies: p.babies || 0 } };
+    const r = budgetCheck(priced, { kind: 'day', eur: c.budget }, { party: p.adults + (p.children || 0) + (p.babies || 0), nights: c.nights });
     return { over: r.over, gap: r.gap };
   }
   if (c.kind === 'kind') {

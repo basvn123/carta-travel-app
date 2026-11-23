@@ -35,7 +35,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-004 Party limits and seats
 - Decides: how many people a price can hold and who takes a seat.
-- Rule: seats = adults + children (at least 1); babies sit on a lap, take no seat and no bed. App party (`partyOf`): seats default 2, clamped 1 to 20; children 0 to seats minus 1; babies 0 to 4. Planner (`quoteTrip`, `tripRequest`): adults 1 to 20, children and babies clamped to the seats left under 20.
+- Rule: seats = adults + children (at least 1); babies sit on a lap, take no seat and no bed. App party (`partyOf`, E2: also teens, paying, carSeats, cars, kind, limits): seats default 2, clamped 1 to 20; children 0 to seats minus 1; babies 0 to 4 on every screen (flag E2; before, the planner, the style and the address took more). A baby takes a car seat (carSeats = seats + babies, cars = carSeats over `car.model car_capacity`, `carsFor`/`carsOf`), so 4 adults and a baby are two cars everywhere (flag E2 for Explore and Places). Teens 12 to 17 are priced as adults and keep kind family (`partyFromAges`); the day budget divides by adults and children (flag E2). Planner (`quoteTrip`, `tripRequest`): adults 1 to 20, children and babies clamped to the seats left under 20.
 - Constant: `party.limits` in `continent-app/config/pricing.json:349` = { default_seats: 2, max_seats: 20, max_babies: 4 }
 - Constant: `partyOf` in `continent-app/src/lib/party.js:28`; `seatsOf` in `continent-app/src/lib/price/request.js:133`; `MAX_PARTY` in `continent-app/src/lib/price/trip.js` (from `party.limits.max_seats`)
 - Test: `continent-app/tests/priceConfig.test.mjs` :: "T691: one group cap and one baby cap"

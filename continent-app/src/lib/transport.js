@@ -17,6 +17,7 @@ import { buildOmioLink } from './omio.js';
 import { resolveGroundFare } from './groundFares.js';
 import { isNum } from '../map/coords.js';
 import { rule } from './price/config.js';
+import { carsOf } from './party.js';
 
 const CAR = rule('car.model');   // T691: the one car model's fallbacks
 
@@ -69,7 +70,7 @@ function carCosts(destA, destB, roadKm, group, carModel) {
   const petrolB = fuelByIso[destB.iso2] ?? cm.fuel_price_eur_per_l ?? CAR.fuel_price_eur_per_l;
   const petrol = (petrolA + petrolB) / 2;
   const lPer100 = cm.consumption_l_per_100km ?? 6.5;
-  const cars = Math.max(1, Math.ceil(group / Math.max(1, cm.car_capacity || 4)));
+  const cars = carsOf(group, cm.car_capacity);
   const fuelEur = cars * (roadKm / 100) * lPer100 * petrol;
   const tollRates = cm.toll_model?.distance_rates_eur_per_100km;
   const tollRate = tollRates

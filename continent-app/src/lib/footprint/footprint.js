@@ -14,6 +14,8 @@
  * Pure: no fetching, no React.
  */
 import { rule } from '../price/config.js';
+import { isOn } from '../flags.js';
+import { carsOf } from '../party.js';
 
 const CFG = () => rule('footprint.factors');
 
@@ -30,9 +32,13 @@ export function footprintMode(mode) {
  * mode has no factor or the distance is unknown.
  *   km     the distance of the way: the straight line for a flight (the
  *          routing uplift is added here), the road or rail distance for the rest
- *   seats  people sharing the car, at most 5 (a car's figure is per car, shared)
+ *   seats  people sharing the car (a car's figure is per car, shared)
+ *   babies  under 2: no seat of their own but a car seat, so they fill a car (E2)
+ *
+ * E2 (B-10, D22): a party that needs two cars emits two cars' grams, shared over its seats:
+ * km x g/km x cars / seats. Before, the grams of one car were shared over at most 5 seats.
  */
-export function legKg(mode, km, { seats = 1 } = {}) {
+export function legKg(mode, km, { seats = 1, babies = 0 } = {}) {
   const key = footprintMode(mode);
   const cfg = CFG();
   if (!key || !(km > 0) || !Number.isFinite(km)) return null;
@@ -41,7 +47,8 @@ export function legKg(mode, km, { seats = 1 } = {}) {
     const band = km <= cfg.short_haul_max_km ? cfg.flight_short_g_pkm : cfg.flight_long_g_pkm;
     g = km * cfg.flight_uplift * band;
   } else if (key === 'car') {
-    g = km * cfg.car_g_km / Math.min(5, Math.max(1, Math.round(seats) || 1));
+    const heads = Math.max(1, Math.round(seats) || 1);
+    g = isOn('E2') ? (km * cfg.car_g_km * carsOf(heads + Math.max(0, babies || 0))) / heads : km * cfg.car_g_km / Math.min(5, heads);
   } else {
     g = km * cfg[`${key}_g_pkm`];
   }
@@ -54,13 +61,13 @@ export function legKg(mode, km, { seats = 1 } = {}) {
  * A leg with no factor or no distance is skipped and counted, never guessed,
  * so the label can say "not counting 1 leg".
  */
-export function tripKg(legs, { seats = 1 } = {}) {
+export function tripKg(legs, { seats = 1, babies = 0 } = {}) {
   const byMode = {};
   let kg = 0;
   let counted = 0;
   let skipped = 0;
   for (const l of legs || []) {
-    const k = legKg(l?.mode, l?.km, { seats });
+    const k = legKg(l?.mode, l?.km, { seats, babies });
     if (k == null) { skipped += 1; continue; }
     const key = footprintMode(l.mode);
     byMode[key] = (byMode[key] || 0) + k;
@@ -86,10 +93,10 @@ export function methodUrl() {
  * straight-line `km` apart, by `mode`. A flight uses the line itself (plus
  * its routing uplift); a ground way uses the line times `ground_detour`.
  */
-export function returnKg(mode, straightKm, { seats = 1 } = {}) {
+export function returnKg(mode, straightKm, { seats = 1, babies = 0 } = {}) {
   if (!(straightKm > 0)) return null;
   const km = footprintMode(mode) === 'flight' ? straightKm : straightKm * CFG().ground_detour;
-  const one = legKg(mode, km, { seats });
+  const one = legKg(mode, km, { seats, babies });
   return one == null ? null : one * 2;
 }
 
@@ -97,8 +104,8 @@ export function returnKg(mode, straightKm, { seats = 1 } = {}) {
  * kg CO2e one person causes on one leg, from the leg's straight line or, for
  * a ground way, the published route km when the trip carries one.
  */
-export function oneWayKg(mode, straightKm, { routeKm = null, seats = 1 } = {}) {
-  if (footprintMode(mode) === 'flight') return legKg(mode, straightKm, { seats });
+export function oneWayKg(mode, straightKm, { routeKm = null, seats = 1, babies = 0 } = {}) {
+  if (footprintMode(mode) === 'flight') return legKg(mode, straightKm, { seats, babies });
   const km = routeKm > 0 ? routeKm : straightKm > 0 ? straightKm * CFG().ground_detour : null;
-  return legKg(mode, km, { seats });
+  return legKg(mode, km, { seats, babies });
 }

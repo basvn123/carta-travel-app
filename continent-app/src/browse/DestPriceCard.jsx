@@ -275,7 +275,7 @@ export function DestPriceCard({
     }) : '';
   const wayName = (w) => (w.mode === 'plane' ? (w.iata ? t('destx.flyToIata', { iata: w.iata }) : t('way.plane')) : t(`way.${w.mode}`));
   const fpText = (w) => {
-    const kg = returnKg(w.mode, ways?.km, { seats: people });
+    const kg = returnKg(w.mode, ways?.km, { seats: people, babies: choices?.babies || 0 });
     return kg == null ? '' : t('footprint.each', { kg: kgText(kg) });
   };
   const waySub = (w) => (w.mode === 'plane' && w.dep && w.arr

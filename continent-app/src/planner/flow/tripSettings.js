@@ -19,6 +19,8 @@
 
 import SLOTS from '../../../config/slots.json' with { type: 'json' };
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
+import { isOn } from '../../lib/flags.js';
+import { rule } from '../../lib/price/config.js';
 import { exactWindow, monthsByNext } from '../../lib/tripDates.js';
 import { QUIET, SIZES, TRADEOFF_DEFAULTS, derivePersonas } from '../../lib/travelStyles.js';
 import { NO_FLIGHT_PREFS } from '../../lib/flights/flights.js';
@@ -213,7 +215,8 @@ export function normalizeSettings(raw) {
       adults,
       kids,
       kidAges,
-      babies: clampInt(p.babies, 0, 10, 0),
+      // E2 (G-9): one baby cap for every screen, config party.limits; before it was 10 here.
+      babies: clampInt(p.babies, 0, isOn('E2') ? rule('party.limits').max_babies : 10, 0),
       slowWalkers: Boolean(p.slowWalkers),
     },
     priority: oneOf(raw.priority, PRIORITIES, d.priority),
