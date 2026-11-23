@@ -46,3 +46,9 @@ Refused: umber 800 as a fill for a chosen state; the Score as an ink ruler insid
 - `verify_mytrips.mjs` stays at 0 fail in all six languages, and `verify_spend.mjs` at 0 fail.
 - No beige wash or sunken fill reappears in `.mt-panel` (grep `--select-bg`, `--umber-100`, `--surface-sunken` in `73-mytrips-ink.css` and the My trips rules).
 - The owner reads My trips as "smooth, clean" on phone and desktop.
+
+## Notes from the polish pass (2026-11-23)
+- **Density.** PRODUCT.md says about ten places fit a phone screen in a list and that large photo cards are for rails. Inside My trips the owner's later ask (2026-11-22: "images need to be larger", "way more modern") wins: Saved and past trips are photo cards, two across on a phone. Explore and Plan lists keep the density rule.
+- **Gevolgd on desktop.** When the followed prices run past their column, the rail fades over its last 48 px (a mask, like Explore's chip row) instead of cutting a card on a hard edge.
+- **Today on desktop.** With an odd number of doors, Je herinneringspagina fills the last cell, its counts under its name.
+- **Long names.** Trip names in the cost list take two lines instead of an ellipsis; the friends line lets its link take the next line on a phone.

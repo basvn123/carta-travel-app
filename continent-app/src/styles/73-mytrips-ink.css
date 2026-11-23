@@ -647,3 +647,44 @@
 /* The shared list's vote: an outlined pill; on, the action paint. */
 .mt-panel .mt-vote { box-sizing: border-box; border: var(--stroke-edge) solid var(--edge); background: transparent; }
 .mt-panel .mt-vote.is-on { border-color: var(--action); background: var(--action); }
+
+/* ---- polish (impeccable pass, 2026-11-23) ---- */
+/* A grade still to give: the link keeps its words together and takes the
+   next line when the card is narrow, never "Geef een / cijfer". */
+.ink-grade.is-none { flex-wrap: wrap; row-gap: 2px; }
+.ink-grade.is-none > .ink-give { white-space: nowrap; }
+
+/* Cost per trip: a long trip name takes two lines instead of an ellipsis, at
+   every width (German at 1180 cut it too); on a phone the bar column gives up
+   a little room for it. */
+.atlas-cname { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; white-space: normal; line-height: var(--leading-tight); }
+@media (max-width: 599px) {
+  .atlas-crow { grid-template-columns: minmax(0, 1fr) 26% minmax(56px, auto); }
+  /* The friends line: its link takes the next line rather than squeezing the
+     sentence to four lines (German at 390). */
+  .btn.mt-friends-line .btn-label { flex-wrap: wrap; row-gap: var(--space-1); }
+  .mt-friends-text { flex: 1 1 14rem; }
+}
+
+@media (min-width: 1100px) {
+  /* Today: with an odd number of doors the memory row fills the last cell
+     instead of leaving it empty and starting a full row of its own (counted by
+     type: the photo input sits between the door buttons). */
+  .mt-panel.is-trips .mt-today-side > .mt-today-note { order: 1; }
+  .mt-panel.is-trips .mt-today-side:has(> .mt-spend-door):has(> .mt-quick > .mt-qk:last-of-type:nth-of-type(even)) > .mt-disc-row {
+    grid-column: auto; grid-template-columns: 20px minmax(0, 1fr) 18px; grid-template-rows: auto auto; row-gap: 2px;
+  }
+  /* In half a row the counts go under the name, so neither is cut. */
+  .mt-panel.is-trips .mt-today-side:has(> .mt-spend-door):has(> .mt-quick > .mt-qk:last-of-type:nth-of-type(even)) > .mt-disc-row > .mt-disc-row-ico { grid-column: 1; grid-row: 1 / span 2; }
+  .mt-panel.is-trips .mt-today-side:has(> .mt-spend-door):has(> .mt-quick > .mt-qk:last-of-type:nth-of-type(even)) > .mt-disc-row > .mt-disc-row-t { grid-column: 2; grid-row: 1; }
+  .mt-panel.is-trips .mt-today-side:has(> .mt-spend-door):has(> .mt-quick > .mt-qk:last-of-type:nth-of-type(even)) > .mt-disc-row > .mt-disc-row-s { grid-column: 2; grid-row: 2; justify-self: start; text-align: start; white-space: normal; overflow: visible; }
+  .mt-panel.is-trips .mt-today-side:has(> .mt-spend-door):has(> .mt-quick > .mt-qk:last-of-type:nth-of-type(even)) > .mt-disc-row > svg:last-child { grid-column: 3; grid-row: 1 / span 2; }
+
+  /* Gevolgd: when the cards run past the column, the rail fades at its end
+     (like Explore's chip row) instead of cutting a card on a hard edge. */
+  .mt-panel .mt-saved-watch .atlas-rail:has(> :nth-child(3)) {
+    -webkit-mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 48px), transparent);
+    mask-image: linear-gradient(to right, var(--mask-solid) calc(100% - 48px), transparent);
+    padding-inline-end: var(--space-7);
+  }
+}
