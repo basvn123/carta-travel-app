@@ -1975,7 +1975,7 @@ export const nl = {
   "vr.openFriend": "Open {who} in Vrienden",
   "vr.madeTrip": "Reis gemaakt, de leden zijn uitgenodigd",
   "vr.kringLink": "Link naar de kring",
-  "vr.removeProposal": "Verwijder {place}",
+  "vr.removeProposal": "Verwijder {place}",
   "vr.invite": "Uitnodigen",
   "vr.you": "Jij",
   "vr.whoGoes": "Wie gaat waarheen",
@@ -2033,7 +2033,7 @@ export const nl = {
   "vr.whatFriendsSee": "Wat vrienden zien",
   "vr.earned": "Behaald",
   "vr.locked": "Nog open",
-  "tg.doorAria": "Vrienden",
+  'tg.doorAria': "Vrienden",
   "tg.doorWaiting": "Vrienden, {n} wachten op jou",
   "tg.signInLine": "Log in om de mensen toe te voegen met wie je reist.",
   "tg.aDay": "{price} per dag",

@@ -2376,7 +2376,7 @@ export const en = {
   "vr.openFriend": "Open {who} in Friends",
   "vr.madeTrip": "Trip made, the members are invited",
   "vr.kringLink": "Link to the circle",
-  "vr.removeProposal": "Remove {place}",
+  "vr.removeProposal": "Remove {place}",
   "vr.invite": "Invite",
   "vr.you": "You",
   "vr.whoGoes": "Who goes where",
@@ -2434,7 +2434,7 @@ export const en = {
   "vr.whatFriendsSee": "What friends see",
   "vr.earned": "Earned",
   "vr.locked": "Not yet",
-  "tg.doorAria": "Friends",
+  'tg.doorAria': "Friends",
   "tg.doorWaiting": "Friends, {n} waiting on you",
   "tg.signInLine": "Sign in to add the people you travel with.",
   "tg.aDay": "{price} a day",

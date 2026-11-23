@@ -1966,7 +1966,7 @@ export const de = {
   "vr.openFriend": "{who} in Freunde öffnen",
   "vr.madeTrip": "Reise angelegt, die Mitglieder sind eingeladen",
   "vr.kringLink": "Link zum Kreis",
-  "vr.removeProposal": "{place} entfernen",
+  "vr.removeProposal": "{place} entfernen",
   "vr.invite": "Einladen",
   "vr.you": "Du",
   "vr.whoGoes": "Wer reist wohin",
@@ -2024,7 +2024,7 @@ export const de = {
   "vr.whatFriendsSee": "Was Freunde sehen",
   "vr.earned": "Erreicht",
   "vr.locked": "Noch offen",
-  "tg.doorAria": "Freunde",
+  'tg.doorAria': "Freunde",
   "tg.doorWaiting": "Freunde, {n} warten auf dich",
   "tg.signInLine": "Melde dich an, um die Menschen hinzuzufügen, mit denen du reist.",
   "tg.aDay": "{price} pro Tag",
