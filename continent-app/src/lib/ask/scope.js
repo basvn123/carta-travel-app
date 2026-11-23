@@ -255,7 +255,8 @@ function phraseOf(text, name) {
 /**
  * True when the catalogue knows `name` as a region, area or country it covers, so it is never a place
  * Carta lacks: (a) at least REGION_MENTIONS catalogue places name it in their text, or (b) it is a word
- * of a gazetteer admin region or country name, six languages (`areas`, the gazetteer's areas.json).
+ * of a gazetteer admin region or country name, six languages (`areas`, the gazetteer's areas.json),
+ * (c) it is the catalogue's own place name, or (d) the head noun of a two-word name passes (a).
  * A gazetteer town of TOWN_POP people or more with that name is a town and wins. Without `areas`
  * (a failed fetch, a bare test) only the text counts.
  */
@@ -265,9 +266,31 @@ export function coveredName(rows, name, { areas = null, towns = null, text = '' 
   if (key.length < 3 || (towns || []).some((t) => (t.pop || 0) >= TOWN_POP && textKey(t.names?.[0] || '') === key)) return false;
   const phrase = phraseOf(text, name);
   for (const n of phrase === name ? [name] : [phrase, name]) if (mentionHits(rows, n, { stem: true }).length >= REGION_MENTIONS) return true;
+  // (c) the catalogue's own place names: "Lofoten" is the row "Lofoten Islands", however rarely the text says it.
+  if (ownName(rows, key)) return true;
+  // (d) a two-word name falls back to its head noun, with the same bar: "Hoge Tatra" is the Tatras, "Fränkischen Schweiz" a Switzerland.
+  const words = key.split(' ');
+  if (words.length === 2 && words[1].length >= 5 && mentionHits(rows, words[1], { stem: true }).length >= REGION_MENTIONS) return true;
   if (key.length < 4) return false;
+  // Admin names are matched on whole words, hyphens as spaces: "alto adige" is a run inside "trentino alto adige".
   for (const a of [...(areas?.regions || []), ...(areas?.countries || [])]) {
-    if (a.folds?.some((f) => f === key || f.split(' ').includes(key))) return true;
+    if (a.folds?.some((f) => ` ${f} `.includes(` ${key} `))) return true;
+  }
+  return false;
+}
+
+const ownNames = new WeakMap();
+/** True when a catalogue row is named `key`, or starts with it as whole words ("lofoten" for "Lofoten Islands"); the id slug counts too. */
+function ownName(rows, key) {
+  const q = ` ${key} `;
+  for (const p of rows || []) {
+    let n = ownNames.get(p);
+    if (n == null) {
+      n = ` ${textKey(p.city || '')} | ${textKey(String(p.id || '').replace(/^gem:/, ''))} `;
+      ownNames.set(p, n);
+    }
+    const [city, slug] = n.split('|');
+    if (city.startsWith(q.slice(0, -1) + ' ') || city === q || ` ${slug.trim()} `.startsWith(q)) return true;
   }
   return false;
 }

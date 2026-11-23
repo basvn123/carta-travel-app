@@ -25,7 +25,8 @@ export async function probe({ file = REGIONS_PATH } = {}) {
   const today = new Date('2026-11-22T12:00:00');
   const seen = (c) => observe({ ...c, id: c.q }, kit, today).obs;
   const out = {};
-  for (const key of ['ordinary', 'judge10']) {
+  for (const key of ['ordinary', 'judge10', 'heldout']) {
+    if (!set[key]) continue;
     const falseLacking = [];
     const falseOutside = [];
     const falseRefusal = [];
@@ -53,8 +54,9 @@ if (process.argv[1] && import.meta.url.endsWith(process.argv[1].replace(/\\/g, '
   const f = (s) => `${s.k} of ${s.n} (${(s.lo * 100).toFixed(1)} to ${(s.hi * 100).toFixed(1)}%)`;
   console.log(`ordinary ${r.ordinary.n}: false lacking ${f(r.ordinary.falseLacking)}, false outside ${f(r.ordinary.falseOutside)}, false refusal ${f(r.ordinary.falseRefusal)}`);
   console.log(`judge10: false lacking ${f(r.judge10.falseLacking)}, false outside ${f(r.judge10.falseOutside)}, false refusal ${f(r.judge10.falseRefusal)}`);
+  if (r.heldout) console.log(`heldout (judge set) ${r.heldout.n}: false lacking ${f(r.heldout.falseLacking)}, false outside ${f(r.heldout.falseOutside)}, false refusal ${f(r.heldout.falseRefusal)}`);
   console.log(`lacking still lacking ${f(r.lacking.ok)}; outside still outside ${f(r.outside.ok)}`);
-  for (const k of ['ordinary', 'judge10']) for (const [kind, list] of Object.entries(r[k].fails)) for (const x of list) console.log(`  ${k} ${kind}: ${x.q} -> ${JSON.stringify(x)}`);
+  for (const k of ['ordinary', 'judge10', 'heldout']) if (r[k]) for (const [kind, list] of Object.entries(r[k].fails)) for (const x of list) console.log(`  ${k} ${kind}: ${x.q} -> ${JSON.stringify(x)}`);
   for (const k of ['lacking', 'outside']) for (const x of r[k].wrong) console.log(`  ${k} wrong: ${JSON.stringify(x)}`);
   if (process.argv[2]) writeFileSync(process.argv[2], `${JSON.stringify(r, null, 2)}\n`);
 }

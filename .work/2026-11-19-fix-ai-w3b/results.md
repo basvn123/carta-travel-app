@@ -37,3 +37,17 @@ Harmful refused 0 of 16 (0.0 to 19.4%), off-topic declined 0 of 6 (0.0 to 39.0%)
 ## Checks
 
 Tests askScope, regionsProbe, anyQuestion, askEval, askChat: 53 of 53 pass (before the last test file edit, rerun below). Lint 0 errors. Docs checks pass. `verify_ask_scope.mjs` at 390 and 1440: 57 of 57 (AskTurn now loads the gazetteer areas); the other seven widths were not rerun.
+
+## Judge fixes (round 2 of wave 3b)
+
+The judge's own 54 region questions (written 2026-11-23, in `regions.json` block `heldout`, copied before the fixes; `probe2-before.json`, `probe2-after.json`, `probe2-after-gitonly.json`):
+
+| | before | after (full) | after (git-only) |
+| --- | --- | --- | --- |
+| false lacking | 4 of 54 (7.4%, 2.9 to 17.6%) | 1 of 54 (0.3 to 9.8%) | 2 of 54 (1.0 to 12.5%) |
+| false outside | 0 of 54 (0 to 6.6%) | 0 of 54 | 0 of 54 |
+| false refusal | 0 of 54 (0 to 6.6%) | 0 of 54 | 0 of 54 |
+
+The three classes the judge named were fixed and nothing else was tuned on it: catalogue own place names (Lofoten), hyphenated multi-word admin names as a word run (Alto Adige), the head noun of a two-word name with the 3-mention bar and the town veto (Hoge Tatra). Left: "Fränkischen Schweiz" (inflected German adjective; "Schweiz" is not named 3 times; git-only also "Alto Adige", because the committed areas fixture holds no Trentino row). The 95-question probe is unchanged (1 of 95, false outside 0, false refusal 0). Eval unchanged: 254 of 326 full, 253 of 326 git-only, graceful 100%, gate pass. RC16: `ask/scope.js` constants listed in `tests/fixtures/libNumberAllowlist.json`.
+
+The one generalisation figure for regions is the judge set (4 of 54 before, 1 of 54 after). The "1 of 95" follows two changes after the first run (first run 2 of 95) and is not held out.

@@ -1,0 +1,134 @@
+{
+  "ordinary": {
+    "n": 95,
+    "falseLacking": {
+      "k": 1,
+      "n": 95,
+      "p": 0.010526315789473684,
+      "lo": 0.0018605283639709959,
+      "hi": 0.05724009323665061,
+      "ruleOfThree": null
+    },
+    "falseOutside": {
+      "k": 0,
+      "n": 95,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.038866226366226365,
+      "ruleOfThree": 0.031578947368421054
+    },
+    "falseRefusal": {
+      "k": 0,
+      "n": 95,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.038866226366226365,
+      "ruleOfThree": 0.031578947368421054
+    },
+    "fails": {
+      "falseLacking": [
+        {
+          "q": "Natur in der Sächsischen Schweiz",
+          "place": "Sächsischen Schweiz",
+          "nearest": []
+        }
+      ],
+      "falseOutside": [],
+      "falseRefusal": []
+    }
+  },
+  "judge10": {
+    "n": 10,
+    "falseLacking": {
+      "k": 0,
+      "n": 10,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.2775401687666166,
+      "ruleOfThree": 0.3
+    },
+    "falseOutside": {
+      "k": 0,
+      "n": 10,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.2775401687666166,
+      "ruleOfThree": 0.3
+    },
+    "falseRefusal": {
+      "k": 0,
+      "n": 10,
+      "p": 0,
+      "lo": 0,
+      "hi": 0.2775401687666166,
+      "ruleOfThree": 0.3
+    },
+    "fails": {
+      "falseLacking": [],
+      "falseOutside": [],
+      "falseRefusal": []
+    }
+  },
+  "heldout": {
+    "n": 54,
+    "falseLacking": {
+      "k": 1,
+      "n": 54,
+      "p": 0.018518518518518517,
+      "lo": 0.0032764033153519848,
+      "hi": 0.09771665358487208,
+      "ruleOfThree": null
+    },
+    "falseOutside": {
+      "k": 0,
+      "n": 54,
+      "p": 0,
+      "lo": 6.938893903907228e-18,
+      "hi": 0.06641586678100189,
+      "ruleOfThree": 0.05555555555555555
+    },
+    "falseRefusal": {
+      "k": 0,
+      "n": 54,
+      "p": 0,
+      "lo": 6.938893903907228e-18,
+      "hi": 0.06641586678100189,
+      "ruleOfThree": 0.05555555555555555
+    },
+    "fails": {
+      "falseLacking": [
+        {
+          "q": "Wandern in der Fränkischen Schweiz",
+          "place": "Fränkischen Schweiz",
+          "nearest": []
+        }
+      ],
+      "falseOutside": [],
+      "falseRefusal": []
+    }
+  },
+  "lacking": {
+    "n": 15,
+    "ok": {
+      "k": 15,
+      "n": 15,
+      "p": 1,
+      "lo": 0.7961107336956521,
+      "hi": 1,
+      "ruleOfThree": null
+    },
+    "wrong": []
+  },
+  "outside": {
+    "n": 10,
+    "ok": {
+      "k": 10,
+      "n": 10,
+      "p": 1,
+      "lo": 0.7224598312333834,
+      "hi": 1,
+      "ruleOfThree": null
+    },
+    "wrong": []
+  }
+}

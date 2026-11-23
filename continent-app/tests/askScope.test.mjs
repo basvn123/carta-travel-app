@@ -160,6 +160,20 @@ test('a region the catalogue covers is answered, never "Carta does not have it y
   assert.equal(coveredName(REGION_ROWS, 'Husum'), false);
 });
 
+test('the catalogue knows its own place names, multi-word admin names and head nouns (E7, wave 3b judge fixes)', () => {
+  const rows = [...ROWS, { id: 'gem:lofoten', city: 'Lofoten Islands', iso2: 'NO', lat: 68.2, lon: 14.5 }, ...['a', 'b', 'c'].map((x) => ({ id: `gem:tatra-${x}`, city: `Zakopane ${x}`, iso2: 'PL', lat: 49.3, lon: 19.9, blurb: 'Gateway to the High Tatra, with hikes in the Tatra mountains.' }))];
+  // a place Carta has under its own name, however rarely the text says it
+  assert.equal(askScope('Northern lights in Lofoten', intent(['lofoten']), { rows, towns: [] }).kind, 'answer');
+  // "alto adige" is a run inside the admin name "trentino alto adige"
+  const areas = { regions: [{ folds: ['trentino alto adige', 'trentin haut adige'] }], countries: [] };
+  assert.equal(askScope('Settimana bianca in Alto Adige', intent(['alto', 'adige']), { rows: ROWS, towns: [], areas, lang: 'it' }).kind, 'answer');
+  // the head noun of a two-word name, with the 3-mention bar; a town of the name still wins
+  assert.equal(askScope('Wandelen in de Hoge Tatra', intent(['hoge', 'tatra']), { rows, towns: [], lang: 'nl' }).kind, 'answer');
+  assert.equal(coveredName(rows, 'Hoge Tatra', { towns: [town(['Hoge Tatra'], 'PL', 49, 20, 15000)] }), false);
+  // a two-word place nobody names stays lacking
+  assert.equal(askScope('What to do in Port Isaac?', intent(['port', 'isaac']), { rows, towns: [] }).kind, 'lacking');
+});
+
 test('a lower-case common word is not a place: "Sardegna in barca" (E7, wave 3b)', () => {
   const barca = [town(['Barca'], 'RO', 46, 25, 3000)];
   const raw = intent(['barca'], { facets: { area: 'sardinia' } });

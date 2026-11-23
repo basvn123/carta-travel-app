@@ -33,6 +33,14 @@
     "WARM_C": "E5 one month: the warm-day cut-off in Ask; moves to config with E5 (ROADMAP G4)"
    }
   },
+  "ask/scope.js": {
+   "why": "Ask scope rule thresholds, measured on the shipped catalogue and gazetteer in wave 3b (E7): 3 catalogue places naming a region separates regions from towns Carta lacks (Burgundy 3, Murren 2); a gazetteer town of 10000 people is a town, a village namesake of a region (Zeeland 4750) is not; a lower-case word is a place only for a town of 20000. Counts and head counts, not a euro amount",
+   "names": [
+    "REGION_MENTIONS",
+    "TOWN_POP",
+    "LOWERCASE_TOWN_POP"
+   ]
+  },
   "ask/reply.js": {
    "why": "Ask prompt, retrieval and chat limits (character, token, time and count caps); not a euro amount",
    "names": [
