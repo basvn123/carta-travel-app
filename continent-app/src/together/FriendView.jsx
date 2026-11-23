@@ -9,6 +9,7 @@ import { parseFavKey } from '../lib/favorites.js';
 import { loadVisitedCountries } from '../lib/visitedCountries.js';
 import { useTogether, togetherActions, shareOf } from './useTogether.js';
 import { ToneFace, Block, nameOf, firstName, fmtShort } from './parts.jsx';
+import { claimShared } from '../lib/sharedElement.js';
 import { AskJoin } from './AskJoin.jsx';
 
 /**
@@ -170,7 +171,10 @@ export function FriendView({ back, headRef, friendId, destinations, costs, favor
     <div className="tg-page">
       <div className="tg-head is-sub">{back}</div>
       <div className="tg-fhead">
-        <ToneFace id={link.userId} name={name} emoji={link.avatarEmoji} size="lg" />
+        {/* The face tapped on Vrienden grows into this one (G16 v3). */}
+        <span className="vr-fhead-face" ref={(el) => claimShared(el, `friend:${link.userId}`)}>
+          <ToneFace id={link.userId} name={name} emoji={link.avatarEmoji} size="lg" />
+        </span>
         <span className="tg-fhead-tx">
           <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{name}</h1>
           <span className="tg-muted">@{link.handle}</span>

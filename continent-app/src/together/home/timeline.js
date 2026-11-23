@@ -192,7 +192,9 @@ function momentsOf({ friendTrips = [], myPlans = [], overlaps = [], circles = []
       .map((p) => ({ id: p.id || p.userId, name: p.name || p.displayName || '', emoji: p.emoji || '' }));
     out.push({
       id: `l:${l.id}`, kind: 'list', start: null, end: null,
-      placeIds: (l.items || []).map((x) => (typeof x === 'string' ? x : x?.destId || x?.id)).filter(Boolean),
+      // A saved list's items are keyed 'dest:OPO'; only places give a photo.
+      placeIds: (l.items || []).map((x) => (typeof x === 'string' ? x
+        : String(x?.key || '').startsWith('dest:') ? x.key.slice(5) : x?.destId || null)).filter(Boolean),
       city: '', people, withYou: true, src: l, merged: [],
     });
   }
@@ -351,7 +353,7 @@ export function exampleTimeline(catalogue, today, words = {}) {
     ],
     availability: [],
   };
-  const sharedLists = [{ id: 'ex-list', name: words.list || '', items: [P(4), P(2), P(3)].filter(Boolean), members: [{ id: kim.id, name: kim.name }], example: true }];
+  const sharedLists = [{ id: 'ex-list', name: words.list || '', items: [P(3), P(2), P(4)].filter(Boolean), members: [{ id: kim.id, name: kim.name }], example: true }];
   const links = [link(alex, 'friend'), link(kim, 'friend'), link(noa, 'friend'), link(robin, 'incoming')];
   const waiting = [
     { id: `f:l-${robin.id}`, kind: 'request', linkId: `l-${robin.id}`, person: { id: robin.id, name: robin.name, emoji: '' }, example: true },

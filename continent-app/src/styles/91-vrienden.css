@@ -36,19 +36,14 @@
 }
 .vr-head.is-sub { gap: var(--space-2); }
 .vr-head.is-sub .vr-h1 { font-size: var(--text-title); }
-.vr-me-door {
-  display: grid; place-items: center; flex: none;
-  width: var(--tap); height: var(--tap); padding: 0; border: 0; border-radius: 50%;
-  background: none; cursor: pointer;
-}
-.vr-me-door:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+
 .vr-panel .vr-lnk { color: var(--umber-700); font-weight: 700; min-height: var(--tap); }
 .vr-panel .vr-invite-btn.is-umber { border: 2px solid var(--umber-800); color: var(--umber-800); background: transparent; }
 .vr-invite { position: relative; display: inline-flex; }
 
 /* ── sections ───────────────────────────────────────────────────────── */
 .vr-sect { display: grid; gap: var(--space-3); min-width: 0; align-content: start; }
-.vr-k { font-size: var(--text-micro); font-weight: 800; color: var(--umber-700); }
+
 .vr-rows { display: grid; border-top: var(--stroke-hair) solid var(--border); margin: 0; padding: 0; list-style: none; }
 .vr-row {
   display: flex; align-items: center; gap: var(--space-3); min-height: 64px; min-width: 0;
@@ -59,114 +54,34 @@
 .vr-row.is-link:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .vr-row-tx { display: grid; flex: 1; min-width: 0; }
 .vr-row-tx b { font-size: var(--text-body); font-weight: 700; overflow-wrap: anywhere; }
-.vr-row-tx > span:not(.vr-k) { font-size: var(--text-caption); color: var(--text-2); }
-.vr-row-acts { display: flex; align-items: center; gap: var(--space-1); flex: none; }
+
 .vr-row-ph { flex: none; width: 96px; aspect-ratio: 4 / 3; border-radius: var(--radius-control); overflow: hidden; }
 .vr-row-ph img, .vr-row-ph .hero-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
 .vr-row-sc { font: 800 26px/1 var(--plate-face); color: var(--text); }
-.vr-chev { flex: none; color: var(--text-3); }
-
-/* Phone: one column in the page's order; from 1100 two columns. */
-.vr-cols { display: flex; flex-direction: column; gap: var(--space-6); min-width: 0; }
-.vr-col { display: contents; }
-.vr-o-todo { order: 1; }
-.vr-o-meet { order: 2; }
-.vr-o-people { order: 3; }
-.vr-o-circles { order: 4; }
-.vr-o-shared { order: 5; }
-.vr-o-bills { order: 6; }
-.vr-o-guides { order: 7; }
-@media (min-width: 1100px) {
-  .vr-cols { display: grid; grid-template-columns: 520px minmax(0, 1fr); gap: var(--space-7, 40px); align-items: start; }
-  .vr-col { display: grid; gap: var(--space-6); align-content: start; min-width: 0; }
-  /* One column when the left one is empty: the friends four across, the
-     kringen two across, so no photo outgrows its 1280 px file at 2x. */
-  .vr-cols.is-one { grid-template-columns: minmax(0, 1fr); }
-  .vr-cols.is-one > .vr-col.is-left { display: none; }
-  .vr-cols.is-one .vr-fgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .vr-cols.is-one .vr-krail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .vr-col > * { order: 0; }
-}
 
 /* Every photo box is filled edge to edge by its photo, whatever element
    the image helper draws (a picture or an img, or the world tile), so a row
    of cards has one top and one height (judge 1 fix 6). */
 /* HeroImage puts the class on the img (its picture is display: contents)
    or on the world tile, so the class alone sizes either. */
-.vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img {
+.vr-m-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img {
   display: block; width: 100%; height: 100%; object-fit: cover;
 }
 /* While a photo loads its box shows the stone band (judge 3 fix 2). */
-.vr-go-ph, .vr-fc-ph:not(.is-none):not(.is-add), .vr-meet-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c { background: var(--border-soft); }
+.vr-m-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c { background: var(--border-soft); }
 /* It fades in on load, only after the traveller opened the page (a deep
    link is the first paint and shows each photo as it comes). */
 @media (prefers-reduced-motion: no-preference) {
-  .vr-draw :is(.vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img) { transition: opacity var(--dur-3) var(--ease-out); }
-  .vr-draw img:is(.vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img):not(.is-loaded) { opacity: 0; }
+  .vr-draw :is(.vr-m-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img) { transition: opacity var(--dur-3) var(--ease-out); }
+  .vr-draw img:is(.vr-m-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img):not(.is-loaded) { opacity: 0; }
 }
-.vr-fc-ph:not(.is-none):not(.is-add) { display: block; }
+
 /* The largest own copy is 1280 px wide, so a lone wide photo stays at 640 px
    or less: sharp on a 2x screen (judge 1 fix 5). */
 .vr-pick-ph { max-width: 640px; }
-/* Samen onderweg keeps its photo and its lanes on one width (judge 2 fix 7). */
-.vr-meet { max-width: 640px; }
 
-/* ── Wie gaat waarheen: the rail ────────────────────────────────────── */
-.vr-rail {
-  display: grid; grid-auto-flow: column; grid-auto-columns: 62%; gap: var(--space-3);
-  overflow-x: auto; scroll-snap-type: x mandatory; overscroll-behavior-x: contain;
-  /* One left edge with the page; the next card peeks at the right. */
-  margin: 0; padding: 0 0 var(--space-1);
-  scrollbar-width: none;
-}
-.vr-rail::-webkit-scrollbar { display: none; }
-@media (min-width: 768px) { .vr-rail { grid-auto-columns: calc((100% - 2 * var(--space-3)) / 3.2); } }
-@media (min-width: 1100px) { .vr-rail { grid-auto-columns: calc((100% - 3 * var(--space-4)) / 4); gap: var(--space-4); margin: 0; padding: 0; } }
-.vr-go { scroll-snap-align: start; display: grid; gap: var(--space-1); align-content: start; min-width: 0; }
-.vr-go-tap { display: grid; gap: var(--space-2); padding: 0; border: 0; background: none; text-align: start; font: inherit; color: inherit; cursor: pointer; min-width: 0; }
-.vr-go-tap:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; border-radius: var(--radius-card); }
-.vr-go-ph { display: block; aspect-ratio: 4 / 5; border-radius: var(--radius-card); overflow: hidden; }
-@media (min-width: 1100px) { .vr-go-ph { aspect-ratio: 16 / 10; } }
-.vr-go-ph img, .vr-go-ph .hero-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
-.vr-go-cd { display: flex; align-items: baseline; gap: var(--space-2); min-width: 0; }
-.vr-go-cd b { font: 800 40px/0.9 var(--plate-face); font-variant-numeric: tabular-nums; color: var(--text); }
-.vr-go.is-mine .vr-go-cd b { color: var(--umber-800); }
-.vr-go-cd span { font-size: var(--text-caption); font-weight: 700; color: var(--text-2); overflow-wrap: anywhere; min-width: 0; }
-.vr-go-bar { display: block; height: 4px; border-radius: var(--radius-sm); background: var(--border); overflow: hidden; }
-.vr-go-bar i { display: block; height: 100%; width: 100%; background: var(--umber-600); transform-origin: left; transform: scaleX(var(--fill, 0)); }
-.vr-go-who { display: flex; align-items: center; gap: var(--space-2); font-size: var(--text-body); min-width: 0; }
-.vr-go-who em { font-style: normal; font-weight: 700; color: var(--umber-700); margin-inline-start: calc(-1 * var(--space-1)); }
-.vr-go-ask { justify-self: start; }
+/* ── the overlap lanes (inside the soonest overlap's card) ──────────── */
 
-/* ── Te doen: the deck ──────────────────────────────────────────────── */
-.vr-deck { position: relative; padding-bottom: 0; }
-.vr-deck.has-next { padding-bottom: 8px; }
-.vr-deck.has-two { padding-bottom: 15px; }
-.vr-card {
-  position: relative; z-index: 2;
-  display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--space-3); align-items: center;
-  padding: var(--space-4); border: var(--stroke-edge) solid var(--umber-800); border-radius: var(--radius-card);
-  background: var(--surface-page);
-}
-.vr-card-tx { display: grid; min-width: 0; }
-.vr-card-tx b { font-size: var(--text-lead); font-weight: 800; overflow-wrap: anywhere; }
-.vr-card-tx > span:last-child { font-size: var(--text-body); color: var(--text-2); }
-.vr-card-x { align-self: start; margin: calc(-1 * var(--space-2)); }
-.vr-card-acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.vr-card-go { flex: 1 1 auto; }
-.vr-deck-edge {
-  position: absolute; z-index: 1; left: 10px; right: 10px; bottom: 7px; height: 20px;
-  border: var(--stroke-hair) solid var(--umber-500); border-top: 0; border-radius: 0 0 var(--radius-card) var(--radius-card);
-}
-.vr-deck-edge.is-two { left: 20px; right: 20px; bottom: 0; border-color: var(--border); }
-
-/* ── Samen onderweg ─────────────────────────────────────────────────── */
-.vr-meet { display: grid; gap: var(--space-2); }
-.vr-meet-ph { display: block; aspect-ratio: 16 / 10; border-radius: var(--radius-card); overflow: hidden; }
-.vr-meet-ph img, .vr-meet-ph .hero-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
-.vr-meet-t { margin: var(--space-1) 0 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.015em; overflow-wrap: anywhere; }
-.vr-meet-d { font: 800 22px/1 var(--plate-face); color: var(--text-2); }
-.vr-meet-acts { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .vr-lanes { --face: 28px; position: relative; display: grid; gap: var(--space-2); padding: var(--space-2) 0; }
 .vr-lanes-scale { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); margin-left: calc(var(--face) + var(--space-2)); }
 .vr-lanes-scale span { text-align: center; font: 800 16px/1 var(--plate-face); color: var(--text-3); }
@@ -187,48 +102,8 @@
   border: 2.5px solid var(--sun-400); border-radius: var(--radius-control); pointer-events: none;
 }
 
-/* ── Vrienden: photo cards ──────────────────────────────────────────── */
-.vr-fgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5) var(--space-3); }
-@media (min-width: 768px) { .vr-fgrid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); } }
-.vr-fc { display: grid; gap: var(--space-2); align-content: start; min-width: 0; padding: 0; border: 0; background: none; text-align: start; font: inherit; color: inherit; cursor: pointer; }
-.vr-fc:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; border-radius: var(--radius-card); }
-.vr-fc-ph { display: grid; place-items: center; aspect-ratio: 4 / 3; border-radius: var(--radius-card); overflow: hidden; }
-.vr-fc-ph img, .vr-fc-ph .hero-blank { width: 100%; height: 100%; object-fit: cover; display: block; }
-.vr-fc-ph.is-none { border: var(--stroke-hair) solid var(--border); }
-.vr-fc-ph.is-add { border: var(--stroke-hair) dashed var(--edge); padding: var(--space-3); }
-.vr-fc.is-add { cursor: default; }
-.vr-fc-nm { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
-.vr-fc-nm b { flex: 1; min-width: 0; font-size: var(--text-body); overflow-wrap: anywhere; }
-.vr-fc-d { flex: none; font: 800 18px/1 var(--plate-face); color: var(--text-2); }
-.vr-fc-f { font-size: var(--text-caption); color: var(--text-2); padding-left: calc(24px + var(--space-2)); overflow-wrap: anywhere; }
-.vr-fc-f.is-meet { color: var(--umber-700); font-weight: 700; }
-
 /* ── Kringen ────────────────────────────────────────────────────────── */
-.vr-krail {
-  display: grid; grid-auto-flow: column; grid-auto-columns: 86%; gap: var(--space-3);
-  overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none;
-  margin: 0; padding: 0 0 var(--space-1);
-}
-.vr-krail::-webkit-scrollbar { display: none; }
-@media (min-width: 768px) { .vr-krail { grid-auto-flow: row; grid-auto-columns: auto; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; } }
-@media (min-width: 1100px) { .vr-krail { grid-template-columns: minmax(0, 1fr); } }
-.vr-kr {
-  scroll-snap-align: start; display: grid; grid-template-columns: 116px minmax(0, 1fr); gap: var(--space-3); align-items: center;
-  padding: var(--space-3); border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-card);
-  background: none; text-align: start; font: inherit; color: inherit; cursor: pointer; min-width: 0;
-}
-@media (hover: hover) { .vr-kr:hover { border-color: var(--umber-800); } }
-.vr-kr:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
-.vr-kr-tx { display: grid; gap: 2px; min-width: 0; }
-.vr-kr-t { font-size: var(--text-lead); font-weight: 800; overflow-wrap: anywhere; }
-.vr-kr-tx > span { font-size: var(--text-caption); color: var(--text-2); }
-.vr-kr-lead { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 var(--space-2); margin-top: var(--space-1); }
-.vr-kr-lead b { font: 800 26px/1 var(--plate-face); color: var(--text); }
-.vr-kr-lead span { font-weight: 700; }
-.vr-groups { display: grid; gap: var(--space-2); margin-top: var(--space-3); }
-.vr-starts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: var(--space-3); }
-.vr-sect > .vr-groups:first-child { margin-top: 0; }
-.vr-fc-ph.is-none + .vr-fc-nm, .vr-fc-ph.is-none ~ .vr-fc-f { padding-left: 0; }
+
 .vr-ring { position: relative; display: block; width: 116px; aspect-ratio: 1; flex: none; }
 .vr-ring.is-big { width: min(200px, 56vw); }
 /* The photo's radius (50% minus the inset) stays 2% inside the orbit minus
@@ -242,54 +117,19 @@
 .vr-ring.is-big .vr-ring-c { inset: 22.5%; }
 
 /* ── Rekeningen ─────────────────────────────────────────────────────── */
-.vr-bal { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+
 /* The side words sit over the two bar columns of .vr-bal-row, on its grid. */
-.vr-bal-key { display: grid; grid-template-columns: 24px minmax(0, 1fr) 1fr 1fr 72px; gap: var(--space-2); margin: 0 0 calc(-1 * var(--space-1)); font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
-.vr-bal-key span:first-child { grid-column: 3; text-align: end; }
-.vr-bal-key span:last-child { grid-column: 4; }
-.vr-bal-row { display: grid; grid-template-columns: 24px minmax(0, 1fr) 1fr 1fr 72px; align-items: center; gap: var(--space-2); min-height: var(--tap); }
-.vr-bal-nm { font-size: var(--text-body); font-weight: 700; overflow-wrap: anywhere; min-width: 0; }
-.vr-bal-l, .vr-bal-r { position: relative; height: 14px; }
-.vr-bal-l { border-right: 1.5px solid var(--text); }
-.vr-bal-l i, .vr-bal-r i { position: absolute; top: 0; bottom: 0; width: calc(var(--w) * 100%); border-radius: var(--radius-sm); }
-.vr-bal-l i { right: 0; background: var(--text-3); transform-origin: right; }
-.vr-bal-r i { left: 0; background: var(--umber-600); transform-origin: left; }
-.vr-bal-amt { font: 800 22px/1 var(--plate-face); text-align: right; color: var(--text); }
-.vr-bal-row.is-owe .vr-bal-amt { color: var(--text-2); }
-.vr-bal-net { display: flex; justify-content: space-between; align-items: center; margin: 0; padding-top: var(--space-2); border-top: 1.5px solid var(--umber-800); font-size: var(--text-caption); color: var(--text-2); }
-.vr-bal-net b { font: 800 30px/1 var(--plate-face); color: var(--text); }
 
 /* ── the empty hero ─────────────────────────────────────────────────── */
-.vr-zero { display: grid; gap: var(--space-5); }
-.vr-zero-main { display: grid; gap: var(--space-4); justify-items: start; }
-.vr-zero-plate { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; border: 2px dashed var(--umber-800); color: var(--umber-800); }
-.vr-zero-t { margin: 0; font-size: var(--text-headline); font-weight: 800; letter-spacing: -0.015em; overflow-wrap: anywhere; }
-.vr-val3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-3); width: 100%; max-width: 520px; margin: 0; padding: 0; list-style: none; }
-.vr-val3 li { display: grid; gap: var(--space-2); align-content: start; font-size: var(--text-caption); font-weight: 700; overflow-wrap: anywhere; }
-.vr-val3-g { display: grid; place-items: center; aspect-ratio: 1; border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-panel); }
-.vr-val3-g svg { width: 70%; height: 70%; }
-.vr-art-fill { fill: var(--umber-600); }
-.vr-art-dot { fill: var(--umber-800); }
-.vr-art-l0 { fill: var(--umber-200); } .vr-art-l1 { fill: var(--umber-300); } .vr-art-l2 { fill: var(--umber-600); } .vr-art-l3 { fill: var(--umber-800); }
-.vr-art-best { fill: none; stroke: var(--umber-800); stroke-width: 2.5; }
-.vr-art-axis { stroke: var(--text); stroke-width: 1.5; fill: none; }
-.vr-art-bars { stroke: var(--umber-800); stroke-width: 5; stroke-linecap: round; fill: none; }
-.vr-zero-acts { display: grid; gap: var(--space-2); width: 100%; max-width: 360px; justify-items: start; }
-.vr-zero-acts .vr-invite, .vr-zero-acts .vr-invite .btn { width: 100%; }
-.vr-zero-qr { display: none; }
-@media (min-width: 1100px) {
-  /* The QR's top on the tiles' top (judge 3 fix 3): the hero's four rows
-     (plate, title, tiles, actions) are a subgrid, the QR sits in row 3. */
-  .vr-zero { grid-template-columns: minmax(0, 520px) auto; grid-template-rows: repeat(4, auto); align-items: start; column-gap: var(--space-8, 56px); row-gap: var(--space-4); }
-  .vr-zero-main { grid-column: 1; grid-row: 1 / 5; grid-template-rows: subgrid; }
-  .vr-zero-qr { display: block; grid-column: 2; grid-row: 3; }
-}
+
+   
+
 .vr-qr .tg-qr { display: block; width: 168px; padding: 10px; border: var(--stroke-hair) solid var(--umber-800); border-radius: var(--radius-panel); background: var(--surface); }
 .vr-qr .tg-qr svg { display: block; width: 100%; height: auto; }
 .vr-qr .tg-qr { box-sizing: border-box; height: auto; aspect-ratio: 1; }
 .vr-qr.is-hero { display: grid; gap: var(--space-2); justify-items: start; }
 .vr-qr-cap { margin: 0; font-size: var(--text-caption); color: var(--text-2); max-width: 168px; }
-.vr-zero-acts .vr-lnk, .vr-sees + .vr-lnk { padding-inline: 0; }
+.vr-sees + .vr-lnk { padding-inline: 0; }
 
 /* ── the invite sheet and popover ───────────────────────────────────── */
 .vr-sheet-wrap { position: fixed; inset: 0; z-index: var(--z-modal); }
@@ -511,13 +351,11 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 /* The house route arrival also waits: a deep link shows the page at rest. */
 .vr-panel:not(.vr-draw) > .tg-route { animation: none; }
 @media (prefers-reduced-motion: no-preference) {
-  .vr-draw .vr-go-bar i { animation: vr-grow var(--dur-4) var(--ease-out) both; }
-  .vr-draw .vr-bar { animation: vr-grow var(--dur-4) var(--ease-out) both; }
-  .vr-draw .vr-bar.is-them { animation-delay: var(--dur-1); }
-  .vr-draw .vr-over, .vr-draw .vr-best { animation: vr-pop var(--dur-3) var(--dur-3) var(--ease-out) both; }
-  .vr-draw .vr-bal-l i, .vr-draw .vr-bal-r i { animation: vr-grow var(--dur-4) var(--ease-out) both; }
-  .vr-card { transition: transform var(--dur-3) var(--ease-out), opacity var(--dur-3) var(--ease-out); }
-  .vr-card.is-leaving { transform: translateX(110%) rotate(6deg); opacity: 0; }
+  /* The kring's date lanes draw in with the page; the home's overlap lanes
+     only when the traveller opens the card (v3: never on scroll). */
+  .vr-draw .vr-mlane .vr-bar, .vr-lanes.is-draw .vr-bar { animation: vr-grow var(--dur-4) var(--ease-out) both; }
+  .vr-lanes.is-draw .vr-bar.is-them { animation-delay: var(--dur-1); }
+  .vr-lanes.is-draw .vr-over, .vr-draw .vr-best { animation: vr-pop var(--dur-3) var(--dur-3) var(--ease-out) both; }
   .vr-sheet-wrap.is-opened .vr-sheet { animation: vr-sheet var(--dur-sheet, 320ms) var(--ease-sheet, var(--ease-out)) both; }
   .vr-draw .vr-pop { animation: vr-rise var(--dur-2) var(--ease-out) both; }
   .vr-vrail button { transition: background var(--dur-2), color var(--dur-2), border-color var(--dur-2), transform var(--dur-1); }
@@ -527,3 +365,194 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 @keyframes vr-pop { from { transform: scale(0.92); opacity: 0; } }
 @keyframes vr-sheet { from { transform: translateY(40%); } }
 @keyframes vr-rise { from { transform: translateY(8px); opacity: 0; } }
+
+/* ── the home, version 3: one timeline (decision 0017, "Version 3") ─────
+   One spine: a 1.5 px umber-300 rule in a 44 px gutter, a date plate (the
+   day in the plate face, the month at 12 px) or a dot per moment. One card:
+   a 3:2 photo at radius 16, no border and no shadow, faces under it, a
+   title that wraps, one fact, at most one primary plus Later. Only the
+   status line is sticky on a phone. */
+.vr-panel .tg-page.vr-v3 { gap: var(--space-3); }
+.vr-v3 .vr-side { display: contents; }
+.vr-v3 .vr-main { display: grid; min-width: 0; }
+.vr-roster, .vr-ruler { display: none; }
+.vr-panel .atlas-example button { min-height: var(--tap); }
+
+/* the face strip: a nav of buttons, one row that scrolls sideways */
+.vr-strip { min-width: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.vr-strip::-webkit-scrollbar { display: none; }
+.vr-strip ul { display: flex; gap: var(--space-2); margin: 0; padding: 2px 2px var(--space-1); list-style: none; }
+.vr-strip li { flex: none; scroll-snap-align: start; }
+.vr-face {
+  display: grid; justify-items: center; align-content: start; gap: var(--space-1); width: 64px; min-height: var(--tap);
+  padding: 0; border: 0; background: none; font: inherit; color: inherit; cursor: pointer;
+}
+.vr-face:focus-visible, .vr-ro-row:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
+.vr-face-d { display: grid; place-items: center; line-height: 0; }
+.vr-face-d .frn-face { width: 44px; height: 44px; }
+.vr-face-n { max-width: 64px; font-size: var(--text-micro); font-weight: 700; line-height: 1.2; color: var(--text-2); text-align: center; overflow-wrap: anywhere; }
+.vr-face.is-me .vr-face-n { color: var(--text); }
+.vr-face.is-me .frn-face { box-shadow: 0 0 0 2px var(--surface-page), 0 0 0 3.5px var(--umber-800); }
+.vr-face.is-pending .frn-face { background: var(--surface-page); box-shadow: inset 0 0 0 1.5px var(--text-3); color: var(--text-2); }
+.vr-face.is-circle .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); }
+.vr-face.is-all .frn-face { background: var(--surface-sunken); color: var(--text); font-weight: 800; }
+.vr-pending { display: flex; flex-wrap: wrap; align-items: center; gap: 0 var(--space-2); margin: 0; font-size: var(--text-body); color: var(--text-2); }
+.vr-fhead-face { line-height: 0; }
+
+/* the status line: the page in one line, the only sticky thing on a phone */
+.vr-status { position: sticky; top: 0; z-index: 3; min-width: 0; background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); }
+.vr-v3.is-example .vr-status { position: static; }
+.vr-status-go {
+  display: flex; align-items: center; gap: var(--space-2); width: 100%; min-height: 48px; padding: 0; border: 0; background: none;
+  font: inherit; font-size: var(--text-lead); font-weight: 800; color: var(--text); text-align: start; cursor: pointer;
+}
+.vr-status-go > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+.vr-status-r { margin-inline-start: auto; font-size: var(--text-body); font-weight: 700; color: var(--text-2); white-space: nowrap; }
+.vr-status-chev { flex: none; color: var(--text-3); }
+.vr-ct { display: inline-block; font: 800 24px/1 var(--plate-face); color: var(--umber-800); vertical-align: -2px; }
+.vr-first { display: grid; gap: var(--space-3); justify-items: start; padding-block: var(--space-2); }
+.vr-first-t { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.015em; }
+
+/* the spine */
+.vr-band { display: grid; min-width: 0; scroll-margin-top: 56px; }
+.vr-band-head { display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); margin-top: var(--space-3); }
+.vr-band-h { margin: 0; font-size: var(--text-caption); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2); }
+.vr-band-h:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
+.vr-band-head > .btn, .vr-band-head > .vr-new { margin-inline-start: auto; }
+.vr-band-l { display: grid; margin: 0; padding: 0; list-style: none; }
+.vr-mo { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: var(--space-3); padding-bottom: var(--space-5); min-width: 0; }
+.vr-gut { position: relative; display: grid; justify-items: center; align-content: start; grid-row: 1 / span 2; }
+.vr-gut::before { content: ""; position: absolute; top: 0; bottom: calc(-1 * var(--space-5)); left: 50%; width: 1.5px; margin-left: -0.75px; background: var(--umber-300); }
+.vr-plate { position: relative; display: grid; justify-items: center; width: 44px; padding-bottom: var(--space-1); background: var(--surface-page); }
+.vr-plate b { font: 800 26px/1 var(--plate-face); color: var(--text); }
+.vr-plate span { font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
+.vr-dot { position: relative; width: 11px; height: 11px; margin-top: 16px; border-radius: 50%; background: var(--surface-page); box-shadow: inset 0 0 0 2px var(--umber-600); }
+.vr-dot.is-now { background: var(--umber-600); }
+.vr-mo-panel { grid-column: 2; margin-top: var(--space-3); min-width: 0; }
+.vr-more { justify-self: start; margin-inline-start: calc(44px + var(--space-3)); }
+
+/* one card */
+.vr-m { position: relative; display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
+.vr-m-ph { display: block; aspect-ratio: 3 / 2; border-radius: var(--radius-card); overflow: hidden; }
+.vr-m-none { display: grid; place-items: center; width: 100%; height: 100%; background: var(--surface-sunken); }
+.vr-m-tx { display: grid; gap: var(--space-1); justify-items: start; min-width: 0; }
+.vr-m-faces { display: inline-flex; align-items: center; }
+.vr-m-faces .frn-face { box-sizing: content-box; border: 2px solid var(--surface-page); }
+.vr-m-faces .frn-face + .frn-face { margin-left: -6px; }
+.vr-m-more { margin-inline-start: var(--space-1); font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
+.vr-m-t { width: 100%; margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
+.vr-m-go { display: flex; align-items: center; width: 100%; min-height: var(--tap); padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: start; cursor: pointer; }
+span.vr-m-go { display: block; min-height: 0; }
+/* The title is the card's one link; its hit area covers the card, and the
+   actions sit above it (no button inside a button). */
+button.vr-m-go::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
+button.vr-m-go:focus-visible { outline: none; }
+button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
+.vr-m-f { font-size: var(--text-body); color: var(--text-2); overflow-wrap: anywhere; }
+.vr-m-f.is-you { color: var(--umber-700); font-weight: 700; }
+.vr-m-acts { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
+.vr-m .vr-lanes { position: relative; z-index: 1; width: 100%; }
+/* Weigeren sits at the row's top corner, so Aanvaard and Later keep one line. */
+.vr-m.is-nu .vr-m-acts { position: static; }
+.vr-m-x { position: absolute; top: calc(-1 * var(--space-2)); inset-inline-end: calc(-1 * var(--space-2)); }
+.vr-m.is-nu:has(.vr-m-x) .vr-m-t { padding-inline-end: var(--space-7); }
+.vr-tick { display: inline-grid; place-items: center; width: 18px; height: 18px; margin-inline-end: var(--space-1); border-radius: 50%; background: var(--action-text); color: var(--umber-700); }
+
+/* row scale: a 96 x 64 photo at the left, the same lines at the right */
+.vr-m.is-row { grid-template-columns: 96px minmax(0, 1fr); column-gap: var(--space-3); align-items: start; }
+.vr-m.is-row .vr-m-ph { border-radius: var(--radius-control); }
+.vr-m.is-row .vr-m-none .frn-face { width: 40px; height: 40px; }
+.vr-m.is-row .vr-m-go { min-height: var(--tap); }
+.vr-band.is-nu .vr-mo { max-height: 480px; }
+
+/* "+ Nieuw": two rows, a new kring or a new group trip */
+.vr-new { position: relative; display: inline-flex; }
+.vr-new-menu {
+  position: absolute; inset-inline-end: 0; top: 100%; z-index: 4; display: grid; min-width: 232px; padding: var(--space-1);
+  border-radius: var(--radius-panel); background: var(--surface); box-shadow: var(--shadow-2);
+}
+.vr-new-row {
+  display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); padding: 0 var(--space-3);
+  border: 0; border-radius: var(--radius-control); background: none; font: inherit; font-weight: 700; color: var(--text); text-align: start; cursor: pointer;
+}
+.vr-new-row:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) { .vr-new-row:hover { background: var(--surface-hover); } }
+
+/* desktop roster and month ruler */
+.vr-roster { gap: var(--space-1); align-content: start; }
+.vr-roster ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.vr-roster li { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
+.vr-ro-row {
+  display: flex; align-items: center; gap: var(--space-3); flex: 1; min-width: 0; min-height: 56px; padding: var(--space-1) 0;
+  border: 0; background: none; font: inherit; color: inherit; text-align: start; cursor: pointer;
+}
+span.vr-ro-row { cursor: default; }
+.vr-ro-tx { display: grid; min-width: 0; }
+.vr-ro-tx b { font-size: var(--text-body); overflow-wrap: anywhere; }
+.vr-ro-tx span { font-size: var(--text-caption); color: var(--text-2); overflow-wrap: anywhere; }
+.vr-roster .vr-band-h + ul { margin-top: var(--space-1); }
+.vr-roster ul + .vr-band-h { margin-top: var(--space-4); }
+.vr-ruler { gap: var(--space-1); padding-block: var(--space-1); background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); }
+.vr-ruler-m {
+  display: grid; gap: 4px; justify-items: start; align-content: center; min-width: var(--tap); min-height: var(--tap); padding: 0 var(--space-2);
+  border: 0; border-radius: var(--radius-control); background: none; font: inherit; font-size: var(--text-body); font-weight: 700; color: var(--text-2); cursor: pointer;
+}
+.vr-ruler-m i { display: flex; gap: 3px; min-height: 5px; }
+.vr-ruler-m i b { width: 5px; height: 5px; border-radius: 50%; background: var(--umber-600); }
+.vr-ruler-m:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
+@media (hover: hover) { .vr-ruler-m:hover { color: var(--text); background: var(--surface-hover); } }
+
+@media (min-width: 1100px) {
+  .vr-panel .tg-page.vr-v3 { grid-template-columns: 360px minmax(0, 1fr); column-gap: var(--space-7); row-gap: var(--space-4); align-items: start; }
+  .vr-v3 > .vr-head, .vr-v3 > .auth-error, .vr-v3 > .mt-exbar, .vr-v3 > .vr-pending { grid-column: 1 / -1; }
+  .vr-v3 > .vr-strip { display: none; }
+  .vr-v3 .vr-side {
+    position: sticky; top: var(--space-4); grid-column: 1; display: grid; gap: var(--space-3); align-content: start; min-width: 0;
+    /* 25 friends outgrow the screen: the column scrolls on its own. */
+    max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-inline-end: var(--space-2);
+  }
+  .vr-v3 .vr-main { grid-column: 2; }
+  .vr-v3 .vr-status { position: static; }
+  .vr-roster { display: grid; }
+  .vr-ruler { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; }
+  /* One grid, three across, that flows across the months without holes: the
+     date plate above each card names its month, so the month heading is
+     kept for screen readers only. The soonest overlap spans two at 2:1. */
+  .vr-v3 .vr-main { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); align-items: start; }
+  .vr-main > .vr-ruler, .vr-main .vr-band.is-undated > .vr-band-head { grid-column: 1 / -1; }
+  .vr-main .vr-band, .vr-main .vr-band-l { display: contents; }
+  .vr-main .vr-band:not(.is-undated) > .vr-band-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .vr-main .vr-band-head { margin-top: 0; }
+  .vr-main .vr-more { grid-column: 1 / -1; }
+  .vr-main .vr-mo { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-2); padding-bottom: 0; align-content: start; }
+  .vr-main .vr-gut { grid-row: auto; justify-items: start; }
+  .vr-main .vr-gut::before { display: none; }
+  .vr-main .vr-gut:not(:has(.vr-plate)) { display: none; }
+  .vr-main .vr-plate { display: flex; align-items: baseline; gap: var(--space-1); width: auto; padding: 0; background: none; }
+  .vr-main .vr-mo.is-wide { grid-column: span 2; }
+  .vr-main .vr-mo.is-wide .vr-m-ph { aspect-ratio: 2 / 1; }
+  .vr-main .vr-mo-panel { grid-column: 1; margin-top: 0; }
+  .vr-main .vr-m.is-row { grid-template-columns: minmax(0, 1fr); }
+  .vr-main .vr-m.is-row .vr-m-ph { border-radius: var(--radius-card); }
+  .vr-main .vr-more { margin-inline-start: 0; }
+}
+
+/* motion: all of it follows a tap, except the once-per-visit entrance */
+@media (prefers-reduced-motion: no-preference) {
+  .vr-band.is-nu .vr-mo { transition: max-height var(--dur-3) var(--ease-out), padding var(--dur-3) var(--ease-out); }
+  .vr-band.is-nu .vr-mo:has(.is-leaving) { max-height: 0; padding-bottom: 0; overflow: hidden; }
+  .vr-m.is-nu { transition: opacity var(--dur-3) var(--ease-out), transform var(--dur-3) var(--ease-out); }
+  .vr-m.is-nu.is-leaving { opacity: 0; transform: translateX(24px); }
+  .vr-tick { animation: vr-tick var(--dur-tick) var(--ease-tick) both; }
+  .vr-ct.is-roll { animation: vr-roll var(--dur-2) var(--ease-out) both; }
+  .vr-main.is-enter { animation: vr-rise var(--dur-4) var(--ease-out) both; }
+  .vr-m, .vr-face-d, .vr-ro-row .vr-face-d { transition: transform var(--dur-press) var(--ease-out); }
+  .vr-m:has(> .vr-m-tx > .vr-m-t > button.vr-m-go:active) { transform: scale(var(--press-scale-lg)); }
+  .vr-face:active .vr-face-d, .vr-ro-row:active .vr-face-d { transform: scale(var(--press-scale-sm)); }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (min-width: 1100px) {
+  .vr-m-img { transition: transform var(--dur-4) var(--ease-out); }
+  .vr-m:has(button.vr-m-go):hover .vr-m-img { transform: scale(1.03); }
+}
+@keyframes vr-roll { from { transform: translateY(60%); opacity: 0; } }
+@keyframes vr-tick { from { transform: scale(0.4); } }

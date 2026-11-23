@@ -131,8 +131,8 @@ export function mockState() {
   ];
   return {
     me: { handle: 'bas_v', displayName: 'Bas', avatarEmoji: '' },
-    links,
-    friendTrips,
+    links: FRIENDS_MOCK === 'many' ? [...links, ...manyFriends(d).links] : links,
+    friendTrips: FRIENDS_MOCK === 'many' ? [...friendTrips, ...manyFriends(d).trips] : friendTrips,
     shares,
     myPlans,
     invites,
@@ -156,6 +156,29 @@ export function mockState() {
     // Accepted co-planners on your own trips, for My trips' "Sam joins".
     coplannersByPlan: { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
   };
+}
+
+/** ?friendsmock=many (G16 v3): the rich state plus 22 more friends, so the
+ *  page holds 25; most show a trip, some to the same place on the same
+ *  days (the timeline merges them), a few nothing. */
+const MANY_NAMES = ['Mia Kovač', 'Tom Jansen', 'Ruud Bakker', 'Noor Visser', 'Daan Smit', 'Eva Mulder', 'Lars Berg', 'Iris de Wit',
+  'Femke Bos', 'Bram Dekker', 'Sara Lind', 'Jonas Weber', 'Lotte Hendriks', 'Milan Novak', 'Zoë Martin', 'Pieter Claes',
+  'Anouk Peters', 'Hugo Lambert', 'Elif Kaya', 'Marta Silva', 'Kai Fischer', 'Nina Rossi'];
+const MANY_PLACES = [['LIS', 'Lisbon'], ['NAP', 'Naples'], ['SPU', 'Split'], ['INN', 'Innsbruck'], ['OPO', 'Porto'], ['LJU', 'Ljubljana']];
+function manyFriends(d) {
+  const links = [];
+  const trips = [];
+  MANY_NAMES.forEach((name, i) => {
+    const id = `u-m${i}`;
+    const handle = name.split(' ')[0].toLowerCase().normalize('NFD').replace(/[^a-z]/g, '');
+    links.push({ id: `l-m${i}`, kind: 'friend', userId: id, handle, displayName: name, avatarEmoji: '', createdAt: d(-10 - i) });
+    if (i % 5 === 4) return; // a few friends show nothing
+    const [dest, city] = MANY_PLACES[i % MANY_PLACES.length];
+    const start = 30 + (i % 9) * 12;
+    trips.push({ ownerId: id, ownerHandle: handle, ownerName: name, ownerEmoji: '', tripPlanId: `ft-m${i}`, label: '',
+      startDate: d(start), endDate: d(start + 4), cities: [city], countries: [], destinationIds: [dest], updatedAt: d(-3) });
+  });
+  return { links, trips };
 }
 
 /** Summer 2027's shared costs: Sam paid the flat's deposit, you the

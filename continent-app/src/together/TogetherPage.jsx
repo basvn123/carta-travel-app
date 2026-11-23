@@ -3,11 +3,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { Button, Blaze } from '../components/ui/index.js';
 import { ArrowLeftIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
-import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
-import { listGuides } from '../community/guides.js';
-import { fmtWhere } from '../auth/friendFacts.js';
-import { SectHead } from '../auth/mytrips/atlas/Ink.jsx';
 import { useTogether } from './useTogether.js';
 import { AddFriend } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
@@ -27,8 +23,9 @@ import { drawAllowed } from './vrienden.js';
  * with, on one page behind the header's people door. The route stays
  * `?tab=together`.
  *
- *   home        VriendenHome: who goes where, to do, together on the road,
- *               friends, kringen and group trips, shared, balances
+ *   home        VriendenHome: one timeline (version 3): the face strip, the
+ *               status line, Nu, the months, Zonder datum. Gidsen live on
+ *               Ontdek (GuidesStrip), not here.
  *   invite      home with the invite sheet (phone) or popover (desktop) open
  *   me          Jij: your face and handle, what friends see, milestones
  *               (the old `privacy` address lands here)
@@ -46,45 +43,11 @@ import { drawAllowed } from './vrienden.js';
  * a deep link straight onto Vrienden shows end states.
  */
 
-/** Guides: the two newest published guides as photo cards, and the door to
- *  all of them. Absent when nothing is published, as the strip was. */
-function GuidesBlock({ destinations, onOpen }) {
-  const { t } = useI18n();
-  const [rows, setRows] = useState([]);
-  useEffect(() => {
-    let live = true;
-    listGuides({ limit: 6 }).then((r) => { if (live) setRows(r); }).catch(() => {});
-    return () => { live = false; };
-  }, []);
-  if (!rows.length || !onOpen) return null;
-  return (
-    <section className="vr-sect vr-o-guides" aria-labelledby="tg-guides-h">
-      <SectHead id="tg-guides-h" as="h2" title={t('tg.guides')}
-        action={<Button variant="quiet" size="sm" className="vr-lnk" onClick={onOpen}>{t('rail.seeAllPlain')}</Button>} />
-      <div className="tg-guides">
-        {rows.slice(0, 2).map((g) => {
-          const d = (g.destinationIds || []).map((id) => destinations?.[id]).find((x) => x?.image?.url);
-          return (
-            <Button key={g.tripPlanId} variant="quiet" className="tg-gd" onClick={onOpen}>
-              <span className="tg-gd-ph">
-                <HeroImage url={d?.image?.url || null} image={d?.image} className="tg-gd-img" maxWidth={960}
-                  sizes="(min-width: 1100px) 20vw, 45vw" ratio={[4, 3]} />
-              </span>
-              <b>{g.label || fmtWhere(g.cities)}</b>
-              <span className="tg-gd-by">@{g.ownerHandle}</span>
-            </Button>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
 const CIRCLE_VIEWS = ['circle', 'circlevote', 'circledates', 'circleflights', 'circlepick'];
 
 export function TogetherPage({
   view = 'home', viewId = '', onView, onClose, destinations, costs, pendingHandle,
-  onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace, choices, onOpenTripPlan, onOpenSaved,
+  onOpenAuth, onPlanDay, favorites, onPlanPlace, choices, onOpenTripPlan, onOpenSaved,
 }) {
   const { t } = useI18n();
   const s = useTogether();
@@ -191,8 +154,7 @@ export function TogetherPage({
       <VriendenHome s={s} meets={meets} destinations={destinations} onView={onView} onPlanDay={onPlanDay}
         onOpenSaved={onOpenSaved} onOpenTripPlan={onOpenTripPlan} headRef={headRef}
         inviteOpen={inviteOpen} setInviteOpen={(o) => { setInviteOpen(o); if (!o && v === 'invite') onView('home'); }}
-        error={error} setError={setError}
-        extra={<GuidesBlock destinations={destinations} onOpen={onOpenGuides} />} />
+        error={error} setError={setError} />
     );
   }
 
