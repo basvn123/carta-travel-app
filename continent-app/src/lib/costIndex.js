@@ -65,6 +65,7 @@ import {
   DEFAULT_LIFESTYLE, CLUB_DRINKS_PER_NIGHT, groundSpendPerPerson,
 } from './runtime_pricing.js';
 import { bedPrice, cheapestMonths, isMeasured } from './stayPrice.js';
+import { isOn } from './flags.js';
 import { staysDataVersion } from './staysData.js';
 import { foodShare, partyOf } from './party.js';
 import { formatMoney } from './money.js';
@@ -154,6 +155,15 @@ function bandScale(lifestyle, stayTier) {
   // The day scale is the two blended at the share each holds by default.
   const shareFood = foodRef / (foodRef + REF_STAY.home);
   return { food, stay, day: shareFood * food + (1 - shareFood) * stay };
+}
+
+const bandDay = (stay, food) => (stay != null && food != null ? stay + food : null);
+
+/** The day band of the bed and food lines an engine answer keeps on (E3, A-7): items the traveller
+ *  switched off leave the sum, food is the adult basis. Null when neither is on. */
+export function dayBandOf(stayEur, foodAdultEur, lifestyle, stayTier) {
+  const parts = [stayEur, foodAdultEur].filter((v) => v != null);
+  return parts.length ? bandFor('day', parts.reduce((s, v) => s + v, 0), bandScale(lifestyle, stayTier).day) : null;
 }
 
 /** Band 0 (cheapest) to 4 (priciest) for a euro figure on one of the scales.
@@ -371,8 +381,11 @@ export function costRow(d, ctx) {
     foodEur,
     dayEur,
     stayBand: bandFor('stay', stayEur, scale.stay),
-    foodBand: bandFor('food', foodEur, scale.food),
-    dayBand: bandFor('day', dayEur, scale.day),
+    // E3 (A-7): a band reads the adult food basis, so a child's share of meals does not move a place's band
+    // with the party; before, the party's average food counted.
+    foodBand: bandFor('food', isOn('E3') ? foodBase : foodEur, scale.food),
+    dayBand: bandFor('day', isOn('E3') ? bandDay(stayEur, foodBase) : dayEur, scale.day),
+    foodAdultEur: foodBase,
     stayLevel: levelOf(at.bed?.q || a.q, repaired),
     stayBasis: repaired ? null : (at.bed?.q || a.q || null),
     foodBasis: d.costs?.price_source || null,
