@@ -167,6 +167,11 @@ def compare(old: dict, new: dict, cfg: dict | None = None) -> dict:
             fail(name, f"{name}: a wire with no places is not a comparison")
             shares.append({"field": name, "old": None, "new": None, "delta_points": None, "ok": False})
             continue
+        if oh == 0 and nh == 0:
+            # Zero hits in both wires is a field nobody fills, not a stable one.
+            fail(name, f"{name} has no hits in either wire")
+            shares.append({"field": name, "old": 0.0, "new": 0.0, "delta_points": 0.0, "old_n": 0, "new_n": 0, "ok": False})
+            continue
         so, sn = oh / op, nh / np_
         delta = round((sn - so) * 100, 2)
         ok = -delta <= cfg["share_drop_points"]

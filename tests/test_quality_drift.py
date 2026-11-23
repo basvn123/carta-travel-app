@@ -124,3 +124,13 @@ def test_the_publish_guard_refuses_a_drifted_build(tmp_path, capsys):
     assert tg.call(guard, tmp_path, good, None, "--previous", str(good)) == 0
     assert tg.call(guard, tmp_path, bad, None, "--previous", str(good)) == 1
     assert "FAIL drift.measured_bed_share" in capsys.readouterr().out
+
+
+def test_zero_hits_in_both_wires_is_never_a_pass(drift):
+    w = make_wire()
+    for d in w["destinations"].values():
+        d["image"] = {}
+        d["accommodation"].update(q="modelled", captured=None)
+    res = drift.compare(w, copy.deepcopy(w))
+    fields = {f["field"] for f in res["failures"]}
+    assert not res["ok"] and {"photo_share", "measured_bed_share"} <= fields
