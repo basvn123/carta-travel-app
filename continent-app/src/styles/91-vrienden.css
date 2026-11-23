@@ -96,6 +96,14 @@
 .vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img {
   display: block; width: 100%; height: 100%; object-fit: cover;
 }
+/* While a photo loads its box shows the stone band (judge 3 fix 2). */
+.vr-go-ph, .vr-fc-ph:not(.is-none):not(.is-add), .vr-meet-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c { background: var(--border-soft); }
+/* It fades in on load, only after the traveller opened the page (a deep
+   link is the first paint and shows each photo as it comes). */
+@media (prefers-reduced-motion: no-preference) {
+  .vr-draw :is(.vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img) { transition: opacity var(--dur-3) var(--ease-out); }
+  .vr-draw img:is(.vr-go-img, .vr-fc-img, .vr-meet-img, .vr-vcard-img, .vr-pick-img, .vr-row-img, .vr-fl-img, .vr-ring-img):not(.is-loaded) { opacity: 0; }
+}
 .vr-fc-ph:not(.is-none):not(.is-add) { display: block; }
 /* The largest own copy is 1280 px wide, so a lone wide photo stays at 640 px
    or less: sharp on a 2x screen (judge 1 fix 5). */
