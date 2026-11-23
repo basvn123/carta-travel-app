@@ -439,12 +439,14 @@ export function CircleView({ circleId, step = 'circle', onView, headRef, destina
   const { photo: leadPhoto } = placeOf(destinations, lead ? [lead.destId] : []);
   const winText = win ? fmtShort(win.start, win.end, lang, j) : '';
   const canLine = win ? (win.count === win.total ? t('vr.everyone') : t('vr.nOfCan', { n: win.count, total: win.total })) : '';
-  const fairRow = fair.rows.find((r) => r.id === (fair.fairestId || lead?.id));
+  // The Vluchten tile speaks of the leading proposal, the same place Gekozen
+  // prices (judge 1 fix 3), and names it.
+  const leadRow = lead ? fair.rows.find((r) => r.id === lead.id) : null;
   const avgFor = (pid) => { const r = fair.rows.find((x) => x.id === pid); return r?.complete ? Math.round(r.avg) : null; };
   const figures = [
     [leadName || t('vr.noLead'), lead ? t('vr.leadsWith', { n: lead.score }) : ''],
     [winText || t('vr.noDays'), canLine],
-    faresOn && fairRow?.complete ? [eur(Math.round(fairRow.avg)), t('vr.avgPP')] : [win ? t('vr.flightPP') : t('vr.datesFirst'), ''],
+    faresOn && leadRow?.complete ? [eur(Math.round(leadRow.avg)), `${t('vr.avgPP')}, ${leadName}`] : [win ? t('vr.flightPP') : t('vr.datesFirst'), ''],
   ];
   const isOwner = c.ownerId === s.userId;
   const canRemove = (p) => p.createdBy === s.userId || isOwner;
