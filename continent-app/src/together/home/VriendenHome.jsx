@@ -51,19 +51,18 @@ function GoCard({ trip, destinations, me, mine, open, onToggle }) {
   const who = trip.ownerName || `@${trip.ownerHandle}`;
   return (
     <article className={`vr-go${mine ? ' is-mine' : ''}${open ? ' is-open' : ''}`}>
-      <button type="button" className="vr-go-tap" aria-expanded={open} onClick={onToggle}
-        aria-label={[who, place, days != null ? t(days === 1 ? 'vr.dayTo' : 'vr.daysTo', { place }) : ''].filter(Boolean).join(', ')}>
+      <button type="button" className="vr-go-tap" aria-expanded={open} onClick={onToggle}>
         <span className="vr-go-ph">
           <HeroImage url={photo?.image?.url || null} image={photo?.image} className="vr-go-img" maxWidth={1280}
             sizes="(min-width: 1100px) 24vw, (min-width: 768px) 30vw, 62vw" ratio={[4, 5]} />
         </span>
         {days != null && (
-          <span className="vr-go-cd" aria-hidden="true">
+          <span className="vr-go-cd">
             <b className="num">{days}</b><span>{t(days === 1 ? 'vr.dayTo' : 'vr.daysTo', { place })}</span>
           </span>
         )}
         <span className="vr-go-bar" aria-hidden="true"><i style={{ '--fill': leadFill(days) }} /></span>
-        <span className="vr-go-who" aria-hidden="true">
+        <span className="vr-go-who">
           <ToneFace id={trip.ownerId} me={me} name={who} emoji={trip.ownerEmoji} size="sm" />
           <b>{firstName(who)}</b>{mine && <em>{t('vr.andYou')}</em>}
         </span>
@@ -293,7 +292,7 @@ function FriendCard({ link, s, destinations, meets, onOpen }) {
   const name = nameOf(link);
   const fact = meet ? t('vr.withYouIn', { place: meet.city }) : next ? place : t('vr.nothingShared');
   return (
-    <button type="button" className="vr-fc" onClick={onOpen} aria-label={[name, fact, days != null && days >= 0 ? t('vr.inDays', { n: days }) : ''].filter(Boolean).join(', ')}>
+    <button type="button" className="vr-fc" onClick={onOpen}>
       {photo?.image?.url ? (
         <span className="vr-fc-ph">
           <HeroImage url={photo.image.url} image={photo.image} className="vr-fc-img" maxWidth={1280}
@@ -302,12 +301,13 @@ function FriendCard({ link, s, destinations, meets, onOpen }) {
       ) : (
         <span className="vr-fc-ph is-none" aria-hidden="true"><ToneFace id={link.userId} me={s.userId} name={name} emoji={link.avatarEmoji} size="lg" /></span>
       )}
-      <span className="vr-fc-nm" aria-hidden="true">
+      <span className="vr-fc-nm">
         <ToneFace id={link.userId} me={s.userId} name={name} emoji={link.avatarEmoji} size="sm" />
         <b>{name}</b>
-        {days != null && days >= 0 && <span className="vr-fc-d num">{t('vr.dShort', { n: days })}</span>}
+        {days != null && days >= 0 && <span className="vr-fc-d num" aria-hidden="true">{t('vr.dShort', { n: days })}</span>}
+        {days != null && days >= 0 && <span className="sr-only">{t('vr.inDays', { n: days })}</span>}
       </span>
-      <span className={`vr-fc-f${meet ? ' is-meet' : ''}`} aria-hidden="true">{fact}</span>
+      <span className={`vr-fc-f${meet ? ' is-meet' : ''}`}>{fact}</span>
     </button>
   );
 }

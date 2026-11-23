@@ -2376,11 +2376,7 @@ export const en = {
   "vr.openFriend": "Open {who} in Friends",
   "vr.madeTrip": "Trip made, the members are invited",
   "vr.kringLink": "Link to the circle",
-  "vr.removeProposal": "Remove {place}",
-  "vr.dirN": "N",
-  "vr.dirE": "E",
-  "vr.dirS": "S",
-  "vr.dirW": "W",
+  "vr.removeProposal": "Remove {place}",
   "vr.invite": "Invite",
   "vr.you": "You",
   "vr.whoGoes": "Who goes where",

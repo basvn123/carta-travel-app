@@ -34,15 +34,24 @@ export function leadFill(days) {
   return Math.max(0.04, Math.min(1, 1 - days / FILL_DAYS));
 }
 
-// The app's first paint is over once it has been up for a moment; a page
-// opened after that (from the door, a link inside the app) may draw in.
-const FIRST_PAINT_MS = 1500;
+// A figure may draw in only once the traveller has done something on the
+// page (opened the door, followed a link inside the app): a deep link or a
+// reload straight onto Vrienden is the app's first paint and shows end
+// states. navigator.userActivation says exactly that; where it is missing,
+// a load that landed on Vrienden counts as the first paint.
+function landedHere() {
+  try {
+    const nav = window.performance?.getEntriesByType?.('navigation')?.[0];
+    return /[?&]tab=together\b/.test(nav?.name || window.location.search);
+  } catch { return true; }
+}
 export function drawAllowed() {
   if (typeof window === 'undefined') return false;
   try {
     if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return false;
   } catch { /* old browsers: no motion query, keep the rule below */ }
-  return (window.performance?.now?.() || 0) > FIRST_PAINT_MS;
+  const ua = window.navigator?.userActivation;
+  return ua ? ua.hasBeenActive : !landedHere();
 }
 
 const IATA = /^[A-Z]{3}$/;

@@ -54,7 +54,7 @@ function Milestones({ userId, friendCount }) {
           const state = at ? t('vr.earned') : b.target ? t('vr.ofN', { i: Math.min(friendCount, b.target), n: b.target }) : t('vr.locked');
           return (
             <button key={b.id} type="button" className={`vr-stamp${at ? ' is-got' : ''}`} aria-expanded={open === b.id}
-              aria-label={`${name}, ${state}`} onClick={() => setOpen(open === b.id ? '' : b.id)}>
+              onClick={() => setOpen(open === b.id ? '' : b.id)}>
               <svg viewBox="0 0 60 60" aria-hidden="true">
                 <circle className="vr-stamp-track" cx="30" cy="30" r={R} />
                 {!at && frac > 0 && (
@@ -62,8 +62,8 @@ function Milestones({ userId, friendCount }) {
                 )}
               </svg>
               <span className="vr-stamp-ic" aria-hidden="true"><Icon size={22} /></span>
-              <span className="vr-stamp-n" aria-hidden="true">{name}</span>
-              {!at && b.target && <span className="vr-stamp-p num" aria-hidden="true">{state}</span>}
+              <span className="vr-stamp-n">{name}</span>
+              {!at && b.target ? <span className="vr-stamp-p num">{state}</span> : <span className="sr-only">{state}</span>}
             </button>
           );
         })}

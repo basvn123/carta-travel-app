@@ -10,6 +10,7 @@ import { Frame2 } from '../auth/mytrips/atlas/Ink.jsx';
 import { useTogether } from './useTogether.js';
 import { QrCode } from './Privacy.jsx';
 import { ToneFace, nameOf } from './parts.jsx';
+import { drawAllowed } from './vrienden.js';
 
 /**
  * Inviting a friend (G16, decision 0017). The link is the existing
@@ -89,9 +90,11 @@ function InviteSheet({ onClose, onFind }) {
   const panelRef = useRef(null);
   const a = useLinkActions();
   const [mode, setMode] = useState('link');
+  // The sheet slides up when a tap opened it, not on a deep link (first paint).
+  const [slide] = useState(drawAllowed);
   useFocusTrap(panelRef, onClose);
   return createPortal(
-    <div className="vr-sheet-wrap">
+    <div className={`vr-sheet-wrap${slide ? ' is-opened' : ''}`}>
       <div className="vr-scrim" onClick={onClose} aria-hidden="true" />
       <div className="vr-sheet" ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="vr-inv-h">
         <span className="vr-grab" aria-hidden="true" />

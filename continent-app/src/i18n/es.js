@@ -1966,11 +1966,7 @@ export const es = {
   "vr.openFriend": "Abrir a {who} en Amigos",
   "vr.madeTrip": "Viaje creado, los miembros están invitados",
   "vr.kringLink": "Enlace al círculo",
-  "vr.removeProposal": "Quitar {place}",
-  "vr.dirN": "N",
-  "vr.dirE": "E",
-  "vr.dirS": "S",
-  "vr.dirW": "O",
+  "vr.removeProposal": "Quitar {place}",
   "vr.invite": "Invitar",
   "vr.you": "Tú",
   "vr.whoGoes": "Quién va adónde",

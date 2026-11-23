@@ -1975,11 +1975,7 @@ export const nl = {
   "vr.openFriend": "Open {who} in Vrienden",
   "vr.madeTrip": "Reis gemaakt, de leden zijn uitgenodigd",
   "vr.kringLink": "Link naar de kring",
-  "vr.removeProposal": "Verwijder {place}",
-  "vr.dirN": "N",
-  "vr.dirE": "O",
-  "vr.dirS": "Z",
-  "vr.dirW": "W",
+  "vr.removeProposal": "Verwijder {place}",
   "vr.invite": "Uitnodigen",
   "vr.you": "Jij",
   "vr.whoGoes": "Wie gaat waarheen",

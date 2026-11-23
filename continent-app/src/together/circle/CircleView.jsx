@@ -344,7 +344,7 @@ function FareTable({ c, top, fares, fair, destinations, me }) {
   const sum = (pid) => fair.rows.find((r) => r.id === pid);
   const win = (pid) => (fair.fairestId === pid ? ' is-fair' : '');
   return (
-    <div className="vr-flwrap">
+    <div className="vr-flwrap" tabIndex={0} role="region" aria-label={t('vr.flightPP')}>
       <table className="vr-fl">
         <thead>
           <tr>
