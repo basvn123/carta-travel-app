@@ -57,6 +57,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 sys.path.insert(0, str(HERE))
 
+import grades  # noqa: E402
 import rating_config  # noqa: E402
 from rating_config import cfg, section  # noqa: E402
 
@@ -340,16 +341,14 @@ def raw_parts(kind, rows):
 # Facts, next to the score
 # ---------------------------------------------------------------------------
 
-SAC_GRADE = {"strolling": "easy", "hiking": "easy",
-             "mountain_hiking": "moderate", "demanding_mountain_hiking": "moderate",
-             "alpine_hiking": "hard", "demanding_alpine_hiking": "hard",
-             "difficult_alpine_hiking": "hard"}
+# One table with the wire's grade (pipeline/grades.py, D24): T3 is hard here
+# as it is on the trail page, not moderate.
+SAC_GRADE = grades.SAC_GRADE
 SURFACE_FACT = {"sand": "sand", "pebble": "pebble", "gravel": "pebble",
                 "fineGravel": "pebble", "shingle": "pebble", "rock": "rock"}
 WAY_UP = {"cableCar": "lift", "gondola": "lift", "funicular": "lift",
           "rackRailway": "lift", "chairlift": "lift", "road": "drive"}
-MOUNTAIN_DIFFICULTY = {"walkUp": "easy", "hike": "easy", "mountainHike": "moderate",
-                       "scramble": "hard", "alpine": "hard"}
+MOUNTAIN_DIFFICULTY = grades.MOUNTAIN_DIFFICULTY
 
 
 def facts_of(kind, row, lab=None):
@@ -358,7 +357,10 @@ def facts_of(kind, row, lab=None):
         loop = (True if rt in ("loop", "figure8") else False if rt in ("point", "out_back")
                 else row.get("is_loop"))
         return {
-            "difficulty": SAC_GRADE.get((lab or {}).get("sac_worst")),
+            # The grade the traveller reads is f.g, the one the score used;
+            # the SAC word is only the fallback for a row without one.
+            "difficulty": ((row.get("f") or {}).get("g")
+                           or SAC_GRADE.get((lab or {}).get("sac_worst"))),
             "km": round(row["distance_m"] / 1000, 1) if row.get("distance_m") else None,
             "climb_m": row.get("ascent_m"),
             "hours": round(row["duration_min"] / 60, 1) if row.get("duration_min") else None,
