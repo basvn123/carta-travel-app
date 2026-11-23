@@ -10,6 +10,7 @@ import { PencilIcon, HeartIcon, CheckIcon } from '../../components/Icons.jsx';
 import { MAX_NOTE } from '../../lib/savedLists.js';
 import { voteState, memberOf, canRemoveItem } from '../../lib/sharedListModel.js';
 import { CardMenu, Faces } from './parts.jsx';
+import { openFriend } from '../../together/openVrienden.js';
 
 /** Two letters for a face: the first of the first two words. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
@@ -134,8 +135,18 @@ export function PeoplePicker({
         <ul className="mt-people-list">
           {members.map((m) => (
             <li key={m.userId} className="mt-people-row">
-              <Faces people={facesOf([m])} max={1} />
-              <span className="mt-people-name">{whoName(t, m, me)}</span>
+              {/* G16: a member's face and name open them in Vrienden. */}
+              {m.userId !== me ? (
+                <Pressable type="button" className="mt-people-who" onClick={() => openFriend(m.userId)}>
+                  <Faces people={facesOf([m])} max={1} />
+                  <span className="mt-people-name">{whoName(t, m, me)}</span>
+                </Pressable>
+              ) : (
+                <>
+                  <Faces people={facesOf([m])} max={1} />
+                  <span className="mt-people-name">{whoName(t, m, me)}</span>
+                </>
+              )}
               {owner && m.userId !== me && (
                 <Button variant="quiet" size="sm" onClick={() => onRemoveMember(m)}>{t('mt2.removePerson')}</Button>
               )}

@@ -28,6 +28,7 @@ import { CardMenu, Faces } from './parts.jsx';
 import { Empty } from './MyTripsTabs.jsx';
 import { scrollBehavior } from '../../lib/motion.js';
 import { SharedItem, PeoplePicker, facesOf } from './SharedList.jsx';
+import { takeSavedList } from './openList.js';
 
 import { SavedPlate } from './atlas/SavedPlate.jsx';
 // The top holds the folded credit button (24 px) clear of the northern pins.
@@ -226,7 +227,8 @@ export function SavedTab({
   const [cc, setCc] = useState(initialCc || '');
   // A country handed in once (the country sheet's Show saved) is taken, then let go.
   useEffect(() => { if (initialCc) { setCc(initialCc); onCcUsed?.(); } }, [initialCc]); // eslint-disable-line react-hooks/exhaustive-deps -- runs per hand-off
-  const [list, setList] = useState('all');
+  // A door that names a shared list (Vrienden, Gedeeld) opens on it (G16).
+  const [list, setList] = useState(() => takeSavedList() || 'all');
   const [kind, setKind] = useState('all');
   const [fell, setFell] = useState(false);
   const [view, setView] = useState('list');

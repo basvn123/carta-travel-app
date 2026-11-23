@@ -36,3 +36,15 @@ What it means in the app:
 - The owner applies migration 078 (`docs/owner/supabase-migrations.md`); until then there is no Kringen section.
 - Phase 2: public kringen (moderation and reporting), a tracked invite that befriends on sign-up (a migration), the remaining cross-app links (ROADMAP G16).
 - Undo: `git revert` of the `p15-vrienden` commits; `078_circles_down.sql` if 078 was applied.
+
+## Links built
+- A friend's face on the place page (Friends here) opens that friend in Vrienden; Stel voor in kring on the place page.
+- In Bewaard, a shared list's people (the faces button) open each member in Vrienden.
+- Vrienden's Gedeeld opens Bewaard on that exact shared list, and a co-planned trip opens in Plan.
+- Account's Vrienden row; My trips' friends line (as before).
+
+## Not done
+- **Explore card faces ("Sam went")**: the faces sit inside the card's own link, and a second control inside it is a nested interactive element. The place page carries the link instead.
+- **Today, "Wie gaat er mee"**: the crew there is names typed on the trip (`tripCrew.js`), not Carta accounts, so there is no friend to open.
+- **Uitgaven, "Verrekenen"**: the Uitgaven page counts one trip's spending on the device; Settle up works on a group trip's ledger (058). The two are not linked by any id, so the link would open the wrong ledger or none.
+- **Shared trip view, "Voeg @handle toe"**: the read-only share projection carries no owner handle (by design, migration 009 whitelists what leaves), so there is no handle to add.

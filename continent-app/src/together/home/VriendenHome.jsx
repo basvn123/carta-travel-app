@@ -23,6 +23,7 @@ import { Ring } from '../circle/Ring.jsx';
 import { ToneFace, ToneFaces, fmtShort, firstName, nameOf } from '../parts.jsx';
 import { placeOf, daysUntil, leadFill } from '../vrienden.js';
 import { usePlaceNames, joinNames } from '../PlaceName.jsx';
+import { requestSavedList } from '../../auth/mytrips/openList.js';
 
 // Every place on the page in the reader's language (judge 1 fix 2), from one
 // lookup in VriendenHome, read by each section.
@@ -431,7 +432,7 @@ function Shared({ s, onOpenSaved, onOpenTripPlan }) {
   for (const l of lists.missing ? [] : lists.lists || []) {
     const people = (l.members || l.people || []).filter((p) => (p.id || p.userId) !== s.userId);
     rows.push(
-      <Pressable key={`l:${l.id}`} type="button" className="vr-row is-link" onClick={() => onOpenSaved?.()}>
+      <Pressable key={`l:${l.id}`} type="button" className="vr-row is-link" onClick={() => { requestSavedList(l.id); onOpenSaved?.(); }}>
         <ToneFaces me={s.userId} size="sm" people={people.map((p) => ({ id: p.id || p.userId, name: p.name || p.displayName || '', emoji: p.emoji || '' }))} />
         <span className="vr-row-tx"><b>{l.name}</b><span>{t('vr.placesN', { n: (l.items || []).length })}</span></span>
         <ChevronRightIcon size={16} className="vr-chev" />

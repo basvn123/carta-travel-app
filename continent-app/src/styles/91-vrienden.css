@@ -24,6 +24,8 @@
 .vr-propose-in { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: center; margin-top: var(--space-3); }
 .vr-propose-in .btn { min-height: var(--tap); }
 .vr-propose-list { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.mt-people-who { display: flex; align-items: center; gap: var(--space-2); flex: 1; min-width: 0; min-height: var(--tap); padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: start; cursor: pointer; }
+.mt-people-who:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
 
 /* ── the head ───────────────────────────────────────────────────────── */
 .vr-head { display: flex; align-items: center; gap: var(--space-3); min-height: 56px; min-width: 0; }
