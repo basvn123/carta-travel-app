@@ -549,7 +549,26 @@ def split_code(name):
     out = _rstrip_keep_abbrev(s.lstrip(_LEAD_PUNCT))
     if re.search(r"\w-,\s[^\s]+-$", s):
         out += "-"                      # "Rad-, Lauf-": a suspended hyphen is a word
-    return out, code
+    return _drop_stray_closers(out), code
+
+
+def _drop_stray_closers(out):
+    """A closer whose opener went with a lead code ("Wm 03 (Untergrafenrieder
+    Weg)" is "Untergrafenrieder Weg)" once "Wm 03" and the "(" are peeled) is
+    taken off, so no name is made unbalanced (D7, wave 3b)."""
+    depth = {"(": 0, "[": 0}
+    keep = []
+    for ch in out:
+        if ch in depth:
+            depth[ch] += 1
+        elif ch in ")]":
+            op = "(" if ch == ")" else "["
+            if depth[op] == 0:
+                continue
+            depth[op] -= 1
+        keep.append(ch)
+    res = "".join(keep)
+    return re.sub(r"\s+", " ", res).lstrip(_LEAD_PUNCT).rstrip() if res != out else out
 
 
 # The languages a place is locally named in, for the countries where the
@@ -1190,7 +1209,8 @@ def dedupe_names(rows, originals=None):
                     if o.endswith((")", "]")):
                         # The route's name before a comma goes whole, before a place does.
                         tail = o.split(", ", 1)[-1]
-                        kept = tail if ", " in o and len(tail) <= TITLE_MAX and not is_code(tail)                             else cap_title(o, keep_note=True)
+                        fits = ", " in o and len(tail) <= TITLE_MAX and not is_code(tail)
+                        kept = tail if fits else cap_title(o, keep_note=True)
                     cand.append(kept if kept and squash(kept) != squash(r["name"]) else None)
                 bare = [i for i, c in enumerate(cand) if not c]
                 if len(bare) == 1 and len(rs) > 1:

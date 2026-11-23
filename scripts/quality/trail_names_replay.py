@@ -213,6 +213,10 @@ def dangling_end(n1: str, n0_readable: str = "") -> bool:
     return names.trim_dangling(t) != t
 
 
+def _unbalanced(t: str) -> bool:
+    return t.count("(") != t.count(")") or t.count("[") != t.count("]")
+
+
 def cap_kept_long(n0: str, n1: str, cc: str | None = None) -> bool:
     """(judge 2) The cap cut a name that has no boundary to cut at (no ", ", ": ",
     " - " or bracket) at a word, after the function words were stripped. Reported
@@ -258,7 +262,7 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
     stc_ex, dang_ex = [], []
     dd_ex = collections.defaultdict(list)
@@ -291,6 +295,8 @@ def replay(rows: list[dict]) -> dict:
             res["dangling_end"] += 1
             if len(dang_ex) < 25:
                 dang_ex.append([r["id"], n0, n1])
+        # D7 (wave 3b): a name unbalanced by the cleaner while the wire's own is balanced.
+        res["stray_bracket"] += bool(_unbalanced(n1) and not _unbalanced(n0))
         res["cap_kept_long"] += cap_kept_long(n0, n1, r.get("country"))
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
@@ -321,7 +327,7 @@ def replay(rows: list[dict]) -> dict:
                      and res["end_losses_unexplained"] == 0
                      and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
                      and res["head_cut"] == 0 and res["mid_word_loss"] == 0 and res["start_tail_cut"] == 0
-                     and res["dangling_end"] == 0
+                     and res["dangling_end"] == 0 and res["stray_bracket"] == 0
                      and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
     res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "dedupe": dd_ex,

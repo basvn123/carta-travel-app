@@ -674,3 +674,19 @@ def test_a_trailing_bracket_goes_before_a_place_does():
     got = _dedupe([(1, "BE", "Via Brabantica, Antwerpen - Mechelen"),
                    (2, "BE", "Via Brabantica, Antwerpen - Mechelen (variant)")])
     assert got[1] != got[2] and "(" not in got[2].replace("(variant)", ""), got
+
+
+def test_a_lead_code_peeled_before_a_bracket_leaves_no_stray_closer():
+    """Judge 1 (wave 3b): "Wm 03 (Untergrafenrieder Weg)" is balanced on the wire."""
+    cases = [
+        (107843, "DE", "Wm 03 (Untergrafenrieder Weg)", "Untergrafenrieder Weg"),
+        (209992, "DE", "Tour 11 (orange 11)", "orange 11"),
+        (77072, "RO", "DJ 708 (Julita - Gurahonț) - Vf. Drocea", "Julita - Gurahonț - Vf. Drocea"),
+        (75869, "RO", "Piatra Pușcată / Confluența Tâmnei cu Cerna (km 26) - Km 18 DN67D (Motel Dumbrava)", "Motel Dumbrava"),
+    ]
+    for rid, cc, src, want in cases:
+        n1 = names.wire_name(src, cc)
+        s, _code = names.split_code(n1)
+        got = names.cap_title(s) if s and not names.is_code(s) else n1
+        assert got == want, (rid, got)
+        assert got.count("(") == got.count(")") and got.count("[") == got.count("]")
