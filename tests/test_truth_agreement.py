@@ -61,3 +61,14 @@ def test_agreement_on_a_fixture_uses_the_field_tolerances(tmp_path, capsys):
     assert res["matched"] == 6 and res["agree"] == 4 and res["raw_agreement"] == round(4 / 6, 4)
     assert res["kappa_rows"] == 4 and res["kappa"] is not None
     assert res["by_field"]["place.population"] == {"agree": 1, "rows": 2}
+
+
+def test_coverage_counts_rows_the_draft_gave_up_and_few_kappa_rows_warn(tmp_path, capsys):
+    draft, sheet = tmp_path / "draft.csv", tmp_path / "sheet.csv"
+    write(draft, [row(1, "country", "NL", "drafted"), row(2, "country", "BE", "unverifiable"),
+                  row(3, "country", "FR", "unverifiable")])
+    write(sheet, [row(1, "country", "NL", "verified"), row(2, "country", "BE", "verified"),
+                  row(3, "country", "FR", "verified")])
+    assert ag.main(["--draft", str(draft), "--sheet", str(sheet)]) == 0
+    out = capsys.readouterr().out
+    assert "coverage 1 of 3" in out and "WARNING: only 1 category rows, fewer than 20" in out

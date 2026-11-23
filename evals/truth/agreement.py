@@ -29,6 +29,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[1]
+MIN_KAPPA_ROWS = 20
 
 
 def _truth():
@@ -61,6 +62,10 @@ def cohen_kappa(a: list, b: list):
 def compare_sheets(draft: list[dict], sheet: list[dict], fields: dict, truth) -> dict:
     owner = {(r["item_id"], r["field"]): r for r in sheet if r.get("status") == "verified"}
     matched = agree = 0
+    # Rows the owner verified that the draft gave up on (`unverifiable`): the draft
+    # says nothing about them, so agreement ignores them. They are counted, or a
+    # high agreement over a few easy rows would read as more than it is.
+    gave_up = sum(1 for d in draft if d.get("status") != "drafted" and (d["item_id"], d["field"]) in owner)
     labels_d, labels_o, by_field = [], [], {}
     for d in draft:
         if d.get("status") != "drafted":
@@ -82,7 +87,8 @@ def compare_sheets(draft: list[dict], sheet: list[dict], fields: dict, truth) ->
             labels_o.append(truth.fold(o["verified_value"]))
     k = cohen_kappa(labels_d, labels_o)
     return {"drafted_rows": sum(r.get("status") == "drafted" for r in draft), "owner_rows": len(owner),
-            "matched": matched, "agree": agree,
+            "matched": matched, "agree": agree, "owner_rows_draft_gave_up": gave_up,
+            "coverage": round(matched / (matched + gave_up), 4) if matched + gave_up else None,
             "raw_agreement": round(agree / matched, 4) if matched else None,
             "kappa": round(k, 4) if k is not None else None, "kappa_rows": len(labels_d),
             "by_field": {f: {"agree": a, "rows": n} for f, (a, n) in sorted(by_field.items())}}
@@ -96,6 +102,11 @@ def render(res: dict) -> str:
              f"{res['agree']}/{res['matched']} = {res['raw_agreement']:.1%}"]
     lines.append("Cohen's kappa " + (f"{res['kappa']:.2f} over {res['kappa_rows']} category rows"
                                      if res["kappa"] is not None else "not defined (too few rows or one label)"))
+    if res["owner_rows_draft_gave_up"]:
+        lines.append(f"coverage {res['matched']} of {res['matched'] + res['owner_rows_draft_gave_up']} owner-verified drafted rows "
+                     f"({res['coverage']:.0%}); {res['owner_rows_draft_gave_up']} the draft marked unverifiable are not scored")
+    if res["kappa_rows"] < MIN_KAPPA_ROWS:
+        lines.append(f"WARNING: only {res['kappa_rows']} category rows, fewer than {MIN_KAPPA_ROWS}: the kappa is not a reliable number")
     lines += [f"  {f}: {v['agree']}/{v['rows']}" for f, v in res["by_field"].items()]
     return "\n".join(lines)
 
