@@ -1,0 +1,606 @@
+{
+ "_about": "Day feasibility, engine E8. want: the day ends before 18:00 (fits), legs run in order, dinner never before 18:00, lunch sits between stops. returnLegMin is the way back to the stay, which today's builder ignores. Typical visit and walk times for real stops.",
+ "cases": [
+  {
+   "id": "paris-three-easy",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 45,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 45,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 150,
+     "legAfterMin": null
+    }
+   ],
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "FR",
+    "class": "3-stops",
+    "persona": "slow"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-two-big",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Louvre",
+     "dwellMin": 150,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Musee d'Orsay",
+     "dwellMin": 90,
+     "legAfterMin": 35
+    }
+   ],
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "FR",
+    "class": "2-stops",
+    "persona": "museums"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-classic-five",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 45,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 45,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 150,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Musee d'Orsay",
+     "dwellMin": 90,
+     "legAfterMin": 35
+    },
+    {
+     "name": "Eiffel Tower",
+     "dwellMin": 90,
+     "legAfterMin": 20
+    }
+   ],
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": false
+   },
+   "slices": {
+    "country": "FR",
+    "class": "5-stops",
+    "persona": "first-time"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-versailles-alone",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Versailles",
+     "dwellMin": 240,
+     "legAfterMin": null
+    }
+   ],
+   "stayLegMin": 50,
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "FR",
+    "class": "1-stops",
+    "persona": "day-trip"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-versailles-plus-louvre",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Versailles",
+     "dwellMin": 240,
+     "legAfterMin": 50
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 150,
+     "legAfterMin": 25
+    }
+   ],
+   "stayLegMin": 50,
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": false
+   },
+   "slices": {
+    "country": "FR",
+    "class": "2-stops",
+    "persona": "day-trip"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-stay-out-start-shifts",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 45,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 45,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 150,
+     "legAfterMin": null
+    }
+   ],
+   "stayLegMin": 30,
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "FR",
+    "class": "3-stops",
+    "persona": "family"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-unknown-leg",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 45,
+     "legAfterMin": null
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 45,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Montmartre",
+     "dwellMin": 90,
+     "legAfterMin": null
+    }
+   ],
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "FR",
+    "class": "3-stops",
+    "persona": "solo"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-six-fast",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 45,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 45,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 150,
+     "legAfterMin": 30
+    },
+    {
+     "name": "Musee d'Orsay",
+     "dwellMin": 90,
+     "legAfterMin": 35
+    },
+    {
+     "name": "Eiffel Tower",
+     "dwellMin": 90,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Montmartre",
+     "dwellMin": 90,
+     "legAfterMin": null
+    }
+   ],
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": false
+   },
+   "slices": {
+    "country": "FR",
+    "class": "6-stops",
+    "persona": "first-time"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "paris-ends-1745-return-30",
+   "expect": "target",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 60,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 60,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 180,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Montmartre",
+     "dwellMin": 100,
+     "legAfterMin": null
+    }
+   ],
+   "returnLegMin": 30,
+   "source": "the way back to the stay is part of the day (audit I-4, proposal E8): a day that ends 17:45 and needs 30 minutes home does not end before 18:00",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": false
+   },
+   "slices": {
+    "country": "FR",
+    "class": "4-stops",
+    "persona": "family"
+   }
+  },
+  {
+   "id": "paris-ends-1630-return-30",
+   "expect": "current",
+   "city": "Paris",
+   "stops": [
+    {
+     "name": "Sainte-Chapelle",
+     "dwellMin": 60,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Notre-Dame",
+     "dwellMin": 60,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Louvre",
+     "dwellMin": 180,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Montmartre",
+     "dwellMin": 60,
+     "legAfterMin": null
+    }
+   ],
+   "returnLegMin": 30,
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "FR",
+    "class": "4-stops",
+    "persona": "family"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "rome-colosseum-forum",
+   "expect": "current",
+   "city": "Rome",
+   "stops": [
+    {
+     "name": "Colosseum",
+     "dwellMin": 120,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Roman Forum",
+     "dwellMin": 90,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Pantheon",
+     "dwellMin": 30,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Trevi Fountain",
+     "dwellMin": 20,
+     "legAfterMin": null
+    }
+   ],
+   "country": "IT",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "IT",
+    "class": "4-stops",
+    "persona": "first-time"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "rome-vatican-day",
+   "expect": "current",
+   "city": "Rome",
+   "stops": [
+    {
+     "name": "Vatican Museums",
+     "dwellMin": 240,
+     "legAfterMin": 20
+    },
+    {
+     "name": "St Peter's Basilica",
+     "dwellMin": 60,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Castel Sant'Angelo",
+     "dwellMin": 60,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Pantheon",
+     "dwellMin": 30,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Trevi Fountain",
+     "dwellMin": 20,
+     "legAfterMin": null
+    }
+   ],
+   "country": "IT",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": false
+   },
+   "slices": {
+    "country": "IT",
+    "class": "5-stops",
+    "persona": "first-time"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "lisbon-alfama-belem",
+   "expect": "current",
+   "city": "Lisbon",
+   "stops": [
+    {
+     "name": "Sao Jorge Castle",
+     "dwellMin": 90,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Se Cathedral",
+     "dwellMin": 30,
+     "legAfterMin": 30
+    },
+    {
+     "name": "Belem Tower",
+     "dwellMin": 45,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Jeronimos Monastery",
+     "dwellMin": 60,
+     "legAfterMin": null
+    }
+   ],
+   "country": "PT",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "PT",
+    "class": "4-stops",
+    "persona": "slow"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "barcelona-gaudi-day",
+   "expect": "current",
+   "city": "Barcelona",
+   "stops": [
+    {
+     "name": "Sagrada Familia",
+     "dwellMin": 90,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Park Guell",
+     "dwellMin": 90,
+     "legAfterMin": 30
+    },
+    {
+     "name": "Casa Batllo",
+     "dwellMin": 60,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Gothic Quarter",
+     "dwellMin": 90,
+     "legAfterMin": null
+    }
+   ],
+   "country": "ES",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "ES",
+    "class": "4-stops",
+    "persona": "first-time"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  },
+  {
+   "id": "barcelona-gaudi-stay-in-sitges",
+   "expect": "target",
+   "city": "Barcelona",
+   "stops": [
+    {
+     "name": "Sagrada Familia",
+     "dwellMin": 90,
+     "legAfterMin": 25
+    },
+    {
+     "name": "Park Guell",
+     "dwellMin": 90,
+     "legAfterMin": 30
+    },
+    {
+     "name": "Casa Batllo",
+     "dwellMin": 60,
+     "legAfterMin": 15
+    },
+    {
+     "name": "Gothic Quarter",
+     "dwellMin": 90,
+     "legAfterMin": null
+    }
+   ],
+   "country": "ES",
+   "returnLegMin": 70,
+   "source": "the day ends 16:55 at the Gothic Quarter; the train back to Sitges is 70 minutes, so the day ends 18:05 (audit I-4)",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": false
+   },
+   "slices": {
+    "country": "ES",
+    "class": "4-stops",
+    "persona": "family"
+   }
+  },
+  {
+   "id": "prague-castle-old-town",
+   "expect": "current",
+   "city": "Prague",
+   "stops": [
+    {
+     "name": "Prague Castle",
+     "dwellMin": 150,
+     "legAfterMin": 20
+    },
+    {
+     "name": "Charles Bridge",
+     "dwellMin": 30,
+     "legAfterMin": 10
+    },
+    {
+     "name": "Old Town Square",
+     "dwellMin": 45,
+     "legAfterMin": null
+    }
+   ],
+   "country": "CZ",
+   "want": {
+    "legsInOrder": true,
+    "dinnerNotEarly": true,
+    "lunchBetweenStops": true,
+    "fits": true
+   },
+   "slices": {
+    "country": "CZ",
+    "class": "3-stops",
+    "persona": "solo"
+   },
+   "source": ".work/2026-11-17-app-logic-audit/explore-I-day-planner.md and probes/I-clocks.mjs (Paris stops with typical visit and walk times)"
+  }
+ ]
+}

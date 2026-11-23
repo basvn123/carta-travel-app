@@ -10,6 +10,7 @@
  * calendar, so comparisons are string comparisons against localToday().
  */
 import { quoteTrip, PLANNER_BAG } from './tripTotal.js';
+import { rule } from './price/config.js';
 
 const pad = (n) => String(n).padStart(2, '0');
 const isoOf = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
@@ -189,7 +190,7 @@ export function planBedOf(stay, todayIso) {
 // A bed must have fallen this share of the plan price, and by at least this
 // many euros a person a night, before the card says so (T923, T943).
 export const PLAN_NUDGE_MIN_SHARE = 0.03;
-export const PLAN_NUDGE_MIN_EUR = 1;
+export const PLAN_NUDGE_MIN_EUR = rule('trips.plan_nudge_min_eur');
 
 /**
  * Today's beds against the plan's (T943). `plan` is a trip row whose stops

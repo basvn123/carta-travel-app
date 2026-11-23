@@ -183,6 +183,8 @@ export function CostCard({
     } else {
       lead = <span className="ccard-ico">{k === 'stay' ? <BedIcon size={18} /> : <DiningIcon size={18} />}</span>;
       sub = lifestyle ? (k === 'stay' ? lifestyle.bed : lifestyle.vibe) : '';
+      // E1: a stay that leaves a stop's bed out says so, in the row's own words.
+      if (k === 'stay' && tile.leftOut?.length) sub = t('plan.lineBedsMissing', { city: tile.leftOut.join(', ') });
       if (onStyleSpend) { act = onStyleSpend; actLabel = t('studio.changeSpend'); }
     }
     if (!act && onOpen) { act = () => onOpen(k); actLabel = t('tp.breakdown'); }

@@ -103,9 +103,11 @@ export function spendSummary(memory) {
     const n = Number(spend[cat]);
     if (!Number.isFinite(n) || n <= 0) return;
     byCat[cat] = n;
-    total += toEur(n, currency);
+    total += toEur(n, currency) ?? 0;
   });
-  return { total, byCat, currency, foreign: currency !== 'EUR', any: total > 0 };
+  // E1: an unknown code is left out of the total and said so (notConverted), never valued at par.
+  const notConverted = toEur(1, currency) == null;
+  return { total, byCat, currency, foreign: currency !== 'EUR', notConverted, any: total > 0 };
 }
 
 /** What the trip cost per traveller, which is the number Carta quotes

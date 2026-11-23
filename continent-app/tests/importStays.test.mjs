@@ -17,7 +17,7 @@ test("nights run to the next check-in, the last to the trip's end", () => {
     { kind: "flight_out", city: "Lisbon", date: "2027-05-10", eur: 90 },
     { kind: "stay", city: "lisbon", date: "2027-05-10", eur: 420.4 },
   ], destinations, { end: "2027-05-17", nights: 7 });
-  assert.deepEqual(rows, [{ id: "lis", nights: 4, eur: 420 }, { id: "opo", nights: 3, eur: 310 }]);
+  assert.deepEqual(rows, [{ id: "lis", nights: 4, eur: 420.4 }, { id: "opo", nights: 3, eur: 310 }]);
 });
 
 test("no dates: an even share of the trip's nights; one town twice is one stop", () => {
@@ -61,4 +61,14 @@ test("an uploaded flight out names where the trip lands", () => {
   ], destinations), "lis");
   assert.equal(arrivalFromImports([{ kind: "flight", city: "Faro" }], destinations), "far");
   assert.equal(arrivalFromImports([{ kind: "flight_out", city: "Atlantis" }], destinations), "");
+});
+
+test("H-12: a booking's price keeps its cents, and two bookings in one town add to the cent", () => {
+  const one = staysFromImports([{ kind: "stay", city: "Faro", date: "", eur: 123.45 }], destinations, { nights: 3 });
+  assert.equal(one[0].eur, 123.45);
+  const two = staysFromImports([
+    { kind: "stay", city: "Faro", date: "", eur: 10.1 },
+    { kind: "stay", city: "Faro", date: "", eur: 20.25 },
+  ], destinations, { nights: 3 });
+  assert.equal(two[0].eur, 30.35);
 });

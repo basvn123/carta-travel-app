@@ -86,12 +86,14 @@ const LINE_KEY = {
   car: 'plan.lineCar',
   daytrips: 'plan.lineDaytrips',
   beds: 'plan.lineBeds',
+  bedsMissing: 'plan.lineBedsMissing',
   days: 'plan.lineDays',
 };
 
 function LineValue({ line, lang, t, onAddFare }) {
   if (line.kind === 'missing') {
-    return onAddFare
+    // A stop with no bed price is not a fare the traveller adds here (E1).
+    return onAddFare && line.key !== 'bedsMissing'
       ? <Button variant="quiet" size="sm" className="plan-line-add" onClick={onAddFare}>{t('plan.addYourFare')}</Button>
       : <span className="plan-line-out">{t('plan.notIn')}</span>;
   }
@@ -283,7 +285,7 @@ export function PlanTotal({
                           kind={l.key}
                           label={(l.key === 'out' || l.key === 'back') && l.leg?.from && l.leg?.to
                             ? <RouteCodes from={l.leg.from} to={l.leg.to} icon={false} />
-                            : t(LINE_KEY[l.key])}
+                            : t(LINE_KEY[l.key], { city: (l.cities || []).join(', ') })}
                           tone={l.kind === 'missing' ? 'missing' : l.kind === 'yours' ? 'yours' : null}
                           mark={l.kind === 'flight' && l.leg?.airline ? <AirlineMark code={l.leg.airline} size="sm" /> : null}
                           value={(

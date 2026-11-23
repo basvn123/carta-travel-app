@@ -21,6 +21,7 @@ How the evals work is in the "Evals" section of `docs/HANDBOOK.md`.
 | Trips generator golden set and self-tests (offline) (`trips-golden`) | pass | yes | offline Trips checks that pass (two self-tests, the baseline stamp) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
 | Parse-booking fields on synthetic documents (`parse-booking`) | pass | yes | booking fields right (reference answers) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
 | Suggest-city rules and wish fit on fixture decks (`suggest-city`) | pass | yes | cases meeting every rule (reference answers) | 100.0% | one run so far  | 1 | 2026-11-07 12:22 UTC, `1a63861c64` |
+| Any question: Ask answers by question type (`any-question`) | pass | no | answers correct, offline path, all types | 55.5% | one run so far | 1 | 2026-11-22, baseline run by hand with `CARTA_PUBLIC`; the dashboard rewrites this row on the next `run.mjs --write --dashboard` |
 
 ## Ask retrieval and grounding
 

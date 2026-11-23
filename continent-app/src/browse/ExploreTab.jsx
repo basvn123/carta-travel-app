@@ -25,7 +25,7 @@ import { StartDialog, startMode, markStartSeen } from './StartDialog.jsx';
 import { useFirstRun } from '../lib/firstRunContext.js';
 import { calendarDefaultWindow } from '../lib/firstRun.js';
 import { todayISO } from '../lib/dates.js';
-import { isEmptyTaste, normalizeTaste } from '../lib/taste.js';
+import { forYouOffered, isEmptyTaste, normalizeTaste } from '../lib/taste.js';
 import { MATCH } from '../lib/match.js';
 import { MatchMonth } from './WhyItMatches.jsx';
 import '../styles/84-explore-overview.css';
@@ -44,6 +44,7 @@ import { useExploreChips, XF_EMPTY } from './explore/useExploreChips.js';
 import { badgeCount, lensCount } from './explore/chipRules.js';
 import { prefetchMap } from './explore/exploreMapLazy.js';
 import { useExploreMapView } from './explore/useExploreMapView.js';
+import { shareViewUrl } from '../lib/shareKeys.js';
 import { setMapViewOn } from './explore/mapViewStore.js';
 import { FilterSheet } from './filters/FilterSheet.jsx';
 import { closeFilters, publishFilters, setFilterHandlers, useFilters } from './filters/filtersStore.js';
@@ -53,7 +54,6 @@ import {
 } from './filters/filterModel.js';
 import { formatMoney } from '../lib/money.js';
 import { spanOf, viewFactor } from '../lib/price/display.js';
-import { shareViewUrl } from '../lib/shareKeys.js';
 
 
 
@@ -225,7 +225,9 @@ export function ExploreTab({
   const matchTaste = React.useMemo(
     () => (isEmptyTaste(matchTasteRaw) ? null : normalizeTaste(matchTasteRaw)), [matchTasteRaw]);
   const matchMonth = dxf.month || travelMonth || null;
-  const catSort = (MATCH.for_you_default && matchTaste && (!sortKey || sortKey === 'beauty') && !xf.vibe && !xf.near)
+  // E-10 (owner default 10): For you is offered, and made the default, only where it can score.
+  const canForYou = forYouOffered(matchTaste);
+  const catSort = (MATCH.for_you_default && canForYou && (!sortKey || sortKey === 'beauty') && !xf.vibe && !xf.near)
     ? 'foryou' : sortKey;
   const { all: catAllRows, rows: catRows, availableCountries, indices: costIndex } = useExploreCatalog({
     data, locationQuery, countryFilter, countryNot, tripKinds,
@@ -492,7 +494,6 @@ export function ExploreTab({
       canShare: true,
     });
   }, [isActive, railsIdle, dockLabel, locationQuery, filterCount]);
-  // Share copies this view's address.
   // Share copies this view: the place, filters and lens only, never the
   // traveller's home point, shortlist, party, dates or taste (lib/shareKeys.js, C9).
   const [toast, setToast] = React.useState(null);
@@ -586,14 +587,14 @@ export function ExploreTab({
   // keeps "For you" off by default (T765), so For you leads the list when
   // the active style gives a taste, as in the sheet (requests-5.md R5.1).
   const sortMenu = (
-    <SortMenu t={t} options={sortOptionsFor(!!matchTaste, home)} onChange={setSortKey} showValue className="xap-tool"
-      value={sortShown(sortKey, !!matchTaste, home)} />
+    <SortMenu t={t} options={sortOptionsFor(canForYou, home)} onChange={setSortKey} showValue className="xap-tool"
+      value={sortShown(sortKey, canForYou, home)} />
   );
 
   // G12 map view round 2: the map sheet's and column's Sort, quiet.
   const mapSort = (
-    <SortMenu t={t} options={sortOptionsFor(!!matchTaste, home)} onChange={setSortKey} bare
-      value={sortShown(sortKey, !!matchTaste, home)} />
+    <SortMenu t={t} options={sortOptionsFor(canForYou, home)} onChange={setSortKey} bare
+      value={sortShown(sortKey, canForYou, home)} />
   );
 
   // T592 (owner, 2026-10-22): one toggle, not a List | Map pair. In the

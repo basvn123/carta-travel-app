@@ -1,0 +1,518 @@
+[
+ {
+  "persona": "family-toddler",
+  "month": 7,
+  "was": [
+   "reloadHeld: styleAdults=3 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=3 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "hiking-couple",
+  "month": 9,
+  "was": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "friends-out",
+  "month": 6,
+  "was": [
+   "reloadHeld: styleAdults=7 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=5 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=5 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=7 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "slow-culture",
+  "month": 10,
+  "was": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "backpacker",
+  "month": 8,
+  "was": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=private",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=1 styleKind=solo held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=2 held=true",
+   "newTripHeld: stayTier=private held=false styleStay=private",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=1 styleKind=solo held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=2 held=true",
+   "newTripHeld: stayTier=private held=false styleStay=private",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=3 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=private",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "beach-family",
+  "month": 7,
+  "was": [
+   "reloadHeld: styleAdults=3 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=3 styleKind=family held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "cyclist",
+  "month": 5,
+  "was": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "foodie",
+  "month": 4,
+  "was": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "skier",
+  "month": 2,
+  "was": [
+   "reloadHeld: styleAdults=7 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=5 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=5 held=true",
+   "newTripHeld: stayTier=home held=false styleStay=home",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=7 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=6 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=home",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "wellness",
+  "month": 11,
+  "was": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "island-hopper",
+  "month": 6,
+  "was": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=2 styleKind=couple held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=3 held=true",
+   "newTripHeld: stayTier=hotel3 held=false styleStay=hotel3",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=5 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=4 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=hotel3",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ },
+ {
+  "persona": "no-car-rail",
+  "month": 5,
+  "was": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=3 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=private",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ],
+  "now": [
+   "reloadHeld: styleAdults=1 styleKind=solo held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "foreignLink: pullsAccount=false",
+   "signInEdited: groupSize=2 held=true",
+   "newTripHeld: stayTier=private held=false styleStay=private",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "same": false,
+  "added": [
+   "reloadHeld: styleAdults=1 styleKind=solo held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=true",
+   "signInEdited: groupSize=2 held=true",
+   "newTripHeld: stayTier=private held=false styleStay=private",
+   "langPush: pulled=null pushed=en",
+   "legacyLink: narrowing=[] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=false dhInAddress=false"
+  ],
+  "dropped": [
+   "reloadHeld: styleAdults=4 styleKind=friends held=false",
+   "reloadOwnQuery: search=?tab=plan&mode=trip&d=2027-03-06&r=2027-03-13&g=3 pullsAccount=false",
+   "signInEdited: groupSize=3 held=false",
+   "newTripHeld: stayTier=hotel4 held=true styleStay=private",
+   "langPush: pulled=null pushed=nl",
+   "legacyLink: narrowing=[ratingRange,topBeachOnly,bigOnly,topPick] gemOnly=true",
+   "oldPersonLink: shortlist=dest:gem:mine homePoint=false favInAddress=true dhInAddress=false"
+  ]
+ }
+]

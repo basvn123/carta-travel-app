@@ -25,11 +25,11 @@ import {
  * ORIGINAL index into the city's items array, stringified, which is exactly
  * what the planner's assignments speak.
  */
-export function buildAiCandidates({ items, walkable, excludeIdx, interests, limit = 22, forceIdx = null }) {
+export function buildAiCandidates({ items, walkable, excludeIdx, interests, limit = 22, forceIdx = null, town = null }) {
   const eligible = excludeIdx && excludeIdx.size
     ? new Set([...(walkable || [])].filter((i) => !excludeIdx.has(i)))
     : walkable;
-  const deck = pickerDeck(items, interests || [], limit, eligible);
+  const deck = pickerDeck(items, interests || [], limit, eligible, town);
   // Places the traveller named themselves (the ideas step) must be ON the
   // deck whatever the ranking thought of them: a day built around the
   // Alhambra cannot offer the model a list the Alhambra is missing from.

@@ -28,7 +28,7 @@ const LONG_HAUL_KM = 800;       // beyond this, overland stops being sensible
 // What an hour of travel time is worth when ranking modes, EUR. At the old
 // value (3) a 5-euro-cheaper bus outranked a train that saves an hour on
 // every short hop, which is not how anyone actually travels Ghent -> Antwerp.
-const VALUE_OF_TIME_EUR_H = 6;
+const VALUE_OF_TIME_EUR_H = rule('transport.value_of_time'); // config/pricing.json
 
 
 // Encode a stop as a bare "lat,lng". A place-name query ("City, Country", a

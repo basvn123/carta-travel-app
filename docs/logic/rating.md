@@ -216,9 +216,9 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### RATING-029 Explore rating order
 - Decides: the default order of Explore and the "Top rated N" shortcut.
-- Rule: rating order is `rating.score`, else `beauty.score`, else 0, best first; the default sort key `beauty` and `price` both sort this way; "Top rated N" trims to the N best before the chosen sort; country and cost sorts break ties by it.
-- Constant: `ratingVal` in `continent-app/src/hooks/useExploreCatalog.js:176`
-- Test: no test
+- Rule: rating order is `rating.score`, else `beauty.score`, else 0, best first, equal scores by `rating.fame` then id (`byRating`, E-6); the default sort key `beauty` and `price` both sort this way; "Top rated N" trims to the N best before the chosen sort; country and cost sorts break ties by it.
+- Constant: `byRating` in `continent-app/src/lib/rating.js`
+- Test: `continent-app/tests/quickWins0b.test.mjs` :: "E-6: equal ratings go by fame, then id, whatever the input order"
 
 ### RATING-030 POI significance composite
 - Decides: how big a deal a sight is anywhere in Europe.
@@ -284,7 +284,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ## Rules with no test
 
-RATING-001, RATING-002, RATING-003, RATING-004, RATING-008, RATING-009, RATING-011, RATING-012, RATING-014, RATING-017, RATING-019, RATING-021, RATING-022, RATING-023, RATING-024, RATING-025, RATING-027, RATING-028, RATING-029, RATING-037
+RATING-001, RATING-002, RATING-003, RATING-004, RATING-008, RATING-009, RATING-011, RATING-012, RATING-014, RATING-017, RATING-019, RATING-021, RATING-022, RATING-023, RATING-024, RATING-025, RATING-027, RATING-028, RATING-037
 
 ## HANDBOOK disagreements
 

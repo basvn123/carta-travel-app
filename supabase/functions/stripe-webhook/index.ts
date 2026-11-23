@@ -20,8 +20,10 @@
  * and the Year Pass are each a payment-mode Checkout session, granted here
  * off checkout.session.completed; grant_pass adds the tier's period_days
  * (60 or 365). Nothing renews, so the subscription and invoice.paid branches
- * T460 added are gone (migration 075). Event to enable on the endpoint:
- * checkout.session.completed; any other event is acknowledged and ignored.
+ * T460 added are gone (migration 075). Events to enable on the endpoint:
+ * checkout.session.completed, checkout.session.async_payment_succeeded and
+ * checkout.session.async_payment_failed (E10 J-9: delayed methods confirm
+ * later); any other event is acknowledged and ignored.
  *
  * Secrets: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, CHECKOUT_TERMS_URL.
  * CHECKOUT_TERMS_URL is read here only to record WHICH terms the buyer
@@ -53,6 +55,7 @@
 import Stripe from 'npm:stripe@17';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { PAID_TIERS } from '../_shared/passes.mjs';
+import { eventAction, grantArgs } from '../_shared/stripeEvents.mjs';
 
 Deno.serve(async (req) => {
   if (req.method !== 'POST') return new Response('method', { status: 405 });
@@ -82,25 +85,29 @@ Deno.serve(async (req) => {
 
   const service = createClient(env('SUPABASE_URL'), env('SUPABASE_SERVICE_ROLE_KEY'));
 
-  // Any other event is acknowledged and ignored, so Stripe stops retrying it.
-  // Only checkout.session.completed grants since no pass renews (decision
-  // 0010); a subscription or invoice event left enabled lands here.
-  if (event.type !== 'checkout.session.completed') {
+  // What to do with the event is lib-free logic in _shared/stripeEvents.mjs
+  // (a node test replays it). A pass is granted when the session is paid:
+  // on checkout.session.completed, or later on async_payment_succeeded for a
+  // delayed method (J-9); both reach the same idempotent grant_pass (G11).
+  // A failed async payment is logged and grants nothing; any other event is
+  // acknowledged and ignored so Stripe stops retrying it.
+  const act = eventAction(event);
+  if (act.action === 'ignore') {
     return new Response(JSON.stringify({ received: true, ignored: event.type }), { status: 200 });
   }
-
-  const session = event.data.object as Stripe.Checkout.Session;
-
-  // Only a session that is actually paid grants anything. An async payment
-  // method can complete the session while payment is still pending, and
-  // `payment_status` is the field that knows the difference.
-  if (session.payment_status !== 'paid') {
+  if (act.action === 'failed') {
+    console.error('stripe-webhook: async payment failed', (act.session as Stripe.Checkout.Session | undefined)?.id || '');
+    return new Response(JSON.stringify({ received: true, failed: true }), { status: 200 });
+  }
+  if (act.action === 'pending') {
     return new Response(JSON.stringify({ received: true, unpaid: true }), { status: 200 });
   }
 
-  const userId = session.client_reference_id || session.metadata?.user_id || '';
-  const tier = session.metadata?.tier || '';
-  if (!userId || !PAID_TIERS.includes(tier)) {
+  const session = event.data.object as Stripe.Checkout.Session;
+  const args = grantArgs(session, PAID_TIERS);
+  const userId = args?.userId || '';
+  const tier = args?.tier || '';
+  if (!args) {
     // 200 rather than 400: retrying will not add the missing metadata, and a
     // permanently failing webhook is noise that hides real failures.
     return new Response(JSON.stringify({ received: true, error: 'missing user or tier' }), { status: 200 });

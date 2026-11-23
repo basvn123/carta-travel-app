@@ -51,7 +51,16 @@ function numberFormat(locale, digits) {
 export function formatMoney(value, { precision = 'whole', locale, missing = '-' } = {}) {
   if (!Number.isFinite(value)) return missing;
   const cents = precision === 'cents';
-  return numberFormat(locale || activeLocale(), cents ? 2 : 0).format(cents ? value : Math.round(value));
+  // A-18: `|| 0` turns -0 (Math.round(-0.4)) into 0, so a rounded-away amount never prints "-€0".
+  const v = (cents ? Math.round(value * 100) / 100 : Math.round(value)) || 0;
+  return numberFormat(locale || activeLocale(), cents ? 2 : 0).format(v);
+}
+
+/** A-8: what a receipt of whole-euro lines is off its whole-euro total by
+ *  (0 when the printed lines add up). The card prints it as its Rounding line. */
+export function receiptRounding(lines, total) {
+  const printed = (lines || []).reduce((sum, l) => sum + Math.round(l.eur), 0);
+  return Math.round(total) - printed;
 }
 
 /** An estimate's figure: the plain figure since the price plan's rule 2

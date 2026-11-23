@@ -82,6 +82,8 @@ export function quoteNights(costRow, nights, people, fare = null, carta = null, 
     total,
     each: p > 1 ? round2(total / p) : null,
     est: lines.some((l) => l.est),
+    // E1 (A-17): no flight, typed way or Carta's line is in this total, so it does not include getting there; the card says so.
+    noWay: !lines.some((l) => l.key === 'flight' || l.key === 'way'),
     dayEur: (off.has('bed') ? 0 : stay) + (off.has('food') ? 0 : food) + (car ? car.eur : 0) + (local ? local.eur : 0),
     nights: n,
     people: p,

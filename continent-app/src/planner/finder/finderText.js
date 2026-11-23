@@ -15,6 +15,7 @@ import { SLOT_ROWS, slotTotals } from '../../lib/recommend/slots.js';
 import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { keepHidden, repriceTrip } from '../../lib/recommend/trips.js';
 import { crowdTier, dayHighs, doorMinutes } from '../../lib/recommend/compare.js';
+import { budgetCompared, budgetPartial, slotsLeaveOut } from '../../lib/price/gaps.js';
 import { partyText } from '../../lib/party.js';
 
 /** How many trips before "Show more trips" (the CountryMatchCards page). */
@@ -121,6 +122,8 @@ export function topSights(pois, n = 4) {
 export function budgetBadge(trip, { locale } = {}) {
   const b = trip.budget;
   if (!b?.eur || !Number.isFinite(b.delta)) return null;
+  // E1 (H-2): a total that leaves a part out is never "under budget"; over budget it stays, the part we know is already over.
+  if (b.delta <= 0 && budgetPartial(trip, b.kind)) return null;
   // Totals carry cents (T818): within half a euro is on budget, never "0 under".
   if (Math.round(b.delta) === 0) return { key: 'tf.budget.on', vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
   return { key: b.delta < 0 ? 'tf.card.under' : 'tf.card.over', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };
@@ -128,7 +131,7 @@ export function budgetBadge(trip, { locale } = {}) {
 
 /** Does the trip's total leave a line out (a slot with no figure, things to do aside)? */
 export function totalLeavesOut(trip) {
-  return trip.slots.some((s) => s.eur == null && s.id !== 'activities');
+  return slotsLeaveOut(trip.slots);
 }
 
 /** A signed whole-euro difference, the way the plan total writes one: "+€24", "-€24". */
@@ -234,7 +237,7 @@ export function withSlot(trip, next, sumSlots = slotTotals) {
   return keepHidden(trip, {
     ...swapped,
     total,
-    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : null,
+    budget: trip.budget ? { ...trip.budget, delta: budgetCompared({ slots, total }, trip.budget.kind) - trip.budget.eur } : null,
   });
 }
 
@@ -432,7 +435,7 @@ export function sortTrips(trips, sort = 'match', destinations = {}) {
  */
 export const QUICK_FILTERS = Object.freeze({
   direct: (x, d) => { const f = cardFacts(x, d); return f.way === 'car' || f.stops === 0; },
-  budget: (x) => Number.isFinite(x.budget?.delta) && x.budget.delta <= 0,
+  budget: (x) => Number.isFinite(x.budget?.delta) && x.budget.delta <= 0 && !budgetPartial(x, x.budget.kind),
   quiet: (x, d) => { const c = crowdTier(x, d); return c != null && c <= 1; },
   warm: (x, d) => { const h = dayHighs(x, d); return h != null && h.hi >= 25; },
   one: (x) => x.places.length === 1,

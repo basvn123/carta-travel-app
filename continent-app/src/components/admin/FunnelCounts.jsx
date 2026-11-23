@@ -3,6 +3,7 @@ import { funnelWeeksView } from '../../lib/funnelCounts.js';
 const LABELS = {
   explore_opened: 'Explore opened', place_opened: 'Place opened', plan_started: 'Plan started',
   priced_draft: 'Priced draft reached', trip_saved: 'Trip saved', shared: 'Shared',
+  ask_answer: 'Ask answered', ask_to_plan: 'Ask to plan',
 };
 
 // The funnel by week (I11, T1129): visits that reached each step, counted per

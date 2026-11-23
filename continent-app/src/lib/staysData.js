@@ -116,7 +116,8 @@ export function loadStays(cc) {
   const baked = getJson(versioned(dataUrl(`/stays/v1/${file}`), bakedVersion));
   const p = Promise.allSettled([baked, live]).then((res) => {
     const files = res.filter((x) => x.status === 'fulfilled' && x.value?.dests).map((x) => x.value);
-    if (!files.length) return 0;
+    // B-17: a country whose two fetches both failed is forgotten, so the next screen asks again.
+    if (!files.length) { loaded.delete(cc); return 0; }
     const best = files.sort((a, b) => String(b.built || '').localeCompare(String(a.built || '')))[0];
     for (const [id, rec] of Object.entries(best.dests)) pending.set(id, rec);
     schedulePublish();

@@ -21,11 +21,12 @@ test("nothing booked: every setup question, then the guide", () => {
   assert.deepEqual(planScreens(n, "know"), ["p:Where", "p:Stay", "p:Getting", "p:Finish"]);
 });
 
-test("flights booked: no When, no From in setup; arrival asked in planning; no reach", () => {
+// H-9: with flights booked "whole trip or flights first" is not asked either: the whole trip is the answer.
+test("flights booked: no When, no From in setup; arrival asked in planning; no reach, no whole-trip question", () => {
   const f = s({ booked: { flights: true } });
   assert.deepEqual(setupScreens(f), ["tell", "booked", "who", "sleep", "priority"]);
   assert.deepEqual(planScreens(f, "guide"), [
-    "g:shape", "g:likes", "g:weather", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
+    "g:shape", "g:likes", "g:weather", "g:around", "g:avoid", "g:budget", "g:pick", "g:trips",
     "p:From", "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
 });

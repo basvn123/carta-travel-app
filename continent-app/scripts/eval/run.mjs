@@ -4,7 +4,7 @@
  * and writes the shared results format (scripts/eval/lib/results.mjs).
  *
  *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [trails-external] [truth] [linking]
- *        [ask-docs] [injection] [trips-golden] [parse-booking] [suggest-city] [all]
+ *        [ask-docs] [injection] [trips-golden] [parse-booking] [suggest-city] [any-question] [logic-engines] [all]
  *        [--check] [--write] [--dashboard] [--json]
  *        [--seed-drop]             (ask: a known regression, the gate must fail)
  *        [--plans <file>]          (plan-day: score recorded plans, not the reference planner)
@@ -33,6 +33,8 @@
  *   trips-golden     the Trips generator's golden set and self-tests, offline (T153, T1206), Python
  *   parse-booking    parse-booking on synthetic documents with gold fields, recorded answers (T1206)
  *   suggest-city     suggest-city on fixture decks, recorded answers, rule checks (T1206)
+ *   any-question     any question: Ask's offline answer by 14 question types, six languages, counterfactual groups (E1; not gated; CARTA_PUBLIC for a catalogue)
+ *   logic-engines    the logic engines' golden sets: month fit, ranking P@k/nDCG@k, day feasibility, per slice (G1)
  * No eval calls a model. The plan-day judge is its own optional step
  * (scripts/eval/plan-day/judge.mjs). The Claude API is never used.
  * T1136's own entry point, scripts/eval/ask-eval.mjs, keeps working as before.
@@ -42,7 +44,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RESULTS_DIR, REPO, readHistory, validateResult, writeResult } from './lib/results.mjs';
 
-export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth', 'linking', 'ask-docs', 'injection', 'trips-golden', 'parse-booking', 'suggest-city'];
+export const EVALS = ['ask', 'trail-summaries', 'data-quality', 'plan-day', 'taxonomy', 'trails-external', 'truth', 'linking', 'ask-docs', 'injection', 'trips-golden', 'parse-booking', 'suggest-city', 'any-question', 'logic-engines'];
 export const DASHBOARD_PATH = join(REPO, 'docs', 'reference', 'evals.md');
 
 const argv = process.argv.slice(2);
@@ -57,7 +59,7 @@ export async function runOne(name, opts = {}) {
     r = await mod.run(opts);
   } catch (e) {
     r = {
-      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification', 'trails-external': 'data', truth: 'data', linking: 'retrieval', 'ask-docs': 'retrieval', injection: 'text-check', 'trips-golden': 'text-check', 'parse-booking': 'extraction', 'suggest-city': 'llm-plan' }[name],
+      schema: 'carta-eval/1', eval: name, title: mod.title || name, kind: { ask: 'retrieval', 'trail-summaries': 'text-check', 'data-quality': 'data', 'plan-day': 'llm-plan', taxonomy: 'classification', 'trails-external': 'data', truth: 'data', linking: 'retrieval', 'ask-docs': 'retrieval', injection: 'text-check', 'trips-golden': 'text-check', 'parse-booking': 'extraction', 'suggest-city': 'llm-plan', 'any-question': 'text-check', 'logic-engines': 'retrieval' }[name],
       at: new Date().toISOString(), git: null, status: 'error', gated: true,
       headline: { key: 'error', value: null, label: 'the eval did not run', higher_is_better: true },
       metrics: {}, gate: { ok: false, rule: 'the eval must run', tolerance: null, baseline: null, failures: [{ key: 'error', was: null, now: null, why: String(e.message || e).slice(0, 400) }] },

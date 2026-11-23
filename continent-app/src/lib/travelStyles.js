@@ -98,14 +98,14 @@ export const TEMPLATES = {
     nameKey: 'styles.t.solo', tone: 'sun',
     who: { kind: 'solo', adults: 1, kids: 0, babies: 0, slowWalkers: false },
     stay: 'private', table: 'Backpacker', way: 'any', priority: 'price',
-    explore: { shapes: ['towns'], likes: [], avoid: [], around: 'public', size: 'city', quiet: 'lively' },
+    explore: { shapes: ['towns'], likes: [], avoid: [], around: '', size: 'city', quiet: 'lively' },
     days: { mornings: 'early', pace: 'packed' },
   },
   couple: {
     nameKey: 'styles.t.couple', tone: 'umber',
     who: { kind: 'couple', adults: 2, kids: 0, babies: 0, slowWalkers: false },
     stay: 'hotel3', table: 'Foodie', way: 'any', priority: 'balance',
-    explore: { shapes: ['towns'], likes: [], avoid: ['crowds'], around: 'public', size: 'town', quiet: 'quiet' },
+    explore: { shapes: ['towns'], likes: [], avoid: ['crowds'], around: '', size: 'town', quiet: 'quiet' },
     days: { mornings: 'slow', pace: 'balanced' },
   },
   friends: {
@@ -128,11 +128,15 @@ export const TEMPLATES = {
     nameKey: 'styles.t.group', tone: 'mist',
     who: { kind: 'group', adults: 6, kids: 0, babies: 0, slowWalkers: false },
     stay: 'home', table: 'Easygoing', way: 'any', priority: 'price',
-    explore: { shapes: ['one'], likes: [], avoid: ['transfers'], around: 'public' },
+    explore: { shapes: ['one'], likes: [], avoid: ['transfers'], around: '' },
     days: { mornings: 'onthego', pace: 'balanced' },
   },
 };
 export const TEMPLATE_IDS = Object.keys(TEMPLATES);
+// G-20: a template never answers "how do you get around": that would mark the
+// traveller "no car" (noCar from around: public) without asking. Only the
+// traveller's own pick sets it; the family and friends templates say "a mix".
+
 
 const clampInt = (v, lo, hi, d) => {
   const n = Math.round(Number(v));
@@ -349,6 +353,16 @@ export function kindOfCounts(adults, kids, babies = 0) {
   return adults <= 5 ? 'friends' : 'group';
 }
 
+/** Whether a kind of party still fits the counts (G-10): a family needs a child
+ *  or a baby, solo is one adult, a couple is two adults, a group has no children. */
+export function kindFits(kind, { adults = 1, kids = 0, babies = 0 } = {}) {
+  const young = kids + babies;
+  if (kind === 'family') return young > 0;
+  if (kind === 'solo') return adults === 1 && young === 0;
+  if (kind === 'couple') return adults === 2 && young === 0;
+  return young === 0 || kind === 'group';
+}
+
 /**
  * The style with its "how you stay" half read from the app's choices. Called
  * whenever those choices move, so the active style follows every edit made
@@ -365,8 +379,7 @@ export function styleFromChoices(style, choices = {}) {
   // The kind stays the traveller's word ("friends" for three) while it still
   // fits the counts; a family with no children left is no longer a family.
   const young = kids + babies;
-  const kindFits = (k) => (k === 'family' ? young > 0 : k === 'solo' ? adults === 1 && young === 0 : young === 0 || k === 'group');
-  const kind = kindFits(base.who.kind) ? base.who.kind : kindOfCounts(adults, kids, babies);
+  const kind = kindFits(base.who.kind, { adults, kids, babies }) ? base.who.kind : kindOfCounts(adults, kids, babies);
   const next = normalizeStyle({
     ...base,
     who: { ...base.who, kind, adults, kids, babies },
@@ -589,6 +602,34 @@ export function commitChoices(prev, id, style) {
   const s = st.list.find((x) => x.id === id);
   if (st.active !== id || prev.style_held) return { ...prev, travel_styles: st };
   return { ...prev, ...choicesFromStyle(s), travel_styles: st };
+}
+
+/**
+ * The sign-in merge of the styles when a shared link drives the view (the
+ * account pull is skipped, but the traveller's styles still merge). Returns the
+ * part of `choices` to change. Old: the active style stays this device's,
+ * '' on a fresh one, and the next push writes that '' to the account (G-2).
+ * E9: a device with no active style adopts the account's, held, so the link's
+ * party and bed are not written into it; one that has an active style keeps it.
+ */
+export function mergeStylesForLink(prev, incoming, { e9 = false } = {}) {
+  if (!incoming) return {};
+  const merged = mergeStyles(prev.travel_styles, incoming);
+  const adopt = e9 && !prev.travel_styles?.active && Boolean(merged.active);
+  return {
+    travel_styles: { ...merged, active: adopt ? merged.active : (prev.travel_styles?.active ?? '') },
+    ...(adopt ? { style_held: true } : {}),
+  };
+}
+
+/**
+ * E9 (G-7): a new trip lifts a hold. The style the traveller holds for trip A
+ * (a 4-star bed, a longer party) must not price trip B, whose settings the
+ * style seeds: back to the active style's own values. Not held: `prev` itself.
+ */
+export function newTripChoices(prev) {
+  const a = activeStyle(normalizeStyles(prev.travel_styles));
+  return prev.style_held && a ? switchChoices(prev, a.id) : prev;
 }
 
 /** Switch (and Back): the style's stay half priced, the hold lifted. */

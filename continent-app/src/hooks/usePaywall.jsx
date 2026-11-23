@@ -35,6 +35,8 @@ import {
   trackPaywall, trackPaywallOnExit, isLeavingForCheckout,
 } from '../lib/paywallEvents.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+import { isOn } from '../lib/flags.js';
+import { decide, isPaidTier, QUOTA_REASONS } from '../lib/paywallDecision.js';
 // T1171: keeps a ?pm=on preview of the Pass moment before the app rewrites the address.
 import '../pass/passMoment.js';
 
@@ -47,7 +49,7 @@ import '../pass/passMoment.js';
  * heading there and to all six locales.
  */
 // Gates asked only when a metered allowance is spent or nearly spent.
-const QUOTA_REASONS = new Set(['plans', 'ground', 'plansLow']);
+// (QUOTA_REASONS lives in lib/paywallDecision.js, the one definition.)
 
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export const GATES = {
@@ -119,6 +121,11 @@ const PaywallContext = createContext(null);
 // build that never sets it. The server enforces the metered surfaces
 // regardless of what this returns, which is why a client-side seam is safe
 // here at all.
+// E10: the last tier a read of ai_status really returned, kept on this device so a
+// read that fails later still knows the traveller has paid (owner default 13).
+const LAST_TIER_KEY = 'carta.lastTier.v1';
+const readLastTier = () => { try { return localStorage.getItem(LAST_TIER_KEY) || null; } catch { return null; } };
+
 const PAY_MOCK = E2E_SEAMS && typeof window !== 'undefined'
   && new URLSearchParams(window.location.search).has('paymock');
 
@@ -193,13 +200,24 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
    * traveller export one PDF, and the metered surfaces are enforced on the
    * server regardless of what this says.
    */
+  const snapshot = useMemo(() => ({
+    signedIn, loading: entitlement.loading, known: entitlement.known, tier: entitlement.tier,
+  }), [signedIn, entitlement.loading, entitlement.known, entitlement.tier]);
+  const E10 = isOn('E10');
+  useEffect(() => {
+    if (!signedIn) { try { localStorage.removeItem(LAST_TIER_KEY); } catch { /* private mode */ } return; }
+    if (!entitlement.known) return;
+    try { localStorage.setItem(LAST_TIER_KEY, entitlement.tier || 'free'); } catch { /* private mode */ }
+  }, [signedIn, entitlement.known, entitlement.tier]);
   const paid = useMemo(() => {
     if (PAY_MOCK) return true;
+    // E10 (J-7): paid means a KNOWN paid tier; the sign-in migration decides only on that.
+    if (E10) return signedIn && entitlement.known && isPaidTier(entitlement.tier);
     if (!signedIn) return false;
     if (entitlement.loading) return true;
     if (!entitlement.known) return true;
     return entitlement.tier !== 'free';
-  }, [signedIn, entitlement.loading, entitlement.known, entitlement.tier]);
+  }, [signedIn, entitlement.loading, entitlement.known, entitlement.tier, E10]);
 
   const close = useCallback(() => {
     setReason('');
@@ -220,12 +238,19 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
     // asked when an allowance has run out or is about to (T460): those used
     // to return true for anyone who paid, so "See passes" did nothing for the
     // one person most likely to buy again.
-    if (paid && !(QUOTA_REASONS.has(why) && entitlement.known)) return true;
+    if (E10 && !PAY_MOCK) {
+      // E10: one decision (lib/paywallDecision.js). 'wait' holds the action while the
+      // entitlement is read: it asks again and shows the pass sheet meanwhile, which reads the
+      // entitlement live, so a press is never silent (a button that does nothing reads as a bug).
+      const d = decide(why, snapshot, readLastTier());
+      if (d === 'pass') return true;
+      if (d === 'wait') entitlement.refresh();
+    } else if (paid && !(QUOTA_REASONS.has(why) && entitlement.known)) return true;
     const gate = GATES[why] || GATES.browse;
     openedHard.current = gate.kind === 'hard';
     setReason(why);
     return false;
-  }, [paid, entitlement.known]);
+  }, [paid, entitlement, snapshot, E10]);
 
   /**
    * Offer a pass without blocking anything. Returns true if the prompt was

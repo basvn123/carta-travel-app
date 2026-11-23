@@ -17,6 +17,7 @@ import { round2 } from './math.js';
 import { buildAviasalesLink } from './affiliate.js';
 import { bedPrice, STAY_TIERS as STAY_TIER_LIST } from './stayPrice.js';
 import { rule } from './price/config.js';
+import { isOn } from './flags.js';
 
 // Nights between two ISO date strings (return must be >= depart).
 export function tripDaysBetween(departDate, returnDate) {
@@ -270,6 +271,18 @@ export function groundSpendPerPerson(dest, nights, lifestyle) {
 
   // A club night = cover charge + a few premium drinks.
   const clubCostPerNight = (c.club_entry_eur || 0) + CLUB_DRINKS_PER_NIGHT * (c.cocktail_eur || 0);
+
+  // E1 (price/gaps.js, A-13): an item the lifestyle uses and the basket does
+  // not have is unknown, not free: the whole spend is unknown, never lower.
+  if (safeNights > 0 && isOn('E1')) {
+    const used = [
+      [ls.dinners_per_week, c.meal_mid_eur], [ls.lunches_per_week, c.meal_cheap_eur],
+      [ls.fastfood_per_week, c.fastfood_eur], [ls.drinks_per_week, c.drink_out_eur],
+      [ls.coffees_per_day, c.coffee_eur], [ls.self_catered_days_per_week, c.grocery_day_eur],
+      [ls.club_nights_per_week, c.club_entry_eur], [ls.club_nights_per_week, c.cocktail_eur],
+    ];
+    if (used.some(([count, price]) => count > 0 && !Number.isFinite(price))) return null;
+  }
   const clubbing  = (ls.club_nights_per_week || 0)       * periods * clubCostPerNight;
 
   return {

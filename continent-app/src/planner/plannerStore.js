@@ -42,6 +42,7 @@
  */
 import { useSyncExternalStore } from 'react';
 import { onTripSwitch } from './tripsStore.js';
+import { announceThingsChanged } from '../lib/thingsChanged.js';
 
 const STORE_KEY = 'carta.plannerDraft.v1';
 
@@ -180,6 +181,7 @@ const listeners = new Set();
 function persist() {
   try {
     localStorage.setItem(STORE_KEY, JSON.stringify({ ...state, savedAt: Date.now() }));
+    announceThingsChanged();
   } catch { /* private mode */ }
 }
 

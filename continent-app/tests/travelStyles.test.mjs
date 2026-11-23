@@ -128,7 +128,7 @@ test('switching a trip to another style replaces only what the style gave', () =
   assert.equal(next.party.adults, 1);
   assert.deepEqual(next.guide.shapes, ['towns']);
   assert.deepEqual(next.guide.personas, ['cities', 'lively']);
-  assert.equal(next.guide.around, 'public');
+  assert.equal(next.guide.around, '', 'G-20: a template never answers how to get around');
   assert.equal(next.guide.weather, 'warm', 'an own answer stays');
   assert.deepEqual(next.guide.avoid, ['crowds'], 'an own answer stays');
 });
@@ -194,7 +194,9 @@ test('updateStyle keeps the id and normalizes the patch', () => {
 test('the style and the taste profile are one thing', async () => {
   const { tasteFromStyle, exploreFromTaste, tasteMatchesStyle } = await import('../src/lib/travelStyles.js');
   const { normalizeTaste } = await import('../src/lib/taste.js');
-  const solo = styleFromTemplate('solo');
+  const base = styleFromTemplate('solo');
+  // The traveller's own pick (a template no longer answers it, G-20).
+  const solo = { ...base, explore: { ...base.explore, around: 'public' } };
   const taste = normalizeTaste(tasteFromStyle(solo, { lifestyle: 'backpacker', asked: { beach: 'no' } }));
   assert.equal(taste.party, 'solo');
   assert.equal(taste.size, 'city');

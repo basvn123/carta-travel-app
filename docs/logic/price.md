@@ -397,6 +397,17 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Constant: `sanitizeShared` baggage in `continent-app/src/lib/shareLink.js:178`
 - Test: `continent-app/tests/travelStyles.test.mjs` :: "the bag survives every hand-over: finder answer key, card, trip page, share link"
 
+### PRICE-048 No number outside config in lib/
+- Decides: where a number that is not a plain limit may live.
+- Rule: a top-level numeric constant in any file of `continent-app/src/lib/` fails the guard unless it is in `config/pricing.json` or listed with a reason in `continent-app/tests/fixtures/libNumberAllowlist.json` (RC16). The budget search's own numbers (buffer, days, adults, near-over, round-up step, budget cap) are `budget.search` in `config/pricing.json` (A-11); so are the value of time (`transport.value_of_time`), the price-drop floor (`alerts.drop_min_eur`), the bed nudge floor (`trips.plan_nudge_min_eur`), Ask's budget steps (`ask.budget_steps`) and the cheap and dear month band (`months.price_band`). A number on the allowlist that behaves like a rule is tagged under `ruleNumbers` with the engine wave that moves it to config. A negative or rounded-away amount never prints "-€0" (A-18), and the receipt's whole-euro lines plus its Rounding line equal the printed total (`receiptRounding`, A-8).
+- Test: `continent-app/tests/priceConfig.test.mjs` :: "RC16: no number outside config anywhere in lib/ unless the allowlist says why"
+
+### PRICE-049 One missing-value rule for money (E1)
+- Decides: what a total, a "fits" and a price sort do when a part has no price.
+- Rule: a null is never 0 in a sum; the chain (typed, measured, country repair, typical fare) is walked first and nothing is invented below it; when it ends empty the total is partial and names what it leaves out (`sumParts`, `quoteTrip().missing`). A partial total is never "fits" or "under budget" (`budgetStanding`, `standingOf`), sorts after complete totals (`comparePartialLast`, `orderByTotal`) and stays out of price bounds, the histogram and the price filter; over budget it stays over, with its over-by figure. A day budget is held against bed plus food, never the flights (`budgetCompared`, H-8). An item the Lifestyle uses and the basket lacks makes the food spend null (A-13); an unknown currency is not converted (A-20); the budget search prices inside the whole catalogue (A-9) and says getting there is not in the total unless it prices the flight (A-10, owner default 1). The figure stays the engine's number (V1); only the label and the order are new. `gaps.js` is the only place that decides fits, tight, over and partial: the budget search's `verdictOf` and the finder's priority sort call `standingOf` and `partialLastKey`, and a test fails on a fits or tight verdict assigned anywhere else in `src/`. Behind flag E1 (`config/flags.json`, default old); with old every site answers as before.
+- Constant: `continent-app/src/lib/price/gaps.js`
+- Test: `continent-app/tests/honestTotals.test.mjs` and the `totals` golden set (`tests/fixtures/logic-golden/totals.json`)
+
 ## Rules with no test
 
 PRICE-018, PRICE-032

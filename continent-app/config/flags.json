@@ -1,0 +1,16 @@
+{
+  "_about": "Which path each logic engine runs (G7, ROADMAP G4). One key per engine of the logic audit (E1 honest totals ... E10 entitlement, docs/logic/). 'old' runs the code that ships today, 'new' runs the engine, 'shadow' runs both, shows old and logs the diff (scripts/eval/shadow-diff.mjs shows it offline). The app reads this file only; a traveller cannot flip an engine from the address or from storage. A wave flips its own key in the commit that wires the engine, and flips it back here to undo.",
+  "version": 1,
+  "engines": {
+    "E1": "old",
+    "E2": "old",
+    "E3": "old",
+    "E4": "old",
+    "E5": "old",
+    "E6": "old",
+    "E7": "old",
+    "E8": "old",
+    "E9": "old",
+    "E10": "old"
+  }
+}

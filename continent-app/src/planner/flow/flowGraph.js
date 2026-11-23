@@ -117,7 +117,8 @@ export function guideScreens(s) {
   const town = places.some((p) => p.kind === 'place');
   return GUIDE.filter((id) => {
     // Whole trip or flights first is moot without flying: the whole trip.
-    if (id === 'g:how' && noFlying(s)) return false;
+    // H-9: nor with flights already booked (the whole trip is then the only answer).
+    if (id === 'g:how' && (noFlying(s) || s.booked?.flights)) return false;
     // Getting around is answered by driving their own car there, or a
     // rental car already booked.
     if (id === 'g:around' && (s.way === 'car' || s.booked.car)) return false;

@@ -15,7 +15,8 @@
  *
  * FIRE AND FORGET: never throws, never awaited, a missing backend is silent.
  */
-export const FUNNEL_STEPS = ['explore_opened', 'place_opened', 'plan_started', 'priced_draft', 'trip_saved', 'shared'];
+// REQ-ai-1: the two Ask steps (lib/ai/funnel.js sends them) close the list, so the admin card shows them.
+export const FUNNEL_STEPS = ['explore_opened', 'place_opened', 'plan_started', 'priced_draft', 'trip_saved', 'shared', 'ask_answer', 'ask_to_plan'];
 
 /** The funnel step an app tab stands for, or null. Pure. */
 export function stepOfTab(tab) {

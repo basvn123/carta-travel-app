@@ -192,6 +192,7 @@ export function TripMemoryView({ memory, onEdit }) {
             )}
           </div>
           {spend.foreign && <p className="memo-note">{t('saved.pastRateNote')}</p>}
+          {spend.notConverted && <p className="memo-note">{t('saved.pastNotConverted')}</p>}
         </div>
       )}
 

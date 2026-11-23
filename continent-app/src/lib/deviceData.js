@@ -17,50 +17,12 @@
  * goes whole: it mixes view filters with the home point and the shortlist,
  * and a clean start is truer than a scrub that keeps unlisted keys.
  */
+import { deviceKeys } from './stateKeys.js';
 
-/** Exact keys, and prefixes ending in '.' that cover a family of keys. */
-export const DEVICE_THING_KEYS = [
-  'carta.savedLists.v1',
-  'carta.visitedCountries.v1',
-  'carta.trips.v1',
-  'carta.keptTrips.v1',
-  'carta.savedJourneys.v1',
-  'carta.deviceTrip.v1',
-  'carta.tripDraft.v1',
-  'carta.plannerDraft.v1',
-  'carta.dayplans.v1',
-  'carta.dayplan.',
-  'carta.dayprefs.',
-  'carta.tripextras.',
-  'carta.booked.',
-  'carta.places.v1',
-  'carta.discovered.v1',
-  'carta.ask.chats.v1',
-  'carta.mytrips.',
-  'carta.tripSkips.v1',
-  'carta.together.',
-  'carta.friends.lastSeen',
-  'carta.dayChat.v1:',
-  // T1104: which account this device last synced with, and what was in sync.
-  'carta.accountSync.v1',
-  // T1152: the traveller's yes and no on their taste chips.
-  'carta.taste.v1',
-  // Logic wave 0a (N5, audit J-W5): the address mirror holds the home point,
-  // shortlist, party, start, dates and taste, so the whole key goes.
-  'continent.state.v1',
-  'carta.travelStyles.v1',
-  // A co-planner invite token: the next person on a shared device must not
-  // accept the last one's invite.
-  'carta.pendingCoplan',
-  // Fares the traveller typed, a finder plan held across a reload, the
-  // shortlist ids a price drop was asked about, and recent searches.
-  'carta.ownFares',
-  'carta.finderPlan.once',
-  'carta.priceDropAsk.v1',
-  'carta.dock.recent',
-  'carta.search.recent',
-  'carta.search.picked',
-];
+/** Exact keys, and prefixes ending in '.' or ':' that cover a family of keys.
+ * Read from the one state table (lib/stateKeys.js): every key whose scope is
+ * `person`. Add a key there, and to "your things" on the Cookies page. */
+export const DEVICE_THING_KEYS = deviceKeys();
 
 /** IndexedDB databases that hold the traveller's own files. */
 export const DEVICE_THING_DATABASES = ['carta-files'];

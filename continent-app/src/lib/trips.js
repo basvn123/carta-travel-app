@@ -205,6 +205,12 @@ export function rankTrips(trips, {
     : t));
 }
 
+/** H-14: what makes two ready trips one card with length chips: the shape,
+ *  the way and the ordered cities, never the length. E7 grows this key. */
+export function variantKey(t) {
+  return [t.archetype || '', t.transport || '', (t.cities || []).map((c) => cityKeyName(c.city)).join('>')].join('|');
+}
+
 /**
  * Collapse the same route at different lengths into one card.
  *
@@ -216,8 +222,9 @@ export function rankTrips(trips, {
  *
  * rankTrips already does a version of this, but only when NO length is asked
  * for, and it keys on shape, pace and scale as well, so a five and a six day
- * run of the same cities stay apart. This one keys on the ordered city
- * sequence alone, which is what the card actually prints, and runs after the
+ * run of the same cities stay apart. This one keys on the way there and the
+ * shape (a rail chain and a car loop through the same cities are two trips, H-14)
+ * plus the ordered city sequence, never the length, and runs after the
  * ranking so the best-scoring variant leads.
  *
  * `days` is the traveller's own window. The variant nearest it is the one
@@ -236,7 +243,7 @@ export function groupTripVariants(trips, days = null) {
   const groups = new Map();
   for (const t of trips || []) {
     if (!t || !Array.isArray(t.cities)) continue;
-    const key = t.cities.map((c) => cityKeyName(c.city)).join('>');
+    const key = variantKey(t);
     const g = groups.get(key);
     if (g) g.push(t);
     else groups.set(key, [t]);

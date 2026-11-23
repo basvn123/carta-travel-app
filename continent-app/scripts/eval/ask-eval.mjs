@@ -63,7 +63,11 @@ import { scoreList, groundingChecks, summarise, gate, TOLERANCE } from './ask-ev
 
 const here = dirname(fileURLToPath(import.meta.url));
 const app = resolve(here, '../..');
-const pub = (p) => join(app, 'public', p);
+// CARTA_PUBLIC points at another public/ (a worktree has none; E1 wave 2), read only.
+const pubDir = () => (process.env.CARTA_PUBLIC ? resolve(process.env.CARTA_PUBLIC) : join(app, 'public'));
+const pub = (p) => join(pubDir(), p);
+/** True when the shipped catalogue can be read: the any-question eval skips loudly without it. */
+export const catalogueAvailable = () => existsSync(pub('app_data.json')) && existsSync(pub('search/guided.json')) && existsSync(pub('search_index.json'));
 const J = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const argv = process.argv.slice(2);
 const flag = (n) => argv.includes(n);
@@ -76,7 +80,7 @@ const SHOWN = 6;
 
 // ---- The catalogue, as the app loads it ------------------------------------
 
-function loadCatalogue() {
+export function loadCatalogue() {
   const data = J(pub('app_data.json'));
   const destinations = Array.isArray(data.destinations) ? Object.fromEntries(data.destinations.map((d) => [d.id, d])) : data.destinations;
   const costs = priceDays(destinations, DEFAULT_PRICE_REQUEST);
@@ -92,6 +96,24 @@ async function catalogs() {
   const out = {};
   for (const lang of ['en', 'nl', 'de', 'fr', 'es', 'it']) out[lang] = (await import(`../../src/i18n/${lang}.js`))[lang];
   return out;
+}
+
+/**
+ * What every offline run needs, once: the catalogue, the six string tables,
+ * one parser vocabulary per language and the optional place linker. The Ask
+ * eval and the any-question eval (adapters/any-question.mjs) both start here,
+ * so they read the same catalogue the same way.
+ */
+export async function offlineKit({ link = false } = {}) {
+  const cat = loadCatalogue();
+  // T1215 (T1153-d): the place linker over the same catalogue, the app's fallback with the flag on.
+  const linker = link ? makeLinker({ destinations: cat.rows, searchIndex: cat.index, lexicon: cat.lexicon }) : null;
+  const linkFn = linker ? (m) => linkPlace(linker, m, { whole: true }) : undefined;
+  const cats = await catalogs();
+  const tFor = (lang) => (k, v) => String(cats[lang][k] ?? cats.en[k] ?? k).replace(/\{(\w+)\}/g, (m, x) => (v && v[x] != null ? String(v[x]) : m));
+  const vocabs = {};
+  for (const lang of Object.keys(cats)) vocabs[lang] = buildAskVocab({ ...cat, t: tFor(lang), lang });
+  return { cat, cats, tFor, vocabs, linkFn };
 }
 
 // ---- The sparse index -------------------------------------------------------
@@ -213,15 +235,8 @@ async function runCase(c, retriever, env) {
 // ---- The run ----------------------------------------------------------------
 
 export async function runEval({ only = null, seedDrop = false, dump = null, set = J(SET_PATH), askDir = null, link = false } = {}) {
-  const cat = loadCatalogue();
-  // T1215 (T1153-d): the place linker over the same catalogue, the app's fallback with the flag on.
-  const linker = link ? makeLinker({ destinations: cat.rows, searchIndex: cat.index, lexicon: cat.lexicon }) : null;
-  const linkFn = linker ? (m) => linkPlace(linker, m, { whole: true }) : undefined;
-  const cats = await catalogs();
+  const { cat, tFor, vocabs, linkFn } = await offlineKit({ link });
   const today = new Date(`${set.now}T12:00:00`);
-  const tFor = (lang) => (k, v) => String(cats[lang][k] ?? cats.en[k] ?? k).replace(/\{(\w+)\}/g, (m, x) => (v && v[x] != null ? String(v[x]) : m));
-  const vocabs = {};
-  for (const lang of Object.keys(cats)) vocabs[lang] = buildAskVocab({ ...cat, t: tFor(lang), lang });
   // The parser keeps its vocabulary; a seeded drop takes places out of the answers only.
   let rows = cat.rows;
   if (seedDrop) {

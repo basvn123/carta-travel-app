@@ -2,11 +2,13 @@
  * bookingImportLogic.js, the pure half of the magic-import client: how a
  * parsed answer folds into the trip's booking rows and Activity Inbox.
  *
- * No imports on purpose: bookingImport.js (which pulls in the Supabase
+ * One import, the dependency-free placeName.js: bookingImport.js (which pulls in the Supabase
  * client, and through it import.meta.env) re-exports everything here, while
  * the Node tests (scripts/ai/test_import_logic.mjs) import THIS file
  * directly, the same split plan-day/logic.mjs lives by.
  */
+
+import { cityFold } from '../lib/placeName.js';
 
 // Client-side mirror of the server's whitelist, so a wrong file type is a
 // friendly message before upload rather than a silent server-side drop.
@@ -46,7 +48,8 @@ export function matchBookingRow(b, rowKeys, cities) {
   }
   if (b.kind === 'stay') {
     // By named city first; a one-stop trip needs no name to match.
-    const i = cities.findIndex((c) => b.city && (norm(c).includes(norm(b.city)) || norm(b.city).includes(norm(c))));
+    // H-11: whole folded names, so Nice no longer lands on Venice and Porto not on Porto Cervo.
+    const i = cities.findIndex((c) => b.city && cityFold(c) === cityFold(b.city));
     if (i >= 0 && has(`stay-${i}`)) return `stay-${i}`;
     if (cities.length === 1 && has('stay-0')) return 'stay-0';
     return null;

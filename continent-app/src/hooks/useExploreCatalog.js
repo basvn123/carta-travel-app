@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { matchesAnyKind } from '../lib/trip_kinds.js';
-import { isFullRatingRange, isGateway } from '../lib/rating.js';
+import { byRating, isFullRatingRange, isGateway } from '../lib/rating.js';
 import { sortForYou } from '../lib/match.js';
 import { isEmptyTaste } from '../lib/taste.js';
 import { isBigPlace } from '../lib/placeSize.js';
@@ -178,25 +178,24 @@ export function useExploreCatalog({
   const rows = useMemo(() => {
     const raw = sortKey || 'beauty';
     const key = raw === 'price' ? 'beauty' : (raw === 'stay' || raw === 'food') ? 'cost' : raw;
-    const ratingVal = (p) => (p.rating?.score ?? p.beauty?.score ?? 0);
     // "Top rated N" trims BEFORE the sort, so the shortcut picks the set and
     // the sort chips still decide the order of what is left.
     const base = topPick?.n
-      ? [...filtered].sort((a, b) => ratingVal(b) - ratingVal(a)).slice(0, topPick.n)
+      ? [...filtered].sort(byRating).slice(0, topPick.n)
       : [...filtered];
     if (key === 'name') base.sort((a, b) => a.city.localeCompare(b.city));
-    else if (key === 'country') base.sort((a, b) => a.country.localeCompare(b.country) || ratingVal(b) - ratingVal(a));
+    else if (key === 'country') base.sort((a, b) => a.country.localeCompare(b.country) || byRating(a, b));
     else if (key === 'cost') {
       // Cheapest day first. A destination with no figure sorts last rather
       // than sorting as free, which is exactly the mistake the old
       // percentile index made with a harvested zero.
       const dayOf = (p) => (p.cost?.dayEur ?? Infinity);
-      base.sort((a, b) => dayOf(a) - dayOf(b) || ratingVal(b) - ratingVal(a));
+      base.sort((a, b) => dayOf(a) - dayOf(b) || byRating(a, b));
     }
     // T765: "For you" (lib/match.js), Q + lambda (F - 0.5); with no taste it
     // is the rating order, so nothing changes for a traveller who set none.
     else if (key === 'foryou' && hasTaste) return sortForYou(base, taste, month);
-    else base.sort((a, b) => ratingVal(b) - ratingVal(a));
+    else base.sort(byRating); // E-6: ties by fame, then id
     return base;
   }, [filtered, sortKey, topPick, hasTaste, taste, month]);
 

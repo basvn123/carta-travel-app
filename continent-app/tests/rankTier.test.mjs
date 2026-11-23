@@ -137,6 +137,10 @@ test("a store without a rank tier says so, so the caller loads everything", asyn
 
 const REAL = ["app_data.json", "boot.json", RANK_PATH.slice(1)].every((f) => existsSync(join(pub, f)));
 
+// E-15: the lite tier leaves the provenance stamps (_src, _asof) out on purpose; the
+// comparisons below are about the values a price or a card reads, not about who stamped them.
+const noProv = (x) => JSON.parse(JSON.stringify(x ?? null, (k, v) => (k === "_src" || k === "_asof" ? undefined : v)));
+
 function realCatalogues() {
   const want = JSON.parse(readFileSync(join(pub, "app_data.json"), "utf8"));
   const boot = JSON.parse(readFileSync(join(pub, "boot.json"), "utf8"));
@@ -177,12 +181,12 @@ test("every destination prices the same from its lite record as from its full on
     for (const id of Object.keys(full.destinations)) {
       const a = quoteComposed(full.destinations[id], depart, ret, choices, full.destinations);
       const b = quoteComposed(lite.destinations[id], depart, ret, choices, lite.destinations);
-      assert.equal(JSON.stringify(b), JSON.stringify(a), `${id} prices the same (${JSON.stringify(choices).slice(0, 60)})`);
+      assert.deepEqual(noProv(b), noProv(a), `${id} prices the same (${JSON.stringify(choices).slice(0, 60)})`);
       if (a) priced += 1;
     }
     const ca = computeCosts(full.destinations, choices);
     const cb = computeCosts(lite.destinations, choices);
-    for (const [id, row] of ca) assert.deepEqual(cb.get(id), row, `${id} costs the same`);
+    for (const [id, row] of ca) assert.deepEqual(noProv(cb.get(id)), noProv(row), `${id} costs the same`);
   }
   assert.ok(priced > 1000, `a vacuous comparison prices nothing (${priced} priced)`);
 });
@@ -201,10 +205,11 @@ test("every field a list row projects reads the same from the lite record", { sk
       if (how && how !== true && a[f] && typeof a[f] === "object") {
         for (const [k, v] of Object.entries(a[f])) {
           if ((how.pick && !how.pick.includes(k)) || (how.omit && how.omit.includes(k))) continue;
-          assert.deepEqual(b[f][k], v, `${id}.${f}.${k}`);
+          if (k === "_src" || k === "_asof") continue;
+          assert.deepEqual(noProv(b[f][k]), noProv(v), `${id}.${f}.${k}`);
         }
       } else {
-        assert.deepEqual(b[f], a[f], `${id}.${f}`);
+        assert.deepEqual(noProv(b[f]), noProv(a[f]), `${id}.${f}`);
       }
     }
     assert.equal(b.image?.url ?? null, a.image?.url ?? null, `${id}.image.url`);

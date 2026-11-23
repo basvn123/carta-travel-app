@@ -9,7 +9,9 @@
 import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.js';
 import { readFavList, writeFavList } from './favorites.js';
 import { decodeTaste, encodeTaste, isEmptyTaste } from './taste.js';
-import { HOME_POINT_DP } from './shareKeys.js';
+import { HOME_POINT_DP, roundHomePoint } from './shareKeys.js';
+import { ownUrlKeys, settingUrlKeys, stripUrlKeys, legacyFilterKeys } from './stateKeys.js';
+import { isOn } from './flags.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -265,7 +267,10 @@ export function encodeState({
 /** Parse the current URL (or a stored mirror) into a partial state object. */
 export function decodeState(search) {
   const q = new URLSearchParams(search || '');
-  const has = (k) => q.has(k);
+  // E-3, V-6: with flag E9 new the filters no chip shows (rr mt mb tb big top) are not read
+  // from an address or the mirror, so an old link or bookmark cannot narrow Explore unseen.
+  const retired = isOn('E9') ? new Set(legacyFilterKeys()) : new Set();
+  const has = (k) => q.has(k) && !retired.has(k);
   const out = {};
   // The view the address names, old names included (LEGACY_TABS, T496). A
   // page over a view (trips, account) keeps its own key here.
@@ -312,7 +317,8 @@ export function decodeState(search) {
     const lat = cut >= 0 ? Number(raw.slice(0, cut)) : NaN;
     const lon = cut >= 0 ? Number(raw.slice(cut + 1, cut2 < 0 ? undefined : cut2)) : NaN;
     if (Number.isFinite(lat) && Number.isFinite(lon)) {
-      out.drive_home = { lat, lon, name: cut2 < 0 ? '' : raw.slice(cut2 + 1) };
+      // G-4: a link or mirror from before wave 0a may hold 4 decimals; read it at 0.01 degree.
+      out.drive_home = { ...roundHomePoint(lat, lon), name: cut2 < 0 ? '' : raw.slice(cut2 + 1) };
     }
   }
   // iso2 codes joined by '.', legacy links stored a single code (still parses).
@@ -492,13 +498,59 @@ export function loadInitialState() {
   return mergeLinkOverMirror(fromUrl, stored);
 }
 
+/** This device's mirror as the raw query string persistState wrote, or ''. */
+export function readMirror() {
+  try { return (typeof window !== 'undefined' && window.localStorage.getItem(STORAGE_KEY)) || ''; } catch { return ''; }
+}
+
+/**
+ * E9 (J-2, G-2, G-3): is this address someone else's link, and not a query
+ * this device wrote itself? `cameFromUrl` used to be "there is a query", so a
+ * reload of the traveller's own address (persistState writes one on every
+ * change) skipped the account pull and the next push overwrote the account.
+ * An address is foreign when it carries a setting (a key the table marks as
+ * an own, non-place, non-seed key) that this device's mirror does not hold with
+ * the same value. A bare place (`?tab=explore`) or a hand-off seed (`cc`,
+ * `dest`, `feat`) carries no one's settings. `mirror` is the raw query string
+ * of continent.state.v1, or ''.
+ */
+export function isForeignLink(search, mirror) {
+  const addr = new URLSearchParams(search || '');
+  const mine = new URLSearchParams(typeof mirror === 'string' ? mirror : '');
+  const settings = new Set(settingUrlKeys());
+  for (const [k, v] of addr) if (settings.has(k) && mine.get(k) !== v) return true;
+  return false;
+}
+
+/** The query keys that carry a priced choice (party g gc gb, stay st, Lifestyle ls, way t). */
+export const PRICED_QUERY = /[?&](g|gc|gb|st|ls|t)=/;
+const PRICED_INIT_KEYS = ['group_size', 'children', 'babies', 'stay_tier', 'transport_mode', 'lifestyle'];
+
+/**
+ * E9 (G-1): the boot values useAppData applies again once the data has loaded.
+ * With a travel style active and no priced key in the address, the style
+ * already set the party, bed, Lifestyle and way at the mount; the mirror's
+ * copy of them (a held trip's party, say) must not be re-applied over it, or
+ * the effect that follows writes the trip into the style. With flag E9 old,
+ * or with no style, or when the address named them, `init` comes back as it was.
+ */
+export function initForLoad(init, { prev, search = '' } = {}) {
+  if (!isOn('E9') || !prev?.travel_styles?.active || PRICED_QUERY.test(search)) return init;
+  const out = { ...init };
+  for (const k of PRICED_INIT_KEYS) delete out[k];
+  return out;
+}
+
 
 // Every key encodeState can write; persistState replaces exactly these.
 // gc, gb, df and cn are written only when not the default, so they must be
 // owned too: otherwise children set back to 0 left gc=2 standing in the
 // address and a reload brought the children back (travel styles review,
 // 2026-11-13).
-const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 'dh', 'fav', 'favonly', 'feat', 'g', 'gb', 'gc', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'ps', 'pv', 'px', 'r', 'rh', 'rr', 'sc', 'sh', 'sk', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un', 'wm', 'wn', 'wy'];
+// Read from the one state table (lib/stateKeys.js). J-17: `pm`, the Pass
+// preview, is no longer owned, so this writer leaves a ?pm= standing instead of
+// stripping it and relying on passMoment.js to have read it at import.
+const OWN_KEYS = ownUrlKeys();
 
 // N5 (logic wave 0a): a device clear stops this writer for the rest of the
 // page, so a pending 300 ms persist cannot put the home point and shortlist
@@ -529,7 +581,11 @@ export function persistState(state) {
   // Together's sub-screen keys (T928) belong to that page only.
   if (state.activeTab !== 'together') { merged.delete('tv'); merged.delete('tg'); }
   for (const key of OWN_KEYS) merged.delete(key);
-  for (const [k, v] of own) merged.set(k, v);
+  // E9: the home point, shortlist and taste live in the mirror only; the address
+  // bar keeps the view and the priced choices. Old links that carried them are
+  // read at load (loadInitialState) and cleaned here.
+  const strip = isOn('E9') ? new Set(stripUrlKeys()) : null;
+  for (const [k, v] of own) if (!strip?.has(k)) merged.set(k, v);
   const ms = merged.toString();
   // A journey's address is its hash (#journey=<id>, lib/journeys.js): the
   // week stays open across a reload, so this writer keeps that one hash

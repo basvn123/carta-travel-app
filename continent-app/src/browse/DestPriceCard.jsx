@@ -5,13 +5,14 @@ import { readOwnFare, writeOwnFare, markFirstResultSeen } from '../lib/firstRun.
 import { tripDaysBetween } from '../lib/runtime_pricing.js';
 import { addDays, fmtDate } from '../lib/dates.js';
 import { quoteNights } from '../lib/price/nights.js';
+import { isOn } from '../lib/flags.js';
 import { priceNotes } from '../lib/price/notes.js';
 import { NotMeasuredValue, ThinBedNote } from '../components/PriceNotes.jsx';
 import { useSettledFigure } from '../lib/figureChange.js';
 import {
   Button, Money, Segmented, Plate, PlateGroup, Formation, Figure, CostRow, CostSum,
 } from '../components/ui/index.js';
-import { formatMoney } from '../lib/money.js';
+import { formatMoney, receiptRounding } from '../lib/money.js';
 import { doPriceOf } from '../lib/price/doPrice.js';
 import { Switch } from '../components/ui/Switch.jsx';
 import '../styles/86-price-items.css';
@@ -293,8 +294,7 @@ export function DestPriceCard({
   // G1 (house style): the receipt's lines print in whole euros; when they
   // do not add up to the engine's own total, a Rounding line says by how
   // much (decision 0012, must-fix 3). Display only: the total is never changed.
-  const printedSum = price.lines.reduce((sum, l) => sum + Math.round(l.eur), 0);
-  const rounding = Math.round(price.total) - printedSum;
+  const rounding = receiptRounding(price.lines, price.total);
   const lineKind = (l) => (l.key === 'flight' ? 'flight' : l.key === 'way' ? (l.mode === 'plane' ? 'flight' : l.mode)
     : l.key === 'stay' ? 'bed' : l.key === 'ground' ? 'food' : l.key === 'car' ? 'car'
       : l.key === 'transport' ? 'local' : 'tickets');
@@ -526,6 +526,10 @@ export function DestPriceCard({
             <CostSum className="tcard-line is-total" label={t('place.total')} value={<Money value={price.total} />} live={false} />
             {/* T1075 (D10): a part with no figure yet says so in words; the
                 total above does not include it, and is never padded. */}
+            {/* E1 (A-17): the plane is the way and no flight is in the total: say so in the same words, never drop the way silently. */}
+            {isOn('E1') && !flightOff && mode === 'plane' && price.noWay && (
+              <CostRow tone="missing" className="tcard-line is-unmeasured" label={t('price.item.flight')} value={<NotMeasuredValue />} />
+            )}
             {priceNotes(costRow).unmeasured.map((key) => (
               <CostRow key={key} tone="missing" className="tcard-line is-unmeasured"
                 label={t(`price.item.${key}`)} value={<NotMeasuredValue />} />

@@ -73,7 +73,7 @@ export function quoteStay(dest, nights, arriveDate, req = DEFAULT_PRICE_REQUEST,
   if (!dest) return null;
   const n = Math.max(0, Math.round(nights || 0));
   const seats = seatsOf(req);
-  if (n === 0) return { day: null, accom: null, ground: null, accomTotal: 0, groundTotal: 0, total: 0, nights: 0, seats };
+  if (n === 0) return { day: null, accom: null, ground: null, accomTotal: 0, groundTotal: 0, total: 0, accomMissing: false, groundMissing: false, nights: 0, seats };
   const at = arriveDate ? atDates(req, arriveDate, addDays(arriveDate, n)) : { ...req, nights: n };
   const day = priceDay(dest, at, destinations);
   if (!day) return null;
@@ -90,6 +90,10 @@ export function quoteStay(dest, nights, arriveDate, req = DEFAULT_PRICE_REQUEST,
     accomTotal,
     groundTotal,
     total: round2(accomTotal + groundTotal),
+    // E1: a stay with no bed or no food price adds 0 above; these say so, so a
+    // total can name what it leaves out (price/gaps.js) instead of reading as complete.
+    accomMissing: bed == null,
+    groundMissing: food == null,
     nights: n,
     seats,
   };

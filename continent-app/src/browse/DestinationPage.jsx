@@ -223,7 +223,6 @@ export function DestinationPage({
   const [postInView, setPostInView] = React.useState(true);
   const firstRun = useFirstRun();
   const view = useDayView();   // T694: per person or the group's total
-  const tripMonth = monthOf(firstRun?.departDate || firstRun?.defaultDates?.start || null);
   const defaults = firstRun?.defaultDates || null;
   const datesOwn = !!(defaults && firstRun?.departDate
     && (firstRun.departDate !== defaults.start || (firstRun.returnDate && firstRun.returnDate !== defaults.end)));
@@ -235,6 +234,8 @@ export function DestinationPage({
     : (settingsCtx?.when
       ?? resolveWhen({ ownDates: datesOwn, departDate: firstRun?.departDate, returnDate: firstRun?.returnDate }));
   const statMonth = whenMonth(tripWhen);
+  // F-9: the one month this page reads for the match line and packing is the stats' month, not the departure date's.
+  const tripMonth = statMonth;
 
   const dossier = useDossier(destination?.id);
   const staysVersion = useStaysVersion();
@@ -426,7 +427,8 @@ export function DestinationPage({
   const visitH = Number(d?.place?.visit_h ?? intro?.facts?.visit_h);
   // D20: a family or a heat avoider is not sent to a heat or fire month.
   const heatGuard = guardsHeat({ children: settingsCtx?.children, babies: settingsCtx?.babies, avoid: settingsCtx?.avoid });
-  const bestMonths = d?.when?.best?.length ? d.when.best : bestMonthsFor(destination.climate, heatGuard).best;
+  // F-6: the dossier's best months pass the same heat guard as the shipped ones.
+  const bestMonths = bestMonthsFor({ ...destination.climate, best: d?.when?.best?.length ? d.when.best : destination.climate?.best }, heatGuard).best;
   const keyFacts = [
     bestMonths?.length > 0 && { key: 'best', label: t('dest.keyBest'), value: monthList(bestMonths) },
     crowdText && { key: 'crowds', label: t('dest.keyCrowds'), value: crowdText },
