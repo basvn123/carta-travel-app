@@ -212,7 +212,9 @@ export function DestPriceCard({
   };
   const nightsText = nights === 1 ? t('receipt.oneNight') : t('receipt.nNights', { n: nights });
   const peopleText = people === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: people });
-  const tier = costRow?.tierFallback ? 'home' : (costRow?.stayTier || choices?.stay_tier || 'home');
+  // The tier the bed was priced at: when the town lacks the one asked for, the one the ladder reached (E3), else the entire place as before.
+  const pricedTier = (costRow?.lines || []).find((x) => x.key === 'bed')?.basis?.tier;
+  const tier = costRow?.tierFallback ? (pricedTier || 'home') : (costRow?.stayTier || choices?.stay_tier || 'home');
   const profileKey = matchProfile(choices?.lifestyle || {});
   const vibe = profileKey ? t(PROFILE_LABEL_KEYS[profileKey]) : t('lifestyle.custom');
 
@@ -516,7 +518,7 @@ export function DestPriceCard({
                     <Money value={l.eur} />
                     {l.thin && <ThinBedNote />}
                     {l.modelled && !l.thin && <ModelledBedNote />}
-                    {l.key === 'bed' && l.basis?.tierFallback && <BedFallbackNote fallback={{ asked: l.basis.tierAsked, tier: l.basis.tier }} />}
+                    {l.fallback && <BedFallbackNote fallback={l.fallback} />}
                   </>
                 )}
               />

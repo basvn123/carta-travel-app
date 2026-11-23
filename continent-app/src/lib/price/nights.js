@@ -45,6 +45,8 @@ const round2 = (v) => Math.round(v * 100) / 100;
  * the way there, as before.
  */
 const bedOf = (row) => (row?.lines || []).find((l) => l.key === 'bed');
+// E3: the tier a bed fell to when the town lacks the one asked for (the same read as display.js bedFallback, kept here so this file stays import free).
+const bedFallback = (row) => { const b = bedOf(row); return b?.basis?.tierFallback && b.basis.tierAsked && b.basis.tier ? { asked: b.basis.tierAsked, tier: b.basis.tier } : null; };
 
 export function quoteNights(costRow, nights, people, fare = null, carta = null, activities = [], way = null) {
   if (costRow?.stayEur == null || costRow?.foodEur == null) return null;
@@ -66,7 +68,9 @@ export function quoteNights(costRow, nights, people, fare = null, carta = null, 
   } else if (carta?.total > 0) {
     lines.push({ key: 'flight', eur: round2(carta.total), est: false, carta });
   }
-  if (!off.has('bed')) lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city', ...(bedOf(costRow)?.thin ? { thin: true } : {}) });
+  if (!off.has('bed')) lines.push({ key: 'stay', eur: round2(stay * n * p), est: costRow.stayLevel !== 'city', ...(bedOf(costRow)?.thin ? { thin: true } : {}),
+    // REQ-data-2 and E3: a modelled bed and a bed priced at another tier say so beside the figure.
+    ...(bedOf(costRow)?.modelled ? { modelled: true } : {}), ...(bedFallback(costRow) ? { fallback: bedFallback(costRow) } : {}) });
   if (!off.has('food')) lines.push({ key: 'ground', eur: round2(food * n * p), est: costRow.foodLevel !== 'city' });
   const car = (costRow.lines || []).find((l) => l.key === 'car' && l.status === 'included' && l.eur != null);
   if (car) lines.push({ key: 'car', eur: round2(car.eur * n * p), est: true });
