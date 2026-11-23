@@ -53,6 +53,8 @@ import sys
 from collections import Counter
 
 sys.path.insert(0, os.path.dirname(__file__))
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))  # pipeline/: festival_filter
+from festival_filter import is_festival_ok  # noqa: E402
 from common import (  # noqa: E402
     PUB, CACHE, DCACHE, REPORTS, GridIndex, TaslStore, atomic_write_json,
     bearing8, commons_filename, dossier_file_base, file_page_url,
@@ -133,6 +135,36 @@ KIND_PATTERNS = [
 ]
 KIND_RES = [(k, re.compile(p, re.I)) for k, p in KIND_PATTERNS]
 
+# A highlight is a place to go, not a date, a crowd disaster or a ground. The
+# 2026-11-17 research found 320 Landmark highlights that were disasters,
+# stadiums, cemeteries or prisons (Brussels led with King Baudouin Stadium, the
+# Heysel disaster and Lotto Park). One predicate, read in the gate loop of
+# resolve_highlights; it reads the row's name, desc and the Wikidata P31 types
+# a landmark keeps in `_types`.
+HL_EVENT_RE = re.compile(
+    r"\b(disaster|massacre|bombing|shooting|crash|stampede|riot|uprising)\b"
+    r"|^(?:the\s+)?(?:battle|siege|raid|treaty|sack|capture)\s+(?:of|for|at)\b", re.I)
+HL_CEMETERY_RE = re.compile(r"\b(cemetery|graveyard|burial ground|necropolis|cimeti[e\u00e8]re|friedhof)\b", re.I)
+HL_PRISON_RE = re.compile(r"\b(prison|jail|gaol|penitentiary|detention centre|detention center)\b", re.I)
+HL_GROUND_RE = re.compile(r"\b(stadium|stadion|stade|estadio|stadio|arena|velodrome|racecourse|ballpark)\b", re.I)
+HL_SITE_RE = re.compile(r"\b(museum|memorial|monument|battlefield|mound|site)\b", re.I)
+
+
+def is_highlight_ok(it):
+    """False for a highlight that is an event, a cemetery, a prison or a
+    stadium. Heritage keeps a cemetery or a stadium (Pere Lachaise); a
+    memorial or museum word keeps an event's site or a prison museum."""
+    name = it.get("name") or ""
+    text = " | ".join(str(it.get(k) or "") for k in ("name", "desc", "fact", "_types"))
+    if it.get("heritage"):
+        return not HL_EVENT_RE.search(name)
+    if HL_EVENT_RE.search(name) or (it.get("_types") and re.search(r"\bdisaster\b", it["_types"], re.I)):
+        return bool(HL_SITE_RE.search(name))
+    if HL_CEMETERY_RE.search(text) or HL_PRISON_RE.search(text) or HL_GROUND_RE.search(text):
+        return bool(HL_SITE_RE.search(name))
+    return True
+
+
 
 def infer_kind(name, desc):
     hay = f"{name} {desc or ''}"
@@ -176,6 +208,7 @@ def landmarks_as_items(landmarks):
             "img": filepath_thumb(lm["img"], 960) if lm.get("img") else None,
             "wiki": None,
             "_qid": lm.get("qid"),
+            "_types": lm.get("types") or "",  # P31 labels, read by is_highlight_ok
             "_sitelinks": lm.get("sitelinks", 0),
             "_from": "wikidata",
         })
@@ -272,6 +305,8 @@ def resolve_highlights(dest, items, poi_wd, cap=12, listed=()):
                 it.get("lon"), (int, float)):
             continue  # gate: an item with no coordinate cannot be mapped
         if is_self_reference(it.get("name") or "", self_name):
+            continue
+        if not is_highlight_ok(it):
             continue
         # A highlight of a town has to BE near the town. Distance was computed
         # and published as dist_km but never bounded, so a name that resolved
@@ -1731,7 +1766,7 @@ def build_one(dest, ctx, refusal_log):
     # list with no month answers nothing. Undated events are kept but sorted
     # last, and the renderers say "date varies" instead of implying one.
     festivals = []
-    for e in sorted(events or [], key=lambda x: (
+    for e in sorted((e for e in events or [] if is_festival_ok(e)), key=lambda x: (
             0 if x.get("months") else 1, -(x.get("links") or 0)))[:8]:
         if not e.get("name"):
             continue

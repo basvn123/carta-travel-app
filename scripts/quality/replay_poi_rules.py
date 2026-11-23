@@ -104,11 +104,10 @@ def load_rules(mode):
     except Exception as e:  # the dossier module may not carry the predicate yet
         print("  dossier predicate not importable:", e)
     try:
-        import dossier_filters as df
-        fest = getattr(df, "is_festival_ok", None)
-        hl = hl or getattr(df, "is_highlight_ok", None)
-    except Exception:
-        pass
+        import festival_filter as ff
+        fest = ff.is_festival_ok
+    except Exception as e:
+        print("  festival predicate not importable:", e)
     return n, hl, fest
 
 
@@ -126,6 +125,13 @@ def main():
     wikidata = load(Path(a.repo) / "cache" / "poi_wikidata.json") if a.repo else {}
 
     # place meta from the dossiers (iso2, class) and the dossier checks
+    types = {}
+    if a.repo:
+        lm_path = Path(a.repo) / "cache" / "dossier" / "landmarks.json"
+        if lm_path.exists():
+            for dest, rows_ in load(lm_path).items():
+                for lm in rows_ or []:
+                    types[(dest.replace(":", "-"), lm.get("name"))] = lm.get("types") or ""
     meta, hl_all, hl_bad, hl_left = {}, Counter(), Counter(), Counter()
     fest_all = fest_bad = fest_left = 0
     fest_samples, hl_samples, bru = [], [], {}
@@ -140,13 +146,15 @@ def main():
             hl_bad[iso] += bad
             ok = True
             if is_hl_ok is not None:
-                ok = bool(is_hl_ok({"name": h.get("name"), "kind": h.get("kind")}))
+                ok = bool(is_hl_ok({"name": h.get("name"), "kind": h.get("kind"),
+                                    "_types": types.get((f.stem, h.get("name")), "")}))
+            bad = bad or bool(BAD_HL.search(types.get((f.stem, h.get("name")), "")))
             if bad and ok:
                 hl_left[iso] += 1
             if bad and len(hl_samples) < 40:
                 hl_samples.append([sid(f), h.get("name"), h.get("kind"), "kept" if ok else "dropped"])
         if sid(f) == "BRU":
-            bru["highlights"] = [(h.get("name"), bool(is_hl_ok({"name": h.get("name"), "kind": h.get("kind")})) if is_hl_ok else True) for h in d.get("highlights") or []]
+            bru["highlights"] = [(h.get("name"), bool(is_hl_ok({"name": h.get("name"), "kind": h.get("kind"), "_types": types.get((f.stem, h.get("name")), "")})) if is_hl_ok else True) for h in d.get("highlights") or []]
         evs = [("festivals", e.get("name"), e.get("what")) for e in d.get("festivals") or []]
         evs += [("do", e.get("name"), e.get("detail")) for e in d.get("do") or [] if e.get("type") == "festival"]
         for src, nm, ds in evs:

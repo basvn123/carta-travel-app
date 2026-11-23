@@ -44,6 +44,8 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 import derive_practical  # noqa: E402  (T641)
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))  # pipeline/: festival_filter
+from festival_filter import is_festival_ok  # noqa: E402
 from common import (  # noqa: E402
     is_self_reference, name_matches, name_tokens, norm_name, usable_desc,
 )
@@ -299,7 +301,8 @@ def derive(dest, items, highlights, nearby, listings, events, poi_wd,
         }, {"layer", "wikidata"})
 
     # ---- recurring events with their own Wikidata item.
-    for ev in sorted(events or [], key=lambda e: -(e.get("links") or 0))[:3]:
+    for ev in sorted((e for e in events or [] if is_festival_ok(e)),
+                     key=lambda e: -(e.get("links") or 0))[:3]:
         if not ev.get("name"):
             continue
         srcs = {"wikidata"}

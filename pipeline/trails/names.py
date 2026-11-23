@@ -977,8 +977,39 @@ def wire_name(title, country=None):
 
 
 _NOISE_WORDS = frozenset({"fixme"})
+# D7 (wave 4 step 0, judge 3 fix 2): words that describe a walk without naming it. A
+# name made only of these ("versantul drept", "paarse route", "Bewegung") has lost its
+# place. The colours are the ones name_problems knows plus the way-marker colours and
+# shapes the data carries in nl, de, fr, it, es, ro, hu, pl, cs and the Nordic languages;
+# the rest is the generic noun of a route in the same languages.
+_GENERIC_PART = frozenset({
+    "p\u00e9destre", "pedestre", "boucle", "balade", "randonn\u00e9e",
+    "route", "routes", "circuit", "circuito", "rundweg", "rundwanderweg", "wanderweg", "weg", "pfad",
+    "variante", "variant", "alternative", "alternatief", "itinerario", "principale", "sentiero",
+    "sentier", "trail", "loop", "walk", "path", "runde", "tour", "section", "connect", "connection",
+    "versantul", "drept", "st\u00e2ng", "traseu", "traseul", "wandelroute", "wandeling", "lus", "pad",
+    "streep", "ruit", "ronde", "grote", "kleine", "gro\u00dfer", "kleiner", "gro\u00dfe", "kleines",
+    "bewegung", "motivation", "entspannung", "ern\u00e4hrung", "vitalwanderweg",
+    "blue", "red", "green", "yellow", "black", "white", "orange", "purple", "brown", "grey", "gray",
+    "blau", "rot", "gelb", "gr\u00fcn", "schwarz", "wei\u00df", "braun", "lila",
+    "blauwe", "rode", "groene", "gele", "paarse", "zwarte", "witte", "oranje", "bruine", "blauw", "rood", "groen", "geel", "paars", "zwart",
+    "bleu", "rouge", "vert", "jaune", "noir", "blanc", "violet", "rosso", "verde", "giallo", "nero", "blu", "azul", "rojo", "amarillo", "negro",
+    "bl\u00e5", "r\u00f8d", "gr\u00f8n", "gul", "sort", "r\u00f6d", "bl\u00e5tt",
+    "pi\u00f3rox", "piros", "k\u00e9k", "z\u00f6ld", "s\u00e1rga",
+    "czerwony", "niebieski", "zielony", "\u017c\u00f3łty", "czarny",
+    "albastru", "ro\u0219u", "verde"})
 _UNIT_RE = re.compile(r"(?<![\w.])(\d+(?:[.,]\d+)?)\s*(km|h|mi|m)\b", re.IGNORECASE)
 _QUOTE_CHARS = "\u201e\u201c\u201d\u00ab\u00bb\""
+
+
+_SUFFIX_RE = re.compile(r", (?:[\d.]+ km|no\. \d+|#\d+|stage \d+\w*)$")
+
+
+def _only_generic(text):
+    """Every word of three letters or more (dedupe suffix aside) is a descriptor
+    from _GENERIC_PART: the name says what kind of walk it is and not where."""
+    words = [m.group(0).casefold() for m in _WORD_RE.finditer(_SUFFIX_RE.sub("", str(text or "")))]
+    return bool(words) and all(w in _GENERIC_PART for w in words)
 
 
 def _balanced(t):
@@ -1011,8 +1042,10 @@ def worse_reason(original, cleaned, country=None, content=True):
         has_num = re.search(r"(?<![\w.])" + re.escape(num) + r"(?![\w]|\.\d)", c)
         if has_num and not re.search(r"(?<![\w.])" + re.escape(num) + r"\s*" + unit + r"\b", c, re.IGNORECASE):
             return "unit_dropped"
+    free = split_code(rd)[0]
+    if _only_generic(c) and not _only_generic(free if free and not is_code(free) else rd):
+        return "generic_only"       # no 42 character limit: a place was there and is gone
     if content and len(rd) <= TITLE_MAX:
-        free = split_code(rd)[0]
         base = free if free and not is_code(free) else rd
         folded = squash(c)
         for m in _WORD_RE.finditer(base):
@@ -1031,6 +1064,15 @@ def _safe_name(rd):
     free = split_code(s)[0]
     if free and not is_code(free):
         s = free
+    # Judge 3 fix 2: the first dash segment names the walk when it fits and is
+    # not a code ("Le sentier de Ferrieres - Circuit pedestre n9"); when it is
+    # only a descriptor, the last one ("rot - Bewegung Bad Wunnenberg").
+    segs = [x.strip() for x in _DASH_SEP_RE.split(s)]
+    if len(segs) > 1 and len(s) > TITLE_MAX:
+        for cand in (segs[0], segs[-1]):
+            if (cand and len(cand) <= TITLE_MAX and _balanced(cand) and not is_code(cand)
+                    and not _only_generic(cand)):
+                return cand
     toks = s.split(" ")
     while len(toks) > 1 and is_code(toks[0]) and not is_code(" ".join(toks[1:])):
         toks.pop(0)

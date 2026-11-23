@@ -29,6 +29,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from pipeline_io import atomic_write_json, load_json
+from festival_filter import is_festival_ok
 
 if sys.platform == "win32":
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -198,7 +199,8 @@ def main():
             row["parking"] = slim_parking(p)
         ev = events.get(did)
         if ev:
-            row["events"] = [slim_event(e) for e in ev]
+            # D23: no adult festival or trade fair reaches the wire
+            row["events"] = [slim_event(e) for e in ev if is_festival_ok(e)]
         ac = pick_access((access_raw or {}).get(did), access_asof)
         if ac:
             row["access"] = ac
