@@ -80,6 +80,18 @@
   .vr-col > * { order: 0; }
 }
 
+/* Every photo box is filled edge to edge by its photo, whatever element
+   the image helper draws (a picture or an img, or the world tile), so a row
+   of cards has one top and one height (judge 1 fix 6). */
+.vr-panel :is(.vr-go-ph, .vr-fc-ph, .vr-meet-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c) > :is(picture, img, .hero-blank) {
+  display: block; width: 100%; height: 100%;
+}
+.vr-panel :is(.vr-go-ph, .vr-fc-ph, .vr-meet-ph, .vr-vcard-ph, .vr-pick-ph, .vr-row-ph, .vr-fl-ph, .vr-ring-c) picture img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.vr-fc-ph:not(.is-none):not(.is-add) { display: block; }
+/* The largest own copy is 1280 px wide, so a lone wide photo stays at 640 px
+   or less: sharp on a 2x screen (judge 1 fix 5). */
+.vr-meet-ph, .vr-pick-ph { max-width: 640px; }
+
 /* ── Wie gaat waarheen: the rail ────────────────────────────────────── */
 .vr-rail {
   display: grid; grid-auto-flow: column; grid-auto-columns: 62%; gap: var(--space-3);
@@ -362,7 +374,7 @@
 
 /* vote */
 .vr-vlist { display: grid; margin: 0; padding: 0; list-style: none; }
-@media (min-width: 1100px) { .vr-vlist { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); } }
+@media (min-width: 768px) { .vr-vlist { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: var(--space-6); } }
 .vr-vote { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: var(--space-3); align-items: start; padding: var(--space-3) 0; border-bottom: var(--stroke-hair) solid var(--border); }
 .vr-vrail { display: grid; grid-template-rows: var(--tap) auto var(--tap); justify-items: center; align-items: center; }
 .vr-vrail button { display: grid; place-items: center; width: var(--tap); height: var(--tap); padding: 0; border: var(--stroke-hair) solid var(--border); border-radius: var(--radius-control); background: none; color: var(--text-2); cursor: pointer; }

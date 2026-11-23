@@ -2,8 +2,9 @@
  * Vrienden proof (G16, decision 0017). For each ?friendsmock variant, width
  * and language it opens Vrienden straight from the address and checks, in
  * the panel: no page error, no horizontal overflow, no clipped visible text,
- * every target at least 44 px, every photo sharp (naturalWidth at least 1.5
- * times its rendered width, at a 2x screen), at most one saffron mark, an
+ * every target at least 44 px, every photo sharp (the chosen file at least
+ * its drawn width times the device pixel ratio, at a 2x screen), every photo
+ * on a row of cards at one top and one height, at most one saffron mark, an
  * h1, axe serious and critical 0, layout shift under 0.05, and that nothing
  * animates at the first paint (a deep link shows end states).
  *
@@ -108,8 +109,9 @@ async function inspect(page) {
   }, SAFFRON);
 }
 
-/* The photo rule: the file the browser chose is at least 1.5 times as wide
- * as the photo is drawn. An <img> with a w-descriptor srcset reports a
+/* The photo rule (judge 1 fix 5): the file the browser chose is at least
+ * the drawn width times the device pixel ratio (the run is at 2x). It was 1.5
+ * times; a 2x screen needs every pixel. An <img> with a w-descriptor srcset reports a
  * density-corrected naturalWidth, so the chosen file is loaded again on its
  * own to read its real pixels. */
 async function sharpness(page) {
@@ -121,12 +123,50 @@ async function sharpness(page) {
       const probe = new Image();
       probe.onload = () => {
         const w = el.getBoundingClientRect().width;
-        if (probe.naturalWidth < w * 1.5 - 1) out.push(`${probe.naturalWidth}<${Math.round(w)}x1.5 ${el.currentSrc.split('/').pop().slice(0, 40)}`);
+        const dpr = window.devicePixelRatio || 1;
+        if (probe.naturalWidth < w * dpr - 1) out.push(`${probe.naturalWidth}<${Math.round(w)}x${dpr} ${el.currentSrc.split('/').pop().slice(0, 40)}`);
         done();
       };
       probe.onerror = () => done();
       probe.src = el.currentSrc;
     })));
+    return out;
+  });
+}
+
+/* Photo rows (judge 1 fix 6): in the rail, the friend grid and the kring
+ * rail, every photo box on one row of cards has the same top and the same
+ * height (1 px or less), whatever the photo inside it is. */
+async function photoRows(page) {
+  return page.evaluate(() => {
+    const out = [];
+    const groups = [['.vr-rail', '.vr-go', '.vr-go-ph'], ['.vr-fgrid', '.vr-fc', '.vr-fc-ph'], ['.vr-krail', '.vr-kr', '.vr-ring']];
+    for (const [wrap, card, ph] of groups) {
+      for (const w of document.querySelectorAll(`.tg-panel ${wrap}`)) {
+        const rows = new Map();
+        for (const c of w.querySelectorAll(`:scope > ${card}`)) {
+          const box = c.querySelector(ph);
+          if (!box) continue;
+          const cr = c.getBoundingClientRect();
+          if (!cr.width) continue;
+          const k = Math.round(cr.top / 8);
+          const r = box.getBoundingClientRect();
+          if (!rows.has(k)) rows.set(k, []);
+          // A photo fills its box; a face tile or the ring holds other things.
+          const pic = box.matches('.vr-ring') ? null : box.querySelector(':scope > :is(picture, img, .hero-blank)');
+          rows.get(k).push({ top: r.top, h: r.height, inner: pic ? pic.getBoundingClientRect().height : r.height });
+        }
+        for (const row of rows.values()) {
+          if (row.length < 2) continue;
+          const t0 = row[0].top; const h0 = row[0].h;
+          for (const x of row) {
+            if (Math.abs(x.top - t0) > 1 || Math.abs(x.h - h0) > 1 || Math.abs(x.inner - x.h) > 1) {
+              out.push(`${wrap} top ${Math.round(x.top - t0)} height ${Math.round(x.h - h0)} fill ${Math.round(x.inner - x.h)}`);
+            }
+          }
+        }
+      }
+    }
     return out;
   });
 }
@@ -150,6 +190,8 @@ async function runOne(browser, v, w, lang) {
     if (r.saffron > 1) fails.push(`saffron marks ${r.saffron}`);
     if (!r.h1) fails.push('no h1');
     if (firstAnims.length) fails.push(`animations at first paint: ${firstAnims.slice(0, 3).join(', ')}`);
+    const rowsBad = await photoRows(page);
+    if (rowsBad.length) fails.push(`photo rows: ${rowsBad.slice(0, 3).join(' | ')}`);
     const blurry = await sharpness(page);
     if (blurry.length) fails.push(`blurry: ${blurry.slice(0, 2).join(' | ')}`);
     const cls = await page.evaluate(() => window.__cls);
