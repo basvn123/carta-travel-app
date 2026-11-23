@@ -323,8 +323,7 @@
 /* What friends see: ruled rows on the ground, no white card (decision 0017). */
 .vr-me .tg-toggles { padding: 0; background: none; box-shadow: none; border-radius: 0; border-top: var(--stroke-hair) solid var(--border); }
 /* An inset, so a row's words never touch the rules (judge 2 fix 7). */
-.vr-me .tg-toggles > * { padding-inline: var(--space-3); }
-.vr-me .tg-toggles { border-bottom: var(--stroke-hair) solid var(--border); }
+.vr-me .tg-toggles { padding-inline: var(--space-3); border-bottom: var(--stroke-hair) solid var(--border); }
 .vr-stamps { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space-1); }
 .vr-stamp { position: relative; display: grid; justify-items: center; align-content: start; gap: var(--space-1); min-height: var(--tap); padding: 0; border: 0; background: none; font: inherit; color: var(--text-2); cursor: pointer; text-align: center; min-width: 0; }
 .vr-stamp:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; border-radius: var(--radius-control); }
