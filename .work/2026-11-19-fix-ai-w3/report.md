@@ -1,8 +1,8 @@
 # Run report · AI fix program wave 3: a graceful answer for every kind of question (E7, E1)
-Status: built on p15-fix-ai (7a6f98b7ba baseline bless, 051cfc0d3c change, d139329afc judge fixes), judged by the program session before merge. Item A2g. Source: RUN programs.md (any kind of question, never a dead end), wave 2 eval.
+Status: built on p15-fix-ai (7a6f98b7ba baseline bless, 051cfc0d3c change, d139329afc and af89b272ab judge fixes), judged by the program session before merge. Item A2g. Source: RUN programs.md (any kind of question, never a dead end), wave 2 eval.
 
 ## Result
-On the 326 drafted cases of the offline eval, Ask Carta now ends every kind of question in a useful answer: graceful went from 83.7% to 100% in every type and accurate from 55.5% to 77.9%. Harmful requests are refused (0 of 24 to 24 of 24), off-topic and outside-Europe questions are declined with a door (1 of 28 to 28 of 28), and places Carta lacks are named with the nearest covered places (0 of 22 to 21 of 22). No European place is called "outside Europe" any more (19 to 0). Every type passes paired non-inferiority against wave 2 (delta 5 points). Caveat: the refusal, off-topic and outside-city word lists were drafted from the same kinds of question as the set; on 16 refusal phrasings written after the first lists, 9 were caught (56%) and 0 of 18 near misses were refused, so the 100% scores are partly in-sample. The judge's own fresh cases caught 2 of 15 harmful phrasings and 0 of 5 off-topic ones, and refused 2 of 27 ordinary questions before the fix (`judgement.md`): the word lists generalise poorly and need a held-out set before any widening (ROADMAP E7). Details: `results.md`, `errors.md`, `decision.md`, `design.md` in this folder.
+On the 326 drafted cases of the offline eval, Ask Carta now ends every kind of question in a useful answer: graceful went from 83.7% to 100% in every type and accurate from 55.5% to 77.9%. Harmful requests are refused (0 of 24 to 24 of 24), off-topic and outside-Europe questions are declined with a door (1 of 28 to 28 of 28), and places Carta lacks are named with the nearest covered places (0 of 22 to 21 of 22). No European place is called "outside Europe" any more (19 to 0). Every type passes paired non-inferiority against wave 2 (delta 5 points). Caveat: the refusal, off-topic and outside-city word lists were drafted from the same kinds of question as the set, so the 100% scores are in-sample. The one held-out figure is `evals/any-question/heldout.json`, never tuned on: harmful refused 0 of 16, off-topic declined 0 of 6, and 0 of 47 ordinary questions refused or wrongly declined after the fixes. The word lists are precise but do not generalise; a measured design comes before any widening (ROADMAP E7, backlog A2h). Details: `results.md`, `errors.md`, `decision.md`, `design.md` in this folder.
 
 ## What changed
 - `continent-app/src/lib/ask/scope.js` (new): `askScope` returns refuse, offtopic, outside, lacking or answer; one rule for the screen and the eval.
@@ -24,9 +24,10 @@ On the 326 drafted cases of the offline eval, Ask Carta now ends every kind of q
 - "smugglers museum", "Smugglers trail hike" and "Smuggler's cove" are answered; only verb forms refuse. "into Japanese" and "to take home" are no longer lacking places.
 - Held-out set `evals/any-question/heldout.json`, written before looking at the lists and never tuned on: harmful refused 0 of 16 (0 to 19.4%), off-topic declined 0 of 6, near misses refused 0 of 27 (0 to 12.5%). The refusal and off-topic lists do not generalise; they are precise but narrow. Not gated.
 - New files: `evals/any-question/towns.json`, `evals/any-question/heldout.json`.
+- Re-judge 2 (af89b272ab): covered country aliases and travel areas (UK, VK, Schengen, Riviera, Benelux and others) are never a lacking place; before the fix 3 of 47 held-out ordinary questions were wrongly declined, after it 0 of 47.
 
 ## Left for the backlog
 Day counts, weekends and road trips not read as a plan (19 failures) and follow-ups not bound to the last place (17). Parser work, not scope. Refusal and off-topic detection that generalises (0 of 16 held out): a measured design is needed before widening any list (ROADMAP E7, backlog A2h).
 
 ## Undo
-`git revert d139329afc 051cfc0d3c 7a6f98b7ba`. No data, schema or migration change.
+`git revert af89b272ab d139329afc 051cfc0d3c 7a6f98b7ba`. No data, schema or migration change.
