@@ -76,7 +76,13 @@ export const ACCOUNT_VIEWS = Object.freeze([
 ]);
 /** The Together sub-screens an address may name (`tv=`, T928); `tg=` is the
  *  friend or group it is about. */
-export const TOGETHER_VIEWS = Object.freeze(['home', 'add', 'privacy', 'friend', 'group', 'newgroup', 'settle']);
+// G16 (decision 0017): `me` (Jij) replaced `privacy`, which an old address
+// still names and which lands on Jij; `invite` is home with the invite open;
+// the kring screens are `circle` and its four steps.
+export const TOGETHER_VIEWS = Object.freeze([
+  'home', 'add', 'privacy', 'friend', 'group', 'newgroup', 'settle',
+  'me', 'invite', 'circle', 'circlevote', 'circledates', 'circleflights', 'circlepick', 'newcircle',
+]);
 const TOGETHER_ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 
 /** Every retired `tab=` value and the view it opens now (1.15 section 3). */
@@ -129,7 +135,7 @@ export function routeFromSearch(search, { hasPlan = false } = {}) {
   } else if (raw === 'together') {
     out.overlay = 'together';
     const tv = q.get('tv');
-    out.togetherView = TOGETHER_VIEWS.includes(tv) ? tv : 'home';
+    out.togetherView = TOGETHER_VIEWS.includes(tv) ? (tv === 'privacy' ? 'me' : tv) : 'home';
     const id = q.get('tg');
     if (id && TOGETHER_ID_RE.test(id)) out.togetherId = id;
   }

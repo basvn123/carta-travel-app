@@ -1,80 +1,53 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, IconButton, Blaze } from '../components/ui/index.js';
-import {
-  ArrowLeftIcon, CheckIcon, CloseIcon, LockIcon, PlusIcon, RouteIcon, ChevronRightIcon,
-} from '../components/Icons.jsx';
+import { Button, Blaze } from '../components/ui/index.js';
+import { ArrowLeftIcon } from '../components/Icons.jsx';
 import { HouseIcon } from '../components/HouseIcons.jsx';
 import { HeroImage } from '../components/HeroImage.jsx';
 import { LoadingBlock } from '../components/StateBlocks.jsx';
 import { listGuides } from '../community/guides.js';
-import { FriendTripPanel } from '../auth/FriendTripPanel.jsx';
-import { FriendBadges } from '../auth/FriendBadges.jsx';
-import { friendFacts, fmtWhere } from '../auth/friendFacts.js';
-import { formatMoney } from '../lib/money.js';
-import { useTogether, togetherActions } from './useTogether.js';
-import { Block, ToneFace, fmtShort, nameOf } from './parts.jsx';
-import { AddFriend, ShareCard } from './AddFriend.jsx';
+import { fmtWhere } from '../auth/friendFacts.js';
+import { SectHead } from '../auth/mytrips/atlas/Ink.jsx';
+import { useTogether } from './useTogether.js';
+import { AddFriend } from './AddFriend.jsx';
 import { FriendView } from './FriendView.jsx';
-import { MeetCard } from './MeetCard.jsx';
-import { FriendsSee, PayLink } from './Privacy.jsx';
+import { FriendsSee } from './Privacy.jsx';
 import { SettleView } from './SettleUp.jsx';
-import { GroupBlock, GroupView, NewGroup, groupWaits } from './GroupTrips.jsx';
+import { GroupView, NewGroup } from './GroupTrips.jsx';
 import { useOverlaps } from './signals.jsx';
-import { AskJoin } from './AskJoin.jsx';
+import { MeView } from './MeView.jsx';
+import { GuestInvite } from './Invite.jsx';
+import { VriendenHome } from './home/VriendenHome.jsx';
+import { CircleView } from './circle/CircleView.jsx';
+import { NewCircle } from './circle/NewCircle.jsx';
+import { drawAllowed } from './vrienden.js';
 
 /**
- * Together (T928, owner-approved spec v2): the people you travel with, on one
- * quiet page behind the header's people door. It replaces the Friends spoke
- * of Account, which keeps a single row linking here.
+ * Vrienden (G16, decision 0017; was Together, T928): the people you travel
+ * with, on one page behind the header's people door. The route stays
+ * `?tab=together`.
  *
- * Order, top to bottom on a phone (desktop splits it in two columns):
- *   the title, Add a friend under it (T986, on every width);
- *   To answer: what is waiting on you (requests, invitations, votes);
- *   Friends' plans: the trips friends chose to show you;
- *   Friends: one row a person, one fact line, tap for their page;
- *   Guides: the published guides strip;
- *   Privacy.
+ *   home        VriendenHome: who goes where, to do, together on the road,
+ *               friends, kringen and group trips, shared, balances
+ *   invite      home with the invite sheet (phone) or popover (desktop) open
+ *   me          Jij: your face and handle, what friends see, milestones
+ *               (the old `privacy` address lands here)
+ *   add, friend, group, newgroup, settle   as before
+ *   circle, circlevote, circledates, circleflights, circlepick, newcircle
+ *               the kring tool (src/together/circle/)
  *
  * The rules FriendsSpoke wrote down still hold: you add somebody by their
  * exact handle or their link, there is no browsing of people, no presence,
  * no counts of followers; declining and removing are silent; nothing is
  * accepted on anybody's behalf.
  *
- * Sub-screens have their own address (`?tab=together&view=add`, `view=friend
- * &id=`), so Back steps out of one onto the page.
+ * Motion: figures draw in (the rail's bars, the lanes, the balance bars)
+ * only when the page was opened after the app's first paint (`vr-draw`);
+ * a deep link straight onto Vrienden shows end states.
  */
 
-function TripCard({ trip, destinations, costs, me, open, onToggle }) {
-  const { t, lang } = useI18n();
-  const dest = (trip.destinationIds || []).map((id) => destinations?.[id]).find(Boolean);
-  const photo = (trip.destinationIds || []).map((id) => destinations?.[id]).find((d) => d?.image?.url);
-  const when = fmtShort(trip.startDate, trip.endDate, lang, t('friends.dateJoin'));
-  const day = dest ? costs?.get?.(dest.id)?.dayEur : null;
-  const who = trip.ownerName || `@${trip.ownerHandle}`;
-  return (
-    <article className={`tg-fp${open ? ' is-open' : ''}`}>
-      <div className="tg-fp-ph">
-        <HeroImage url={photo?.image?.url || null} city={dest?.city || (trip.cities || [])[0] || trip.label}
-          iso2={photo?.iso2 || dest?.iso2} className="tg-fp-img" maxWidth={640} sizes="(min-width: 1024px) 280px, 60vw" ratio={[4, 3]} />
-        <ToneFace id={trip.ownerId} me={me} name={who} emoji={trip.ownerEmoji} />
-      </div>
-      <Button variant="quiet" block className="tg-fp-bd" aria-expanded={open} onClick={onToggle}>
-        <b>{trip.label || fmtWhere(trip.cities)}</b>
-        <span>
-          {[when, Number.isFinite(day) ? t('tg.aDay', { price: formatMoney(day, { precision: 'whole' }) }) : ''].filter(Boolean).join(', ')}
-        </span>
-        <span className="tg-fp-who">{who}</span>
-      </Button>
-      <AskJoin trip={trip} className="tg-fp-act" />
-    </article>
-  );
-}
-
-/**
- * Guides: the two newest published guides as photo cards, and the door to
- * all of them. Absent when nothing is published, as the strip was.
- */
+/** Guides: the two newest published guides as photo cards, and the door to
+ *  all of them. Absent when nothing is published, as the strip was. */
 function GuidesBlock({ destinations, onOpen }) {
   const { t } = useI18n();
   const [rows, setRows] = useState([]);
@@ -85,16 +58,17 @@ function GuidesBlock({ destinations, onOpen }) {
   }, []);
   if (!rows.length || !onOpen) return null;
   return (
-    <Block id="tg-guides-h" title={t('tg.guides')} className="tg-o-guides"
-      action={<Button variant="quiet" size="sm" onClick={onOpen}>{t('rail.seeAllPlain')}</Button>}>
+    <section className="vr-sect vr-o-guides" aria-labelledby="tg-guides-h">
+      <SectHead id="tg-guides-h" as="h2" title={t('tg.guides')}
+        action={<Button variant="quiet" size="sm" className="vr-lnk" onClick={onOpen}>{t('rail.seeAllPlain')}</Button>} />
       <div className="tg-guides">
         {rows.slice(0, 2).map((g) => {
           const d = (g.destinationIds || []).map((id) => destinations?.[id]).find((x) => x?.image?.url);
           return (
             <Button key={g.tripPlanId} variant="quiet" className="tg-gd" onClick={onOpen}>
               <span className="tg-gd-ph">
-                <HeroImage url={d?.image?.url || null} city={d?.city || (g.cities || [])[0] || g.label} iso2={d?.iso2}
-                  className="tg-gd-img" maxWidth={480} sizes="(min-width: 1024px) 240px, 45vw" ratio={[4, 3]} />
+                <HeroImage url={d?.image?.url || null} image={d?.image} className="tg-gd-img" maxWidth={960}
+                  sizes="(min-width: 1100px) 20vw, 45vw" ratio={[4, 3]} />
               </span>
               <b>{g.label || fmtWhere(g.cities)}</b>
               <span className="tg-gd-by">@{g.ownerHandle}</span>
@@ -102,71 +76,42 @@ function GuidesBlock({ destinations, onOpen }) {
           );
         })}
       </div>
-    </Block>
+    </section>
   );
 }
 
-/** One row of "To answer": who or what, what it is, and its answer. */
-function WaitRow({ face, title, line, children }) {
-  return (
-    <div className="tg-wr">
-      {face}
-      <span className="tg-wr-tx"><b>{title}</b><span>{line}</span></span>
-      <span className="tg-wr-acts">{children}</span>
-    </div>
-  );
-}
+const CIRCLE_VIEWS = ['circle', 'circlevote', 'circledates', 'circleflights', 'circlepick'];
 
 export function TogetherPage({
   view = 'home', viewId = '', onView, onClose, destinations, costs, pendingHandle,
   onOpenGuides, onOpenAuth, onPlanDay, favorites, onPlanPlace, choices, onOpenTripPlan, onOpenSaved,
 }) {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const s = useTogether();
   const headRef = useRef(null);
-  const [openTrip, setOpenTrip] = useState('');
   const [error, setError] = useState('');
-  const [allPlans, setAllPlans] = useState(false);
+  const [inviteOpen, setInviteOpen] = useState(view === 'invite');
+  const [draw] = useState(drawAllowed);
   const meets = useOverlaps(s);
+  const v = view === 'privacy' ? 'me' : view;
 
   // The page heading takes focus on arrival and on every sub-screen.
-  useEffect(() => { headRef.current?.focus?.(); }, [view, viewId]);
+  useEffect(() => { headRef.current?.focus?.(); }, [v, viewId]);
+  useEffect(() => { if (v === 'invite') setInviteOpen(true); }, [v]);
   // Escape steps out of a sub-screen, then closes the page.
   useEffect(() => {
     const onKey = (e) => {
       if (e.key !== 'Escape' || e.defaultPrevented) return;
       if (document.querySelector('[aria-modal="true"]')) return;
-      if (view !== 'home') onView('home'); else onClose?.();
+      if (CIRCLE_VIEWS.includes(v) && v !== 'circle') onView('circle', viewId);
+      else if (v !== 'home' && v !== 'invite') onView('home');
+      else onClose?.();
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [view, onView, onClose]);
+  }, [v, viewId, onView, onClose]);
   // An invite link opens on the Add screen with the handle looked up.
   useEffect(() => { if (pendingHandle && s.signedIn) onView('add'); }, [pendingHandle, s.signedIn]); // eslint-disable-line react-hooks/exhaustive-deps -- once per link
-
-  const incoming = s.links.filter((l) => l.kind === 'incoming');
-  const outgoing = s.links.filter((l) => l.kind === 'outgoing');
-  const friends = s.links.filter((l) => l.kind === 'friend');
-  const today = new Date().toISOString().slice(0, 10);
-  const shelf = useMemo(() => s.friendTrips
-    .filter((tr) => !tr.endDate || tr.endDate >= today)
-    .sort((a, b) => String(a.startDate || '9').localeCompare(String(b.startDate || '9'))), [s.friendTrips, today]);
-
-  const act = (p) => p.catch(() => setError(t('friends.unavailable')));
-  // The trip a join request names: its label, else its cities, from your own plans.
-  const joinTripName = (r) => {
-    const p = s.myPlans.find((x) => x.id === r.tripPlanId);
-    return r.label || p?.label || fmtWhere(p?.cities || []) || t('tg2.yourTrip');
-  };
-
-  const factFor = (link) => {
-    const { shown, next } = friendFacts(s.friendTrips, link.userId);
-    if (!shown) return t('friends.factNothing');
-    if (!next) return t(shown === 1 ? 'friends.factShownOne' : 'friends.factShownMany', { n: shown });
-    const where = fmtWhere(next.cities);
-    const when = fmtShort(next.startDate, next.endDate, lang, t('friends.dateJoin'));
-    return [where, when].filter(Boolean).join(', ');
-  };
 
   const back = (
     <Button variant="quiet" size="sm" className="tg-back" iconStart={<ArrowLeftIcon size={16} />} onClick={() => onView('home')}>
@@ -176,11 +121,13 @@ export function TogetherPage({
 
   let body;
   if (!s.signedIn && s.loaded) {
-    // T991 (owner): signed out, Together is one card: the Together mark,
-    // the title, the one line and Sign in. House style (2026-11): the art
-    // is the waiting path (a dashed blaze), not a drawn contour, which the
-    // house keeps for real peaks.
-    body = (
+    body = pendingHandle ? (
+      <div className="tg-page vr-page">
+        <GuestInvite handle={pendingHandle} onSignIn={onOpenAuth} headRef={headRef} />
+      </div>
+    ) : (
+      // T991 (owner): signed out, Vrienden is one card: the people glyph on
+      // the waiting path, the title, the one line and Sign in.
       <div className="tg-page">
         <div className="tg-out">
           <div className="tg-out-art" aria-hidden="true">
@@ -197,191 +144,54 @@ export function TogetherPage({
     );
   } else if (!s.loaded) {
     body = (
-      <div className="tg-page">
-        <div className="tg-head"><h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1></div>
+      <div className="tg-page vr-page">
+        <div className="vr-head"><h1 className="vr-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1></div>
         <LoadingBlock label={t('saved.loading')} rows={3} />
       </div>
     );
-  } else if (view === 'add') {
+  } else if (v === 'add') {
     body = <AddFriend back={back} headRef={headRef} pendingHandle={pendingHandle} aside={<FriendsSee onOpenSaved={onOpenSaved} />} />;
-  } else if (view === 'privacy') {
-    body = (
-      <div className="tg-page">
-        <div className="tg-head is-sub">{back}<h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.privacy')}</h1></div>
-        <FriendsSee onOpenSaved={onOpenSaved} />
-        <PayLink />
-      </div>
-    );
-  } else if (view === 'settle') {
+  } else if (v === 'me') {
+    body = <MeView back={back} headRef={headRef} onOpenSaved={onOpenSaved} />;
+  } else if (v === 'settle') {
     body = <SettleView headRef={headRef} groupId={viewId} onView={onView} />;
-  } else if (view === 'friend') {
+  } else if (v === 'friend') {
     body = (
       <FriendView back={back} headRef={headRef} friendId={viewId} destinations={destinations} costs={costs}
         favorites={favorites} onPlanPlace={onPlanPlace} onGone={() => onView('home')} />
     );
-  } else if (view === 'group') {
+  } else if (v === 'group') {
     body = (
       <GroupView back={back} headRef={headRef} groupId={viewId} destinations={destinations} choices={choices}
         onOpenTripPlan={onOpenTripPlan} onSettle={() => onView('settle', viewId)} />
     );
-  } else if (view === 'newgroup') {
+  } else if (v === 'newgroup') {
     body = <NewGroup back={back} headRef={headRef} onCreated={(id) => onView('group', id)} />;
-  } else {
-    const nothing = !incoming.length && !s.invites.length && !friends.length && !outgoing.length;
-    const groupsWaiting = groupWaits(s);
+  } else if (v === 'newcircle') {
+    body = <NewCircle back={back} headRef={headRef} onCreated={(id) => onView('circle', id)} />;
+  } else if (CIRCLE_VIEWS.includes(v)) {
     body = (
-      <div className="tg-page">
-        <div className="tg-head is-home">
-          <span className="tg-head-row">
-            <h1 className="tg-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
-            <IconButton label={t('tg.privacy')} className="tg-privacy" onClick={() => onView('privacy')}><LockIcon size={18} /></IconButton>
-          </span>
-          <Button variant={nothing ? 'primary' : 'secondary'} size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onView('add')}>
-            {t('friends.addTitle')}
-          </Button>
-        </div>
-        {error && <div className="auth-error" role="alert">{error}</div>}
-
-        {(incoming.length > 0 || s.invites.length > 0 || groupsWaiting.length > 0 || s.joinToMe.length > 0) && (
-          <Block id="tg-wait-h" title={t('tg.toAnswer')} className="tg-o-wait">
-            <div className="tg-wait tg-list">
-              {incoming.map((l, i) => (
-                <WaitRow key={l.id} face={<ToneFace id={l.userId} name={nameOf(l)} emoji={l.avatarEmoji} />}
-                  title={nameOf(l)} line={t('tg.friendRequest')}>
-                  <Button variant={i === 0 ? 'primary' : 'secondary'} size="sm" className="frn-yes" onClick={() => act(togetherActions.accept(l.id))}>
-                    {t('friends.accept')}
-                  </Button>
-                  <IconButton label={t('friends.decline')} className="frn-no" onClick={() => act(togetherActions.remove(l.id))}>
-                    <CloseIcon size={16} />
-                  </IconButton>
-                </WaitRow>
-              ))}
-              {s.joinToMe.map((r) => (
-                <WaitRow key={r.id} face={<ToneFace id={r.requesterId} name={r.name} emoji={r.emoji} />}
-                  title={r.name} line={t('tg2.asksToJoin', { trip: joinTripName(r) })}>
-                  <Button variant="secondary" size="sm" iconStart={<CheckIcon size={16} />} onClick={() => act(togetherActions.answerJoin(r.id, true))}>
-                    {t('friends.accept')}
-                  </Button>
-                  <IconButton label={t('friends.decline')} onClick={() => act(togetherActions.answerJoin(r.id, false))}>
-                    <CloseIcon size={16} />
-                  </IconButton>
-                </WaitRow>
-              ))}
-              {s.invites.map((iv) => (
-                <WaitRow key={iv.tripPlanId}
-                  face={<span className="frn-face frn-face-md frn-face-trip" aria-hidden="true"><RouteIcon size={16} /></span>}
-                  title={iv.label || fmtWhere(iv.cities)} line={t('tg.coplanFrom', { who: iv.ownerName || `@${iv.ownerHandle}` })}>
-                  <Button variant="secondary" size="sm" iconStart={<CheckIcon size={16} />} onClick={() => act(togetherActions.takeInvite(iv.tripPlanId))}>
-                    {t('coplan.join')}
-                  </Button>
-                  <IconButton label={t('friends.decline')} onClick={() => act(togetherActions.refuseInvite(iv.tripPlanId))}>
-                    <CloseIcon size={16} />
-                  </IconButton>
-                </WaitRow>
-              ))}
-              {groupsWaiting.map((g) => {
-                const owner = g.members.find((m) => m.userId === g.ownerId);
-                return g.myStatus === 'invited' ? (
-                  <WaitRow key={g.id} face={<ToneFace id={g.ownerId} name={owner?.name || ''} emoji={owner?.emoji} />}
-                    title={g.title} line={t('tg.groupFrom', { who: owner?.name || '' })}>
-                    <Button variant="secondary" size="sm" iconStart={<CheckIcon size={16} />} onClick={() => act(togetherActions.respondGroup(g.id, true))}>
-                      {t('coplan.join')}
-                    </Button>
-                    <IconButton label={t('friends.decline')} onClick={() => act(togetherActions.respondGroup(g.id, false))}>
-                      <CloseIcon size={16} />
-                    </IconButton>
-                  </WaitRow>
-                ) : (
-                  <WaitRow key={g.id} face={<ToneFace id={g.ownerId} me={s.userId} name={owner?.name || ''} emoji={owner?.emoji} />}
-                    title={g.title} line={t('tg.voteWaiting')}>
-                    <Button variant="secondary" size="sm" onClick={() => onView('group', g.id)}>{t('tg.vote')}</Button>
-                  </WaitRow>
-                );
-              })}
-            </div>
-          </Block>
-        )}
-
-        {/* G12, D10 (lane 1, round 4): the one-column case is a class, not
-            a :has() rule: that rule alone made every element inserted
-            anywhere on a desktop page restyle the whole document (about
-            1 s at 4x CPU on Explore). */}
-        <div className={`tg-grid${meets.length === 0 && shelf.length === 0 ? ' is-wide-empty' : ''}`}>
-          <div className="tg-col">
-            {meets.length > 0 && (
-              <Block id="tg-meet-h" title={t('tg.plansMeet')} className="tg-o-meet">
-                {meets.slice(0, 3).map((o) => (
-                  <MeetCard key={o.key} o={o} me={s.userId} meName={nameOf(s.me)} onPlanDay={onPlanDay} onHide={(k) => togetherActions.hideMeet(k)} />
-                ))}
-              </Block>
-            )}
-            {shelf.length > 0 && (
-              <Block id="tg-plans-h" title={t('tg.friendsPlans')} className="tg-o-plans"
-                action={shelf.length > 3 && (
-                  <Button variant="quiet" size="sm" aria-expanded={allPlans} onClick={() => setAllPlans((v) => !v)}>
-                    {allPlans ? t('tg.fewer') : t('rail.seeAllPlain')}
-                  </Button>
-                )}>
-                <div className={`tg-shelf${allPlans ? ' is-all' : ''}`}>
-                  {shelf.map((tr) => (
-                    <TripCard key={tr.tripPlanId} trip={tr} destinations={destinations} costs={costs} me={s.userId}
-                      open={openTrip === tr.tripPlanId} onToggle={() => setOpenTrip((cur) => (cur === tr.tripPlanId ? '' : tr.tripPlanId))} />
-                  ))}
-                </div>
-                {openTrip && <FriendTripPanel planId={openTrip} destinations={destinations} />}
-              </Block>
-            )}
-          </div>
-          <div className="tg-col">
-            <GroupBlock s={s} onView={onView} />
-            <Block id="tg-people-h" title={t('friends.title')} className="tg-o-people">
-              {friends.length === 0 && outgoing.length === 0 ? (
-                <div className="tg-invite">
-                  <p className="tg-muted">{t('tg.noFriends')}</p>
-                  <ShareCard onError={setError} />
-                </div>
-              ) : (
-                <div className="tg-people">
-                  {friends.map((l) => (
-                    <Button key={l.id} variant="quiet" block className="tg-pr" onClick={() => onView('friend', l.userId)}>
-                      <ToneFace id={l.userId} name={nameOf(l)} emoji={l.avatarEmoji} />
-                      <span className="tg-pr-tx"><b>{nameOf(l)}</b><span>{factFor(l)}</span></span>
-                      <ChevronRightIcon size={16} className="tg-pr-go" />
-                    </Button>
-                  ))}
-                  {outgoing.map((l) => (
-                    <div key={l.id} className="tg-pr is-static">
-                      <ToneFace id={l.userId} name={nameOf(l)} emoji={l.avatarEmoji} />
-                      <span className="tg-pr-tx"><b>{nameOf(l)}</b><span>{t('tg.requestSent')}</span></span>
-                      <Button variant="quiet" size="sm" className="frn-no frn-text" onClick={() => act(togetherActions.remove(l.id))}>
-                        {t('friends.cancel')}
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Block>
-            {friends.length > 0 && (
-              <div className="tg-o-badges">
-                <FriendBadges userId={s.userId} friendCount={friends.length} refreshKey={friends.length} />
-              </div>
-            )}
-            <GuidesBlock destinations={destinations} onOpen={onOpenGuides} />
-          </div>
-        </div>
-      </div>
+      <CircleView circleId={viewId} step={v} onView={onView} headRef={headRef} destinations={destinations}
+        onOpenTripPlan={onOpenTripPlan} />
+    );
+  } else {
+    body = (
+      <VriendenHome s={s} meets={meets} destinations={destinations} onView={onView} onPlanDay={onPlanDay}
+        onOpenSaved={onOpenSaved} onOpenTripPlan={onOpenTripPlan} headRef={headRef}
+        inviteOpen={inviteOpen} setInviteOpen={(o) => { setInviteOpen(o); if (!o && v === 'invite') onView('home'); }}
+        error={error} setError={setError}
+        extra={<GuidesBlock destinations={destinations} onOpen={onOpenGuides} />} />
     );
   }
 
   return (
     <div className="saved-shell together">
-      <div className="panel open account-panel saved-trips-panel tg-panel">
+      <div className={`panel open account-panel saved-trips-panel tg-panel vr-panel${draw ? ' vr-draw' : ''}`}>
         {/* House style: each view arrives as a pushed view (Route
             primitive); the key only remounts the frame when the view or its
             subject changes. */}
-        <div className="tg-route" key={`${view || 'home'}:${viewId || ''}`}>{body}</div>
+        <div className="tg-route" key={`${v || 'home'}:${viewId || ''}`}>{body}</div>
       </div>
     </div>
   );
 }
-

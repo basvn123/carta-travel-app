@@ -21,6 +21,40 @@ import { inviteCoplanner } from './coplanners.js';
 
 const MISSING = { missing: true, circles: [] };
 
+/* A kring link (#circle=<id>): in the hash like every link this app hands
+ * out, held in this tab's session storage through a sign-in round trip. */
+const CIRCLE_PARAM = 'circle';
+const CIRCLE_KEY = 'carta.pendingCircle';
+const CIRCLE_ID = /^[A-Za-z0-9_-]{1,64}$/;
+
+export function circleLink(id) {
+  if (typeof window === 'undefined' || !CIRCLE_ID.test(id || '')) return null;
+  return `${window.location.origin}${window.location.pathname}#${CIRCLE_PARAM}=${id}`;
+}
+
+export function readCircleFromUrl() {
+  if (typeof window === 'undefined') return null;
+  const hash = (window.location.hash || '').replace(/^#/, '');
+  const fromHash = hash.includes(`${CIRCLE_PARAM}=`) ? new URLSearchParams(hash).get(CIRCLE_PARAM) : null;
+  let held = null;
+  try { held = sessionStorage.getItem(CIRCLE_KEY); } catch { /* private mode */ }
+  const id = fromHash || held;
+  return CIRCLE_ID.test(id || '') ? id : null;
+}
+
+export function holdCircle(id) {
+  try { if (id) sessionStorage.setItem(CIRCLE_KEY, id); else sessionStorage.removeItem(CIRCLE_KEY); } catch { /* private mode */ }
+}
+
+export function stripCircleFromUrl() {
+  if (typeof window === 'undefined') return;
+  const params = new URLSearchParams((window.location.hash || '').replace(/^#/, ''));
+  if (!params.has(CIRCLE_PARAM)) return;
+  params.delete(CIRCLE_PARAM);
+  const rest = params.toString();
+  window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}${rest ? `#${rest}` : ''}`);
+}
+
 /** Your kringen with everything the screens draw. */
 export async function listCircles(userId) {
   const supabase = await getSupabase();
