@@ -241,6 +241,17 @@ def unit_dropped(n0: str, n1: str, cc: str | None = None) -> bool:
     return False
 
 
+def generic_only(n0: str, n1: str, cc: str | None = None) -> bool:
+    """The new name keeps only descriptor words (names._GENERIC_PART, the list
+    is shared, the test is written again) while the code-free wire name had a
+    word that names a place: "versantul drept" for "Circuit Cheile ... - versantul drept"."""
+    def words(t):
+        t = re.sub(r", (?:[\d.]+ km|no\. \d+|#\d+|stage \d+\w*)$", "", t)
+        return [m.group(0).casefold() for m in names._WORD_RE.finditer(t)]
+    new, old = words(n1), words(codefree(n0, cc))
+    return bool(new) and all(w in names._GENERIC_PART for w in new) and any(w not in names._GENERIC_PART for w in old)
+
+
 def emptied(n0: str, n1: str, cc: str | None = None) -> bool:
     """A readable name with a word of three letters or more became nothing or a bare code."""
     r = names.readable(n0, cc)
@@ -260,6 +271,8 @@ def worse_than_wire(n0: str, n1: str, cc: str | None, dedupe_touched: bool) -> s
         return "unbalanced"
     if unit_dropped(n0, n1, cc):
         return "unit_dropped"
+    if generic_only(n0, n1, cc):
+        return "generic_only"
     if not dedupe_touched and len(r) <= names.TITLE_MAX:
         base = codefree(n0, cc)
         fold = names.squash(n1)
@@ -314,7 +327,7 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "worse_than_wire": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "generic_only": 0, "worse_than_wire": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
     stc_ex, dang_ex, worse_ex = [], [], []
     dd_ex = collections.defaultdict(list)
@@ -351,6 +364,7 @@ def replay(rows: list[dict]) -> dict:
         res["stray_bracket"] += bool(_unbalanced(n1) and not _unbalanced(n0))
         res["unit_dropped"] += unit_dropped(n0, n1, r.get("country"))
         res["emptied"] += emptied(n0, n1, r.get("country"))
+        res["generic_only"] += generic_only(n0, n1, r.get("country"))
         why = worse_than_wire(n0, n1, r.get("country"), n1 != pre[r["id"]])
         if why:
             res["worse_than_wire"] += 1
@@ -386,7 +400,7 @@ def replay(rows: list[dict]) -> dict:
                      and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
                      and res["head_cut"] == 0 and res["mid_word_loss"] == 0 and res["start_tail_cut"] == 0
                      and res["dangling_end"] == 0 and res["stray_bracket"] == 0 and res["unit_dropped"] == 0
-                     and res["emptied"] == 0 and res["worse_than_wire"] == 0
+                     and res["emptied"] == 0 and res["generic_only"] == 0 and res["worse_than_wire"] == 0
                      and res["after"].get("too_long", 0) == 0
                      and not new and res["walks"] > 0)
     res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "worse_than_wire": worse_ex, "dedupe": dd_ex,

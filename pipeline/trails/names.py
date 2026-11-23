@@ -1064,6 +1064,12 @@ def _safe_name(rd):
     free = split_code(s)[0]
     if free and not is_code(free):
         s = free
+    # A network prefix ("WNW IJsseldelta -") is a code of the walk, as in dedupe_names.
+    mp = re.match(r"^[A-Z]{2,5}\s+[^-–]{1,30}?\s*[-–]\s*(?=\S)", s)
+    if mp and not is_code(s[mp.end():]):
+        s = s[mp.end():].strip()
+        if len(s) <= TITLE_MAX:
+            return s
     # Judge 3 fix 2: the first dash segment names the walk when it fits and is
     # not a code ("Le sentier de Ferrieres - Circuit pedestre n9"); when it is
     # only a descriptor, the last one ("rot - Bewegung Bad Wunnenberg").
@@ -1073,6 +1079,12 @@ def _safe_name(rd):
             if (cand and len(cand) <= TITLE_MAX and _balanced(cand) and not is_code(cand)
                     and not _only_generic(cand)):
                 return cand
+    bm = re.search(r"[(\[]([^()\[\]]+)[)\]]$", s)
+    if bm and len(s) > TITLE_MAX and _only_generic(s[:bm.start()]):
+        # "Wanderweg Nr. 12 (Schenefeld - Klovensteen - Wedel)": the bracket holds the places.
+        inner = bm.group(1).strip()
+        if len(inner) <= TITLE_MAX and not is_code(inner) and not _only_generic(inner):
+            return inner
     toks = s.split(" ")
     while len(toks) > 1 and is_code(toks[0]) and not is_code(" ".join(toks[1:])):
         toks.pop(0)

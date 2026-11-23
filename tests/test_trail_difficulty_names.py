@@ -743,3 +743,22 @@ def test_never_worse_reverts_a_worse_name_and_keeps_a_better_one():
     assert names.never_worse("Weg 3 - gelb - Wald", "gelb - Wald", "DE") == "gelb - Wald"            # a lead code is no loss
     long_src = "Via Sancti Martini HW-37-02 Neustadt an der Weinstraße - Neustadt an der Weinstraße"
     assert names.never_worse(long_src, "Via Sancti Martini, stage 2", "DE") == "Via Sancti Martini, stage 2"
+
+
+def test_a_name_never_keeps_only_a_descriptor_where_the_wire_had_a_place():
+    """Judge 3 fix 2: "versantul drept", "paarse route" and "Bewegung" say what, not where."""
+    cases = [
+        (76648, "RO", "Circuit Cheile Vălișoarei (Aiudului) - versantul drept", "Circuit Cheile Vălișoarei (Aiudului)"),
+        (41836, "FR", "Le sentier de Ferrières - Circuit pédestre n°9", "Le sentier de Ferrières"),
+        (211890, "DE", 'Vitalwanderweg "rot - Bewegung" Bad Wünnenberg', "Bewegung Bad Wünnenberg"),
+        (138004, "NL", "WNW Twente Hesingen/Hezingerveld/Springendal/Uelsen - paarse route", None),
+        (150136, "NL", "WNW Twente Hengelo - blauwe route", None),
+    ]
+    for rid, cc, src, want in cases:
+        got = _ship(src, cc)
+        assert not names._only_generic(got), (rid, got)
+        assert "Twente" in got or want, (rid, got)
+        if want:
+            assert got == want, (rid, got)
+    assert names.worse_reason("Circuit Cheile Valisoarei (Aiudului) - versantul drept", "versantul drept", "RO") == "generic_only"
+    assert names.worse_reason("Rundweg", "Rundweg", "DE") is None      # nothing was lost
