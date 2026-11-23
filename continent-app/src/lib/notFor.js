@@ -27,7 +27,7 @@ import { count } from './format.js';
 
 const MAX_LINES = 2;
 // REQ-data-5 (D-5): the "not for" thresholds of a trail, pipeline/not_for.py's
-// numbers (tests/notForParity.test.mjs holds the two files together).
+// numbers (tests/wave3aTrails.test.mjs holds the two files together).
 export const TRAIL_CLIMB_M = 800;
 export const TRAIL_LONG_KM = 20;
 export const TRAIL_ROAD_PCT = 15;

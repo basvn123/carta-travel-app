@@ -207,7 +207,7 @@ export function trailPlace(tr, detail, assocDest, countryName = () => null) {
  *
  * REQ-data-5 (D-5): the numbers are pipeline/not_for.py's, one block for the
  * rating and the app. A climb of 800 m is "not for", so the test is `>=`, and
- * a grade above `hard` is never a comfortable day. tests/notForParity.test.mjs
+ * a grade above `hard` is never a comfortable day. tests/wave3aTrails.test.mjs
  * reads the Python file and fails when a number here drifts from it.
  */
 export const COMFORT_MAX_CLIMB_M = 800;

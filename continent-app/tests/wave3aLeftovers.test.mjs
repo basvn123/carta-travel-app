@@ -9,6 +9,7 @@ import { readFileSync } from "node:fs";
 import { setStayRecords } from "../src/lib/staysData.js";
 import { priceDay } from "../src/lib/price/index.js";
 import { isMeasured } from "../src/lib/stayPrice.js";
+import { costContext, costRow } from "../src/lib/costIndex.js";
 import { takeBlocked, backKey, BLOCKED_PASS_KEY } from "../src/lib/passMoments.js";
 import { scopeOf } from "../src/lib/stateKeys.js";
 import { partsAfter } from "../src/lib/partyParts.js";
@@ -96,4 +97,16 @@ test("W3-L1: the Style Studio's party editor takes the teens row only behind E2"
   const steps = readFileSync(new URL("../src/browse/styles/StyleSteps.jsx", import.meta.url), "utf8");
   assert.match(editor, /withTeens \? \[\{ key: 'teens'/);
   assert.match(steps, /withTeens=\{isOn\('E2'\)\}/);
+});
+
+test("W3-L2: a bed read from a nearby block is not the town's own, even when the place's block is measured", () => {
+  const dests = FX.destinations;
+  const ctx = costContext(dests, {});
+  const base = ctx.atById?.get("LIS");
+  assert.ok(base?.bed, "the fixture's LIS has a priced bed");
+  assert.equal(isMeasured(dests.LIS.accommodation), true);
+  assert.equal(costRow(dests.LIS, ctx).stayMeasured, true, "the town's own measured bed is measured");
+  // The same place, but the tier's rate came from a nearby block: the block is measured, the rate is not the town's.
+  const nearby = { ...ctx, atById: new Map([["LIS", { ...base, bed: { ...base.bed, q: "nearby" } }]]) };
+  assert.equal(costRow(dests.LIS, nearby).stayMeasured, false);
 });
