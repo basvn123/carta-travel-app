@@ -253,3 +253,23 @@ export function buildDaySchedule({
     freeMin: Math.max(0, DAY_END_MIN - t),
   };
 }
+
+// I-16: how many candidates a chat plan sends, by days. A multi-day plan chose from about
+// three places a day at a flat 24; 12 plus 10 a day is capped at what the server reads.
+export const DECK_BASE = 12;
+export const DECK_PER_DAY = 10;
+export const DECK_MAX = 28;
+export function deckSize(days) {
+  return Math.min(DECK_MAX, DECK_BASE + DECK_PER_DAY * Math.max(1, Math.round(Number(days) || 1)));
+}
+
+/**
+ * I-14: for each row of a day, its position among the rows that have
+ * coordinates (-1 for a row without). A route is drawn through placed stops
+ * only, so the leg after row i is route.legs[placedIndex[i]] (plus any lead),
+ * and only when row i and the next row are both placed.
+ */
+export function placedIndex(items) {
+  let n = 0;
+  return (items || []).map((it) => (Number.isFinite(it?.lat) && Number.isFinite(it?.lon) ? n++ : -1));
+}

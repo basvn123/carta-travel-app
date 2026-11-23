@@ -198,3 +198,61 @@ test("G-12: the dead handleSaveTrip is gone; handleLoadTrip is live and stays", 
   assert.ok(hook.includes("handleLoadTrip"));
   assert.ok(read("src/shell/AppOverlays.jsx").includes("handleLoadTrip(trip)"));
 });
+
+test("D-7: a trail filter group no row can answer is not drawn, unless it is on", async () => {
+  const { showFacet } = await import("../src/browse/destinations/facetRules.js");
+  assert.equal(showFacet(0, 0), false);
+  assert.equal(showFacet(0, 2), true, "switched on: stays so it can be switched off");
+  assert.equal(showFacet(14, 0), true);
+  const src = read("src/browse/destinations/useFacetGroups.js");
+  assert.ok(/showFacet\(sacTotal, sacs\.length\)/.test(src) && /showFacet\(trailFacets\.reach, reachOnly\)/.test(src));
+});
+
+test("C-15: the rating sheet's reason effect keys on the reason text, not the rating object", () => {
+  const src = read("src/browse/RatingSheet.jsx");
+  assert.ok(/\[id, lang, wire\]/.test(src));
+  assert.ok(!/\[id, lang, rating\]/.test(src));
+});
+
+test("I-11: a POI named exactly like the town is not a stop; a longer name is", async () => {
+  const { isTownNamed, pickerDeck } = await import("../src/planner/dayDraft.js");
+  assert.equal(isTownNamed({ name: "Paris" }, "Paris"), true);
+  assert.equal(isTownNamed({ name: "Paris Plages" }, "Paris"), false);
+  assert.equal(isTownNamed({ name: "Nimes" }, "Nîmes (Gard)"), true);
+  assert.equal(isTownNamed({ name: "Paris" }, null), false);
+  const items = [{ name: "Paris", kind: "Square", lat: 48.85, lon: 2.35, rating: 3 }, { name: "Louvre", kind: "Museum", lat: 48.86, lon: 2.34, rating: 3 }];
+  const names = (town) => pickerDeck(items, [], 10, null, town).map((c) => c.item.name);
+  assert.ok(!names("Paris").includes("Paris"));
+  if (names(null).includes("Paris")) assert.ok(names(null).length > names("Paris").length);
+});
+
+test("I-14: a row without coordinates takes no leg and shifts none onto the rows after it", async () => {
+  const { placedIndex } = await import("../src/planner/daySchedule.js");
+  const rows = [{ lat: 1, lon: 1 }, { name: "no coordinates" }, { lat: 2, lon: 2 }, { lat: 3, lon: 3 }];
+  assert.deepEqual(placedIndex(rows), [0, -1, 1, 2]);
+  assert.deepEqual(placedIndex([]), []);
+});
+
+test("I-16: the chat deck grows with the days: 12 + 10 a day, at most 28", async () => {
+  const { deckSize } = await import("../src/planner/daySchedule.js");
+  assert.equal(deckSize(1), 22);
+  assert.equal(deckSize(2), 28);
+  assert.equal(deckSize(7), 28);
+  assert.equal(deckSize(0), 22);
+});
+
+test("A-14: a flat month curve names no cheapest months", async () => {
+  const { flatCurve, cheapestMonths } = await import("../src/lib/stayPrice.js");
+  const { setStayRecords } = await import("../src/lib/staysData.js");
+  assert.equal(flatCurve(Array(12).fill(100)), true);
+  assert.equal(flatCurve([100, 104, 100, 105, 100, 100, 100, 100, 100, 100, 100, 100]), true);
+  assert.equal(flatCurve([60, 70, 80, 90, 100, 120, 150, 160, 100, 90, 70, 60]), false);
+  setStayRecords({ FLAT: { month: { hotel3: Array(12).fill(100) }, season_q: "mmmmmmmmmmmm" }, WAVY: { month: { hotel3: [60, 70, 80, 90, 100, 120, 150, 160, 100, 90, 70, 65] }, season_q: "mmmmmmmmmmmm" } });
+  assert.equal(cheapestMonths({ id: "FLAT" }, "hotel3"), null);
+  assert.deepEqual(cheapestMonths({ id: "WAVY" }, "hotel3"), [1, 12]);
+});
+
+test("REQ-ai-1: the funnel card lists the two Ask steps", async () => {
+  const { FUNNEL_STEPS } = await import("../src/lib/funnelCounts.js");
+  assert.ok(FUNNEL_STEPS.includes("ask_answer") && FUNNEL_STEPS.includes("ask_to_plan"));
+});

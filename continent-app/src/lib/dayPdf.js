@@ -17,7 +17,7 @@
 import { createPdf, fileSlug, clean } from './pdfKit.js';
 import { formatMoney } from './money.js';
 import { routeDay, isWalkable } from './dayRoute.js';
-import { buildDaySchedule, fmtClockLoose } from '../planner/daySchedule.js';
+import { buildDaySchedule, fmtClockLoose, placedIndex } from '../planner/daySchedule.js';
 import { googleMapsDirParts, GMAPS_STOPS_PHONE } from './routing.js';
 import { addDays } from './dates.js';
 import { fmtKm } from '../planner/dayFormat.js';
@@ -101,8 +101,12 @@ export async function downloadDayPdf({
       // eslint-disable-next-line no-await-in-loop -- one day at a time: the routing service is shared and public
       const route = await routeDay(placed, { start: stay, startsAtStart, pace, stepFree, groupSize });
       const lead = route.lead || 0;
+      // I-14: a leg joins two placed stops; a row without coordinates has none, and the
+      // rows after it read their own leg, not the one that happens to share their row number.
+      const at = placedIndex(dayItems);
       const legOf = (i) => {
-        const l = route.checked ? route.legs[i + lead] : null;
+        if (at[i] < 0 || at[i + 1] === undefined || at[i + 1] < 0) return null;
+        const l = route.checked ? route.legs[at[i] + lead] : null;
         if (!l) return null;
         return isWalkable(l.status) ? l : { ...l, ride: true, min: rideMin(l.straightKm) };
       };

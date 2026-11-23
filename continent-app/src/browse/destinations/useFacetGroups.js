@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { showFacet } from './facetRules.js';
 import { TRIP_PACES, TRIP_SCALES } from './destTabConsts.js';
 import { DISTANCE_BANDS, GRADES, ASCENT_BANDS, ROUTE_TYPES, HIGHLIGHTS, SUITABILITY } from '../../lib/trailCards.js';
 import { LoopIcon } from '../../components/Icons.jsx';
@@ -104,7 +105,7 @@ export function useFacetGroups({
       // them yet. A chip with no rows behind it is disabled and the group
       // says so (notYet), instead of the group being left out.
       const sacTotal = SAC_BANDS.reduce((n, d) => n + (trailFacets.bySac.get(d.key) || 0), 0);
-      out.push({
+      if (showFacet(sacTotal, sacs.length)) out.push({
         key: 'sac',
         label: t('route.facetSac'),
         notYet: sacTotal === 0,
@@ -125,7 +126,7 @@ export function useFacetGroups({
           return { key: d.key, label: t(d.labelKey), n, on: isOn, disabled: !n && !isOn };
         }),
       });
-      out.push({
+      if (showFacet(trailFacets.reach, reachOnly)) out.push({
         key: 'reach',
         label: t('route.facetTransit'),
         notYet: trailFacets.reach === 0,

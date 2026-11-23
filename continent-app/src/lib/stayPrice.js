@@ -281,12 +281,18 @@ export function monthRates(dest, tier, people = 2) {
   return out;
 }
 
+/** A-14: a curve whose dearest month is within `when.guide.stay_flat` of its cheapest has no
+ *  cheap months to name (the same bar whenGuide's stayByMonth calls flat). */
+export function flatCurve(curve) {
+  return Math.max(...curve) / Math.min(...curve) < rule('when.guide').stay_flat;
+}
+
 /** The two cheapest months to stay (1-based), from the measured curve of the
- *  tier, or null without a measured curve. */
+ *  tier, or null without a measured curve or on a flat one. */
 export function cheapestMonths(dest, tier = 'home') {
   const rec = stayRecord(dest?.id);
   const curve = rec?.month?.[WIRE[normaliseTier(tier)]] || rec?.month?.hotel3 || rec?.month?.bnb_home;
-  if (!Array.isArray(curve) || curve.length !== 12 || !curve.every((v) => v > 0)) return null;
+  if (!Array.isArray(curve) || curve.length !== 12 || !curve.every((v) => v > 0) || flatCurve(curve)) return null;
   return curve.map((v, i) => [v, i + 1]).sort((a, b) => a[0] - b[0])
     .slice(0, 2).map(([, m]) => m).sort((a, b) => a - b);
 }
