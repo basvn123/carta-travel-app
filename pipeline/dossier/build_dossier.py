@@ -804,6 +804,23 @@ ROUTES_ATTACH = os.path.join(os.path.dirname(REPORTS), "derived",
                              "routes_attach.json")
 
 
+ROUTES_LINE_KM = os.path.join(os.path.dirname(REPORTS), "derived",
+                              "routes_line_km.json")
+
+
+def load_routes_line_km():
+    """{dest id: {"hiking"|"cycling": {route id: km to the line}}} (D-14),
+    written by pipeline/trails/attach.py. Absent: Around falls back to the
+    bbox centre and says so per row."""
+    try:
+        with open(ROUTES_LINE_KM, encoding="utf-8") as fh:
+            return json.load(fh)
+    except (OSError, ValueError):
+        print("  no data/derived/routes_line_km.json: Around distances are "
+              "measured to the bbox centre (run pipeline/trails/attach.py)")
+        return {}
+
+
 def load_routes_attach():
     try:
         with open(ROUTES_ATTACH, encoding="utf-8") as fh:
@@ -877,7 +894,10 @@ def row_score(f):
     return v5.get("score") if v5.get("score") is not None else f.get("score")
 
 
-def compose_around(dest, layer_index):
+LINE_ACTIVITY = {"trails": "hiking", "cycling": "cycling"}
+
+
+def compose_around(dest, layer_index, line_km=None):
     """Everything the Destinations tab knows within 20 km, per layer.
 
     `nearby` is the shortlist (a radius by place class, capped small, tier
@@ -912,6 +932,13 @@ def compose_around(dest, layer_index):
                 "bearing": bearing8(clat, clon, f["lat"], f["lon"]),
                 "lat": round(f["lat"], 5), "lon": round(f["lon"], 5),
             }
+            # A route is a line: its distance is to the line when attach
+            # measured it, else to the bbox centre, and the row says which.
+            if layer in LINE_ACTIVITY:
+                line = ((line_km or {}).get(LINE_ACTIVITY[layer]) or {}).get(
+                    str(f["id"]))
+                entry["km"] = line if line is not None else entry["km"]
+                entry["km_from"] = "line" if line is not None else "centre"
             for k in outdoor_row.ROW_COPY_KEYS + ("listed",):
                 if f.get(k) is not None:
                     entry[k] = f[k]
@@ -1594,6 +1621,7 @@ def load_context():
         "destinfo": destinfo, "trips_by_cc": trips_by_cc,
         "dest_index": dest_index, "layer_index": layer_index,
         "routes_attach": load_routes_attach(),
+        "routes_line_km": load_routes_line_km(),
         "similar": derive_place_page.Similar(dests),
         "trip_model": _load_trip_model(), "tasl": TaslStore(),
         "meta": app.get("meta", {}),
@@ -1671,7 +1699,8 @@ def build_one(dest, ctx, refusal_log):
     gallery = compose_gallery(
         dest, highlights, nearby, ctx["tasl"], refusals, landmarks=landmarks,
         extras=place_gallery.extras_for(ctx["place_gallery"], dest.get("id")))
-    around = compose_around(dest, ctx["layer_index"])
+    around = compose_around(dest, ctx["layer_index"],
+                            (ctx.get("routes_line_km") or {}).get(did))
     cl0 = dest.get("climate") or {}
     intro_facts = {
         "sights": [h["name"] for h in sorted(

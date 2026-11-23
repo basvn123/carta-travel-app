@@ -102,3 +102,32 @@ def test_dossier_fixture_every_around_row_carries_o(tmp_path, monkeypatch, capsy
     assert all(r["o"]["v5"]["score"] for r in around["trails"])
     # The legacy difficulty ("easy" on the old row) follows the grade the score used.
     assert {r["difficulty"] for r in around["trails"]} == {"hard"}
+
+
+def test_line_km_is_uncapped_inside_the_circle_and_nearest_wins():
+    sys.path.insert(0, str(ROOT / "pipeline" / "trails"))
+    import attach
+    rows = [{"activity": "hiking", "id": i, "dist_m": 1000.0 + i * 900}
+            for i in range(1, 30)]
+    rows += [{"activity": "hiking", "id": 1, "dist_m": 400.0},
+             {"activity": "cycling", "id": 1, "dist_m": 21000.0},
+             {"activity": "cycling", "id": 2, "dist_m": 19900.0}]
+    got = attach.line_km_of(rows)
+    assert got["hiking"]["1"] == 0.4
+    assert "21" in got["hiking"] and "22" not in got["hiking"]  # 20 km cut
+    assert len(got["hiking"]) == 21 > attach.CAP["hiking"]
+    assert got["cycling"] == {"2": 19.9}
+
+
+def test_around_distance_is_to_the_line_and_says_where_from(tmp_path, monkeypatch):
+    (tmp_path / "trails").mkdir()
+    rows = [trail(1, 47.05), trail(2, 47.06)]
+    (tmp_path / "trails" / "XX.json").write_text(
+        json.dumps({"trips": rows}), encoding="utf-8")
+    monkeypatch.setattr(bd, "PUB", str(tmp_path))
+    idx = bd.load_layer_index()
+    around = bd.compose_around({"lat": 47.0, "lon": 8.0}, idx,
+                               {"hiking": {"1": 3.2}})
+    by_id = {r["id"]: r for r in around["trails"]}
+    assert (by_id["1"]["km"], by_id["1"]["km_from"]) == (3.2, "line")
+    assert by_id["2"]["km_from"] == "centre" and by_id["2"]["km"] > 6
