@@ -2,7 +2,7 @@
 
 Since T1107 the box runs every pipeline task on a schedule, so a data run is no longer an owner step: the checks Claude does after each box run are in ROADMAP H9, and the data-lane exports that still need code are in ROADMAP D7, D10, D11 and D18 (owner sweep 2026-11-12, `.work/2026-11-12-owner-box/report.md`). Paid runs are in `docs/owner/paid-runs.md`. What is left here needs a person, a phone or a drive. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 8.
+Rows: 11.
 
 ## Steps
 
@@ -16,6 +16,12 @@ The wave 1 data fixes (2026-11-22) are in code and not yet on the box, so the li
 6. **D10: run the stays task, then publish.** On the box: `python pipeline/stays/box_stays.py` (usage from its docstring; verified to import and pass its tests, not run on the box). It writes the clean beds into the box master (dorm above hotel3 dropped, measured beds kept; it refuses if the measured share would fall more than 2 points). Then the box's next scheduled run publishes through the guard. Done when the guard prints PASS and the live `app_data` has about 3,340 measured places and no dorm above hotel3 (`python -I scripts/quality/launch_gate.py --public <dir>` shows the table).
 7. **0.2: re-publish the laptop wire as a stopgap, only if you will not wait for step 6.** Default 19 (`docs/owner/product-decisions.md`): yes. The wire from commit `93987631ff` has 35 places with a dorm above hotel3, so the guard refuses it unless you override. In the main checkout, from `continent-app/`: `python ../scripts/quality/publish_guard.py --override "stopgap 0.2"` (no `-I`: the guard needs `yaml`, which sits in the laptop's user packages and `-I` skips them), then `node ../scripts/ship.mjs` (dry run), then `CARTA_PUBLISH_OVERRIDE="stopgap 0.2" node ../scripts/ship.mjs --live` from `main` (`ship.mjs` runs the guard itself before the data upload and stops on a refusal; the variable is its stated override). Not verified: the commands were not run together on the live wire. Done when the live site shows measured beds again. Step 6 replaces this wire later.
 8. **D7, 0.4: trail names deadline 2027-01-16.** Before the trails rebuild (T1092-a) runs on the box, 2027-01-16 at the latest, confirm `python -I scripts/quality/trail_names_replay.py` prints ACCEPT on the wire you are about to publish. Done when it prints ACCEPT and the rebuild has run.
+
+Data wave 2 (2026-11-23), in code and not yet on the box. Do 9 and 10 after steps 5 to 8, in this order: 9, then 10, then 11.
+
+9. **D2, G2: verify the 50 drafted labels.** Claude drafted 50 rows from Wikipedia, Wikidata and OpenStreetMap in `evals/truth/draft.csv` (30 places, 20 trails; some are `unverifiable` with a note). Without opening the draft, fill the same rows in `evals/truth/sheet.csv` as the guide says (`evals/truth/GUIDE.md`), then in Git Bash in the main checkout: `python evals/truth/agreement.py`. Done when it prints the raw agreement and the kappa. It says "no owner rows yet" until you have verified a drafted row.
+10. **D2, D10, D3, D17: box rebuild of app_data (1.6).** On the box, after the pull of step 5: `python run_pipeline.py stays`, then `python run_pipeline.py hero_audit`, then the master rebuild that stamps the wire (`python pipeline/apply_rating_layer.py`), each from the repo root. Add `--allow-backfill` only where a task refuses a backfill and says so. Done when `python scripts/quality/publish_guard.py --public continent-app/public` prints PASS (no `-I`: yaml) and `python scripts/quality/drift.py --old <last published wire> --new continent-app/public` prints `drift: PASS`. Not verified here: nothing ran on the box.
+11. **D1, D3: ship 1, then the airports flip (1.7).** After step 10: `node scripts/ship.mjs` (dry run), then `node scripts/ship.mjs --live` from `main`, with the previous wire kept on the box for `publish_guard.py --previous`. Right after it, in `docs/wire.schema.json` set `airports` `x-presence` from `pending` to `some`, regenerate with `node continent-app/scripts/ci/wire-table.mjs --write`, and run `npm test` in `continent-app/`. Done when the contract tests pass with `some` (`continent-app/tests/airportsFlip.test.mjs` shows how).
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
