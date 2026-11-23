@@ -16,8 +16,9 @@
  * Gated since wave 3 (E7): graceful 100% per type, floors on the three types wave 3
  * fixed, and paired non-inferiority per type against any-question-baseline.json (the
  * wave 2 scores). The scope rule is src/lib/ask/scope.js, the function the chat runs.
- * Without the catalogue and the gazetteer the result is `skipped`, which CI sees (it
- * has no public/): the floors then hold only where a catalogue is present.
+ * Without the catalogue the result is `skipped`, loudly, never a pass. CI has the
+ * catalogue (it is in git) but not the gazetteer (gitignored): the towns the set names
+ * come from evals/any-question/towns.json, so the gate runs in CI.
  * No model is called.
  */
 import { existsSync, readFileSync } from 'node:fs';
@@ -49,7 +50,16 @@ const EMPTY = { intentType: null, outside: null, lacking: null, refused: false, 
 // The gazetteer's towns for a name, read from the shipped shards (the app fetches the same files).
 let gazetteerIndex = null;
 const shardCache = new Map();
+// CI has the catalogue but not the gazetteer (public/search/places/ is gitignored): the towns the set's
+// lacking cases name are committed in evals/any-question/towns.json and read when the shards are absent.
+export const TOWNS_PATH = join(REPO, 'evals', 'any-question', 'towns.json');
+let fixtureTowns = null;
 function townsFor(name) {
+  if (!gazetteerAvailable()) {
+    fixtureTowns ||= prepareTowns(JSON.parse(readFileSync(TOWNS_PATH, 'utf8')).towns);
+    const key = foldName(name);
+    return fixtureTowns.filter((t) => t.folds.includes(key));
+  }
   gazetteerIndex ||= JSON.parse(readFileSync(publicPath('search/places/index.json'), 'utf8'));
   const out = [];
   for (const f of shardsFor(gazetteerIndex, foldName(name))) {
@@ -69,7 +79,7 @@ export function observe(c, kit, today) {
   const ref = c.prev?.ref || null;
   // The chat's own question, asked of the same function: refuse, decline, or answer.
   const name = needsGazetteer(c.q, raw, ref, { lang: c.lang });
-  const scope = askScope(c.q, raw, { ref, lang: c.lang, rows: cat.rows, towns: name && gazetteerAvailable() ? townsFor(name) : null });
+  const scope = askScope(c.q, raw, { ref, lang: c.lang, rows: cat.rows, towns: name ? townsFor(name) : null });
   if (scope.kind !== 'answer') {
     const lines = scopeLines(scope, t);
     const picks = (scope.nearest || []).map((p) => ({ id: p.id, cc: p.cc }));
@@ -126,12 +136,12 @@ export async function runSet({ set = JSON.parse(readFileSync(SET_PATH, 'utf8')),
 }
 
 export async function run(opts = {}) {
-  if (!catalogueAvailable() || !gazetteerAvailable()) {
+  if (!catalogueAvailable()) {
     return makeResult({
       eval: id, title, kind: 'text-check', status: 'skipped', gated: true,
       headline: { key: 'all.accurate', value: null, label: 'answers correct (skipped: no catalogue)', higher_is_better: true },
-      gate: { ok: true, rule: 'skipped: the gate needs the shipped catalogue and gazetteer, so it did not run (not a pass)', tolerance: null, baseline: 'scripts/eval/any-question-baseline.json', failures: [] },
-      notes: ['SKIPPED, not scored: no shipped catalogue (and gazetteer, public/search/places/) found. Build continent-app/public/ or set CARTA_PUBLIC to a read-only copy of it. This is not a score of 0 and not a pass: the floors and the non-inferiority check did not run.'],
+      gate: { ok: true, rule: 'skipped: the gate needs the shipped catalogue, so it did not run (not a pass)', tolerance: null, baseline: 'scripts/eval/any-question-baseline.json', failures: [] },
+      notes: ['SKIPPED, not scored: no shipped catalogue (public/app_data.json, search_index.json, search/guided.json) found. Build continent-app/public/ or set CARTA_PUBLIC to a read-only copy of it. This is not a score of 0 and not a pass: the floors and the non-inferiority check did not run.'],
     });
   }
   const { set, rows, sl, cf, worst, plants } = await runSet({ seedDrop: !!opts.seedDrop });

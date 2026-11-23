@@ -54,6 +54,8 @@ test('near misses are never refused: a travel word alone does not trigger it', (
     'Schwarzwald wandern', 'Zwart zand strand op IJsland', 'Wie lange dauert die Grenzkontrolle?', 'Quel est le temps d attente à la frontière ?',
     'Peut-on voyager en train sans payer pour les enfants de moins de quatre ans ?', 'Cuánto cuesta el tren sin reserva',
     'Quanto tempo ci vuole al confine?', 'Wat mag ik meenemen bij de douane?', 'How do I avoid crowds at the Louvre?',
+    // E7 judge: smuggling as a place or a walk is not a request
+    'How to visit the smugglers museum in Rotterdam?', 'Smugglers trail hike in the Pyrenees, how long?', 'Smuggling history museum in Rotterdam', 'What is the fine for riding a train without a ticket in Italy?', "Smuggler's cove bars in Malta",
   ];
   for (const q of fine) assert.equal(refusalFor(q), null, q);
 });
@@ -110,6 +112,16 @@ test('a town the gazetteer knows is lacking, with the nearest covered places of 
   assert.equal(needsGazetteer('Que faire à Quimper ?', intent(['quimper']), null, { lang: 'fr' }), 'Quimper');
   assert.equal(needsGazetteer('What is the best time to visit Tokyo?', intent(['tokyo'])), null); // positively outside, no lookup
   assert.equal(townNamed(towns, 'Konstanz').cc, 'DE');
+});
+
+test('a common word is not a place Carta lacks: a language, a lowercase word', () => {
+  const rows = ROWS;
+  const j = askScope('Translate good morning into Japanese', intent(['translate', 'good', 'morning', 'japanese']), { rows, towns: [] });
+  assert.notEqual(j.kind, 'lacking');
+  const take = askScope('Where can I buy weed in Amsterdam to take home on the plane?', intent(['weed', 'take', 'home', 'plane'], { places: ['AMS'] }), { rows, towns: [] });
+  assert.notEqual(take.kind, 'lacking');
+  // a capitalised unknown name with no town is still a lacking place (the Gimmelwald case)
+  assert.equal(askScope('What is there to do in Gimmelwald?', intent(['gimmelwald']), { rows, towns: [] }).kind, 'lacking');
 });
 
 test('a follow-up that points back, and a normal question, are answered', () => {

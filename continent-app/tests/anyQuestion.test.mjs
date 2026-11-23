@@ -186,3 +186,25 @@ test('without a catalogue the eval is skipped loudly, never scored 0', async () 
     if (before === undefined) delete process.env.CARTA_PUBLIC; else process.env.CARTA_PUBLIC = before;
   }
 });
+
+test('the gate runs without a gazetteer: the committed towns fixture places the lacking cases (CI path)', async () => {
+  const { catalogueAvailable, publicPath } = await import('../scripts/eval/ask-eval.mjs');
+  if (!catalogueAvailable()) return; // no catalogue here: the adapter skips, which the test above covers
+  const { mkdirSync, copyFileSync, rmSync } = await import('node:fs');
+  const dir = mkdtempSync(join(tmpdir(), 'carta-ci-public-'));
+  const before = process.env.CARTA_PUBLIC;
+  try {
+    mkdirSync(join(dir, 'search', 'ask'), { recursive: true });
+    for (const f of ['app_data.json', 'search_index.json', 'search/guided.json']) copyFileSync(publicPath(f), join(dir, f));
+    if (existsSync(publicPath('search/ask/lexicon.json'))) copyFileSync(publicPath('search/ask/lexicon.json'), join(dir, 'search', 'ask', 'lexicon.json'));
+    process.env.CARTA_PUBLIC = dir;
+    const { run } = await import('../scripts/eval/adapters/any-question.mjs');
+    const r = await run();
+    assert.notEqual(r.status, 'skipped');
+    assert.equal(r.gated, true);
+    assert.ok(r.metrics['type.places-lacking.accurate'] >= 0.8, `places-lacking ${r.metrics['type.places-lacking.accurate']}`);
+  } finally {
+    if (before === undefined) delete process.env.CARTA_PUBLIC; else process.env.CARTA_PUBLIC = before;
+    rmSync(dir, { recursive: true, force: true });
+  }
+});

@@ -176,7 +176,7 @@ export function placeCandidate(text, intent, { bare = false } = {}) {
     // A European name the parser does not know yet is not outside Europe.
     if (inEurope(name)) continue;
     const sure = isOutsideName(name);
-    return { name: titled(name), sure, weak };
+    return { name: titled(name), sure, weak, typed: capital(w) };
   }
   // A country or city outside Europe, wherever it stands ("the capital of australia").
   // A one-word city must be unknown to the parser; "New York" has York in it, so it need not be.
@@ -186,7 +186,7 @@ export function placeCandidate(text, intent, { bare = false } = {}) {
     if (known && key.length === 1) continue;
     for (let i = 0; i + key.length <= toks.length; i++) {
       if (key.every((k, n) => toks[i + n] === k && (key.length > 1 || unknown.has(k)))) {
-        return { name: words.slice(i, i + key.length).map(titled).join(' '), sure: true, weak: false };
+        return { name: words.slice(i, i + key.length).map(titled).join(' '), sure: true, weak: false, typed: true };
       }
     }
   }
@@ -200,7 +200,7 @@ export function placeCandidate(text, intent, { bare = false } = {}) {
       let name = words[i];
       while (i + 1 < words.length && capital(words[i + 1]) && unknown.has(fold(words[i + 1]))) name += ` ${words[++i]}`;
       if (inEurope(name)) continue;
-      return { name: titled(name), sure: isOutsideName(name), weak: true };
+      return { name: titled(name), sure: isOutsideName(name), weak: true, typed: true };
     }
   }
   return null;

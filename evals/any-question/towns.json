@@ -1,0 +1,224 @@
+{
+ "about": "The towns the places-lacking cases of set.json name, copied from the shipped gazetteer (public/search/places/, GeoNames, CC BY 4.0, built 2026-11-18) on 2026-11-23, so the any-question eval can place them where public/ has no gazetteer (CI: it is gitignored). Row format as the shards: [geonameid, names, lat, lon, cc, admin1, pop]. Regenerate with the same filter if the lacking names change.",
+ "source": "GeoNames, CC BY 4.0",
+ "date": "2026-11-23",
+ "towns": [
+  [
+   2885679,
+   [
+    "Konstanz",
+    "Constanza",
+    "Constance",
+    "Costanza"
+   ],
+   47.6603,
+   9.1758,
+   "DE",
+   "01",
+   81275,
+   {
+    "es": "Constanza",
+    "fr": "Constance",
+    "it": "Costanza"
+   }
+  ],
+  [
+   3202825,
+   [
+    "Cavtat",
+    "Ragusa Vecchia",
+    "Ragusavecchia"
+   ],
+   42.5811,
+   18.2181,
+   "HR",
+   "03",
+   2189,
+   {
+    "it": "Ragusa Vecchia"
+   }
+  ],
+  [
+   779683,
+   [
+    "Hammerfest"
+   ],
+   70.6631,
+   23.6809,
+   "NO",
+   "05",
+   11448
+  ],
+  [
+   2897132,
+   [
+    "Husum"
+   ],
+   54.4858,
+   9.0524,
+   "DE",
+   "10",
+   20841
+  ],
+  [
+   2620279,
+   [
+    "Hirtshals"
+   ],
+   57.5881,
+   9.9592,
+   "DK",
+   "19",
+   5532
+  ],
+  [
+   2702997,
+   [
+    "Jokkmokk"
+   ],
+   66.6067,
+   19.8232,
+   "SE",
+   "14",
+   2794
+  ],
+  [
+   2897136,
+   [
+    "Husum"
+   ],
+   52.5667,
+   9.25,
+   "DE",
+   "06",
+   2336
+  ],
+  [
+   2704114,
+   [
+    "Husum"
+   ],
+   63.3333,
+   19.1667,
+   "SE",
+   "24",
+   1563
+  ],
+  [
+   2885679,
+   [
+    "Konstanz",
+    "Constanza",
+    "Constance",
+    "Costanza"
+   ],
+   47.6603,
+   9.1758,
+   "DE",
+   "01",
+   81275,
+   {
+    "es": "Constanza",
+    "fr": "Constance",
+    "it": "Costanza"
+   }
+  ],
+  [
+   3195308,
+   [
+    "Međugorje",
+    "Megugorje",
+    "Medjugorje",
+    "Medjugorie"
+   ],
+   43.1958,
+   17.6755,
+   "BA",
+   "01",
+   2265,
+   {
+    "fr": "Medjugorje",
+    "it": "Medjugorie",
+    "nl": "Medjugorje"
+   }
+  ],
+  [
+   3144987,
+   [
+    "Narvik"
+   ],
+   68.4384,
+   17.4272,
+   "NO",
+   "09",
+   14141
+  ],
+  [
+   2984701,
+   [
+    "Quimper"
+   ],
+   47.996,
+   -4.0979,
+   "FR",
+   "53",
+   63849
+  ],
+  [
+   603570,
+   [
+    "Piteå"
+   ],
+   65.3172,
+   21.4794,
+   "SE",
+   "14",
+   23067
+  ],
+  [
+   3202825,
+   [
+    "Cavtat",
+    "Ragusa Vecchia",
+    "Ragusavecchia"
+   ],
+   42.5811,
+   18.2181,
+   "HR",
+   "03",
+   2189,
+   {
+    "it": "Ragusa Vecchia"
+   }
+  ],
+  [
+   634093,
+   [
+    "Tornio"
+   ],
+   65.8481,
+   24.1466,
+   "FI",
+   "19",
+   20932
+  ],
+  [
+   3183719,
+   [
+    "Vlorë",
+    "Vlora",
+    "Valona"
+   ],
+   40.4696,
+   19.4838,
+   "AL",
+   "51",
+   115261,
+   {
+    "de": "Vlora",
+    "fr": "Vlora",
+    "it": "Valona"
+   }
+  ]
+ ]
+}

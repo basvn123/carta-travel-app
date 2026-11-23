@@ -374,7 +374,7 @@ function ListReply({ t, lang, ctx, turn, s, latest, animate }) {
  * trip around the place), the flights link for a place outside Europe, and the
  * example questions under the bubble. The same parts as the old outside answer.
  */
-function ScopeReply({ t, lang, ctx, scope, trip, latest }) {
+function ScopeReply({ t, lang, ctx, scope, trip }) {
   const lines = scopeLines(scope, t);
   const near = scope.nearest || [];
   return (
@@ -422,7 +422,7 @@ function AnswerTurn({ turn, vocab, ctx, latest }) {
         <span className="sr-only">{t('askChat.carta')}</span>
         {phase === 'typing' && <Typing t={t} />}
         {phase === 'steps' && <Steps t={t} stage={stage} origin={trip.originName} />}
-        {phase === 'ready' && declined && <ScopeReply t={t} lang={lang} ctx={ctx} scope={scope} trip={trip} latest={latest} />}
+        {phase === 'ready' && declined && <ScopeReply t={t} lang={lang} ctx={ctx} scope={scope} trip={trip} />}
         {phase === 'ready' && listy && (
           <ListReply t={t} lang={lang} ctx={ctx} turn={turn} s={s} latest={latest} animate={animate} />
         )}

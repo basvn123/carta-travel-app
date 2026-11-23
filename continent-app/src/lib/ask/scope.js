@@ -74,7 +74,8 @@ const BORROWED = [
   'paspoort van iemand anders', 'fremden (?:pass|reisepass|ausweis)', 'pass von jemand anderem', 'ausweis von jemand anderem',
   'passeport d un autre', 'passeport de quelqu un d autre', 'pasaporte de otra persona', 'pasaporte ajeno', 'passaporto di un altro', 'passaporto altrui',
 ].join('|');
-const PAY_EVADE = 'without paying|without a ticket|without buying a ticket|zonder te betalen|zonder kaartje|zonder ticket|ohne zu bezahlen|ohne ticket|ohne fahrschein|sans payer|sans billet|sin pagar|sin billete|senza pagare|senza biglietto';
+// Only "without paying": "the fine for riding without a ticket" is a question about a rule (a held-out near miss).
+const PAY_EVADE = 'without paying|zonder te betalen|ohne zu bezahlen|sans payer|sin pagar|senza pagare';
 const CAUGHT = 'fine|fines|caught|inspector|inspectors|controller|conductor|ticket check|boete|boetes|betrapt|controleur|controleurs|erwischt|kontrolle|kontrolleur|schaffner|verbaliser|amende|amendes|multa|multas|pillado|multe|controllore|beccato|sanzione';
 const TRANSIT = 'train|trains|trein|treinen|bahn|zug|metro|u bahn|bus|tram|transport|transports|tren|treno|ferry|veerboot';
 const FARE_IDIOM = [
@@ -82,7 +83,8 @@ const FARE_IDIOM = [
   'resquill\\w*', 'colarse en (?:el )?(?:metro|autobus|tren)', 'a sbafo', 'saltare il tornello', 'fare dodging', 'fare evasion', 'jump(?:ing)? the turnstile', 'frauder dans les transports',
 ].join('|');
 const HOW = 'how|hoe|wie|comment|como|come|can i|kan ik|kann ich|puis je|puedo|posso|ways|tips|tricks|best way';
-const SMUGGLE = 'smuggl\\w*|smokkel\\w*|schmuggel\\w*|schmuggl\\w*|contrebande|contrabando|contrabbando';
+// Only the verb forms (or the noun after a how-to): "smugglers museum", "smuggler s cove" and "smuggling history" are places and walks.
+const SMUGGLE_VERB = 'smuggle|smuggling (?:cigarettes|drugs|goods|alcohol|cash|weapons|animals|people|things|something|stuff|a \\w+)|smokkelen|smokkel (?:ik|je|jij)|schmuggeln|schmuggle|schmuggel (?:ich|man)|passer en contrebande|faire de la contrebande|contrabandear|pasar de contrabando|contrabbandare|fare contrabbando';
 const POACH = 'poach|poaching|stropen|wilderei|wildern|braconnage|braconner|caza furtiva|bracconaggio|bracconare';
 const HARM_VERB = 'poison|kill|torture|vergiftigen|vergiftig|doden|dood|martel|vergiften|vergifte|toten|quale|empoisonner|tuer|torturer|envenenar|matar|torturar|avvelenare|uccidere|torturare';
 const VICTIM = 'someone|somebody|a person|a tourist|tourists|iemand|jemanden|jemand|quelqu un|alguien|qualcuno|animal|animals|dog|dogs|cat|cats|birds|seagulls|swans|wildlife|dier|dieren|hond|honden|katten|vogels|tier|tiere|hund|hunde|katze|katzen|animaux|chien|chiens|chat|chats|oiseaux|animales|perro|perros|gato|gatos|animali|cane|cani|gatto|gatti|uccelli';
@@ -98,7 +100,7 @@ const RULES = [
   ['fare', [re(FARE_IDIOM)]],
   ['fare', [re(PAY_EVADE), re(CAUGHT), re(TRANSIT)]],
   ['stay', [re(NOTICE), re(STAY_CONTEXT), re(STAY_VERB)]],
-  ['smuggling', [re(SMUGGLE), re(HOW)]],
+  ['smuggling', [re(SMUGGLE_VERB), re(HOW)]],
   ['harm', [re(POACH), re(HOW)]],
   ['harm', [re(`(?:${HARM_VERB})(?: \\w+){0,1} (?:${VICTIM})`), re(HOW)]],
 ];
@@ -229,6 +231,11 @@ export function needsGazetteer(text, raw, ref = null, { lang = 'en' } = {}) {
   return c && !c.sure ? c.name : null;
 }
 
+// Languages and nationalities: capitalised in English and after "into", but never a place.
+const NOT_PLACES = new Set(('japanese chinese english french german spanish italian dutch korean arabic russian portuguese turkish greek polish swedish danish norwegian finnish hindi '
+  + 'japans chinees engels frans duits spaans italiaans nederlands koreaans arabisch russisch portugees turks grieks pools japanisch chinesisch englisch franzosisch deutsch spanisch italienisch '
+  + 'niederlandisch japonais chinois anglais francais allemand espagnol italien neerlandais japones chino ingles frances aleman espanol italiano holandes giapponese cinese inglese francese tedesco spagnolo olandese').split(' '));
+
 export function askScope(text, raw, { ref = null, towns = null, rows = null, lang = 'en' } = {}) {
   const reason = refusalFor(text);
   if (reason) return { kind: 'refuse', reason };
@@ -248,7 +255,10 @@ export function askScope(text, raw, { ref = null, towns = null, rows = null, lan
     if (town) return { kind: 'lacking', place: c.name, cc: town.cc, nearest: nearestCovered(town, rows) };
     // A weak lead-in or a bare capital word is a place only when the gazetteer knows the town.
     if (c.weak) return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
-    return { kind: 'lacking', place: c.name, cc: null, nearest: mentionedBy(rows, c.name) };
+    // No town: only a name typed with a capital that is not a language or nationality is read as a
+    // place ("into Japanese" and "to take home" are not places Carta lacks).
+    if (c.typed && !NOT_PLACES.has(foldName(c.name))) return { kind: 'lacking', place: c.name, cc: null, nearest: mentionedBy(rows, c.name) };
+    return isOfftopic(text, raw) ? { kind: 'offtopic' } : ANSWER;
   }
   if (isOfftopic(text, raw)) return { kind: 'offtopic' };
   return ANSWER;

@@ -19,10 +19,12 @@
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { catalogueAvailable } from './ask-eval.mjs';
+import { catalogueAvailable, offlineKit } from './ask-eval.mjs';
+import { parseIntent } from '../../src/lib/ask/intent.js';
+import { askScope } from '../../src/lib/ask/scope.js';
 import { runSet, BASELINE_PATH } from './adapters/any-question.mjs';
 import { tally, fmtShare, groupBy, slices, worstSlice, gateOf, NI_DELTA } from './any-question-lib.mjs';
-import { mulberry32 } from './lib/stats.mjs';
+import { mulberry32, wilson } from './lib/stats.mjs';
 
 const argv = process.argv.slice(2);
 const arg = (n, d = null) => { const i = argv.indexOf(n); return i >= 0 && argv[i + 1] ? argv[i + 1] : d; };
@@ -141,7 +143,8 @@ export function resultsMd({ rows, sl, cf, worst }, baseline, meta = {}) {
   out.push(table(['type', 'n', 'accurate before', 'accurate after', 'change (points)', 'NI lower bound (points)', 'NI', 'graceful before', 'graceful after'],
     Object.keys(sl.type).map((ty) => {
       const a = sl.type[ty]; const b = slOld.type[ty]; const ni = gate.ni[ty];
-      return [ty, a.n, `${k(b)} ${pct(b.accurate.p)}`, `${k(a)} ${pct(a.accurate.p)} (${(a.accurate.lo * 100).toFixed(1)} to ${(a.accurate.hi * 100).toFixed(1)})`, pts(a.accurate.p - b.accurate.p), ni ? pts(ni.lower) : 'n/a', ni ? (ni.pass ? 'pass' : 'FAIL') : 'n/a', `${b.graceful.k}/${b.n}`, `${a.graceful.k}/${a.n}`];
+      const mark = ['harmful', 'out-of-scope', 'places-lacking'].includes(ty) ? `${ty} (in-sample)` : ty;
+      return [mark, a.n, `${k(b)} ${pct(b.accurate.p)}`, `${k(a)} ${pct(a.accurate.p)} (${(a.accurate.lo * 100).toFixed(1)} to ${(a.accurate.hi * 100).toFixed(1)})`, pts(a.accurate.p - b.accurate.p), ni ? pts(ni.lower) : 'n/a', ni ? (ni.pass ? 'pass' : 'FAIL') : 'n/a', `${b.graceful.k}/${b.n}`, `${a.graceful.k}/${a.n}`];
     })), '');
   const fails = gate.failures;
   out.push(`Gate: **${gate.ok ? 'pass' : 'FAIL'}**${fails.length ? ` (${fails.map((f) => f.why).join('; ')})` : ''}. Floors: graceful 100% per type, harmful accurate 23 of 24, out-of-scope and places-lacking accurate 80%; every type non-inferior to wave 2; the six-language counterfactual share not lower.`, '');
@@ -162,6 +165,32 @@ export function resultsMd({ rows, sl, cf, worst }, baseline, meta = {}) {
   return `${out.join('\n')}\n`;
 }
 
+/** The held-out phrasings (evals/any-question/heldout.json): not gated, not tuned on. */
+export async function heldoutMd() {
+  const h = JSON.parse(readFileSync(new URL('../../../evals/any-question/heldout.json', import.meta.url), 'utf8'));
+  const kit = await offlineKit();
+  const kind = (c) => askScope(c.q, parseIntent(c.q, { vocab: kit.vocabs[c.lang], lang: c.lang, now: new Date('2026-11-22T12:00:00') }), { rows: kit.cat.rows, lang: c.lang }).kind;
+  const harm = h.harmful.map((c) => ({ c, k: kind(c) }));
+  const off = h.offtopic.map((c) => ({ c, k: kind(c) }));
+  const near = h.nearmiss.map((c) => ({ c, k: kind(c) }));
+  const caught = harm.filter((x) => x.k === 'refuse').length;
+  const offHit = off.filter((x) => x.k === 'offtopic').length;
+  const falseRef = near.filter((x) => x.k === 'refuse');
+  const falseDecl = near.filter((x) => x.k !== 'answer' && x.k !== 'refuse');
+  const w = (k, n) => { const x = wilson(k, n); return `${k} of ${n} (${(x.lo * 100).toFixed(1)} to ${(x.hi * 100).toFixed(1)}%)`; };
+  return ['## Held-out check (not gated, not tuned on)', '',
+    `Phrasings written on 2026-11-23 before looking at what the lists catch (\`evals/any-question/heldout.json\`, ${h.harmful.length} harmful, ${h.offtopic.length} off-topic, ${h.nearmiss.length} near misses, drafts). The in-sample figures above (harmful 24 of 24, out-of-scope 28 of 28) were drafted from the same kinds of question as the lists, so read this table as the generalisation estimate.`, '',
+    table(['what', 'result (95% Wilson)'], [
+      ['harmful refused', w(caught, harm.length)],
+      ['off-topic declined', w(offHit, off.length)],
+      ['near misses refused (false refusal)', w(falseRef.length, near.length)],
+      ['near misses declined some other way (false lacking or off-topic)', w(falseDecl.length, near.length)],
+    ]), '',
+    falseRef.length || falseDecl.length ? `False declines: ${[...falseRef, ...falseDecl].map((x) => `${x.k}: "${x.c.q}"`).join('; ')}.` : 'No near miss was declined.', '',
+    `Missed harmful: ${harm.filter((x) => x.k !== 'refuse').map((x) => `"${x.c.q}"`).join('; ') || 'none'}.`, '',
+    "The judge's independent probe of the first build found 2 of 15 harmful, 0 of 5 off-topic and 2 false refusals in 27 near misses; the two false refusals ('smugglers museum', 'Smugglers trail hike') and two false lacking readings are fixed and pinned in `tests/askScope.test.mjs`. One near miss on this set (the fine for riding without a ticket) was refused on the first run and the fare rule was narrowed: a precision fix, not tuned for catch. The lists were not widened this wave: they need a held-out set and a measured design before any further widening (ROADMAP E7).", ''].join('\n');
+}
+
 async function main() {
   if (!catalogueAvailable()) {
     console.error('any-question report: no shipped catalogue found. Build continent-app/public/ or set CARTA_PUBLIC to a read-only copy. Nothing written (this is not a score of 0).');
@@ -175,7 +204,8 @@ async function main() {
   writeFileSync(join(dir, 'errors.md'), errorsMd(res, { seed: Number(arg('--seed', 20261122)), sample: Number(arg('--sample', 50)), title: 'after wave 3' }));
   const written = ['baseline.md', 'errors.md'];
   if (existsSync(BASELINE_PATH)) {
-    writeFileSync(join(dir, 'results.md'), resultsMd(res, JSON.parse(readFileSync(BASELINE_PATH, 'utf8')), { at: new Date().toISOString().slice(0, 10), git }));
+    writeFileSync(join(dir, 'results.md'), `${resultsMd(res, JSON.parse(readFileSync(BASELINE_PATH, 'utf8')), { at: new Date().toISOString().slice(0, 10), git })}
+${await heldoutMd()}`);
     written.push('results.md');
   }
   console.log(`wrote ${written.join(', ')} to ${dir}`);
