@@ -140,6 +140,8 @@ Discover is the part of Carta where a traveller finds a place: the home page, Ex
 
 ### Home page
 
+**Temporarily off (owner, 2026-11-22).** `HOME_OFF` in `src/lib/homeVisit.js` is true: no visit opens on the home page, and `?tab=home` or any link to it opens Explore (`App.jsx`: the first visit, the boot route and `goToTab`). Set it to false to bring the home page back.
+
 **What it does.** The home page opens a first visit with a full-screen film of real places, the line "A cheap flight is not a cheap trip" and an Ask Carta field. Scrolling down, it shows what a week really costs at one place (flight, bed, food), a short tour of the app, a budget slider over real places, and the three plans. Anything typed in the field opens Carta's chat on Explore, already asking.
 
 **How it works.**
@@ -2852,6 +2854,8 @@ This section covers the parts of Carta that sit around the travel content: the A
 **Limits.** Account trips are read from Supabase and do not open offline unless the account sync has mirrored them to the device (T1169-a). Not checked on a real iPhone or Android phone (T246-c, T1169-b). No store listing; the route is I-R3's decision (T1169-c). The precache list is read from the built page and entry script, not from Vite's manifest (T1169-d).
 
 ### Opening screen
+
+**Temporarily off (owner, 2026-11-22).** The opening screen never shows: the last rule of `src/styles/06-boot-splash.css` hides it from the first paint, and `SPLASH_OFF` in `src/lib/bootSplash.js` stops it being held, drawn or colouring the browser bar. The app opens straight on the stone ground. Remove the rule and set the flag to false to bring it back.
 
 **What it does.** When Carta opens, the first frame is a deep umber screen: the blaze paints itself, "Carta" lifts in letter by letter with the tagline, and the real ground around Chamonix rises along the bottom with one real height, "Mont Blanc 4,806 m". While the app waits on the session or the travel data, the house loading mark shows; after 4 s one plain line says it is taking longer than usual. When the app is ready, the whole screen lifts away like a curtain onto the app. Before this, the browser showed a blank page until the script ran, then a small logo screen that cut to the app. ROADMAP G5 (owner choice "deep umber", 2026-11-17).
 
