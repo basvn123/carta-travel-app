@@ -11,20 +11,15 @@
  * Not here on purpose: the dates and When (`d r df wm wy wn`, the lens month
  * `xm`), the way (`t`), the price view (`pv ps px`) and the Together group id
  * (`tg`). Opening a link would overwrite the recipient's own settings with
- * them (critic correctness). Lists and pure functions only: the full state
- * key table is wave 2 (E9).
+ * them (critic correctness). The lists are read from the one state table
+ * (lib/stateKeys.js, wave 2 E9); this module keeps the pure functions.
  */
+import { shareViewKeys } from './stateKeys.js';
 
-/** The address keys an Explore "share this view" link keeps. */
-export const SHARE_VIEW_KEYS = [
-  // The place and category.
-  'tab', 'cat', 'dc', 'dq', 'dm',
-  // The filters.
-  'cf', 'cn', 'tk', 'sort', 'rr', 'gem', 'un', 'tb', 'big', 'top', 'rh',
-  // Explore's lens and its filter mirror (useExploreLens.js, ExploreTab.jsx).
-  'xk', 'xv', 'xr', 'xb', 'xp', 'xe', 'xa', 'xn', 'xd', 'xg', 'xu', 'xw', 'xi', 'xall',
-  'xc', 'xo', 'xs',
-];
+/** The address keys an Explore "share this view" link keeps: the table's
+ * `share` keys (lib/stateKeys.js), the place and category, the filters and
+ * Explore's lens. */
+export const SHARE_VIEW_KEYS = shareViewKeys();
 
 /** Trip share fields that describe the sender, not the trip. Party counts
  * stay: the shared booked figures (ownFlight, ownStays) are party totals. */

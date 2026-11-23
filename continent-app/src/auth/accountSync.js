@@ -45,6 +45,7 @@ import {
   TRIPS_KEY, readKeys, hasContent, ensure as ensureTrips, deleteTrip as deleteTripEntry,
 } from '../planner/tripsStore.js';
 import { DEVICE_TRIP_KEY, loadDeviceTrip } from '../planner/deviceTripStore.js';
+import { syncKeys } from '../lib/stateKeys.js';
 
 export const SYNC_KEY = 'carta.accountSync.v1';
 export const KINDS = ['kept', 'journey', 'trip', 'device_trip'];
@@ -455,7 +456,9 @@ function schedule() {
   b.timer = setTimeout(() => { b.timer = null; runBound(); }, DEBOUNCE_MS);
 }
 
-const WATCHED = new Set([KEPT_KEY, SAVES_KEY, TRIPS_KEY, DEVICE_TRIP_KEY, 'carta.plannerDraft.v1', 'carta.tripDraft.v1']);
+// The keys the table marks `sync: 'things'` (lib/stateKeys.js); tests/stateKeys.test.mjs
+// proves they are the six stores this sync reads.
+const WATCHED = new Set(syncKeys());
 function onStorage(e) { if (!e.key || WATCHED.has(e.key)) schedule(); }
 function onVisible() { if (typeof document !== 'undefined' && document.visibilityState === 'visible') schedule(); }
 

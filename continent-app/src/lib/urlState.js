@@ -10,6 +10,7 @@ import { isFullRatingRange, clampRatingRange, rangeFromMinTier } from './rating.
 import { readFavList, writeFavList } from './favorites.js';
 import { decodeTaste, encodeTaste, isEmptyTaste } from './taste.js';
 import { HOME_POINT_DP } from './shareKeys.js';
+import { ownUrlKeys } from './stateKeys.js';
 
 const LS_ORDER = [
   'dinners_per_week', 'lunches_per_week', 'fastfood_per_week', 'drinks_per_week',
@@ -498,7 +499,10 @@ export function loadInitialState() {
 // owned too: otherwise children set back to 0 left gc=2 standing in the
 // address and a reload brought the children back (travel styles review,
 // 2026-11-13).
-const OWN_KEYS = ['ah', 'b', 'big', 'cat', 'cc', 'cf', 'cn', 'd', 'dest', 'df', 'dh', 'fav', 'favonly', 'feat', 'g', 'gb', 'gc', 'gem', 'ls', 'mode', 'o', 'oa', 'pm', 'pr', 'ps', 'pv', 'px', 'r', 'rh', 'rr', 'sc', 'sh', 'sk', 'sort', 'st', 't', 'tab', 'tb', 'tk', 'top', 'ty', 'un', 'wm', 'wn', 'wy'];
+// Read from the one state table (lib/stateKeys.js). J-17: `pm`, the Pass
+// preview, is no longer owned, so this writer leaves a ?pm= standing instead of
+// stripping it and relying on passMoment.js to have read it at import.
+const OWN_KEYS = ownUrlKeys();
 
 // N5 (logic wave 0a): a device clear stops this writer for the rest of the
 // page, so a pending 300 ms persist cannot put the home point and shortlist
