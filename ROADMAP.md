@@ -661,6 +661,7 @@ docs/
 - Mountains: route up (14.8% today); lakes: water class (55.8%) and the 258 unknown swim flags.
 - Check the country assignment (for example "Grote Rivierenpad" filed under Germany).
 - Round 2 (2026-11-12, from docs/owner): T233-a and T233-c decided: stay on Mapterhorn terrain; no own Europe PMTiles cut before launch (355.6 GB planet, no launch need). The Range CORS rule is live (T233-b) if it is ever needed.
+- Wave 3 (2026-11-23): one outdoor row `o` and one grade vocabulary in code (`pipeline/grades.py`, `outdoor_row.py`, `not_for.py`), the dem_grade both-terms fix, Around distance to the line, `credited()` gates, `allYear`, D-10 and D-15; replay `scripts/quality/grade_replay.py` (HANDBOOK "Outdoor row and grade vocabulary"). Open: the box re-export (docs/owner/data-and-pipeline-runs.md steps 12 to 15) and the app readers (requests to logic).
 
 **D8. Sea temperature**
 - Run the `sea_temp` task, re-export beaches, run `apply_climate`. Confirm the beach page strip draws.
@@ -748,6 +749,7 @@ docs/
 | Texts and translations | The cited sources; back-translation and native review (I8) | Grounding, no invented facts |
 | Ask answers | E1 eval set | Grounding and recall |
 | Photos | D17 | The photo shows the named place |
+- Wave 3 (2026-11-23): D-8 (v5 rank is within one kind) and D-9 (peak access stays in the score) are documented in HANDBOOK "Outdoor row and grade vocabulary" and recorded as defaults in docs/owner/product-decisions.md; the grade replay is the trail check for "the grade shown is the grade scored".
 
 *Order.* Trails first (D24), then beaches and prices (the most visible numbers), then the rest. Each run is sized as a sample per layer, stratified by country, so the cost stays small and the result holds for the whole layer.
 
@@ -760,6 +762,7 @@ docs/
 - multi-stage treks as one parent record with ordered stages (540 of 594 stage groups have none), shown as one walk and as a multi-day trip;
 - the way back to the start for one-way walks, linked to the trip planner;
 - mountains (route up, 14.8% today) and lakes (water class 55.8%, 258 unknown swim flags) filled.
+- **Glacier to alpine** (open, added 2026-11-23): a route over a glacier highlight is alpine in fact, but `highlight_kinds` is read in `rate.py` after `attributes` grades it, so `cap_derived` never sees it. Verify `attributes` can see glacier highlights, then pass them to `cap_derived(..., ferrata=...)` with a test.
 
 **D25. Famous coverage for every outdoor kind** (added 2026-11-20, owner: "gather every famous trail, cycling route, beach, lake, mountain"; HANDBOOK "Famous coverage"). Built: the Wikidata reference per kind with canaries, the matcher, the coverage report with a reason per miss, the mountains and lakes hand-off (seed by QID, never left out at export), curation's reference pass reading the famous trail ids, and the routed seed path for walks without an OSM route. Next, in order:
 - **a. Waypoints for famous day walks** (about 1 day; target 2026-11-27, live with the next trails run). 155 famous trails have no OSM route and only 5 have a Wikidata start and end (all 5 refused by the gates). For the 47 with a trailhead in the D24 reference, take the landmark the walk is named for (a place row of `data/trails/famous_registry_full.json` or a Wikidata item whose label is in the walk's name, within 15 km of the trailhead) and route trailhead to landmark and back in `seed_routes.py`, judged against the reference length; for the rest, OSM `highway=trailhead` or a car park within 1 km of the walk's own point. Report kept and refused per gate before any `--write`.
