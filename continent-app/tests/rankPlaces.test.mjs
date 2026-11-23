@@ -17,7 +17,8 @@ test("E6: the four 9.6 places order by fame: Salzburg, Dubrovnik, Hallstatt, Tao
   assert.deepEqual(order, ["SZG", "DBV", "gem:hallstatt", "gem:taormina"]);
 });
 
-test("E6: a third like never lowers a place's fit below the two-like fit", { todo: true }, async () => {
+// Passes today (the fit already behaves); kept as a plain guard so E6 cannot break it.
+test("E6: a third like never lowers a place's fit below the two-like fit", async () => {
   const { fit } = await import("../src/lib/match.js");
   const hallstatt = PLACES.find((p) => p.id === "gem:hallstatt");
   const two = fit({ likes: ["hiking", "lakes"] }, hallstatt.taste, 9);

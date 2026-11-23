@@ -5,7 +5,8 @@
 // Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync, statSync, mkdtempSync, writeFileSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { PRICING_RULES, rule } from "../src/lib/price/config.js";
@@ -93,22 +94,46 @@ const libFiles = (dir) => readdirSync(dir).flatMap((f) => {
 });
 const ALLOW = JSON.parse(readFileSync(join(APP, "tests/fixtures/libNumberAllowlist.json"), "utf8")).files;
 
-test("RC16: no number outside config anywhere in lib/ unless the allowlist says why", () => {
+// The guard itself, over any directory and allowlist, so a test can plant a file.
+function scanLib(root, allow) {
   const found = [];
   const seen = {};
-  for (const abs of libFiles(join(APP, "src/lib"))) {
-    const rel = abs.slice(join(APP, "src/lib").length + 1).replace(/\\/g, "/");
+  for (const abs of libFiles(root)) {
+    const rel = abs.slice(root.length + 1).replace(/\\/g, "/");
     if (PRICE_MODULES.includes(`src/lib/${rel}`)) continue; // held to the stricter list above
     for (const [name, rhs] of numericConsts(readFileSync(abs, "utf8"))) {
       (seen[rel] ||= []).push(name);
-      if (!ALLOW[rel]?.names.includes(name)) found.push(`src/lib/${rel}: ${name} = ${rhs} (move it to config/pricing.json, or list it in tests/fixtures/libNumberAllowlist.json with a reason)`);
+      if (!allow[rel]?.names.includes(name)) found.push(`src/lib/${rel}: ${name} = ${rhs} (move it to config/pricing.json, or list it in tests/fixtures/libNumberAllowlist.json with a reason)`);
     }
   }
+  return { found, seen };
+}
+
+test("RC16: no number outside config anywhere in lib/ unless the allowlist says why", () => {
+  const { found, seen } = scanLib(join(APP, "src/lib"), ALLOW);
   assert.deepEqual(found, []);
   // A stale entry hides nothing today but would let a future constant of that name through.
   const stale = Object.entries(ALLOW).flatMap(([rel, v]) => v.names.filter((n) => !seen[rel]?.includes(n)).map((n) => `${rel}: ${n}`));
   assert.deepEqual(stale, [], "remove the allowlist entries for constants that are gone");
-  for (const [rel, v] of Object.entries(ALLOW)) assert.ok(v.why && v.why.length > 20, `${rel}: a reason`);
+  for (const [rel, v] of Object.entries(ALLOW)) {
+    assert.ok(v.why && v.why.length > 20, `${rel}: a reason`);
+    // A rule number names the engine wave that moves it to config.
+    for (const [name, why] of Object.entries(v.ruleNumbers || {})) {
+      assert.ok(v.names.includes(name), `${rel}: ruleNumbers names ${name}, which is not listed`);
+      assert.match(why, /E\d+.*ROADMAP G4/, `${rel}: ${name} names its engine`);
+    }
+  }
+});
+
+test("RC16: euro amounts and rule numbers moved to config keep their values", () => {
+  assert.equal(rule("transport.value_of_time"), 6);
+  assert.equal(rule("alerts.drop_min_eur"), 5);
+  assert.equal(rule("trips.plan_nudge_min_eur"), 1);
+  assert.deepEqual(rule("ask.budget_steps"), [40, 60, 80, 100, 130]);
+  assert.deepEqual(rule("months.price_band"), { cheap_below: 0.92, dear_above: 1.08 });
+  for (const f of ["VALUE_OF_TIME_EUR_H", "DROP_MIN_EUR", "PLAN_NUDGE_MIN_EUR", "BUDGET_STEPS", "CHEAP_BELOW", "DEAR_ABOVE"]) {
+    assert.ok(!Object.values(ALLOW).some((v) => v.names.includes(f)), `${f} is in config, not on the allowlist`);
+  }
 });
 
 test("RC16: the budget search keeps its numbers in config/pricing.json budget.search (A-11)", () => {
@@ -117,12 +142,19 @@ test("RC16: the budget search keeps its numbers in config/pricing.json budget.se
   assert.equal(rule("budget.search").days_default, 5);
 });
 
-test("RC16: a planted literal fails the guard", () => {
-  assert.deepEqual(numericConsts("export const CLEANING_FEE = 25;\n"), [["CLEANING_FEE", "25"]]);
-  assert.deepEqual(numericConsts("const RATES = [0.1, 0.2];\n"), [["RATES", "[0.1, 0.2]"]]);
+test("RC16: a planted literal in a lib file fails the real guard loop", () => {
+  const dir = mkdtempSync(join(tmpdir(), "rc16-"));
+  try {
+    writeFileSync(join(dir, "planted.js"), "export const CLEANING_FEE = 25;\nconst RATES = [0.1, 0.2];\n");
+    const { found } = scanLib(dir, {});
+    assert.equal(found.length, 2);
+    assert.match(found[0], /CLEANING_FEE = 25/);
+    // Listed with a reason, the same file passes: the allowlist is how a number is excused.
+    assert.deepEqual(scanLib(dir, { "planted.js": { why: "a planted number for this test", names: ["CLEANING_FEE", "RATES"] } }).found, []);
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
   assert.deepEqual(numericConsts("const A = rule('x.y');\n// const B = 3;\n"), []);
-  // and a file the allowlist does not know has no entry, so the loop above would report it:
-  assert.equal(ALLOW["plantedNewFile.js"], undefined);
 });
 
 test("T691: one group cap and one baby cap", () => {

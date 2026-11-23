@@ -13,7 +13,9 @@
  * test keeps the two equal. This device asks at most once in 20 hours and
  * never twice for the same place at the same or a higher price.
  */
-export const DROP_MIN_EUR = 5;
+import { rule } from './price/config.js';
+
+export const DROP_MIN_EUR = rule('alerts.drop_min_eur');
 export const DROP_MIN_SHARE = 0.1;
 export const ASK_GAP_MS = 20 * 3600 * 1000;
 const KEY = 'carta.priceDropAsk.v1';

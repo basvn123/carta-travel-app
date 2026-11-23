@@ -22,7 +22,7 @@
     "class": "all",
     "persona": "family-toddler"
    },
-   "source": "persona family-toddler of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona family-toddler of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "hiking-couple",
@@ -46,7 +46,7 @@
     "class": "all",
     "persona": "hiking-couple"
    },
-   "source": "persona hiking-couple of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona hiking-couple of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "friends-out",
@@ -70,7 +70,7 @@
     "class": "all",
     "persona": "friends-out"
    },
-   "source": "persona friends-out of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona friends-out of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "slow-culture",
@@ -95,7 +95,7 @@
     "class": "all",
     "persona": "slow-culture"
    },
-   "source": "persona slow-culture of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona slow-culture of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "backpacker",
@@ -120,7 +120,7 @@
     "class": "all",
     "persona": "backpacker"
    },
-   "source": "persona backpacker of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona backpacker of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "beach-family",
@@ -145,7 +145,7 @@
     "class": "all",
     "persona": "beach-family"
    },
-   "source": "persona beach-family of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona beach-family of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "cyclist",
@@ -170,7 +170,7 @@
     "class": "all",
     "persona": "cyclist"
    },
-   "source": "persona cyclist of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona cyclist of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "foodie",
@@ -196,7 +196,7 @@
     "class": "all",
     "persona": "foodie"
    },
-   "source": "persona foodie of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona foodie of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "skier",
@@ -218,7 +218,7 @@
     "class": "all",
     "persona": "skier"
    },
-   "source": "persona skier of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona skier of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "wellness",
@@ -241,7 +241,7 @@
     "class": "all",
     "persona": "wellness"
    },
-   "source": "persona wellness of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona wellness of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "island-hopper",
@@ -262,7 +262,7 @@
     "class": "all",
     "persona": "island-hopper"
    },
-   "source": "persona island-hopper of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona island-hopper of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "no-car-rail",
@@ -291,7 +291,7 @@
     "class": "all",
     "persona": "no-car-rail"
    },
-   "source": "persona no-car-rail of tests/personas_v5.json (gate 7); relevant places judged by hand"
+   "source": "persona no-car-rail of tests/personas_v5.json (gate 7); relevant places are an owner-judged hand pick, not from the audit"
   },
   {
    "id": "AT-skier",
@@ -308,7 +308,7 @@
     "class": "all",
     "persona": "skier"
    },
-   "source": "AT places only, persona skier; relevant places judged by hand",
+   "source": "AT places only, persona skier; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "AT"
   },
   {
@@ -327,7 +327,7 @@
     "class": "all",
     "persona": "island-hopper"
    },
-   "source": "IT places only, persona island-hopper; relevant places judged by hand",
+   "source": "IT places only, persona island-hopper; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "IT"
   },
   {
@@ -347,7 +347,7 @@
     "class": "all",
     "persona": "foodie"
    },
-   "source": "ES places only, persona foodie; relevant places judged by hand",
+   "source": "ES places only, persona foodie; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "ES"
   },
   {
@@ -366,7 +366,7 @@
     "class": "all",
     "persona": "beach-family"
    },
-   "source": "PT places only, persona beach-family; relevant places judged by hand",
+   "source": "PT places only, persona beach-family; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "PT"
   },
   {
@@ -384,7 +384,7 @@
     "class": "all",
     "persona": "hiking-couple"
    },
-   "source": "FR places only, persona hiking-couple; relevant places judged by hand",
+   "source": "FR places only, persona hiking-couple; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "FR"
   },
   {
@@ -401,7 +401,7 @@
     "class": "all",
     "persona": "wellness"
    },
-   "source": "DE places only, persona wellness; relevant places judged by hand",
+   "source": "DE places only, persona wellness; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "DE"
   },
   {
@@ -420,7 +420,7 @@
     "class": "all",
     "persona": "island-hopper"
    },
-   "source": "GR places only, persona island-hopper; relevant places judged by hand",
+   "source": "GR places only, persona island-hopper; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "GR"
   },
   {
@@ -438,7 +438,7 @@
     "class": "all",
     "persona": "beach-family"
    },
-   "source": "HR places only, persona beach-family; relevant places judged by hand",
+   "source": "HR places only, persona beach-family; relevant places are an owner-judged hand pick, not from the audit",
    "iso2": "HR"
   },
   {

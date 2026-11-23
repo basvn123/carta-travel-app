@@ -25,7 +25,8 @@ test("E7: shareNights sums to the total and gives every stop at least 1", { todo
   }
 });
 
-test("E7: the finder memo key changes when any FINDER_INPUTS field changes (the quick win QW#13 pins the interim list)", { todo: true }, async () => {
+// Passes today (QW#13 added FINDER_INPUTS); kept as a plain guard so E7 keeps the list.
+test("E7: the finder memo key changes when any FINDER_INPUTS field changes (the quick win QW#13 pins the interim list)", async () => {
   const { FINDER_INPUTS } = await import("../src/lib/recommend/candidates.js");
   assert.ok(Array.isArray(FINDER_INPUTS) && FINDER_INPUTS.length >= 10);
 });

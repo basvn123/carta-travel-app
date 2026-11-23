@@ -16,7 +16,7 @@ import { guideScreens } from "../src/planner/flow/flowGraph.js";
 import { withOriginRoutes } from "../src/lib/origins.js";
 import { matchAll } from "../src/lib/guidedSearch.js";
 import { byRating } from "../src/lib/rating.js";
-import { monthsOf, whenVerdict } from "../src/lib/whenGuide.js";
+import { whenVerdict } from "../src/lib/whenGuide.js";
 
 const read = (rel) => readFileSync(new URL(`../${rel}`, import.meta.url), "utf8");
 
@@ -163,7 +163,15 @@ test("F-10: a hot month with unknown crowds is hot, not hot and busy", () => {
   const v = whenVerdict([m(7, 33, null), m(8, 33, 3), m(9, 22, null)], [9]);
   assert.deepEqual(v.hot, [7, 8]);
   assert.deepEqual(v.hotUnknown, [7]);
-  assert.ok(monthsOf === monthsOf);
+});
+
+test("call sites: E-10, F-10, I-14 and I-16 are wired where a traveller meets them", () => {
+  assert.ok(/canForYou = forYouOffered\(matchTaste\)/.test(read("src/browse/ExploreTab.jsx")) && /sortOptionsFor\(canForYou/.test(read("src/browse/ExploreTab.jsx")), "E-10 Explore");
+  assert.ok(/sortOptionsFor\(canForYou\)/.test(read("src/browse/filters/FilterSheet.jsx")), "E-10 filter sheet");
+  assert.ok(/when\.hotOnly/.test(read("src/browse/DestWhen.jsx")) && /hotUnknown/.test(read("src/browse/DestWhen.jsx")), "F-10");
+  assert.ok(/placedIndex\(dayItems\)/.test(read("src/lib/dayPdf.js")), "I-14");
+  assert.ok(/limit: deckSize\(newDayCount\)/.test(read("src/planner/days/useDayChatAi.js")), "I-16");
+  assert.ok(/\.sort\(byRating\)/.test(read("src/hooks/useExploreCatalog.js")), "E-6 catalog");
 });
 
 test("F-16: the priced month and the When default read the local day, not UTC", () => {
