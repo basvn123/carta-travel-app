@@ -782,3 +782,22 @@ def test_no_word_cuts_a_cut_keeps_a_place():
     assert names._keeps_a_place("Neudorf - Wilhelmsfeld", "Neudorf - Wilhelmsfeld - Rundweg Alpenblick")
     assert not names._keeps_a_place("Rail Trail", "Rail Trail: Marston Green Circular via Elmdon")
     assert not names._keeps_a_place("Marston Green via", "Marston Green via Elmdon Park Lane")
+
+
+def test_a_prefix_never_ends_at_an_in_word_hyphen_and_a_cut_is_at_a_boundary():
+    """Wave 4, judge 2: 72741 and 232403 lost the start of a hyphenated word to the network
+    prefix rule; 79556, 230721, 76609, 200773 and 79356 were cut at a plain space."""
+    assert _ship("RPDDK 9/3 (Jakab-hegy – Büdös-kúti kulcsosház)", "HU") == "Jakab-hegy – Büdös-kúti kulcsosház"
+    assert _ship("IVV Rundweitwanderweg München Fünf-Seen-Land", "DE") == "IVV Rundweitwanderweg München Fünf-Seen-Land"
+    whole = [
+        ("PT", "Caminhos do Pão e Caminhos da Fé (Percurso Longo)"),
+        ("DE", "Westpfalz-Wanderweg Rotes W (Potzberg-Burg Lichtenberg-Weg)"),
+        ("RO", "Pasul Prislop - intersecție traseul BR (sub Vf. Hăjmaru) - Vf. Cearănul - Valea Furului - Borșa"),
+        ("IT", "Var - Sentiero Brigata Fiamme Verdi Giacomo Perlasca"),
+        ("PT", "Camino Torres - 02 Caminho de Don Diego de Torres Villarroel"),
+    ]
+    for cc, src in whole:
+        got = _ship(src, cc)
+        assert got == names.readable(src, cc), (src, got)
+    # A cut that a trim had to shorten, or that is no boundary, ships whole.
+    assert names.cap_title("Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda") == "Alpha Beta Gamma Delta Epsilon Zeta Eta Theta Iota Kappa Lambda"

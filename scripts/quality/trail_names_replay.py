@@ -272,6 +272,31 @@ def place_lost(n0: str, n1: str, cc: str | None = None) -> bool:
     return bool(old) and not any(w.casefold() in n1.casefold() for w in old)
 
 
+def fragment_start(n0: str, n1: str) -> bool:
+    """The first word of the new name is only the tail of a hyphenated word of the wire
+    name ("hegy" from "Jakab-hegy", "Seen-Land" from "Fünf-Seen-Land")."""
+    m = re.match(r"[^\W\d_]+", n1)
+    if not m or n1 == n0:
+        return False
+    w = m.group(0)
+    toks = re.findall(r"[^\W\d_]+(?:-[^\W\d_]+)*", n0)
+    return (w not in re.findall(r"(?<![-\w])[^\W\d_]+", n0)
+            and any(t.endswith("-" + w) or ("-" + w + "-") in t for t in toks))
+
+
+def plain_space_cut(n0: str, n1: str, cc: str | None = None) -> bool:
+    """The new name, minus a dedupe suffix, is a prefix of the wire name (or of its
+    code-free form) and the next character is a plain space: a cut that is no boundary."""
+    b = re.sub(r", (?:no\. |#)\d+$|, \d+(?:\.\d+)? km$|, stage \d+\w*$", "", n1)
+    for src in (n0, codefree(n0, cc)):
+        rest = src[len(b):]
+        if (src.startswith(b) and len(b) < len(src.rstrip()) and rest[:1] == " "
+                and not re.match(r" *[-–:,(\[/|]", rest)
+                and not re.match(r" [A-Z]{1,4}-[A-Za-z0-9]*\d", rest)):     # a stage code ends a name
+            return True
+    return False
+
+
 def emptied(n0: str, n1: str, cc: str | None = None) -> bool:
     """A readable name with a word of three letters or more became nothing or a bare code."""
     r = names.readable(n0, cc)
@@ -347,7 +372,7 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "generic_only": 0, "worse_than_wire": 0, "kept_long": 0, "place_lost": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "generic_only": 0, "worse_than_wire": 0, "kept_long": 0, "place_lost": 0, "fragment_start": 0, "plain_space_cut": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
     stc_ex, dang_ex, worse_ex = [], [], []
     dd_ex = collections.defaultdict(list)
@@ -391,6 +416,8 @@ def replay(rows: list[dict]) -> dict:
             worse_ex.append([r["id"], why, n0, n1])
         # D7 (wave 4, judge 1): no word cuts, so a name with no boundary ships whole; allowed, counted.
         res["kept_long"] += len(n1) > names.TITLE_MAX
+        res["fragment_start"] += fragment_start(n0, n1)
+        res["plain_space_cut"] += plain_space_cut(n0, n1, r.get("country")) and n1 == pre[r["id"]]
         res["place_lost"] += place_lost(n0, n1, r.get("country")) and n1 == pre[r["id"]]   # a dedupe base trim is counted by dedupe_trim
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
@@ -425,7 +452,7 @@ def replay(rows: list[dict]) -> dict:
                      and res["head_cut"] == 0 and res["mid_word_loss"] == 0 and res["start_tail_cut"] == 0
                      and res["dangling_end"] == 0 and res["stray_bracket"] == 0 and res["unit_dropped"] == 0
                      and res["emptied"] == 0 and res["generic_only"] == 0 and res["worse_than_wire"] == 0
-                     and res["place_lost"] == 0
+                     and res["place_lost"] == 0 and res["fragment_start"] == 0 and res["plain_space_cut"] == 0
                      and not new and res["walks"] > 0)
     res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "worse_than_wire": worse_ex, "dedupe": dd_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}

@@ -464,8 +464,14 @@ def cap_title(text, limit=TITLE_MAX, keep_note=False, safe=False, uncut=True):
                 out = trim_dangling(bare)
     if out and whole.endswith(out + ".") and len(out) < limit and _ends_in_abbrev(out):
         out += "."              # D7: "1241 r.", "Śl.", "v.W." keep the dot of a closing abbreviation
-    if uncut and out and len(s) > limit and len(out) < len(s) and not _keeps_a_place(out, s):
-        return s                # a boundary cut that loses every place, or ends on a joiner, ships whole
+    if uncut and out and len(s) > limit and len(out) < len(s):
+        # D7 (wave 4, judge 2): the check runs on the cut as the boundary made it. A cut that
+        # a trim had to shorten, that does not end at a listed boundary, that loses every
+        # place or that ends on a joiner ships the whole name.
+        if trim_dangling(out) != out or not _keeps_a_place(out, s):
+            return s
+        if s.startswith(out) and not re.match(r"(?: [-–/:] |: |, | \(| \[| (?=[A-Z]{1,4}-[A-Za-z0-9]*\d))", s[len(out):]):
+            return s
     return out
 
 
@@ -1020,7 +1026,7 @@ def wire_name(title, country=None):
         if free and not is_code(free):
             base = free
         # A network prefix ("WNW IJsseldelta -") is a code of the walk too.
-        mp = re.match(r"^[A-Z]{2,5}\s+[^-–]{1,30}?\s*[-–]\s*(?=\S)", base)
+        mp = re.match(r"^[A-Z]{2,5}\s+[^-–]{1,30}?\s+[-–]\s*(?=\S)", base)
         if mp and not is_code(base[mp.end():]) and len(base[mp.end():]) <= TITLE_MAX:
             base = base[mp.end():].strip()
     s = cap_title(base)
@@ -1118,7 +1124,7 @@ def _safe_name(rd):
     if free and not is_code(free):
         s = free
     # A network prefix ("WNW IJsseldelta -") is a code of the walk, as in dedupe_names.
-    mp = re.match(r"^[A-Z]{2,5}\s+[^-–]{1,30}?\s*[-–]\s*(?=\S)", s)
+    mp = re.match(r"^[A-Z]{2,5}\s+[^-–]{1,30}?\s+[-–]\s*(?=\S)", s)
     if mp and not is_code(s[mp.end():]):
         s = s[mp.end():].strip()
         if len(s) <= TITLE_MAX:
@@ -1448,7 +1454,7 @@ def dedupe_names(rows, originals=None):
                     # code prefix, when it fits, before an id ("WNW IJsseldelta -
                     # IJsselmuiden/Station Kampen - groene route").
                     up = split_code(o)[0]
-                    mp = re.match(r"^[A-Z]{2,5}\s+[^-\u2013]{1,30}?\s*[-\u2013]\s*(?=\S)", o)
+                    mp = re.match(r"^[A-Z]{2,5}\s+[^-\u2013]{1,30}?\s+[-\u2013]\s*(?=\S)", o)
                     if mp:
                         up = o[mp.end():].strip()
                     cand.append(up if up and len(up) <= TITLE_MAX and not is_code(up)
