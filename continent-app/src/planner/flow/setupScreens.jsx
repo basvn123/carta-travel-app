@@ -32,6 +32,7 @@ import { PartyEditor } from '../PartyEditor.jsx';
 import { StyleCards } from '../../browse/styles/StyleCards.jsx';
 import { useStyleFigures } from '../../browse/styles/styleBits.jsx';
 import { holdForTrip } from './styleSeed.js';
+import { useHoldApp } from './StyleBar.jsx';
 import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
@@ -91,11 +92,12 @@ export function WhoScreen({ settings, commit, doneLabel }) {
   // app's; the active style is held ("Changed for now", Keep makes the
   // picked one active, Back undoes) and its stay half prices the trip.
   const ts = app?.travelStyles;
+  const holdApp = useHoldApp();
   const figures = useStyleFigures(ts?.list, app?.data?.destinations);
   const pickStyle = (id) => {
     const st = ts.list.find((x) => x.id === id);
     if (!st) return;
-    setS(holdForTrip(s, 'style', st, app));
+    setS(holdForTrip(s, 'style', st, holdApp));
   };
   return (
     <>

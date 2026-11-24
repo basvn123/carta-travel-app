@@ -20,6 +20,7 @@ import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { FlowRail } from './FlowRail.jsx';
 import { stepAnswer } from './stepText.js';
 import { CreateScreen } from './setupScreens.jsx';
+import { StyleSwitch } from './StyleBar.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
 import { showKeptNext } from '../../lib/recommend/keptStore.js';
@@ -324,6 +325,8 @@ export function PlanFlow({
           position={t('pf.position', { x: pos.index + 1, n: steps.length })}
           marks={steps.map((id) => ({ key: id, now: id === screen, done: settings.answered.includes(id) }))}
         />
+        {/* G12: the trip's style, switchable for this trip, on every step. */}
+        {settings.kind !== 'now' && <StyleSwitch settings={settings} save={save} />}
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody
           id={screen}

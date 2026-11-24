@@ -323,6 +323,8 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
             <FlowSide rows={sideRows} fit={fit} heading={false} />
           </SideFold>
         )}
+        {/* G12: the trip's style, switchable for this trip, on every step. */}
+        <StyleSwitch settings={settings} save={save} />
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />
         {/* G12 §12: a quiet way past the rest of the questions. */}

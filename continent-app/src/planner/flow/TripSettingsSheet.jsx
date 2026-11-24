@@ -14,6 +14,7 @@ import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { StyleCards } from '../../browse/styles/StyleCards.jsx';
 import { styleName, useStyleFigures } from '../../browse/styles/styleBits.jsx';
 import { holdForTrip } from './styleSeed.js';
+import { useHoldApp } from './StyleBar.jsx';
 import { formatMoney } from '../../lib/money.js';
 
 /**
@@ -27,6 +28,8 @@ import { formatMoney } from '../../lib/money.js';
 export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned = false }) {
   const { t } = useI18n();
   const app = useSettings();
+  // G12 B3: the hold carries the app's choices setter (holdForTrip 'sleep').
+  const holdApp = useHoldApp();
   const [settings, save] = useTripSettings();
   const [editing, setEditing] = useState('');
   // T731: what a saved answer did to a planned trip, in one line, with the
@@ -174,7 +177,7 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
                 const st = ts.list.find((x) => x.id === id);
                 if (!st || id === s.style) return;
                 // G12 plan rethink: this trip's style, the app's held, never switched from Plan.
-                const next = holdForTrip(s, 'style', st, app);
+                const next = holdForTrip(s, 'style', st, holdApp);
                 save(next);
                 setNotice(onSaved ? onSaved(normalizeSettings(next), s) || null : null);
               }}
