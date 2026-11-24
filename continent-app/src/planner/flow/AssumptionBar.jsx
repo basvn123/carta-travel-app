@@ -12,7 +12,7 @@ import { assumptionChips } from './assumptions.js';
 /**
  * The shared assumption bar (G12 plan rethink, decision §1.4, §3.3): the
  * same chips on Trips for you, the found trip and the trip page, so a
- * direct landing never hides what was assumed. Who · From · When/length,
+ * direct landing never hides what was assumed. Who, From, When and length,
  * the style switch, then More. Solid = given; dashed = assumed. A chip
  * opens that question's own body (the screens of the flow) and saves it
  * for this trip; the trips re-price from the new settings. The delta on a

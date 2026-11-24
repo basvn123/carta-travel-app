@@ -1,5 +1,5 @@
 /**
- * bookedReceipt.js, "Betaald €x · Nog te plannen €y" (G12 plan rethink,
+ * bookedReceipt.js, "Betaald €x, nog te plannen €y" (G12 plan rethink,
  * lane L4, decision §3.5 and N2): a trip with booked parts splits its
  * total into what the traveller already paid and what Carta still prices.
  *

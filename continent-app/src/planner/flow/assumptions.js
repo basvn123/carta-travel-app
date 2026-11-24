@@ -1,6 +1,6 @@
 /**
  * assumptions.js, the chips of the shared assumption bar (G12 plan rethink,
- * decision §1.4 and §3.3): Who · From · When/length, then Style and More
+ * decision §1.4 and §3.3): Who, From, When and length, then Style and More
  * in the component. Solid = the traveller gave it (on a screen, in words,
  * on Explore, from the page the trip came from, for this trip, or through
  * their style); dashed = Carta assumed it (a default). Pure, so node tests
