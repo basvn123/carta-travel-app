@@ -275,6 +275,8 @@ export function SavedTripsPanel({
   // prices with, so every figure here is the figure there.
   costs = null, stayTier = 'home', lifestyle = null,
   onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null, onPlanKept = null, onPlanTripCountry = null,
+  // G12 B3 (L5): My trips' plan buttons hand Plan a seed (App's openPlan), not a bare tab.
+  onPlanSeed = null,
   // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
   startWithPast = false, onPastStarted = null,
   // G12 Phase C: the "Prijzen tonen" setting the trip plate and the rows
@@ -1525,7 +1527,12 @@ export function SavedTripsPanel({
               friendsShared={friendTrips.length}
               friendFaces={ownersOf(friendTrips)}
               onOpenFriends={onOpenFriends}
-              onPlanTrip={() => onGoToTab?.('planstart')}
+              // G12 L5: with past trips, plan again somewhere new (the
+              // countries been are the seed's avoidIso2; the finder honours
+              // it in B6); else the door on Plan home.
+              onPlanTrip={() => (pastTrips.length > 0 && beenIso.size > 0 && onPlanSeed
+                ? onPlanSeed({ source: 'past', avoidIso2: [...beenIso] })
+                : onGoToTab?.('planstart'))}
               onAllInPlan={() => onGoToTab?.('planstart')}
               onSignIn={onOpenAuth}
               signInLine={!devicePlan}

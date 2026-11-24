@@ -179,6 +179,7 @@ export function AppOverlays({
              places to the trip planner through Explore's own door. */
           onPlanStops={(stops) => openTripInPlanner({ stops }, 'saved')}
           onPlanKept={(plan) => openPlan?.(null, { plan })}
+          onPlanSeed={(seed) => openPlan?.(seed)}
           /* The trip kept on this device (T503, T500-a) opens in Plan through
              the same hand-off, marked so the planner reads the device. */
           onOpenDeviceTrip={() => openPlanInList({ device: true })}

@@ -159,7 +159,10 @@ export function PlanFlow({
    * a door chip's budget arrives as a pinned seed field. A typed line opens
    * Tell with it, where the words are read and shown as chips.
    */
-  const startTrip = ({ text = '', seed = null } = {}) => {
+  const tellNext = useRef(false);
+  const startTrip = ({ text = '', seed = null, tell = false } = {}) => {
+    // The booked chip opens Tell (its upload and typed sentence) even with no line.
+    tellNext.current = Boolean(tell);
     tripsStore.startNew();
     const style = app?.travelStyles?.active || null;
     const base = seedToSettings(seed || {}, { style, explore: exploreAnswers(app?.model || null) });
@@ -175,7 +178,7 @@ export function PlanFlow({
   };
   /** After the kind sheet: Tell with a typed line, else the first open question. */
   const afterKind = (s) => {
-    if ((s.note || '').trim()) { go('tell'); return; }
+    if ((s.note || '').trim() || tellNext.current) { tellNext.current = false; go('tell'); return; }
     const first = firstAsked(s);
     if (first) go(first); else quickCreate(s);
   };

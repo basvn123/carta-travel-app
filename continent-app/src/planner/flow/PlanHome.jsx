@@ -13,6 +13,7 @@ import { useBcp47 } from './flowHooks.js';
 import { useKept, useKeptDrops } from '../../lib/recommend/keptStore.js';
 import { formatMoney } from '../../lib/money.js';
 import { loadFlightFile } from '../../lib/flights/flightData.js';
+import { PlanDoor } from './PlanDoor.jsx';
 
 /** A plain click stays in the app; a modified click opens the address. */
 function door(go) {
@@ -376,6 +377,13 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
   }, [trips]);
   const [tab, setTab] = useState(() => TABS.find((k) => byState[k].length) || 'planning');
   const next = byState.upcoming[0] || byState.planning[0] || null;
+  // G12 L5: the door replaces Start planning (the same start, now with a
+  // line, three chips and the cards that have something behind them).
+  const lastPast = byState.past[0] || null;
+  const doorNode = (
+    <PlanDoor onStart={onStart} kept={kept} onOpenKept={onOpenKept}
+      past={lastPast ? { name: lastPast.name, nights: lastPast.nights || null } : null} />
+  );
 
   if (trips.length > 0) {
     const del = (trip) => () => onDeleteTrip(trip);
@@ -388,12 +396,9 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
         <header className="pfh-head">
           {/* House style (plan lane): the page shows its name again (T989 had hidden it). */}
           <Title className="pf-title pfh-title" tabIndex={-1}>{t('pf.home.tripsTitle')}</Title>
-          <Button variant="quiet" className="pfh-new" onClick={onStart}
-            iconStart={<span className="pfh-new-plus"><PlusIcon size={20} /></span>}>
-            {t('pf.home.newTrip')}
-          </Button>
           <CartaDoor fan={fan} onOpen={onOpenTrips} />
         </header>
+        {doorNode}
 
         {dropped && onOpenKept && (
           <a className="pf-open-resume pf-open-drop" href={tabHref('trips')} onClick={door(onOpenKept)}>
@@ -446,10 +451,8 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
         {/* House style (integration, P10): the house page head, the tab's
             job in ink, instead of a slogan with an umber second line. */}
         <Title className="pf-title pf-open-title" tabIndex={-1}>{t('pf.home.planTitle')}</Title>
+        {doorNode}
         <div className="pf-open-actions">
-          <Button variant="primary" className="pf-open-start" iconEnd={<ArrowRightIcon size={20} />} onClick={onStart}>
-            {t('pf.home.start')}
-          </Button>
           <Button variant="secondary" className="pf-open-browse" iconStart={<CalendarIcon size={20} />}
             onClick={onOpenTrips}>
             {t('pf.home.browse')}
