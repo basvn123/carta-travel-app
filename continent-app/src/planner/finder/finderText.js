@@ -125,7 +125,12 @@ export function budgetBadge(trip, { locale } = {}) {
   // Totals carry cents (T818): within half a euro is on budget, never "0 under".
   // G12 (L1): a day budget's gap is a day's, and the badge says so.
   const day = b.kind === 'day' ? 'Day' : '';
+  // G12 L8 (decision §3.4): like with like. A trip figure with a line still
+  // "Not yet" is not judged (a missing flight would read as under budget);
+  // an under-budget trip figure names what it never holds (things to do).
+  if (!day && totalLeavesOut(trip)) return null;
   if (Math.round(b.delta) === 0) return { key: `tf.budget.on${day}`, vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
+  if (b.delta < 0 && !day) return { key: 'tf.card.underNoTickets', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: false };
   return { key: `${b.delta < 0 ? 'tf.card.under' : 'tf.card.over'}${day}`, vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };
 }
 

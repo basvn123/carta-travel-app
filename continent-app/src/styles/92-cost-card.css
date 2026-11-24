@@ -281,3 +281,5 @@ div.ccard-hit { cursor: default; }
 .ccard-jaw-opt.is-on { border-color: var(--ccard-ink); }
 .ccard-jaw-total { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .ccard-jaw-diff { margin: 0; color: var(--ccard-ink-2); }
+/* G12 L8: the money left under the budget line. */
+.tpbud-left { margin: 0; color: var(--text-2); font-size: var(--text-label); font-variant-numeric: tabular-nums; }

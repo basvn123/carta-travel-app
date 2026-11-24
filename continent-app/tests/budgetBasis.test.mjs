@@ -49,7 +49,7 @@ test("the badge names a day gap as a day's", () => {
   const day = { ...trip(), budget: { eur: 90, kind: "day", delta: 10 } };
   assert.equal(budgetBadge(day).key, "tf.card.overDay");
   assert.equal(budgetBadge({ ...day, budget: { eur: 110, kind: "day", delta: -10 } }).key, "tf.card.underDay");
-  assert.equal(budgetBadge({ ...day, budget: { eur: 1500, kind: "total", delta: -100 } }).key, "tf.card.under");
+  assert.equal(budgetBadge({ ...day, budget: { eur: 1500, kind: "total", delta: -100 } }).key, "tf.card.underNoTickets", "G12 L8: a trip figure names what it leaves out");
   assert.equal(budgetBadge({ ...day, budget: { eur: 90, kind: "day", delta: null } }), null, "an unknown spend has no badge");
 });
 

@@ -16,6 +16,7 @@ import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { diverseOrder } from '../../lib/recommend/diversify.js';
+import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
 
 /** The cheapest whole total in the list (the best-value pin), when two or more have one. */
 const cheapestOf = (trips) => {
@@ -168,13 +169,17 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   const [skips, setSkips] = useSkips(settings);
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
-  const kept = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
+  // G12 L8: under a ceiling the trips over it leave the list; up to three
+  // just over (within 10%) come back apart under "Just over".
+  const capped = budgetSplit(found, settings.guide?.budget);
+  const kept = skips.length ? capped.list.filter((x) => !skips.includes(x.id)) : capped.list;
+  const nearBy = capped.near.filter((x) => !skips.includes(x.trip.id));
   const quick = sort.quick || [];
   const sorted = sortTrips(filterTrips(kept, quick, destinations), sort.sort, destinations);
   // G12 R1: in the engine's own order rank 1 stays the pure best and the next
   // five are picked to differ (country, shape, price band); the rest follow.
   const trips = sort.sort === 'match' ? diverseOrder(sorted) : sorted;
-  const hidden = found.length - kept.length;
+  const hidden = capped.list.length - kept.length;
   const focusNext = useRef(null);
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -425,6 +430,19 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         <div className="tff-more">
           <Button variant="quiet" onClick={() => setShown(shown + PAGE)}>{t('tf.list.more')}</Button>
         </div>
+      )}
+      {!onMap && capped.out > 0 && (
+        <section className="tff-near" aria-labelledby="tff-near-h" data-near="">
+          <h3 className="tff-rows-h" id="tff-near-h">{t('tf.near.title')}</h3>
+          <p className="tff-near-note">{t('tf.near.out', { n: capped.out })}</p>
+          {nearBy.length > 0 && (
+            <ul className="tff-row-cards" aria-labelledby="tff-near-h">
+              {nearBy.map(({ trip, verdict }) => (
+                <li key={trip.id}>{card(trip, { why: t(settings.guide?.budget?.kind === 'day' ? 'tf.near.whyDay' : 'tf.near.why', { eur: formatMoney(verdict.gap, { locale: lang }) }) })}</li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
       {comparing && ticked.length >= 2 && (
         <TripCompare
