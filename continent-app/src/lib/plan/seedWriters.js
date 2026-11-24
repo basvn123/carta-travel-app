@@ -84,6 +84,33 @@ export function routeSeedOf(trip, { source = 'trip', destinations = null } = {})
   return seed.stops.length ? seed : null;
 }
 
+/**
+ * A journey's base towns from its `basecamps` text ("Kraków", "Point-to-point,
+ * Passau to Vienna", "Vienna (Neubau or Landstrasse)", "Kurowo/Łapy"): each
+ * part a town in order, of "a or b" the first the catalogue knows, words in
+ * brackets dropped. Only exact catalogue names count. The journey's nights
+ * (its days less the day home) are shared out evenly, the first towns
+ * taking any extra night; never more towns than nights.
+ *   -> [{ dest, nights, dayActivities }]
+ */
+function basecampStops(trip, byName) {
+  const ids = [];
+  for (const entry of Array.isArray(trip?.basecamps) ? trip.basecamps : []) {
+    const text = String(entry || '').replace(/\([^)]*\)/g, ' ').replace(/^\s*point-to-point\s*,?/i, '');
+    for (const part of text.split(/,|\s+and\s+|\s+to\s+|\s+&\s+/)) {
+      const hit = part.split(/\/|\s+or\s+/).map((x) => byName.get(norm(x))).find(Boolean);
+      if (hit && ids[ids.length - 1] !== hit) ids.push(hit);
+    }
+  }
+  if (!ids.length) return [];
+  const days = Number(trip.durationDays) || 0;
+  const nights = Math.max(1, days > 1 ? days - 1 : ids.length);
+  const towns = ids.slice(0, nights);
+  const base = Math.floor(nights / towns.length);
+  const extra = nights - base * towns.length;
+  return towns.map((dest, i) => ({ dest, nights: base + (i < extra ? 1 : 0), dayActivities: [] }));
+}
+
 /** The catalogue town for a journey stop: the same name first, else the nearest within NEAR_KM. */
 function townOf(stop, byName, points) {
   const hit = byName.get(norm(stop.name));
@@ -127,6 +154,11 @@ export function journeySeed(trip, stops, destinations = {}) {
   if (out.length) {
     const tail = out[out.length - 1];
     if (tail.nights > 1) tail.nights -= 1;
+  } else {
+    // G12 B7a: most journeys carry no day places, only their named base
+    // towns; those are placed by name alone (no nearest town is guessed),
+    // the journey's nights shared out in order. None named, none placed.
+    out.push(...basecampStops(trip, byName));
   }
   const label = trip.title || trip.name || '';
   const ref = trip.id ? { kind: 'journey', id: String(trip.id) } : null;

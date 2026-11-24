@@ -14,6 +14,7 @@ import { PAGE, QUICK_FILTERS, SORTS, answersLine, countryLabel, filterTrips, sho
 import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
 import { useKept } from '../../lib/recommend/keptStore.js';
 import { otherMonthTrips } from '../../lib/recommend/alternatives.js';
+import { libraryShortlist, libraryTrips } from '../../lib/recommend/moreSearch.js';
 import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
@@ -181,15 +182,33 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   const keptList = useKept();
   // G12 R6: Another month, cheaper, priced only on "Search more" (L0: the
   // first run already takes 2 to 3.5 s on a desktop, so no extra pricing
-  // runs before the traveller asks). null = not asked, [] = asked, none found.
+  // runs before the traveller asks). null = not asked, 'busy', then
+  // { month, library } (each [] when none found).
   const [more, setMore] = useState(null);
+  const moreRun = useRef(0);
   // A new answer set is a new list: an earlier search no longer applies.
-  useEffect(() => { setMore(null); }, [found]);
+  useEffect(() => { moreRun.current += 1; setMore(null); }, [found]);
   const searchMore = () => {
     setMore('busy');
-    // One frame first, so the button can say it is searching before the pricing blocks.
-    requestAnimationFrame(() => setMore(otherMonthTrips(found, input)));
+    const run = moreRun.current;
+    const ref = found[0] || null;
+    // G12 B7a (R6): Carta's own journeys that fit the window, loaded only
+    // now (a few small files), placed on catalogue towns and priced by the
+    // same engine as the list; the journey library loads in its own chunk.
+    import('../../lib/journeys.js')
+      .then(({ loadAllJourneyCards, loadJourney }) => loadAllJourneyCards()
+        .then((cards) => Promise.all(libraryShortlist(cards, ref, { settings }).map((c) => loadJourney(c.id).catch(() => null)))))
+      .catch(() => [])
+      // One frame first, so the button can say it is searching before the pricing blocks.
+      .then((journeys) => requestAnimationFrame(() => {
+        if (run !== moreRun.current) return;
+        setMore({
+          month: otherMonthTrips(found, input),
+          library: libraryTrips((journeys || []).filter(Boolean), input, ref, { have: found }),
+        });
+      }));
   };
+  const moreFound = more && more !== 'busy' ? more : null;
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
   // G12 L8: under a ceiling the trips over it leave the list; up to three
@@ -458,17 +477,30 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
             </section>
             {input && (
               <section className="tff-search-more" aria-live="polite">
-                {Array.isArray(more) && more.length > 0 ? (
+                {moreFound ? (
                   <>
-                    <h3 className="tff-rows-h">{t('tf.row.month')}</h3>
-                    <ul className="tff-row-cards">
-                      {more.map((m) => (
-                        <li key={m.trip.id}>{card(m.trip, { why: t('tf.row.monthWhy', { month: monthName(m.month, lang), eur: formatMoney(-m.diff, { locale: lang }) }) })}</li>
-                      ))}
-                    </ul>
+                    {moreFound.month.length > 0 && (
+                      <>
+                        <h3 className="tff-rows-h">{t('tf.row.month')}</h3>
+                        <ul className="tff-row-cards">
+                          {moreFound.month.map((m) => (
+                            <li key={m.trip.id}>{card(m.trip, { why: t('tf.row.monthWhy', { month: monthName(m.month, lang), eur: formatMoney(-m.diff, { locale: lang }) }) })}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    {moreFound.library.length > 0 && (
+                      <>
+                        <h3 className="tff-rows-h">{t('tf.row.carta')}</h3>
+                        <ul className="tff-row-cards">
+                          {moreFound.library.map((trip) => (
+                            <li key={trip.id}>{card(trip, { why: t('tf.row.cartaWhy', { title: trip.library.title }) })}</li>
+                          ))}
+                        </ul>
+                      </>
+                    )}
+                    {!moreFound.month.length && !moreFound.library.length && <p className="tff-spendref">{t('tf.more.none')}</p>}
                   </>
-                ) : Array.isArray(more) ? (
-                  <p className="tff-spendref">{t('tf.more.none')}</p>
                 ) : (
                   <Button variant="secondary" size="sm" disabled={more === 'busy'} onClick={searchMore}>
                     {t(more === 'busy' ? 'tf.more.busy' : 'tf.more.search')}

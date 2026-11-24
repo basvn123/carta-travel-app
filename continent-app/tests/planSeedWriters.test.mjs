@@ -77,6 +77,18 @@ test("journeySeed: a journey's route stops on the catalogue, a night a day, the 
   assert.deepEqual(none.places.map((x) => x.id), ["PT"], "no town found: the country stays as the wish");
 });
 
+test("journeySeed (G12 B7a): no day places, the named base towns by exact name, the nights shared out", () => {
+  const j = (basecamps) => ({ id: "j3", countryCode: "PT", durationDays: 7, basecamps });
+  const stops = (s) => s.stops.map((x) => [x.dest, x.nights]);
+  assert.deepEqual(stops(journeySeed(j(["Point-to-point, Lisbon to Porto"]), [], DESTS)), [["LIS", 3], ["OPO", 3]]);
+  assert.deepEqual(stops(journeySeed(j(["Lisbon (Alfama or Baixa)"]), null, DESTS)), [["LIS", 6]], "words in brackets dropped");
+  assert.deepEqual(stops(journeySeed(j(["Cascais/Sintra", "Porto"]), [], DESTS)), [["SIN", 3], ["OPO", 3]], "of a or b, the first the catalogue knows");
+  assert.deepEqual(stops(journeySeed({ ...j(["Lisbon", "Sintra", "Porto"]), durationDays: 3 }, [], DESTS)), [["LIS", 1], ["SIN", 1]], "never more towns than nights");
+  const none = journeySeed(j(["Óbidos"]), [], DESTS);
+  assert.deepEqual(none.places.map((x) => x.id), ["PT"], "no catalogue name: no town guessed, the country stays");
+  assert.deepEqual(journeySeed(j([]), [], DESTS).stops, [], "no base towns: none invented");
+});
+
 test("askPlanSeed: Ask's route plus the question through parseTrip (one parser)", () => {
   const s = askPlanSeed({ stops: [{ dest: "LIS", nights: 4 }], transport: "public" }, "5 days with 2 kids from 3 to 8 May 2027 under 800 euros", { lang: "en", today: new Date("2026-11-24T12:00:00Z") });
   assert.equal(s.source, "ask");
