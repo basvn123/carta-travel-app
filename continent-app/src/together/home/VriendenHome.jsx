@@ -618,8 +618,11 @@ export function VriendenHome({
       <div className={`tg-page vr-page vr-home vr-v3${ex ? ' is-example' : ''}`}>
         <div className="vr-head">
           <h1 className="vr-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
-          <InviteButton open={inviteOpen} onOpen={() => setInviteOpen(true)} onClose={() => setInviteOpen(false)} onFind={onFind}
-            variant={friends.length ? 'umber' : 'primary'} block={false} />
+          {/* With no friends the invite is the body's primary, as My trips' Plan is; never two. */}
+          {!zero && (
+            <InviteButton open={inviteOpen} onOpen={() => setInviteOpen(true)} onClose={() => setInviteOpen(false)} onFind={onFind}
+              variant={friends.length ? 'umber' : 'primary'} block={false} />
+          )}
         </div>
         {error && <div className="auth-error" role="alert">{error}</div>}
         {ex && <ExampleBar onClose={() => setExample(false)} />}
@@ -632,14 +635,20 @@ export function VriendenHome({
               <Button variant="quiet" size="sm" className="vr-lnk" onClick={() => { togetherActions.remove(pendingOpen.linkId); setPendingOpen(null); }}>{t('friends.cancel')}</Button>
             </p>
           )}
-          <div className="vr-side">
-            <Status count={tl.count} next={tl.next} hasFriends={hasFriends} onGo={go} ex={Boolean(ex)} />
-            {zero && (
-              <div className="vr-first">
-                <h2 className="vr-first-t">{t('vr.zeroTitle')}</h2>
+          {/* The My trips first-use block (MyTripsTabs): one line, the primary,
+              then "Bekijk een voorbeeld" with the eye (judge v3-1 fix 6). */}
+          {zero && (
+            <div className="mt-first vr-first">
+              <h2 className="mt-first-title">{t('vr.zeroTitle')}</h2>
+              <div className="mt-first-acts">
+                <InviteButton open={inviteOpen} onOpen={() => setInviteOpen(true)} onClose={() => setInviteOpen(false)} onFind={onFind}
+                  variant="primary" block />
                 <Button variant="secondary" className="mt-soft" iconStart={<EyeIcon size={18} />} onClick={() => setExample(true)}>{t('mt.seeExample')}</Button>
               </div>
-            )}
+            </div>
+          )}
+          <div className="vr-side">
+            <Status count={tl.count} next={tl.next} hasFriends={hasFriends} onGo={go} ex={Boolean(ex)} />
             <NuBand items={tl.now} me={me} onView={onView} onError={onError} />
             <Roster items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji}
               meLine={!ex && s.me?.handle ? `@${s.me.handle}` : t('vr.whatFriendsSee')} onMe={() => onView('me')} meets={data.meets} onFriend={openFriend} onCircle={(id) => onView('circle', id)}

@@ -411,8 +411,12 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-status-r { margin-inline-start: auto; font-size: var(--text-body); font-weight: 700; color: var(--text-2); white-space: nowrap; }
 .vr-status-chev { flex: none; color: var(--text-3); }
 .vr-ct { display: inline-block; font: 800 24px/1 var(--plate-face); color: var(--umber-800); vertical-align: -2px; }
-.vr-first { display: grid; gap: var(--space-3); justify-items: start; padding-block: var(--space-2); }
-.vr-first-t { margin: 0; font-size: var(--text-title); font-weight: 800; letter-spacing: -0.015em; }
+/* The first-use block is My trips' own (72-atlas.css .mt-first); here only
+   the invite's wrapper stretches and the example button keeps My trips'
+   panel look (an ink edge, no well; 73-mytrips-ink.css). */
+.vr-first .mt-first-acts .vr-invite { display: grid; }
+.vr-panel .vr-first .btn.mt-soft { border-color: var(--text); background: transparent; }
+.vr-v3 > .vr-first { grid-column: 1 / -1; }
 
 /* the spine */
 .vr-band { display: grid; min-width: 0; scroll-margin-top: 56px; }
