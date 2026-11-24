@@ -10,7 +10,11 @@ import { readSkips, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { SortMenu } from './SortMenu.jsx';
-import { PAGE, QUICK_FILTERS, SORTS, answersLine, filterTrips, sortTrips, totalLeavesOut } from './finderText.js';
+import { PAGE, QUICK_FILTERS, SORTS, answersLine, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut } from './finderText.js';
+import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
+import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
+import { formatMoney } from '../../lib/money.js';
+import { monthName } from '../../lib/dates.js';
 import { diverseOrder } from '../../lib/recommend/diversify.js';
 
 /** The cheapest whole total in the list (the best-value pin), when two or more have one. */
@@ -242,13 +246,35 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   };
 
   const cheapestId = cheapestOf(trips);
+  // G12 R2: themed rows from the trips already priced, under the best pick
+  // and the diverse five, only in the engine's own order with no quick
+  // filter (a sort or a filter is the traveller's own way to keep looking).
+  const acc = { minutes: thereMinutes, highs: (x) => dayHighs(x, destinations), crowd: (x) => crowdTier(x, destinations) };
+  const rows = sort.sort === 'match' && !quick.length && !onMap
+    ? themedRows(trips, { ...acc, settings, topIds: trips.slice(0, PAGE).map((x) => x.id) })
+    : [];
+  const rowTitle = (r) => {
+    if (r.key === 'warm') return r.month ? t('tf.row.warm', { month: monthName(r.month, lang) }) : t('tf.row.warmAny');
+    return t(`tf.row.${r.key}`);
+  };
+  const whyText = (r, trip) => {
+    const w = rowWhy(r, trip, acc);
+    if (!w) return '';
+    if (w.key === 'tf.row.less') return t(w.key, { eur: formatMoney(w.eur, { locale: lang }) });
+    if (w.key === 'tf.row.time') return t(w.key, { time: shortDuration(t, w.minutes) });
+    if (w.key === 'tf.row.high') return t(w.key, { c: w.c });
+    return t(w.key, { month: monthName(w.month, lang) });
+  };
+  // "All n" opens the row's sort on the full list below.
+  const showAll = (r) => { setSort(r.sort); titleRef.current?.scrollIntoView?.({ block: 'start' }); };
   // The top pick takes a whole row while the list is in the engine's order (T879).
   const featId = sort.sort === 'match' && trips.length > 2 ? trips[0].id : null;
-  const card = (trip, { feat = false } = {}) => (
+  const card = (trip, { feat = false, why = '' } = {}) => (
     <TripCard
       trip={trip}
       destinations={destinations}
       feat={feat}
+      why={why}
       best={trip.id === cheapestId}
       marked={trip.id === markedId}
       onOpen={onOpen}
@@ -312,7 +338,38 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
             <Button variant="secondary" size="sm" onClick={() => setSortState({ ...sort, quick: [] })}>{t('tf.quick.clear')}</Button>
           </div>
         );
-        const list = (
+        const item = (trip) => (
+          <li key={trip.id} className={[trip.id === featId ? 'is-feat' : '', trip.id === hotId ? 'is-hot' : ''].filter(Boolean).join(' ') || undefined}
+            onMouseEnter={side ? () => setHotId(trip.id) : undefined} onMouseLeave={side ? () => setHotId(null) : undefined}
+            ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
+            {card(trip, { feat: trip.id === featId })}
+          </li>
+        );
+        // G12 R2: with rows, the best pick and the diverse five, then the
+        // rows, then the rest of the list under "Keep looking".
+        const list = rows.length ? (
+          <>
+            <ol className="tff-list">{trips.slice(0, PAGE).map(item)}</ol>
+            <section className="tff-rows" aria-labelledby="tff-rows-h">
+              <h3 className="tff-rows-h" id="tff-rows-h">{t('tf.row.label')}</h3>
+              {rows.map((r) => (
+                <div key={r.key} className="tff-row">
+                  <div className="tff-row-head">
+                    <h4 className="tff-row-title">{rowTitle(r)}</h4>
+                    <Button variant="quiet" size="sm" aria-label={t('tf.row.allOf', { n: r.n, row: rowTitle(r) })} onClick={() => showAll(r)}>
+                      {t('tf.row.all', { n: r.n })}
+                    </Button>
+                  </div>
+                  <ul className="tff-row-cards" aria-label={rowTitle(r)}>
+                    {r.trips.map((trip) => <li key={trip.id}>{card(trip, { why: whyText(r, trip) })}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </section>
+            {trips.length > PAGE && <h3 className="tff-more-h">{t('tf.list.keepLooking')}</h3>}
+            {shown > PAGE && <ol className="tff-list">{trips.slice(PAGE, shown).map(item)}</ol>}
+          </>
+        ) : (
           <ol className="tff-list">
             {trips.slice(0, shown).map((trip) => (
               <li key={trip.id} className={[trip.id === featId ? 'is-feat' : '', trip.id === hotId ? 'is-hot' : ''].filter(Boolean).join(' ') || undefined}
