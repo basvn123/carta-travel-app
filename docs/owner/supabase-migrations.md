@@ -4,7 +4,7 @@ Project Carta, `ntssxktaduxzpsmejwyv` only (never Horizon-App or the inactive pr
 
 ## State on 2026-11-12 (owner sweep, supabase lane)
 
-- **Live:** migrations 001 to 075 (there is no 068).
+- **Live:** migrations 001 to 078 (there is no 068).
 - **Deployed:** all ten Edge Functions from `main` as of 2026-11-12. These five run without the JWT check: stripe-webhook, notify, price-alerts, waitlist, upload-scan. Each was smoke-tested.
   - The AI trio answers 401 without a signed-in user.
   - Without their provider keys, the others answer "not configured" and send nothing: billing (removed from the code by round 2; deleted with the next deploy, step 1), checkout, stripe-webhook, notify, price-alerts, waitlist, upload-scan.
@@ -15,6 +15,7 @@ Project Carta, `ntssxktaduxzpsmejwyv` only (never Horizon-App or the inactive pr
 The sweep could not apply migrations or write secrets: the session's permission guard refuses production DB and secret-store writes. So step 1 is one run for whoever holds that permission, a Claude session the owner allows or the owner.
 
 - **Applied 2026-11-12 by the orchestrator (owner sweep):** migrations 063 to 075, one at a time, no error; `carta_privacy_retention`, `carta_ai_events_prune` and `carta_ai_reports_prune` are scheduled. A JSON copy of the tables 069 prunes was taken first (local only, `.work/2026-11-12-owner-sweep/db-backup-before-069/`). The app was shipped the same evening, so 064 and the admin page match.
+- **Applied 2026-11-24 by a Claude session the owner allowed:** migrations 076 (followed prices), 077 (Reiskas splits) and 078 (kringen), in order, no error. Checked live: the `watch` kind, the three split columns, five circle tables with RLS on, 18 policies, the four circle functions pin `search_path`, anon cannot read them.
 - **Step 1 below is one command:** `python -I .work/2026-11-12-owner-sweep/set_shared_secrets.py` makes the four values, sets them, fills Vault and runs only the cron blocks of 060 and 061; it prints no secret. The session permission check refused to run it for Claude.
 
 ## Steps
@@ -52,12 +53,6 @@ The sweep could not apply migrations or write secrets: the session's permission 
      supabase db query --linked "select source_header, created_at from public.content_reports order by created_at desc limit 1"
      ```
      `source_header` must be `cf-connecting-ip`. That also closes T068-c.
-
-4. **Migration 076: followed prices across devices (G12, My trips atlas).** Paste `supabase/migrations/076_account_things_watch.sql` in the Supabase SQL editor and run it. It adds the kind `watch` to the `account_things` check. Undo: `076_account_things_watch_down.sql`. Until it runs, followed prices stay on the device. Check: follow a price signed in on one device and see it under Saved, Followed on another.
-
-5. **Migration 077: per-person splits for a shared Reiskas (G15, Uitgaven).** Paste `supabase/migrations/077_group_expenses_split.sql` in the Supabase SQL editor after 058 and run it; look for "group expenses split self-check passed". It adds per-person shares, the currency, the category, a client id, the day and a column-level update grant with an update policy to `group_trip_expenses`. Nothing in the app writes these columns yet: phase 1 keeps the Reiskas in the trip on one phone, and phase 2 (join by link) will. Undo: `077_group_expenses_split_down.sql` (one-way for the new columns' data). Check: `supabase db query --linked "select column_name from information_schema.columns where table_name = 'group_trip_expenses' and column_name in ('shares','currency','client_id')"` answers three rows. Not run against a database by the build session.
-
-6. **Migration 078: kringen (G16, Vrienden).** Paste `supabase/migrations/078_circles.sql` in the Supabase SQL editor after 077 and run it; look for "circles self-check passed". It adds `circles`, `circle_members` (with the home airport), `circle_proposals`, `circle_votes`, `circle_availability`, `circle_role()` and `circle_people()`, with RLS: private, the owner invites only accepted friends, members write only their own rows. Until it runs, Vrienden shows no Kringen section. Undo: `078_circles_down.sql` (one way: every kring, vote and date range is deleted). Check: sign in, Vrienden, Nieuwe kring, create one with a friend, and see it in Kringen; the friend sees it in Te doen. Not run against a database by the build session.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
