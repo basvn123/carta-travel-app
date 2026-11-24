@@ -137,6 +137,8 @@ async function timelineRules(page, v) {
     const root = document.querySelector('.tg-panel');
     const out = [];
     const wide = window.innerWidth >= 1100;
+    // From 768 px the months are a grid with the plate above each card.
+    const grid = window.innerWidth >= 768;
     const vis = (el) => { const r = el.getBoundingClientRect(); const s = getComputedStyle(el); return r.width > 0 && r.height > 0 && s.visibility !== 'hidden' && s.display !== 'none'; };
     if (!wide) {
       const sticky = [...root.querySelectorAll('*')].filter((el) => getComputedStyle(el).position === 'sticky' && vis(el));
@@ -158,12 +160,12 @@ async function timelineRules(page, v) {
       if (!plate || !card || !vis(plate)) continue;
       const p = plate.getBoundingClientRect();
       const c = card.getBoundingClientRect();
-      if (wide ? p.bottom > c.top + 1 : Math.abs(p.top - c.top) > 1) out.push(`plate ${Math.round(p.top)} vs card ${Math.round(c.top)}`);
+      if (grid ? p.bottom > c.top + 1 : Math.abs(p.top - c.top) > 1) out.push(`plate ${Math.round(p.top)} vs card ${Math.round(c.top)}`);
     }
     // Judge v3-1 fix 2: from 1100 px no hole in a grid of moments before its
     // last row (each column is covered at the top of every row), and no
     // void over 200 px between two cards in one column.
-    if (wide) {
+    if (grid) {
       for (const grid of [root.querySelector('.vr-main'), root.querySelector('.vr-band.is-undated')]) {
         if (!grid || getComputedStyle(grid).display !== 'grid') continue;
         const g = grid.getBoundingClientRect();
