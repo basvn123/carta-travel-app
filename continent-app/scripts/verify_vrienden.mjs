@@ -143,6 +143,32 @@ async function timelineRules(page, v) {
       const c = card.getBoundingClientRect();
       if (wide ? p.bottom > c.top + 1 : Math.abs(p.top - c.top) > 1) out.push(`plate ${Math.round(p.top)} vs card ${Math.round(c.top)}`);
     }
+    // Judge v3-1 fix 2: from 1100 px no hole in a grid of moments before its
+    // last row (each column is covered at the top of every row), and no
+    // void over 200 px between two cards in one column.
+    if (wide) {
+      for (const grid of [root.querySelector('.vr-main'), root.querySelector('.vr-band.is-undated')]) {
+        if (!grid || getComputedStyle(grid).display !== 'grid') continue;
+        const g = grid.getBoundingClientRect();
+        const widths = getComputedStyle(grid).gridTemplateColumns.split(' ').map(parseFloat);
+        const gap = parseFloat(getComputedStyle(grid).columnGap) || 0;
+        const xs = [];
+        widths.reduce((x, w) => { xs.push(x + w / 2); return x + w + gap; }, g.left);
+        const items = [...grid.querySelectorAll('.vr-mo')]
+          .filter((li) => vis(li) && (grid.matches('.is-undated') || !li.closest('.is-undated'))).map((li) => li.getBoundingClientRect());
+        const tops = [...new Set(items.map((r) => Math.round(r.top)))].sort((a, b) => a - b);
+        const rowTops = tops.filter((t, i) => i === 0 || t - tops[i - 1] > 4);
+        for (const t of rowTops.slice(0, -1)) {
+          for (const x of xs) {
+            if (!items.some((r) => r.left <= x && r.right >= x && r.top <= t + 5 && r.bottom >= t + 5)) out.push(`hole at row ${Math.round(t - g.top)} column ${xs.indexOf(x) + 1}`);
+          }
+        }
+        for (const x of xs) {
+          const col = items.filter((r) => r.left <= x && r.right >= x).sort((a, b) => a.top - b.top);
+          for (let i = 1; i < col.length; i += 1) if (col[i].top - col[i - 1].bottom > 200) out.push(`void ${Math.round(col[i].top - col[i - 1].bottom)} px in column ${xs.indexOf(x) + 1}`);
+        }
+      }
+    }
     // Judge v3-1 fix 1: with nobody, no face but yours and no next trip; with
     // one friend, only that friend (Sam Martens, SM).
     const allowed = { empty: [], one: ['SM'] }[variant];

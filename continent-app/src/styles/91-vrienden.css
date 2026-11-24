@@ -430,7 +430,10 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-dot { position: relative; width: 11px; height: 11px; margin-top: 16px; box-sizing: border-box; border-radius: 50%; background: var(--surface-page); border: 2px solid var(--umber-600); }
 .vr-dot.is-now { background: var(--umber-600); }
 .vr-mo-panel { grid-column: 2; margin-top: var(--space-3); min-width: 0; }
-.vr-more { justify-self: start; margin-inline-start: calc(44px + var(--space-3)); }
+.vr-mo.is-more { padding-bottom: var(--space-3); }
+.vr-mo.is-more .vr-dot { margin-top: 16px; }
+.vr-more { justify-self: start; }
+.vr-more-n, .vr-mo-month { display: none; }
 
 /* one card */
 .vr-m { position: relative; display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
@@ -522,24 +525,39 @@ span.vr-ro-row { cursor: default; }
   /* One grid, three across, that flows across the months without holes: the
      date plate above each card names its month, so the month heading is
      kept for screen readers only. The soonest overlap spans two at 2:1. */
-  .vr-v3 .vr-main { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); align-items: start; }
+  /* Dense flow: a cell left open by the wide overlap card is filled. */
+  .vr-v3 .vr-main { grid-template-columns: repeat(3, minmax(0, 1fr)); grid-auto-flow: row dense; gap: var(--space-7) var(--space-4); align-items: start; }
   .vr-main > .vr-ruler, .vr-main .vr-band.is-undated > .vr-band-head { grid-column: 1 / -1; }
   .vr-main .vr-band, .vr-main .vr-band-l { display: contents; }
   .vr-main .vr-band:not(.is-undated) > .vr-band-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .vr-main .vr-band-head { margin-top: 0; }
-  .vr-main .vr-more { grid-column: 1 / -1; }
-  .vr-main .vr-mo { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-2); padding-bottom: 0; align-content: start; }
-  .vr-main .vr-gut { grid-row: auto; justify-items: start; }
+  /* The spine on desktop: every cell stands on a 1.5 px umber rule with its
+     date plate on it, and the first cell of a month carries the ruled month
+     head above the rule (the same 12/800 head as the phone's bands). */
+  .vr-main .vr-mo { grid-template-columns: minmax(0, 1fr); row-gap: var(--space-2); padding: var(--space-2) 0 0; align-content: start; border-top: 1.5px solid var(--umber-300); }
+  .vr-main .vr-mo-month {
+    display: block; position: absolute; bottom: calc(100% + var(--space-2)); inset-inline-start: 0; white-space: nowrap;
+    font-size: var(--text-caption); font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-2);
+  }
+  /* Zonder datum is its own grid under the months, so the dense flow above
+     never pulls an undated card in among the dated ones. */
+  .vr-main .vr-band.is-undated { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-5) var(--space-4); align-items: start; }
+  .vr-main .vr-mo.is-more { padding-bottom: 0; }
+  .vr-main .vr-mo.is-more .vr-more {
+    display: grid; place-content: center; justify-items: center; gap: var(--space-1); width: 100%; aspect-ratio: 3 / 2;
+    margin-top: calc(26px + var(--space-2)); border-radius: var(--radius-card); background: var(--surface-sunken);
+  }
+  .vr-main .vr-more-n { display: block; font: 800 40px/1 var(--plate-face); color: var(--umber-800); }
+  .vr-main .vr-gut { position: static; grid-row: auto; justify-items: start; }
   .vr-main .vr-gut::before { display: none; }
   .vr-main .vr-gut:not(:has(.vr-plate)) { display: none; }
   .vr-main .vr-plate { display: flex; align-items: baseline; gap: var(--space-1); width: auto; padding: 0; background: none; }
   .vr-main .vr-m.is-full { max-width: none; }
-  .vr-main .vr-mo.is-wide { grid-column: span 2; }
+  .vr-main .vr-mo.is-wide { grid-column: span 2; grid-row: span 2; }
   .vr-main .vr-mo.is-wide .vr-m-ph { aspect-ratio: 2 / 1; }
   .vr-main .vr-mo-panel { grid-column: 1; margin-top: 0; }
   .vr-main .vr-m.is-row { grid-template-columns: minmax(0, 1fr); }
   .vr-main .vr-m.is-row .vr-m-ph { border-radius: var(--radius-card); }
-  .vr-main .vr-more { margin-inline-start: 0; }
 }
 
 /* motion: all of it follows a tap, except the once-per-visit entrance */

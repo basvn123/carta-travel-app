@@ -310,12 +310,15 @@ function Band({ id, label, head = null, className = '', moments, hidden = [], mo
         {head}
       </div>
       <ul className="vr-band-l">
-        {list.map((m) => {
+        {list.map((m, i) => {
           const panel = m.kind === 'overlap' ? m.src.theirs.tripPlanId : m.kind === 'friendTrip' ? m.src.tripPlanId : '';
           const open = Boolean(panel) && openId === panel;
           return (
             <li key={m.id} id={domId(m.id)} className={`vr-mo${m.saffron ? ' is-wide' : ''}`}>
               <span className="vr-gut" aria-hidden="true">
+                {/* From 1100 px the month heads are inside the grid's flow: the
+                    first card of a month carries its ruled month name. */}
+                {dated && i === 0 && <span className="vr-mo-month">{label}</span>}
                 {dated && m.at ? (
                   <span className="vr-plate"><b className="num">{Number(m.at.slice(8))}</b><span>{monShort(m.at, lang)}</span></span>
                 ) : <span className="vr-dot" />}
@@ -326,13 +329,17 @@ function Band({ id, label, head = null, className = '', moments, hidden = [], mo
             </li>
           );
         })}
+        {/* "Nog n" is a cell of the grid, so a month never leaves holes. */}
+        {hidden.length > 0 && !more && (
+          <li className="vr-mo is-more">
+            <span className="vr-gut" aria-hidden="true"><span className="vr-dot" /></span>
+            <Button variant="quiet" size="sm" className="vr-lnk vr-more" aria-expanded={more} onClick={() => setMore(true)}
+              iconEnd={<ChevronDownIcon size={16} />}>
+              <b className="vr-more-n num" aria-hidden="true">+{hidden.length}</b><span>{moreLabel}</span>
+            </Button>
+          </li>
+        )}
       </ul>
-      {hidden.length > 0 && !more && (
-        <Button variant="quiet" size="sm" className="vr-lnk vr-more" aria-expanded={more} onClick={() => setMore(true)}
-          iconEnd={<ChevronDownIcon size={16} />}>
-          {moreLabel}
-        </Button>
-      )}
     </section>
   );
 }
