@@ -167,7 +167,10 @@
      "2",
      "--",
      "<PY>",
-     "pipeline/beaches/build_beaches.py"
+     "pipeline/beaches/build_beaches.py",
+     "--no-context",
+     "--max-hours",
+     "24"
     ]
    ],
    "guard": "<fn guard_beaches>",

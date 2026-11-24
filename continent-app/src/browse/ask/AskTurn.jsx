@@ -3,12 +3,13 @@ import { Button } from '../../components/ui/index.js';
 import { CheckIcon, ExternalIcon } from '../../components/Icons.jsx';
 import { parseIntent } from '../../lib/ask/intent.js';
 import { answerFacts } from '../../lib/ask/rank.js';
-import { composeAnswer, unknownNote } from '../../lib/ask/compose.js';
+import { composeAnswer, unknownNote, scopeLines } from '../../lib/ask/compose.js';
 import { buildPack } from '../../lib/ask/context.js';
 import { writeAnswer } from '../../lib/ask/generate.js';
 import { useAiStyle } from '../../hooks/useAiStyle.js';
-import { outsidePlace } from '../../lib/ask/outside.js';
-import { bindFollowUp, pointsBack } from '../../lib/ask/followup.js';
+import { askScope, needsGazetteer } from '../../lib/ask/scope.js';
+import { loadTownsFor, loadAreas } from '../../lib/search/gazetteer.js';
+import { bindFollowUp } from '../../lib/ask/followup.js';
 import {
   SHOWN_PLACES, MIN_TYPING_MS, SLOW_MS, trimSentences, replyText, shortLine, revealPace, placeChips,
 } from '../../lib/ask/reply.js';
@@ -60,26 +61,44 @@ function useTurn(turn, vocab, ctx) {
   );
   // T572: a follow-up that names no place is about the last answer's place;
   // one that points back ("there") is never a place outside Europe.
+  // E7: askScope decides first whether the question is answered at all: a refusal, an
+  // off-topic or outside-Europe decline, a European place Carta lacks (src/lib/ask/scope.js,
+  // the function the any-question eval runs too). A town name is looked up in the gazetteer
+  // before it decides, so `scope` is null for that short wait.
   const refId = turn.ref?.id || null;
-  const outside = React.useMemo(
-    () => (raw && !(refId && pointsBack(turn.q)) ? outsidePlace(turn.q, raw) : null),
-    [raw, turn.q, refId],
-  );
-  const parsed = React.useMemo(
-    () => (raw && !outside && refId ? bindFollowUp(turn.q, raw, turn.ref) : raw),
+  const gaz = React.useMemo(() => (raw ? needsGazetteer(turn.q, raw, turn.ref, { lang }) : null), [raw, turn.q, lang]); // eslint-disable-line react-hooks/exhaustive-deps -- turn.ref is read by its id
+  const [towns, setTowns] = React.useState(undefined);
+  // The gazetteer's regions too: a region the catalogue covers (Burgundy, Galicia) is answered, not declined (E7, wave 3b).
+  const [areas, setAreas] = React.useState(null);
+  React.useEffect(() => {
+    if (!gaz) return undefined;
+    let live = true;
+    Promise.all([loadTownsFor(gaz), loadAreas().catch(() => null)])
+      .then(([l, a]) => { if (live) { setAreas(a); setTowns(l); } })
+      .catch(() => { if (live) setTowns(null); });
+    return () => { live = false; };
+  }, [gaz]);
+  const scope = React.useMemo(
+    () => (raw && (!gaz || towns !== undefined) ? askScope(turn.q, raw, { ref: turn.ref, towns: gaz ? towns : null, areas: gaz ? areas : null, rows: ctx.rows, lang }) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps -- turn.ref is read by its id
-    [raw, outside, refId, turn.q],
+    [raw, gaz, towns, areas, turn.q, refId, ctx.rows, lang],
+  );
+  const declined = !!scope && scope.kind !== 'answer';
+  const parsed = React.useMemo(
+    () => (raw && !declined && refId ? bindFollowUp(turn.q, raw, turn.ref) : raw),
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- turn.ref is read by its id
+    [raw, declined, refId, turn.q],
   );
 
   // undefined while the search runs, null when there is none.
   const [found, setFound] = React.useState(undefined);
   React.useEffect(() => {
-    if (!parsed) return undefined;
-    if (!retrieve || outside) { setFound(null); return undefined; }
+    if (!parsed || !scope) return undefined;
+    if (!retrieve || declined) { setFound(null); return undefined; }
     let live = true;
     retrieve(parsed, turn.q).then((r) => { if (live) setFound(r || null); }).catch(() => { if (live) setFound(null); });
     return () => { live = false; };
-  }, [parsed, outside, retrieve, turn.q]);
+  }, [parsed, scope, declined, retrieve, turn.q]);
 
   // Words the rules could not place but the vectors could fill empty facets.
   const intent = React.useMemo(() => {
@@ -89,10 +108,10 @@ function useTurn(turn, vocab, ctx) {
 
   const today = React.useMemo(() => new Date(turn.at), [turn.at]);
   const facts = React.useMemo(
-    () => (intent && found !== undefined && !outside
+    () => (intent && found !== undefined && scope && !declined
       ? answerFacts(intent, { rows, byId, guided, today, price, limit: LIMIT, retrieved: found?.retrieved || null, taste: ctx.taste || null })
       : null),
-    [intent, found, outside, rows, byId, guided, today, price, ctx.taste],
+    [intent, found, scope, declined, rows, byId, guided, today, price, ctx.taste],
   );
   const answer = React.useMemo(() => {
     if (!facts) return null;
@@ -143,9 +162,11 @@ function useTurn(turn, vocab, ctx) {
   // one render before its effect starts it).
   const writing = !hasWritten && !!facts?.picks?.length && (written.state === 'idle' || written.state === 'writing');
   const stage = !parsed ? 'read'
-    : found === undefined ? 'search'
-      : writing ? 'write' : 'done';
-  return { intent, outside, facts, answer, written, stage };
+    : !scope ? 'search'
+      : declined ? 'done'
+        : found === undefined ? 'search'
+          : writing ? 'write' : 'done';
+  return { intent, scope, facts, answer, written, stage };
 }
 
 /**
@@ -245,10 +266,10 @@ function Replies({ label, items }) {
   );
 }
 
-function followUps(t, labels, intent, facts, outside) {
+function followUps(t, labels, intent, facts, declined) {
   const out = [];
   const month = intent?.facets?.month || new Date().getMonth() + 1;
-  if (outside) {
+  if (declined) {
     out.push(t('askChat.fu.warm', { month: labels.month(month) }));
     out.push(t('ask.ex.budget'));
     return out;
@@ -350,10 +371,44 @@ function ListReply({ t, lang, ctx, turn, s, latest, animate }) {
   );
 }
 
+/**
+ * A question Ask does not answer as a search (E7): a refusal, an off-topic
+ * decline, a place outside Europe, a European place Carta lacks. One line, and
+ * always a door: the nearest covered places as quick replies (a tap opens the
+ * trip around the place), the flights link for a place outside Europe, and the
+ * example questions under the bubble. The same parts as the old outside answer.
+ */
+function ScopeReply({ t, lang, ctx, scope, trip }) {
+  const lines = scopeLines(scope, t);
+  const near = scope.nearest || [];
+  return (
+    <>
+      <div className="ac-bubble">
+        <p className="ac-text">{[lines.lead, lines.note].filter(Boolean).join(' ')}</p>
+        {scope.kind === 'outside' && trip.origin && (
+          <a className="ac-out-link" target="_blank" rel="noopener noreferrer"
+            href={googleFlightsLink(trip.origin, scope.place, trip.depart || new Date().toISOString().slice(0, 10), { back: trip.back, lang })}>
+            <span>{t('askChat.outside.flights', { place: scope.place })}</span>
+            <ExternalIcon size={14} />
+          </a>
+        )}
+      </div>
+      {/* Not only on the newest turn: the nearest places are the answer's door, and an older decline without them reads as a dead end. */}
+      {near.length > 0 && (
+        <div className="ac-bubble ac-ask">
+          <p className="ac-text">{lines.near}</p>
+          <Replies label={lines.near} items={near.map((p) => ({ key: p.id, label: p.city, run: () => ctx.onPick?.({ id: p.id, city: p.city }, null) }))} />
+        </div>
+      )}
+    </>
+  );
+}
+
 function AnswerTurn({ turn, vocab, ctx, latest }) {
   const { t, lang, labels, trip } = ctx;
   const s = useTurn(turn, vocab, ctx);
-  const { intent, outside, facts, answer, written, stage } = s;
+  const { intent, scope, facts, answer, written, stage } = s;
+  const declined = !!scope && scope.kind !== 'answer';
   const { phase, animate } = useArrival(turn, stage !== 'done');
   const listy = !!answer && LIST_TYPES.has(intent.type);
   const pick = facts?.picks?.[0];
@@ -361,7 +416,7 @@ function AnswerTurn({ turn, vocab, ctx, latest }) {
   const planAll = facts?.plan
     ? () => ctx.onPlan({ stops: facts.plan.order.map((id) => ({ dest: id, nights: facts.plan.nights[id] })).filter((x) => x.nights > 0) })
     : ctx.onPlan;
-  const fus = latest && phase === 'ready' && !listy ? followUps(t, labels, intent, facts, outside) : [];
+  const fus = latest && phase === 'ready' && !listy ? followUps(t, labels, intent, facts, declined) : [];
   const short = React.useMemo(() => ({ ...written, sentences: trimSentences(written.sentences) }), [written]);
 
   return (
@@ -371,18 +426,7 @@ function AnswerTurn({ turn, vocab, ctx, latest }) {
         <span className="sr-only">{t('askChat.carta')}</span>
         {phase === 'typing' && <Typing t={t} />}
         {phase === 'steps' && <Steps t={t} stage={stage} origin={trip.originName} />}
-        {phase === 'ready' && outside && (
-          <div className="ac-bubble">
-            <p className="ac-text">{t('askChat.outside.lead', { place: outside })} {t('askChat.outside.note')}</p>
-            {trip.origin && (
-              <a className="ac-out-link" target="_blank" rel="noopener noreferrer"
-                href={googleFlightsLink(trip.origin, outside, trip.depart || new Date().toISOString().slice(0, 10), { back: trip.back, lang })}>
-                <span>{t('askChat.outside.flights', { place: outside })}</span>
-                <ExternalIcon size={14} />
-              </a>
-            )}
-          </div>
-        )}
+        {phase === 'ready' && declined && <ScopeReply t={t} lang={lang} ctx={ctx} scope={scope} trip={trip} />}
         {phase === 'ready' && listy && (
           <ListReply t={t} lang={lang} ctx={ctx} turn={turn} s={s} latest={latest} animate={animate} />
         )}

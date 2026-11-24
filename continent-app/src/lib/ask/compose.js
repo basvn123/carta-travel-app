@@ -195,6 +195,23 @@ function finish(out, facts, { t }) {
   return out;
 }
 
+/**
+ * The words for a question Ask does not answer as a search (E7, scope.js):
+ * a refusal, an off-topic question, a place outside Europe, a European place
+ * Carta lacks. { lead, note, near }: `near` is the label over the nearest
+ * covered places, set only when there are some; the door (those places, or
+ * the example questions) is drawn by the screen.
+ */
+export function scopeLines(scope, t) {
+  const place = scope.place || '';
+  if (scope.kind === 'refuse') return { lead: t('askChat.refuse.lead'), note: t('askChat.refuse.note'), near: null };
+  if (scope.kind === 'offtopic') return { lead: t('askChat.offtopic.lead'), note: t('askChat.offtopic.note'), near: null };
+  const near = scope.nearest?.length ? t('askChat.scope.near') : null;
+  if (scope.kind === 'lacking') return { lead: t('askChat.lacking.lead', { place }), note: near ? '' : t('askChat.lacking.note'), near };
+  if (scope.kind === 'outside') return { lead: t('askChat.outside.lead', { place }), note: t('askChat.outside.note'), near };
+  return null;
+}
+
 /** "Carta can't search for X yet", for the words nothing could place. */
 export function unknownNote(intent, t) {
   const words = (intent.unknown || []).filter((w) => w.length > 2);
