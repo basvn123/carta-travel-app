@@ -8684,6 +8684,8 @@ export const nl = {
   "pf.abar.assumed": "{q}: {a}, aangenomen door Carta. Wijzig",
   "pf.abar.given": "{q}: {a}. Wijzig",
   "pf.abar.more": "Meer",
+  "pf.abar.check": "Loop na wat Carta invulde",
+  "pf.dh.fromStyle": "Uit je stijl",
   "pf.showNow": "Toon de reizen nu",
   "pf.q.ages": "Hoe oud zijn de kinderen?",
   "pf.step.ages": "Leeftijden",

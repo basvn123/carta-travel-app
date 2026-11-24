@@ -7,7 +7,7 @@ import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { StyleSwitch } from './StyleBar.jsx';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
-import { assumptionChips } from './assumptions.js';
+import { assumptionChips, checkWalk } from './assumptions.js';
 
 /**
  * The shared assumption bar (G12 plan rethink, decision §1.4, §3.3): the
@@ -16,7 +16,8 @@ import { assumptionChips } from './assumptions.js';
  * the style switch, then More. Solid = given; dashed = assumed. A chip
  * opens that question's own body (the screens of the flow) and saves it
  * for this trip; the trips re-price from the new settings. The delta on a
- * change and "Check my assumptions" are B5 (decision §3.3).
+ * change is B5 (decision §3.3). "Check my assumptions" (G12 L7) walks the
+ * dashed chips one sheet at a time, biggest price effect first.
  *
  *   settings, save(next)  the trip's settings and their store
  *   onEdit(id)            instead of the bar's own sheet (the trip page
@@ -29,13 +30,30 @@ export function AssumptionBar({ settings, save, onEdit = null, onMore = null }) 
   const months = useMonths();
   const bcp47 = useBcp47();
   const [open, setOpen] = useState('');
+  // G12 L7 "Check my assumptions": the dashed chips still to walk, in order
+  // of price effect; each save opens the next, the walk ends by itself.
+  const [walk, setWalk] = useState([]);
   const anchorRef = useRef(null);
   const when = whenText(t, settings.when, months, bcp47);
   const chips = assumptionChips(settings, { t, when, fromName: app?.model?.fromPlace?.name || '' });
+  const toCheck = checkWalk(settings);
   const edit = (id, el) => {
     if (onEdit) { onEdit(id); return; }
     anchorRef.current = el;
     setOpen(id);
+  };
+  const startCheck = (el) => {
+    const [first, ...rest] = toCheck;
+    if (!first) return;
+    setWalk(onEdit ? [] : rest);
+    edit(first, el);
+  };
+  const close = () => { setOpen(''); setWalk([]); };
+  const commit = (next) => {
+    save(next);
+    const [nextId, ...rest] = walk;
+    setWalk(rest);
+    setOpen(nextId || '');
   };
   return (
     <div className="pf-abar-wrap">
@@ -54,14 +72,17 @@ export function AssumptionBar({ settings, save, onEdit = null, onMore = null }) 
           </li>
         ))}
         <li><StyleSwitch settings={settings} save={save} /></li>
+        {toCheck.length > 0 && (
+          <li><Button variant="quiet" size="sm" className="pf-abar-check" onClick={(e) => startCheck(e.currentTarget)}>{t('pf.abar.check')}</Button></li>
+        )}
         {onMore && (
           <li><Button variant="quiet" size="sm" onClick={onMore}>{t('pf.abar.more')}</Button></li>
         )}
       </ul>
       {open && (
-        <SheetShell title={t(QUESTIONS[open]?.titleKey || 'pf.sheet')} onClose={() => setOpen('')} anchorRef={anchorRef} width={440} className="pf-settings">
+        <SheetShell title={t(QUESTIONS[open]?.titleKey || 'pf.sheet')} onClose={close} anchorRef={anchorRef} width={440} className="pf-settings">
           <div className="pf-set-edit">
-            <QuestionBody id={open} settings={settings} doneLabel={t('pf.set.save')} commit={(next) => { save(next); setOpen(''); }} />
+            <QuestionBody id={open} settings={settings} doneLabel={t('pf.set.save')} key={open} commit={commit} />
           </div>
         </SheetShell>
       )}

@@ -16,6 +16,21 @@ export function assumed(settings, id) {
 }
 
 /**
+ * The order "Check my assumptions" walks the dashed chips in (G12 L7,
+ * decision §1.8: biggest price effect first). The party scales every line
+ * (beds, days, seats), the dates move both the fares and the bed season,
+ * the start town only the way there; so who, when, from. A fixed order on
+ * purpose: quoting each default against its alternatives to rank them
+ * would re-price the trip three times before the first sheet opens.
+ */
+export const CHECK_ORDER = Object.freeze(['who', 'when', 'from']);
+
+/** The ids still assumed, in CHECK_ORDER; empty when everything is given. */
+export function checkWalk(settings) {
+  return CHECK_ORDER.filter((id) => assumed(settings, id));
+}
+
+/**
  * The bar's chips.
  *   opts: { t, when ({ start, end } as flowHooks whenText), fromName (the
  *           app's start town when the trip has none) }

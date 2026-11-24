@@ -8673,6 +8673,8 @@ export const de = {
   "pf.abar.assumed": "{q}: {a}, von Carta angenommen. Ändern",
   "pf.abar.given": "{q}: {a}. Ändern",
   "pf.abar.more": "Mehr",
+  "pf.abar.check": "Prüfen, was Carta eingesetzt hat",
+  "pf.dh.fromStyle": "Aus deinem Stil",
   "pf.showNow": "Reisen jetzt zeigen",
   "pf.q.ages": "Wie alt sind die Kinder?",
   "pf.step.ages": "Alter",

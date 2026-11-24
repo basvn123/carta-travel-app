@@ -8673,6 +8673,8 @@ export const fr = {
   "pf.abar.assumed": "{q} : {a}, supposé par Carta. Modifier",
   "pf.abar.given": "{q} : {a}. Modifier",
   "pf.abar.more": "Plus",
+  "pf.abar.check": "Vérifier ce que Carta a rempli",
+  "pf.dh.fromStyle": "Selon ton style",
   "pf.showNow": "Voir les voyages maintenant",
   "pf.q.ages": "Quel âge ont les enfants ?",
   "pf.step.ages": "Âges",

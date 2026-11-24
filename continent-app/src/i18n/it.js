@@ -8673,6 +8673,8 @@ export const it = {
   "pf.abar.assumed": "{q}: {a}, ipotizzato da Carta. Cambia",
   "pf.abar.given": "{q}: {a}. Cambia",
   "pf.abar.more": "Altro",
+  "pf.abar.check": "Controlla cosa ha inserito Carta",
+  "pf.dh.fromStyle": "Dal tuo stile",
   "pf.showNow": "Mostra i viaggi ora",
   "pf.q.ages": "Quanti anni hanno i bambini?",
   "pf.step.ages": "Età",

@@ -1491,3 +1491,6 @@
 .pf-door-budget { display: flex; flex-wrap: wrap; gap: var(--space-2); align-items: end; }
 .pf-door-cards { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
 .pf-door-knows { margin: 0; color: var(--text-2); font-size: var(--text-label); }
+/* G12 L7: the style's own answers on Plan your days, and the check walk on the bar. */
+.pdh-from { margin-left: var(--space-2); font-weight: 400; color: var(--text-2); }
+.pf-abar-check { text-decoration: underline; text-underline-offset: 3px; }

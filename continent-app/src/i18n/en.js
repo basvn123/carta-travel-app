@@ -9300,6 +9300,8 @@ export const en = {
   "pf.abar.assumed": "{q}: {a}, assumed by Carta. Change",
   "pf.abar.given": "{q}: {a}. Change",
   "pf.abar.more": "More",
+  "pf.abar.check": "Check what Carta filled in",
+  "pf.dh.fromStyle": "From your style",
   "pf.showNow": "Show the trips now",
   "pf.q.ages": "How old are the children?",
   "pf.step.ages": "Ages",
