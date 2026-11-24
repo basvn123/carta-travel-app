@@ -77,6 +77,51 @@ export function firstSetup(s) {
 }
 
 /**
+ * G12 plan rethink, the question rule (decision §12, owner, binding): "for
+ * every question, check whether the travel style captures it; if not, keep
+ * the question". These are the questions a style answers (lib/travelStyles
+ * STYLE_ANSWERS, plus the way there, styleSeed withStyle); with a style
+ * they are passed over (source 'style'), without one they are asked once.
+ */
+export const STYLE_HELD = Object.freeze(['who', 'sleep', 'priority', 'way', 'g:shape', 'g:likes', 'g:around', 'g:avoid', 'r:mornings', 'r:pace']);
+
+/** Children counted without an age each: the one party gap that stops the flow (decision §1.3). */
+export function kidAgesMissing(s) {
+  return s.party.kids > 0 && s.party.kidAges.length < s.party.kids;
+}
+
+/**
+ * The setup a new trip asks after the door (G12 §12). Tell is the door's
+ * own line, so it is not a step here (a typed line still opens it). Kid
+ * ages follow Who whenever there are children: a style knows how many come,
+ * never how old they are. A trip under way keeps its own run.
+ */
+export function askedSetup(s) {
+  if (s.kind === 'now') return NOW_SETUP.filter((id) => id !== 'tell');
+  const list = setupScreens(s).filter((id) => id !== 'tell');
+  if (s.party.kids > 0) list.splice(list.indexOf('who') + 1, 0, 'ages');
+  return list;
+}
+
+/** Whether question `id` is still to ask: kid ages while one is missing, else not given by words, a seed pin or the style. */
+export function askOpen(s, id) {
+  if (id === 'ages') return kidAgesMissing(s);
+  return !givenBy(s, id, SETUP_SKIP);
+}
+
+/** The next question in `list` after `id` still to ask (stop ends the walk early). */
+export function nextAsked(list, id, s, stop = null) {
+  let k = nextScreen(list, id);
+  while (k && k !== stop && !askOpen(s, k)) k = nextScreen(list, k);
+  return k;
+}
+
+/** The first question of the setup still to ask, or null when the style, Explore pins and words hold them all. */
+export function firstAsked(s) {
+  return askedSetup(s).find((id) => askOpen(s, id)) || null;
+}
+
+/**
  * Whether one of these trips is under way today (its start on or before
  * today, its end on or after it). Only then does Start planning ask "a new
  * trip or the one you are on" (G12: skip the choice when nothing is in
@@ -126,6 +171,9 @@ export function guideScreens(s) {
     // to fly would ask it twice (and could contradict it).
     if (id === 'g:reach' && OVERLAND_WAYS.includes(s.way || '')) return false;
     if (places.length && WHERE_QUESTIONS.includes(id)) return false;
+    // G12 §12: the shape is not asked once the place is known (Carta
+    // orders and sizes the named places, decision §3.2 S5/S6).
+    if (places.length && id === 'g:shape') return false;
     if (town && id === 'g:likes') return false;
     return true;
   });
@@ -167,9 +215,10 @@ export function fullFlow(s, door = 'know') {
  * words, and what the page the trip was opened from fixed ('seed', a
  * PlanSeed pin). What Explore prefilled ('explore') is still asked, so one
  * tap confirms it; what the style gave is skipped by the guide walk
- * (GUIDE_SKIP) and, from B3, by the setup per the question rule.
+ * (GUIDE_SKIP) and, G12 B3, by the setup per the question rule (Who, the
+ * bed, what matters most and the way there, when a style holds them).
  */
-export const SETUP_SKIP = Object.freeze(['words', 'seed']);
+export const SETUP_SKIP = Object.freeze(['words', 'seed', 'style']);
 
 /**
  * The screen Continue goes to after `id` (owner, plan flow walk 2026-10-30:

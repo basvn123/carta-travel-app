@@ -18,7 +18,7 @@ import { syncParty, syncWhen } from './appSync.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { plannerStore } from '../plannerStore.js';
 import {
-  WhoScreen, SleepScreen, StayScreen, WhenScreen, FromScreen, WayScreen, AirportsScreen, LikesScreen, BudgetScreen, PickScreen,
+  WhoScreen, AgesScreen, SleepScreen, StayScreen, WhenScreen, FromScreen, WayScreen, AirportsScreen, LikesScreen, BudgetScreen, PickScreen,
   NowWhereScreen, NowUntilScreen,
 } from './setupScreens.jsx';
 
@@ -27,7 +27,7 @@ const PARSE_DELAY_MS = 250;
 
 /** The questions with their own controls (setupScreens.jsx). */
 const CUSTOM = {
-  who: WhoScreen, sleep: SleepScreen, stay: StayScreen, when: WhenScreen, from: FromScreen, way: WayScreen, airports: AirportsScreen,
+  who: WhoScreen, ages: AgesScreen, sleep: SleepScreen, stay: StayScreen, when: WhenScreen, from: FromScreen, way: WayScreen, airports: AirportsScreen,
   'g:likes': LikesScreen, 'g:budget': BudgetScreen,
   'g:pick': PickScreen,
   nowWhere: NowWhereScreen, nowUntil: NowUntilScreen,

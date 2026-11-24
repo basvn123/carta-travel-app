@@ -166,6 +166,40 @@ export function WhoScreen({ settings, commit, doneLabel }) {
   );
 }
 
+/**
+ * The children's ages alone (G12 §12): a travel style knows how many
+ * children come, never how old they are, and a child's age prices the bed
+ * and the ticket, so it is asked even when the style holds Who.
+ */
+export function AgesScreen({ settings, commit, doneLabel }) {
+  const { t } = useI18n();
+  const p = settings.party;
+  const [ages, setAges] = useState(() => Array.from({ length: p.kids }, (_, i) => p.kidAges[i] ?? 7));
+  return (
+    <>
+      <div className="pf-ages-row">
+        {ages.map((a, i) => (
+          <Field
+            key={i}
+            as="select"
+            label={t('pf.who.ageOf', { n: i + 1 })}
+            value={a}
+            onChange={(e) => setAges((cur) => cur.map((x, k) => (k === i ? Number(e.target.value) : x)))}
+          >
+            {Array.from({ length: 9 }, (_, k) => k + 3).map((n) => (
+              <option key={n} value={n}>{t('pf.who.age', { n })}</option>
+            ))}
+          </Field>
+        ))}
+      </div>
+      <Foot
+        onContinue={() => commit(markAnswered(normalizeSettings({ ...settings, party: { ...p, kidAges: ages } }), 'ages'))}
+        label={doneLabel}
+      />
+    </>
+  );
+}
+
 // ---- Where you sleep and how you spend ----
 
 /** The named places' countries (iso2), for a stay's typical night (T862). */

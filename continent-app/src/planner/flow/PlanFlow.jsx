@@ -7,11 +7,10 @@ import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
-import { firstSetup, tripUnderWay, continueTo, givenBy, prevScreen, progressOf, SETUP_SKIP } from './flowGraph.js';
+import { askedSetup, askOpen, firstAsked, nextAsked, tripUnderWay, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, nothingBooked } from './tripSettings.js';
 import { exploreAnswers, seedToSettings } from '../../lib/plan/seed.js';
 import { bookedLanding } from '../../lib/plan/doors.js';
-import { newTripSettings } from './styleSeed.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { markQuickStart } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
@@ -63,7 +62,7 @@ export function PlanFlow({
   // question (the answers were never lost, only the screen), not to the
   // opening, whose Start planning would begin another trip.
   const [kept] = useState(() => (settings.trip.created ? null
-    : recallPlace('opening', tripsStore.getActiveId(), [...firstSetup(settings), 'create', 'kind', 'now'])));
+    : recallPlace('opening', tripsStore.getActiveId(), ['tell', ...askedSetup(settings), 'create', 'kind', 'now'])));
   const [screen, setScreen] = useState(kept?.screen || 'home');
   // House style: the question settles in when the step changes (presentation only).
   const stepRef = useRef(null);
@@ -108,16 +107,20 @@ export function PlanFlow({
     sheetRef.current?.scrollIntoView?.({ block: 'start' });
   }, [screen]);
 
-  // T1103 (G12): a new trip asks Tell, who, when and from, then is made
-  // and opens on its priced trips; the rest refines them from there.
-  const list = useMemo(() => [...firstSetup(settings), 'create'], [settings]);
+  // G12 plan rethink, the question rule (decision §12): a new trip asks
+  // only what its travel style does not hold (no style: every question
+  // once), When and From prefilled from Explore so one tap confirms them,
+  // kid ages whenever children come; then the trip is made and the planner
+  // walks the help-me-choose questions the style leaves open.
+  const list = useMemo(() => ['tell', ...askedSetup(settings), 'create'], [settings]);
   const go = (id) => setScreen(id);
   /** The trip made with its defaults (no name, cover or buddies yet; the
-   *  trip settings hold them), the planner told to open on the trips. */
-  const quickCreate = (s) => {
+   *  trip settings hold them). `mode` 'ask' opens the planner on the
+   *  questions still open, 'trips' (Show the trips now) on the priced trips. */
+  const quickCreate = (s, mode = 'ask') => {
     if (!nothingBooked(s) && landBooked(s)) return;
     save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
-    markQuickStart();
+    markQuickStart(mode);
     rememberPlace('opening', tripsStore.getActiveId(), null);
     if (onCreated) onCreated();
   };
@@ -146,20 +149,52 @@ export function PlanFlow({
     setKind('new');
     setKindAsked(false);
     if (!nothingBooked(s) && landBooked(s)) return;
-    const first = firstSetup(s).find((id) => !givenBy(s, id, SETUP_SKIP));
+    const first = firstAsked(s);
     if (first) go(first); else quickCreate(s);
   }, [openAt?.n]); // eslint-disable-line react-hooks/exhaustive-deps -- one start per door tap
+  /**
+   * G12 L5: the door starts a trip. The style answers what it holds,
+   * Explore prefills When and From (seedToSettings: style < Explore < seed),
+   * a door chip's budget arrives as a pinned seed field. A typed line opens
+   * Tell with it, where the words are read and shown as chips.
+   */
+  const startTrip = ({ text = '', seed = null } = {}) => {
+    tripsStore.startNew();
+    const style = app?.travelStyles?.active || null;
+    const base = seedToSettings(seed || {}, { style, explore: exploreAnswers(app?.model || null) });
+    const s = text ? normalizeSettings({ ...base, note: text }) : base;
+    save(s);
+    setKind('new');
+    // T1103 (G12, P-33): the choice between a new trip and the one under
+    // way is asked only when a trip is under way today.
+    const ask = tripUnderWay(trips, todayISO());
+    setKindAsked(ask);
+    if (ask) { go('kind'); return; }
+    afterKind(s);
+  };
+  /** After the kind sheet: Tell with a typed line, else the first open question. */
+  const afterKind = (s) => {
+    if ((s.note || '').trim()) { go('tell'); return; }
+    const first = firstAsked(s);
+    if (first) go(first); else quickCreate(s);
+  };
   const next = (id, s) => {
-    const l = [...firstSetup(s), 'create'];
-    // Skip only what the Tell sentence answered; a question answered on its
-    // own screen is the next stop again (continueTo).
-    const k = continueTo(l, id, s, 'create') || 'create';
+    const l = ['tell', ...askedSetup(s), 'create'];
+    // Skip what the style, the words or the source page hold (the question
+    // rule); a question answered on its own screen is the next stop again.
+    const k = nextAsked(l, id, s, 'create') || 'create';
     // A trip under way keeps its Create screen (it names a trip already
     // travelled); a new trip goes straight to its priced trips.
     if (k === 'create' && s.kind !== 'now') { quickCreate(s); return; }
     go(k);
   };
-  const back = () => go(prevScreen(list, screen) || (kindAsked ? 'kind' : 'home'));
+  // Back passes over what was never asked (held by the style, the words or
+  // the source page), and over Tell when nothing was typed.
+  const back = () => {
+    let k = prevScreen(list, screen);
+    while (k && (k === 'tell' ? !(settings.note || '').trim() : !askOpen(settings, k))) k = prevScreen(list, k);
+    go(k || (kindAsked ? 'kind' : 'home'));
+  };
 
   const draft = loadTripDraft();
   const hasTrip = Boolean(settings.trip.created || draft?.stops?.length || draft?.planId);
@@ -177,23 +212,10 @@ export function PlanFlow({
         <PlanHome
           titleTag={Title}
           trips={trips}
-          onStart={() => {
-            // A new trip every time; the one open stays in the list. T856:
-            // always, so an open draft too empty to be listed (answers with
-            // no trip made yet) never hands its old answers to the new plan.
-            tripsStore.startNew();
-            // The traveller's travel style answers what it can (who, what
-            // matters most, how they explore), so the planner asks only the
-            // rest; the Who screen shows the style and can swap it.
-            const style = app?.travelStyles?.active;
-            if (style) save(newTripSettings(style));
-            setKind('new');
-            // T1103 (G12, P-33): the choice between a new trip and the one
-            // under way is asked only when a trip is under way today.
-            const ask = tripUnderWay(trips, todayISO());
-            setKindAsked(ask);
-            go(ask ? 'kind' : 'tell');
-          }}
+          // A new trip every time; the one open stays in the list. T856:
+          // always, so an open draft too empty to be listed (answers with no
+          // trip made yet) never hands its old answers to the new plan.
+          onStart={(door) => startTrip(door || {})}
           onOpenTrip={(trip) => {
             if (trip.device) tripsStore.open(trip.id);
             if (trip.planId && onOpenPlan) { onOpenPlan(trip.planId); return; }
@@ -238,8 +260,9 @@ export function PlanFlow({
         onClose={() => go('home')}
         onContinue={() => {
           if (kind === 'now') { go('now'); return; }
-          if (settings.kind !== 'new') save({ ...settings, kind: 'new' });
-          go('tell');
+          const s = settings.kind !== 'new' ? normalizeSettings({ ...settings, kind: 'new' }) : settings;
+          if (s !== settings) save(s);
+          afterKind(s);
         }}
         onPast={() => (onAddPast ? onAddPast() : onNavigate('trips'))}
       />
@@ -307,6 +330,13 @@ export function PlanFlow({
           settings={settings}
           commit={(s) => { save(s); next(screen, s); }}
         />
+        {/* G12 §12: a quiet way past the rest; what was not answered keeps
+            its default and shows dashed in the assumption bar. */}
+        {settings.kind !== 'now' && screen !== 'tell' && (
+          <Button variant="quiet" size="sm" className="pf-show-now" onClick={() => quickCreate(settings, 'trips')}>
+            {t('pf.showNow')}
+          </Button>
+        )}
       </div>
     );
   }

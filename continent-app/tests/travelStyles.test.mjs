@@ -145,9 +145,10 @@ test('the planner passes over what the style answered, never the trips', () => {
   const open = openGuideQuestions(s);
   assert.ok(!open.includes('g:shape') && !open.includes('g:persona') && !open.includes('g:around'));
   assert.ok(open.includes('g:likes') && open.includes('g:budget'));
-  // continueTo with the guide's skip list jumps the style's, the setup's
-  // default (words only) does not, so the Who screen still shows the style.
-  assert.equal(continueTo(['tell', 'who', 'when'], 'tell', s), 'who');
+  // G12 §12 (the question rule): the setup passes over what the style
+  // holds too, so Who is not asked with a style; the style switch on every
+  // step is where another style is picked for this trip.
+  assert.equal(continueTo(['tell', 'who', 'when'], 'tell', s), 'when');
   const k = continueTo(list, 'g:persona', s, TRIPS_SCREEN, GUIDE_SKIP);
   assert.ok(!['g:shape'].includes(k));
 });

@@ -11,7 +11,15 @@ const BIND = { normalize: normalizeSettings, markAnswered };
 /** `s` with the style's answers in every place the traveller has not
  *  answered on a screen or in words (those always stay theirs). */
 export function withStyle(s, style) {
-  return style ? seedTripSettings(normalizeSettings(s), style, BIND) : s;
+  if (!style) return s;
+  const seeded = seedTripSettings(normalizeSettings(s), style, BIND);
+  // G12 §12: the way there is the style's too (`way`), so a style that
+  // names one of the planner's ways answers that question; a bus style
+  // has no planner way and the question stays.
+  const st = normalizeStyle(style);
+  const mine = seeded.answered.includes('way') && seeded.sources?.way !== 'style';
+  if (!st || mine || !WAYS.includes(st.way)) return seeded;
+  return markAnswered(normalizeSettings({ ...seeded, way: st.way }), 'way', 'style');
 }
 
 /** A new trip's settings: the defaults, then the active style's answers. */
@@ -38,6 +46,8 @@ export function switchTripStyle(s, style) {
   if (styled.includes('g:around')) guide.around = '';
   if (styled.includes('r:mornings')) rhythm.mornings = '';
   if (styled.includes('r:pace')) rhythm.pace = '';
+  // G12 §12: the old style's way there goes with it too.
+  if (styled.includes('way')) next.way = d.way;
   // The old style's trade-offs go with it; the new style seeds its own.
   next = normalizeSettings({ ...next, guide, rhythm, style: '', tradeoffs: null });
   return withStyle(next, style);
@@ -64,6 +74,29 @@ export function restyleTrip(settings, style) {
     party: styled.includes('who') ? d.party : out.party,
     priority: styled.includes('priority') ? d.priority : out.priority,
   });
+}
+
+/**
+ * A Style Studio draft from a trip's own answers (G12 §12: a traveller with
+ * no style is asked the style questions once, then offered "Save as travel
+ * style" so the next trip skips them). `choices` are the app's (the bed and
+ * the lifestyle live there). The studio checks the draft (styleFromDraft);
+ * nothing is stored until the traveller saves it there.
+ */
+export function styleDraftOfTrip(settings, choices = {}) {
+  const s = normalizeSettings(settings);
+  const g = s.guide;
+  return {
+    id: '',
+    who: { kind: s.party.kind, adults: s.party.adults, kids: s.party.kids, babies: s.party.babies, slowWalkers: s.party.slowWalkers },
+    stay: choices.stay_tier || undefined,
+    lifestyle: choices.lifestyle || undefined,
+    way: WAYS.includes(s.way) ? s.way : 'any',
+    priority: s.priority,
+    tradeoffs: s.tradeoffs || undefined,
+    explore: { shapes: g.shapes, likes: g.likes, avoid: g.avoid, around: g.around, personas: g.personas || [] },
+    days: { mornings: s.rhythm.mornings, pace: s.rhythm.pace },
+  };
 }
 
 /** Which of the style's answers a trip still takes from its style (the rest are the traveller's). */

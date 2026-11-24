@@ -134,14 +134,14 @@ test("when_set and nights_set: set by touching When or the length, inferred for 
 
 // ---- the answer sources ----
 
-test("sources: 'explore', 'seed' and 'trip' survive a normalize; the setup skips only words and seed", () => {
+test("sources: 'explore', 'seed' and 'trip' survive a normalize; the setup skips words, seed and (G12 §12) style", () => {
   let s = defaultSettings();
   s = markAnswered(s, "when", "explore");
   s = markAnswered(s, "from", "seed");
   s = markAnswered(s, "who", "trip");
   const n = normalizeSettings(s);
   assert.deepEqual([n.sources.when, n.sources.from, n.sources.who], ["explore", "seed", "trip"]);
-  assert.deepEqual([...SETUP_SKIP], ["words", "seed"]);
+  assert.deepEqual([...SETUP_SKIP], ["words", "seed", "style"]);
   const list = ["tell", "who", "when", "from"];
   assert.equal(continueTo(list, "tell", n), "who", "a trip change is never jumped");
   assert.equal(continueTo(list, "who", n), "when", "Explore's When is asked, prefilled");

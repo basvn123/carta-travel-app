@@ -19,10 +19,11 @@ import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, engineScreens, firstOpenGuide, guideQuestions, guideScreens, hasDoors, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
-import { clearQuickStart, peekQuickStart } from './quickStart.js';
+import { clearQuickStart, peekQuickMode } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
 import { tripsStore } from '../tripsStore.js';
 import { RefineCard } from './RefineCard.jsx';
+import { SaveStyleOffer, StyleSwitch } from './StyleBar.jsx';
 import NotYet from '../../components/NotYet.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
@@ -67,7 +68,11 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const arriveTrip = useRef(readTripHash());
   // T1103 (G12): a trip made by the Plan opening's short setup opens on its
   // priced trips; the help-me-choose questions then refine them.
-  const [fresh] = useState(peekQuickStart);
+  // G12 §12: the mark's mode says where: 'ask' walks the questions the
+  // style leaves open first, 'trips' (Show the trips now) opens on them.
+  const [quickMode] = useState(peekQuickMode);
+  const fresh = Boolean(quickMode);
+  const asking = quickMode === 'ask';
   useEffect(() => { clearQuickStart(); }, []);
   // T1123 (G4): a reload (or a tab hop that remounts the planner) comes back
   // to the screen it left, the priced trips above all, instead of the trip's
@@ -77,8 +82,12 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
     : recallPlace('trip', tripsStore.getActiveId(), [...guideScreens(settings), 'ff', 'home'])));
   // The trip came from the short setup (now, or before the reload).
   const quick = useRef(fresh || Boolean(kept?.quick));
-  const [walked, setWalked] = useState(kept ? Boolean(kept.walked) : !fresh);
-  const [phase, setPhase] = useState(() => (arriveTrip.current || fresh ? TRIPS_SCREEN : kept?.phase || 'home')); // home | g:* | ff | engine
+  const [walked, setWalked] = useState(kept ? Boolean(kept.walked) : (!fresh || asking));
+  const [phase, setPhase] = useState(() => {
+    if (arriveTrip.current) return TRIPS_SCREEN;
+    if (fresh) return asking ? firstOpenGuide(settings) : TRIPS_SCREEN;
+    return kept?.phase || 'home';
+  }); // home | g:* | ff | engine
   // House style: the question settles in when the step changes (presentation only).
   const stepRef = useRef(null);
   useStepIn(stepRef, phase);
@@ -281,7 +290,8 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
           // T1103: straight from the short setup there is no question
           // behind the trips yet; back is the trip's own page.
           onBack={() => setPhase(walked ? questions[questions.length - 1] : 'home')}
-          refine={walked ? null : <RefineCard count={openGuideQuestions(settings).length || questions.length} onFit={start} onSleep={() => reopen('sleep')} />}
+          // G12 §12: with no travel style, Save as travel style after the first result.
+          refine={(<>{walked ? null : <RefineCard count={openGuideQuestions(settings).length || questions.length} onFit={start} onSleep={() => reopen('sleep')} />}<SaveStyleOffer settings={settings} /></>)}
           headEnd={bar}
           onWiden={reopen}
           edits={finderEdits}
@@ -315,6 +325,12 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
         )}
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />
+        {/* G12 §12: a quiet way past the rest of the questions. */}
+        {questions.includes(phase) && (
+          <Button variant="quiet" size="sm" className="pf-show-now" onClick={() => { setReturnTo(null); setWalked(true); setPhase(TRIPS_SCREEN); }}>
+            {t('pf.showNow')}
+          </Button>
+        )}
       </div>
     );
   }
