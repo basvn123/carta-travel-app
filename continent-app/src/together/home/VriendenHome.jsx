@@ -158,7 +158,8 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
       <span className="vr-m-ph">
         {photo?.image?.url ? (
           <HeroImage url={photo.image.url} image={photo.image} className="vr-m-img" maxWidth={1280} ratio={[3, 2]}
-            sizes={m.saffron ? '(min-width: 1100px) 50vw, 92vw' : scale === 'row' ? '(min-width: 1100px) 30vw, 96px' : '(min-width: 1100px) 30vw, 92vw'} />
+            sizes={m.saffron ? '(min-width: 1100px) 50vw, (min-width: 700px) 640px, calc(100vw - 88px)'
+              : scale === 'row' ? '(min-width: 1100px) 30vw, 96px' : '(min-width: 1100px) 30vw, (min-width: 700px) 640px, calc(100vw - 88px)'} />
         ) : (
           <span className="vr-m-none" aria-hidden="true">
             <ToneFace id={face?.id || me} me={me} name={face?.name || meName} emoji={face?.emoji} />

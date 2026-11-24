@@ -228,10 +228,26 @@ async function inspect(page) {
  * density-corrected naturalWidth, so the chosen file is loaded again on its
  * own to read its real pixels. */
 async function sharpness(page) {
+  // Every card photo is lazy: scroll the whole page through first so each one
+  // loads, then a card photo that did not load is a failure too (judge v3-1
+  // fix 4). The probe reads the real file; an img's naturalWidth is density
+  // corrected and only repeats the sizes width.
+  await page.evaluate(async () => {
+    const scrollers = [document.scrollingElement, ...document.querySelectorAll('.tg-panel, .tg-panel *')]
+      .filter((el) => el && el.scrollHeight > el.clientHeight + 4 && /(auto|scroll)/.test(getComputedStyle(el).overflowY) || el === document.scrollingElement);
+    for (const el of scrollers) {
+      for (let y = 0; y <= el.scrollHeight; y += 500) { el.scrollTop = y; await new Promise((r) => setTimeout(r, 60)); }
+      el.scrollTop = 0;
+    }
+  });
+  await page.waitForTimeout(1200);
   return page.evaluate(async () => {
     const root = document.querySelector('.tg-panel');
-    const imgs = [...(root?.querySelectorAll('img') || [])].filter((el) => el.complete && el.currentSrc && el.getBoundingClientRect().width > 0);
     const out = [];
+    for (const el of root?.querySelectorAll('.vr-m-ph img') || []) {
+      if (el.getBoundingClientRect().width > 0 && !(el.complete && el.naturalWidth)) out.push(`not loaded ${(el.currentSrc || el.src).split('/').pop().slice(0, 30)}`);
+    }
+    const imgs = [...(root?.querySelectorAll('img') || [])].filter((el) => el.complete && el.currentSrc && el.getBoundingClientRect().width > 0);
     await Promise.all(imgs.map((el) => new Promise((done) => {
       const probe = new Image();
       probe.onload = () => {
