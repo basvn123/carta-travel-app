@@ -208,6 +208,9 @@ data/derived/place_candidates.json
 # The committed registry and report carry the walks and the rollups.
 data/trails/famous_registry_full.json
 data/reports/trails_coverage_full.json
+# D25 b: the exports' drop logs, rewritten by every export and read by
+# famous_coverage on the same machine.
+data/reports/famous/export_drops/
 
 # Encrypted database dumps: never in the repo, even encrypted (T004).
 carta-backups/

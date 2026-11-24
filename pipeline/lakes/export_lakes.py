@@ -84,7 +84,7 @@ if sys.platform == "win32":
 
 sys.path.insert(0, str(HERE.parents[1] / "pipeline"))
 
-from pipeline_io import in_europe  # noqa: E402
+from pipeline_io import in_europe, write_export_drops  # noqa: E402
 from water_sources import haversine_km, load_cache  # noqa: E402
 from harvest_lakes import COUNTRIES, fold, name_tokens  # noqa: E402
 import lake_index as li  # noqa: E402
@@ -764,6 +764,46 @@ def listable(lake):
     return bool(name_tokens(lake.get("name")))
 
 
+def drop_reasons(scored, gated, deduped, rows, listed, min_score):
+    """{qid: reason} for the scored lakes that are on neither tier (D25 b;
+    pipeline/famous/coverage.py names the gate from it).
+
+    `gated` holds the ids that cleared every rated gate including the score,
+    `deduped` those still there after the dedupe. Reasons: outside_europe;
+    no_name (not even listable); dedupe and quota_cap (a rated candidate cut
+    by the dedupe, or by the region quota and the country cap); photo and
+    no_reason (the rated gate it failed, and the region floor did not take
+    it as listed: ":not_listed"); score (it cleared the photo and reason
+    gates but not the score, and the country floor did not take it:
+    ":under_floor" below FLOOR_MIN_SCORE, else ":not_in_floor")."""
+    kept = {r["id"] for r in rows} | {r["id"] for r in listed}
+    out = {}
+    for lake, comps, score10 in scored:
+        qid = lake.get("wd")
+        if not qid:
+            continue
+        if not in_europe(lake.get("lat"), lake.get("lon")):
+            out[qid] = "outside_europe"
+            continue
+        lid = li.lake_id(lake)
+        if lid in kept:
+            continue
+        if lid in gated:
+            out[qid] = "quota_cap" if lid in deduped else "dedupe"
+        elif not listable(lake):
+            out[qid] = "no_name"
+        elif not publishable(lake):
+            out[qid] = "photo:not_listed"
+        elif not li.reasons_for(lake, comps):
+            out[qid] = "no_reason:not_listed"
+        elif score10 < min_score:
+            out[qid] = ("score:under_floor" if score10 < FLOOR_MIN_SCORE
+                        and not lake.get("seed") else "score:not_in_floor")
+        else:
+            out[qid] = "other"
+    return out
+
+
 def country_water_default(lakes):
     """What an unmeasured lake in this country is worth: the median class of
     the lakes around it that DO have a reading."""
@@ -1234,6 +1274,7 @@ def main():
     filled = {}
     total = 0
     credits = set()
+    drops = {}
 
     for cc in countries:
         scored = scored_by_cc.get(cc) or []
@@ -1283,7 +1324,9 @@ def main():
                 spare.append(row)
                 if (lake.get("seed") or {}).get("why") == "famous":
                     famous_spare.append(row)
+        gated = {r["id"] for r in rows}
         rows = dedupe(rows)
+        deduped = {r["id"] for r in rows}
         kept = quota_ordered(rows, qmod)[:args.max_per_country]
         # D25: a famous lake that passed every gate is not cut by the region
         # quota or the country ceiling; it ships rated, beyond them.
@@ -1322,6 +1365,8 @@ def main():
             if row["id"] not in have:
                 listed.append(row)
                 have.add(row["id"])
+        drops.update(drop_reasons(scored, gated, deduped, rows, listed,
+                                  args.min_score))
         if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
@@ -1540,6 +1585,7 @@ def main():
                    ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")
     nature_tiers.save_parts("lakes")
+    write_export_drops("lakes", drops, generated, merge=bool(wanted))
     print(f"[lakes] published {total} water bodies across {len(index)} "
           f"countries into {out_dir} (top.json holds {len(top)})")
     if filled:
