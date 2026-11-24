@@ -1281,6 +1281,32 @@ def enrich_country(cc, shortlist_n=None, refresh=False, bathing=None,
     return payload
 
 
+def make_readers(aspect=True):
+    """(aspect_reader, protection_reader), each None when unavailable.
+
+    Both readers hold a continent of geometry, so they are built once for the
+    whole run rather than once per country. build_beaches.py builds them here
+    too (D25 i): without them its new rows had no aspect and no protection."""
+    aspect_reader = None
+    if aspect:
+        try:
+            import coastline
+            aspect_reader = coastline.AspectReader()
+            if not aspect_reader.ready:
+                print("  note: coastline unavailable, aspect skipped")
+        except Exception as exc:
+            print(f"  note: aspect pass unavailable ({type(exc).__name__}: {exc})")
+    protection_reader = None
+    try:
+        import protection
+        protection_reader = protection.ProtectionReader()
+        if not protection_reader.ready:
+            protection_reader = None
+    except Exception:
+        protection_reader = None
+    return aspect_reader, protection_reader
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--countries", default="")
@@ -1322,25 +1348,7 @@ def main():
     protected = load_protected()
     dests = NearIndex(build_dest_index())
 
-    # Both readers hold a continent of geometry, so they are built once for
-    # the whole run rather than once per country.
-    aspect_reader = None
-    if not args.no_aspect:
-        try:
-            import coastline
-            aspect_reader = coastline.AspectReader()
-            if not aspect_reader.ready:
-                print("  note: coastline unavailable, aspect skipped")
-        except Exception as exc:
-            print(f"  note: aspect pass unavailable ({type(exc).__name__}: {exc})")
-    protection_reader = None
-    try:
-        import protection
-        protection_reader = protection.ProtectionReader()
-        if not protection_reader.ready:
-            protection_reader = None
-    except Exception:
-        protection_reader = None
+    aspect_reader, protection_reader = make_readers(aspect=not args.no_aspect)
 
     left = []
     for cc in countries:

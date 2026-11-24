@@ -38,7 +38,21 @@ Options:
     --refresh             re-query even where a cache exists
     --skip-harvest        start from the raw caches (they are the slow part)
     --skip-enrich         re-score and re-export from the rich caches only
+    --shortlist N         beaches per country to enrich; default: sized from
+                          the country's region quotas, as enrich_beaches.py
+    --no-context          skip the Overpass ground truth (beach_context fills it)
+    --max-hours H         start no country's enrich after H hours; the export
+                          still runs, from the caches as they stand
     --dry-run             say what would ship, write nothing
+
+D25 i (2026-11-23): --shortlist used to default to the flat floor of 170, so
+every rebuild through this command undid the quota sizing enrich_beaches.py
+applies (Greece and Norway want 2,600, France 1,896) and cut the rich caches
+back to 170 rows, which is why the box's export came out at about 3,200 rows
+against 6,619 live. The task runs it with --no-context and --max-hours, so the
+photographs for the larger shortlists come in without waiting on Overpass, and
+a slow day cannot hold the box's queue for days; the publish gate judges what
+the export makes of it.
 """
 
 import argparse
@@ -71,9 +85,17 @@ def main():
     parser.add_argument("--refresh", action="store_true")
     parser.add_argument("--skip-harvest", action="store_true")
     parser.add_argument("--skip-enrich", action="store_true")
-    parser.add_argument("--shortlist", type=int, default=enrich_beaches.SHORTLIST)
+    # None: enrich_beaches.shortlist_size picks it from the region quotas.
+    parser.add_argument("--shortlist", type=int, default=None)
+    parser.add_argument("--no-context", action="store_true")
+    parser.add_argument("--max-hours", type=float, default=0)
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
+    deadline = None
+    if args.max_hours:
+        deadline = time.monotonic() + args.max_hours * 3600
+        # The same clock stops enrich_beaches' Overpass batches mid country.
+        enrich_beaches.DEADLINE = deadline
 
     wanted = [c.strip().upper() for c in args.countries.split(",") if c.strip()]
     countries = wanted or harvest_beaches.COUNTRIES
@@ -94,17 +116,28 @@ def main():
         bathing = enrich_beaches.load_bathing()
         protected = enrich_beaches.load_protected()
         dests = enrich_beaches.NearIndex(enrich_beaches.build_dest_index())
+        aspect_reader, protection_reader = enrich_beaches.make_readers()
+        left = []
         for cc in countries:
             if load_cache("raw", cc) is None:
+                continue
+            if deadline is not None and time.monotonic() > deadline:
+                left.append(cc)
                 continue
             try:
                 enrich_beaches.enrich_country(
                     cc, shortlist_n=args.shortlist, refresh=args.refresh,
-                    bathing=bathing, protected=protected, dests=dests)
+                    bathing=bathing, protected=protected, dests=dests,
+                    context=not args.no_context,
+                    aspect_reader=aspect_reader,
+                    protection_reader=protection_reader)
             except KeyboardInterrupt:
                 raise
             except Exception as exc:
                 print(f"  {cc}: enrich failed ({exc})")
+        if left:
+            print(f"  --max-hours {args.max_hours:g} reached; not enriched this run: "
+                  f"{', '.join(left)} (their caches stand as they are)")
 
     print("[3/3] export")
     argv = ["export_beaches.py"]
