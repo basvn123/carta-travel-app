@@ -12,6 +12,7 @@ import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { costTiles } from '../../lib/price/tiles.js';
 import { formatMoney } from '../../lib/money.js';
 import { bookedSplit } from '../../lib/plan/bookedReceipt.js';
+import { OpenJawToggle } from './OpenJawToggle.jsx';
 import { CostRow } from '../../components/CostCardKit.jsx';
 import { barSegments, costCardVariant, SHARE_MIN } from './costCardVariant.js';
 
@@ -144,7 +145,7 @@ function CostTrain({ tiles, mine = false }) {
  */
 export function CostCard({
   priced, people = 1, per = 'group', onPer, budget = null, onOpen = null, onAll = null, onAddPaid = null, aroundNote = '',
-  lifestyle = null, onStyleSpend = null, onChangeFlight = null, mine = false,
+  lifestyle = null, onStyleSpend = null, onChangeFlight = null, mine = false, openJaw = null,
 }) {
   const { t, lang } = useI18n();
   const [variant] = useState(readVariant);
@@ -169,6 +170,9 @@ export function CostCard({
       {splitMiss && <span className="ccard-booked-miss">{t('tp.booked.notYet', { lines: splitMiss })}</span>}
     </p>
   ) : null;
+
+  // G12 L11: fly home from the last stop, both totals in the card's unit.
+  const jawLine = openJaw ? <OpenJawToggle jaw={openJaw} names={openJaw.names} div={div} onPick={openJaw.onPick} /> : null;
 
   const cf = priced?.cartaFlight || {};
   const carriers = [...new Set(['out', 'back'].map((d) => cf[d]?.airline).filter(Boolean))];
@@ -241,6 +245,7 @@ export function CostCard({
           </p>
           {budget && <div className="ccard-budget">{budget}</div>}
           {splitLine}
+          {jawLine}
           {tiles.length > 0 && <CostBar tiles={tiles} lang={lang} />}
         </div>
 
@@ -295,6 +300,7 @@ export function CostCard({
 
       {budget && <div className="ccard-budget">{budget}</div>}
       {splitLine}
+      {jawLine}
 
       <ul className="ccard-rows">{tiles.map(rowOf)}</ul>
       <PriceNotes row={(priced?.stayCosts || []).map((s) => s?.day)} className="ccard-notes" />

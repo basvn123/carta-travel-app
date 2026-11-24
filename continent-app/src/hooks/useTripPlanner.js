@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { tripDaysBetween, DEFAULT_LIFESTYLE, haversineKm } from '../lib/runtime_pricing.js';
 import { suggestNextStops } from '../lib/trip_planner_pricing.js';
 import { quoteTrip, normalizeTransferMode, tripStopDetails, MAX_PARTY, PLANNER_BAG } from '../lib/tripTotal.js';
+import { openJawTotals } from '../lib/plan/openJaw.js';
 import { reorderSavings } from '../lib/tripCostOptimizer.js';
 import { planBedOf, localToday } from '../lib/myTrips.js';
 import { addDays } from '../lib/dates.js';
@@ -487,6 +488,14 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     return Number.isFinite(now) && Number.isFinite(then) ? then - now : null;
   }, [tripState, data, countryInsights]);
 
+  // G12 L11 (open jaw): both ways home quoted on the swept fares, like
+  // quoteDelta, so the trip page can offer flying home from the last stop
+  // with both totals. Only a trip of two or more stops has the choice.
+  const openJaw = useMemo(
+    () => (stops.length >= 2 ? openJawTotals(tripState, { data, countryInsights }) : null),
+    [stops.length, tripState, data, countryInsights],
+  );
+
   const setLegMode = useCallback((index, mode) => {
     setLegModes((prev) => ({ ...prev, [index]: mode }));
   }, []);
@@ -755,7 +764,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     groupSize, setGroupSize, children, babies, setParty,
     transportPref, setTransportPref, transferMode, setTransferMode, pace, setPace, setLegMode, setOwnLeg, carRental,
     // The raw share-link ingredients (the same fields the draft persists).
-    anchorId, anchorOrigin, setAnchorOrigin, returnAnchorId, legModes, ownLegs, ownStays, setOwnStay,
+    anchorId, anchorOrigin, setAnchorOrigin, returnAnchorId, setReturnAnchorId, openJaw, legModes, ownLegs, ownStays, setOwnStay,
     priced, lifestyle,
     cheaperOrder, applyCheaperOrder,
     addStop, removeStop, setStopNights, setStopActivities, moveStop, reorderStop, swapStop, setStopStay, setStopDayTrips,

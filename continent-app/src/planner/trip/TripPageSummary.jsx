@@ -10,6 +10,8 @@ import { TRIP_DRAFT_PLAN_ID } from '../dayPlanStore.js';
 import { IconButton } from '../../components/ui/index.js';
 import { BookmarkIcon } from '../../components/Icons.jsx';
 import { MoreMenu } from './MoreMenu.jsx';
+import { openJawPatch } from '../../lib/plan/openJaw.js';
+import { cityLabel } from '../../lib/placeName.js';
 
 export function TripPageSummary({
   carDelta, carTip, cardMap, data, fullMap, handleSave, handleStartOver, headCount, hist,
@@ -70,6 +72,15 @@ export function TripPageSummary({
       // T888: Change your trip prices a move of the dates and saves it
       // the way the dates chip does, so Undo takes it back.
       quoteDelta={tp.quoteDelta}
+      // G12 L11: fly home from the last stop; a pick sets the planner's return airport (undo keeps it).
+      openJaw={tp.openJaw && tp.setReturnAnchorId ? {
+        ...tp.openJaw,
+        names: {
+          in: cityLabel(data?.destinations?.[tp.openJaw.choice.firstId]?.city || ''),
+          out: cityLabel(data?.destinations?.[tp.openJaw.choice.lastId]?.city || ''),
+        },
+        onPick: (which) => tp.setReturnAnchorId(openJawPatch(tp.openJaw.choice, which).returnAnchorId),
+      } : null}
       onDates={(start, end) => saveChip('dates', { start, end })}
       onFlights={tp.planned && !tp.flight?.driving ? () => setFlightSheet('out') : null}
       onAddPaid={() => {
