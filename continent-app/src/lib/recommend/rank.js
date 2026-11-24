@@ -277,6 +277,10 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
   const levered = applyLevers(trips.map((x) => ({ ...x, base: x.base || x })), levers);
   const pull = flightPull(levered, levers?.flight);
   const priority = priorityPull(levered, settings, levers);
+  // G12 L12: countries the traveller has been come after new ones (decision
+  // §3.2 S10, "countries not yet visited first"), within the fit-first order.
+  const been = new Set(settings.avoidIso2 || []);
+  const isBeen = (trip) => been.size > 0 && been.has(String(trip.iso2 || '').toUpperCase());
   const ranked = levered.map((trip) => {
     const info = fitOf(trip, t, destinations, settings);
     const budget = budgetRuler(trip, settings);
@@ -305,13 +309,14 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
       catch: catchFor(trip, { settings, info, budget }),
       score,
       qualified: RANK.fitFirst ? qualifies(info, settings) : true,
+      ...(isBeen(trip) ? { been: true } : {}),
     };
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });
     // A levered trip keeps its own quote and state (T819); else the base's.
     const own = trip.quote ? trip : trip.base;
     return own ? keepHidden(own, out) : out;
   });
-  return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (b.score - a.score) || a.id.localeCompare(b.id));
+  return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (Number(Boolean(a.been)) - Number(Boolean(b.been))) || (b.score - a.score) || a.id.localeCompare(b.id));
 }
 
 /**

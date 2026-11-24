@@ -134,6 +134,12 @@ export function defaultSettings() {
     // T859: the places the traveller named (Tell Carta's words), countries
     // and towns: [{ kind: 'country' | 'place', id, name, iso2, country }].
     places: [],
+    // G12 L12 (plan again, somewhere new): countries the traveller has been,
+    // which the finder puts after new ones, and their own logged spend on the
+    // trip they plan from: a reference line only (decision 0013), never a
+    // budget and never counted in a total.
+    avoidIso2: [],
+    spendRef: null,
     // T857 (row T856-c): where each answer came from, by question id:
     // 'words' (Tell Carta's sentence) or 'screen'. An id with no entry was
     // given on its screen, as every answer was before T857.
@@ -298,9 +304,25 @@ export function normalizeSettings(raw) {
     sources: raw.sources && typeof raw.sources === 'object'
       ? Object.fromEntries(Object.entries(raw.sources).filter(([k, v]) => typeof k === 'string' && SOURCES.includes(v)))
       : {},
+    avoidIso2: Array.isArray(raw.avoidIso2)
+      ? [...new Set(raw.avoidIso2.map((c) => String(c || '').toUpperCase()).filter((c) => /^[A-Z]{2}$/.test(c)))].slice(0, 60)
+      : [],
+    spendRef: spendRefRaw(raw.spendRef),
     door: oneOf(raw.door, TRIP_DOORS, ''),
     style: typeof raw.style === 'string' ? raw.style.slice(0, 24) : '',
     tradeoffs: tradeoffsRaw(raw.tradeoffs),
+  };
+}
+
+/** G12 L12: own logged spend as { eurPP, nights, planId, label, year }, or null. */
+function spendRefRaw(r) {
+  if (!r || typeof r !== 'object' || !(Number(r.eurPP) > 0)) return null;
+  return {
+    eurPP: Math.round(Number(r.eurPP)),
+    nights: clampInt(r.nights, 1, 60, 1),
+    planId: r.planId ? String(r.planId).slice(0, 64) : null,
+    label: String(r.label || '').slice(0, 80),
+    year: clampInt(r.year, 0, 2200, 0),
   };
 }
 

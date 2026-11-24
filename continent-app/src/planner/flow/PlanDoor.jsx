@@ -100,7 +100,7 @@ export function PlanDoor({ onStart, kept = [], onOpenKept = null, past = null })
           {past && (
             <li>
               <Button variant="secondary" size="sm" iconStart={<SparkIcon size={16} />}
-                onClick={() => onStart({ seed: { source: 'past', label: past.name, when: past.nights ? { mode: 'any', nights: past.nights } : null } })}>
+                onClick={() => (past.onPlan ? past.onPlan() : onStart({ seed: { source: 'past', label: past.name, when: past.nights ? { mode: 'any', nights: past.nights } : null } }))}>
                 {t('pf.door.like', { name: past.name })}
               </Button>
             </li>

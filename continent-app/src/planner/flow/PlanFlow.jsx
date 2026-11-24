@@ -401,6 +401,8 @@ function useHomeTrips(destinations) {
       return '';
     };
     const towns = (ids) => [...new Set(ids.map((id) => dest[id]?.city).filter(Boolean))].slice(0, 2).join(', ');
+    // G12 L12: a trip's countries, so the door's plan again knows where the traveller has been.
+    const isoOf = (ids) => [...new Set(ids.map((id) => String(dest[id]?.iso2 || '').toUpperCase()).filter(Boolean))];
     // T890: a name that is only the country a finder trip landed with
     // ("Italy" for a week in Rome) reads as its places, as on the trip page.
     const named = (name, ids) => {
@@ -423,6 +425,7 @@ function useHomeTrips(destinations) {
       months: x.meta.months,
       nights: x.meta.nights,
       stopCount: x.meta.stops.length,
+      iso2s: isoOf(x.meta.stops),
       status: x.meta.status,
       account: Boolean(x.meta.planId),
     }));
@@ -442,6 +445,7 @@ function useHomeTrips(destinations) {
         months: [],
         nights: nights > 0 ? nights : null,
         stopCount: ids.length,
+        iso2s: isoOf(ids),
         status: ids.length ? 'planned' : 'planning',
         account: true,
       };

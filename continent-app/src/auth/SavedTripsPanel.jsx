@@ -78,6 +78,7 @@ import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '.
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
 import { UnitSheet, UnitButton, RateTrip, tripInUnit, unitWords } from './mytrips/TripParts.jsx';
+import { pastAgainSeed } from '../lib/plan/seedWriters.js';
 import { shareRouteImage } from './mytrips/atlas/routeImage.js';
 import { project } from './mytrips/atlas/project.js';
 
@@ -1320,6 +1321,17 @@ export function SavedTripsPanel({
       const open = openMemory === x.id;
       const mem = x.mem;
       const edit = () => openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, mem) : editableFromDayPlan(x.item, mem));
+      // G12 L12: plan again, somewhere new, from this trip: its length, month
+      // and party, every country been after the new ones, and its own spend
+      // as a reference line only (decision 0013).
+      const again = onPlanSeed ? () => onPlanSeed(pastAgainSeed({
+        id: x.id,
+        name: x.title,
+        start: plain?.start || x.item?.start_date || '',
+        nights: x.nights,
+        spendPP: x.spendPP,
+        party: mem?.travellers ? { adults: Number(mem.travellers.adults) || 0, kids: Number(mem.travellers.children) || 0 } : null,
+      }, { been: [...beenIso] })) : null;
       return {
         ...row,
         year: tripYear(plain) ?? yearOf(x.end),
@@ -1340,6 +1352,7 @@ export function SavedTripsPanel({
               </span>
             )}
             {mem && !mem.photos?.length && <Button size="sm" iconStart={<CameraIcon size={14} />} onClick={edit}>{t('mt.addPhotos')}</Button>}
+            {again && <Button size="sm" variant="quiet" onClick={again}>{t('mt.planAgain')}</Button>}
           </div>
         ) : row.below && !mem ? row.below : null,
       };

@@ -145,7 +145,7 @@ export function useTripFinder(settings) {
   const stayTier = choices.stay_tier || null;
   // The answer set this run is for; a new one restarts the stages.
   const answers = answersOf(settings);
-  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, settings.booked, settings.imports, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
+  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, settings.booked, settings.imports, settings.avoidIso2, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
     (data?.meta?.home_airports || []).map((a) => a.iata), verdictKey]),
   [settings, origin, stayTier, lifestyle, taste, data, verdictKey]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
 

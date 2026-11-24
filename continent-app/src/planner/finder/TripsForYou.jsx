@@ -278,6 +278,13 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   };
 
   const cheapestId = cheapestOf(trips);
+  // G12 L12 (decision §3.4, 0013): the past trip's own logged spend a day, as
+  // a reference line only. It is the traveller's figure, not like for like
+  // with Carta's totals, so it never sets a budget, sorts, or is compared.
+  const ref = settings.spendRef;
+  const spendLine = ref?.eurPP > 0 && ref.nights > 0
+    ? t('tf.spendRef', { name: [ref.label, ref.year || ''].filter(Boolean).join(' '), eur: formatMoney(ref.eurPP / ref.nights, { locale: lang }) })
+    : '';
   // G12 R2: themed rows from the trips already priced, under the best pick
   // and the diverse five, only in the engine's own order with no quick
   // filter (a sort or a filter is the traveller's own way to keep looking).
@@ -334,6 +341,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
           {t(trips.length === 1 ? 'tf.list.titleOne' : 'tf.list.titleN', { n: trips.length })}
         </h2>
       </div>
+      {spendLine && <p className="tff-spendref">{spendLine}</p>}
       {answers.chips.length > 0 && (
         <ul className="tff-answers" aria-label={t('tf.chip.change')}>
           {answers.chips.map((c) => (

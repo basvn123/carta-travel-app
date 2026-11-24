@@ -42,7 +42,7 @@ export function answerKey(input) {
   const s = input.settings;
   return stableHash(JSON.stringify([
     // G12 L10: what is booked fixes the dates and the places.
-    s.guide, s.when, s.party, s.priority, tradeoffsOf(s), s.booked || null, s.imports || null, input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
+    s.guide, s.when, s.party, s.priority, tradeoffsOf(s), s.booked || null, s.imports || null, s.avoidIso2 || null, input.origin?.iata || null, input.origin?.lat ?? null, input.origin?.lon ?? null,
     input.lifestyle || null, input.stayTier || null, input.baggage || null, input.ownFlight || null, input.flights?.checked || null,
     input.taste || null, Boolean(input.countryInsights),
     // T861: the home airports in reach and when each one's file was checked.

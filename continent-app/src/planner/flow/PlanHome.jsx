@@ -14,6 +14,7 @@ import { useKept, useKeptDrops } from '../../lib/recommend/keptStore.js';
 import { formatMoney } from '../../lib/money.js';
 import { loadFlightFile } from '../../lib/flights/flightData.js';
 import { PlanDoor } from './PlanDoor.jsx';
+import { pastAgainSeed } from '../../lib/plan/seedWriters.js';
 
 /** A plain click stays in the app; a modified click opens the address. */
 function door(go) {
@@ -380,9 +381,25 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
   // G12 L5: the door replaces Start planning (the same start, now with a
   // line, three chips and the cards that have something behind them).
   const lastPast = byState.past[0] || null;
+  // G12 L12 (decision §3.2 S10): the door's past-trip card plans again
+  // somewhere new: that trip's month, length and own logged spend (a
+  // reference line only, decision 0013) and every country of a past trip
+  // after the new ones. The spend store loads on the tap only, so Plan's
+  // first load does not carry it.
+  const planAgain = async (past) => {
+    const been = [...new Set(byState.past.flatMap((x) => x.iso2s || []))];
+    let spendPP = null;
+    if (past.planId) {
+      try {
+        const m = await import('../../auth/pastTripMemory.js');
+        spendPP = m.tripSpendPerPerson(past.planId, m.loadMemory(past.planId));
+      } catch { spendPP = null; }
+    }
+    onStart({ seed: pastAgainSeed({ id: past.planId, name: past.name, start: past.start, nights: past.nights, spendPP }, { been }) });
+  };
   const doorNode = (
     <PlanDoor onStart={onStart} kept={kept} onOpenKept={onOpenKept}
-      past={lastPast ? { name: lastPast.name, nights: lastPast.nights || null } : null} />
+      past={lastPast ? { name: lastPast.name, nights: lastPast.nights || null, onPlan: () => planAgain(lastPast) } : null} />
   );
 
   if (trips.length > 0) {

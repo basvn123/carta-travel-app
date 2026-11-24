@@ -136,7 +136,7 @@ function bookedOf(b) {
 
 function spendRefOf(r) {
   if (!r || typeof r !== 'object' || !(Number(r.eurPP) > 0)) return null;
-  return { eurPP: Math.round(Number(r.eurPP)), nights: int(r.nights, 1, 60, 1), planId: str(String(r.planId || '')) || null };
+  return { eurPP: Math.round(Number(r.eurPP)), nights: int(r.nights, 1, 60, 1), planId: str(String(r.planId || '')) || null, year: int(r.year, 0, 2200, 0) };
 }
 
 /** Any object made a safe PlanSeed (unknown keys dropped, every value checked). */
@@ -253,6 +253,10 @@ export function seedToSettings(rawSeed, { style = null, explore = null, base = n
     give('booked', { booked: { ...s.booked, ...Object.fromEntries(Object.entries(flags).filter(([, v]) => v)) } });
   }
   if (seed.transport) give('transport', { guide: { ...s.guide, around: seed.transport } });
+  // G12 L12: plan again, somewhere new. Not answers (nothing is asked):
+  // the finder reads the countries been, the list shows the spend line.
+  if (seed.avoidIso2.length) s = normalizeSettings({ ...s, avoidIso2: seed.avoidIso2 });
+  if (seed.spendRef) s = normalizeSettings({ ...s, spendRef: { ...seed.spendRef, label: seed.label } });
   return s;
 }
 

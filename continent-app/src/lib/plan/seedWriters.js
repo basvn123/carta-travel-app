@@ -11,6 +11,7 @@
  *   askPlanSeed (askSeed.js, apart so the app's first load does not carry the parser)
  *   openTripOf(draft, name)                               the trip open in Plan, for S15
  *   choiceStop(seed)                                      the town S15 adds to the open trip
+ *   pastAgainSeed(past, { been })                         plan again, somewhere new (G12 L12, S10)
  *
  * Pure: no React, no store, so node tests hold it (tests/planSeedWriters.test.mjs).
  */
@@ -154,4 +155,41 @@ export function choiceStop(rawSeed) {
   const seed = makeSeed(rawSeed);
   const p = seed.places.find((x) => x.kind === 'place');
   return p ? p.id : null;
+}
+
+/**
+ * G12 L12 (decision §3.2 S10, N5): "plan again, somewhere new" from a past
+ * trip. Same length and month (asked, prefilled: a seed field is a prefill
+ * unless pinned) and party, the countries been as `avoidIso2` (the finder
+ * puts them after new ones), and the trip's own logged spend as `spendRef`:
+ * a reference line only (decision 0013, logged spend is not like for like
+ * with the engine), never a budget.
+ *   past: { id, name, start (YYYY-MM-DD), nights, spendPP (whole trip, a
+ *           person, or null), party: { adults, kids } | null }
+ *   opts: { been (ISO2 codes of every country been) }
+ */
+export function pastAgainSeed(past, { been = [] } = {}) {
+  if (!past) return makeSeed({ source: 'past', avoidIso2: been });
+  const start = /^\d{4}-\d{2}/.test(String(past.start || '')) ? String(past.start) : '';
+  const month = start ? Number(start.slice(5, 7)) : 0;
+  const nights = Number(past.nights) > 0 ? Math.round(Number(past.nights)) : 0;
+  let when = null;
+  if (month) when = { mode: 'months', months: [month], nights: nights || 7 };
+  else if (nights) when = { mode: 'any', nights };
+  const p = past.party;
+  const party = p && Number(p.adults) > 0
+    ? { kind: Number(p.kids) > 0 ? 'family' : Number(p.adults) === 1 ? 'solo' : Number(p.adults) === 2 ? 'couple' : 'friends', adults: p.adults, kids: p.kids || 0 }
+    : null;
+  const spend = Number(past.spendPP) > 0 && nights > 0
+    ? { eurPP: past.spendPP, nights, planId: past.id || null, year: start ? Number(start.slice(0, 4)) : 0 }
+    : null;
+  return makeSeed({
+    source: 'past',
+    ref: past.id ? { kind: 'plan', id: String(past.id) } : null,
+    label: String(past.name || ''),
+    when,
+    party,
+    avoidIso2: been,
+    spendRef: spend,
+  });
 }

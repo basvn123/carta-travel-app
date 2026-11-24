@@ -391,7 +391,12 @@ export function buildCandidates(input) {
     taste: tasteFor(settings, taste),
     topN: CANDIDATES.placesPerCountry,
   });
-  const countries = matched.slice(0, CANDIDATES.countries);
+  // G12 L12 (decision §3.2 S10): plan again somewhere new puts the
+  // countries been after the new ones, so the eight countries priced are
+  // new ones first; a been country still comes when too few new ones fit.
+  const avoid = new Set(settings.avoidIso2 || []);
+  const fresh = avoid.size ? [...matched.filter((c) => !avoid.has(String(c.iso2 || '').toUpperCase())), ...matched.filter((c) => avoid.has(String(c.iso2 || '').toUpperCase()))] : matched;
+  const countries = fresh.slice(0, CANDIDATES.countries);
 
   const { shapes, gaps } = shapesFor(settings);
   const flies = fliesThere(settings);
