@@ -453,6 +453,9 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-m-ph.is-group .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); border-color: var(--umber-800); }
 .vr-m-tx { display: grid; gap: var(--space-1); justify-items: start; min-width: 0; }
 .vr-m-faces { display: inline-flex; align-items: center; min-height: 28px; }
+/* A phone card stands alone in its row, so an empty face line takes no room
+   there; in the grids it keeps its height so titles line up (judge v3-3). */
+@media (max-width: 767.98px) { .vr-m-faces:empty { display: none; } }
 .vr-m-faces .frn-face { box-sizing: content-box; border: 2px solid var(--surface-page); }
 .vr-m-faces .frn-face + .frn-face { margin-left: -6px; }
 .vr-m-more { margin-inline-start: var(--space-1); font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
