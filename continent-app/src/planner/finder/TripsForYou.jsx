@@ -1,6 +1,6 @@
 import React, { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Button, Segmented } from '../../components/ui/index.js';
 import { CheckIcon, ListDayIcon, MapPinIcon, ScaleIcon } from '../../components/Icons.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
@@ -38,15 +38,19 @@ const TripsMap = lazy(() => import('./TripsMap.jsx'));
 
 // From 1024 px the map stands beside the list (T880), as on Explore.
 const WIDE = '(min-width: 1024px)';
-function useWide() {
-  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia?.(WIDE).matches);
+// G12 B7a (R7): below 820 px List and Map are two tabs at the top of the
+// results, not a floating pill the traveller has to find; 820 to 1023 px
+// keeps the pill, and from 1024 px the map stands beside the list.
+const PHONE = '(max-width: 819.98px)';
+function useWide(query = WIDE) {
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && Boolean(window.matchMedia?.(query).matches));
   useEffect(() => {
-    const mq = window.matchMedia?.(WIDE);
+    const mq = window.matchMedia?.(query);
     if (!mq) return undefined;
     const on = (e) => setWide(e.matches);
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
-  }, []);
+  }, [query]);
   return wide;
 }
 
@@ -211,6 +215,7 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   const moreFound = more && more !== 'busy' ? more : null;
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
+  const phone = useWide(PHONE);
   // G12 L8: under a ceiling the trips over it leave the list; up to three
   // just over (within 10%) come back apart under "Just over".
   const capped = budgetSplit(found, settings.guide?.budget);
@@ -417,6 +422,14 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
         )}
       </div>
 
+      {phone && trips.length > 0 && (
+        <Segmented size="sm" block className="tff-viewtabs" label={t('tf.view.label')} value={onMap ? 'map' : 'list'}
+          onChange={(v) => setMap(v === 'map')}
+          options={[
+            { value: 'list', label: t('explore.viewList'), icon: <ListDayIcon size={16} /> },
+            { value: 'map', label: t('explore.viewMap'), icon: <MapPinIcon size={16} /> },
+          ]} />
+      )}
       {ml.undo && (
         <p className="tff-ml-note" role="status">
           <span>{t('tf.ml.lessDone')}</span>
@@ -548,7 +561,7 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
         }
         return empty || list;
       })()}
-      {!wide && trips.length > 0 && (
+      {!wide && !phone && trips.length > 0 && (
         <div className="tff-fab-slot">
           <Button variant="secondary" size="sm" className="tff-fab" iconStart={onMap ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />} onClick={() => setMap(!onMap)}>
             {t(onMap ? 'explore.viewList' : 'explore.viewMap')}

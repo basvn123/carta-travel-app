@@ -369,6 +369,9 @@
 .tff-none { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); }
 .tff-none p { margin: 0; color: var(--text-2); }
 
+/* G12 B7a (R7): below 820 px List and Map are two tabs under the toolbar (the 820 to 1023 px pill stays). */
+.tff-viewtabs { margin-block: var(--space-2) var(--space-3); }
+
 /* The phone's map switch (T880): one paper pill floating above the nav (house style: no dark slab). */
 .tff-fab-slot {
   position: sticky;

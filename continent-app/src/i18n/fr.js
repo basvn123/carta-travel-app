@@ -9597,6 +9597,7 @@ export const fr = {
   "tf.quick.clear": "Effacer les filtres",
   "tf.view.hideMap": "Masquer la carte",
   "tf.view.showMap": "Afficher la carte",
+  "tf.view.label": "Affichage",
   "tf.sort.shortest": "Le plus rapide",
   "tf.cmp.openN": "Comparer {n}",
   "tf.map.label": "Voyages sur la carte",

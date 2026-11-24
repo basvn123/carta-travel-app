@@ -10224,6 +10224,7 @@ export const en = {
   "tf.quick.clear": "Clear filters",
   "tf.view.hideMap": "Hide map",
   "tf.view.showMap": "Show map",
+  "tf.view.label": "View",
   "tf.sort.shortest": "Quickest there",
   "tf.cmp.openN": "Compare {n}",
   "tf.map.label": "Trips on the map",

@@ -9597,6 +9597,7 @@ export const de = {
   "tf.quick.clear": "Filter zurücksetzen",
   "tf.view.hideMap": "Karte ausblenden",
   "tf.view.showMap": "Karte zeigen",
+  "tf.view.label": "Ansicht",
   "tf.sort.shortest": "Am schnellsten da",
   "tf.cmp.openN": "{n} vergleichen",
   "tf.map.label": "Reisen auf der Karte",

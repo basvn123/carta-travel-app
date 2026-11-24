@@ -9608,6 +9608,7 @@ export const nl = {
   "tf.quick.clear": "Filters wissen",
   "tf.view.hideMap": "Kaart verbergen",
   "tf.view.showMap": "Kaart tonen",
+  "tf.view.label": "Weergave",
   "tf.sort.shortest": "Snelst er",
   "tf.cmp.openN": "{n} vergelijken",
   "tf.map.label": "Reizen op de kaart",
