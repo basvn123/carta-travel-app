@@ -6,20 +6,22 @@ Must-sees after the rules approximate relabelling: a dropped one is replaced by 
 
 | Measure | Before | After | Target |
 |---|---|---|---|
-| Must-sees | 11161 | 11159 | |
+| Must-sees | 11161 | 11158 | |
 | Must-sees filed Square without a square word | 3769 (33.77%) | 2 (0.02%) | at most 2% |
-| Must-sees matching event/org/shop/Fondali, not a visitable site | 274 | 14 | 0 |
-| Must-sees flagged noise (dropped) | 0 | 276 | |
+| Must-sees matching event/org/shop/Fondali, not a visitable site | 274 | 3 | 0 |
+| Must-sees flagged noise (dropped) | 0 | 286 | |
 | Dossier highlights matching the ban regex (name and P31 types) | 580 | 12 | 0 |
 | Festival rows matching the adult or trade regex | 3 | 0 | 0 |
 
-Remaining highlight and event hits are rows kept by a guard (heritage, 60 or more Wikipedia languages, or a memorial, museum or site word): see `errors.md`. The 0 targets for the research patterns are not met: 14 famous battles (Verdun, Vienna, Actium, Mohacs, Kosovo) stay because 60 or more languages make them a place people visit; a stricter rule was judged worse than keeping them.
+After judge 1 (fixes 2a to 2d): the 60-language exception for events is gone (Verdun, Vienna, Actium, Mohacs, Kosovo are flagged), `EVENT_NAME_RE` takes ordinals and "on" (Raid on Pula, Third Siege of Missolonghi), fame alone no longer rescues an organisation (Deutsche Bank flagged), and a town hall is a Palace, not a Town. The 3 research-pattern must-sees left are Slovak National Theatre (a theatre you can visit) and two Fort Eben-Emael rows (a fort, kept by the site word). Remaining highlights (12): 7 war memorials or cemetery-memorials kept by heritage or the memorial word, 3 regex false positives (Sampierdarena, Frederiksstaden, Arenas Blancas Lighthouse), others in `errors.md`.
+
+Replay run time (`--rules after`, 157,775 rows, 3,865 shards and dossiers, main checkout on this disk): 895 s, about 15 minutes. Plan for 10 to 15 minutes; run it in the background.
 
 ## Dropped must-sees by place class
-{"city": 88, "town": 88, "village": 59, "area": 27, "metro": 13, "?": 1}
+{"town": 91, "city": 88, "village": 62, "area": 28, "metro": 16, "?": 1}
 
 ## Dropped must-sees by country (top 15)
-{"IT": 55, "FR": 46, "ES": 32, "GR": 19, "GB": 18, "BE": 14, "DE": 13, "NL": 10, "PL": 7, "BG": 7, "CZ": 6, "HR": 5, "DK": 4, "XK": 4, "HU": 3}
+{"IT": 56, "FR": 49, "ES": 32, "GR": 20, "GB": 18, "BE": 14, "DE": 14, "NL": 10, "PL": 7, "BG": 7, "HR": 6, "CZ": 6, "XK": 5, "HU": 4, "DK": 4}
 
 ## Square must-sees without square word after, by class
 {"metro": 2}
@@ -42,7 +44,7 @@ Row format: [shard, name, kind before, kind after, label before, flagged noise].
 [["King Baudouin Stadium", false], ["Heysel Stadium disaster", false], ["Lotto Park", false], ["Cathedral of St. Michael and St. Gudula", true], ["National Basilica of the Sacred Heart", true], ["Royal Museums of Fine Arts of Belgium", true], ["Royal Palace of Brussels", true], ["Berlaymont building", true]]
 
 ## 50 dropped must-sees I read (shard | name | kind | desc | why)
-All 276 dropped must-sees were read in two passes: the 36 that are not a plain battle, and 70 random ones. None is a visitable site: battles and sieges as dates, naval actions, disasters (Costa Concordia, Courrieres), seabed polygons (Fondali), a diocese, a railway halt, Waitrose. One real museum was dropped by the first draft (Sainsbury Centre for Visual Arts, shop rule) and fixed: the shop rule now gives way to a site word in desc.
+All 286 dropped must-sees (276 before judge 1 plus 10 newly flagged) were read: the 36 that are not a plain "Battle of" row, including every newly flagged one (Deutsche Bank, Raid on Pula, Combat of the Thirty, Capture of Cadiz, Second Battle of the Marne), and 70 random battles earlier. None is a visitable site: battles and sieges as dates, naval actions, disasters (Costa Concordia, Courrieres), 9 seabed polygons (Fondali), 2 dioceses plus a bank, 2 railway stations, Waitrose. One real museum was dropped by the first draft (Sainsbury Centre for Visual Arts, shop rule) and fixed: the shop rule now gives way to a site word in desc.
 
 - BZR | massacre at Béziers | Square | 1209 killing of Cathars during the Albigensian Crusade | event
 - GDN | Defense of the Polish Post Office in Danzig | Square | 1939 battle of the World War II | event
@@ -93,3 +95,12 @@ All 276 dropped must-sees were read in two passes: the 36 that are not a plain b
 - gem:nieuwpoort | Battle of the Yser | Square | 1914 battle of the First World War | event
 - TMP | Battle of Tampere | Square | 1918 battle of the Finnish Civil War | event
 - gem:gorlitz | Battle of Moys | Square | 1757 battle | event
+
+## Wave 4 step 0 (D7 carried)
+
+- Judge 3 fix 1: HANDBOOK and ROADMAP now say `cap_kept_long` 371, as the replay prints.
+- Judge 3 fix 2: `names._GENERIC_PART` (descriptor and colour words, scanned from the wire's cut names, not a blind list) and `worse_reason` "generic_only", with no length limit. `_safe_name` takes a network prefix off, then the first dash segment when it fits and is no code, else the last, else the places in a trailing bracket. Replay counter `generic_only` required 0 (a second copy of the test; the list is shared).
+- Replay on the real wire: ACCEPT. Changed 2,926, unclean 3,937 to 1,209, `generic_only` 0, `worse_than_wire` 0, `stray_bracket` 0, `unit_dropped` 0, `emptied` 0, `dangling_end` 0, `dedupe_cut` 0, `dedupe_trim` 9, `dedupe_replaced` 64, `id_suffix` 2, `cap_kept_long` 371, end losses 76 (75 over the cap), new duplicate groups 0.
+- Whole-wire scan, names whose every 3+ letter word is a descriptor or colour: 208 on the wire itself; 222 with `308437f64c` (14 made by the cleaner); 208 now, and 0 that the wire did not already have.
+- Diff against `308437f64c`: 21 ids change, all generic leftovers or their dedupe suffixes: 76648 and 76650 "Circuit Cheile Vălișoarei, versantul drept/stâng", 41836 "Le sentier de Ferrières", 211889 and 211890 "Motivation/Bewegung Bad Wünnenberg", 138004 and 150136 and 152972 keep Twente or Het Hulsbeek, 224692 "Schenefeld - Klövensteen - Wedel", 186798, 201656, 28662, plus a few where the dedupe suffix went away.
+- Tests 128 passed, ruff clean, drift 0 new. Pins: 76648, 41836, 211890, 138004, 150136.

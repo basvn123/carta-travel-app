@@ -2,37 +2,37 @@
  "rules": "after",
  "shards": 3865,
  "rows": 157775,
- "must_sees_effective": 11159,
- "kind_changed": 55144,
- "newly_noise_live_rows": 975,
+ "must_sees_effective": 11158,
+ "kind_changed": 55188,
+ "newly_noise_live_rows": 1049,
  "must_square_no_square_word": 2,
  "must_square_no_square_word_pct": 0.02,
- "must_matching_research_not_visitable": 14,
- "must_dropped": 276,
+ "must_matching_research_not_visitable": 3,
+ "must_dropped": 286,
  "must_dropped_by_class": {
+  "town": 91,
   "city": 88,
-  "town": 88,
-  "village": 59,
-  "area": 27,
-  "metro": 13,
+  "village": 62,
+  "area": 28,
+  "metro": 16,
   "?": 1
  },
  "must_dropped_by_country": {
-  "IT": 55,
-  "FR": 46,
+  "IT": 56,
+  "FR": 49,
   "ES": 32,
-  "GR": 19,
+  "GR": 20,
   "GB": 18,
   "BE": 14,
-  "DE": 13,
+  "DE": 14,
   "NL": 10,
   "PL": 7,
   "BG": 7,
+  "HR": 6,
   "CZ": 6,
-  "HR": 5,
+  "XK": 5,
+  "HU": 4,
   "DK": 4,
-  "XK": 4,
-  "HU": 3,
   "SE": 3,
   "EE": 3,
   "IE": 2,
@@ -50,12 +50,13 @@
   "LU": 1,
   "LT": 1,
   "CH": 1,
-  "SK": 1
+  "SK": 1,
+  "AT": 1
  },
  "must_by_class": {
   "village": 3069,
   "city": 3002,
-  "town": 2845,
+  "town": 2844,
   "area": 1231,
   "metro": 1008,
   "?": 4
@@ -68,17 +69,9 @@
   "PL": 1
  },
  "research_hits_by_country": {
-  "FR": 3,
-  "GR": 2,
   "SK": 1,
-  "DE": 1,
-  "HR": 1,
   "BE": 1,
-  "IT": 1,
-  "HU": 1,
-  "NL": 1,
-  "XK": 1,
-  "AT": 1
+  "NL": 1
  },
  "research_hits_samples": [
   [
@@ -90,30 +83,6 @@
    ]
   ],
   [
-   "FRA",
-   "Deutsche Bank",
-   "globales Bank- und Finanzdienstleistungsunternehmen aus Deutschland",
-   [
-    "org"
-   ]
-  ],
-  [
-   "gem:brijuni",
-   "Raid on Pula",
-   "Part of the Mediterrainian Campaign of World War I",
-   [
-    "event"
-   ]
-  ],
-  [
-   "gem:josselin",
-   "Combat of the Thirty",
-   "Part of the Breton War of Succession (1351)",
-   [
-    "event"
-   ]
-  ],
-  [
    "gem:lanaye",
    "Battle of Fort Eben-Emael",
    "Battle (WW2)",
@@ -122,73 +91,9 @@
    ]
   ],
   [
-   "gem:mauleon",
-   "Second Battle of Ch\u00e2tillon",
-   null,
-   [
-    "event"
-   ]
-  ],
-  [
-   "gem:mesolongi",
-   "Third Siege of Missolonghi",
-   null,
-   [
-    "event"
-   ]
-  ],
-  [
-   "gem:monfalcone",
-   "Eleventh Battle of the Isonzo",
-   "World War I battle fought between the Italian and Austro-Hungarian armies",
-   [
-    "event"
-   ]
-  ],
-  [
-   "gem:verdun",
-   "Battle of Verdun",
-   "Battle on the Western Front during the First World War",
-   [
-    "event"
-   ]
-  ],
-  [
-   "gem:villany",
-   "Battle of Moh\u00e1cs",
-   "1526 battle of the Ottoman-Hungarian Wars",
-   [
-    "event"
-   ]
-  ],
-  [
    "MST",
    "Battle of Fort Eben-Emael",
    "Battle (WW2)",
-   [
-    "event"
-   ]
-  ],
-  [
-   "PRN_",
-   "Battle of Kosovo",
-   "1389 battle between Serbian-led forces and the Ottoman Empire",
-   [
-    "event"
-   ]
-  ],
-  [
-   "PVK",
-   "Battle of Actium",
-   "Naval battle between Octavian and Mark Antony/Cleopatra (31 BC)",
-   [
-    "event"
-   ]
-  ],
-  [
-   "VIE",
-   "Battle of Vienna",
-   "1683 battle between the Christian European States and the Ottomans",
    [
     "event"
    ]

@@ -95,12 +95,34 @@ def test_must_keep_rows_are_never_noise():
         poi("Atomium", desc="Landmark building in Brussels, Belgium"),
         poi("Manneken Pis", desc="Brass sculpture and fountain in Brussels, Belgium", heritage=True),
         poi("Dam", kind="Palace", desc="Town square in Amsterdam", heritage=True),
-        poi("Battle of Waterloo", desc="1815 battle", wiki="u"),
+        poi("Slovak National Theatre", kind="Theatre", desc="Theatre and opera company in Bratislava"),
     ]
-    famous = {"u": {"sitelinks": 90}}
-    for it in keep[:-1]:
+    for it in keep:
         assert not n.classify_poi(it)["noise_reason"], it["name"]
-    assert not n.classify_poi(keep[-1], famous["u"])["noise_reason"]
+
+
+def test_fame_does_not_rescue_an_event_or_a_company():
+    big = {"sitelinks": 90}
+    assert n.classify_poi(poi("Battle of Vienna", desc="1683 battle"), big)["noise_reason"] == "event"
+    assert n.classify_poi(poi("Deutsche Bank", desc="globally active bank in Germany"),
+                          big)["noise_reason"] == "organisation"
+
+
+def test_event_names_with_ordinals_and_on():
+    for name in ("Third Siege of Missolonghi", "Raid on Pula", "Combat of the Thirty",
+                 "Second Battle of Châtillon", "Eleventh Battle of the Isonzo"):
+        assert n.classify_poi(poi(name))["noise_reason"] == "event", name
+
+
+def test_a_town_hall_is_not_a_town():
+    for name, desc in (("Gdansk Main Town Hall", "Town hall in Gdansk"),
+                       ("Roemer", "City hall in Frankfurt"),
+                       ("Joensuu Town Hall", "Town hall in Finland"),
+                       ("Rathaus", None)):
+        v = n.classify_poi(poi(name, desc=desc), known=KNOWN)
+        assert v["kind"] not in ("Town", "Square"), name
+    assert n.classify_poi(poi("Palazzo Vecchio", kind="Palace", desc="Town hall in Florence"),
+                          known=KNOWN)["kind"] == "Palace"
 
 
 def test_colosseum_is_not_a_theatre():

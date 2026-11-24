@@ -136,6 +136,8 @@ DESC_KIND = [
     ("Cave", r"\b(cave|cave system|cavern|grotto|grotte|h[oö]hle)\b"),
     ("Park", r"\b(park|public park|country park|botanical garden|arboretum|garden|gardens|nature reserve|protected area|national park)\b"),
     ("Stadium", r"\b(stadium|arena|velodrome)\b"),
+    # a town hall is a building to see, not a town (Gdansk Main Town Hall, Roemer)
+    ("Palace", r"\b(town hall|city hall|town house|guildhall|rathaus|hotel de ville|hôtel de ville|raadhuis|stadhuis)\b"),
     ("Town", r"\b(town|city|market town|capital|city and municipality)\b"),
     ("Village", r"\b(village|hamlet|comune|commune|municipality|human settlement|settlement|civil parish|former municipality|neighbourhood|gemeente|community|municipal unit)\b"),
 ]
@@ -152,7 +154,7 @@ NAME_KIND = [
     ("Lighthouse", r"\b(lighthouse|faro|phare|fyr)\b"),
     ("Windmill", r"\b(windmill|windmolen|molen|moulin)\b"),
     ("Castle", r"\b(castle|fortress|fort|citadel|ch[aâ]teau|kasteel|castello|castillo|burg|hrad|zamek|schloss)\b"),
-    ("Palace", r"\b(palace|palazzo|palacio|palais|manor|mansion|villa)\b"),
+    ("Palace", r"\b(palace|palazzo|palacio|palais|manor|mansion|villa|town hall|city hall|rathaus|guildhall)\b"),
     ("Museum", r"\b(museum|museo|mus[eé]e|muzeum|muzeu|gallery|galerie)\b"),
     ("Bridge", r"\b(bridge|ponte|puente|pont|br[uü]cke|brug)\b"),
     ("Tower", r"\b(tower|torre|tour|turm|toren)\b"),
@@ -176,7 +178,7 @@ EVENT_DESC_RE = re.compile(
     r"(battle|siege|bombing|raid|massacre|treaty|ruhr pocket|disaster|shooting|election|"
     r"stadium disaster|crash|attack|uprising|offensive|operation|campaign)\b", re.IGNORECASE)
 EVENT_NAME_RE = re.compile(
-    r"^(?:the\s+)?(battle|siege|bombing|raid|massacre|treaty)\s+(of|for|at)\b"
+    r"^(?:the\s+)?(?:\w+\s+)?(battle|siege|bombing|raid|massacre|treaty|combat|capture|sack)\s+(of|for|at|on)\b"
     r"|\b(disaster|massacre|bombing)\s*$|^(ruhr pocket)\b", re.IGNORECASE)
 # Organisations in the leading noun phrase of desc (not anywhere in it: "river
 # bank" and "bank of a lake" are places).
@@ -210,6 +212,8 @@ SITE_NAME_RE = re.compile(
     r"\b(museum|memorial|monument|battlefield|lion'?s mound|butte du lion|museo|mus[eé]e|"
     r"gedenkst[aä]tte|cemetery|castle|fort|park|ruins?|ossuary|trench(?:es)?)\b", re.IGNORECASE)
 FAMOUS_SITELINKS = 15
+# A theatre or opera "company" is also a house you can visit (Slovak National Theatre).
+VENUE_DESC_RE = re.compile(r"\b(theatre|theater|opera house|concert hall|museum|gallery|stadium)\b", re.IGNORECASE)
 
 
 def _lead(desc):
@@ -269,11 +273,16 @@ def noise_reason(item, wd=None):
     # An event, unless the row is the site of it. "Battle of X" with a memorial
     # in desc is kept; the plain "Battle of Berlin" row is a date.
     if (EVENT_DESC_RE.search(desc) or EVENT_NAME_RE.search(name)) and not (
-            item.get("heritage") or ((wd or {}).get("sitelinks") or 0) >= 60
+            item.get("heritage")
             or re.search(r"\b(museum|memorial|monument|battlefield|site|mound|cemetery|park)\b", desc, re.I)
             or SITE_NAME_RE.search(name)):
         return "event"
-    if ORG_DESC_RE.search(lead) and not visitable:
+    # Fame alone never rescues an organisation (Deutsche Bank has many
+    # sitelinks): it needs heritage or a site word, or to be a venue.
+    if ORG_DESC_RE.search(lead) and not (
+            item.get("heritage") or (wd or {}).get("heritage")
+            or SITE_DESC_RE.search(desc) or SITE_NAME_RE.search(name)
+            or VENUE_DESC_RE.search(desc)):
         return "organisation"
     if CEMETERY_DESC_RE.search(lead) and not item.get("wiki") and not visitable:
         return "cemetery"
