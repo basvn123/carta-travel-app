@@ -8,6 +8,7 @@ import { heldPlanWaiting } from './heldPlan.js';
 import { loadTripDraft } from '../planner/tripDraftStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
 import { TabFallback } from './TabFallback.jsx';
+import { PlanHereChoice } from './PlanHereChoice.jsx';
 import { AccountPanel } from '../auth/AccountPanel.jsx';
 
 export function AppOverlays({
@@ -22,7 +23,11 @@ export function AppOverlays({
   setChoices, setCountryPage, setGuidesOpen, setPastAtOpen, setPendingDayPlanId,
   setPendingGuide, setPendingRegion, setPendingTrip, setSavedTripsOpen, setSelectedId,
   setTogetherCode, togetherCode, togetherOpen, togetherView, toggleFav, user,
+  openPlan = null, planChoice = null, resolvePlanChoice = null,
 }) {
+  // S15 (G12 B2): a "Plan a trip here" answered while a trip is open closes
+  // the page it was asked on only once the traveller picks.
+  const leavePlace = () => { setSelectedId(null); leaveRegionPage(); leaveCountryPage(); };
   return (
     <>
     {countryPage && (
@@ -39,7 +44,7 @@ export function AppOverlays({
             onShowAll={(cc) => { leaveCountryPage(); openExploreSection('places', cc); }}
             onOpenLayer={(layer, cc) => { leaveCountryPage(); openExploreSection(layer, cc); }}
             onOpenRegion={openRegionPage}
-            onPlanTrip={(cc) => { leaveCountryPage(); openTripForCountry(cc); }}
+            onPlanTrip={(cc) => { if (openTripForCountry(cc, null, { source: 'country' }) !== 'choose') leaveCountryPage(); }}
             onOpenJourney={(card) => openFeatureFrom(
               { kind: 'country', id: countryPage, label: localCountryName(countryPage) }, 'journey', { id: card.id })}
             onSeeAllWeeks={(cc) => { leaveCountryPage(); openTripStyles(null, cc); }}
@@ -66,7 +71,9 @@ export function AppOverlays({
               { kind: 'region', id: pendingRegion.id, label: name || null }, layer, ref)}
             rows={placeRows}
             onSelectDest={openDetail}
-            onPlanTrip={(cc, destId) => { leaveRegionPage(); leaveCountryPage(); openTripForCountry(cc, destId); }}
+            onPlanTrip={(cc, destId) => {
+              if (openTripForCountry(cc, destId, { source: 'region', regionId: pendingRegion.id }) !== 'choose') { leaveRegionPage(); leaveCountryPage(); }
+            }}
             onOpenJourney={(card, name) => openFeatureFrom(
               { kind: 'region', id: pendingRegion.id, label: name || null }, 'journey', { id: card.id })}
             onSeeAllLayer={(layer, cc) => { leaveRegionPage(); leaveCountryPage(); openExploreSection(layer, cc); }}
@@ -99,7 +106,10 @@ export function AppOverlays({
             setPendingTrip({ id });
             goToTab('places');
           }}
-          onPlanTrip={selectedDest.iso2 ? () => { setSelectedId(null); openTripForCountry(selectedDest.iso2); } : undefined}
+          onPlanTrip={selectedDest.iso2 ? () => {
+            // G12 B2 (S5): the town itself, not only its country.
+            if (openTripForCountry(selectedDest.iso2, selectedDest.id, { source: 'place', name: selectedDest.city || '' }) !== 'choose') setSelectedId(null);
+          } : undefined}
           onPlanDay={selectedId ? () => { setSelectedId(null); openDayForDest(selectedId); } : undefined}
         />
       </div>
@@ -167,7 +177,8 @@ export function AppOverlays({
           onLoadTripPlan={openPlanInList}
           /* T925: "Plan a trip with these" from Saved hands the picked
              places to the trip planner through Explore's own door. */
-          onPlanStops={(stops) => openTripInPlanner({ stops })}
+          onPlanStops={(stops) => openTripInPlanner({ stops }, 'saved')}
+          onPlanKept={(plan) => openPlan?.(null, { plan })}
           /* The trip kept on this device (T503, T500-a) opens in Plan through
              the same hand-off, marked so the planner reads the device. */
           onOpenDeviceTrip={() => openPlanInList({ device: true })}
@@ -213,7 +224,7 @@ export function AppOverlays({
             onOpenTripPlan={openPlanInList}
             favorites={favorites}
             choices={choices}
-            onPlanPlace={(id) => { const d = data?.destinations?.[id]; if (d?.iso2) openTripForCountry(d.iso2, id); }}
+            onPlanPlace={(id) => { const d = data?.destinations?.[id]; if (d?.iso2) openTripForCountry(d.iso2, id, { name: d.city || '' }); }}
           />
         </Suspense>
       </div>
@@ -258,6 +269,14 @@ export function AppOverlays({
           <AdminPage onClose={() => setAdminOpen(false)} />
         </div>
       </Suspense>
+    )}
+    {planChoice && resolvePlanChoice && (
+      <PlanHereChoice
+        tripName={planChoice.trip?.name || ''}
+        onAdd={() => { leavePlace(); resolvePlanChoice('add'); }}
+        onNew={() => { leavePlace(); resolvePlanChoice('new'); }}
+        onClose={() => resolvePlanChoice(null)}
+      />
     )}
     </>
   );

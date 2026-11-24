@@ -819,7 +819,13 @@ function TravelApp() {
     if (pendingTrip) goToTab('places', { replace: true });
   }, [pendingTrip, goToTab]);
 
+  // G12 B2 (S15): "Add to <trip>" from a place page, for the trip page's Add stop.
+  const [pendingAddStop, setPendingAddStop] = useState(null);
+  const clearPendingAddStop = useCallback(() => setPendingAddStop(null), []);
+  // What openPlan reads at the tap (the catalogue, Explore's settings), set below once known.
+  const planCtxRef = useRef({});
   const {
+    openPlan, planChoice, resolvePlanChoice,
     openExploreSection, pendingStyle, setPendingStyle, planOpen, planInner, setPlanInner,
     openTripStyles, onJourneyClosed, pendingJourney, clearPendingJourney, bootJourney,
     openTripInPlanner, openTripPage, openTripForCountry, openDayForDest, openDayForFeature,
@@ -829,7 +835,7 @@ function TravelApp() {
     goToTab, setCountryFilter, setPendingBeach, setPendingCategory, setPendingCountry,
     setPendingCycle, setPendingDaySeed, setPendingLake, setPendingMountain, setPendingRegion,
     setPendingSharedTrip, setPendingTrail, setPendingTrip, setPendingTripPlanId,
-    setPendingTripSeed,
+    setPendingAddStop, planCtxRef,
   });
   // Leaving the region page for another surface: its entry stays.
   const leaveRegionPage = useCallback(() => {
@@ -1490,6 +1496,7 @@ function TravelApp() {
     setFrom, setOrigin, setParty, setPartyParts, setPriceExcluded, setPriceView, setReturnDate,
     setTransportMode, sweptOrigins, travelMonth, when, setChoices,
   });
+  planCtxRef.current = { destinations: data?.destinations, exploreModel: settings.model };
   // The travel styles ride on the same context, so the style disc, the
   // planner's Who screen and the trip settings read one store.
   const settingsValue = useMemo(() => ({ ...settings, travelStyles, openStyleSpend }), [settings, travelStyles, openStyleSpend]);
@@ -1860,6 +1867,7 @@ function TravelApp() {
             openTrip={pendingTrip}
             onOpenTripConsumed={() => setPendingTrip(null)}
             onOpenTripInPlanner={openTripInPlanner}
+            onPlanSeed={openPlan}
             openCountry={pendingCountry}
             onOpenCountryConsumed={() => setPendingCountry(null)}
             openCategory={pendingCategory}
@@ -1904,6 +1912,8 @@ function TravelApp() {
               onSharedTripConsumed={clearPendingSharedTrip}
               tripSeed={pendingTripSeed}
               onTripSeedConsumed={clearPendingTripSeed}
+              addStopSeed={pendingAddStop}
+              onAddStopConsumed={clearPendingAddStop}
               origin={choices.origin}
               onChangeOrigin={setOrigin}
               lifestyle={choices.lifestyle}
@@ -1970,6 +1980,7 @@ function TravelApp() {
               onOpenJourney={(id) => openFeature('journey', { id })}
               onOpenPlan={openPlanInList}
               openAt={planOpen}
+              onLandTrip={(shared) => { setPendingSharedTrip(shared); goTo('trip'); }}
               destinations={data?.destinations}
               onInnerChange={setPlanInner}
             />
@@ -2013,6 +2024,7 @@ function TravelApp() {
         openPlanInList={openPlanInList} openRegionPage={openRegionPage} openSaved={openSaved}
         openTogether={openTogether} openTripForCountry={openTripForCountry}
         openTripInPlanner={openTripInPlanner} openTripStyles={openTripStyles}
+        openPlan={openPlan} planChoice={planChoice} resolvePlanChoice={resolvePlanChoice}
         pastAtOpen={pastAtOpen} pendingFriend={pendingFriend} pendingGuide={pendingGuide}
         pendingRegion={pendingRegion} place={place} placeRows={placeRows}
         planInProgress={planInProgress} savedCount={savedCount} savedTripsOpen={savedTripsOpen}

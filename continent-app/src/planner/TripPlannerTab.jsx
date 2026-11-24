@@ -66,7 +66,7 @@ const TRIP_TABS = ['overview', 'itinerary', 'costs', 'days', 'notes'];
 
 
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null, onPlanHome = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null, onPlanHome = null, addStopSeed = null, onAddStopConsumed = null }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -219,6 +219,21 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
     selectedStop, setChipOpen, setDeviceTrip, setSaveError, setSelectedStop, setToast,
     setTripTab, setView, setWizardOpen, stopRefs, t, tp, tripSeed,
   });
+  // S15 (G12 B2): "Add to <trip>" from a place page while this trip is open.
+  // The town becomes a stop through the route's own Add stop; a country
+  // without a town opens that Add stop on the country to pick one. Either
+  // way the route is shown, so the change is seen.
+  useEffect(() => {
+    if (!addStopSeed) return;
+    if (addStopSeed.destId && destinations[addStopSeed.destId]) {
+      tp.addStop(addStopSeed.destId);
+    } else if (addStopSeed.iso2) {
+      const name = Object.values(destinations).find((d) => d?.iso2 === addStopSeed.iso2)?.country;
+      if (name) handlePendingCountry(name);
+    }
+    setTripTab('itinerary');
+    onAddStopConsumed?.();
+  }, [addStopSeed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: tp is a fresh object every render
 
   // Manual "Add stop": country first, then city within it, picking both at once
   // made the combined list noisy, and country-first mirrors how travellers

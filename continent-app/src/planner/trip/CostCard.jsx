@@ -11,6 +11,7 @@ import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
 import { costTiles } from '../../lib/price/tiles.js';
 import { formatMoney } from '../../lib/money.js';
+import { bookedSplit } from '../../lib/plan/bookedReceipt.js';
 import { CostRow } from '../../components/CostCardKit.jsx';
 import { barSegments, costCardVariant, SHARE_MIN } from './costCardVariant.js';
 
@@ -156,6 +157,19 @@ export function CostCard({
   const tiles = costTiles(priced);
   const money = (v) => formatMoney(v, { precision: 'whole', locale: lang });
 
+  // G12 B2 (lane L4): a trip with booked parts says what is paid and what
+  // is still to plan; a part with no price yet is named, never counted.
+  const split = bookedSplit(priced);
+  const splitMiss = split ? [...new Set([...split.unpriced, ...split.notYet])].map((k) => t(LABEL[k])).join(', ') : '';
+  const splitLine = split ? (
+    <p className="ccard-booked" data-booked-split="">
+      <span>{split.paid > 0
+        ? t('tp.booked.split', { paid: money(split.paid / div), rest: money(split.toPlan / div) })
+        : t('tp.booked.rest', { rest: money(split.toPlan / div) })}</span>
+      {splitMiss && <span className="ccard-booked-miss">{t('tp.booked.notYet', { lines: splitMiss })}</span>}
+    </p>
+  ) : null;
+
   const cf = priced?.cartaFlight || {};
   const carriers = [...new Set(['out', 'back'].map((d) => cf[d]?.airline).filter(Boolean))];
 
@@ -226,6 +240,7 @@ export function CostCard({
             {perLine && <span className="ccu-per">{perLine}</span>}
           </p>
           {budget && <div className="ccard-budget">{budget}</div>}
+          {splitLine}
           {tiles.length > 0 && <CostBar tiles={tiles} lang={lang} />}
         </div>
 
@@ -279,6 +294,7 @@ export function CostCard({
       {tiles.length > 0 && <CostTrain tiles={tiles} mine={mine} />}
 
       {budget && <div className="ccard-budget">{budget}</div>}
+      {splitLine}
 
       <ul className="ccard-rows">{tiles.map(rowOf)}</ul>
       <PriceNotes row={(priced?.stayCosts || []).map((s) => s?.day)} className="ccard-notes" />

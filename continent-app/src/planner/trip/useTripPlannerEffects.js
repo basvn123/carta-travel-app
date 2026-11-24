@@ -82,7 +82,9 @@ export function useTripPlannerEffects({
         anchorId: d.anchorId,
         anchorOrigin: d.anchorOrigin,
         returnAnchorId: d.returnAnchorId,
-        ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal ? d.ownFlight : null,
+        // G12 B2: a booked flight with no airline or price printed (a typed
+        // sentence) is still the traveller's, never Carta's fare.
+        ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal || d.ownFlight?.booked ? d.ownFlight : null,
         legModes: d.legModes,
         ownLegs: d.ownLegs,
         ownStays: d.ownStays,

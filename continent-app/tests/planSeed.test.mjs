@@ -45,7 +45,7 @@ test("makeSeed: values are checked, unknown ones dropped", () => {
     pins: ["when", "banana"],
   });
   assert.equal(s.source, "door");
-  assert.deepEqual(s.places, [{ kind: "place", id: "pt_lisbon", iso2: "PT" }]);
+  assert.deepEqual(s.places, [{ kind: "place", id: "pt_lisbon", iso2: "PT", name: "" }]);
   assert.deepEqual(s.stops, [{ dest: "pt_porto", nights: 60, dayActivities: [] }]);
   assert.equal(s.when, null, "an end before the start is no window");
   assert.deepEqual(s.party.kidAges, [6, 11]);

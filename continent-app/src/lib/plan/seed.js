@@ -6,17 +6,26 @@
  * so nothing arrives as a bare country again:
  *
  *   { v: 1, source, ref: { kind, id } | null, label,
- *     places: [{ kind, id, iso2 }],                 a wish: Carta orders and sizes it
+ *     places: [{ kind, id, iso2, name }],           a wish: Carta orders and sizes it
  *     stops: [{ dest, nights, dayActivities }],     a fixed route
  *     legModes: {}, transport: 'public'|'car'|null,
  *     when: { mode: 'exact'|'months'|'any', start, end, months, nights } | null,
  *     party: { kind, adults, kids, babies, kidAges } | null,
  *     budget: { eur, kind: 'total'|'day', per: 'person'|'group', mode: 'cap'|'soft'|'band' } | null,
- *     booked: { flights, stays, car, tickets } | null,
+ *     booked: { flights, stays, car, tickets } | null,   each a flag or booking rows (below)
  *     coplanners: [], groupId: null,
  *     avoidIso2: [],                                "somewhere new"
  *     spendRef: { eurPP, nights, planId } | null,   own logged spend, a reference line only
  *     pins: [] }                                    fields the source fixes; never asked again
+ *
+ * Booked rows (G12 B2, lane L4): `booked.flights` and `booked.stays` may
+ * hold the bookings themselves, in the trip settings' import shape (the
+ * rows parse-booking returns and tripSettings normalizeImport keeps):
+ *   { kind: 'flight_out'|'flight_home'|'flight'|'stay', title, city,
+ *     date: 'YYYY-MM-DD', eur: number|null (null = not printed), code, link }
+ * A flight row's `city` is the town it lands in, a stay's the town it is in.
+ * seedToSettings puts the rows in `imports`, so doors.js bookedTrip builds
+ * the trip page from them; `true` alone says "booked" with nothing to place.
  *
  * The seed is not stored: it lives in memory (and flowMemory) until the
  * first save, and never goes in a URL. The budget keeps the stored shape
@@ -30,7 +39,7 @@
  *
  * Pure: no React, no store, so node tests hold it (tests/planSeed.test.mjs).
  */
-import { BUDGET_MODES, defaultSettings, markAnswered, normalizeSettings, BOOKED_KEYS, PARTY_KINDS } from '../../planner/flow/tripSettings.js';
+import { BUDGET_MODES, defaultSettings, fromImports, markAnswered, normalizeSettings, BOOKED_KEYS, PARTY_KINDS } from '../../planner/flow/tripSettings.js';
 import { withStyle } from '../../planner/flow/styleSeed.js';
 
 export const SEED_VERSION = 1;
@@ -64,7 +73,8 @@ function placesOf(raw) {
     if (!p || !PLACE_KINDS.includes(p.kind) || !p.id) continue;
     const id = str(String(p.id));
     if (out.some((x) => x.kind === p.kind && x.id === id)) continue;
-    out.push({ kind: p.kind, id, iso2: iso2Of(p.iso2) || (p.kind === 'country' ? iso2Of(id) : '') });
+    // The name is for the screens only (the planner's chips); the id is what counts.
+    out.push({ kind: p.kind, id, iso2: iso2Of(p.iso2) || (p.kind === 'country' ? iso2Of(id) : ''), name: str(p.name) });
     if (out.length >= MAX_PLACES) break;
   }
   return out;
@@ -187,7 +197,7 @@ export function exploreAnswers(model) {
 function namedPlaces(seed) {
   const fromStops = seed.stops.map((x) => ({ kind: 'place', id: x.dest }));
   const list = seed.places.length ? seed.places : fromStops;
-  return list.map((p) => (p.kind === 'region' ? (p.iso2 ? { kind: 'country', id: p.iso2, iso2: p.iso2 } : null) : { kind: p.kind, id: p.id, iso2: p.iso2 }))
+  return list.map((p) => (p.kind === 'region' ? (p.iso2 ? { kind: 'country', id: p.iso2, iso2: p.iso2 } : null) : { kind: p.kind, id: p.id, iso2: p.iso2, name: p.name || '' }))
     .filter(Boolean);
 }
 
@@ -235,8 +245,12 @@ export function seedToSettings(rawSeed, { style = null, explore = null, base = n
     give('budget', { guide: { ...s.guide, budget: b } });
   }
   if (seed.booked) {
+    // Booking rows go in as the trip's imports (fromImports also sets the
+    // flags and, when no When was answered, the dates they print).
+    const rows = ['flights', 'stays'].flatMap((k) => (Array.isArray(seed.booked[k]) ? seed.booked[k] : []));
+    if (rows.length) s = fromImports(s, rows);
     const flags = Object.fromEntries(BOOKED_KEYS.map((k) => [k, Array.isArray(seed.booked[k]) ? seed.booked[k].length > 0 : Boolean(seed.booked[k])]));
-    give('booked', { booked: flags });
+    give('booked', { booked: { ...s.booked, ...Object.fromEntries(Object.entries(flags).filter(([, v]) => v)) } });
   }
   if (seed.transport) give('transport', { guide: { ...s.guide, around: seed.transport } });
   return s;
@@ -279,4 +293,36 @@ export function routeSeed(rawSeed, { openTrip = null } = {}) {
   if (seed.source === 'booking' || (b && (b.flights === true || b.stays === true || (Array.isArray(b.flights) && b.flights.length) || (Array.isArray(b.stays) && b.stays.length)))) return 'booked';
   if (seed.places.length) return 'found';
   return 'list';
+}
+
+/**
+ * A seed's fixed route as the trip planner's hand-over (App's
+ * pendingSharedTrip, read by useTripPlannerEffects): the stops with their
+ * nights and day activities, the label, the leg modes, car or public, and
+ * the party when the seed names one. Dates only when the seed or Explore
+ * gives exact ones; else the trip page asks for them (as before).
+ *   opts: { explore (exploreAnswers) }  -> the hand-over, or null with no stops
+ */
+export function seedToSharedTrip(rawSeed, { explore = null } = {}) {
+  const seed = makeSeed(rawSeed);
+  const stops = seed.stops
+    .map((x) => ({ destinationId: x.dest, nights: x.nights, activities: x.dayActivities.slice(0, 20).map((a) => String(a).slice(0, 80)) }))
+    .filter((x) => x.destinationId && x.nights);
+  if (!stops.length) return null;
+  const when = seed.when || explore?.when || null;
+  const out = {
+    stops,
+    label: seed.label,
+    transportPref: seed.transport === 'car' ? 'owncar' : 'public',
+    legModes: seed.legModes,
+    tripStart: when?.mode === 'exact' ? when.start : '',
+  };
+  if (seed.party) Object.assign(out, { groupSize: seed.party.adults, children: seed.party.kids, babies: seed.party.babies });
+  return out;
+}
+
+/** True when the seed says nothing at all (an empty door): Plan's home, not a new trip. */
+export function emptySeed(rawSeed) {
+  const s = makeSeed(rawSeed);
+  return !s.places.length && !s.stops.length && !s.when && !s.party && !s.budget && !s.booked && !s.avoidIso2.length && !s.spendRef && !s.coplanners.length && !s.transport;
 }

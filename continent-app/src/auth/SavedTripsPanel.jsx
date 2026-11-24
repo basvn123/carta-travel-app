@@ -274,7 +274,7 @@ export function SavedTripsPanel({
   // The day-cost map Explore prints from, and the Lifestyle the trip planner
   // prices with, so every figure here is the figure there.
   costs = null, stayTier = 'home', lifestyle = null,
-  onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null,
+  onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null, onPlanKept = null, onPlanTripCountry = null,
   // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
   startWithPast = false, onPastStarted = null,
   // G12 Phase C: the "Prijzen tonen" setting the trip plate and the rows
@@ -1563,7 +1563,8 @@ export function SavedTripsPanel({
                 <>
                   {/* Kept trips from the trip finder (T806): planning one hands
                       its plan to the Plan tab, which opens the planner on it. */}
-                  <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
+                  {/* G12 B2: through App's openPlan, which keeps the finder's priced plan. */}
+                  <KeptTrips onPlan={(r) => { if (onPlanKept) onPlanKept(r.plan); else { holdPlan(r.plan); onGoToTab?.('trip'); } }} />
                   {onOpenFeature && <SavedJourneys onOpen={(id) => onOpenFeature('journey', { id })} />}
                 </>
               )}
@@ -1609,9 +1610,14 @@ export function SavedTripsPanel({
             onToggle={(cc) => { toggleIso(cc); setCountry(''); }}
             onShowSaved={() => { setSavedCc(countryInfo.cc); setCountry(''); pickTab('saved'); }}
             onPlan={() => {
-              const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc).map((r) => r.id);
+              // G12 B2: the saved towns as stops ({ dest, nights }, the shape
+              // openTripInPlanner reads; bare ids were dropped there), else the
+              // country itself as the place to plan.
+              const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc)
+                .map((r) => ({ dest: r.id, nights: 2, dayActivities: [] }));
               setCountry('');
               if (stops.length && onPlanStops) onPlanStops(stops);
+              else if (onPlanTripCountry) onPlanTripCountry(countryInfo.cc);
               else onGoToTab?.('planstart');
             }}
           />

@@ -73,6 +73,10 @@
 
 /* The budget, under the arc: one line and Edit budget, centred. */
 .ccard-budget { display: grid; justify-items: center; }
+/* G12 B2: "Paid · Still to plan" under a booked trip's total. */
+.ccard-booked { display: grid; gap: var(--space-1); justify-items: center; margin: 0; font-size: var(--text-body); }
+.ccard-booked-miss { color: var(--ccard-ink-2); }
+.ccard.is-umber .ccard-booked { justify-items: start; }
 .ccard .tpbud.is-compact { align-items: center; gap: var(--space-1); padding: 0; border: 0; background: none; box-shadow: none; text-align: center; }
 .ccard .tpbud.is-compact .tpbud-bar { display: none; }
 .ccard .tpbud.is-compact .tpbud-line { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: var(--space-1) var(--space-2); margin: 0; font-size: var(--text-caption); color: var(--ccard-ink-2); }

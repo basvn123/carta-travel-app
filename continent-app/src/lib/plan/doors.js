@@ -14,6 +14,7 @@
  *   suggestDoor(s)              the door the words point at
  *   selectionOfPlan(plan)       a finder plan as the planner's hand-over
  *   bookedTrip(s, destinations) the trip the bookings make, with the booked parts marked
+ *   bookedLanding(s, destinations) that trip as the trip page's hand-over (G12, files or typed words)
  *
  * Plain JS, no React and no store, so node tests hold it (tests/doors.test.mjs).
  * It rides in the Plan tab's first load, so it imports nothing heavy.
@@ -152,6 +153,50 @@ export function bookedTrip(s, destinations, { label = '' } = {}) {
       lifestyle: null,
     },
     booked: { flights: flightsBooked, stays: stays.map((r) => r.id) },
+  };
+}
+
+/**
+ * G12 B2 (lane L4, decision §3.5): the trip page a booking makes, as the
+ * trip planner's hand-over (App's pendingSharedTrip), or null when the
+ * bookings place nothing. Rows from a file (parse-booking, behind the Pass)
+ * are the trip's `imports`; a typed sentence ("flight to Lisbon booked,
+ * 3 to 10 May") is read on the device for free and stands as one flight row
+ * with no price printed, so it stays the traveller's (never Carta's fare)
+ * and the receipt names it "Not yet" instead of inventing a figure.
+ */
+export function bookedLanding(s, destinations, { label = '' } = {}) {
+  let imports = Array.isArray(s?.imports) ? s.imports : [];
+  if (!imports.length) {
+    const said = saidFlight(s);
+    if (said.city) {
+      imports = [{ kind: 'flight_out', city: said.city, title: '', date: said.out, eur: null, code: '' }];
+      if (said.back) imports.push({ kind: 'flight_home', city: '', title: '', date: said.back, eur: null, code: '' });
+    }
+  }
+  const made = imports.length ? bookedTrip({ ...s, imports }, destinations, { label }) : null;
+  return made ? { ...sharedOfSelection(made.selection), booked: made.booked } : null;
+}
+
+/** A planner hand-over (loadFromWizard's shape) in the shared-trip shape useTripPlannerEffects reads. */
+export function sharedOfSelection(sel) {
+  if (!sel?.stops?.length) return null;
+  return {
+    stops: sel.stops,
+    label: sel.label || '',
+    tripStart: sel.startDate || '',
+    transportPref: sel.transport || 'auto',
+    groupSize: sel.groupSize,
+    children: sel.children,
+    babies: sel.babies,
+    pace: sel.pace,
+    anchorId: sel.anchorId || null,
+    returnAnchorId: sel.returnAnchorId || null,
+    anchorOrigin: sel.anchorOrigin || null,
+    ownFlight: sel.ownFlight || null,
+    legModes: sel.legModes || {},
+    ownLegs: sel.ownLegs || {},
+    ownStays: sel.ownStays || {},
   };
 }
 

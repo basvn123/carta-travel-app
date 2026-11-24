@@ -7,8 +7,10 @@ import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
-import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
-import { normalizeSettings } from './tripSettings.js';
+import { firstSetup, tripUnderWay, continueTo, givenBy, prevScreen, progressOf, SETUP_SKIP } from './flowGraph.js';
+import { normalizeSettings, nothingBooked } from './tripSettings.js';
+import { exploreAnswers, seedToSettings } from '../../lib/plan/seed.js';
+import { bookedLanding } from '../../lib/plan/doors.js';
 import { newTripSettings } from './styleSeed.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { markQuickStart } from './quickStart.js';
@@ -39,13 +41,17 @@ import { useAuth } from '../../auth/AuthContext.jsx';
  *   onOpenJourney(id)  one of Carta's own trips, its whole week (T752)
  *   onOpenPlan(id)     an account trip, through App's open-saved-trip path
  *   destinations       the catalogue by id, for a trip's first photo and towns
+ *   openAt             a door's request: { screen: 'carta', ... } or, G12 B2,
+ *                      { screen: 'seed', seed, n } from App's openPlan
+ *   onLandTrip(shared) G12 B2: a booked trip straight onto the trip page
+ *                      (App's pendingSharedTrip)
  *
  * T809: the opening lists every trip on this device (tripsStore) and, signed
  * in, the account's trips; Start planning always starts a new one.
  */
 export function PlanFlow({
   onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenPlan = null, destinations = null, pageOver = false,
-  openAt = null, onInnerChange = null,
+  openAt = null, onInnerChange = null, onLandTrip = null,
 }) {
   const { t, lang } = useI18n();
   const months = useMonths();
@@ -109,11 +115,40 @@ export function PlanFlow({
   /** The trip made with its defaults (no name, cover or buddies yet; the
    *  trip settings hold them), the planner told to open on the trips. */
   const quickCreate = (s) => {
+    if (!nothingBooked(s) && landBooked(s)) return;
     save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
     markQuickStart();
     rememberPlace('opening', tripsStore.getActiveId(), null);
     if (onCreated) onCreated();
   };
+  /** G12 B2 (lane L4, S7): a trip with bookings Carta can place lands on
+   *  the trip page they make (doors.js bookedTrip), the booked flight and
+   *  stays the traveller's own, the rest priced; false when they place nothing. */
+  const landBooked = (s) => {
+    if (!onLandTrip) return false;
+    const shared = bookedLanding(s, destinations || {}, { label: (s.trip.name || '').trim() });
+    if (!shared) return false;
+    save(normalizeSettings({ ...s, door: 'booked', trip: { ...s.trip, created: s.trip.created || Date.now() } }));
+    rememberPlace('opening', tripsStore.getActiveId(), null);
+    onLandTrip(shared);
+    return true;
+  };
+  // G12 B2 (lane L3): a door's seed (App's openPlan) starts a new trip on
+  // the seed's settings (style < Explore < seed, lib/plan/seed.js), and the
+  // flow opens on the first question the seed did not answer, so a place
+  // page's town is the trip's place from the first screen.
+  useEffect(() => {
+    if (openAt?.screen !== 'seed' || !openAt.seed) return;
+    tripsStore.startNew();
+    const style = app?.travelStyles?.active || null;
+    const s = seedToSettings(openAt.seed, { style, explore: exploreAnswers(app?.model || null) });
+    save(s);
+    setKind('new');
+    setKindAsked(false);
+    if (!nothingBooked(s) && landBooked(s)) return;
+    const first = firstSetup(s).find((id) => !givenBy(s, id, SETUP_SKIP));
+    if (first) go(first); else quickCreate(s);
+  }, [openAt?.n]); // eslint-disable-line react-hooks/exhaustive-deps -- one start per door tap
   const next = (id, s) => {
     const l = [...firstSetup(s), 'create'];
     // Skip only what the Tell sentence answered; a question answered on its
