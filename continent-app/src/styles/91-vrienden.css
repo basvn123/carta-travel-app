@@ -609,7 +609,7 @@ span.vr-ro-row { cursor: default; }
   /* On the wide card the dates and its two actions share one line, so it is
      no taller than the two cards beside it need. */
   .vr-main .vr-mo.is-wide .vr-m-tx { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-3); }
-  .vr-main .vr-mo.is-wide .vr-m-tx > * { grid-column: 1 / -1; }
+  .vr-main .vr-mo.is-wide .vr-m-faces, .vr-main .vr-mo.is-wide .vr-lanes { grid-column: 1 / -1; }
   .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-t { grid-column: 1; grid-row: 2; }
   .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-acts { grid-column: 2; grid-row: 2; }
   .vr-main .vr-mo.is-wide .vr-m-tx > .vr-lanes { grid-row: 3; }
