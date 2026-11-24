@@ -8,3 +8,6 @@ Grouped by root cause, biggest first.
 4. **Day counts and follow-ups** (19 and 17 cases, from wave 3): untouched, A2h.
 5. **Word lists generalise poorly** (held-out harmful 0 of 16, off-topic 0 of 6): untouched, A2h.
 6. Limits of the rule: a village the catalogue text names 3 or more times (and the gazetteer lacks) would be answered as a region; a village in the text under 3 times and a region named under 3 times are indistinguishable (Wengen 1, Murren 2 stay lacking; Rioja 1 and Masuria 1 are saved only by the gazetteer's regions).
+
+## Judge fixes leftovers (2026-11-24)
+Group 1 (names the catalogue text never uses, A2h) also holds: "Wandern in der Fraenkischen Schweiz" (judge 1 held-out block, the head noun "Schweiz" has fewer than 3 mentions), and the one-word exonyms "Cevennen" and "Sierra Nevada" (judge 2 fresh set). A2h idea from judge 2: when a name has no catalogue mention but a gazetteer feature (mountain range, park) lies near covered places, answer with those places instead of declining.

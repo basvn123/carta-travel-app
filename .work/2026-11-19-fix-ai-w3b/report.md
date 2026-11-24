@@ -15,6 +15,8 @@ Ask's scope rule now asks the catalogue before it calls a name a place Carta lac
 
 ## Checks
 - Tests askScope, regionsProbe, anyQuestion, askEval, askChat: 53 of 53. Lint 0 errors. Docs checks pass.
+- The local full `npm test` did not finish on this loaded machine; CI run 45274076479 is the full run: app fails only `ship.test.mjs` (from the p15-fix-programs merge, baseline), csp, evals and edge-deno pass.
+- Judge 2 fresh probe, never tuned on: 2 of 20 region questions declined (2.8 to 30.1%: the exonyms Cevennen and Sierra Nevada), 5 of 5 absent places declined, 0 false refusals.
 - `run.mjs any-question ask --check`: pass on the full catalogue and on the git-only path (253 of 326).
 - `verify_ask_scope.mjs` on a fresh fast build: 246 of 246 at 390, 820, 1440, 360, 600, 768, 1024, 1180 and 1920 (program session rerun; `dom-check.txt`).
 

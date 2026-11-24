@@ -55,3 +55,6 @@ The one generalisation figure for regions is the judge set (4 of 54 before, 1 of
 ## Full `npm test` (local, Windows, under load)
 
 Started in the background and not finished within the turn budget (the round 2 baseline notes a 32 minute run with many process-start failures). The failures seen before it was stopped, none in the ask scope code: `cspHashes` (a `C:\C:\` path bug on Windows, ENOENT), `askDocs` "the eval passes its gate" (fails identically with the docs of cc6ee79567, so not from this wave), `aiGateway` "scans the attack set" (needs Python), design and snapshot tests that drive a browser and timed out under load, `budgetSearch` worked example (passes alone). The RC16 test (`priceConfig.test.mjs`) passes: 12 of 12. The CI run on the pushed branch is the comparison with the round 2 baseline; this local run is not a clean baseline comparison.
+
+## Latest untouched figure (judge 2, 2026-11-24)
+The judge's own 20 fresh region questions, written before running: 2 of 20 declined as lacking (2.8 to 30.1%; Cevennen, Sierra Nevada), 0 false outside, 0 false refusal; 5 of 5 fresh absent places declined.
