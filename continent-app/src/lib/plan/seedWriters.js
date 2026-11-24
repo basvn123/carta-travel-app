@@ -12,6 +12,7 @@
  *   openTripOf(draft, name)                               the trip open in Plan, for S15
  *   choiceStop(seed)                                      the town S15 adds to the open trip
  *   pastAgainSeed(past, { been })                         plan again, somewhere new (G12 L12, S10)
+ *   friendsSeed(group, { destId, iso2, name })            a Vrienden group trip (G12 L15, S11)
  *
  * Pure: no React, no store, so node tests hold it (tests/planSeedWriters.test.mjs).
  */
@@ -224,5 +225,32 @@ export function pastAgainSeed(past, { been = [] } = {}) {
     avoidIso2: been,
     spendRef: spend,
     pastRef: Number(past.stops) > 0 ? { shape: Number(past.stops) > 1 ? 'towns' : 'one', year: start ? Number(start.slice(0, 4)) : 0 } : null,
+  });
+}
+
+/**
+ * G12 L15: a Vrienden group trip (auth/groupTrips.js listGroupTrips) opens
+ * Plan with its group, the joined members as co-planners and the place the
+ * group leans to. The group's band (the lowest whole-trip maximum a person,
+ * computed on the server, ready from three members) becomes this trip's
+ * budget in mode 'band', so the list can say which trips fit everyone; no
+ * member's own maximum is read. A group with no band gets no budget.
+ *   group: { id, title, members: [{ userId, status }], band: { top, ready } }
+ */
+export function friendsSeed(group, { destId = null, iso2 = '', name = '' } = {}) {
+  if (!group?.id) return null;
+  const cc = ISO2_RE.test(String(iso2 || '')) ? String(iso2).toUpperCase() : '';
+  const places = destId ? [{ kind: 'place', id: String(destId), iso2: cc, name }] : cc ? [{ kind: 'country', id: cc, iso2: cc, name }] : [];
+  const band = group.band?.ready && Number(group.band.top) > 0 ? { eur: Number(group.band.top), kind: 'total', per: 'person', mode: 'band' } : null;
+  const joined = (group.members || []).filter((m) => m?.status === 'joined' && m.userId).map((m) => m.userId);
+  return makeSeed({
+    source: 'friends',
+    ref: { kind: 'group', id: String(group.id) },
+    label: group.title || '',
+    groupId: String(group.id),
+    coplanners: joined,
+    places,
+    budget: band,
+    pins: [...(places.length ? ['places'] : []), ...(band ? ['budget'] : [])],
   });
 }

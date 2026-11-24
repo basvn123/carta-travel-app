@@ -9609,6 +9609,7 @@ export const nl = {
   "tf.view.hideMap": "Kaart verbergen",
   "tf.view.showMap": "Kaart tonen",
   "tf.view.label": "Weergave",
+  "tf.band.line": "Past iedereen tot {eur} per persoon: {n} van {m} reizen",
   "tf.sort.shortest": "Snelst er",
   "tf.cmp.openN": "{n} vergelijken",
   "tf.map.label": "Reizen op de kaart",

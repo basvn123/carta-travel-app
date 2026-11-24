@@ -4,7 +4,7 @@ import { countryFromHash, countryHash } from '../lib/urlState.js';
 import { emptySeed, exploreAnswers, makeSeed, routeSeed, seedToSharedTrip, seedTripPatch } from '../lib/plan/seed.js';
 import { plannerStore } from '../planner/plannerStore.js';
 import { draftPatch, fromDraft } from '../planner/flow/tripSettings.js';
-import { choiceStop, openTripOf, placeSeed, routeSeedOf } from '../lib/plan/seedWriters.js';
+import { choiceStop, friendsSeed, openTripOf, placeSeed, routeSeedOf } from '../lib/plan/seedWriters.js';
 import { loadTripDraft } from '../planner/tripDraftStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
 import { holdPlan } from '../lib/recommend/keptStore.js';
@@ -177,6 +177,20 @@ export function useAppOpeners({
     return () => window.removeEventListener('carta:plan-day', onPlanDay);
   }, [openDayForDest]);
 
+  /** G12 L15: plan a Vrienden group trip through the one door, openPlan
+   *  with source 'friends' (lib/plan/seedWriters.js friendsSeed): the group,
+   *  its joined members and its band as the trip's budget. Vrienden calls it
+   *  with one event (together/signals.jsx planGroupTrip), as Plan a day does. */
+  const openPlanForGroup = useCallback((group, place = {}) => {
+    const seed = friendsSeed(group, place || {});
+    return seed ? openPlan(seed) : null;
+  }, [openPlan]);
+  useEffect(() => {
+    const onPlanGroup = (e) => { if (e.detail?.group) openPlanForGroup(e.detail.group, e.detail.place || {}); };
+    window.addEventListener('carta:plan-group', onPlanGroup);
+    return () => window.removeEventListener('carta:plan-group', onPlanGroup);
+  }, [openPlanForGroup]);
+
   /** "Add to a day plan" on a trail, beach, lake or mountain page: the day
    *  flow with that place as the first idea, staying in the nearest town.
    *  The page passes what it knows (name, point); a share link passes only
@@ -304,5 +318,5 @@ export function useAppOpeners({
     } catch { /* sandboxed: the page still opens */ }
     setPendingRegion({ id });
   }, [setPendingRegion]);
-  return { openPlan, planChoice, resolvePlanChoice, openExploreSection, pendingStyle, setPendingStyle, planOpen, planInner, setPlanInner, openTripStyles, onJourneyClosed, pendingJourney, clearPendingJourney, bootJourney, openTripInPlanner, openTripPage, openTripForCountry, openDayForDest, openDayForFeature, openTripFromDay, openFeature, openJourneyPage, countryPage, setCountryPage, openCountryPage, leaveCountryPage, regionPushedRef, regionHandoffRef, openRegionPage };
+  return { openPlan, planChoice, resolvePlanChoice, openExploreSection, pendingStyle, setPendingStyle, planOpen, planInner, setPlanInner, openTripStyles, onJourneyClosed, pendingJourney, clearPendingJourney, bootJourney, openTripInPlanner, openTripPage, openTripForCountry, openPlanForGroup, openDayForDest, openDayForFeature, openTripFromDay, openFeature, openJourneyPage, countryPage, setCountryPage, openCountryPage, leaveCountryPage, regionPushedRef, regionHandoffRef, openRegionPage };
 }

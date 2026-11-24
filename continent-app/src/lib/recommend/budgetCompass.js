@@ -86,6 +86,25 @@ export function budgetSplit(trips, budget) {
 }
 
 /**
+ * G12 L15: a Vrienden group's band (budget mode 'band', the lowest
+ * whole-trip maximum a person) against the list: { eur, fits, judged } or
+ * null without a band. Only trips that can be judged count (a "Not yet"
+ * line on the basis is never fitting), so the line never overclaims.
+ */
+export function bandFit(trips, budget) {
+  if (!budget || budget.mode !== 'band' || !(Number(budget.eur) > 0)) return null;
+  let fits = 0;
+  let judged = 0;
+  for (const trip of trips || []) {
+    const v = tripVerdict(trip, budget);
+    if (!v || v.state === 'unknown') continue;
+    judged += 1;
+    if (v.state === 'fits') fits += 1;
+  }
+  return { eur: Number(budget.eur), fits, judged };
+}
+
+/**
  * What is left of the budget on the trip page ("Geld over"), from the
  * engine's quote: { person, group } in euros, or null when there is no
  * budget, the trip is over it, or a line on the basis has no price yet

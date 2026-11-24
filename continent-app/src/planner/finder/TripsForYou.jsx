@@ -19,7 +19,7 @@ import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { diverseOrder } from '../../lib/recommend/diversify.js';
-import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
+import { bandFit, budgetSplit } from '../../lib/recommend/budgetCompass.js';
 import { haversineKm } from '../../lib/nearby.js';
 import { lessHint, lessOrder, likeThis, markOf } from '../../lib/recommend/moreLess.js';
 import { useHoldApp } from '../flow/StyleBar.jsx';
@@ -320,6 +320,7 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   // G12 L12 (decision §3.4, 0013): the past trip's own logged spend a day, as
   // a reference line only. It is the traveller's figure, not like for like
   // with Carta's totals, so it never sets a budget, sorts, or is compared.
+  const band = bandFit(trips, settings.guide?.budget);
   const ref = settings.spendRef;
   const spendLine = ref?.eurPP > 0 && ref.nights > 0
     ? t('tf.spendRef', { name: [ref.label, ref.year || ''].filter(Boolean).join(' '), eur: formatMoney(ref.eurPP / ref.nights, { locale: lang }) })
@@ -383,6 +384,10 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
         </h2>
       </div>
       {spendLine && <p className="tff-spendref">{spendLine}</p>}
+      {/* G12 L15: a Vrienden group's band, the trips that fit everyone (only those that can be judged). */}
+      {band && band.judged > 0 && (
+        <p className="tff-spendref" data-band="">{t('tf.band.line', { eur: formatMoney(band.eur, { locale: lang }), n: band.fits, m: band.judged })}</p>
+      )}
       {answers.chips.length > 0 && (
         <ul className="tff-answers" aria-label={t('tf.chip.change')}>
           {answers.chips.map((c) => (

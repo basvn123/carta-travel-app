@@ -9598,6 +9598,7 @@ export const it = {
   "tf.view.hideMap": "Nascondi mappa",
   "tf.view.showMap": "Mostra mappa",
   "tf.view.label": "Vista",
+  "tf.band.line": "Va bene per tutti fino a {eur} a persona: {n} viaggi su {m}",
   "tf.sort.shortest": "Il più veloce",
   "tf.cmp.openN": "Confronta {n}",
   "tf.map.label": "Viaggi sulla mappa",

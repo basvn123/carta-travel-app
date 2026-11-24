@@ -9598,6 +9598,7 @@ export const de = {
   "tf.view.hideMap": "Karte ausblenden",
   "tf.view.showMap": "Karte zeigen",
   "tf.view.label": "Ansicht",
+  "tf.band.line": "Passt allen bis {eur} pro Person: {n} von {m} Reisen",
   "tf.sort.shortest": "Am schnellsten da",
   "tf.cmp.openN": "{n} vergleichen",
   "tf.map.label": "Reisen auf der Karte",

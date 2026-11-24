@@ -10225,6 +10225,7 @@ export const en = {
   "tf.view.hideMap": "Hide map",
   "tf.view.showMap": "Show map",
   "tf.view.label": "View",
+  "tf.band.line": "Fits everyone up to {eur} a person: {n} of {m} trips",
   "tf.sort.shortest": "Quickest there",
   "tf.cmp.openN": "Compare {n}",
   "tf.map.label": "Trips on the map",
