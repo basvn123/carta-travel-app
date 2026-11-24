@@ -11,6 +11,7 @@ import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { SortMenu } from './SortMenu.jsx';
 import { PAGE, QUICK_FILTERS, SORTS, answersLine, filterTrips, sortTrips, totalLeavesOut } from './finderText.js';
+import { diverseOrder } from '../../lib/recommend/diversify.js';
 
 /** The cheapest whole total in the list (the best-value pin), when two or more have one. */
 const cheapestOf = (trips) => {
@@ -165,7 +166,10 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   const wide = useWide();
   const kept = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
   const quick = sort.quick || [];
-  const trips = sortTrips(filterTrips(kept, quick, destinations), sort.sort, destinations);
+  const sorted = sortTrips(filterTrips(kept, quick, destinations), sort.sort, destinations);
+  // G12 R1: in the engine's own order rank 1 stays the pure best and the next
+  // five are picked to differ (country, shape, price band); the rest follow.
+  const trips = sort.sort === 'match' ? diverseOrder(sorted) : sorted;
   const hidden = found.length - kept.length;
   const focusNext = useRef(null);
   const months = useMonths();

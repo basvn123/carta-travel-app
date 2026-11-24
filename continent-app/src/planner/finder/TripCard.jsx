@@ -143,8 +143,9 @@ function CrowdMeter({ tier }) {
  *   keep               { kept, onKeep(trip), onSkip(trip) }: the heart and Skip (T806)
  *   feat               the top pick: a whole row and its reasons on the photo
  *   best               the cheapest whole total in the list
+ *   why                G12 R2: a row's own reason, said instead of the trip's first
  */
-export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, compare = null, keep = null, feat = false, best = false }, ref) {
+export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, compare = null, keep = null, feat = false, best = false, why = '' }, ref) {
   const { t, lang } = useI18n();
   const openRef = useRef(null);
   const name = tripName(trip, destinations, lang);
@@ -173,7 +174,8 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
     return s ? (Number.isFinite(s.eurGroup) ? s.eurGroup : null) : undefined;
   };
   const flightEur = slotEur('flight');
-  const reasons = feat ? (trip.reasons || []).slice(0, 2).map((r) => factText(r, { t, lang })).filter(Boolean) : [];
+  // G12 R1: every card says why it is here: two facts on the best pick, one on the rest.
+  const reasons = why ? [why] : (trip.reasons || []).slice(0, feat ? 2 : 1).map((r) => factText(r, { t, lang })).filter(Boolean);
 
   const setRefs = (el) => {
     openRef.current = el;
