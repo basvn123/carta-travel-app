@@ -764,6 +764,9 @@ export function VriendenHome({
                   variant="primary" block />
                 <Button variant="secondary" className="mt-soft" iconStart={<EyeIcon size={18} />} onClick={() => setExample(true)}>{t('mt.seeExample')}</Button>
               </div>
+              {/* Jij (your handle, what friends see, milestones) one tap away on
+                  a phone too, where there is no strip yet (judge v3-3). */}
+              <Button variant="quiet" size="sm" className="vr-lnk vr-first-me" onClick={() => onView('me')}>{t('vr.whatFriendsSee')}</Button>
             </div>
           )}
           <div className="vr-side">

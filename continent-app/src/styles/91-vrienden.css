@@ -417,6 +417,7 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-first .mt-first-acts .vr-invite { display: grid; }
 .vr-panel .vr-first .btn.mt-soft { border-color: var(--text); background: transparent; }
 .vr-v3 > .vr-first { grid-column: 1 / -1; }
+.vr-first-me { justify-self: start; }
 /* One line of purpose under the h1, no second heading (judge v3-2 fix 2). */
 .vr-purpose { margin: 0; max-width: 52ch; font-size: var(--text-lead); line-height: 1.4; color: var(--text-2); }
 
