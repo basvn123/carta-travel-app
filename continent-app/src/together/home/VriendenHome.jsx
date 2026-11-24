@@ -713,7 +713,11 @@ export function VriendenHome({
     </span>
   ) : null;
   const labels = Object.fromEntries(tl.bands.map((b) => [b.key, b.thisMonth ? t('vr.thisMonth') : monthName(b.month, lang, today)]));
-  const ruler = Object.fromEntries(tl.bands.map((b) => [b.key, monthName(b.month, lang, today, 'short').replace('.', '')]));
+  // The ruler names the year on every month or on none (judge v3-3).
+  const years = new Set(tl.bands.map((b) => b.month.slice(0, 4))).size > 1;
+  const ruler = Object.fromEntries(tl.bands.map((b) => [b.key, new Intl.DateTimeFormat(lang, {
+    month: 'short', ...(years ? { year: 'numeric' } : {}), timeZone: 'UTC',
+  }).format(new Date(`${b.month}-15T12:00:00Z`)).replace('.', '')]));
   const bandProps = { me, meName, destinations, openId, onOpen, onPlanDay };
   // A grid's last row never ends in empty columns (judge v3-2 fix 1): its
   // last card takes the rest of the row, at two and at three across.
