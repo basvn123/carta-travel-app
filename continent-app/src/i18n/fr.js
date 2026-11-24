@@ -2036,6 +2036,7 @@ export const fr = {
   "vr.whatFriendsSee": "Ce que voient vos amis",
   "vr.earned": "Obtenu",
   "vr.locked": "À obtenir",
+  "vr.showDays": "Afficher les jours",
   "vr.waitsOnYou1": "attend votre réponse",
   "vr.waitsOnYou": "attendent votre réponse",
   "vr.nextUp": "Ensuite : {who} à {place}",

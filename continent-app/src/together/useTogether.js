@@ -42,7 +42,7 @@ import {
 import { mockCircles } from './circle/circleMock.js';
 import { bandTopFrom } from './groupBand.js';
 import { waitingOf } from './home/timeline.js';
-import { readHidden, hideOverlap } from './overlaps.js';
+import { readHidden, hideOverlap, unhideOverlap } from './overlaps.js';
 import { IS_FRIENDS_MOCK, FRIENDS_MOCK, MOCK_ME, mockState } from './friendsMock.js';
 
 const EMPTY = Object.freeze({
@@ -439,6 +439,9 @@ export const togetherActions = {
   },
   hideMeet(key) {
     emit({ ...state, hidden: hideOverlap(key) });
+  },
+  showMeet(key) {
+    emit({ ...state, hidden: unhideOverlap(key) });
   },
 };
 

@@ -42,8 +42,12 @@ import { buildTimeline, waitingOf, stripOf, exampleTimeline, NOW_CAP, STRIP_CAP 
 // Every place in the reader's language (judge 1 fix 2), from one lookup.
 const NamesCtx = React.createContext((id, fallback) => fallback || id);
 const useName = () => React.useContext(NamesCtx);
-// True inside the example: actions are inert, titles carry "Voorbeeld".
+// True inside the example: titles carry "Voorbeeld", and every action plays
+// its end state on this page only: nothing is saved or sent (judge v3-1 fix 9).
 const ExCtx = React.createContext(false);
+// Hide and show an overlap (Verbergen, Toon dagen): the store in real use, a
+// local list in the example.
+const MeetCtx = React.createContext({ hidden: new Set(), hide() {}, show() {} });
 
 const todayIso = () => new Date().toISOString().slice(0, 10);
 const reduced = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -121,6 +125,7 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
   const name = useName();
   const who = useWho();
   const ex = useContext(ExCtx);
+  const meet = useContext(MeetCtx);
   const ref = useRef(null);
   const [draw, setDraw] = useState(0);
   const lead = m.kind === 'circle' ? m.lead?.destId : null;
@@ -150,8 +155,12 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
   const tap = () => {
     // The lanes draw when the traveller opens the card, never on scroll.
     if (m.kind === 'overlap' && !open && !reduced()) setDraw((d) => d + 1);
-    onOpen(m, ref.current);
+    // The example has no trip to open: a tap only draws the lanes.
+    if (!ex) onOpen(m, ref.current);
   };
+  // A friend's trip whose overlap with yours was hidden offers it back.
+  const hiddenKey = m.kind === 'friendTrip'
+    ? [...meet.hidden].find((k) => k.startsWith(`${m.src.ownerId}:${m.src.tripPlanId}:`)) : null;
   const face = m.people[0];
   return (
     <article ref={ref} className={`vr-m is-${scale}${m.saffron ? ' is-saffron' : ''}`}>
@@ -169,20 +178,30 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
       <span className="vr-m-tx">
         <Faces people={m.people} me={me} />
         <h3 className="vr-m-t">
-          {ex ? (
+          {ex && m.kind !== 'overlap' ? (
             <span className="vr-m-go"><span className="sr-only">{t('mt.example')}: </span>{title}</span>
           ) : (
-            <Pressable className="vr-m-go" aria-expanded={opens ? open : undefined} onClick={tap}>{title}</Pressable>
+            <Pressable className="vr-m-go" aria-expanded={opens && !ex ? open : undefined} onClick={tap}>
+              {ex && <span className="sr-only">{t('mt.example')}: </span>}{title}
+            </Pressable>
           )}
         </h3>
         {fact && <span className={`vr-m-f${m.withYou ? ' is-you' : ''}`}>{fact}</span>}
         {m.kind === 'overlap' && m.saffron && <Lanes o={m.src} me={me} meName={meName} draw={draw} />}
         {m.kind === 'overlap' && (
-          <span className="vr-m-acts" inert={ex ? '' : undefined}>
+          <span className="vr-m-acts">
+            {/* Plan samen een dag leaves for the planner, so in the example it stays still. */}
             {m.src.destId && (
-              <Button variant="secondary" size="sm" iconStart={<RouteIcon size={16} />} onClick={() => onPlanDay?.(m.src.destId, m.src.start)}>{t('tg.planDayTogether')}</Button>
+              <span className="vr-m-act" inert={ex ? '' : undefined}>
+                <Button variant="secondary" size="sm" iconStart={<RouteIcon size={16} />} onClick={() => onPlanDay?.(m.src.destId, m.src.start)}>{t('tg.planDayTogether')}</Button>
+              </span>
             )}
-            <Button variant="quiet" size="sm" className="vr-lnk" onClick={() => togetherActions.hideMeet(m.src.key)}>{t('tg.hide')}</Button>
+            <Button variant="quiet" size="sm" className="vr-lnk" onClick={() => meet.hide(m.src.key)}>{t('tg.hide')}</Button>
+          </span>
+        )}
+        {hiddenKey && (
+          <span className="vr-m-acts">
+            <Button variant="quiet" size="sm" className="vr-lnk" onClick={() => meet.show(hiddenKey)}>{t('vr.showDays')}</Button>
           </span>
         )}
       </span>
@@ -192,7 +211,7 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
 
 /* ---------------------------------------------------------- Nu */
 
-function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk }) {
+function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk, onExDone }) {
   const { t, lang } = useI18n();
   const name = useName();
   const ex = useContext(ExCtx);
@@ -232,8 +251,13 @@ function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk }) {
   }
   const fact = w.kind === 'circleVote' ? t(w.n === 1 ? 'vr.voteWait1' : 'vr.votesWait', { n: w.n }) : '';
   const gone = leaving === w.id;
+  // In the example an answer plays its end state here and goes nowhere.
+  const local = () => onExDone(w.id);
   const press = () => {
-    if (ok[2]) { haptic('confirm'); onLeave(w.id, ok[1]); } else run(ok[1]);
+    if (ok[2]) haptic('confirm');
+    if (ex) onLeave(w.id, local);
+    else if (ok[2]) onLeave(w.id, ok[1]);
+    else run(ok[1]);
   };
   return (
     <article className={`vr-m is-row is-nu${gone ? ' is-leaving' : ''}`}>
@@ -245,22 +269,22 @@ function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk }) {
       <span className="vr-m-tx">
         <h3 className="vr-m-t">{ex && <span className="sr-only">{t('mt.example')}: </span>}{title}</h3>
         {fact && <span className="vr-m-f">{fact}</span>}
-        <span className="vr-m-acts" inert={ex ? '' : undefined}>
+        <span className="vr-m-acts">
           {ok && (
             <Button variant="primary" size="sm" onClick={press} disabled={gone}>
               {gone && <span className="vr-tick" aria-hidden="true"><CheckIcon size={14} /></span>}{ok[0]}
             </Button>
           )}
           {ok && laterOk && <Button variant="secondary" size="sm" onClick={() => onLater(w.id)}>{t('vr.later')}</Button>}
-          {secondary && <Button variant="secondary" size="sm" onClick={() => run(secondary[1])}>{secondary[0]}</Button>}
-          {no && <IconButton className="vr-m-x" label={`${t('friends.decline')}, ${w.person.name}`} onClick={() => run(no)}><CloseIcon size={16} /></IconButton>}
+          {secondary && <Button variant="secondary" size="sm" onClick={() => (ex ? onLeave(w.id, local) : run(secondary[1]))}>{secondary[0]}</Button>}
+          {no && <IconButton className="vr-m-x" label={`${t('friends.decline')}, ${w.person.name}`} onClick={() => (ex ? onLeave(w.id, local) : run(no))}><CloseIcon size={16} /></IconButton>}
         </span>
       </span>
     </article>
   );
 }
 
-function NuBand({ items, me, onView, onError }) {
+function NuBand({ items, me, onView, onError, onExDone }) {
   const { t } = useI18n();
   const [later, setLater] = useState([]);
   const [all, setAll] = useState(false);
@@ -290,7 +314,7 @@ function NuBand({ items, me, onView, onError }) {
           <li key={w.id} className="vr-mo">
             <span className="vr-gut" aria-hidden="true"><span className="vr-dot is-now" /></span>
             <NuRow w={w} me={me} onView={onView} run={run} leaving={leaving} onLeave={onLeave}
-              onLater={(id) => setLater((l) => [...l.filter((x) => x !== id), id])} laterOk={items.length > 1} />
+              onLater={(id) => setLater((l) => [...l.filter((x) => x !== id), id])} laterOk={items.length > 1} onExDone={onExDone} />
           </li>
         ))}
       </ul>
@@ -534,6 +558,9 @@ export function VriendenHome({
   const { user } = useAuth();
   const lists = useSharedLists(user, { mock: IS_FRIENDS_MOCK });
   const [example, setExample] = useState(false);
+  // The example's own answers and hides, on this page only (judge v3-1 fix 9).
+  const [exDone, setExDone] = useState([]);
+  const [exHidden, setExHidden] = useState([]);
   const [openId, setOpenId] = useState('');
   const [newOpen, setNewOpen] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(null);
@@ -551,7 +578,10 @@ export function VriendenHome({
   const ex = useMemo(() => (example ? exampleTimeline(destinations, today, exWords) : null),
     [example, destinations, today, exWords.circle, exWords.list]); // eslint-disable-line react-hooks/exhaustive-deps -- the words, not the object
   const data = useMemo(() => {
-    if (ex) return { ...ex, meets: ex.overlaps };
+    if (ex) {
+      const overlaps = ex.overlaps.filter((o) => !exHidden.includes(o.key));
+      return { ...ex, waiting: ex.waiting.filter((w) => !exDone.includes(w.id)), overlaps, meets: overlaps };
+    }
     const coplans = {};
     for (const [pid, co] of Object.entries(s.coplannersByPlan || {})) coplans[pid] = co.map((c) => ({ id: c.userId, name: c.name, emoji: c.emoji }));
     return {
@@ -559,7 +589,7 @@ export function VriendenHome({
       waiting: waitingOf(s), circles: s.circles || [], groupTrips: s.groups || [],
       sharedLists: lists.missing ? [] : lists.lists || [], coplans,
     };
-  }, [ex, s, meets, lists]);
+  }, [ex, s, meets, lists, exDone, exHidden]);
   const me = data.userId;
   const tl = useMemo(() => buildTimeline({ ...data, me }, today), [data, me, today]);
   const strip = useMemo(() => stripOf({ links: data.links, friendTrips: data.friendTrips, circles: data.circles }, today), [data, today]);
@@ -612,6 +642,9 @@ export function VriendenHome({
   const ruler = Object.fromEntries(tl.bands.map((b) => [b.key, monthName(b.month, lang, today, 'short').replace('.', '')]));
   const bandProps = { me, meName, destinations, openId, onOpen, onPlanDay };
   const zero = !example && friends.length === 0;
+  const meetCtx = ex
+    ? { hidden: new Set(exHidden), hide: (k) => setExHidden((h) => [...h, k]), show: (k) => setExHidden((h) => h.filter((x) => x !== k)) }
+    : { hidden: s.hidden || new Set(), hide: (k) => togetherActions.hideMeet(k), show: (k) => togetherActions.showMeet(k) };
 
   return (
     <NamesCtx.Provider value={name}>
@@ -625,8 +658,9 @@ export function VriendenHome({
           )}
         </div>
         {error && <div className="auth-error" role="alert">{error}</div>}
-        {ex && <ExampleBar onClose={() => setExample(false)} />}
+        {ex && <ExampleBar onClose={() => { setExample(false); setExDone([]); setExHidden([]); }} />}
         <ExCtx.Provider value={Boolean(ex)}>
+        <MeetCtx.Provider value={meetCtx}>
           <Strip items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji} onMe={() => onView('me')}
             onFriend={openFriend} onCircle={(id) => onView('circle', id)} onPending={(p) => setPendingOpen((c) => (c?.id === p.id ? null : p))} />
           {pendingOpen && !ex && (
@@ -649,7 +683,7 @@ export function VriendenHome({
           )}
           <div className="vr-side">
             <Status count={tl.count} next={tl.next} hasFriends={hasFriends} onGo={go} ex={Boolean(ex)} />
-            <NuBand items={tl.now} me={me} onView={onView} onError={onError} />
+            <NuBand items={tl.now} me={me} onView={onView} onError={onError} onExDone={(id) => setExDone((d) => [...d, id])} />
             <Roster items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji}
               meLine={!ex && s.me?.handle ? `@${s.me.handle}` : t('vr.whatFriendsSee')} onMe={() => onView('me')} meets={data.meets} onFriend={openFriend} onCircle={(id) => onView('circle', id)}
               onCancel={(linkId) => togetherActions.remove(linkId)} />
@@ -665,6 +699,7 @@ export function VriendenHome({
               <Band id="vr-b-undated" className=" is-undated" label={t('vr.undated')} head={newBtn} moments={tl.undated} scale="row" dated={false} {...bandProps} />
             )}
           </div>
+        </MeetCtx.Provider>
         </ExCtx.Provider>
       </div>
     </NamesCtx.Provider>

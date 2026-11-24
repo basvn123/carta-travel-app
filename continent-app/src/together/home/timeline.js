@@ -348,7 +348,8 @@ export function exampleTimeline(catalogue, today, words = {}) {
   const overlap = {
     friendId: alex.id, friendName: alex.name, handle: '', emoji: '', destId: P(0), city: city(P(0)), start: d(18), end: d(22),
     mine: { planId: mine.id, label: '', start: d(17), end: d(23) }, theirs: { tripPlanId: 'ex-ft-alex', label: '', start: d(18), end: d(22) },
-    key: `ex:${P(0)}:${d(18)}`, example: true,
+    // The real overlapKey shape, so a hide in the example can be undone the same way.
+    key: `${alex.id}:ex-ft-alex:${P(0)}:${d(17)}`, example: true,
   };
   const member = (p) => ({ userId: p.id, status: 'joined', handle: '', name: p.name, emoji: '' });
   const circle = {

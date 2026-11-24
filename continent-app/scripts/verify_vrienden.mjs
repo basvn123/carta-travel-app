@@ -107,9 +107,26 @@ async function open(browser, v, w, lang) {
       const u = r.url();
       if (r.method() !== 'GET' || /supabase|\/functions\/|\/api\//.test(u)) sent.push(`${r.method()} ${u.slice(0, 80)}`);
     });
-    await page.locator('.vr-first .btn').first().click();
+    await page.locator('.vr-first .btn.mt-soft').first().click();
     await page.locator('.mt-exbar').waitFor({ timeout: 5000 });
     await page.waitForTimeout(1500);
+    // Judge v3-1 fix 9: the example moves on this page only. Aanvaard ticks,
+    // the row leaves and the count drops; Verbergen hides the overlap and
+    // Toon dagen brings it back; all with no write and no request (above).
+    const count = async () => Number((await page.locator('.vr-ct').first().textContent().catch(() => '0')) || 0);
+    const c0 = await count();
+    await page.locator('.vr-band.is-nu .vr-m-acts button').first().click();
+    await page.waitForTimeout(900);
+    const c1 = await count();
+    if (c1 !== c0 - 1) sent.push(`example Aanvaard: count ${c0} then ${c1}`);
+    await page.locator('.vr-m.is-saffron .vr-m-acts > .vr-lnk').first().click();
+    await page.waitForTimeout(400);
+    if (await page.locator('.vr-m.is-saffron').count()) sent.push('example Verbergen: the overlap stayed');
+    await page.locator('.vr-m .vr-m-acts > .vr-lnk').first().click();
+    await page.waitForTimeout(400);
+    if (!(await page.locator('.vr-m.is-saffron').count())) sent.push('example Toon dagen: the overlap did not come back');
+    await page.evaluate(() => { document.scrollingElement.scrollTop = 0; document.querySelector('.tg-panel').scrollTop = 0; });
+    await page.waitForTimeout(400);
   }
   return { ctx, page, errors, firstAnims, sent };
 }

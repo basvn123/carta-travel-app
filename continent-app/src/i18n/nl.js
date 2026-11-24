@@ -2045,6 +2045,7 @@ export const nl = {
   "vr.whatFriendsSee": "Wat vrienden zien",
   "vr.earned": "Behaald",
   "vr.locked": "Nog open",
+  "vr.showDays": "Toon dagen",
   "vr.waitsOnYou1": "wacht op jou",
   "vr.waitsOnYou": "wachten op jou",
   "vr.nextUp": "Volgende: {who} in {place}",

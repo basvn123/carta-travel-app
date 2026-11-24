@@ -161,6 +161,14 @@ export function hideOverlap(key) {
   return s;
 }
 
+/** Undo a hide ("Toon dagen", G16 v3 judge 1 fix 10). */
+export function unhideOverlap(key) {
+  const s = readHidden();
+  s.delete(key);
+  try { localStorage.setItem(HIDDEN_KEY, JSON.stringify([...s].slice(-200))); } catch { /* private mode */ }
+  return s;
+}
+
 /**
  * Friends' shown stays in one window (the Plan date step): each friend stay
  * at a named place that shares a day with [start, end]. With no window, the
