@@ -734,10 +734,11 @@ export function VriendenHome({
       <div className={`tg-page vr-page vr-home vr-v3${ex ? ' is-example' : ''}${zero ? ' is-zero' : ''}`}>
         <div className="vr-head">
           <h1 className="vr-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
-          {/* With no friends the invite is the body's primary, as My trips' Plan is; never two. */}
+          {/* With no friends the invite is the body's primary, as My trips' Plan is; never two.
+              In the example it is outlined, so it does not stack a second dark fill under the bar. */}
           {!zero && (
             <InviteButton open={inviteOpen} onOpen={() => setInviteOpen(true)} onClose={() => setInviteOpen(false)} onFind={onFind}
-              variant={friends.length ? 'umber' : 'primary'} block={false} />
+              variant={friends.length || ex ? 'umber' : 'primary'} block={false} />
           )}
         </div>
         {error && <div className="auth-error" role="alert">{error}</div>}
