@@ -176,3 +176,15 @@ test("plan flow walk: a group budget keeps its total and follows the party", () 
   // A day budget is always a person's.
   assert.equal(s({ guide: { budget: { kind: "day", per: "group", groupEur: 500 } } }).guide.budget.per, "person");
 });
+
+test("G12 §12: a known place drops weather, reach and the shape; the setup gains kid ages with children", async () => {
+  const { guideScreens: guide, askedSetup } = await import("../src/planner/flow/flowGraph.js");
+  const open = guide(s({}));
+  for (const id of ["g:shape", "g:weather", "g:reach"]) assert.ok(open.includes(id), id);
+  const placed = guide(s({ places: [{ kind: "country", id: "PT", iso2: "PT" }] }));
+  for (const id of ["g:shape", "g:weather", "g:reach"]) assert.ok(!placed.includes(id), id);
+  assert.ok(placed.includes("g:budget") && placed.includes("g:pick") && placed.includes("g:how"));
+  assert.deepEqual(askedSetup(s({ party: { kind: "family", adults: 2, kids: 1 } })).slice(0, 3), ["booked", "who", "ages"]);
+  assert.ok(!askedSetup(s({})).includes("tell"), "Tell is the door's line");
+  assert.ok(QUESTIONS.ages, "the ages question exists");
+});
