@@ -174,22 +174,46 @@ export function levers(trip, input) {
     }
     if (best) out.push(best);
   }
-  // A cheaper week: only with at least two checked windows, so "cheaper"
-  // compares checked fares, never a sparse guess.
-  const windows = checkedWindows(trip, input);
-  if (windows.length >= MIN_WINDOWS) {
-    const other = windows
-      .filter((w) => w.pair.out.date !== trip.dates?.out)
-      .sort((a, b) => a.pair.perSeat - b.pair.perSeat)[0];
-    if (other) {
-      const outDate = other.pair.out.date;
-      const month = Number(outDate.slice(5, 7));
-      const next = safePrice(candidateOf(trip, { month, dates: { out: outDate, back: addDays(outDate, trip.nights) } }), input, 'week');
-      const diff = cheaper(trip, next);
-      if (diff != null) out.push({ key: 'week', trip: next, diff, month, windows: windows.length });
-    }
-  }
+  const week = weekLever(trip, input);
+  if (week) out.push(week);
   return out.sort((a, b) => a.diff - b.diff);
+}
+
+/**
+ * A cheaper week: only with at least two checked windows, so "cheaper"
+ * compares checked fares, never a sparse guess. The same trip priced on the
+ * cheapest other checked window, kept only when complete, like for like and
+ * really cheaper. -> { key: 'week', trip, diff, month, windows } | null
+ */
+export function weekLever(trip, input) {
+  if (!trip || !input || leavesOut(trip)) return null;
+  const windows = checkedWindows(trip, input);
+  if (windows.length < MIN_WINDOWS) return null;
+  const other = windows
+    .filter((w) => w.pair.out.date !== trip.dates?.out)
+    .sort((a, b) => a.pair.perSeat - b.pair.perSeat)[0];
+  if (!other) return null;
+  const outDate = other.pair.out.date;
+  const month = Number(outDate.slice(5, 7));
+  const next = safePrice(candidateOf(trip, { month, dates: { out: outDate, back: addDays(outDate, trip.nights) } }), input, 'week');
+  const diff = cheaper(trip, next);
+  return diff != null ? { key: 'week', trip: next, diff, month, windows: windows.length } : null;
+}
+
+/**
+ * G12 B6 (R6): "Another month, cheaper" as a row. Each try prices a trip
+ * again (about 100 to 180 ms a trip on a desktop, B1 L0), and the finder's
+ * first run already takes 2 to 3.5 s, so this runs only when the traveller
+ * asks ("Search more"), over the first `tries` complete trips of the list.
+ *   -> [{ trip (the cheaper week), base (the list's trip), diff, month }] cheapest saving first
+ */
+export function otherMonthTrips(trips, input, { tries = 6, max = 4 } = {}) {
+  const out = [];
+  for (const base of (trips || []).filter((x) => x && !leavesOut(x)).slice(0, tries)) {
+    const w = weekLever(base, input);
+    if (w) out.push({ trip: w.trip, base, diff: w.diff, month: w.month });
+  }
+  return out.sort((a, b) => a.diff - b.diff).slice(0, max);
 }
 
 /**

@@ -98,3 +98,12 @@ test("owner rule (G12 B5): flight Not yet in both, a saving on the priced lines 
   assert.ok(!alts.some((x) => x.key === "cheaper"), "a Not yet total never wins Cheaper");
   assert.ok(alts.every((x) => x.diff === null), "no whole-trip difference against a Not yet total");
 });
+
+// G12 B6 (R6): Another month as a row runs only on Search more, and never
+// from a trip with a Not yet line or without two checked windows.
+test("R6: otherMonthTrips skips Not yet trips and needs checked windows", async () => {
+  const { otherMonthTrips } = await import("../src/lib/recommend/alternatives.js");
+  const t = (id, out) => ({ id, nights: 7, gateway: { iata: "LIS" }, dates: { out: "2027-05-01" }, total: { group: 900 }, slots: [{ id: "flight", eur: out ? null : 200 }] });
+  assert.deepEqual(otherMonthTrips([t("a", true), t("b", false)], { flights: null, today: "2026-11-25" }), []);
+  assert.deepEqual(otherMonthTrips([], {}), []);
+});

@@ -13,6 +13,7 @@ import { SortMenu } from './SortMenu.jsx';
 import { PAGE, QUICK_FILTERS, SORTS, answersLine, countryLabel, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut, tripName } from './finderText.js';
 import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
 import { useKept } from '../../lib/recommend/keptStore.js';
+import { otherMonthTrips } from '../../lib/recommend/alternatives.js';
 import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
@@ -173,11 +174,22 @@ function useVisit(store, settings, fallback) {
  * (keptStore), Skip in its menu hides it for these answers; the hidden ones
  * are counted under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
+export function TripsForYou({ input = null, settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
   const { t, lang } = useI18n();
   const [skips, setSkips] = useSkips(settings);
   // G12 R5: the kept trips, for the Like your saved row.
   const keptList = useKept();
+  // G12 R6: Another month, cheaper, priced only on "Search more" (L0: the
+  // first run already takes 2 to 3.5 s on a desktop, so no extra pricing
+  // runs before the traveller asks). null = not asked, [] = asked, none found.
+  const [more, setMore] = useState(null);
+  // A new answer set is a new list: an earlier search no longer applies.
+  useEffect(() => { setMore(null); }, [found]);
+  const searchMore = () => {
+    setMore('busy');
+    // One frame first, so the button can say it is searching before the pricing blocks.
+    requestAnimationFrame(() => setMore(otherMonthTrips(found, input)));
+  };
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
   // G12 L8: under a ceiling the trips over it leave the list; up to three
@@ -444,6 +456,26 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
                 </div>
               ))}
             </section>
+            {input && (
+              <section className="tff-search-more" aria-live="polite">
+                {Array.isArray(more) && more.length > 0 ? (
+                  <>
+                    <h3 className="tff-rows-h">{t('tf.row.month')}</h3>
+                    <ul className="tff-row-cards">
+                      {more.map((m) => (
+                        <li key={m.trip.id}>{card(m.trip, { why: t('tf.row.monthWhy', { month: monthName(m.month, lang), eur: formatMoney(-m.diff, { locale: lang }) }) })}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : Array.isArray(more) ? (
+                  <p className="tff-spendref">{t('tf.more.none')}</p>
+                ) : (
+                  <Button variant="secondary" size="sm" disabled={more === 'busy'} onClick={searchMore}>
+                    {t(more === 'busy' ? 'tf.more.busy' : 'tf.more.search')}
+                  </Button>
+                )}
+              </section>
+            )}
             {trips.length > PAGE && <h3 className="tff-more-h">{t('tf.list.keepLooking')}</h3>}
             {shown > PAGE && <ol className="tff-list">{trips.slice(PAGE, shown).map(item)}</ol>}
           </>

@@ -326,6 +326,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
       <div hidden={Boolean(open)} className="tff-under" ref={underRef}>
         {ready ? (
           <TripsForYou
+            input={finder.input}
             settings={settings}
             trips={all}
             destinations={finder.data?.destinations}

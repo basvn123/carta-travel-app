@@ -1261,5 +1261,7 @@
 /* G12 R4: More and Less like this, the hint and the row on top. */
 .tff-ml-note { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); color: var(--text-2); font-size: var(--text-label); }
 .tff-ml-row { margin-bottom: var(--space-5); }
+/* G12 R6: Search more (Another month, priced on request). */
+.tff-search-more { margin: var(--space-4) 0; }
 /* G12 L12: own past spend, a quiet reference line under the title (decision 0013). */
 .tff-spendref { margin: 0 0 var(--space-2); font-size: var(--text-caption); color: var(--text-2); }
