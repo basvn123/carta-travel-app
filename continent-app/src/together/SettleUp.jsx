@@ -159,7 +159,7 @@ export function SettleView({ headRef, groupId, onView }) {
             )}
             {owedToMe && !s.payLink && !s.payLinkMissing && (
               <div>
-                <Button variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onView('privacy')}>{t('tg2.addPayLink')}</Button>
+                <Button variant="quiet" size="sm" iconStart={<PlusIcon size={16} />} onClick={() => onView('me')}>{t('tg2.addPayLink')}</Button>
               </div>
             )}
           </Block>

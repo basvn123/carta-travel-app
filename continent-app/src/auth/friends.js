@@ -186,9 +186,24 @@ export function buildFriendInviteUrl(handle) {
 export function readFriendHandleFromUrl() {
   if (typeof window === 'undefined') return null;
   const hash = (window.location.hash || '').replace(/^#/, '');
-  if (!hash.includes(`${INVITE_PARAM}=`)) return null;
-  const handle = new URLSearchParams(hash).get(INVITE_PARAM);
+  const fromHash = hash.includes(`${INVITE_PARAM}=`) ? new URLSearchParams(hash).get(INVITE_PARAM) : null;
+  let held = null;
+  try { held = sessionStorage.getItem(FRIEND_HOLD_KEY); } catch { /* private mode */ }
+  const handle = fromHash || held;
   return /^[a-z0-9_]{3,24}$/.test(handle || '') ? handle : null;
+}
+
+/* G16 (decision 0017): the handle is kept in this tab's session storage
+ * until it is used, so a guest who signs in with Google (the browser leaves
+ * and comes back) still lands on the request, as holdCoplanToken does for a
+ * coplan link (coplanners.js). Cleared once the signed-in Add screen has it. */
+const FRIEND_HOLD_KEY = 'carta.pendingFriend';
+
+export function holdFriendHandle(handle) {
+  try {
+    if (handle && /^[a-z0-9_]{3,24}$/.test(handle)) sessionStorage.setItem(FRIEND_HOLD_KEY, handle);
+    else sessionStorage.removeItem(FRIEND_HOLD_KEY);
+  } catch { /* private mode */ }
 }
 
 /** Strips our param without disturbing the rest of the hash or the history. */

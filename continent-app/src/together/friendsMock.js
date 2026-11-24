@@ -4,7 +4,8 @@
  * Same precedent as ?savedmock, ?coplanmock and ?guidesmock: fixtures stand
  * in for the friend RPCs and the group trip tables so every state of the
  * Together page renders without an account, before migrations 055 and 056
- * are applied, and in headless checks. Display only: never on unless typed,
+ * are applied, and in headless checks. Trip labels are left empty, so a trip
+ * is named from its places in the reader's language (G16). Display only: never on unless typed,
  * and never in a production build (E2E_SEAMS).
  *
  * What it holds: a friend request (Lea), a co-plan invite and a group invite,
@@ -50,11 +51,11 @@ export function mockState() {
     { id: 'l-ana', kind: 'friend', userId: 'u-ana', handle: 'ana_r', displayName: 'Ana Rocha', avatarEmoji: '', createdAt: d(-30) },
   ];
   const friendTrips = empty ? [] : [
-    { ownerId: 'u-sam', ownerHandle: 'sam_m', ownerName: 'Sam Martens', ownerEmoji: '', tripPlanId: 'ft-sam-lis', label: 'Lisbon long weekend', startDate: d(22), endDate: d(25), cities: ['Lisbon'], countries: ['Portugal'], destinationIds: ['LIS'], updatedAt: d(-2) },
-    { ownerId: 'u-sam', ownerHandle: 'sam_m', ownerName: 'Sam Martens', ownerEmoji: '', tripPlanId: 'ft-sam-hr', label: 'Croatia coast', startDate: d(180), endDate: d(187), cities: ['Split', 'Dubrovnik'], countries: ['Croatia'], destinationIds: ['SPU', 'DBV'], updatedAt: d(-5) },
-    { ownerId: 'u-sam', ownerHandle: 'sam_m', ownerName: 'Sam Martens', ownerEmoji: '', tripPlanId: 'ft-sam-opo', label: 'Porto in September', startDate: d(-410), endDate: d(-404), cities: ['Porto'], countries: ['Portugal'], destinationIds: ['OPO'], updatedAt: d(-400) },
-    { ownerId: 'u-jo', ownerHandle: 'jo_p', ownerName: 'Jo Peeters', ownerEmoji: '', tripPlanId: 'ft-jo-be', label: 'Ghent and Bruges', startDate: d(300), endDate: d(306), cities: ['Ghent', 'Bruges'], countries: ['Belgium'], destinationIds: ['gem:ghent', 'gem:bruges'], updatedAt: d(-9) },
-    { ownerId: 'u-ana', ownerHandle: 'ana_r', ownerName: 'Ana Rocha', ownerEmoji: '', tripPlanId: 'ft-ana-at', label: 'Alps hut tour', startDate: d(250), endDate: d(256), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'], updatedAt: d(-20) },
+    { ownerId: 'u-sam', ownerHandle: 'sam_m', ownerName: 'Sam Martens', ownerEmoji: '', tripPlanId: 'ft-sam-lis', label: '', startDate: d(22), endDate: d(25), cities: ['Lisbon'], countries: ['Portugal'], destinationIds: ['LIS'], updatedAt: d(-2) },
+    { ownerId: 'u-sam', ownerHandle: 'sam_m', ownerName: 'Sam Martens', ownerEmoji: '', tripPlanId: 'ft-sam-hr', label: '', startDate: d(180), endDate: d(187), cities: ['Split', 'Dubrovnik'], countries: ['Croatia'], destinationIds: ['SPU', 'DBV'], updatedAt: d(-5) },
+    { ownerId: 'u-sam', ownerHandle: 'sam_m', ownerName: 'Sam Martens', ownerEmoji: '', tripPlanId: 'ft-sam-opo', label: '', startDate: d(-410), endDate: d(-404), cities: ['Porto'], countries: ['Portugal'], destinationIds: ['OPO'], updatedAt: d(-400) },
+    { ownerId: 'u-jo', ownerHandle: 'jo_p', ownerName: 'Jo Peeters', ownerEmoji: '', tripPlanId: 'ft-jo-be', label: '', startDate: d(300), endDate: d(306), cities: ['Ghent', 'Bruges'], countries: ['Belgium'], destinationIds: ['gem:ghent', 'gem:bruges'], updatedAt: d(-9) },
+    { ownerId: 'u-ana', ownerHandle: 'ana_r', ownerName: 'Ana Rocha', ownerEmoji: '', tripPlanId: 'ft-ana-at', label: '', startDate: d(250), endDate: d(256), cities: ['Innsbruck'], countries: ['Austria'], destinationIds: ['INN'], updatedAt: d(-20) },
   ];
   const shares = empty ? new Map() : new Map([
     ['u-sam', {
@@ -89,12 +90,12 @@ export function mockState() {
       stops: [{ destination_id: 'LJU', city: 'Ljubljana', country: 'Slovenia', arrive_date: d(-200), depart_date: d(-195) }] },
   ];
   const invites = empty ? [] : [{
-    tripPlanId: 'ft-jo-wk', label: 'Weekend in Ghent', ownerHandle: 'jo_p', ownerName: 'Jo Peeters',
+    tripPlanId: 'ft-jo-wk', label: 'Gent', ownerHandle: 'jo_p', ownerName: 'Jo Peeters',
     cities: ['Ghent'], countries: ['Belgium'], status: 'pending', createdAt: d(-1),
   }];
   const groups = empty ? [] : [
     {
-      id: 'g-summer', title: 'Summer 2027', ownerId: MOCK_ME, bookedPlanId: null, myStatus: 'joined',
+      id: 'g-summer', title: 'Zuid 2027', ownerId: MOCK_ME, bookedPlanId: null, myStatus: 'joined',
       members: [
         { userId: MOCK_ME, status: 'joined', handle: 'bas_v', name: 'Bas', emoji: '' },
         { userId: 'u-sam', status: 'joined', handle: 'sam_m', name: 'Sam Martens', emoji: '' },
@@ -120,7 +121,7 @@ export function mockState() {
       band: { top: 700, set: 3, members: 3, ready: true },
     },
     {
-      id: 'g-autumn', title: 'Autumn walk', ownerId: 'u-ana', bookedPlanId: null, myStatus: 'invited',
+      id: 'g-autumn', title: 'GR 5', ownerId: 'u-ana', bookedPlanId: null, myStatus: 'invited',
       members: [
         { userId: 'u-ana', status: 'joined', handle: 'ana_r', name: 'Ana Rocha', emoji: '' },
         { userId: MOCK_ME, status: 'invited', handle: 'bas_v', name: 'Bas', emoji: '' },
@@ -130,15 +131,16 @@ export function mockState() {
   ];
   return {
     me: { handle: 'bas_v', displayName: 'Bas', avatarEmoji: '' },
-    links,
-    friendTrips,
+    links: FRIENDS_MOCK === 'many' ? [...links, ...manyFriends(d).links] : links,
+    friendTrips: FRIENDS_MOCK === 'many' ? [...friendTrips, ...manyFriends(d).trips] : friendTrips,
     shares,
     myPlans,
     invites,
     groups,
     groupsMissing: false,
     joinToMe: empty ? [] : [
-      { id: 'jr-jo', tripPlanId: 'mp1', requesterId: 'u-jo', handle: 'jo_p', name: 'Jo Peeters', emoji: '', label: 'Lisbon and Porto', createdAt: d(-1) },
+      // No label: the trip is named from its places in the reader's language.
+    { id: 'jr-jo', tripPlanId: 'mp1', requesterId: 'u-jo', handle: 'jo_p', name: 'Jo Peeters', emoji: '', label: '', createdAt: d(-1) },
     ],
     joinMine: new Set(empty ? [] : ['ft-jo-be']),
     joinMissing: false,
@@ -152,8 +154,32 @@ export function mockState() {
     mockVisited: ['Belgium', 'Netherlands', 'France', 'Germany', 'Austria', 'Italy', 'Spain', 'Czechia'],
     mockSaves: ['dest:OPO', 'dest:LJU'],
     // Accepted co-planners on your own trips, for My trips' "Sam joins".
-    coplannersByPlan: { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
+    // None with nobody yet (empty and one): a co-planner is a friend (judge v3-1 fix 1).
+    coplannersByPlan: empty ? {} : { mp1: [{ userId: 'u-sam', name: 'Sam Martens', emoji: '' }] },
   };
+}
+
+/** ?friendsmock=many (G16 v3): the rich state plus 22 more friends, so the
+ *  page holds 25; most show a trip, some to the same place on the same
+ *  days (the timeline merges them), a few nothing. */
+const MANY_NAMES = ['Mia Kovač', 'Tom Jansen', 'Ruud Bakker', 'Noor Visser', 'Daan Smit', 'Eva Mulder', 'Lars Berg', 'Iris de Wit',
+  'Femke Bos', 'Bram Dekker', 'Sara Lind', 'Jonas Weber', 'Lotte Hendriks', 'Milan Novak', 'Zoë Martin', 'Pieter Claes',
+  'Anouk Peters', 'Hugo Lambert', 'Elif Kaya', 'Marta Silva', 'Kai Fischer', 'Nina Rossi'];
+const MANY_PLACES = [['LIS', 'Lisbon'], ['NAP', 'Naples'], ['SPU', 'Split'], ['INN', 'Innsbruck'], ['OPO', 'Porto'], ['LJU', 'Ljubljana']];
+function manyFriends(d) {
+  const links = [];
+  const trips = [];
+  MANY_NAMES.forEach((name, i) => {
+    const id = `u-m${i}`;
+    const handle = name.split(' ')[0].toLowerCase().normalize('NFD').replace(/[^a-z]/g, '');
+    links.push({ id: `l-m${i}`, kind: 'friend', userId: id, handle, displayName: name, avatarEmoji: '', createdAt: d(-10 - i) });
+    if (i % 5 === 4) return; // a few friends show nothing
+    const [dest, city] = MANY_PLACES[i % MANY_PLACES.length];
+    const start = 30 + (i % 9) * 12;
+    trips.push({ ownerId: id, ownerHandle: handle, ownerName: name, ownerEmoji: '', tripPlanId: `ft-m${i}`, label: '',
+      startDate: d(start), endDate: d(start + 4), cities: [city], countries: [], destinationIds: [dest], updatedAt: d(-3) });
+  });
+  return { links, trips };
 }
 
 /** Summer 2027's shared costs: Sam paid the flat's deposit, you the

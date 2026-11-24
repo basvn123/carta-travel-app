@@ -32,10 +32,12 @@ test('signed out: a Sign in pill that calls requestAuth; signed in: the avatar',
   assert.match(read('src/App.jsx'), /<AppHeader[\s\S]*?onSignIn=\{requestAuth\}/);
 });
 
-test('44 px pills; the word hides only from 769 to 1099 px and, signed out, under 400 px', () => {
+// G16 (decision 0017): the door is the glyph and the badge on every width,
+// with the word "Vrienden" from 1100 px.
+test('44 px pills; the word shows from 1100 px and, signed out, hides under 400 px', () => {
   const css = read('src/styles/90-together.css');
   assert.match(css, /\.hdr-pill \{[^}]*min-height: var\(--tap\);/);
-  assert.match(css, /@media \(min-width: 769px\) and \(max-width: 1099px\) \{[^@]*\.tg-door-word \{ display: none; \}/);
+  assert.match(css, /@media \(max-width: 1099px\) \{[^@]*\.tg-door-word \{ display: none; \}/);
   assert.match(css, /@media \(max-width: 399px\) \{[^@]*\.tg-door-word \{ display: none; \}/);
 });
 

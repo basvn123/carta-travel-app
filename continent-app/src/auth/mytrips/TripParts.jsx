@@ -219,7 +219,8 @@ export function ExampleBar({ onClose }) {
   return (
     <div className="atlas-example mt-exbar" role="status">
       <EyeIcon size={16} /><span>{t('mt.example')}</span>
-      <Pressable onClick={onClose} aria-label={t('mt.exampleCloseAria')}>
+      {/* The read name starts with the visible word (WCAG 2.5.3, G16 v3 axe). */}
+      <Pressable onClick={onClose} aria-label={`${t('mt.exampleClose')}, ${t('mt.exampleCloseAria')}`}>
         {t('mt.exampleClose')} <CloseIcon size={14} />
       </Pressable>
     </div>

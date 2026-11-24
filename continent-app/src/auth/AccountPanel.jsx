@@ -9,6 +9,7 @@ import {
   PersonIcon, PlaneIcon, QuestionIcon, ReceiptIcon, ShareIcon, ShieldIcon, SignOutIcon,
   TicketIcon, TrashIcon,
 } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 
 // The explainer page (scripts/explainer/numbers.mjs), a static page outside
 // the app, built as about/numbers.html and served at this clean path.
@@ -699,7 +700,7 @@ export function AccountPanel({
     { v: 'travel', Icon: PlaneIcon, label: t('ac.travel') },
     signedIn && { v: 'plan', Icon: TicketIcon, label: t('ac.plan') },
     { v: 'prefs', Icon: BordersIcon, label: t('account.preferences') },
-    signedIn && { v: 'together', Icon: FriendsIcon, label: t('tg.title') },
+    signedIn && { v: 'together', Icon: HouseIcon.people, label: t('tg.title') },
     signedIn && { v: 'security', Icon: LockIcon, label: t('account.menuSecurity') },
     signedIn && { v: 'data', Icon: ShieldIcon, label: t('account.dataTitle') },
     { v: 'help', Icon: QuestionIcon, label: t('side.help') },
@@ -1332,9 +1333,10 @@ export function AccountPanel({
           {storedHandle && (
             <Row icon={PersonIcon} label={t('profile.handle')} value={`@${storedHandle}`} href={hrefOf('profile')} onClick={() => go('profile')} />
           )}
-          <Row icon={EyeIcon} label={t('tg.friendsSee')} value={seeValue} href={tabHref('together', undefined, { view: 'privacy' })} onClick={() => onOpenTogether?.('privacy')} />
+          <Row icon={EyeIcon} label={t('tg.friendsSee')} value={seeValue} href={tabHref('together', undefined, { view: 'me' })} onClick={() => onOpenTogether?.('me')} />
+          {/* G16: the Vrienden row, one people glyph. */}
+          <Row icon={HouseIcon.people} label={t('ac.openTogether')} href={tabHref('together')} onClick={() => onOpenTogether?.('home')} />
         </Group>
-        <Button className="ac-signout" iconStart={<FriendsIcon size={20} />} onClick={() => onOpenTogether?.('home')}>{t('ac.openTogether')}</Button>
       </>
     );
   }

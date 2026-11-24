@@ -30,12 +30,13 @@ export function sharedSupported() {
 }
 
 /**
- * @param {Element|null} from  the card (or its button); its first img is named
+ * @param {Element|null} from  the card (or its button); its first img, or the
+ *                             element marked data-shared (a face, G16), is named
  * @param {string} key         what is being opened, the same key the page claims with
  * @param {Function} commit    the state change that opens the page
  */
 export function openShared(from, key, commit) {
-  const img = from?.querySelector?.('img');
+  const img = from?.querySelector?.('[data-shared], img');
   if (!img || !sharedSupported()) { commit(); return; }
   img.style.viewTransitionName = NAME;
   const clear = () => { img.style.viewTransitionName = ''; };

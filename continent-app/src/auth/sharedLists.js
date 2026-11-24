@@ -114,8 +114,13 @@ export const MOCK_FRIENDS = [
 const mockPerson = (f) => ({ userId: f.userId, handle: f.handle, name: f.displayName, emoji: f.avatarEmoji });
 const ME = { userId: MOCK_ME, handle: 'you', name: 'You', emoji: '' };
 const ago = (d) => new Date(Date.now() - d * 864e5).toISOString();
-let mockLists = [{
-  id: 'sl1', name: 'Porto with friends', ownerId: MOCK_ME, mine: true,
+// ?friendsmock=empty and =one have nobody to share a list with (G16 v3,
+// judge 1 fix 1), so the seam starts with no shared list there.
+const NO_LISTS = typeof window !== 'undefined'
+  && ['empty', 'one'].includes(new URLSearchParams(window.location.search).get('friendsmock'));
+let mockLists = NO_LISTS ? [] : [{
+  // A list name with no English in it, so the seam reads right in every language (G16).
+  id: 'sl1', name: 'Porto 2027', ownerId: MOCK_ME, mine: true,
   members: [ME, mockPerson(MOCK_FRIENDS[0]), mockPerson(MOCK_FRIENDS[1])],
   items: [
     { id: 'si1', key: 'dest:OPO', kind: 'dest', name: 'Porto', cc: 'PT', img: null, note: 'Rooftop bar Sofie found', addedBy: 'u-sofie', at: ago(9), votes: ['u-sofie', 'u-jonas', MOCK_ME] },

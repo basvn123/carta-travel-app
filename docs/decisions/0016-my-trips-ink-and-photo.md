@@ -24,7 +24,7 @@ We chose **"Ink and photo"**, a combination (decision.md in the run). The owner 
 - **Every control is ink and line** (`atlas/Ink.jsx`, `styles/73-mytrips-ink.css`): `SectHead`, `Frame2` (an inset umber 800 outline at radius 6, the chosen cell in the action paint, 44 px cells), `MoveInk`, `NoPrice`, `GradeCells`.
 - **The rating's tile language is kept** for the grade (ten cells, "9/10" printed) and the food plan on the Uitgaven page (ten tiles, the figure printed).
 - **Charts:** solid bars on one baseline; a picked year is ringed, never the others dimmed; an empty month is a tick.
-- **The extremes:** a drawn compass rose with the four places at its points, on every width.
+- **The extremes:** a drawn compass rose with the four places at its points, on every width. Superseded by 0017 (owner 2026-11-23): four ruled rows, no rose.
 - **No beige and no sunken fill** in My trips and the Uitgaven page. Kept on purpose: the map's year ramp and wish hatch, the journey line's pills, the year card's own art, the rating's paper cells.
 
 House-style exceptions (the owner's yes in the artifact):
