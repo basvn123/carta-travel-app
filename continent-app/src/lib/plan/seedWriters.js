@@ -6,7 +6,7 @@
  * dates and party said in a question) reaches Plan instead of a bare country.
  *
  *   placeSeed({ source, iso2, destId, name, regionId })   a place, region or country page
- *   routeSeedOf(trip, { source })                         a route with stops (library trip, Saved, Kept)
+ *   routeSeedOf(trip, { source, destinations })           a route with stops (library trip, Kept); Saved's hearts as places (G12 L6)
  *   journeySeed(trip, stops, destinations)                a journey's route stops on the catalogue
  *   askPlanSeed (askSeed.js, apart so the app's first load does not carry the parser)
  *   openTripOf(draft, name)                               the trip open in Plan, for S15
@@ -58,8 +58,19 @@ function legModesOf(legs) {
  * stops, nights, day activities, leg modes, car or public and the name.
  *   trip: { id?, name?, stops: [{ dest, nights, dayActivities? }], legs?, transport? }
  */
-export function routeSeedOf(trip, { source = 'trip' } = {}) {
+export function routeSeedOf(trip, { source = 'trip', destinations = null } = {}) {
   if (!trip || !Array.isArray(trip.stops)) return null;
+  // G12 L6 (decision §3.2 S9): Saved's hearts are a wish, not a route (their
+  // flat 2 nights were never chosen), so they land on a priced found trip:
+  // the towns become named places that knowTrip routes and sizes.
+  if (source === 'saved') {
+    const places = trip.stops.filter((x) => x && x.dest).map((x) => {
+      const d = destinations?.[x.dest] || null;
+      return { kind: 'place', id: String(x.dest), iso2: d?.iso2 || '', name: cityKeyName(d?.city || '') || '' };
+    });
+    const wish = makeSeed({ source, label: trip.name || trip.label || '', places, pins: ['places'] });
+    return wish.places.length ? wish : null;
+  }
   const seed = makeSeed({
     source,
     ref: trip.id ? { kind: source, id: String(trip.id) } : null,

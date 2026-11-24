@@ -1,7 +1,9 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { readJourneyFromUrl } from '../lib/journeys.js';
 import { countryFromHash, countryHash } from '../lib/urlState.js';
-import { emptySeed, exploreAnswers, makeSeed, routeSeed, seedToSharedTrip } from '../lib/plan/seed.js';
+import { emptySeed, exploreAnswers, makeSeed, routeSeed, seedToSharedTrip, seedTripPatch } from '../lib/plan/seed.js';
+import { plannerStore } from '../planner/plannerStore.js';
+import { draftPatch, fromDraft } from '../planner/flow/tripSettings.js';
 import { choiceStop, openTripOf, placeSeed, routeSeedOf } from '../lib/plan/seedWriters.js';
 import { loadTripDraft } from '../planner/tripDraftStore.js';
 import { tripsStore } from '../planner/tripsStore.js';
@@ -102,6 +104,10 @@ export function useAppOpeners({
       // A route is a trip of its own: one with stops already open stays in
       // the list (as a kept trip does) instead of being overwritten.
       if (loadTripDraft()) tripsStore.startNew();
+      // G12 L6: the seed's month, length and budget reach the trip's settings too.
+      const cur = fromDraft(plannerStore.getState());
+      const next = seedTripPatch(seed, cur);
+      if (next !== cur) plannerStore.set(draftPatch(next, plannerStore.getState()));
       setPendingSharedTrip(shared);
       goToTab('trip');
       return landing;
@@ -131,9 +137,9 @@ export function useAppOpeners({
   const openTripInPlanner = useCallback((trip, source = 'trip') => {
     // Ask hands a seed of its own (lib/plan/askSeed.js: the question read too).
     if (trip?.v === 1) return openPlan(trip);
-    const seed = routeSeedOf(trip, { source });
+    const seed = routeSeedOf(trip, { source, destinations: planCtxRef?.current?.destinations || null });
     return seed ? openPlan(seed) : null;
-  }, [openPlan]);
+  }, [openPlan, planCtxRef]);
 
   /** Open one published trip's page from the planner. Stable, like every
    *  other callback handed to the two planner tabs: they stay mounted behind

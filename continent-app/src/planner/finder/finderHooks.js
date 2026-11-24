@@ -242,7 +242,9 @@ export function useDoorRun(settings, kind) {
         if (!alive) return;
         const input = { data, countryInsights, layerIndexes, settings: answersOf(settings), taste, origin, flights, lifestyle, stayTier, baggage: choices.baggage_key || null, today: todayISO() };
         const result = kind === 'flight' ? flightRows(input) : knowTrip(input);
-        setRun((r) => ({ ...r, result, stages: { flights: true, priced: true } }));
+        // G12 L6: the input stays beside the result, so the place lander can
+        // price its levers and alternatives on the same engine and files.
+        setRun((r) => ({ ...r, result, input, stages: { flights: true, priced: true } }));
       } catch (error) {
         if (alive) setRun((r) => ({ ...r, result: null, error }));
       }
@@ -254,6 +256,7 @@ export function useDoorRun(settings, kind) {
     stages: fresh ? run.stages : { flights: false, priced: false },
     result: fresh ? run.result : undefined,
     error: fresh ? run.error : null,
+    input: fresh ? run.input || null : null,
     origin,
     data,
   };

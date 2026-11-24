@@ -16,7 +16,7 @@ import { groupsOf, stepAnswer } from './stepText.js';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { selectionOfPlan } from '../../lib/plan/doors.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, engineScreens, firstOpenGuide, guideQuestions, guideScreens, hasDoors, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
+import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, landingOf, engineScreens, firstOpenGuide, guideQuestions, guideScreens, hasDoors, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
 import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import { clearQuickStart, peekQuickMode } from './quickStart.js';
@@ -35,6 +35,8 @@ const TripFinderScreen = lazy(() => import('../finder/FindingTrips.jsx'));
 // T864: the flights first, in the same chunk as the finder (it runs its
 // engine), so no preload is added.
 const FlightFirstScreen = lazy(() => import('../finder/FindingTrips.jsx').then((m) => ({ default: m.FlightFirstScreen })));
+// G12 L6: the place lander (a known place's priced found trip), same chunk.
+const PlaceLander = lazy(() => import('../finder/FindingTrips.jsx').then((m) => ({ default: m.PlaceLander })));
 /** The trip page's id in the address (#tf=<id>, the finder's TRIP_HASH), or null. */
 function readTripHash() {
   try {
@@ -80,13 +82,13 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // empty home. Not over an address's trip page, a fresh short setup or a
   // country page's seed, which each say where to open.
   const [kept] = useState(() => (arriveTrip.current || fresh || seed?.iso2 ? null
-    : recallPlace('trip', tripsStore.getActiveId(), [...guideScreens(settings), 'ff', 'home'])));
+    : recallPlace('trip', tripsStore.getActiveId(), [...guideScreens(settings), 'ff', 'home', 'know'])));
   // The trip came from the short setup (now, or before the reload).
   const quick = useRef(fresh || Boolean(kept?.quick));
   const [walked, setWalked] = useState(kept ? Boolean(kept.walked) : (!fresh || asking));
   const [phase, setPhase] = useState(() => {
     if (arriveTrip.current) return TRIPS_SCREEN;
-    if (fresh) return asking ? firstOpenGuide(settings) : TRIPS_SCREEN;
+    if (fresh) return asking ? (firstOpenGuide(settings) || landingOf(settings)) : landingOf(settings);
     return kept?.phase || 'home';
   }); // home | g:* | ff | engine
   // House style: the question settles in when the step changes (presentation only).
@@ -220,10 +222,11 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const afterGuide = (id, s) => {
     if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
     // How do you want to plan: the flights first opens their screen.
-    if (id === 'g:how') { setDoor(s.door || 'guide'); setPhase(s.door === 'flight' ? 'ff' : TRIPS_SCREEN); return; }
+    if (id === 'g:how') { setDoor(s.door || 'guide'); setPhase(s.door === 'flight' ? 'ff' : landingOf(s)); return; }
     // Skip what the Tell sentence or the travel style answered (never the trips).
     const k = continueTo(guideScreens(s), id, s, TRIPS_SCREEN, GUIDE_SKIP);
-    setPhase(k || TRIPS_SCREEN);
+    // G12 L6: a known place lands on its found trip, not the list.
+    setPhase(!k || k === TRIPS_SCREEN ? landingOf(s) : k);
   };
   /** Reopen one question from the trips, and come back to them after it. */
   const reopen = (id) => { setReturnTo(TRIPS_SCREEN); setFinderEdits({}); setMarkedId(null); setPhase(id); };
@@ -252,7 +255,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   );
   // Every step carries the gear in its own head, level with the back
   // control (owner, plan flow walk), instead of a bar floating above it.
-  const inHead = !!QUESTIONS[phase] || phase === 'ff' || phase === TRIPS_SCREEN;
+  const inHead = !!QUESTIONS[phase] || phase === 'ff' || phase === TRIPS_SCREEN || phase === 'know';
 
   let body;
   if (phase === 'home') {
@@ -263,7 +266,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
     body = (
       <TripHome
         settings={settings}
-        onStart={toTrips ? () => setPhase(TRIPS_SCREEN) : start}
+        onStart={toTrips ? () => setPhase(landingOf(settings)) : start}
         startLabel={toTrips ? t('pf.home.seeTrips') : ''}
         actions={bar}
       />
@@ -278,6 +281,20 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
           headEnd={bar}
           onChange={() => setSettingsOpen(true)}
           onPick={(plan) => landPlan(plan, 'flight')}
+        />
+      </Suspense>
+    );
+  } else if (phase === 'know') {
+    // G12 L6: a known place's priced found trip; its back opens every trip.
+    body = (
+      <Suspense fallback={<div className="pf-step" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
+        <PlaceLander
+          ui={FINDER_UI}
+          settings={settings}
+          bar={<AssumptionBar settings={settings} save={save} onMore={() => setSettingsOpen(true)} />}
+          onBack={() => setPhase(walked && questions.length ? questions[questions.length - 1] : 'home')}
+          onList={() => setPhase(TRIPS_SCREEN)}
+          onLand={(plan) => { setMarkedId(plan.tripId); landPlan(plan, 'know'); }}
         />
       </Suspense>
     );
@@ -332,7 +349,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
         <QuestionBody id={phase} settings={settings} commit={(s) => { save(s); afterGuide(phase, s); }} />
         {/* G12 §12: a quiet way past the rest of the questions. */}
         {questions.includes(phase) && (
-          <Button variant="quiet" size="sm" className="pf-show-now" onClick={() => { setReturnTo(null); setWalked(true); setPhase(TRIPS_SCREEN); }}>
+          <Button variant="quiet" size="sm" className="pf-show-now" onClick={() => { setReturnTo(null); setWalked(true); setPhase(landingOf(settings)); }}>
             {t('pf.showNow')}
           </Button>
         )}
@@ -342,7 +359,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
 
   return (
     <div className={`pf${phase === 'home' ? ' is-trip' : ''}`} ref={rootRef}>
-      <PlanStage bar={phase === 'home' || inHead ? null : bar} rail={rail} side={side} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN || phase === 'ff'}>
+      <PlanStage bar={phase === 'home' || inHead ? null : bar} rail={rail} side={side} sheetLabel={settings.trip.name || t('pf.sheet')} wide={phase === 'g:likes' || phase === TRIPS_SCREEN || phase === 'ff' || phase === 'know'}>
         {body}
       </PlanStage>
       {settingsOpen && <TripSettingsSheet anchorRef={gearRef} onClose={() => setSettingsOpen(false)} />}

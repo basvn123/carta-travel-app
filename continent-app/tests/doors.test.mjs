@@ -134,13 +134,14 @@ test("a flight row picked becomes a trip that prices the same flight", { skip },
   assert.equal(q.cartaFlight.back.price, row.flight.facts.back.price);
 });
 
-test("I know where: the named towns are the route, in the order named, the nights split", { skip }, () => {
+test("I know where: the named towns are the route, routed from home, the nights split", { skip }, () => {
   const lj = { kind: "place", id: "LJU", name: "Ljubljana", iso2: "SI", country: "Slovenia" };
   const one = knowTrip(inputOf(answers({ places: [lj] })));
   assert.deepEqual(one.places, [{ id: "LJU", nights: 7 }]);
   assert.ok(one.total.group > 0);
   const two = knowTrip(inputOf(answers({ places: [lj, { kind: "place", id: "PRG", name: "Prague", iso2: "CZ", country: "Czechia" }] })));
-  assert.deepEqual(two.places.map((p) => p.id), ["LJU", "PRG"]);
+  // G12 L6: routeOrder from Brussels takes Prague, the nearer, first.
+  assert.deepEqual(two.places.map((p) => p.id), ["PRG", "LJU"]);
   assert.equal(two.places.reduce((n, p) => n + p.nights, 0), 7);
   const pt = knowTrip(inputOf(answers({ places: [{ kind: "country", id: "PT", name: "Portugal", iso2: "PT", country: "Portugal" }] })));
   assert.equal(pt.iso2, "PT");

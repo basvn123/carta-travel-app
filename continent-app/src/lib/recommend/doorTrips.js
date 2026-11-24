@@ -31,6 +31,7 @@ import {
 import { priceCandidate } from './trips.js';
 import { rankTrips, budgetRuler } from './rank.js';
 import { buildTrips } from './trips.js';
+import { allocateNights, routeOrder } from '../cartaRoute.js';
 
 /** How many places a flight list is built from, and how many rows it may show. */
 export const FLIGHT_FIRST = Object.freeze({ pool: 48, perCountry: 4, rows: 30 });
@@ -184,8 +185,17 @@ export function knowTrip(input) {
     const dests = towns.map((id) => destinations[id]);
     const month = setupMonth(settings, today) ?? bestMonth(dests, settings.guide.weather, today);
     const dates = datesFor(settings, month, today);
-    const ids = towns.slice(0, Math.max(1, dates.nights));
-    const nights = splitNights(dates.nights, ids.length);
+    // G12 L6 (decision §3.2 S6): "Porto and Lisbon" is a wish, not an
+    // order. The towns are routed from home (routeOrder) and the nights
+    // shared by what each place can hold (allocateNights), the planner's own
+    // way, so the found trip and the trip page agree on the route.
+    const named = towns.slice(0, Math.max(1, dates.nights));
+    const start = origin?.lat != null && origin?.lon != null ? { lat: origin.lat, lon: origin.lon } : null;
+    const ids = named.length > 1 ? routeOrder(named, destinations, { start }) : named;
+    const rhythm = settings.rhythm?.pace;
+    const pace = rhythm === 'slow' ? 'relaxed' : rhythm === 'packed' ? 'packed' : 'balanced';
+    const split = allocateNights(ids, destinations, dates.nights, { pace });
+    const nights = ids.every((id) => split.nights[id] > 0) ? ids.map((id) => split.nights[id]) : splitNights(dates.nights, ids.length);
     const shape = ids.length > 1 ? 'towns' : 'one';
     const flies = fliesThere(settings);
     const first = destinations[ids[0]];

@@ -1248,3 +1248,5 @@
 @media (min-width: 600px) { .tff-row-cards { grid-auto-columns: minmax(240px, 40%); } }
 @media (min-width: 1024px) { .tff-row-cards { grid-auto-columns: minmax(240px, 30%); } }
 .tff-more-h { margin: var(--space-6) 0 var(--space-3); font-size: var(--text-title); }
+/* G12 L6: the place lander keeps the wizard's country compare under the found trip. */
+.tff-compare { display: flex; justify-content: center; padding: var(--space-4) 0 var(--space-6); }

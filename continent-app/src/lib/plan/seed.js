@@ -321,6 +321,29 @@ export function seedToSharedTrip(rawSeed, { explore = null } = {}) {
   return out;
 }
 
+/**
+ * G12 L6 (B2 deferral): what a seed that lands straight on the trip page
+ * still has to say to that trip's settings. The hand-over (seedToSharedTrip)
+ * carries only exact dates and the party; a month, a length or a budget the
+ * source gave would be lost, and the trip page's assumption bar and budget
+ * would read the defaults. Returns the settings with the seed's When and
+ * budget (marked as the seed's when pinned), or the same object when the
+ * seed gives neither.
+ */
+export function seedTripPatch(rawSeed, settings) {
+  const seed = makeSeed(rawSeed);
+  if (!seed.when && !seed.budget) return settings;
+  const made = seedToSettings(seed, { base: settings });
+  let s = normalizeSettings(settings);
+  const take = (id, patch) => {
+    s = normalizeSettings({ ...s, ...patch });
+    if (made.answered.includes(id)) s = markAnswered(s, id, made.sources?.[id] || 'seed');
+  };
+  if (seed.when) take('when', { when: made.when });
+  if (seed.budget) take('g:budget', { guide: { ...s.guide, budget: made.guide.budget } });
+  return s;
+}
+
 /** True when the seed says nothing at all (an empty door): Plan's home, not a new trip. */
 export function emptySeed(rawSeed) {
   const s = makeSeed(rawSeed);

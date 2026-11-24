@@ -23,6 +23,8 @@ export { default as TogetherSheet } from './TogetherSheet.jsx';
 export { dropsFor } from '../../lib/recommend/kept.js';
 // T864, T865: two doors' screens ride in this chunk with the engine they run.
 export { FlightFirstScreen, KnowBuildScreen } from './DoorScreens.jsx';
+// G12 L6: the place lander is the revived KnowBuildScreen.
+export { KnowBuildScreen as PlaceLander } from './DoorScreens.jsx';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
 

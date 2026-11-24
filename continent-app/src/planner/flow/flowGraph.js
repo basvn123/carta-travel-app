@@ -43,6 +43,16 @@ export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWher
 export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
+/** G12 L6: the place lander, a known place's priced found trip (TripFlow phase). */
+export const KNOW_SCREEN = 'know';
+/**
+ * G12 L6 (decision §3.2 S5, S6, S9): where the trips open. With a place
+ * named (a place page, typed towns, Saved's hearts) the answers land on that
+ * place's priced found trip; with none, on Trips for you.
+ */
+export function landingOf(settings) {
+  return (settings?.places || []).some((p) => p && (p.kind === 'place' || p.kind === 'country')) ? KNOW_SCREEN : TRIPS_SCREEN;
+}
 // Getting around is asked once (g:around) and the day goal is read from the
 // Plan your days moods (tripSettings aroundOf, goalOfGoals): neither is a
 // days question of its own any more.
