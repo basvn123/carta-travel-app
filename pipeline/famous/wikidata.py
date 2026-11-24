@@ -277,9 +277,11 @@ def _batches(qids):
 
 
 def labels(qids, verbose=False):
-    """{qid: {"en": label, "names": [labels and en aliases in LABEL_LANGS]}}"""
+    """{qid: {"en": label, "names": [labels and en aliases in LABEL_LANGS],
+    "labels": [the labels alone]}}. The matcher trusts a label more than an
+    alias: an alias can name the place next door (D25 h, "es Coto")."""
     langs = ", ".join(f"'{lang}'" for lang in LABEL_LANGS)
-    out = {q: {"en": None, "names": set()} for q in qids}
+    out = {q: {"en": None, "names": set(), "labels": set()} for q in qids}
     for chunk in _batches(qids):
         values = " ".join("wd:" + q for q in chunk)
         for pred in ("rdfs:label", "skos:altLabel"):
@@ -293,9 +295,12 @@ def labels(qids, verbose=False):
                 if pred == "skos:altLabel" and lang != "en":
                     continue
                 out[q]["names"].add(lab)
-                if pred == "rdfs:label" and lang == "en":
-                    out[q]["en"] = lab
-    return {q: {"en": v["en"], "names": sorted(v["names"])}
+                if pred == "rdfs:label":
+                    out[q]["labels"].add(lab)
+                    if lang == "en":
+                        out[q]["en"] = lab
+    return {q: {"en": v["en"], "names": sorted(v["names"]),
+                "labels": sorted(v["labels"])}
             for q, v in out.items()}
 
 

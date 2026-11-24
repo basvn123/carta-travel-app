@@ -103,7 +103,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q685132"
+   "id": "wd:Q685132",
+   "labels": [
+    "Via Claudia Augusta",
+    "Via Cláudia Augusta",
+    "Виа Клавдия Августа",
+    "Дорога Клавдія Августа"
+   ]
   },
   {
    "qid": "Q2036072",
@@ -152,7 +158,24 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2036072"
+   "id": "wd:Q2036072",
+   "labels": [
+    "EV10 Oostzeeroute",
+    "EV10 Østersjøruten",
+    "EuroVelo 10",
+    "EuroVelo 10 - Eystrasaltsleiðin",
+    "EuroVelo 10 - Véloroute de la Baltique",
+    "EuroVelo 10 – Balti-tengeri kerékpár útvonal",
+    "EuroVelo 10 – Baltic Sea Cycle Route",
+    "EuroVelo 10 – Baltijas jūras aplis",
+    "EuroVelo 10 – Baltijos jūros žiedas",
+    "EuroVelo 10 – Itämeren reitti",
+    "EuroVelo 10 – Läänemere rattatee",
+    "EuroVelo 10 – Ostseeküsten-Route",
+    "EuroVelo 10 – Szlak Rowerowy Morza Bałtyckiego",
+    "EuroVelo 10 – Östersjöleden",
+    "EuroVelo 10 – Østersø Cykelruten"
+   ]
   },
   {
    "qid": "Q1289628",
@@ -204,7 +227,17 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1289628"
+   "id": "wd:Q1289628",
+   "labels": [
+    "EV13 Iron Curtain Trail",
+    "EuroVelo 13",
+    "EuroVelo 13 - Szlak Żelaznej Kurtyny",
+    "EuroVelo 13 - The Iron Curtain Trail",
+    "EuroVelo 13 - Véloroute du Rideau de Fer",
+    "EuroVelo 13 – Iron Curtain Trail",
+    "EuroVelo 13 – Stezka Železné opony",
+    "EuroVelo 13 – The Iron Curtain Trail"
+   ]
   },
   {
    "qid": "Q3060534",
@@ -244,7 +277,19 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060534"
+   "id": "wd:Q3060534",
+   "labels": [
+    "EV2 Hovedstadsruten",
+    "EuroVelo 2",
+    "EuroVelo 2 - Hoofdstedenroute",
+    "EuroVelo 2 - Itinerario delle capitali",
+    "EuroVelo 2 - Szlak Stolic",
+    "EuroVelo 2 - Véloroute des capitales",
+    "EuroVelo 2 – Capitals Route",
+    "EuroVelo 2 – Cesta hlavními městy",
+    "EuroVelo 2 – Hauptstadt-Route",
+    "EuroVelo 2: Capitals Route"
+   ]
   },
   {
    "qid": "Q3060537",
@@ -294,7 +339,23 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060537"
+   "id": "wd:Q3060537",
+   "labels": [
+    "EV6 Atlanterhavet–Svartehavet",
+    "EV6 Atlantische kust naar de Zwarte Zee",
+    "EV6 Fljótaleiðin",
+    "EuroVelo 6",
+    "EuroVelo 6 - Atlantic-Marea Neagră",
+    "EuroVelo 6 - Atlantico-Mar Nero",
+    "EuroVelo 6 - Atlantik-Crno More",
+    "EuroVelo 6 - Atlantique-Mer Noire",
+    "EuroVelo 6 - Atlantyk-Morze Czarne",
+    "EuroVelo 6 – Atlantic-Black Sea",
+    "EuroVelo 6 – Atlantik – Schwarzes Meer",
+    "EuroVelo 6 – Atlantik – Čierne more",
+    "EuroVelo 6 – Od Atlantiku k Černému moři",
+    "EuroVelo 6 – The Rivers Route"
+   ]
   },
   {
    "qid": "Q3060539",
@@ -337,7 +398,20 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060539"
+   "id": "wd:Q3060539",
+   "labels": [
+    "EV9 Østersjøen–Adriaterhavet",
+    "EuroVelo 9",
+    "EuroVelo 9 - Baltique-Adriatique",
+    "EuroVelo 9 - Bałtyk-Adriatyk",
+    "EuroVelo 9 - Dal Baltico all'Adriatico",
+    "EuroVelo 9 - Van Oostzee naar de Adriatische Zee",
+    "EuroVelo 9 Jantarska pot",
+    "EuroVelo 9 – Balti tengertől-Adriáig",
+    "EuroVelo 9 – Baltic-Adriatic",
+    "EuroVelo 9 – Baltisch-Adriatische Route",
+    "EuroVelo 9 – Baltsko-Jaderská trasa"
+   ]
   },
   {
    "qid": "Q540745",
@@ -372,7 +446,19 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q540745"
+   "id": "wd:Q540745",
+   "labels": [
+    "Ciclabile del Danubio",
+    "Danubioko ibilbide zikloturista",
+    "Donauradweg",
+    "Duna menti kerékpárút",
+    "Dunajská cyklistická cesta",
+    "Dunajská cyklostezka",
+    "Ruta cicloturista del Danubi",
+    "Ruta cicloturista del Danubio",
+    "Дунавска бициклистичка рута",
+    "Дунавски велосипеден път"
+   ]
   },
   {
    "qid": "Q3060531",
@@ -412,7 +498,19 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060531"
+   "id": "wd:Q3060531",
+   "labels": [
+    "EV1 Atlantiske kystrute",
+    "EuroVelo 1",
+    "EuroVelo 1 - Atlantic Coast Route",
+    "EuroVelo 1 - Atlantische Kustroute",
+    "EuroVelo 1 - Atlantshafsströndin",
+    "EuroVelo 1 - Itinerario Atlantico del Litorale",
+    "EuroVelo 1 - Rota da Costa Atlântica",
+    "EuroVelo 1 - Szlak Wybrzeża Atlantyku",
+    "EuroVelo 1 – Atlantic Coast Route",
+    "EuroVelo1 – Trasa po pobřeží Atlantiku"
+   ]
   },
   {
    "qid": "Q869924",
@@ -454,7 +552,20 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q869924"
+   "id": "wd:Q869924",
+   "labels": [
+    "EV15 Rhinen sykkelrute",
+    "EuroVelo 15",
+    "EuroVelo 15 - Itinerario del Reno",
+    "EuroVelo 15 - Rijnfietsroute",
+    "EuroVelo 15 - Rínarleiðin",
+    "EuroVelo 15 - Szlak Renu",
+    "EuroVelo 15 - Véloroute Rhin",
+    "EuroVelo 15 – Rheinradweg",
+    "EuroVelo 15 – Rhine Cycle Route",
+    "EuroVelo 15 – Rýnská stezka",
+    "Рейнська велосипедна доріжка"
+   ]
   },
   {
    "qid": "Q1800050",
@@ -497,7 +608,19 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1800050"
+   "id": "wd:Q1800050",
+   "labels": [
+    "EV3 Pilegrimsruten",
+    "EuroVelo 3",
+    "EuroVelo 3 - De pelgrimsroute",
+    "EuroVelo 3 - Itinerario dei pellegrini",
+    "EuroVelo 3 - Pílagrímaleiðin",
+    "EuroVelo 3 - Szlak Pielgrzymi",
+    "EuroVelo 3 - Véloroute des Pèlerins",
+    "EuroVelo 3 – Pilgerroute",
+    "EuroVelo 3 – Poutnická trasa",
+    "EuroVelo 3 – The Pilgrims Route"
+   ]
   },
   {
    "qid": "Q1940135",
@@ -548,7 +671,28 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1940135"
+   "id": "wd:Q1940135",
+   "labels": [
+    "EV4 Sentraleuropeiske rute",
+    "EuroVelo 4",
+    "EuroVelo 4 - Centraal-Europese route",
+    "EuroVelo 4 - Itinerario l'Europa centrale",
+    "EuroVelo 4 - Véloroute de l'Europe centrale",
+    "EuroVelo 4 – Central Europe Route",
+    "EuroVelo 4 – Centraleuroparuten",
+    "EuroVelo 4 – Centraleuroparutten",
+    "EuroVelo 4 – Mitteleuropa-Route",
+    "EuroVelo 4 – Orta Avrupa Rotası",
+    "EuroVelo 4 – Rota da Europa Central",
+    "EuroVelo 4 – Szlak Europy Centralnej",
+    "EuroVelo 4 – Trasa střední Evropou",
+    "EuroVelo 4 – közép-európai útvonal",
+    "EuroVelo 4 – ruta Europei Centrale",
+    "EuroVelo 4 – ruta d'Europa Central",
+    "EuroVelo 4 – trasa strednou Európou",
+    "EuroVelo 4 – Централноевропейски маршрут",
+    "EuroVelo 4 – Центральноєвропейський маршрут"
+   ]
   },
   {
    "qid": "Q3060535",
@@ -586,7 +730,15 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060535"
+   "id": "wd:Q3060535",
+   "labels": [
+    "EV5 Via Romea (Francigena)",
+    "EV5 Via Romea Francigena",
+    "EuroVelo 5",
+    "EuroVelo 5 - Via Romea Francigena",
+    "EuroVelo 5 – Via Romea Francigena",
+    "Vëlospist EuroVëlo 5"
+   ]
   },
   {
    "qid": "Q3060536",
@@ -630,7 +782,19 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060536"
+   "id": "wd:Q3060536",
+   "labels": [
+    "EV7 Solruten",
+    "EuroVelo 7",
+    "EuroVelo 7 - Itinerario del sole",
+    "EuroVelo 7 - Szlak Słońca",
+    "EuroVelo 7 - Sólarleiðin",
+    "EuroVelo 7 - Véloroute du soleil",
+    "EuroVelo 7 - Zonneroute",
+    "EuroVelo 7 – Sluneční trasa",
+    "EuroVelo 7 – Sonnen-Route",
+    "EuroVelo 7 – The Sun Route"
+   ]
   },
   {
    "qid": "Q436177",
@@ -658,7 +822,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q436177"
+   "id": "wd:Q436177",
+   "labels": [
+    "Alte Salzstraße",
+    "Antigua ruta de la sal",
+    "Old Salt Route",
+    "Vanha suolatie",
+    "ancienne route du sel"
+   ]
   },
   {
    "qid": "Q3060538",
@@ -708,7 +879,20 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060538"
+   "id": "wd:Q3060538",
+   "labels": [
+    "EV8 Middelhavsruten",
+    "EV8 Middellandse Zeeroute",
+    "EuroVelo 8",
+    "EuroVelo 8 - Akdeniz Rotası",
+    "EuroVelo 8 - Itinerario del Mediterraneo",
+    "EuroVelo 8 - Miðjarðarhafsleiðin",
+    "EuroVelo 8 - Szlak śródziemnomorski",
+    "EuroVelo 8 - Véloroute de la méditerranée",
+    "EuroVelo 8 – Mediterranean Route",
+    "EuroVelo 8 – Mittelmeer-Route",
+    "EuroVelo 8 – Středomořská trasa"
+   ]
   },
   {
    "qid": "Q3060533",
@@ -753,7 +937,18 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3060533"
+   "id": "wd:Q3060533",
+   "labels": [
+    "EV11 Oost-Europaroute",
+    "EV11 Østeuropeiske rute",
+    "EuroVelo 11",
+    "EuroVelo 11 - Itinerario dell'Europa orientale",
+    "EuroVelo 11 - Szlak Europy Wschodniej",
+    "EuroVelo 11 - Véloroute de l'Europe de l'Est",
+    "EuroVelo 11 – East Europe Route",
+    "EuroVelo 11 – Východoevropská trasa",
+    "EuroVelo 11: East Europe Route"
+   ]
   },
   {
    "qid": "Q456594",
@@ -798,7 +993,20 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q456594"
+   "id": "wd:Q456594",
+   "labels": [
+    "EV 12 – Trasa kolem Severního moře",
+    "EuroVelo 12",
+    "EuroVelo 12 - Itinerario ciclistico del Mare del Nord",
+    "EuroVelo 12 - Noordzeefietsroute",
+    "EuroVelo 12 - Nordseeküsten-Route",
+    "EuroVelo 12 - North Sea Cycle Route",
+    "EuroVelo 12 - Norðursjávarleiðin",
+    "EuroVelo 12 - Szlak Rowerowy Morza Północnego",
+    "EuroVelo 12 - Trasa okolo Severného mora",
+    "EuroVelo 12 - Véloroute de la Mer du Nord",
+    "Ev12 Nordsjøsykkelruten"
+   ]
   },
   {
    "qid": "Q699630",
@@ -833,7 +1041,16 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q699630"
+   "id": "wd:Q699630",
+   "labels": [
+    "Sultanens rute",
+    "Sultanlar Yolu",
+    "Sultanov put",
+    "Sultans Trail",
+    "Sultāna taka",
+    "sentier des Sultans",
+    "Патеката Султанови"
+   ]
   },
   {
    "qid": "Q452401",
@@ -863,7 +1080,16 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q452401"
+   "id": "wd:Q452401",
+   "labels": [
+    "Deutsche Fachwerkstrasse",
+    "Deutsche Fachwerkstraße",
+    "German Timber-Frame Road",
+    "Ruta Alemana de Arquitectura de Entramados",
+    "Ruta germană cu case de paiantă",
+    "circuit alemany de l'entramat de fusta",
+    "route des maisons à colombages allemands"
+   ]
   },
   {
    "qid": "Q25407118",
@@ -892,7 +1118,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q25407118"
+   "id": "wd:Q25407118",
+   "labels": [
+    "Green Velo",
+    "Green Velo – East of Poland Cycling Trail",
+    "Wschodni Szlak Rowerowy Green Velo",
+    "Східний Велосипедний Шлях Green Velo"
+   ]
   },
   {
    "qid": "Q882270",
@@ -921,7 +1153,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q882270"
+   "id": "wd:Q882270",
+   "labels": [
+    "Elbe Cycle Route",
+    "Elberadweg",
+    "Labská cyklotrasa"
+   ]
   },
   {
    "qid": "Q14540313",
@@ -955,7 +1192,16 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14540313"
+   "id": "wd:Q14540313",
+   "labels": [
+    "EV19 Maas sykkelrute",
+    "EuroVelo 19",
+    "EuroVelo 19 - Maasfietsroute",
+    "EuroVelo 19 - Meuse à Vélo",
+    "EuroVelo 19 – Meuse Cycle Route",
+    "EuroVelo 19 – Mázská stezka",
+    "Radroute Maas"
+   ]
   },
   {
    "qid": "Q1091655",
@@ -985,7 +1231,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1091655"
+   "id": "wd:Q1091655",
+   "labels": [
+    "Alpe Adria Radweg",
+    "Alpe Adria cycling route",
+    "Piste cyclable Alpe Adria",
+    "ciclovia Alpe Adria"
+   ]
   },
   {
    "qid": "Q559327",
@@ -1014,7 +1266,15 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q559327"
+   "id": "wd:Q559327",
+   "labels": [
+    "Dão line",
+    "Ferrovia del Dão",
+    "Linha do Dão",
+    "Línea del Dão",
+    "ligne de Dão",
+    "Železniční trať Dão"
+   ]
   },
   {
    "qid": "Q103159272",
@@ -1047,7 +1307,16 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q103159272"
+   "id": "wd:Q103159272",
+   "labels": [
+    "EV14 Meren en rivieren van Midden-Europa",
+    "EV14 Sentraleuropeiske sjøer og elver",
+    "EuroVelo 14",
+    "EuroVelo 14 - Lacs et Rivières d'Europe Centrale",
+    "EuroVelo 14 – Gewässer von Mitteleuropa",
+    "EuroVelo 14 – Közép-Európa vizei",
+    "EuroVelo 14 – Waters of Central Europe"
+   ]
   },
   {
    "qid": "Q159890",
@@ -1074,7 +1343,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q159890"
+   "id": "wd:Q159890",
+   "labels": [
+    "Międzynarodowy szlak rowerowy Odra - Nysa",
+    "Oder-Neiße-Radweg",
+    "cyklotrasa Odra-Nisa"
+   ]
   },
   {
    "qid": "Q668119",
@@ -1099,7 +1373,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q668119"
+   "id": "wd:Q668119",
+   "labels": [
+    "Deutsche Fährstraße",
+    "German Ferry Road"
+   ]
   },
   {
    "qid": "Q322905",
@@ -1124,7 +1402,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q322905"
+   "id": "wd:Q322905",
+   "labels": [
+    "Ruwer-Hochwald-Radweg",
+    "Véloroute Ruwer-Hochwald"
+   ]
   },
   {
    "qid": "Q1341341",
@@ -1151,7 +1433,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1341341"
+   "id": "wd:Q1341341",
+   "labels": [
+    "Saale-Radwanderweg",
+    "Saaleradweg",
+    "Szlak rowerowy rzeki Soławy"
+   ]
   },
   {
    "qid": "Q9376094",
@@ -1188,7 +1475,20 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q9376094"
+   "id": "wd:Q9376094",
+   "labels": [
+    "Ciclovia della Vistola",
+    "Ciclovia do rio Vístula",
+    "Ruta Ciclista del Vístula",
+    "Vislianska cyklotrasa",
+    "Vistula River Cycling Route",
+    "Vistulafietsroute",
+    "Véloroute de la Vistule",
+    "Weichsel-Radweg",
+    "Wisła-cykelruten",
+    "Wiślana Trasa Rowerowa",
+    "Віслінська велосипедна траса"
+   ]
   },
   {
    "qid": "Q2563833",
@@ -1213,7 +1513,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2563833"
+   "id": "wd:Q2563833",
+   "labels": [
+    "Szlak rowerowy Weser-Harz-Heide",
+    "Weser-Harz-Heide Cycle Route",
+    "Weser-Harz-Heide-Radweg"
+   ]
   },
   {
    "qid": "Q5219846",
@@ -1239,7 +1544,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q5219846"
+   "id": "wd:Q5219846",
+   "labels": [
+    "N1 - Westkustroute",
+    "Vestkystruten",
+    "West Coast Route"
+   ]
   },
   {
    "qid": "Q20827135",
@@ -1264,7 +1574,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q20827135"
+   "id": "wd:Q20827135",
+   "labels": [
+    "Berliner Mauerweg",
+    "Parcours du mur de Berlin"
+   ]
   },
   {
    "qid": "Q889682",
@@ -1291,7 +1605,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q889682"
+   "id": "wd:Q889682",
+   "labels": [
+    "Bodensee-Radweg",
+    "Szlak rowerowy wokół jeziora Bodeńskiego"
+   ]
   },
   {
    "qid": "Q1255895",
@@ -1317,7 +1635,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1255895"
+   "id": "wd:Q1255895",
+   "labels": [
+    "Ciclabile della Drava",
+    "Drauradweg"
+   ]
   },
   {
    "qid": "Q22665853",
@@ -1345,7 +1667,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q22665853"
+   "id": "wd:Q22665853",
+   "labels": [
+    "Danish National Cycle Route 5",
+    "N5 - Oostkustroute",
+    "Nordseeküsten-Radweg Dänemark",
+    "Østkystruten"
+   ]
   },
   {
    "qid": "Q1375670",
@@ -1380,7 +1708,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1375670"
+   "id": "wd:Q1375670",
+   "labels": [
+    "Europaradweg R1",
+    "Europese fietsroute R1",
+    "Euroroute R1",
+    "Trasa rowerowa R1"
+   ]
   },
   {
    "qid": "Q3525046",
@@ -1406,7 +1740,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3525046"
+   "id": "wd:Q3525046",
+   "labels": [
+    "Green Cycle Routes",
+    "Grønne Cykelruter",
+    "Grønne cykelruter",
+    "Grüne Radwege Kopenhagen"
+   ]
   },
   {
    "qid": "Q883273",
@@ -1434,7 +1774,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q883273"
+   "id": "wd:Q883273",
+   "labels": [
+    "Dollard Route",
+    "Dollardroute",
+    "Internationale Dollardroute"
+   ]
   },
   {
    "qid": "Q1885499",
@@ -1461,7 +1806,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1885499"
+   "id": "wd:Q1885499",
+   "labels": [
+    "Main-Radweg",
+    "Mainradweg"
+   ]
   },
   {
    "qid": "Q918250",
@@ -1487,7 +1836,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q918250"
+   "id": "wd:Q918250",
+   "labels": [
+    "RAVeL",
+    "RAVeL network",
+    "RAVeL-Netz",
+    "Réseau RAVeL"
+   ]
   },
   {
    "qid": "Q2126802",
@@ -1512,7 +1867,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2126802"
+   "id": "wd:Q2126802",
+   "labels": [
+    "Pista ciclabile Ulma-Lago di Costanza",
+    "Radwanderweg Donau-Bodensee"
+   ]
   },
   {
    "qid": "Q11783914",
@@ -1543,7 +1902,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q11783914"
+   "id": "wd:Q11783914",
+   "labels": [
+    "Cyklistická trasa R-66",
+    "Stettiner Haff-Rundweg",
+    "Szczecin Lagoon Cycling Path",
+    "Wokół Zalewu Szczecińskiego"
+   ]
   },
   {
    "qid": "Q14535978",
@@ -1576,7 +1941,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14535978"
+   "id": "wd:Q14535978",
+   "labels": [
+    "La piste cyclable de la Vennbahn",
+    "Vennbahn (Radweg)",
+    "Vennbahn Cycle Route",
+    "Vennbahn fietspad",
+    "Vennbunn (Vëlospist)"
+   ]
   },
   {
    "qid": "Q3556473",
@@ -1600,7 +1972,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3556473"
+   "id": "wd:Q3556473",
+   "labels": [
+    "ViaRhôna"
+   ]
   },
   {
    "qid": "Q2563316",
@@ -1623,7 +1998,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2563316"
+   "id": "wd:Q2563316",
+   "labels": [
+    "Werratal-Radweg"
+   ]
   },
   {
    "qid": "Q2563880",
@@ -1650,7 +2028,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2563880"
+   "id": "wd:Q2563880",
+   "labels": [
+    "Szlak rowerowy doliny Wezery",
+    "Weser-Radweg",
+    "Weserradweg"
+   ]
   },
   {
    "qid": "Q165180",
@@ -1674,7 +2057,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q165180"
+   "id": "wd:Q165180",
+   "labels": [
+    "100 Schlösser Route",
+    "Szlak rowerowy 100 zamków"
+   ]
   },
   {
    "qid": "Q402624",
@@ -1700,7 +2087,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q402624"
+   "id": "wd:Q402624",
+   "labels": [
+    "Ahr Cycleway",
+    "Ahr-Radweg",
+    "Szlak rowerowy doliny rzeki Ahr"
+   ]
   },
   {
    "qid": "Q442954",
@@ -1725,7 +2117,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q442954"
+   "id": "wd:Q442954",
+   "labels": [
+    "Altmühltal-Radweg",
+    "Altmühltalradweg"
+   ]
   },
   {
    "qid": "Q2874205",
@@ -1753,7 +2149,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2874205"
+   "id": "wd:Q2874205",
+   "labels": [
+    "Avenue Verte",
+    "Avenue verte",
+    "avenue verte"
+   ]
   },
   {
    "qid": "Q47462567",
@@ -1779,7 +2180,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q47462567"
+   "id": "wd:Q47462567",
+   "labels": [
+    "Bayerisch-Böhmischer Freundschaftsweg",
+    "Stezka bavorsko-českého přátelství"
+   ]
   },
   {
    "qid": "Q4876619",
@@ -1804,7 +2209,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q4876619"
+   "id": "wd:Q4876619",
+   "labels": [
+    "Beara Way",
+    "Slí Bhéara"
+   ]
   },
   {
    "qid": "Q2126817",
@@ -1831,7 +2240,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2126817"
+   "id": "wd:Q2126817",
+   "labels": [
+    "Berlin-Copenhagen Cycle Route",
+    "Radweg Berlin–Kopenhagen",
+    "Szlak Rowerowy Berlin-Kopenhaga"
+   ]
   },
   {
    "qid": "Q3676408",
@@ -1860,7 +2274,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3676408"
+   "id": "wd:Q3676408",
+   "labels": [
+    "Bikeway 3",
+    "Percorso ciclabile 3 Val Pusteria",
+    "Radroute 3 „Pustertal“"
+   ]
   },
   {
    "qid": "Q889221",
@@ -1883,7 +2302,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q889221"
+   "id": "wd:Q889221",
+   "labels": [
+    "Bocklradweg"
+   ]
   },
   {
    "qid": "Q889672",
@@ -1907,7 +2329,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q889672"
+   "id": "wd:Q889672",
+   "labels": [
+    "Bodensee-Königssee-Radweg"
+   ]
   },
   {
    "qid": "Q52667013",
@@ -1934,7 +2359,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q52667013"
+   "id": "wd:Q52667013",
+   "labels": [
+    "Bornholm Rundt",
+    "Bornholm Rundweg",
+    "Bornholm circular route",
+    "N10 - Rond Bornholm"
+   ]
   },
   {
    "qid": "Q3676522",
@@ -1961,7 +2392,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3676522"
+   "id": "wd:Q3676522",
+   "labels": [
+    "Ciclopista della valle dell'Adige",
+    "Etsch-Radweg",
+    "ciclopista della Valle dell'Adige"
+   ]
   },
   {
    "qid": "Q11773819",
@@ -1987,7 +2423,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q11773819"
+   "id": "wd:Q11773819",
+   "labels": [
+    "Cycling routes in the Czech Republic",
+    "Cyklistické trasy v Česku",
+    "Nationale fietsroutes van Tsjechië",
+    "Radwege in Tschechien"
+   ]
   },
   {
    "qid": "Q1202515",
@@ -2010,7 +2452,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1202515"
+   "id": "wd:Q1202515",
+   "labels": [
+    "Deutsche Fehnroute"
+   ]
   },
   {
    "qid": "Q1220754",
@@ -2035,7 +2480,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1220754"
+   "id": "wd:Q1220754",
+   "labels": [
+    "Diemelradweg"
+   ]
   },
   {
    "qid": "Q14541751",
@@ -2062,7 +2510,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14541751"
+   "id": "wd:Q14541751",
+   "labels": [
+    "Cyklotrasa Euregio Egrensis",
+    "Euregio Egrensis Radfernweg",
+    "Euregio Egrensis cycling route",
+    "Euregio Egrensis-fietsroute"
+   ]
   },
   {
    "qid": "Q103124624",
@@ -2094,7 +2548,15 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q103124624"
+   "id": "wd:Q103124624",
+   "labels": [
+    "EV17 Rhône sykkelrute",
+    "EuroVelo 17",
+    "EuroVelo 17 - Rhone Cycle Route",
+    "EuroVelo 17 - Rhônefietsroute",
+    "EuroVelo 17 - Véloroute du Rhône",
+    "EuroVelo 17 – Rhônská stezka"
+   ]
   },
   {
    "qid": "Q1296698",
@@ -2120,7 +2582,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1296698"
+   "id": "wd:Q1296698",
+   "labels": [
+    "Flaeming Skate",
+    "Flaeming-Skate",
+    "Patineur Flamme"
+   ]
   },
   {
    "qid": "Q1559811",
@@ -2145,7 +2612,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1559811"
+   "id": "wd:Q1559811",
+   "labels": [
+    "Garte Valley Railway",
+    "Göttinger Kleinbahn"
+   ]
   },
   {
    "qid": "Q1320028",
@@ -2168,7 +2639,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1320028"
+   "id": "wd:Q1320028",
+   "labels": [
+    "Gera-Radweg"
+   ]
   },
   {
    "qid": "Q1555200",
@@ -2194,7 +2668,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1555200"
+   "id": "wd:Q1555200",
+   "labels": [
+    "Gurken-Radweg",
+    "Gurkenradweg",
+    "Szlak ogórkowy"
+   ]
   },
   {
    "qid": "Q1473473",
@@ -2220,7 +2699,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1473473"
+   "id": "wd:Q1473473",
+   "labels": [
+    "Fulda-Radweg",
+    "Hessian long-distance cycle route R1",
+    "Hessischer Radfernweg R1"
+   ]
   },
   {
    "qid": "Q1615941",
@@ -2245,7 +2729,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615941"
+   "id": "wd:Q1615941",
+   "labels": [
+    "Hessian long-distance cycle route R2",
+    "Hessischer Radfernweg R2"
+   ]
   },
   {
    "qid": "Q1615942",
@@ -2270,7 +2758,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615942"
+   "id": "wd:Q1615942",
+   "labels": [
+    "Hessian long-distance cycle route R3",
+    "Hessischer Radfernweg R3"
+   ]
   },
   {
    "qid": "Q1615945",
@@ -2295,7 +2787,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615945"
+   "id": "wd:Q1615945",
+   "labels": [
+    "Hessian long-distance cycle route R4",
+    "Hessischer Radfernweg R4"
+   ]
   },
   {
    "qid": "Q1284047",
@@ -2320,7 +2816,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1284047"
+   "id": "wd:Q1284047",
+   "labels": [
+    "Hessian long-distance cycle route R5",
+    "Hessischer Radfernweg R5"
+   ]
   },
   {
    "qid": "Q1615949",
@@ -2345,7 +2845,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615949"
+   "id": "wd:Q1615949",
+   "labels": [
+    "Hessian long-distance cycle route R6",
+    "Hessischer Radfernweg R6"
+   ]
   },
   {
    "qid": "Q1615948",
@@ -2370,7 +2874,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615948"
+   "id": "wd:Q1615948",
+   "labels": [
+    "Hessian long-distance cycle route R8",
+    "Hessischer Radfernweg R8"
+   ]
   },
   {
    "qid": "Q1283650",
@@ -2395,7 +2903,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1283650"
+   "id": "wd:Q1283650",
+   "labels": [
+    "Ederauenradweg",
+    "Hessischer Radfernweg"
+   ]
   },
   {
    "qid": "Q1658771",
@@ -2418,7 +2930,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1658771"
+   "id": "wd:Q1658771",
+   "labels": [
+    "Iller-Radweg"
+   ]
   },
   {
    "qid": "Q1317213",
@@ -2441,7 +2956,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1317213"
+   "id": "wd:Q1317213",
+   "labels": [
+    "Ilmtal-Radweg"
+   ]
   },
   {
    "qid": "Q1663848",
@@ -2466,7 +2984,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1663848"
+   "id": "wd:Q1663848",
+   "labels": [
+    "Inn-Radweg",
+    "Innradweg"
+   ]
   },
   {
    "qid": "Q10544439",
@@ -2490,7 +3012,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q10544439"
+   "id": "wd:Q10544439",
+   "labels": [
+    "Kattegattleden"
+   ]
   },
   {
    "qid": "Q10546074",
@@ -2515,7 +3040,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q10546074"
+   "id": "wd:Q10546074",
+   "labels": [
+    "Klarälvsbanan"
+   ]
   },
   {
    "qid": "Q1245544",
@@ -2540,7 +3068,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1245544"
+   "id": "wd:Q1245544",
+   "labels": [
+    "Kyll Cycle Path",
+    "Kyll-Radweg",
+    "Kyll-fietspad",
+    "Piste cyclable de la Kyll"
+   ]
   },
   {
    "qid": "Q1253784",
@@ -2566,7 +3100,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1253784"
+   "id": "wd:Q1253784",
+   "labels": [
+    "Lahn Valley Cycle Path",
+    "Lahnradweg"
+   ]
   },
   {
    "qid": "Q975833",
@@ -2591,7 +3129,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q975833"
+   "id": "wd:Q975833",
+   "labels": [
+    "Leine-Heide Cycle Path",
+    "Leine-Heide-Radweg"
+   ]
   },
   {
    "qid": "Q1882266",
@@ -2616,7 +3158,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1882266"
+   "id": "wd:Q1882266",
+   "labels": [
+    "Maare-Mosel-Radweg",
+    "Maare-Moselradweg"
+   ]
   },
   {
    "qid": "Q1885510",
@@ -2639,7 +3185,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1885510"
+   "id": "wd:Q1885510",
+   "labels": [
+    "Main-Werra-Radweg"
+   ]
   },
   {
    "qid": "Q3946399",
@@ -2662,7 +3211,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3946399"
+   "id": "wd:Q3946399",
+   "labels": [
+    "Mergellandroute"
+   ]
   },
   {
    "qid": "Q1949067",
@@ -2689,7 +3241,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1949067"
+   "id": "wd:Q1949067",
+   "labels": [
+    "Mosel-Radweg",
+    "Moselradweg"
+   ]
   },
   {
    "qid": "Q1963661",
@@ -2714,7 +3270,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1963661"
+   "id": "wd:Q1963661",
+   "labels": [
+    "Nahe-Radweg",
+    "Naheradweg"
+   ]
   },
   {
    "qid": "Q1769622",
@@ -2739,7 +3299,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1769622"
+   "id": "wd:Q1769622",
+   "labels": [
+    "Neckartal-Radweg",
+    "Neckartalradweg"
+   ]
   },
   {
    "qid": "Q1987564",
@@ -2763,7 +3327,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1987564"
+   "id": "wd:Q1987564",
+   "labels": [
+    "NiederRheinroute",
+    "Нижньорейнська велосипедна доріжка"
+   ]
   },
   {
    "qid": "Q2090784",
@@ -2793,7 +3361,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2090784"
+   "id": "wd:Q2090784",
+   "labels": [
+    "Noordzee-Route",
+    "Noordzeeroute"
+   ]
   },
   {
    "qid": "Q2094971",
@@ -2817,7 +3389,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2094971"
+   "id": "wd:Q2094971",
+   "labels": [
+    "Pilgerweg Loccum - Volkenroda",
+    "Pilgerweg Loccum–Volkenroda"
+   ]
   },
   {
    "qid": "Q2125620",
@@ -2841,7 +3417,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2125620"
+   "id": "wd:Q2125620",
+   "labels": [
+    "Radfernweg Berlin–Usedom",
+    "cyklotrasa Berlín-Uznojem"
+   ]
   },
   {
    "qid": "Q2125609",
@@ -2866,7 +3446,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2125609"
+   "id": "wd:Q2125609",
+   "labels": [
+    "Radfernweg Thüringer Städtekette"
+   ]
   },
   {
    "qid": "Q1795212",
@@ -2890,7 +3473,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1795212"
+   "id": "wd:Q1795212",
+   "labels": [
+    "Rennsteig Cycle Path",
+    "Rennsteig-Radwanderweg"
+   ]
   },
   {
    "qid": "Q2148433",
@@ -2914,7 +3501,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2148433"
+   "id": "wd:Q2148433",
+   "labels": [
+    "Rhön Cycleway",
+    "Rhönradweg"
+   ]
   },
   {
    "qid": "Q1273242",
@@ -2938,7 +3529,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1273242"
+   "id": "wd:Q1273242",
+   "labels": [
+    "RuhrtalRadweg",
+    "Ruhrtalradweg"
+   ]
   },
   {
    "qid": "Q2176751",
@@ -2966,7 +3561,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2176751"
+   "id": "wd:Q2176751",
+   "labels": [
+    "RurUfer cycling route",
+    "RurUfer-Radweg",
+    "Rurufer-Radweg"
+   ]
   },
   {
    "qid": "Q15957675",
@@ -2990,7 +3590,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q15957675"
+   "id": "wd:Q15957675",
+   "labels": [
+    "Römer-Lippe-Route",
+    "Römer-Lippe-route"
+   ]
   },
   {
    "qid": "Q2209081",
@@ -3016,7 +3620,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2209081"
+   "id": "wd:Q2209081",
+   "labels": [
+    "Saar-Radweg",
+    "Vallée de Sarre"
+   ]
   },
   {
    "qid": "Q14524498",
@@ -3041,7 +3649,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14524498"
+   "id": "wd:Q14524498",
+   "labels": [
+    "Sauerland-Radring",
+    "Sauerlandradring"
+   ]
   },
   {
    "qid": "Q1567367",
@@ -3064,7 +3676,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1567367"
+   "id": "wd:Q1567367",
+   "labels": [
+    "Spreeradweg"
+   ]
   },
   {
    "qid": "Q7652201",
@@ -3089,7 +3704,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q7652201"
+   "id": "wd:Q7652201",
+   "labels": [
+    "Sverigeleden"
+   ]
   },
   {
    "qid": "Q1312127",
@@ -3114,7 +3732,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1312127"
+   "id": "wd:Q1312127",
+   "labels": [
+    "Tauber Valley Cycleway",
+    "Taubertalradweg"
+   ]
   },
   {
    "qid": "Q2396840",
@@ -3140,7 +3762,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2396840"
+   "id": "wd:Q2396840",
+   "labels": [
+    "Tauern Cycle Path",
+    "Tauernradweg"
+   ]
   },
   {
    "qid": "Q2521699",
@@ -3166,7 +3792,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2521699"
+   "id": "wd:Q2521699",
+   "labels": [
+    "Via Verda de la Terra Alta",
+    "Via verda de la Terra Alta",
+    "Vía verde de la Tierra Alta"
+   ]
   },
   {
    "qid": "Q3564127",
@@ -3191,7 +3822,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3564127"
+   "id": "wd:Q3564127",
+   "labels": [
+    "La Voie Bleue Moselle-Saône à vélo",
+    "Voie Bleue"
+   ]
   },
   {
    "qid": "Q301127",
@@ -3216,7 +3851,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q301127"
+   "id": "wd:Q301127",
+   "labels": [
+    "Aare-Route",
+    "route de l’Aar"
+   ]
   },
   {
    "qid": "Q14510827",
@@ -3241,7 +3880,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14510827"
+   "id": "wd:Q14510827",
+   "labels": [
+    "Aischtal cycling route",
+    "Aischtal-Radweg"
+   ]
   },
   {
    "qid": "Q2648465",
@@ -3265,7 +3908,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2648465"
+   "id": "wd:Q2648465",
+   "labels": [
+    "Aller-Radweg"
+   ]
   },
   {
    "qid": "Q2650806",
@@ -3290,7 +3936,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2650806"
+   "id": "wd:Q2650806",
+   "labels": [
+    "Alpenpanorama-Route",
+    "route panorama alpin"
+   ]
   },
   {
    "qid": "Q442692",
@@ -3316,7 +3966,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q442692"
+   "id": "wd:Q442692",
+   "labels": [
+    "Altmark circuit",
+    "Altmarkrundkurs"
+   ]
   },
   {
    "qid": "Q106106840",
@@ -3341,7 +3995,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q106106840"
+   "id": "wd:Q106106840",
+   "labels": [
+    "Ammer-Amper-Radweg"
+   ]
   },
   {
    "qid": "Q801791",
@@ -3365,7 +4022,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q801791"
+   "id": "wd:Q801791",
+   "labels": [
+    "Bahnradweg Rotkäppchenland"
+   ]
   },
   {
    "qid": "Q789285",
@@ -3391,7 +4051,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q789285"
+   "id": "wd:Q789285",
+   "labels": [
+    "Balaton-Radweg",
+    "Balatoni kerékpárút"
+   ]
   },
   {
    "qid": "Q52658870",
@@ -3419,7 +4083,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q52658870"
+   "id": "wd:Q52658870",
+   "labels": [
+    "Baltic Cycle Route",
+    "N8 - Baltische Route",
+    "Ostseeroute",
+    "Østersøruten"
+   ]
   },
   {
    "qid": "Q17380386",
@@ -3442,7 +4112,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q17380386"
+   "id": "wd:Q17380386",
+   "labels": [
+    "Beara-Breifne Way"
+   ]
   },
   {
    "qid": "Q28673022",
@@ -3470,7 +4143,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q28673022"
+   "id": "wd:Q28673022",
+   "labels": [
+    "Bicycle Trail of the former Borderland",
+    "Radweg des ehemaligen Borderlands",
+    "Szlak Rowerowy Dawnego Pogranicza"
+   ]
   },
   {
    "qid": "Q1418357",
@@ -3500,7 +4178,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1418357"
+   "id": "wd:Q1418357",
+   "labels": [
+    "Bike route 1 (Switzerland)",
+    "Nationale fietsroute 1 - Rhôneroute",
+    "Percorso del Rodano",
+    "Rhone-Route",
+    "route du Rhône"
+   ]
   },
   {
    "qid": "Q60170312",
@@ -3524,7 +4209,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q60170312"
+   "id": "wd:Q60170312",
+   "labels": [
+    "Blue Velo"
+   ]
   },
   {
    "qid": "Q996457",
@@ -3548,7 +4236,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q996457"
+   "id": "wd:Q996457",
+   "labels": [
+    "Brückenradweg"
+   ]
   },
   {
    "qid": "Q14378572",
@@ -3576,7 +4267,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14378572"
+   "id": "wd:Q14378572",
+   "labels": [
+    "Cycling route Berlin–Leipzig",
+    "Radweg Berlin–Leipzig"
+   ]
   },
   {
    "qid": "Q11773832",
@@ -3600,7 +4295,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q11773832"
+   "id": "wd:Q11773832",
+   "labels": [
+    "Cyklistická trasa Vlčí Důl",
+    "Cyklostezka Vlčí Důl"
+   ]
   },
   {
    "qid": "Q11773825",
@@ -3626,7 +4325,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q11773825"
+   "id": "wd:Q11773825",
+   "labels": [
+    "Cyklostezka Ohře",
+    "Eger-Radweg",
+    "Ścieżka rowerowa Ohře"
+   ]
   },
   {
    "qid": "Q139942662",
@@ -3652,7 +4356,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q139942662"
+   "id": "wd:Q139942662",
+   "labels": [
+    "D-Route 9",
+    "Weser – Romantische Straße (D9)"
+   ]
   },
   {
    "qid": "Q14513070",
@@ -3676,7 +4384,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14513070"
+   "id": "wd:Q14513070",
+   "labels": [
+    "Dahme-Radweg"
+   ]
   },
   {
    "qid": "Q12308062",
@@ -3700,7 +4411,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q12308062"
+   "id": "wd:Q12308062",
+   "labels": [
+    "Den Grønne Sti"
+   ]
   },
   {
    "qid": "Q1478415",
@@ -3725,7 +4439,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1478415"
+   "id": "wd:Q1478415",
+   "labels": [
+    "Deutsche Fußball Route NRW",
+    "Fußballroute NRW"
+   ]
   },
   {
    "qid": "Q1205080",
@@ -3749,7 +4467,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1205080"
+   "id": "wd:Q1205080",
+   "labels": [
+    "Deutscher Limes-Radweg"
+   ]
   },
   {
    "qid": "Q1283677",
@@ -3772,7 +4493,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1283677"
+   "id": "wd:Q1283677",
+   "labels": [
+    "Ederseebahn-Radweg"
+   ]
   },
   {
    "qid": "Q1333876",
@@ -3797,7 +4521,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1333876"
+   "id": "wd:Q1333876",
+   "labels": [
+    "Elster-Radweg"
+   ]
   },
   {
    "qid": "Q1339758",
@@ -3821,7 +4548,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1339758"
+   "id": "wd:Q1339758",
+   "labels": [
+    "Emsradweg"
+   ]
   },
   {
    "qid": "Q1343465",
@@ -3844,7 +4574,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1343465"
+   "id": "wd:Q1343465",
+   "labels": [
+    "Ennsradweg"
+   ]
   },
   {
    "qid": "Q52666028",
@@ -3872,7 +4605,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q52666028"
+   "id": "wd:Q52666028",
+   "labels": [
+    "Esbjerg - Copenhagen",
+    "Esbjerg - Kopenhagen",
+    "Esbjerg - København",
+    "N6 - Esbjerg-Kopenhagen"
+   ]
   },
   {
    "qid": "Q1647178",
@@ -3896,7 +4635,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1647178"
+   "id": "wd:Q1647178",
+   "labels": [
+    "EuroVelo 10 in Germany",
+    "Ostseeküstenroute"
+   ]
   },
   {
    "qid": "Q16548583",
@@ -3921,7 +4664,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q16548583"
+   "id": "wd:Q16548583",
+   "labels": [
+    "Fünf-Flüsse-Radweg"
+   ]
   },
   {
    "qid": "Q1482823",
@@ -3944,7 +4690,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1482823"
+   "id": "wd:Q1482823",
+   "labels": [
+    "Fürst-Pückler-Weg"
+   ]
   },
   {
    "qid": "Q26836593",
@@ -3968,7 +4717,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q26836593"
+   "id": "wd:Q26836593",
+   "labels": [
+    "Gaubahn-Radweg"
+   ]
   },
   {
    "qid": "Q29035474",
@@ -3993,7 +4745,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q29035474"
+   "id": "wd:Q29035474",
+   "labels": [
+    "German Unity Cycle Route",
+    "Radweg Deutsche Einheit"
+   ]
   },
   {
    "qid": "Q1529165",
@@ -4021,7 +4777,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1529165"
+   "id": "wd:Q1529165",
+   "labels": [
+    "Glan-Blies Way",
+    "Glan-Blies-Weg",
+    "Sentier Glan-Blies"
+   ]
   },
   {
    "qid": "Q1543697",
@@ -4048,7 +4809,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1543697"
+   "id": "wd:Q1543697",
+   "labels": [
+    "Graubünden-Route",
+    "Graubündenroute",
+    "Percorso dei Grigioni",
+    "route des Grisons"
+   ]
   },
   {
    "qid": "Q11783904",
@@ -4077,7 +4844,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q11783904"
+   "id": "wd:Q11783904",
+   "labels": [
+    "Greenway Krakau-Mähren-Wien",
+    "Greenway Krakov-Morava-Vídeň",
+    "Greenway Krakow-Moravia-Vienna",
+    "Greenways Krakau-Moravië-Wenen",
+    "Międzynarodowy Szlak Rowerowy Greenways Kraków – Morawy – Wiedeń"
+   ]
   },
   {
    "qid": "Q9323003",
@@ -4103,7 +4877,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q9323003"
+   "id": "wd:Q9323003",
+   "labels": [
+    "Cyklistická trasa řeky Odry",
+    "Greenway Oder River Trail",
+    "Rowerowy Szlak Odry"
+   ]
   },
   {
    "qid": "Q12018458",
@@ -4129,7 +4908,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q12018458"
+   "id": "wd:Q12018458",
+   "labels": [
+    "Greenways Praag-Wenen",
+    "Greenways Praha-Wien",
+    "Greenways Praha–Vídeň"
+   ]
   },
   {
    "qid": "Q1588045",
@@ -4152,7 +4936,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1588045"
+   "id": "wd:Q1588045",
+   "labels": [
+    "Harzrundweg"
+   ]
   },
   {
    "qid": "Q1593987",
@@ -4176,7 +4963,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1593987"
+   "id": "wd:Q1593987",
+   "labels": [
+    "Heidelberg-Schwarzwald-Bodensee-Weg"
+   ]
   },
   {
    "qid": "Q52666542",
@@ -4203,7 +4993,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q52666542"
+   "id": "wd:Q52666542",
+   "labels": [
+    "Helsingör - Gedser",
+    "Helsingør - Gedser",
+    "N9 - Gedser-Helsingør"
+   ]
   },
   {
    "qid": "Q1610074",
@@ -4227,7 +5022,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1610074"
+   "id": "wd:Q1610074",
+   "labels": [
+    "Herkules-Wartburg-Radweg"
+   ]
   },
   {
    "qid": "Q1615946",
@@ -4252,7 +5050,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615946"
+   "id": "wd:Q1615946",
+   "labels": [
+    "Hessian long-distance cycle route R7",
+    "Hessischer Radfernweg R7"
+   ]
   },
   {
    "qid": "Q1615951",
@@ -4277,7 +5079,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1615951"
+   "id": "wd:Q1615951",
+   "labels": [
+    "Hessian long-distance cycle route R9",
+    "Hessischer Radfernweg R9"
+   ]
   },
   {
    "qid": "Q14543727",
@@ -4300,7 +5106,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14543727"
+   "id": "wd:Q14543727",
+   "labels": [
+    "Hiwwel-Route"
+   ]
   },
   {
    "qid": "Q14543728",
@@ -4325,7 +5134,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14543728"
+   "id": "wd:Q14543728",
+   "labels": [
+    "Hofjagdweg"
+   ]
   },
   {
    "qid": "Q15060320",
@@ -4349,7 +5161,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q15060320"
+   "id": "wd:Q15060320",
+   "labels": [
+    "Ilm-Rennsteig-Radweg"
+   ]
   },
   {
    "qid": "Q9351924",
@@ -4380,7 +5195,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q9351924"
+   "id": "wd:Q9351924",
+   "labels": [
+    "Information plaques on Following Švejk Hiking Trail",
+    "Stezkou po stopách dobrého vojáka Švejka",
+    "Szlak śladami dobrego wojaka Szwejka"
+   ]
   },
   {
    "qid": "Q61044207",
@@ -4407,7 +5227,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q61044207"
+   "id": "wd:Q61044207",
+   "labels": [
+    "Iron Cycle Route",
+    "Żelazny Szlak Rowerowy",
+    "Železná cyklotrasa"
+   ]
   },
   {
    "qid": "Q1673719",
@@ -4433,7 +5258,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1673719"
+   "id": "wd:Q1673719",
+   "labels": [
+    "Isar-Radweg",
+    "Isarradweg"
+   ]
   },
   {
    "qid": "Q1247689",
@@ -4458,7 +5287,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1247689"
+   "id": "wd:Q1247689",
+   "labels": [
+    "Kaiser-Route"
+   ]
   },
   {
    "qid": "Q1722353",
@@ -4481,7 +5313,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1722353"
+   "id": "wd:Q1722353",
+   "labels": [
+    "Kalkeifel-Radweg"
+   ]
   },
   {
    "qid": "Q76831997",
@@ -4505,7 +5340,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q76831997"
+   "id": "wd:Q76831997",
+   "labels": [
+    "Kanonenbahn-Radweg"
+   ]
   },
   {
    "qid": "Q19946205",
@@ -4530,7 +5368,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q19946205"
+   "id": "wd:Q19946205",
+   "labels": [
+    "Karelsroute",
+    "Karlsroute"
+   ]
   },
   {
    "qid": "Q1737813",
@@ -4553,7 +5395,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1737813"
+   "id": "wd:Q1737813",
+   "labels": [
+    "Kegelspiel-Radweg"
+   ]
   },
   {
    "qid": "Q1778090",
@@ -4577,7 +5422,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1778090"
+   "id": "wd:Q1778090",
+   "labels": [
+    "Kocher-Jagst-Radweg"
+   ]
   },
   {
    "qid": "Q63477110",
@@ -4601,7 +5449,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q63477110"
+   "id": "wd:Q63477110",
+   "labels": [
+    "Kulturringen"
+   ]
   },
   {
    "qid": "Q106097253",
@@ -4629,7 +5480,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q106097253"
+   "id": "wd:Q106097253",
+   "labels": [
+    "LF Kustroute"
+   ]
   },
   {
    "qid": "Q133839373",
@@ -4653,7 +5507,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q133839373"
+   "id": "wd:Q133839373",
+   "labels": [
+    "La Régalante"
+   ]
   },
   {
    "qid": "Q129419583",
@@ -4677,7 +5534,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q129419583"
+   "id": "wd:Q129419583",
+   "labels": [
+    "La Seine à Vélo",
+    "La Seine à vélo"
+   ]
   },
   {
    "qid": "Q1647053",
@@ -4702,7 +5563,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1647053"
+   "id": "wd:Q1647053",
+   "labels": [
+    "Lahn-Eder cycle path",
+    "Lahn-Eder-Radweg"
+   ]
   },
   {
    "qid": "Q1935788",
@@ -4726,7 +5591,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1935788"
+   "id": "wd:Q1935788",
+   "labels": [
+    "Milseburgradweg"
+   ]
   },
   {
    "qid": "Q1110867",
@@ -4754,7 +5622,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1110867"
+   "id": "wd:Q1110867",
+   "labels": [
+    "Mittelland-Route",
+    "Nationale fietsroute 5 - Mittelland-Route",
+    "Percorso dell’Altopiano",
+    "route Mittelland"
+   ]
   },
   {
    "qid": "Q1552676",
@@ -4778,7 +5652,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1552676"
+   "id": "wd:Q1552676",
+   "labels": [
+    "Moldaufietsroute",
+    "Moldauradweg"
+   ]
   },
   {
    "qid": "Q1943846",
@@ -4802,7 +5680,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1943846"
+   "id": "wd:Q1943846",
+   "labels": [
+    "Mommelstein-Radweg"
+   ]
   },
   {
    "qid": "Q1952105",
@@ -4826,7 +5707,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1952105"
+   "id": "wd:Q1952105",
+   "labels": [
+    "Mulderadweg"
+   ]
   },
   {
    "qid": "Q1958028",
@@ -4849,7 +5733,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1958028"
+   "id": "wd:Q1958028",
+   "labels": [
+    "Mönchsweg"
+   ]
   },
   {
    "qid": "Q72287781",
@@ -4873,7 +5760,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q72287781"
+   "id": "wd:Q72287781",
+   "labels": [
+    "Naabtal-Radweg"
+   ]
   },
   {
    "qid": "Q4316318",
@@ -4900,7 +5790,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q4316318"
+   "id": "wd:Q4316318",
+   "labels": [
+    "Hadrian's Cycleway",
+    "Llwybr Beicio Cenedlaethol 72",
+    "National Cycle Route 72"
+   ]
   },
   {
    "qid": "Q6972086",
@@ -4926,7 +5821,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q6972086"
+   "id": "wd:Q6972086",
+   "labels": [
+    "Lôn Las Cymru",
+    "National Cycle Route 8"
+   ]
   },
   {
    "qid": "Q1997426",
@@ -4953,7 +5852,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1997426"
+   "id": "wd:Q1997426",
+   "labels": [
+    "Nationale fietsroute 3 - Noordzuidroute",
+    "Nord-Süd-Route",
+    "Percorso Nord-Sud",
+    "route Nord-Sud"
+   ]
   },
   {
    "qid": "Q13105398",
@@ -4981,7 +5886,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q13105398"
+   "id": "wd:Q13105398",
+   "labels": [
+    "PC1 Centrumfietsroute",
+    "PC1 Cycle Route",
+    "Vëlospist PC1",
+    "itinéraire cyclable PC1"
+   ]
   },
   {
    "qid": "Q64506385",
@@ -5009,7 +5920,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64506385"
+   "id": "wd:Q64506385",
+   "labels": [
+    "PC10 Cycle Route",
+    "PC10 François Faber",
+    "Vëlospist PC10",
+    "itinéraire cyclable PC10"
+   ]
   },
   {
    "qid": "Q64510133",
@@ -5036,7 +5953,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64510133"
+   "id": "wd:Q64510133",
+   "labels": [
+    "PC11 Charly Gaul",
+    "PC11 Cycle Route",
+    "Vëlospist PC11",
+    "itinéraire cyclable PC11"
+   ]
   },
   {
    "qid": "Q16764997",
@@ -5064,7 +5987,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q16764997"
+   "id": "wd:Q16764997",
+   "labels": [
+    "PC12 Attert-Radweg",
+    "PC12 Cycle Route",
+    "Vëlospist PC12",
+    "itinéraire cyclable PC12"
+   ]
   },
   {
    "qid": "Q64526237",
@@ -5092,7 +6021,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64526237"
+   "id": "wd:Q64526237",
+   "labels": [
+    "PC14 Cycle Route",
+    "PC14 Eisch-Mamerfietsroute",
+    "Vëlospist PC14",
+    "itinéraire cyclable PC14"
+   ]
   },
   {
    "qid": "Q64526302",
@@ -5121,7 +6056,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64526302"
+   "id": "wd:Q64526302",
+   "labels": [
+    "PC15",
+    "PC15 Alzette-Radweg",
+    "PC15 Cycle Route",
+    "Vëlospist PC15",
+    "itinéraire cyclable PC15"
+   ]
   },
   {
    "qid": "Q16764415",
@@ -5149,7 +6091,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q16764415"
+   "id": "wd:Q16764415",
+   "labels": [
+    "PC17 Cycle Route",
+    "PC17 Westen-Radweg",
+    "Vëlospist PC17",
+    "itinéraire cyclable PC17"
+   ]
   },
   {
    "qid": "Q64532934",
@@ -5177,7 +6125,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64532934"
+   "id": "wd:Q64532934",
+   "labels": [
+    "PC18 Cycle Route",
+    "PC18 Schieferbrüche-Radweg",
+    "Vëlospist PC18",
+    "itinéraire cyclable PC18"
+   ]
   },
   {
    "qid": "Q13105401",
@@ -5204,7 +6158,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q13105401"
+   "id": "wd:Q13105401",
+   "labels": [
+    "PC2 Cycle Route",
+    "PC2 Luxemburg-Echternach",
+    "Vëlospist PC2",
+    "itinéraire cyclable PC2"
+   ]
   },
   {
    "qid": "Q64667052",
@@ -5233,7 +6193,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64667052"
+   "id": "wd:Q64667052",
+   "labels": [
+    "PC20",
+    "PC20 Cycle Route",
+    "PC20 Wiltzfietsroute",
+    "Vëlospist PC20",
+    "itinéraire cyclable PC20"
+   ]
   },
   {
    "qid": "Q64667633",
@@ -5261,7 +6228,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64667633"
+   "id": "wd:Q64667633",
+   "labels": [
+    "PC21 Cycle Route",
+    "PC21 Nord-Radweg",
+    "Vëlospist PC21",
+    "itinéraire cyclable PC21"
+   ]
   },
   {
    "qid": "Q64670858",
@@ -5289,7 +6262,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64670858"
+   "id": "wd:Q64670858",
+   "labels": [
+    "PC22 Ardennenfietsroute",
+    "PC22 Cycle Route",
+    "Vëlospist PC22",
+    "itinéraire cyclable PC22"
+   ]
   },
   {
    "qid": "Q64676399",
@@ -5316,7 +6295,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64676399"
+   "id": "wd:Q64676399",
+   "labels": [
+    "PC23 Benny",
+    "PC23 Cycle Route",
+    "Vëlospist PC23",
+    "itinéraire cyclable PC23"
+   ]
   },
   {
    "qid": "Q16764998",
@@ -5344,7 +6329,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q16764998"
+   "id": "wd:Q16764998",
+   "labels": [
+    "PC3 Cycle Route",
+    "PC3 Drei Rivieren-Radweg",
+    "Vëlospist PC3",
+    "itinéraire cyclable PC3"
+   ]
   },
   {
    "qid": "Q64490725",
@@ -5372,7 +6363,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64490725"
+   "id": "wd:Q64490725",
+   "labels": [
+    "PC4 Cycle Route",
+    "PC4 Syre-Radweg",
+    "Vëlospist PC4",
+    "itinéraire cyclable PC4"
+   ]
   },
   {
    "qid": "Q64490956",
@@ -5400,7 +6397,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64490956"
+   "id": "wd:Q64490956",
+   "labels": [
+    "PC5 Cycle Route",
+    "PC5 Weisse Ernz-Radweg",
+    "Vëlospist PC5",
+    "itinéraire cyclable PC5"
+   ]
   },
   {
    "qid": "Q64495444",
@@ -5428,7 +6431,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64495444"
+   "id": "wd:Q64495444",
+   "labels": [
+    "PC6 Cycle Route",
+    "PC6 Drei Länder-Radweg",
+    "Vëlospist PC6",
+    "itinéraire cyclable PC6"
+   ]
   },
   {
    "qid": "Q64504516",
@@ -5456,7 +6465,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64504516"
+   "id": "wd:Q64504516",
+   "labels": [
+    "PC8 Cycle Route",
+    "PC8 Rote Erde-Radweg",
+    "Vëlospist PC8",
+    "itinéraire cyclable PC8"
+   ]
   },
   {
    "qid": "Q64505952",
@@ -5484,7 +6499,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q64505952"
+   "id": "wd:Q64505952",
+   "labels": [
+    "PC9 Cycle Route",
+    "PC9 Fietsroute Faubourg Minier",
+    "Vëlospist PC9",
+    "itinéraire cyclable PC9"
+   ]
   },
   {
    "qid": "Q2049383",
@@ -5512,7 +6533,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2049383"
+   "id": "wd:Q2049383",
+   "labels": [
+    "Paneuropa-Radweg",
+    "Paneurópska cyklotrasa",
+    "Panevropská cyklostezka",
+    "Véloroute paneuropéenne"
+   ]
   },
   {
    "qid": "Q1996471",
@@ -5537,7 +6564,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1996471"
+   "id": "wd:Q1996471",
+   "labels": [
+    "Pennine Cycleway"
+   ]
   },
   {
    "qid": "Q11816794",
@@ -5560,7 +6590,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q11816794"
+   "id": "wd:Q11816794",
+   "labels": [
+    "Pierścień Rowerowy dookoła Poznania"
+   ]
   },
   {
    "qid": "Q1029259",
@@ -5586,7 +6619,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1029259"
+   "id": "wd:Q1029259",
+   "labels": [
+    "Queich Valley Cycleway",
+    "Queichtalradweg"
+   ]
   },
   {
    "qid": "Q2125615",
@@ -5610,7 +6647,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2125615"
+   "id": "wd:Q2125615",
+   "labels": [
+    "Radfernweg Hamburg-Bremen",
+    "Radfernweg Hamburg–Bremen"
+   ]
   },
   {
    "qid": "Q18560320",
@@ -5635,7 +6676,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q18560320"
+   "id": "wd:Q18560320",
+   "labels": [
+    "Radrunde Allgäu",
+    "Szlak rowerowy Allgäu"
+   ]
   },
   {
    "qid": "Q28974725",
@@ -5658,7 +6703,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q28974725"
+   "id": "wd:Q28974725",
+   "labels": [
+    "Radweg Berlin–Hameln"
+   ]
   },
   {
    "qid": "Q1253779",
@@ -5686,7 +6734,14 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1253779"
+   "id": "wd:Q1253779",
+   "labels": [
+    "Nationale fietsroute 2 - Rijnroute",
+    "Percorso del Reno",
+    "Rhein-Route",
+    "Rhine Route",
+    "route du Rhin"
+   ]
   },
   {
    "qid": "Q65952678",
@@ -5710,7 +6765,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q65952678"
+   "id": "wd:Q65952678",
+   "labels": [
+    "Ruhr-Sieg-Radweg"
+   ]
   },
   {
    "qid": "Q140391713",
@@ -5736,7 +6794,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q140391713"
+   "id": "wd:Q140391713",
+   "labels": [
+    "Saar-Mosel-Main (D5)"
+   ]
   },
   {
    "qid": "Q1642850",
@@ -5762,7 +6823,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1642850"
+   "id": "wd:Q1642850",
+   "labels": [
+    "Sauer-Radweg",
+    "Sauertal-Radweg",
+    "Sauertalradweg"
+   ]
   },
   {
    "qid": "Q1799492",
@@ -5785,7 +6851,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1799492"
+   "id": "wd:Q1799492",
+   "labels": [
+    "Schinderhannes-Radweg"
+   ]
   },
   {
    "qid": "Q2252927",
@@ -5808,7 +6877,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2252927"
+   "id": "wd:Q2252927",
+   "labels": [
+    "Schwalm-Radweg"
+   ]
   },
   {
    "qid": "Q1435497",
@@ -5831,7 +6903,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1435497"
+   "id": "wd:Q1435497",
+   "labels": [
+    "Schwarze-Elster-Radweg"
+   ]
   },
   {
    "qid": "Q7440138",
@@ -5856,7 +6931,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q7440138"
+   "id": "wd:Q7440138",
+   "labels": [
+    "Coast to Coast",
+    "Sea to Sea Cycle Route"
+   ]
   },
   {
    "qid": "Q2299474",
@@ -5879,7 +6958,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2299474"
+   "id": "wd:Q2299474",
+   "labels": [
+    "Solztalradweg"
+   ]
   },
   {
    "qid": "Q42560886",
@@ -5904,7 +6986,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q42560886"
+   "id": "wd:Q42560886",
+   "labels": [
+    "Sydostleden"
+   ]
   },
   {
    "qid": "Q9351767",
@@ -5929,7 +7014,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q9351767"
+   "id": "wd:Q9351767",
+   "labels": [
+    "Szlak \"Zielona Odra\"",
+    "Szlak Zielona Odra"
+   ]
   },
   {
    "qid": "Q25044237",
@@ -5956,7 +7045,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q25044237"
+   "id": "wd:Q25044237",
+   "labels": [
+    "N4 - Kopenhagen-Søndervig",
+    "Sondervig - Kopenhagen",
+    "Søndervig - København"
+   ]
   },
   {
    "qid": "Q507891",
@@ -5981,7 +7075,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q507891"
+   "id": "wd:Q507891",
+   "labels": [
+    "Südschwarzwald-Radweg",
+    "cyklotrasa Jihem Černého lesa"
+   ]
   },
   {
    "qid": "Q52666777",
@@ -6009,7 +7107,13 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q52666777"
+   "id": "wd:Q52666777",
+   "labels": [
+    "Die Limfjordroute",
+    "Limfjordsruten",
+    "N12 - Limfjordroute",
+    "The Limfjord route"
+   ]
   },
   {
    "qid": "Q2477550",
@@ -6034,7 +7138,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2477550"
+   "id": "wd:Q2477550",
+   "labels": [
+    "Ulsterradweg",
+    "Ulstertal-Radweg"
+   ]
   },
   {
    "qid": "Q1323775",
@@ -6057,7 +7165,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1323775"
+   "id": "wd:Q1323775",
+   "labels": [
+    "Unstrut-Radweg"
+   ]
   },
   {
    "qid": "Q14535760",
@@ -6082,7 +7193,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14535760"
+   "id": "wd:Q14535760",
+   "labels": [
+    "Unstrut-Werra-Radweg"
+   ]
   },
   {
    "qid": "Q14535893",
@@ -6111,7 +7225,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q14535893"
+   "id": "wd:Q14535893",
+   "labels": [
+    "Veloroute SaarLorLux",
+    "Véloroute SaarLorLux",
+    "Vëlospist SaarLorLux"
+   ]
   },
   {
    "qid": "Q2530088",
@@ -6134,7 +7253,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2530088"
+   "id": "wd:Q2530088",
+   "labels": [
+    "Vogelsberger Südbahnradweg"
+   ]
   },
   {
    "qid": "Q1799976",
@@ -6158,7 +7280,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1799976"
+   "id": "wd:Q1799976",
+   "labels": [
+    "Vulkanradweg"
+   ]
   },
   {
    "qid": "Q28493478",
@@ -6182,7 +7307,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q28493478"
+   "id": "wd:Q28493478",
+   "labels": [
+    "Vélo Francette"
+   ]
   },
   {
    "qid": "Q21027504",
@@ -6207,7 +7335,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q21027504"
+   "id": "wd:Q21027504",
+   "labels": [
+    "Via Venaissia",
+    "Véloroute Via Venaissia"
+   ]
   },
   {
    "qid": "Q16683024",
@@ -6230,7 +7362,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q16683024"
+   "id": "wd:Q16683024",
+   "labels": [
+    "Véloroute du Calavon"
+   ]
   },
   {
    "qid": "Q6165301",
@@ -6256,7 +7391,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q6165301"
+   "id": "wd:Q6165301",
+   "labels": [
+    "Vía Verde de la Sierra de la Demanda"
+   ]
   },
   {
    "qid": "Q2409323",
@@ -6284,7 +7422,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q2409323"
+   "id": "wd:Q2409323",
+   "labels": [
+    "Waddenzee-Route",
+    "Waddenzeeroute"
+   ]
   },
   {
    "qid": "Q1666564",
@@ -6308,7 +7450,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q1666564"
+   "id": "wd:Q1666564",
+   "labels": [
+    "Weiltalweg"
+   ]
   },
   {
    "qid": "Q932170",
@@ -6332,7 +7477,11 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q932170"
+   "id": "wd:Q932170",
+   "labels": [
+    "Mühlenroute",
+    "Westphalian Mill Route"
+   ]
   },
   {
    "qid": "Q115857128",
@@ -6359,7 +7508,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q115857128"
+   "id": "wd:Q115857128",
+   "labels": [
+    "Ybbstal valley bike path",
+    "Ybbstalradweg",
+    "Ybbstalská cyklostezka"
+   ]
   },
   {
    "qid": "Q3676520",
@@ -6384,7 +7538,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3676520"
+   "id": "wd:Q3676520",
+   "labels": [
+    "Ciclovia del Sole",
+    "ciclovia del Sole",
+    "cycleway of the Sun"
+   ]
   },
   {
    "qid": "Q17066263",
@@ -6410,7 +7569,12 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q17066263"
+   "id": "wd:Q17066263",
+   "labels": [
+    "Trasy rowerowe w Gdańsku",
+    "cycling in Gdańsk",
+    "cyklistika v Gdaňsku"
+   ]
   },
   {
    "qid": "Q3210116",
@@ -6435,7 +7599,10 @@
     "wikidata"
    ],
    "tier": "A",
-   "id": "wd:Q3210116"
+   "id": "wd:Q3210116",
+   "labels": [
+    "La Loire à vélo"
+   ]
   },
   {
    "qid": "Q65241531",
@@ -6459,7 +7626,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q65241531"
+   "id": "wd:Q65241531",
+   "labels": [
+    "Möhnetal-Radweg",
+    "MöhnetalRadweg"
+   ]
   },
   {
    "qid": "Q112675067",
@@ -6483,7 +7654,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q112675067"
+   "id": "wd:Q112675067",
+   "labels": [
+    "Schwarzachtal-Radweg"
+   ]
   },
   {
    "qid": "Q138658276",
@@ -6508,7 +7682,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q138658276"
+   "id": "wd:Q138658276",
+   "labels": [
+    "2Franken-Radweg"
+   ]
   },
   {
    "qid": "Q1256900",
@@ -6533,7 +7710,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1256900"
+   "id": "wd:Q1256900",
+   "labels": [
+    "3 Täler-Radweg",
+    "Drei-Täler-Radweg"
+   ]
   },
   {
    "qid": "Q2631762",
@@ -6557,7 +7738,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2631762"
+   "id": "wd:Q2631762",
+   "labels": [
+    "3-Länder-Radweg"
+   ]
   },
   {
    "qid": "Q303155",
@@ -6580,7 +7764,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q303155"
+   "id": "wd:Q303155",
+   "labels": [
+    "Aartal-Radweg (Taunus)"
+   ]
   },
   {
    "qid": "Q99585029",
@@ -6603,7 +7790,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q99585029"
+   "id": "wd:Q99585029",
+   "labels": [
+    "Alb-Crossing"
+   ]
   },
   {
    "qid": "Q14510834",
@@ -6628,7 +7818,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14510834"
+   "id": "wd:Q14510834",
+   "labels": [
+    "Alb-Neckar-Weg",
+    "Alb-Neckar-weg"
+   ]
   },
   {
    "qid": "Q16683026",
@@ -6652,7 +7846,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16683026"
+   "id": "wd:Q16683026",
+   "labels": [
+    "Alsace Wine Route",
+    "Véloroute du vignoble d'Alsace"
+   ]
   },
   {
    "qid": "Q106098226",
@@ -6676,7 +7874,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106098226"
+   "id": "wd:Q106098226",
+   "labels": [
+    "Amarminoen"
+   ]
   },
   {
    "qid": "Q2302085",
@@ -6699,7 +7900,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2302085"
+   "id": "wd:Q2302085",
+   "labels": [
+    "Arfgoodroute"
+   ]
   },
   {
    "qid": "Q125465456",
@@ -6724,7 +7928,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q125465456"
+   "id": "wd:Q125465456",
+   "labels": [
+    "BC 3 - Ruta Guía de Isora"
+   ]
   },
   {
    "qid": "Q801790",
@@ -6747,7 +7954,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q801790"
+   "id": "wd:Q801790",
+   "labels": [
+    "Bahnradweg Hessen"
+   ]
   },
   {
    "qid": "Q99191985",
@@ -6771,7 +7981,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q99191985"
+   "id": "wd:Q99191985",
+   "labels": [
+    "Banestien Hadsund Gistrup",
+    "Banestien Hadsund-Gistrup"
+   ]
   },
   {
    "qid": "Q807764",
@@ -6795,7 +8009,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q807764"
+   "id": "wd:Q807764",
+   "labels": [
+    "Barbarossa Cycleway",
+    "Barbarossa-Radweg"
+   ]
   },
   {
    "qid": "Q26046155",
@@ -6819,7 +8037,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q26046155"
+   "id": "wd:Q26046155",
+   "labels": [
+    "Bergischer Panorama-Radweg"
+   ]
   },
   {
    "qid": "Q66821215",
@@ -6844,7 +8065,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q66821215"
+   "id": "wd:Q66821215",
+   "labels": [
+    "Bicycleroute 6",
+    "Radroute 6"
+   ]
   },
   {
    "qid": "Q857161",
@@ -6869,7 +8094,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q857161"
+   "id": "wd:Q857161",
+   "labels": [
+    "Biedermeier cycle path",
+    "Biedermeier-Radweg"
+   ]
   },
   {
    "qid": "Q65161234",
@@ -6894,7 +8123,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q65161234"
+   "id": "wd:Q65161234",
+   "labels": [
+    "Bikeway Oborniki – Stobnica",
+    "Trasa rowerowa Oborniki – Stobnica"
+   ]
   },
   {
    "qid": "Q11773828",
@@ -6918,7 +8151,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11773828"
+   "id": "wd:Q11773828",
+   "labels": [
+    "Bikeway Rokytka",
+    "Cyklostezka Rokytka"
+   ]
   },
   {
    "qid": "Q11773833",
@@ -6942,7 +8179,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11773833"
+   "id": "wd:Q11773833",
+   "labels": [
+    "Bikeway under the Vítkov hill",
+    "Cyklostezka pod Vítkovem"
+   ]
   },
   {
    "qid": "Q2173665",
@@ -6969,7 +8210,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2173665"
+   "id": "wd:Q2173665",
+   "labels": [
+    "Boerenlandroute"
+   ]
   },
   {
    "qid": "Q895575",
@@ -6992,7 +8236,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q895575"
+   "id": "wd:Q895575",
+   "labels": [
+    "Boxenstopp-Route"
+   ]
   },
   {
    "qid": "Q12305442",
@@ -7015,7 +8262,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q12305442"
+   "id": "wd:Q12305442",
+   "labels": [
+    "Carlsbergruten"
+   ]
   },
   {
    "qid": "Q140389350",
@@ -7039,7 +8289,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q140389350"
+   "id": "wd:Q140389350",
+   "labels": [
+    "Category:Piste cyclable PE Hollerich - Gare Esch-sur-Alzette (PC 104)",
+    "Vëlospist PC104"
+   ]
   },
   {
    "qid": "Q14543609",
@@ -7063,7 +8317,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14543609"
+   "id": "wd:Q14543609",
+   "labels": [
+    "Chattengau-Fulda-Radweg"
+   ]
   },
   {
    "qid": "Q14513058",
@@ -7088,7 +8345,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14513058"
+   "id": "wd:Q14513058",
+   "labels": [
+    "Chattengauweg"
+   ]
   },
   {
    "qid": "Q106592781",
@@ -7111,7 +8371,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106592781"
+   "id": "wd:Q106592781",
+   "labels": [
+    "Ciclovia dei parchi della Calabria"
+   ]
   },
   {
    "qid": "Q5168494",
@@ -7139,7 +8402,14 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q5168494"
+   "id": "wd:Q5168494",
+   "labels": [
+    "Copenhagen Super Bikeways",
+    "Fietssnelwegennetwerk Kopenhagen",
+    "Radschnellwegenetz Kopenhagen",
+    "Réseau express vélo de Copenhague",
+    "Supercykelstier i København"
+   ]
   },
   {
    "qid": "Q124343268",
@@ -7166,7 +8436,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q124343268"
+   "id": "wd:Q124343268",
+   "labels": [
+    "Cycling route 10",
+    "Cyklistická trasa 10"
+   ]
   },
   {
    "qid": "Q95981099",
@@ -7194,7 +8468,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q95981099"
+   "id": "wd:Q95981099",
+   "labels": [
+    "Cycling route 5",
+    "Cyklistická trasa 5"
+   ]
   },
   {
    "qid": "Q135923414",
@@ -7221,7 +8499,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q135923414"
+   "id": "wd:Q135923414",
+   "labels": [
+    "Cycling route 503",
+    "Cyklistická trasa 503"
+   ]
   },
   {
    "qid": "Q135923503",
@@ -7248,7 +8530,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q135923503"
+   "id": "wd:Q135923503",
+   "labels": [
+    "Cycling route 551",
+    "Cyklistická trasa 551"
+   ]
   },
   {
    "qid": "Q135923514",
@@ -7273,7 +8559,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q135923514"
+   "id": "wd:Q135923514",
+   "labels": [
+    "Cycling route 552",
+    "Cyklistická trasa 552"
+   ]
   },
   {
    "qid": "Q135923537",
@@ -7297,7 +8587,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q135923537"
+   "id": "wd:Q135923537",
+   "labels": [
+    "Cycling route 554",
+    "Cyklistická trasa 554"
+   ]
   },
   {
    "qid": "Q122451249",
@@ -7323,7 +8617,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q122451249"
+   "id": "wd:Q122451249",
+   "labels": [
+    "Cycling route 59 (Czech Republic)",
+    "Cyklistická trasa 59"
+   ]
   },
   {
    "qid": "Q130270354",
@@ -7348,7 +8646,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q130270354"
+   "id": "wd:Q130270354",
+   "labels": [
+    "Cycling route 6172 (Czech Republic)",
+    "Cyklistická trasa 6172"
+   ]
   },
   {
    "qid": "Q19818148",
@@ -7375,7 +8677,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q19818148"
+   "id": "wd:Q19818148",
+   "labels": [
+    "Cycling route 6271",
+    "Cyklistická trasa 6271",
+    "Ruta cyclista 6271 en Nový Jičín District"
+   ]
   },
   {
    "qid": "Q124691679",
@@ -7403,7 +8710,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q124691679"
+   "id": "wd:Q124691679",
+   "labels": [
+    "Cycling route Radegast Opava",
+    "Cyklistická trasa Radegast Opava"
+   ]
   },
   {
    "qid": "Q10464338",
@@ -7427,7 +8738,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q10464338"
+   "id": "wd:Q10464338",
+   "labels": [
+    "Cykelspåret"
+   ]
   },
   {
    "qid": "Q124671916",
@@ -7453,7 +8767,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q124671916"
+   "id": "wd:Q124671916",
+   "labels": [
+    "Cyklistická trasa 55"
+   ]
   },
   {
    "qid": "Q141156644",
@@ -7477,7 +8794,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q141156644"
+   "id": "wd:Q141156644",
+   "labels": [
+    "Cyklistická trasa M (Hlučínsko)"
+   ]
   },
   {
    "qid": "Q117081626",
@@ -7502,7 +8822,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q117081626"
+   "id": "wd:Q117081626",
+   "labels": [
+    "Cyklostezka Bevlava"
+   ]
   },
   {
    "qid": "Q20755245",
@@ -7526,7 +8849,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q20755245"
+   "id": "wd:Q20755245",
+   "labels": [
+    "Cyklostezka Nový Bor - Sloup v Čechách",
+    "Cyklostezka Nový Bor-Sloup v Čechách"
+   ]
   },
   {
    "qid": "Q11756153",
@@ -7549,7 +8876,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11756153"
+   "id": "wd:Q11756153",
+   "labels": [
+    "Cyklostezka Ploučnice"
+   ]
   },
   {
    "qid": "Q11773831",
@@ -7572,7 +8902,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11773831"
+   "id": "wd:Q11773831",
+   "labels": [
+    "Cyklostezka Varhany"
+   ]
   },
   {
    "qid": "Q1204148",
@@ -7596,7 +8929,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1204148"
+   "id": "wd:Q1204148",
+   "labels": [
+    "Deutsche Sielroute"
+   ]
   },
   {
    "qid": "Q28455587",
@@ -7625,7 +8961,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28455587"
+   "id": "wd:Q28455587",
+   "labels": [
+    "Devon Coast to Coast Cycle Route"
+   ]
   },
   {
    "qid": "Q123663743",
@@ -7649,7 +8988,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q123663743"
+   "id": "wd:Q123663743",
+   "labels": [
+    "Dolce Via"
+   ]
   },
   {
    "qid": "Q67872695",
@@ -7674,7 +9016,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q67872695"
+   "id": "wd:Q67872695",
+   "labels": [
+    "Dorsale dell’Adda"
+   ]
   },
   {
    "qid": "Q1250612",
@@ -7697,7 +9042,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1250612"
+   "id": "wd:Q1250612",
+   "labels": [
+    "Dortmund-Ems-Kanal-Route"
+   ]
   },
   {
    "qid": "Q114891283",
@@ -7721,7 +9069,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q114891283"
+   "id": "wd:Q114891283",
+   "labels": [
+    "Ecopista do Minho"
+   ]
   },
   {
    "qid": "Q115147146",
@@ -7746,7 +9097,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q115147146"
+   "id": "wd:Q115147146",
+   "labels": [
+    "Ecopista do Vale do Vouga"
+   ]
   },
   {
    "qid": "Q115055454",
@@ -7770,7 +9124,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q115055454"
+   "id": "wd:Q115055454",
+   "labels": [
+    "Ecovia do Vez"
+   ]
   },
   {
    "qid": "Q130307834",
@@ -7797,7 +9154,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q130307834"
+   "id": "wd:Q130307834",
+   "labels": [
+    "Educaionat Trail Okolo Chropyně",
+    "Naučná stezka Okolo Chropyně",
+    "Náučný chodník Okolo Chropyně",
+    "sentier éducatif Okolo Chropyně"
+   ]
   },
   {
    "qid": "Q1302847",
@@ -7825,7 +9188,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1302847"
+   "id": "wd:Q1302847",
+   "labels": [
+    "Eifel-Ardennen fietsroute",
+    "Eifel-Ardennen-Radweg",
+    "Eifel-Ardennes Cycle Path",
+    "Piste cyclable Eifel-Ardennes"
+   ]
   },
   {
    "qid": "Q14514271",
@@ -7851,7 +9220,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14514271"
+   "id": "wd:Q14514271",
+   "labels": [
+    "Elbe cycle route",
+    "Elbe-Radweg Tschechien",
+    "Labská stezka",
+    "Szlak rowerowy wzdłuż Łaby"
+   ]
   },
   {
    "qid": "Q1915750",
@@ -7874,7 +9249,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1915750"
+   "id": "wd:Q1915750",
+   "labels": [
+    "Elbe-Oderhaff-Radweg"
+   ]
   },
   {
    "qid": "Q1325094",
@@ -7898,7 +9276,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1325094"
+   "id": "wd:Q1325094",
+   "labels": [
+    "Elbe-Weser-Radweg",
+    "Elbe-Weser-Radwege"
+   ]
   },
   {
    "qid": "Q1333605",
@@ -7921,7 +9303,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1333605"
+   "id": "wd:Q1333605",
+   "labels": [
+    "Else-Werre-Radweg"
+   ]
   },
   {
    "qid": "Q1339657",
@@ -7944,7 +9329,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1339657"
+   "id": "wd:Q1339657",
+   "labels": [
+    "Emscher Park Radweg"
+   ]
   },
   {
    "qid": "Q1346147",
@@ -7968,7 +9356,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1346147"
+   "id": "wd:Q1346147",
+   "labels": [
+    "Enztal-Radweg",
+    "Enztal-Radweg (Eifel)"
+   ]
   },
   {
    "qid": "Q1346151",
@@ -7992,7 +9384,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1346151"
+   "id": "wd:Q1346151",
+   "labels": [
+    "Enztal-Radweg"
+   ]
   },
   {
    "qid": "Q14554959",
@@ -8016,7 +9411,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14554959"
+   "id": "wd:Q14554959",
+   "labels": [
+    "EuroVelo 10 in Mecklenburg-Vorpommern",
+    "Ostseeküsten-Radweg (Mecklenburg-Vorpommern)"
+   ]
   },
   {
    "qid": "Q18544870",
@@ -8040,7 +9439,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q18544870"
+   "id": "wd:Q18544870",
+   "labels": [
+    "EuroVelo 12 in Germany",
+    "Nordseeküsten-Radweg (Niedersachsen)"
+   ]
   },
   {
    "qid": "Q125851720",
@@ -8068,7 +9471,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q125851720"
+   "id": "wd:Q125851720",
+   "labels": [
+    "EuroVelo 16",
+    "EuroVelo 16 – Iberian Cycle Route",
+    "EuroVelo 16 – Pyrenejská stezka"
+   ]
   },
   {
    "qid": "Q5432450",
@@ -8092,7 +9500,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q5432450"
+   "id": "wd:Q5432450",
+   "labels": [
+    "Fallowfield Loop"
+   ]
   },
   {
    "qid": "Q1319317",
@@ -8115,7 +9526,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1319317"
+   "id": "wd:Q1319317",
+   "labels": [
+    "Feininger-Radweg"
+   ]
   },
   {
    "qid": "Q1000760",
@@ -8140,7 +9554,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1000760"
+   "id": "wd:Q1000760",
+   "labels": [
+    "Fertő tavi kerékpárutak",
+    "Neusiedler-See-Radweg"
+   ]
   },
   {
    "qid": "Q1411768",
@@ -8166,7 +9584,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1411768"
+   "id": "wd:Q1411768",
+   "labels": [
+    "Fietsallee am Nordkanal",
+    "Fietsallee langs de Noordervaart"
+   ]
   },
   {
    "qid": "Q112133630",
@@ -8189,7 +9611,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q112133630"
+   "id": "wd:Q112133630",
+   "labels": [
+    "Fietsas Coupure-Groendreef-Trekweg"
+   ]
   },
   {
    "qid": "Q12311508",
@@ -8213,7 +9638,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q12311508"
+   "id": "wd:Q12311508",
+   "labels": [
+    "Fjordstien"
+   ]
   },
   {
    "qid": "Q1923891",
@@ -8240,7 +9668,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1923891"
+   "id": "wd:Q1923891",
+   "labels": [
+    "Flevoroute"
+   ]
   },
   {
    "qid": "Q1435836",
@@ -8264,7 +9695,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1435836"
+   "id": "wd:Q1435836",
+   "labels": [
+    "Fontanewanderweg",
+    "Fontaneweg"
+   ]
   },
   {
    "qid": "Q3082438",
@@ -8290,7 +9725,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q3082438"
+   "id": "wd:Q3082438",
+   "labels": [
+    "Francovelosuisse",
+    "Francovélosuisse"
+   ]
   },
   {
    "qid": "Q1456900",
@@ -8313,7 +9752,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1456900"
+   "id": "wd:Q1456900",
+   "labels": [
+    "Friedensroute"
+   ]
   },
   {
    "qid": "Q110890334",
@@ -8336,7 +9778,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q110890334"
+   "id": "wd:Q110890334",
+   "labels": [
+    "Froschradweg"
+   ]
   },
   {
    "qid": "Q1239231",
@@ -8359,7 +9804,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1239231"
+   "id": "wd:Q1239231",
+   "labels": [
+    "Geestweg"
+   ]
   },
   {
    "qid": "Q10505008",
@@ -8382,7 +9830,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q10505008"
+   "id": "wd:Q10505008",
+   "labels": [
+    "Ginstleden"
+   ]
   },
   {
    "qid": "Q109326865",
@@ -8405,7 +9856,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q109326865"
+   "id": "wd:Q109326865",
+   "labels": [
+    "Grabfeld-Radroute"
+   ]
   },
   {
    "qid": "Q12018457",
@@ -8428,7 +9882,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q12018457"
+   "id": "wd:Q12018457",
+   "labels": [
+    "Greenway Botič"
+   ]
   },
   {
    "qid": "Q17494355",
@@ -8452,7 +9909,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q17494355"
+   "id": "wd:Q17494355",
+   "labels": [
+    "Greenway dell’Adda Sud"
+   ]
   },
   {
    "qid": "Q1368585",
@@ -8477,7 +9937,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1368585"
+   "id": "wd:Q1368585",
+   "labels": [
+    "Grüner Ring",
+    "Grüner Ring (Region Hannover)"
+   ]
   },
   {
    "qid": "Q14522447",
@@ -8501,7 +9965,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14522447"
+   "id": "wd:Q14522447",
+   "labels": [
+    "Grünkern-Radweg"
+   ]
   },
   {
    "qid": "Q1569105",
@@ -8525,7 +9992,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1569105"
+   "id": "wd:Q1569105",
+   "labels": [
+    "Haidenaab-Radweg"
+   ]
   },
   {
    "qid": "Q42601884",
@@ -8552,7 +10022,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q42601884"
+   "id": "wd:Q42601884",
+   "labels": [
+    "Hanstholm - Kopenhagen",
+    "Hanstholm - København",
+    "N2 - Hanstholm-Kopenhagen"
+   ]
   },
   {
    "qid": "Q1588175",
@@ -8575,7 +10050,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1588175"
+   "id": "wd:Q1588175",
+   "labels": [
+    "Hase-Ems-Tour"
+   ]
   },
   {
    "qid": "Q1451891",
@@ -8600,7 +10078,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1451891"
+   "id": "wd:Q1451891",
+   "labels": [
+    "Havelradweg"
+   ]
   },
   {
    "qid": "Q130391049",
@@ -8624,7 +10105,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q130391049"
+   "id": "wd:Q130391049",
+   "labels": [
+    "Havřická naučná stezka"
+   ]
   },
   {
    "qid": "Q1593038",
@@ -8647,7 +10131,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1593038"
+   "id": "wd:Q1593038",
+   "labels": [
+    "Heckmair-Route"
+   ]
   },
   {
    "qid": "Q31838860",
@@ -8672,7 +10159,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q31838860"
+   "id": "wd:Q31838860",
+   "labels": [
+    "Hintergebirgsweg"
+   ]
   },
   {
    "qid": "Q109807540",
@@ -8696,7 +10186,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q109807540"
+   "id": "wd:Q109807540",
+   "labels": [
+    "Holtriem-Wanderweg"
+   ]
   },
   {
    "qid": "Q93106146",
@@ -8725,7 +10218,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q93106146"
+   "id": "wd:Q93106146",
+   "labels": [
+    "Hradubice Cycle Route",
+    "Hradubická cyklostezka"
+   ]
   },
   {
    "qid": "Q1638033",
@@ -8750,7 +10247,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1638033"
+   "id": "wd:Q1638033",
+   "labels": [
+    "Hunsrück cycle path",
+    "Hunsrück-Radweg"
+   ]
   },
   {
    "qid": "Q12317712",
@@ -8776,7 +10277,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q12317712"
+   "id": "wd:Q12317712",
+   "labels": [
+    "Hærvejsruten",
+    "N3 - Ossenwegroute"
+   ]
   },
   {
    "qid": "Q108744567",
@@ -8800,7 +10305,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q108744567"
+   "id": "wd:Q108744567",
+   "labels": [
+    "Industrieveloweg Winterthur"
+   ]
   },
   {
    "qid": "Q14545274",
@@ -8823,7 +10331,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14545274"
+   "id": "wd:Q14545274",
+   "labels": [
+    "Joe-Route"
+   ]
   },
   {
    "qid": "Q6301853",
@@ -8848,7 +10359,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6301853"
+   "id": "wd:Q6301853",
+   "labels": [
+    "Jubilee Greenway"
+   ]
   },
   {
    "qid": "Q54878213",
@@ -8871,7 +10385,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q54878213"
+   "id": "wd:Q54878213",
+   "labels": [
+    "Julius-Trip-Ring"
+   ]
   },
   {
    "qid": "Q1713786",
@@ -8897,7 +10414,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1713786"
+   "id": "wd:Q1713786",
+   "labels": [
+    "Jura-Route",
+    "Percorso del Giura",
+    "route du Jura"
+   ]
   },
   {
    "qid": "Q141570933",
@@ -8922,7 +10444,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q141570933"
+   "id": "wd:Q141570933",
+   "labels": [
+    "Järva cykelled"
+   ]
   },
   {
    "qid": "Q1721211",
@@ -8945,7 +10470,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1721211"
+   "id": "wd:Q1721211",
+   "labels": [
+    "Kahltal-Spessart-Radwanderweg"
+   ]
   },
   {
    "qid": "Q1493047",
@@ -8969,7 +10497,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1493047"
+   "id": "wd:Q1493047",
+   "labels": [
+    "Kamptal cycling route",
+    "Kamptalweg"
+   ]
   },
   {
    "qid": "Q14568052",
@@ -8993,7 +10525,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14568052"
+   "id": "wd:Q14568052",
+   "labels": [
+    "Kassel-Eder-Radweg"
+   ]
   },
   {
    "qid": "Q107459358",
@@ -9021,7 +10556,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q107459358"
+   "id": "wd:Q107459358",
+   "labels": [
+    "Kempenroute"
+   ]
   },
   {
    "qid": "Q1743220",
@@ -9046,7 +10584,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1743220"
+   "id": "wd:Q1743220",
+   "labels": [
+    "Kirchenradweg Jena – Thalbürgel",
+    "Kirchenradweg Jena-Thalbürgel"
+   ]
   },
   {
    "qid": "Q18287918",
@@ -9069,7 +10611,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q18287918"
+   "id": "wd:Q18287918",
+   "labels": [
+    "Kloster-Radweg"
+   ]
   },
   {
    "qid": "Q138025942",
@@ -9094,7 +10639,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q138025942"
+   "id": "wd:Q138025942",
+   "labels": [
+    "Kopaničiarska cyklomagistrála"
+   ]
   },
   {
    "qid": "Q20055022",
@@ -9118,7 +10666,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q20055022"
+   "id": "wd:Q20055022",
+   "labels": [
+    "Korkenziehertrasse"
+   ]
   },
   {
    "qid": "Q1568570",
@@ -9141,7 +10692,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1568570"
+   "id": "wd:Q1568570",
+   "labels": [
+    "Kosmosradweg"
+   ]
   },
   {
    "qid": "Q160691",
@@ -9164,7 +10718,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q160691"
+   "id": "wd:Q160691",
+   "labels": [
+    "Krabat-Radweg"
+   ]
   },
   {
    "qid": "Q131881544",
@@ -9188,7 +10745,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q131881544"
+   "id": "wd:Q131881544",
+   "labels": [
+    "Ku(n)stpicknickplekkenroute"
+   ]
   },
   {
    "qid": "Q1791804",
@@ -9211,7 +10771,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1791804"
+   "id": "wd:Q1791804",
+   "labels": [
+    "Kulturpfad Porz"
+   ]
   },
   {
    "qid": "Q20190974",
@@ -9235,7 +10798,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q20190974"
+   "id": "wd:Q20190974",
+   "labels": [
+    "Kulturroute"
+   ]
   },
   {
    "qid": "Q2293122",
@@ -9260,7 +10826,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2293122"
+   "id": "wd:Q2293122",
+   "labels": [
+    "Kunst am Deich",
+    "Skulpturenpfad Kunst am Deich"
+   ]
   },
   {
    "qid": "Q18340237",
@@ -9283,7 +10853,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q18340237"
+   "id": "wd:Q18340237",
+   "labels": [
+    "Křivoklátské okruhy"
+   ]
   },
   {
    "qid": "Q106488176",
@@ -9312,7 +10885,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106488176"
+   "id": "wd:Q106488176",
+   "labels": [
+    "LF Frontroute 14-18"
+   ]
   },
   {
    "qid": "Q106529287",
@@ -9339,7 +10915,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106529287"
+   "id": "wd:Q106529287",
+   "labels": [
+    "LF Groene Gordelroute"
+   ]
   },
   {
    "qid": "Q106529285",
@@ -9367,7 +10946,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106529285"
+   "id": "wd:Q106529285",
+   "labels": [
+    "LF Heuvelroute"
+   ]
   },
   {
    "qid": "Q106488175",
@@ -9394,7 +10976,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106488175"
+   "id": "wd:Q106488175",
+   "labels": [
+    "LF Kempenroute"
+   ]
   },
   {
    "qid": "Q106529274",
@@ -9421,7 +11006,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106529274"
+   "id": "wd:Q106529274",
+   "labels": [
+    "LF Kunststedenroute"
+   ]
   },
   {
    "qid": "Q64334516",
@@ -9449,7 +11037,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64334516"
+   "id": "wd:Q64334516",
+   "labels": [
+    "LF Maasroute"
+   ]
   },
   {
    "qid": "Q106488178",
@@ -9476,7 +11067,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106488178"
+   "id": "wd:Q106488178",
+   "labels": [
+    "LF Schelderoute"
+   ]
   },
   {
    "qid": "Q107458170",
@@ -9503,7 +11097,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q107458170"
+   "id": "wd:Q107458170",
+   "labels": [
+    "LF Vlaanderenroute"
+   ]
   },
   {
    "qid": "Q107457412",
@@ -9530,7 +11127,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q107457412"
+   "id": "wd:Q107457412",
+   "labels": [
+    "LF Waterlinieroute"
+   ]
   },
   {
    "qid": "Q1980391",
@@ -9557,7 +11157,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1980391"
+   "id": "wd:Q1980391",
+   "labels": [
+    "LF Zuiderzeeroute"
+   ]
   },
   {
    "qid": "Q118950837",
@@ -9580,7 +11183,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q118950837"
+   "id": "wd:Q118950837",
+   "labels": [
+    "La Durance à vélo"
+   ]
   },
   {
    "qid": "Q118951104",
@@ -9606,7 +11212,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q118951104"
+   "id": "wd:Q118951104",
+   "labels": [
+    "La Vallée du Loir à Vélo",
+    "Vallée du Loir à vélo"
+   ]
   },
   {
    "qid": "Q2852065",
@@ -9633,7 +11243,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2852065"
+   "id": "wd:Q2852065",
+   "labels": [
+    "Landelijke fietsroute 17"
+   ]
   },
   {
    "qid": "Q2445175",
@@ -9660,7 +11273,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2445175"
+   "id": "wd:Q2445175",
+   "labels": [
+    "Landelijke fietsroute 5"
+   ]
   },
   {
    "qid": "Q2633800",
@@ -9687,7 +11303,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2633800"
+   "id": "wd:Q2633800",
+   "labels": [
+    "Landelijke fietsroute 6"
+   ]
   },
   {
    "qid": "Q2182599",
@@ -9713,7 +11332,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2182599"
+   "id": "wd:Q2182599",
+   "labels": [
+    "Landelijke fietsroute 8"
+   ]
   },
   {
    "qid": "Q116771371",
@@ -9741,7 +11363,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q116771371"
+   "id": "wd:Q116771371",
+   "labels": [
+    "Lech cycle path",
+    "Lechradweg"
+   ]
   },
   {
    "qid": "Q1818037",
@@ -9765,7 +11391,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1818037"
+   "id": "wd:Q1818037",
+   "labels": [
+    "Lenneroute"
+   ]
   },
   {
    "qid": "Q18431475",
@@ -9788,7 +11417,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q18431475"
+   "id": "wd:Q18431475",
+   "labels": [
+    "Leśno Rajza"
+   ]
   },
   {
    "qid": "Q18431476",
@@ -9811,7 +11443,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q18431476"
+   "id": "wd:Q18431476",
+   "labels": [
+    "Leśno Uciecha"
+   ]
   },
   {
    "qid": "Q1417405",
@@ -9834,7 +11469,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1417405"
+   "id": "wd:Q1417405",
+   "labels": [
+    "Loquitzradwanderweg"
+   ]
   },
   {
    "qid": "Q1869973",
@@ -9857,7 +11495,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1869973"
+   "id": "wd:Q1869973",
+   "labels": [
+    "Loreley-Aar-Radweg"
+   ]
   },
   {
    "qid": "Q13129860",
@@ -9880,7 +11521,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q13129860"
+   "id": "wd:Q13129860",
+   "labels": [
+    "Lôn Las Ogwen"
+   ]
   },
   {
    "qid": "Q118733090",
@@ -9904,7 +11548,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q118733090"
+   "id": "wd:Q118733090",
+   "labels": [
+    "M-Wasserweg"
+   ]
   },
   {
    "qid": "Q2536211",
@@ -9932,7 +11579,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2536211"
+   "id": "wd:Q2536211",
+   "labels": [
+    "LF 12",
+    "Maas- en Vestingroute"
+   ]
   },
   {
    "qid": "Q1885225",
@@ -9955,7 +11606,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1885225"
+   "id": "wd:Q1885225",
+   "labels": [
+    "Maifeld-Radweg"
+   ]
   },
   {
    "qid": "Q26821657",
@@ -9978,7 +11632,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q26821657"
+   "id": "wd:Q26821657",
+   "labels": [
+    "Main-Tauber-Fränkischer Rad-Achter"
+   ]
   },
   {
    "qid": "Q17151339",
@@ -10003,7 +11660,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q17151339"
+   "id": "wd:Q17151339",
+   "labels": [
+    "Malokarpatská cyklomagistrála"
+   ]
   },
   {
    "qid": "Q20054624",
@@ -10026,7 +11686,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q20054624"
+   "id": "wd:Q20054624",
+   "labels": [
+    "Meißner 8 süd"
+   ]
   },
   {
    "qid": "Q13747751",
@@ -10054,7 +11717,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q13747751"
+   "id": "wd:Q13747751",
+   "labels": [
+    "Midden-Nederlandroute"
+   ]
   },
   {
    "qid": "Q1323268",
@@ -10077,7 +11743,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1323268"
+   "id": "wd:Q1323268",
+   "labels": [
+    "Mineralquellen-Route"
+   ]
   },
   {
    "qid": "Q42301985",
@@ -10101,7 +11770,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q42301985"
+   "id": "wd:Q42301985",
+   "labels": [
+    "Mittelland-Route"
+   ]
   },
   {
    "qid": "Q1953814",
@@ -10126,7 +11798,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1953814"
+   "id": "wd:Q1953814",
+   "labels": [
+    "Murradweg",
+    "Murska kolesarska pot"
+   ]
   },
   {
    "qid": "Q18226569",
@@ -10150,7 +11826,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q18226569"
+   "id": "wd:Q18226569",
+   "labels": [
+    "Märchenland-Radrundweg"
+   ]
   },
   {
    "qid": "Q29197673",
@@ -10175,7 +11854,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q29197673"
+   "id": "wd:Q29197673",
+   "labels": [
+    "Münchner Radschnellweg"
+   ]
   },
   {
    "qid": "Q2184469",
@@ -10204,7 +11886,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2184469"
+   "id": "wd:Q2184469",
+   "labels": [
+    "NAP-route"
+   ]
   },
   {
    "qid": "Q6972055",
@@ -10227,7 +11912,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972055"
+   "id": "wd:Q6972055",
+   "labels": [
+    "National Cycle Network Route 23"
+   ]
   },
   {
    "qid": "Q6972039",
@@ -10256,7 +11944,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972039"
+   "id": "wd:Q6972039",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 1",
+    "National Cycle Route 1"
+   ]
   },
   {
    "qid": "Q55137008",
@@ -10283,7 +11975,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q55137008"
+   "id": "wd:Q55137008",
+   "labels": [
+    "National Cycle Route 10"
+   ]
   },
   {
    "qid": "Q6972040",
@@ -10306,7 +12001,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972040"
+   "id": "wd:Q6972040",
+   "labels": [
+    "National Cycle Route 11"
+   ]
   },
   {
    "qid": "Q16896877",
@@ -10330,7 +12028,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16896877"
+   "id": "wd:Q16896877",
+   "labels": [
+    "National Cycle Route 12"
+   ]
   },
   {
    "qid": "Q6972043",
@@ -10353,7 +12054,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972043"
+   "id": "wd:Q6972043",
+   "labels": [
+    "National Cycle Route 13"
+   ]
   },
   {
    "qid": "Q6972044",
@@ -10379,7 +12083,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972044"
+   "id": "wd:Q6972044",
+   "labels": [
+    "National Cycle Route 14"
+   ]
   },
   {
    "qid": "Q60367544",
@@ -10405,7 +12112,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q60367544"
+   "id": "wd:Q60367544",
+   "labels": [
+    "National Cycle Route 141"
+   ]
   },
   {
    "qid": "Q6972045",
@@ -10429,7 +12139,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972045"
+   "id": "wd:Q6972045",
+   "labels": [
+    "National Cycle Route 15"
+   ]
   },
   {
    "qid": "Q16896878",
@@ -10453,7 +12166,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16896878"
+   "id": "wd:Q16896878",
+   "labels": [
+    "National Cycle Route 16"
+   ]
   },
   {
    "qid": "Q28404876",
@@ -10477,7 +12193,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28404876"
+   "id": "wd:Q28404876",
+   "labels": [
+    "National Cycle Route 164"
+   ]
   },
   {
    "qid": "Q55137005",
@@ -10504,7 +12223,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q55137005"
+   "id": "wd:Q55137005",
+   "labels": [
+    "National Cycle Route 165"
+   ]
   },
   {
    "qid": "Q48814674",
@@ -10530,7 +12252,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q48814674"
+   "id": "wd:Q48814674",
+   "labels": [
+    "National Cycle Route 166"
+   ]
   },
   {
    "qid": "Q28404871",
@@ -10556,7 +12281,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28404871"
+   "id": "wd:Q28404871",
+   "labels": [
+    "National Cycle Route 167"
+   ]
   },
   {
    "qid": "Q6972048",
@@ -10580,7 +12308,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972048"
+   "id": "wd:Q6972048",
+   "labels": [
+    "National Cycle Route 17"
+   ]
   },
   {
    "qid": "Q6972050",
@@ -10604,7 +12335,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972050"
+   "id": "wd:Q6972050",
+   "labels": [
+    "National Cycle Route 18"
+   ]
   },
   {
    "qid": "Q6972051",
@@ -10631,7 +12365,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972051"
+   "id": "wd:Q6972051",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 2",
+    "National Cycle Route 2"
+   ]
   },
   {
    "qid": "Q6972052",
@@ -10655,7 +12393,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972052"
+   "id": "wd:Q6972052",
+   "labels": [
+    "National Cycle Route 20"
+   ]
   },
   {
    "qid": "Q6972054",
@@ -10678,7 +12419,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972054"
+   "id": "wd:Q6972054",
+   "labels": [
+    "National Cycle Route 22"
+   ]
   },
   {
    "qid": "Q16998472",
@@ -10704,7 +12448,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16998472"
+   "id": "wd:Q16998472",
+   "labels": [
+    "National Cycle Route 24"
+   ]
   },
   {
    "qid": "Q6972057",
@@ -10732,7 +12479,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972057"
+   "id": "wd:Q6972057",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 3",
+    "National Cycle Route 3"
+   ]
   },
   {
    "qid": "Q6972058",
@@ -10759,7 +12510,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972058"
+   "id": "wd:Q6972058",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 4",
+    "National Cycle Route 4"
+   ]
   },
   {
    "qid": "Q6972059",
@@ -10783,7 +12538,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972059"
+   "id": "wd:Q6972059",
+   "labels": [
+    "National Cycle Route 42"
+   ]
   },
   {
    "qid": "Q6972062",
@@ -10809,7 +12567,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972062"
+   "id": "wd:Q6972062",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 5",
+    "National Cycle Route 5"
+   ]
   },
   {
    "qid": "Q16896879",
@@ -10832,7 +12594,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16896879"
+   "id": "wd:Q16896879",
+   "labels": [
+    "National Cycle Route 56"
+   ]
   },
   {
    "qid": "Q6972068",
@@ -10858,7 +12623,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972068"
+   "id": "wd:Q6972068",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 6",
+    "National Cycle Route 6"
+   ]
   },
   {
    "qid": "Q30687084",
@@ -10886,7 +12655,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q30687084"
+   "id": "wd:Q30687084",
+   "labels": [
+    "National Cycle Route 61"
+   ]
   },
   {
    "qid": "Q48771048",
@@ -10911,7 +12683,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q48771048"
+   "id": "wd:Q48771048",
+   "labels": [
+    "National Cycle Route 62"
+   ]
   },
   {
    "qid": "Q96251179",
@@ -10938,7 +12713,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q96251179"
+   "id": "wd:Q96251179",
+   "labels": [
+    "National Cycle Route 636"
+   ]
   },
   {
    "qid": "Q60744983",
@@ -10963,7 +12741,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q60744983"
+   "id": "wd:Q60744983",
+   "labels": [
+    "National Cycle Route 64"
+   ]
   },
   {
    "qid": "Q60742709",
@@ -10989,7 +12770,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q60742709"
+   "id": "wd:Q60742709",
+   "labels": [
+    "National Cycle Route 647"
+   ]
   },
   {
    "qid": "Q56276771",
@@ -11015,7 +12799,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q56276771"
+   "id": "wd:Q56276771",
+   "labels": [
+    "National Cycle Route 648"
+   ]
   },
   {
    "qid": "Q28404653",
@@ -11041,7 +12828,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28404653"
+   "id": "wd:Q28404653",
+   "labels": [
+    "National Cycle Route 65"
+   ]
   },
   {
    "qid": "Q48815871",
@@ -11067,7 +12857,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q48815871"
+   "id": "wd:Q48815871",
+   "labels": [
+    "National Cycle Route 656"
+   ]
   },
   {
    "qid": "Q28404488",
@@ -11091,7 +12884,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28404488"
+   "id": "wd:Q28404488",
+   "labels": [
+    "National Cycle Route 657"
+   ]
   },
   {
    "qid": "Q28404699",
@@ -11117,7 +12913,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28404699"
+   "id": "wd:Q28404699",
+   "labels": [
+    "National Cycle Route 658"
+   ]
   },
   {
    "qid": "Q6972071",
@@ -11141,7 +12940,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972071"
+   "id": "wd:Q6972071",
+   "labels": [
+    "National Cycle Route 66"
+   ]
   },
   {
    "qid": "Q28404770",
@@ -11166,7 +12968,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28404770"
+   "id": "wd:Q28404770",
+   "labels": [
+    "National Cycle Route 665"
+   ]
   },
   {
    "qid": "Q97386312",
@@ -11192,7 +12997,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q97386312"
+   "id": "wd:Q97386312",
+   "labels": [
+    "National Cycle Route 67"
+   ]
   },
   {
    "qid": "Q55136981",
@@ -11216,7 +13024,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q55136981"
+   "id": "wd:Q55136981",
+   "labels": [
+    "National Cycle Route 688"
+   ]
   },
   {
    "qid": "Q60740253",
@@ -11240,7 +13051,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q60740253"
+   "id": "wd:Q60740253",
+   "labels": [
+    "National Cycle Route 69"
+   ]
   },
   {
    "qid": "Q6972072",
@@ -11265,7 +13079,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972072"
+   "id": "wd:Q6972072",
+   "labels": [
+    "National Cycle Route 7"
+   ]
   },
   {
    "qid": "Q55136964",
@@ -11290,7 +13107,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q55136964"
+   "id": "wd:Q55136964",
+   "labels": [
+    "National Cycle Route 70"
+   ]
   },
   {
    "qid": "Q48816728",
@@ -11314,7 +13134,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q48816728"
+   "id": "wd:Q48816728",
+   "labels": [
+    "National Cycle Route 71"
+   ]
   },
   {
    "qid": "Q6972074",
@@ -11339,7 +13162,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972074"
+   "id": "wd:Q6972074",
+   "labels": [
+    "National Cycle Route 73"
+   ]
   },
   {
    "qid": "Q6972077",
@@ -11365,7 +13191,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972077"
+   "id": "wd:Q6972077",
+   "labels": [
+    "National Cycle Route 75"
+   ]
   },
   {
    "qid": "Q16896880",
@@ -11389,7 +13218,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16896880"
+   "id": "wd:Q16896880",
+   "labels": [
+    "National Cycle Route 76"
+   ]
   },
   {
    "qid": "Q134315280",
@@ -11413,7 +13245,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q134315280"
+   "id": "wd:Q134315280",
+   "labels": [
+    "National Cycle Route 82"
+   ]
   },
   {
    "qid": "Q6972082",
@@ -11441,7 +13276,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q6972082"
+   "id": "wd:Q6972082",
+   "labels": [
+    "Llwybr Beicio Cenedlaethol 9",
+    "National Cycle Route 9"
+   ]
   },
   {
    "qid": "Q20191091",
@@ -11464,7 +13303,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q20191091"
+   "id": "wd:Q20191091",
+   "labels": [
+    "Naturerlebnisroute"
+   ]
   },
   {
    "qid": "Q119091874",
@@ -11488,7 +13330,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q119091874"
+   "id": "wd:Q119091874",
+   "labels": [
+    "Naučná stezka po stavbách z červených cihel v Bohumíně"
+   ]
   },
   {
    "qid": "Q1757195",
@@ -11511,7 +13356,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1757195"
+   "id": "wd:Q1757195",
+   "labels": [
+    "Niddaradweg"
+   ]
   },
   {
    "qid": "Q1992670",
@@ -11534,7 +13382,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1992670"
+   "id": "wd:Q1992670",
+   "labels": [
+    "Nimstal-Radweg"
+   ]
   },
   {
    "qid": "Q16514268",
@@ -11557,7 +13408,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16514268"
+   "id": "wd:Q16514268",
+   "labels": [
+    "Nørrebroruten"
+   ]
   },
   {
    "qid": "Q117287655",
@@ -11582,7 +13436,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q117287655"
+   "id": "wd:Q117287655",
+   "labels": [
+    "Obrova cesta"
+   ]
   },
   {
    "qid": "Q2014347",
@@ -11606,7 +13463,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2014347"
+   "id": "wd:Q2014347",
+   "labels": [
+    "Odenwald-Madonnen-Weg"
+   ]
   },
   {
    "qid": "Q2014407",
@@ -11630,7 +13490,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2014407"
+   "id": "wd:Q2014407",
+   "labels": [
+    "Oder-Spree-Tour"
+   ]
   },
   {
    "qid": "Q2294420",
@@ -11658,7 +13521,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2294420"
+   "id": "wd:Q2294420",
+   "labels": [
+    "Oeverlandroute"
+   ]
   },
   {
    "qid": "Q17138376",
@@ -11682,7 +13548,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q17138376"
+   "id": "wd:Q17138376",
+   "labels": [
+    "Okolo Považského Inovca"
+   ]
   },
   {
    "qid": "Q2036092",
@@ -11706,7 +13575,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2036092"
+   "id": "wd:Q2036092",
+   "labels": [
+    "Ostsee–Oberbayern (D11)"
+   ]
   },
   {
    "qid": "Q64513560",
@@ -11734,7 +13606,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64513560"
+   "id": "wd:Q64513560",
+   "labels": [
+    "PC13 Cycle Route",
+    "PC13 Nicolas Franz",
+    "Vëlospist PC13",
+    "itinéraire cyclable PC13"
+   ]
   },
   {
    "qid": "Q64526392",
@@ -11761,7 +13639,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64526392"
+   "id": "wd:Q64526392",
+   "labels": [
+    "PC16 Cycle Route",
+    "Vëlospist PC16",
+    "itinéraire cyclable PC16"
+   ]
   },
   {
    "qid": "Q64667044",
@@ -11787,7 +13670,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64667044"
+   "id": "wd:Q64667044",
+   "labels": [
+    "PC19 Cycle Route",
+    "PC19 Fietsroute van het Meer van de Boven-Sûre",
+    "Vëlospist PC19",
+    "itinéraire cyclable PC19"
+   ]
   },
   {
    "qid": "Q64691770",
@@ -11813,7 +13702,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64691770"
+   "id": "wd:Q64691770",
+   "labels": [
+    "PC27 Cycle Route",
+    "Vëlospist PC27",
+    "itinéraire cyclable PC27"
+   ]
   },
   {
    "qid": "Q64504428",
@@ -11840,7 +13734,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64504428"
+   "id": "wd:Q64504428",
+   "labels": [
+    "PC7 Jangeli Cycle Route",
+    "PC7 Jangelifietsroute",
+    "Vëlospist PC7 Jangeli",
+    "itinéraire cyclable PC7 Jangeli"
+   ]
   },
   {
    "qid": "Q134705012",
@@ -11865,7 +13765,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q134705012"
+   "id": "wd:Q134705012",
+   "labels": [
+    "Palatia-Radweg"
+   ]
   },
   {
    "qid": "Q1514238",
@@ -11889,7 +13792,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1514238"
+   "id": "wd:Q1514238",
+   "labels": [
+    "Panoramaradweg Niederbergbahn"
+   ]
   },
   {
    "qid": "Q14538716",
@@ -11913,7 +13819,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14538716"
+   "id": "wd:Q14538716",
+   "labels": [
+    "Pengel-Anton-Radweg"
+   ]
   },
   {
    "qid": "Q2265414",
@@ -11939,7 +13848,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2265414"
+   "id": "wd:Q2265414",
+   "labels": [
+    "Percorso dei laghi",
+    "Seen-Route",
+    "route des lacs"
+   ]
   },
   {
    "qid": "Q2094958",
@@ -11962,7 +13876,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2094958"
+   "id": "wd:Q2094958",
+   "labels": [
+    "Pilgerroute (D7)"
+   ]
   },
   {
    "qid": "Q22689867",
@@ -11985,7 +13902,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q22689867"
+   "id": "wd:Q22689867",
+   "labels": [
+    "Pleiße-Radweg"
+   ]
   },
   {
    "qid": "Q16494537",
@@ -12023,7 +13943,22 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q16494537"
+   "id": "wd:Q16494537",
+   "labels": [
+    "Palenkės gandrų maršrutas",
+    "Podlaasia toonekurerada",
+    "Podlachië Ooievaarsroute",
+    "Podlases stārķu maršruts",
+    "Podlaski Szlak Bociani",
+    "Podlaskie White Stork Trail",
+    "Podlaskie-storkeruten",
+    "Podleská čapí trasa",
+    "Rota das cegonhas da Podláquia",
+    "Route des cigognes de Podlachie",
+    "Ruta de las cigüeñas de Podlaquia",
+    "Storchenroute Podlachiens",
+    "Підляський маршрут лелек"
+   ]
   },
   {
    "qid": "Q20191186",
@@ -12047,7 +13982,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q20191186"
+   "id": "wd:Q20191186",
+   "labels": [
+    "Produktroute"
+   ]
   },
   {
    "qid": "Q1029009",
@@ -12070,7 +14008,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1029009"
+   "id": "wd:Q1029009",
+   "labels": [
+    "Prümtal-Radweg"
+   ]
   },
   {
    "qid": "Q11773827",
@@ -12095,7 +14036,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11773827"
+   "id": "wd:Q11773827",
+   "labels": [
+    "Přibyslav-Sázava bikeway",
+    "cyklostezka Přibyslav - Sázava"
+   ]
   },
   {
    "qid": "Q1481497",
@@ -12118,7 +14063,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1481497"
+   "id": "wd:Q1481497",
+   "labels": [
+    "Radfernweg Hamburg–Rügen"
+   ]
   },
   {
    "qid": "Q105826888",
@@ -12142,7 +14090,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q105826888"
+   "id": "wd:Q105826888",
+   "labels": [
+    "Radrunde Oberfranken"
+   ]
   },
   {
    "qid": "Q28661155",
@@ -12166,7 +14117,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28661155"
+   "id": "wd:Q28661155",
+   "labels": [
+    "Radrundweg Lumda - Wieseck",
+    "Radwanderweg Lumda-Wieseck"
+   ]
   },
   {
    "qid": "Q1763142",
@@ -12190,7 +14145,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1763142"
+   "id": "wd:Q1763142",
+   "labels": [
+    "Radweg Deutsche Weinstraße"
+   ]
   },
   {
    "qid": "Q14536357",
@@ -12214,7 +14172,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14536357"
+   "id": "wd:Q14536357",
+   "labels": [
+    "Radweg Waldhessen R12",
+    "Waldhessen R12"
+   ]
   },
   {
    "qid": "Q14536559",
@@ -12239,7 +14201,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14536559"
+   "id": "wd:Q14536559",
+   "labels": [
+    "Radweg Waldhessen R15",
+    "Waldhessen R15"
+   ]
   },
   {
    "qid": "Q2126811",
@@ -12262,7 +14228,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2126811"
+   "id": "wd:Q2126811",
+   "labels": [
+    "Radweg Wittlicher Senke"
+   ]
   },
   {
    "qid": "Q14541025",
@@ -12285,7 +14254,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14541025"
+   "id": "wd:Q14541025",
+   "labels": [
+    "Radweg zur Kunst"
+   ]
   },
   {
    "qid": "Q2126813",
@@ -12308,7 +14280,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2126813"
+   "id": "wd:Q2126813",
+   "labels": [
+    "Radwegenetz Hessen"
+   ]
   },
   {
    "qid": "Q1275365",
@@ -12332,7 +14307,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1275365"
+   "id": "wd:Q1275365",
+   "labels": [
+    "Rheintal-Weg"
+   ]
   },
   {
    "qid": "Q15842332",
@@ -12356,7 +14334,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q15842332"
+   "id": "wd:Q15842332",
+   "labels": [
+    "Rhön-Rennsteig-Radweg"
+   ]
   },
   {
    "qid": "Q56790414",
@@ -12379,7 +14360,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q56790414"
+   "id": "wd:Q56790414",
+   "labels": [
+    "Ronde van Vlaanderenroute"
+   ]
   },
   {
    "qid": "Q1422953",
@@ -12403,7 +14387,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1422953"
+   "id": "wd:Q1422953",
+   "labels": [
+    "Rotbach-Route"
+   ]
   },
   {
    "qid": "Q113195775",
@@ -12429,7 +14416,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q113195775"
+   "id": "wd:Q113195775",
+   "labels": [
+    "Maršruto aplink Platelių ežerą",
+    "Route around the Lake Palateliai",
+    "Trasa Okolo jezera Plateliai",
+    "Trasa kolem jezera Plateliai"
+   ]
   },
   {
    "qid": "Q2176270",
@@ -12452,7 +14445,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2176270"
+   "id": "wd:Q2176270",
+   "labels": [
+    "Rundkurs Ruhrgebiet"
+   ]
   },
   {
    "qid": "Q19965240",
@@ -12475,7 +14471,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q19965240"
+   "id": "wd:Q19965240",
+   "labels": [
+    "Röderradroute"
+   ]
   },
   {
    "qid": "Q69055265",
@@ -12499,7 +14498,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q69055265"
+   "id": "wd:Q69055265",
+   "labels": [
+    "Saale-Unstrut-Elster-Rad-Acht"
+   ]
   },
   {
    "qid": "Q1419789",
@@ -12523,7 +14525,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1419789"
+   "id": "wd:Q1419789",
+   "labels": [
+    "Saarland-Radweg"
+   ]
   },
   {
    "qid": "Q15831703",
@@ -12546,7 +14551,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q15831703"
+   "id": "wd:Q15831703",
+   "labels": [
+    "Sachsenrieder Bähnle"
+   ]
   },
   {
    "qid": "Q2054082",
@@ -12574,7 +14582,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2054082"
+   "id": "wd:Q2054082",
+   "labels": [
+    "Saksenroute"
+   ]
   },
   {
    "qid": "Q1739751",
@@ -12598,7 +14609,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1739751"
+   "id": "wd:Q1739751",
+   "labels": [
+    "Salier-Radweg"
+   ]
   },
   {
    "qid": "Q23841753",
@@ -12622,7 +14636,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q23841753"
+   "id": "wd:Q23841753",
+   "labels": [
+    "Salzkammergut Radweg",
+    "Salzkammergut-Radweg"
+   ]
   },
   {
    "qid": "Q140965817",
@@ -12648,7 +14666,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q140965817"
+   "id": "wd:Q140965817",
+   "labels": [
+    "Schambachtalbahn cycling route",
+    "Schambachtalbahn-Radweg"
+   ]
   },
   {
    "qid": "Q1917515",
@@ -12676,7 +14698,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1917515"
+   "id": "wd:Q1917515",
+   "labels": [
+    "Schelde-Rheinroute"
+   ]
   },
   {
    "qid": "Q65244854",
@@ -12701,7 +14726,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q65244854"
+   "id": "wd:Q65244854",
+   "labels": [
+    "Schlossparkradrunde im Allgäu"
+   ]
   },
   {
    "qid": "Q64027415",
@@ -12724,7 +14752,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q64027415"
+   "id": "wd:Q64027415",
+   "labels": [
+    "Schunter-Radweg"
+   ]
   },
   {
    "qid": "Q23787500",
@@ -12748,7 +14779,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q23787500"
+   "id": "wd:Q23787500",
+   "labels": [
+    "Schwarzwald-Panorama-Radweg"
+   ]
   },
   {
    "qid": "Q1266432",
@@ -12771,7 +14805,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1266432"
+   "id": "wd:Q1266432",
+   "labels": [
+    "Schwarzwald-Radweg"
+   ]
   },
   {
    "qid": "Q1112609",
@@ -12795,7 +14832,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1112609"
+   "id": "wd:Q1112609",
+   "labels": [
+    "Selztal-Radweg"
+   ]
   },
   {
    "qid": "Q1714709",
@@ -12818,7 +14858,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1714709"
+   "id": "wd:Q1714709",
+   "labels": [
+    "Senne-Radweg"
+   ]
   },
   {
    "qid": "Q110413226",
@@ -12842,7 +14885,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q110413226"
+   "id": "wd:Q110413226",
+   "labels": [
+    "Silkin Way"
+   ]
   },
   {
    "qid": "Q12054301",
@@ -12865,7 +14911,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q12054301"
+   "id": "wd:Q12054301",
+   "labels": [
+    "Singltrek pod Smrkem"
+   ]
   },
   {
    "qid": "Q52666348",
@@ -12890,7 +14939,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q52666348"
+   "id": "wd:Q52666348",
+   "labels": [
+    "N7 - Sjællands Odde-Rødbyhavn",
+    "Sjællands Odde - Rødbyhavn"
+   ]
   },
   {
    "qid": "Q63536461",
@@ -12914,7 +14967,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q63536461"
+   "id": "wd:Q63536461",
+   "labels": [
+    "Skulpturenradweg",
+    "Skulpturenradweg Bauland-Odenwald"
+   ]
   },
   {
    "qid": "Q110390218",
@@ -12940,7 +14997,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q110390218"
+   "id": "wd:Q110390218",
+   "labels": [
+    "Stary Kolejowy Szlak",
+    "Стара залізниця"
+   ]
   },
   {
    "qid": "Q3438485",
@@ -12968,7 +15029,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q3438485"
+   "id": "wd:Q3438485",
+   "labels": [
+    "Stedenroute"
+   ]
   },
   {
    "qid": "Q136533595",
@@ -12992,7 +15056,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q136533595"
+   "id": "wd:Q136533595",
+   "labels": [
+    "Sterzradweg"
+   ]
   },
   {
    "qid": "Q1514508",
@@ -13015,7 +15082,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1514508"
+   "id": "wd:Q1514508",
+   "labels": [
+    "Steyrtalradweg"
+   ]
   },
   {
    "qid": "Q114598495",
@@ -13044,7 +15114,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q114598495"
+   "id": "wd:Q114598495",
+   "labels": [
+    "Stoneman by Roland Stauder"
+   ]
   },
   {
    "qid": "Q7622115",
@@ -13068,7 +15141,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q7622115"
+   "id": "wd:Q7622115",
+   "labels": [
+    "Strathkelvin Railway Path"
+   ]
   },
   {
    "qid": "Q2356022",
@@ -13091,7 +15167,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2356022"
+   "id": "wd:Q2356022",
+   "labels": [
+    "Streuobstroute im Nassauer Land"
+   ]
   },
   {
    "qid": "Q65197228",
@@ -13114,7 +15193,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q65197228"
+   "id": "wd:Q65197228",
+   "labels": [
+    "Sydkustleden"
+   ]
   },
   {
    "qid": "Q124306914",
@@ -13138,7 +15220,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q124306914"
+   "id": "wd:Q124306914",
+   "labels": [
+    "Szlak Motławski"
+   ]
   },
   {
    "qid": "Q44444853",
@@ -13161,7 +15246,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q44444853"
+   "id": "wd:Q44444853",
+   "labels": [
+    "Telegraphenradweg"
+   ]
   },
   {
    "qid": "Q7753151",
@@ -13185,7 +15273,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q7753151"
+   "id": "wd:Q7753151",
+   "labels": [
+    "The National Byway"
+   ]
   },
   {
    "qid": "Q2430873",
@@ -13208,7 +15299,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2430873"
+   "id": "wd:Q2430873",
+   "labels": [
+    "Thüringer Mühlenradweg"
+   ]
   },
   {
    "qid": "Q2445995",
@@ -13232,7 +15326,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2445995"
+   "id": "wd:Q2445995",
+   "labels": [
+    "Tour Brandenburg"
+   ]
   },
   {
    "qid": "Q139487604",
@@ -13256,7 +15353,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q139487604"
+   "id": "wd:Q139487604",
+   "labels": [
+    "Triangel-Radweg"
+   ]
   },
   {
    "qid": "Q7859310",
@@ -13280,7 +15380,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q7859310"
+   "id": "wd:Q7859310",
+   "labels": [
+    "Two Tunnels Greenway"
+   ]
   },
   {
    "qid": "Q28679660",
@@ -13306,7 +15409,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q28679660"
+   "id": "wd:Q28679660",
+   "labels": [
+    "Ecopista Tâmega",
+    "Ecopista do Tâmega",
+    "Tâmega cycling route"
+   ]
   },
   {
    "qid": "Q66482810",
@@ -13329,7 +15437,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q66482810"
+   "id": "wd:Q66482810",
+   "labels": [
+    "Umpfertalradweg"
+   ]
   },
   {
    "qid": "Q110576076",
@@ -13357,7 +15468,13 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q110576076"
+   "id": "wd:Q110576076",
+   "labels": [
+    "Stezka Hornej Odry",
+    "Stezka Horní Odry",
+    "Szlak Górnej Odry",
+    "Upper Reaches of the Odra Trail"
+   ]
   },
   {
    "qid": "Q2850593",
@@ -13384,7 +15501,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2850593"
+   "id": "wd:Q2850593",
+   "labels": [
+    "Vechtdalroute",
+    "Vechtetalroute"
+   ]
   },
   {
    "qid": "Q130236975",
@@ -13408,7 +15529,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q130236975"
+   "id": "wd:Q130236975",
+   "labels": [
+    "VeloDunajec"
+   ]
   },
   {
    "qid": "Q25089281",
@@ -13432,7 +15556,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q25089281"
+   "id": "wd:Q25089281",
+   "labels": [
+    "Veloroute 4"
+   ]
   },
   {
    "qid": "Q1497770",
@@ -13455,7 +15582,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1497770"
+   "id": "wd:Q1497770",
+   "labels": [
+    "Via Bavarica Tyrolensis"
+   ]
   },
   {
    "qid": "Q23692095",
@@ -13481,7 +15611,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q23692095"
+   "id": "wd:Q23692095",
+   "labels": [
+    "Via Claudia Augusta"
+   ]
   },
   {
    "qid": "Q24929856",
@@ -13504,7 +15637,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q24929856"
+   "id": "wd:Q24929856",
+   "labels": [
+    "Via Fluvia"
+   ]
   },
   {
    "qid": "Q1283797",
@@ -13530,7 +15666,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1283797"
+   "id": "wd:Q1283797",
+   "labels": [
+    "Via Romana"
+   ]
   },
   {
    "qid": "Q111309383",
@@ -13553,7 +15692,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q111309383"
+   "id": "wd:Q111309383",
+   "labels": [
+    "Vilstalradweg"
+   ]
   },
   {
    "qid": "Q137708340",
@@ -13578,7 +15720,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q137708340"
+   "id": "wd:Q137708340",
+   "labels": [
+    "VolleGaasroute"
+   ]
   },
   {
    "qid": "Q2533085",
@@ -13601,7 +15746,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2533085"
+   "id": "wd:Q2533085",
+   "labels": [
+    "Von-Ruhr-zur-Ruhr-Radweg"
+   ]
   },
   {
    "qid": "Q1244314",
@@ -13624,7 +15772,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1244314"
+   "id": "wd:Q1244314",
+   "labels": [
+    "Vulkan-Rad-Route Eifel"
+   ]
   },
   {
    "qid": "Q10717811",
@@ -13649,7 +15800,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q10717811"
+   "id": "wd:Q10717811",
+   "labels": [
+    "Väsman runt"
+   ]
   },
   {
    "qid": "Q3564129",
@@ -13672,7 +15826,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q3564129"
+   "id": "wd:Q3564129",
+   "labels": [
+    "Véloroute du canal du Nivernais"
+   ]
   },
   {
    "qid": "Q73002277",
@@ -13696,7 +15853,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q73002277"
+   "id": "wd:Q73002277",
+   "labels": [
+    "Waldnaabtal-Radweg"
+   ]
   },
   {
    "qid": "Q14492611",
@@ -13720,7 +15880,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14492611"
+   "id": "wd:Q14492611",
+   "labels": [
+    "Warmetal-Radweg"
+   ]
   },
   {
    "qid": "Q1544866",
@@ -13745,7 +15908,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1544866"
+   "id": "wd:Q1544866",
+   "labels": [
+    "Wasserburgen-Route",
+    "Waterkastelenroute"
+   ]
   },
   {
    "qid": "Q7974173",
@@ -13770,7 +15937,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q7974173"
+   "id": "wd:Q7974173",
+   "labels": [
+    "Waterlink Way"
+   ]
   },
   {
    "qid": "Q14537721",
@@ -13793,7 +15963,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14537721"
+   "id": "wd:Q14537721",
+   "labels": [
+    "Welterbe-Radweg"
+   ]
   },
   {
    "qid": "Q30094476",
@@ -13818,7 +15991,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q30094476"
+   "id": "wd:Q30094476",
+   "labels": [
+    "Welzbach Valley Cycleway",
+    "Welzbachtalradweg"
+   ]
   },
   {
    "qid": "Q14538071",
@@ -13841,7 +16018,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q14538071"
+   "id": "wd:Q14538071",
+   "labels": [
+    "Werra-Obermain-Radweg"
+   ]
   },
   {
    "qid": "Q125572435",
@@ -13865,7 +16045,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q125572435"
+   "id": "wd:Q125572435",
+   "labels": [
+    "Werra-Suhltal-Radweg"
+   ]
   },
   {
    "qid": "Q2563396",
@@ -13889,7 +16072,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q2563396"
+   "id": "wd:Q2563396",
+   "labels": [
+    "Werse Rad Weg"
+   ]
   },
   {
    "qid": "Q134429386",
@@ -13914,7 +16100,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q134429386"
+   "id": "wd:Q134429386",
+   "labels": [
+    "Western Front Way"
+   ]
   },
   {
    "qid": "Q125822816",
@@ -13939,7 +16128,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q125822816"
+   "id": "wd:Q125822816",
+   "labels": [
+    "Wiesental Radweg"
+   ]
   },
   {
    "qid": "Q11773810",
@@ -13963,7 +16155,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11773810"
+   "id": "wd:Q11773810",
+   "labels": [
+    "cycling route 12 (Czech Republic)",
+    "cyklistická trasa 12"
+   ]
   },
   {
    "qid": "Q106784659",
@@ -13987,7 +16183,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q106784659"
+   "id": "wd:Q106784659",
+   "labels": [
+    "cycling route 3 (Czech Republic)",
+    "cyklistická trasa 3"
+   ]
   },
   {
    "qid": "Q11773812",
@@ -14013,7 +16213,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q11773812"
+   "id": "wd:Q11773812",
+   "labels": [
+    "cycling route 33 (Czech republic)",
+    "cyklistická trasa 33"
+   ]
   },
   {
    "qid": "Q13986530",
@@ -14038,7 +16242,12 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q13986530"
+   "id": "wd:Q13986530",
+   "labels": [
+    "Národní cyklotrasa 36",
+    "Radweg 36 (Tschechien)",
+    "cycling route 36 (Czech Republic)"
+   ]
   },
   {
    "qid": "Q90840760",
@@ -14063,7 +16272,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q90840760"
+   "id": "wd:Q90840760",
+   "labels": [
+    "cycling route 8100 (Czech republic)",
+    "cyklistická trasa 8100 Pražské kolo"
+   ]
   },
   {
    "qid": "Q111106574",
@@ -14087,7 +16300,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q111106574"
+   "id": "wd:Q111106574",
+   "labels": [
+    "cycling route A1 (Prague)",
+    "cyklistická trasa A1"
+   ]
   },
   {
    "qid": "Q134303895",
@@ -14111,7 +16328,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q134303895"
+   "id": "wd:Q134303895",
+   "labels": [
+    "cycling route A258 (Prague)",
+    "cyklistická trasa A258"
+   ]
   },
   {
    "qid": "Q1158836",
@@ -14137,7 +16358,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q1158836"
+   "id": "wd:Q1158836",
+   "labels": [
+    "Dampflokrunde",
+    "stream train route"
+   ]
   },
   {
    "qid": "Q86667378",
@@ -14161,7 +16386,11 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q86667378"
+   "id": "wd:Q86667378",
+   "labels": [
+    "Véloroute Vallée de Somme",
+    "véloroute de la vallée de la Somme"
+   ]
   },
   {
    "qid": "Q15613808",
@@ -14185,7 +16414,10 @@
     "wikidata"
    ],
    "tier": "B",
-   "id": "wd:Q15613808"
+   "id": "wd:Q15613808",
+   "labels": [
+    "Štefánikova cyklomagistrála"
+   ]
   }
  ]
 }

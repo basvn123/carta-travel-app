@@ -1751,7 +1751,7 @@ Famous references from Wikidata (CC0): the fame list per outdoor kind.
 | def | `parse_point(wkt)` |  |
 | def | `subclasses(classes, verbose=False)` | Every class under the given ones (P279*), the roots included. |
 | def | `candidates(classes, country_qid, min_sl, verbose=False)` | {qid: {sitelinks, lat, lon, cls}} for one country and class set. |
-| def | `labels(qids, verbose=False)` | {qid: {"en": label, "names": [labels and en aliases in LABEL_LANGS]}} |
+| def | `labels(qids, verbose=False)` | {qid: {"en": label, "names": [labels and en aliases in LABEL_LANGS], "labels": [the labels alone]}}. The matcher trusts a label more than an alias: an alias can name the place next door (D25 h, "es Coto"). |
 | def | `values_of(qids, prop, verbose=False)` | {qid: [values]} for one direct property, in QID batches. Quantities in SI_SCALE come normalised and scaled, never in the stored unit. |
 | def | `by_label(names, verbose=False)` | {name: [(qid, sitelinks, (lat, lon), [cc])]} for items whose English label or alias is exactly the name, in a covered country, best known first. For the canaries, which Wikidata types as islands, villages, cliffs or parks rather than beache |
 | def | `country_highpoints(verbose=False)` | {qid of the highest point: cc} for the countries (P610). |

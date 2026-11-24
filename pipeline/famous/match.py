@@ -14,6 +14,8 @@ Guards, each with a test in tests/test_famous_match.py:
   distance);
 - rows are only looked up in the reference's own kind;
 - a generic name ("Schwarzsee", "Main Beach") always needs the distance;
+- for a wire row that carries a different QID only the reference's own
+  name counts, never an alias (an alias can name the beach next door, D25 h);
 - mountains and lakes match names exactly ("Matterhorn" is not "Klein
   Matterhorn");
 - a side trail or variant ("Rheinsteig Zuweg", "Kungsleden winter route")
@@ -241,8 +243,21 @@ def candidates(kind, ref, index):
     ref_cc = set(ref.get("countries") or [])
     near = NEAR_KM[kind]
     generic_ref = bool(ref_names & GENERIC)
+    # The reference's own name in every language: its labels, not aliases.
+    own = {fold(n) for n in [ref.get("name"), *(ref.get("labels") or [])]} - {""}
     for row, how in index.by_name(kind, ref_names).values():
         if ref_cc and row.get("cc") and row["cc"] not in ref_cc:
+            continue
+        # D25 h: reference aliases carry neighbours ("Es Marques" lists
+        # "es Coto", "Playa de Vistahermosa" lists "Playa de Santa Catalina"),
+        # each on the wire under its own QID a few hundred metres off. So a
+        # row with another QID counts only by the reference's own name, not an
+        # alias. Measured 2026-11-24: of 10 name matches with another QID, the
+        # 3 wrong ones all came through an alias; the own-name ones are
+        # duplicate items of one place (Cofete, Prainha, Arenella), and a
+        # label in another language is the own name too ("Pančićev vrh").
+        if q and row.get("wd") and row["wd"] != q and not any(
+                name_hit(kind, own, w) for w in row["_names"]):
             continue
         extra = row.get("_raw", set()) - ref_raw
         if extra & (SIDE_WORDS | COMPASS):

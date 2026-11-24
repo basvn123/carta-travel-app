@@ -101,6 +101,28 @@ def test_one_row_answers_one_reference():
     assert len(got) == 1
 
 
+def test_an_alias_never_answers_for_a_row_with_another_qid():
+    # D25 h: Wikidata lists "es Coto" as an alias of Es Marques; Es Coto is
+    # the next beach, on the wire under its own QID, 350 m away.
+    refs = [ref("Es Marques", qid="Q20104424", lat=39.54, lon=2.37,
+                names=["es Coto"], cc=("ES",))]
+    rows = [row("Es Coto", "coto", 39.543, 2.37, wd_="Q17601510", cc="ES",
+                kind="beaches")]
+    assert m.match("beaches", refs, rows) == {}
+    # The same alias on a row with no QID still counts.
+    rows = [row("Es Coto", "coto", 39.543, 2.37, cc="ES", kind="beaches")]
+    assert m.match("beaches", refs, rows)["wd:Q20104424"]["by"] == "name"
+
+
+def test_the_own_name_still_answers_a_duplicate_item():
+    # Cofete has two Wikidata items, the area and the beach: the reference's
+    # own name on the wire row counts whatever QID the row carries.
+    refs = [ref("Cofete", qid="Q545972", lat=28.10, lon=-14.39, cc=("ES",))]
+    rows = [row("Playa de Cofete", "c", 28.105, -14.39, wd_="Q23986978",
+                cc="ES", kind="beaches")]
+    assert m.match("beaches", refs, rows)["wd:Q545972"]["row"]["id"] == "c"
+
+
 def test_rated_row_preferred_over_listed():
     refs = [ref("Zugspitze", qid="Q3375", lat=47.42, lon=10.98,
                 cc=("DE",))]

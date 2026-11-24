@@ -157,6 +157,7 @@ def fetch_wikidata(kind, countries, previous, verbose=False):
         r["name"] = names.get(q, {}).get("en") or (
             names.get(q, {}).get("names") or [q])[0]
         r["names"] = names.get(q, {}).get("names", [])
+        r["labels"] = names.get(q, {}).get("labels", [])
         for key, vals in props.items():
             v = vals.get(q)
             if not v:
@@ -283,6 +284,8 @@ def add_canaries(kind, rows, verbose=False):
         for q in new:
             rows[q]["names"] = sorted(set(rows[q]["names"]) |
                                       set(names_of.get(q, {}).get("names", [])))
+            rows[q]["labels"] = sorted({rows[q]["name"]} |
+                                       set(names_of.get(q, {}).get("labels", [])))
             for prop, key in wd.KINDS[kind]["props"].items():
                 v = wd.values_of([q], prop, verbose).get(q)
                 if v and key == "osm_rel":
