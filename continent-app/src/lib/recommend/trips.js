@@ -20,6 +20,7 @@ import { flightStateOf, partySize, tradeoffsOf } from '../../planner/flow/tripSe
 import { buildCandidates, wantsNoCar } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
 import { planOf, finderState } from '../../planner/finder/planOf.js';
+import { budgetRulerFor } from '../budgetBasis.js';
 
 /** A short stable hash (FNV-1a, base 36) of a string. */
 export function stableHash(s) {
@@ -194,7 +195,8 @@ export function repriceTrip(trip) {
     ...trip,
     slots: owned,
     total,
-    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : trip.budget,
+    // G12 (L1): the ruler keeps its basis; a day budget reads the new quote.
+    budget: trip.budget ? budgetRulerFor({ ...trip, total }, trip.budget, quote) : trip.budget,
   };
   Object.defineProperty(out, 'quote', { value: quote, enumerable: false });
   Object.defineProperty(out, 'state', { value: state, enumerable: false });

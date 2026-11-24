@@ -29,7 +29,7 @@ import {
   bestMonth, datesFor, fliesThere, gatewayFor, namedPool, setupMonth, splitNights, tasteFor, transportFor,
 } from './candidates.js';
 import { priceCandidate } from './trips.js';
-import { rankTrips, budgetOf } from './rank.js';
+import { rankTrips, budgetRuler } from './rank.js';
 import { buildTrips } from './trips.js';
 
 /** How many places a flight list is built from, and how many rows it may show. */
@@ -147,8 +147,10 @@ export function flightRows(input, { limit = FLIGHT_FIRST.rows } = {}) {
     const trip = priceCandidate(c, input);
     const flight = flightOf(trip);
     if (!flight) continue;
-    const budget = budgetOf(input.settings, trip.nights);
-    if (budget && (flight.eur > budget || (trip.total?.perPerson ?? 0) > budget)) continue;
+    // G12 (L1): a trip budget leaves out a flight or trip over it; a day
+    // budget says nothing about the flight, so only bed and days over it do.
+    const budget = budgetRuler(trip, input.settings);
+    if (budget && (budget.delta > 0 || (budget.kind === 'total' && flight.eur > budget.eur))) continue;
     airports.add(c.gateway.iata);
     rows.push({ trip, flight });
   }

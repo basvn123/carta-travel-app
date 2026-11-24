@@ -32,6 +32,7 @@ import { MATCH } from '../match.js';
 import { flightLeverKeys } from './adapters/flight.js';
 import { personaOf, picksOf, personaReason, tripPersona, personaShapes } from './persona.js';
 import { avoidsHeat } from './prefs.js';
+import { budgetKind, budgetRulerFor } from '../budgetBasis.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -57,17 +58,21 @@ export function blendOf(F, P, Q) {
 /** The badge's figure for a score in 0..1: a whole percent, never 100. */
 export const matchPct = (score) => Math.max(0, Math.min(99, Math.round(score * 100)));
 
-/** The traveller's budget for one trip, a person: the whole-trip figure, or a day figure times the nights. */
-export function budgetOf(settings, nights) {
+/**
+ * The traveller's budget a person on its own basis, { eur, kind }, or null.
+ * G12 (lane L1): a day budget stays a day figure and is held against bed and
+ * days a night (lib/budgetBasis.js), never times the nights against the
+ * whole trip with its flight.
+ */
+export function budgetOf(settings) {
   const b = settings.guide.budget;
   if (!b?.eur) return null;
-  return b.kind === 'day' ? b.eur * nights : b.eur;
+  return { eur: b.eur, kind: budgetKind(b) };
 }
 
-/** The ruler: { eur, delta } a person, delta < 0 under budget; null with no budget. */
+/** The ruler: { eur, kind, delta } a person, delta < 0 under budget, null when the spend is not known; null with no budget. */
 export function budgetRuler(trip, settings) {
-  const eur = budgetOf(settings, trip.nights);
-  return eur ? { eur, delta: trip.total.perPerson - eur } : null;
+  return budgetRulerFor(trip, budgetOf(settings));
 }
 
 /** The slots and shapes after the levers. Unknown or unset levers change nothing. */

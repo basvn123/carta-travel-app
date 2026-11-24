@@ -1,3 +1,5 @@
+import { budgetKind, dayBasisSpend } from '../../lib/budgetBasis.js';
+
 /**
  * budget.js (T658): how a priced trip sits against the budget the traveller
  * gave in the trip settings. The budget is for one person (the question says
@@ -7,14 +9,8 @@
  */
 export function budgetCheck(priced, budget, { party = 1, nights = 0 } = {}) {
   if (!priced || !budget || !(budget.eur > 0)) return null;
-  const people = Math.max(1, party);
-  let spent;
-  if (budget.kind === 'total') {
-    spent = priced.perPerson;
-  } else {
-    if (!(nights > 0)) return null;
-    spent = ((priced.parts?.beds || 0) + (priced.parts?.days || 0)) / people / nights;
-  }
+  // G12 (L1): the same basis the finder's ruler uses (lib/budgetBasis.js).
+  const spent = budgetKind(budget) === 'total' ? priced.perPerson : dayBasisSpend(priced.parts, party, nights);
   if (!Number.isFinite(spent)) return null;
   const gap = Math.abs(budget.eur - spent);
   return { over: spent > budget.eur, gap: Math.round(gap) };
