@@ -195,3 +195,12 @@ test('timeline: only accepted friends are named; no friends, no names (judge v3-
   const names = [...one.bands.flatMap((b) => b.moments), ...one.undated].flatMap((m) => m.people.map((p) => p.id));
   assert.deepEqual([...new Set(names)], ['sam']);
 });
+
+test('waiting: a vote row wears the group, never your own face (judge v3-1 fix 7)', () => {
+  const g = { id: 'g1', title: 'Zuid 2027', ownerId: ME, myStatus: 'joined', bookedPlanId: null,
+    members: [{ userId: ME, name: 'Me' }], options: [{ id: 'w', kind: 'when', start: '2027-05-01', end: '2027-05-05' }], votes: [] };
+  const w = waitingOf({ userId: ME, links: [], groups: [g], circles: [], invites: [], joinToMe: [], ledgers: {} });
+  assert.equal(w[0].kind, 'groupVote');
+  assert.notEqual(w[0].person.id, ME);
+  assert.equal(w[0].person.name, 'Zuid 2027');
+});

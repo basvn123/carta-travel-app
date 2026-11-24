@@ -443,6 +443,8 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-m { position: relative; display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
 .vr-m-ph { display: block; aspect-ratio: 3 / 2; border-radius: var(--radius-card); overflow: hidden; }
 .vr-m-none { display: grid; place-items: center; width: 100%; height: 100%; background: var(--surface-sunken); }
+/* A kring or group trip wears its own face, the strip's rounded umber square. */
+.vr-m-none.is-group .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); }
 .vr-m-tx { display: grid; gap: var(--space-1); justify-items: start; min-width: 0; }
 .vr-m-faces { display: inline-flex; align-items: center; }
 .vr-m-faces .frn-face { box-sizing: content-box; border: 2px solid var(--surface-page); }

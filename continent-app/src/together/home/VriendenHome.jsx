@@ -238,7 +238,7 @@ function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk }) {
   return (
     <article className={`vr-m is-row is-nu${gone ? ' is-leaving' : ''}`}>
       <span className="vr-m-ph">
-        <span className="vr-m-none" aria-hidden="true">
+        <span className={`vr-m-none${w.person.group ? ' is-group' : ''}`} aria-hidden="true">
           <ToneFace id={w.person.id} me={me} name={w.person.name} emoji={w.person.emoji} />
         </span>
       </span>

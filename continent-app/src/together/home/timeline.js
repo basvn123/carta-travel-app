@@ -96,7 +96,9 @@ export function waitingOf(s) {
     if (g.myStatus === 'invited') out.push({ id: `g:${g.id}`, kind: 'groupInvite', subject: `g:${g.id}`, group: g, person });
     else if (g.myStatus === 'joined' && !g.bookedPlanId
       && (owesVote(g.options, g.votes, me, 'when') || owesVote(g.options, g.votes, me, 'where'))) {
-      out.push({ id: `g:${g.id}`, kind: 'groupVote', subject: `g:${g.id}`, group: g, person });
+      // A vote is about the trip, not its owner (who may be you): the row
+      // wears the group's own face (judge v3-1 fix 7).
+      out.push({ id: `g:${g.id}`, kind: 'groupVote', subject: `g:${g.id}`, group: g, person: { id: `g:${g.id}`, name: g.title, emoji: '', group: true } });
     }
   }
   for (const c of s.circles || []) {
@@ -104,7 +106,7 @@ export function waitingOf(s) {
     const person = { id: c.ownerId, name: owner?.name || '', emoji: owner?.emoji || '' };
     if (c.myStatus === 'invited') out.push({ id: `k:${c.id}`, kind: 'circleInvite', subject: `k:${c.id}`, circle: c, person });
     else if (c.myStatus === 'joined' && unvoted(c, me) > 0) {
-      out.push({ id: `k:${c.id}`, kind: 'circleVote', subject: `k:${c.id}`, circle: c, n: unvoted(c, me), person });
+      out.push({ id: `k:${c.id}`, kind: 'circleVote', subject: `k:${c.id}`, circle: c, n: unvoted(c, me), person: { id: `k:${c.id}`, name: c.name, emoji: '', group: true } });
     }
   }
   for (const b of balancesOf(s.ledgers, me)) {
