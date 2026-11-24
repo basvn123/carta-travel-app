@@ -554,17 +554,42 @@ export function afterChoicesChange(prev, { first = false, linked = false } = {})
   return next === a ? prev : { ...prev, travel_styles: updateStyle(st, a.id, next) };
 }
 
-/** A change made for one trip is coming: hold the style (no-op without one). */
+/** A change made for one trip is coming: hold the style (no-op without one).
+ *  A fresh hold names no other style (`style_held_for`, holdStyleChoices),
+ *  so an old trip's style never comes back on Keep. */
 export function holdChoices(prev) {
-  return prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true };
+  return prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true, style_held_for: '' };
 }
 
-/** Keep: the held choices written into the active style, the hold lifted. */
+/**
+ * Another style for one trip (G12 plan rethink, build plan "style switch"):
+ * Plan never switches the app's style itself. The other style's stay half
+ * prices the trip, the active style is held ("Changed for now") and the
+ * hold names the style picked, so Keep makes that style the active one and
+ * Back returns to the active style's own values. The active style itself
+ * picked lifts the hold. With no active style there is nothing to hold:
+ * the picked style's stay half prices the choices and no style becomes
+ * active. An unknown id changes nothing.
+ */
+export function holdStyleChoices(prev, id) {
+  const st = normalizeStyles(prev.travel_styles);
+  const s = st.list.find((x) => x.id === id);
+  if (!s) return prev;
+  if (st.active === id) return switchChoices(prev, id);
+  if (!activeStyle(st)) return { ...prev, ...choicesFromStyle(s) };
+  return { ...prev, ...choicesFromStyle(s), style_held: true, style_held_for: id };
+}
+
+/** Keep: the held choices written into the active style, the hold lifted.
+ *  A hold for another style (holdStyleChoices) makes that style the active
+ *  one, with the trip's changes on top written into it. */
 export function keepChoices(prev) {
   const st = normalizeStyles(prev.travel_styles);
-  const a = activeStyle(st);
-  if (!a) return { ...prev, style_held: false };
-  return { ...prev, travel_styles: updateStyle(st, a.id, styleFromChoices(a, prev)), style_held: false };
+  const heldFor = prev.style_held && prev.style_held_for ? st.list.find((x) => x.id === prev.style_held_for) : null;
+  const a = heldFor || activeStyle(st);
+  if (!a) return { ...prev, style_held: false, style_held_for: '' };
+  const next = heldFor ? setActive(st, a.id) : st;
+  return { ...prev, travel_styles: updateStyle(next, a.id, styleFromChoices(a, prev)), style_held: false, style_held_for: '' };
 }
 
 /** The Style Studio's Done on a new style: `style` (styleFromDraft) added

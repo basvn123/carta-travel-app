@@ -163,6 +163,15 @@ export function fullFlow(s, door = 'know') {
 }
 
 /**
+ * The sources the setup passes over (G12 plan rethink, decision §12): the
+ * words, and what the page the trip was opened from fixed ('seed', a
+ * PlanSeed pin). What Explore prefilled ('explore') is still asked, so one
+ * tap confirms it; what the style gave is skipped by the guide walk
+ * (GUIDE_SKIP) and, from B3, by the setup per the question rule.
+ */
+export const SETUP_SKIP = Object.freeze(['words', 'seed']);
+
+/**
  * The screen Continue goes to after `id` (owner, plan flow walk 2026-10-30:
  * "Continue always goes to the next question"). Only a question the Tell
  * sentence answered, and not yet seen on its own screen, is passed over; a
@@ -170,7 +179,7 @@ export function fullFlow(s, door = 'know') {
  * back and on walks the questions in order. `stop` ends the walk early (the
  * create screen, the trips) even when it carries an answer.
  */
-export function continueTo(list, id, s, stop = null, skip = ['words']) {
+export function continueTo(list, id, s, stop = null, skip = SETUP_SKIP) {
   let k = nextScreen(list, id);
   while (k && k !== stop && givenBy(s, k, skip)) k = nextScreen(list, k);
   return k;
@@ -188,7 +197,7 @@ export function givenBy(s, id, from) {
  * changing there. The Who screen of the setup is not passed over: it is
  * where the style is chosen for this trip.
  */
-export const GUIDE_SKIP = ['words', 'style'];
+export const GUIDE_SKIP = ['words', 'style', 'seed'];
 
 /** The first guide screen still open for this trip (the trips when none is). */
 export function firstOpenGuide(s) {

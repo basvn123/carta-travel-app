@@ -31,7 +31,7 @@ import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { PartyEditor } from '../PartyEditor.jsx';
 import { StyleCards } from '../../browse/styles/StyleCards.jsx';
 import { useStyleFigures } from '../../browse/styles/styleBits.jsx';
-import { switchTripStyle } from './styleSeed.js';
+import { holdForTrip } from './styleSeed.js';
 import { answer, markAnswered, normalizeSettings, withPartyKind, PARTY_KINDS, WAYS } from './tripSettings.js';
 import { MAX_TRIP_NIGHTS, addDaysUTC, nightsBetween, windowFromStart } from '../../lib/tripDates.js';
 
@@ -86,15 +86,16 @@ export function WhoScreen({ settings, commit, doneLabel }) {
   };
   // Who comes decides the travel style (owner, 2026-11-12: "dependent on who
   // you travel with, you choose a trip setting"): a style picked here fills
-  // this trip's party and every answer the style holds, and becomes the
-  // app's active style, so the prices behind the planner follow it too.
+  // this trip's party and every answer the style holds. G12 plan rethink
+  // (decision §4, one hold mechanism): it is this trip's style, not the
+  // app's; the active style is held ("Changed for now", Keep makes the
+  // picked one active, Back undoes) and its stay half prices the trip.
   const ts = app?.travelStyles;
   const figures = useStyleFigures(ts?.list, app?.data?.destinations);
   const pickStyle = (id) => {
     const st = ts.list.find((x) => x.id === id);
     if (!st) return;
-    ts.switchTo(id);
-    setS((cur) => switchTripStyle(cur, st));
+    setS(holdForTrip(s, 'style', st, app));
   };
   return (
     <>

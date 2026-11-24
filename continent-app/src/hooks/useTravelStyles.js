@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, keepChoices, switchChoices, choicesMatchStyle, commitChoices, createChoices,
+  MAX_STYLES, STYLES_KEY, activeStyle, afterChoicesChange, holdChoices, holdStyleChoices, keepChoices, switchChoices, choicesMatchStyle, commitChoices, createChoices,
   draftFromTemplate, duplicateStyle, emptyDraft, exploreFromTaste, normalizeStyles, removeChoices, studioOpen, styleFromDraft, tasteFromStyle, tasteMatchesStyle, updateStyle,
 } from '../lib/travelStyles.js';
 import { normalizeTaste } from '../lib/taste.js';
@@ -155,6 +155,11 @@ export function useTravelStyles(choices, setChoices) {
   const hold = useCallback(() => {
     setChoices(holdChoices);
   }, [setChoices]);
+  /** Another style for one trip (G12): its stay half prices the trip and
+   *  the active style is held; Keep makes it active (holdStyleChoices). */
+  const holdStyle = useCallback((id) => {
+    setChoices((prev) => holdStyleChoices(prev, id));
+  }, [setChoices]);
   /** The held changes written into the active style, and the hold lifted. */
   const keep = useCallback(() => {
     setChoices(keepChoices);
@@ -180,9 +185,11 @@ export function useTravelStyles(choices, setChoices) {
     remove,
     duplicate,
     hold,
+    holdStyle,
     keep,
     revert,
     changed,
     held,
-  }), [store, active, openNow, setOpen, switchTo, createFrom, commit, update, remove, duplicate, hold, keep, revert, changed, held]);
+    heldFor: held ? (choices.style_held_for || '') : '',
+  }), [store, active, openNow, setOpen, switchTo, createFrom, commit, update, remove, duplicate, hold, holdStyle, keep, revert, changed, held, choices.style_held_for]);
 }

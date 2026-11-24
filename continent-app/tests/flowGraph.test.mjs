@@ -166,13 +166,13 @@ test("plan flow walk: no flying (train, car, or How far 'No flying') drops every
 
 test("plan flow walk: a group budget keeps its total and follows the party", () => {
   const fam = s({ party: { kind: "family", adults: 2, kids: 2 }, guide: { budget: { kind: "total", per: "group", groupEur: 4000 } } });
-  assert.deepEqual(fam.guide.budget, { kind: "total", per: "group", groupEur: 4000, eur: 1000 });
+  assert.deepEqual(fam.guide.budget, { kind: "total", per: "group", mode: "soft", groupEur: 4000, eur: 1000 });
   // One more traveller: the total stands, the figure a person follows.
   const five = s({ ...fam, party: { ...fam.party, kids: 3 } });
   assert.equal(five.guide.budget.groupEur, 4000);
   assert.equal(five.guide.budget.eur, 800);
   // A person's budget, and an older budget with no basis, read as per person.
-  assert.deepEqual(s({ guide: { budget: { kind: "total", eur: 900 } } }).guide.budget, { kind: "total", per: "person", eur: 900 });
+  assert.deepEqual(s({ guide: { budget: { kind: "total", eur: 900 } } }).guide.budget, { kind: "total", per: "person", mode: "soft", eur: 900 });
   // A day budget is always a person's.
   assert.equal(s({ guide: { budget: { kind: "day", per: "group", groupEur: 500 } } }).guide.budget.per, "person");
 });

@@ -196,7 +196,7 @@ export function useAccountSync({
     if (trip.choices) {
       setChoices((prev) => {
         const { travel_styles: _drop, ...rest } = trip.choices;
-        return { ...prev, ...rest, style_held: Boolean(prev.travel_styles?.active) };
+        return { ...prev, ...rest, style_held: Boolean(prev.travel_styles?.active), style_held_for: '' };
       });
     }
     setAccountOpen(false);

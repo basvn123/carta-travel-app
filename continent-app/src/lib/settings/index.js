@@ -2,7 +2,7 @@
 // re-derive a figure, a chip text or a start.
 export {
   ORIGIN_KINDS, DATE_MODES, PRICE_SPANS, DEFAULT_TRIP_NIGHTS, MIN_TRIP_NIGHTS, MAX_TRIP_NIGHTS,
-  readSettings, nextYm, addMonth, isYm, clampNights,
+  readSettings, nextYm, addMonth, isYm, clampNights, whenSetOf, nightsSetOf,
   withDateMode, withMonth, withTripNights, withWay, withPriceView, withPriceSpan, withStart,
 } from './model.js';
 export { nearestTown, countryStartTown, countryAirports, startCountryOf, CAPITALS, MAX_COUNTRY_AIRPORTS } from './start.js';

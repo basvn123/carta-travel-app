@@ -13,7 +13,7 @@ import { normalizeSettings } from './tripSettings.js';
 import { VisibilityChoice } from './VisibilityChoice.jsx';
 import { StyleCards } from '../../browse/styles/StyleCards.jsx';
 import { styleName, useStyleFigures } from '../../browse/styles/styleBits.jsx';
-import { switchTripStyle } from './styleSeed.js';
+import { holdForTrip } from './styleSeed.js';
 import { formatMoney } from '../../lib/money.js';
 
 /**
@@ -173,8 +173,8 @@ export function TripSettingsSheet({ onClose, anchorRef, onSaved = null, planned 
               onPick={(id) => {
                 const st = ts.list.find((x) => x.id === id);
                 if (!st || id === s.style) return;
-                const next = switchTripStyle(s, st);
-                ts.switchTo(id);
+                // G12 plan rethink: this trip's style, the app's held, never switched from Plan.
+                const next = holdForTrip(s, 'style', st, app);
                 save(next);
                 setNotice(onSaved ? onSaved(normalizeSettings(next), s) || null : null);
               }}

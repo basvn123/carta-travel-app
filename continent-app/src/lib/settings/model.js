@@ -131,6 +131,9 @@ export function readSettings(choices = {}, legacy = {}) {
     party,
     seats: party.seats,
     migrated,
+    // G12 plan rethink: set by the traveller, or a default (whenSetOf).
+    whenSet: whenSetOf(c),
+    nightsSet: nightsSetOf(c),
   };
 }
 
@@ -139,12 +142,36 @@ export function readSettings(choices = {}, legacy = {}) {
  * setChoices; tests and the URL use them directly.
  * ------------------------------------------------------------------------- */
 
-export const withDateMode = (mode) => (prev) => (DATE_MODES.includes(mode) ? { ...prev, date_mode: mode } : prev);
-export const withMonth = (ym) => (prev) => (isYm(ym) ? { ...prev, date_mode: 'month', when_month: ym } : prev);
+// G12 plan rethink (decision §4): touching When or the length marks it set
+// by the traveller (`when_set`, `nights_set`), so Plan can prefill it as
+// theirs and show an untouched default as an assumption.
+export const withDateMode = (mode) => (prev) => (DATE_MODES.includes(mode) ? { ...prev, date_mode: mode, when_set: true } : prev);
+export const withMonth = (ym) => (prev) => (isYm(ym) ? { ...prev, date_mode: 'month', when_month: ym, when_set: true } : prev);
 export const withTripNights = (n) => (prev) => {
   const v = clampNights(n);
-  return v == null ? prev : { ...prev, trip_nights: v };
+  return v == null ? prev : { ...prev, trip_nights: v, nights_set: true };
 };
+
+/**
+ * Whether the traveller set When in Explore (G12 plan rethink). The flag
+ * wins when stored; an account or device from before the flag infers it
+ * from the raw stored choices: a stored date_mode was only ever written by
+ * the traveller (Settings, a link they opened), never by a default, so
+ * returning travellers do not all look unset. Read the raw choices, not
+ * readSettings' migrated model, which fills a mode in for everyone.
+ */
+export function whenSetOf(choices) {
+  const c = choices || {};
+  if (typeof c.when_set === 'boolean') return c.when_set;
+  return DATE_MODES.includes(c.date_mode);
+}
+
+/** Whether the traveller set the trip length (G12): the flag, else a stored trip_nights (see whenSetOf). */
+export function nightsSetOf(choices) {
+  const c = choices || {};
+  if (typeof c.nights_set === 'boolean') return c.nights_set;
+  return clampNights(c.trip_nights) != null;
+}
 /** The way there. A way that is not the active style's main way HOLDS the
  *  style (fixes-r1 E1): without the hold, useTravelStyles rule 1 wrote the
  *  new way into the saved style; held, the heart gets its dot and the
