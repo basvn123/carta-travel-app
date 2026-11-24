@@ -34,6 +34,7 @@ import { todayISO } from '../../lib/dates.js';
 import { engineOriginCode } from '../../lib/airportReach.js';
 import { EARLY, priceInSlices } from './priceSlices.js';
 import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
+import { bookedTrip } from '../../lib/plan/doors.js';
 import { checkedWindows, levers } from '../../lib/recommend/alternatives.js';
 import { rankTrips } from '../../lib/recommend/rank.js';
 import { useTasteVerdicts, verdictsKey } from '../../lib/taste/store.js';
@@ -144,7 +145,7 @@ export function useTripFinder(settings) {
   const stayTier = choices.stay_tier || null;
   // The answer set this run is for; a new one restarts the stages.
   const answers = answersOf(settings);
-  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
+  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, settings.booked, settings.imports, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
     (data?.meta?.home_airports || []).map((a) => a.iata), verdictKey]),
   [settings, origin, stayTier, lifestyle, taste, data, verdictKey]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
 
@@ -165,6 +166,8 @@ export function useTripFinder(settings) {
           lifestyle, stayTier, today: todayISO(),
           // The traveller's bag prices the flight (lib/recommend/trips.js).
           baggage: choices.baggage_key || null,
+          // G12 L10: a booked flight is the traveller's own fare on every trip.
+          ownFlight: bookedOwnFlight(answers, data.destinations),
         };
         // The taxonomy only loads when the traveller gave a verdict.
         const tasteLean = await tasteLeanFor(verdicts);
@@ -203,6 +206,12 @@ export function useTripFinder(settings) {
     // so the searching screen names it from its first frame.
     stayTier,
   };
+}
+
+/** G12 L10: the booked flight as the engine's own flight (doors.js bookedTrip), or null. */
+function bookedOwnFlight(settings, destinations) {
+  if (!settings?.booked?.flights) return null;
+  return bookedTrip(settings, destinations)?.selection?.ownFlight || null;
 }
 
 /**
