@@ -17,6 +17,7 @@ import { slotTotals } from '../../lib/recommend/slots.js';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { useFoundMore, useKeepTrip } from './finderHooks.js';
 import { alternatives } from '../../lib/recommend/alternatives.js';
+import { receiptOfTrip } from '../../lib/price/receiptDiff.js';
 import { useTotalDelta } from '../planHooks.js';
 import { LinePicker } from './LinePicker.jsx';
 import { MatchRing, TripCard } from './TripCard.jsx';
@@ -542,7 +543,8 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
             <Gallery photos={photos} name={name} t={t}>{null}</Gallery>
             {head}
             {/* G12 §3.3: what this price assumed, the same bar as the list. */}
-            {bar}
+            {/* G12 L9: the bar compares this trip's price before and after a chip change. */}
+            {bar && React.isValidElement(bar) ? React.cloneElement(bar, { receipt: receiptOfTrip(trip) }) : bar}
           </>
         );
       })()}

@@ -8,6 +8,8 @@ import { QuestionBody } from './QuestionScreen.jsx';
 import { StyleSwitch } from './StyleBar.jsx';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
 import { assumptionChips, checkWalk } from './assumptions.js';
+import { useChipDelta } from './useChipDelta.js';
+import { signedMoney } from '../finder/finderText.js';
 
 /**
  * The shared assumption bar (G12 plan rethink, decision §1.4, §3.3): the
@@ -23,9 +25,13 @@ import { assumptionChips, checkWalk } from './assumptions.js';
  *   onEdit(id)            instead of the bar's own sheet (the trip page
  *                         opens its trip settings, which keep the route in step)
  *   onMore()              the trip settings (way there, bed, budget, ...)
+ *   receipt               G12 L9: the price shown now (lib/price/receiptDiff.js
+ *                         receiptOfTrip or receiptOfQuote); after a chip
+ *                         change the bar says what it did, with Undo
  */
-export function AssumptionBar({ settings, save, onEdit = null, onMore = null }) {
-  const { t } = useI18n();
+export function AssumptionBar({ settings, save, onEdit = null, onMore = null, receipt = null }) {
+  const { t, lang } = useI18n();
+  const delta = useChipDelta(settings, receipt, save);
   const app = useSettings();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -79,6 +85,12 @@ export function AssumptionBar({ settings, save, onEdit = null, onMore = null }) 
           <li><Button variant="quiet" size="sm" onClick={onMore}>{t('pf.abar.more')}</Button></li>
         )}
       </ul>
+      {delta.diff && (
+        <p className="pf-abar-delta" role="status">
+          <span className="money">{deltaText(t, lang, delta.diff)}</span>
+          <Button variant="quiet" size="sm" onClick={delta.undo}>{t('pf.delta.undo')}</Button>
+        </p>
+      )}
       {open && (
         <SheetShell title={t(QUESTIONS[open]?.titleKey || 'pf.sheet')} onClose={close} anchorRef={anchorRef} width={440} className="pf-settings">
           <div className="pf-set-edit">
@@ -88,4 +100,18 @@ export function AssumptionBar({ settings, save, onEdit = null, onMore = null }) 
       )}
     </div>
   );
+}
+
+/**
+ * The words for a change's price difference (G12 L9). A whole-trip figure
+ * only like for like; with a "Not yet" line in both, the difference is
+ * named on the lines that moved ("-40 euros on beds"), never as a cheaper
+ * trip; with different live lines, no figure at all.
+ */
+function deltaText(t, lang, d) {
+  if (!d.comparable) return t('pf.delta.notComparable');
+  const eur = signedMoney(d.total, { locale: lang });
+  if (!d.partial) return t('pf.delta.total', { eur });
+  const names = d.lines.map((x) => t(`pf.delta.l.${x.id}`)).join(', ');
+  return t('pf.delta.lines', { eur, lines: names });
 }

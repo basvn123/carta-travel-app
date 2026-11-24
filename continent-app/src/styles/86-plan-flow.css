@@ -1494,3 +1494,5 @@
 /* G12 L7: the style's own answers on Plan your days, and the check walk on the bar. */
 .pdh-from { margin-left: var(--space-2); font-weight: 400; color: var(--text-2); }
 .pf-abar-check { text-decoration: underline; text-underline-offset: 3px; }
+/* G12 L9: what a chip change did to the price, with Undo. */
+.pf-abar-delta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); color: var(--text); font-size: var(--text-label); font-variant-numeric: tabular-nums; }
