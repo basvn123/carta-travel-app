@@ -443,8 +443,11 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 .vr-m { position: relative; display: grid; gap: var(--space-2); align-content: start; min-width: 0; }
 .vr-m-ph { display: block; aspect-ratio: 3 / 2; border-radius: var(--radius-card); overflow: hidden; }
 .vr-m-none { display: grid; place-items: center; width: 100%; height: 100%; background: var(--surface-sunken); }
-/* A kring or group trip wears its own face, the strip's rounded umber square. */
-.vr-m-none.is-group .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); }
+/* A Nu person row: the 40 px disc at the left of the 96 px slot, on the
+   ground with a hairline ring so every tone reads (no grey slab). */
+.vr-m-ph.is-face { display: flex; align-items: center; background: none; aspect-ratio: auto; height: var(--tap); }
+.vr-m-ph.is-face .frn-face { width: 40px; height: 40px; box-sizing: border-box; border: var(--stroke-hair) solid var(--border); }
+.vr-m-ph.is-group .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); border-color: var(--umber-800); }
 .vr-m-tx { display: grid; gap: var(--space-1); justify-items: start; min-width: 0; }
 .vr-m-faces { display: inline-flex; align-items: center; min-height: 28px; }
 .vr-m-faces .frn-face { box-sizing: content-box; border: 2px solid var(--surface-page); }

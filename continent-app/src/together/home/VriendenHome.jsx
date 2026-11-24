@@ -17,6 +17,7 @@ import { formatMoney } from '../../lib/money.js';
 import { openShared } from '../../lib/sharedElement.js';
 import { haptic } from '../../lib/haptics.js';
 import { togetherActions } from '../useTogether.js';
+import { rankProposals } from '../../lib/circles/rank.js';
 import { laneGeometry } from '../overlaps.js';
 import { IS_FRIENDS_MOCK } from '../friendsMock.js';
 import { InviteButton } from '../Invite.jsx';
@@ -242,7 +243,16 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
 
 /* ---------------------------------------------------------- Nu */
 
-function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk, onExDone }) {
+// The place a Nu row names, for its photo: your trip someone asks to join,
+// a kring's leading proposal, a group trip's first place.
+function nuPlace(w) {
+  if (w.kind === 'join') return (w.plan?.destination_ids || [])[0] || null;
+  if (w.circle) return rankProposals(w.circle.proposals || [], w.circle.votes || [])[0]?.destId || null;
+  if (w.group) return (w.group.options || []).find((o) => o.kind === 'where')?.destId || null;
+  return null;
+}
+
+function NuRow({ w, me, destinations, onView, run, leaving, onLeave, onLater, laterOk, onExDone }) {
   const { t, lang } = useI18n();
   const name = useName();
   const ex = useContext(ExCtx);
@@ -282,6 +292,7 @@ function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk, onExDon
   }
   const fact = w.kind === 'circleVote' ? t(w.n === 1 ? 'vr.voteWait1' : 'vr.votesWait', { n: w.n }) : '';
   const gone = leaving === w.id;
+  const { photo } = placeOf(destinations, [nuPlace(w)].filter(Boolean));
   // In the example an answer plays its end state here and goes nowhere.
   const local = () => onExDone(w.id);
   const press = () => {
@@ -292,11 +303,17 @@ function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk, onExDon
   };
   return (
     <article className={`vr-m is-row is-nu${gone ? ' is-leaving' : ''}`}>
-      <span className="vr-m-ph">
-        <span className={`vr-m-none${w.person.group ? ' is-group' : ''}`} aria-hidden="true">
+      {/* A row that names a place shows its photo; a person row the 40 px
+          face disc on the ground, no grey slab (judge v3-2 fix 3). */}
+      {photo?.image?.url ? (
+        <span className="vr-m-ph">
+          <HeroImage url={photo.image.url} image={photo.image} className="vr-m-img" maxWidth={640} ratio={[3, 2]} sizes="96px" />
+        </span>
+      ) : (
+        <span className={`vr-m-ph is-face${w.person.group ? ' is-group' : ''}`} aria-hidden="true">
           <ToneFace id={w.person.id} me={me} name={w.person.name} emoji={w.person.emoji} />
         </span>
-      </span>
+      )}
       <span className="vr-m-tx">
         <h3 className="vr-m-t">{ex && <span className="sr-only">{t('mt.example')}: </span>}{title}</h3>
         {fact && <span className="vr-m-f">{fact}</span>}
@@ -315,7 +332,7 @@ function NuRow({ w, me, onView, run, leaving, onLeave, onLater, laterOk, onExDon
   );
 }
 
-function NuBand({ items, me, onView, onError, onExDone }) {
+function NuBand({ items, me, destinations, onView, onError, onExDone }) {
   const { t } = useI18n();
   const [later, setLater] = useState([]);
   const [all, setAll] = useState(false);
@@ -344,7 +361,7 @@ function NuBand({ items, me, onView, onError, onExDone }) {
         {shown.map((w) => (
           <li key={w.id} className="vr-mo">
             <span className="vr-gut" aria-hidden="true"><span className="vr-dot is-now" /></span>
-            <NuRow w={w} me={me} onView={onView} run={run} leaving={leaving} onLeave={onLeave}
+            <NuRow w={w} me={me} destinations={destinations} onView={onView} run={run} leaving={leaving} onLeave={onLeave}
               onLater={(id) => setLater((l) => [...l.filter((x) => x !== id), id])} laterOk={items.length > 1} onExDone={onExDone} />
           </li>
         ))}
@@ -748,7 +765,7 @@ export function VriendenHome({
           )}
           <div className="vr-side">
             <Status count={tl.count} next={tl.next} hasFriends={hasFriends} onGo={go} ex={Boolean(ex)} />
-            <NuBand items={tl.now} me={me} onView={onView} onError={onError} onExDone={(id) => setExDone((d) => [...d, id])} />
+            <NuBand items={tl.now} me={me} destinations={destinations} onView={onView} onError={onError} onExDone={(id) => setExDone((d) => [...d, id])} />
             <Roster items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji}
               meLine={!ex && s.me?.handle ? `@${s.me.handle}` : t('vr.whatFriendsSee')} onMe={() => onView('me')} meets={data.meets} onFriend={openFriend} onCircle={(id) => onView('circle', id)}
               onCancel={(linkId) => togetherActions.remove(linkId)} />

@@ -147,7 +147,7 @@ async function timelineRules(page, v) {
     if (!root.querySelector('.vr-status[role="status"]')) out.push('no status line');
     if (root.querySelector('.vr-me-door')) out.push('.vr-me-door present');
     if (/Vraag om mee te gaan/.test(root.innerText) || root.querySelector('.vr-go-ask')) out.push('Vraag om mee te gaan on the home');
-    const cards = [...root.querySelectorAll('.vr-m-ph')].filter(vis);
+    const cards = [...root.querySelectorAll('.vr-m-ph:not(.is-face)')].filter(vis);
     for (const ph of cards) {
       const r = ph.getBoundingClientRect();
       const isWide = wide && ph.closest('.vr-mo.is-wide');
@@ -205,6 +205,14 @@ async function timelineRules(page, v) {
       // The wide overlap card's 2:1 photo is taller by design: its row is skipped.
       const wideTop = [...root.querySelectorAll('.vr-main .vr-mo.is-wide')].filter(vis).map((li) => Math.round(li.getBoundingClientRect().top));
       for (const [k, tops] of rows) if (!wideTop.includes(k) && Math.max(...tops) - Math.min(...tops) > 1) out.push(`titles in a row at ${tops.join(',')}`);
+    }
+    // Judge v3-2 fix 3: every Nu thumbnail holds a photo or one face disc,
+    // never a bare slab.
+    for (const ph of root.querySelectorAll('.vr-band.is-nu .vr-m-ph')) {
+      if (!vis(ph)) continue;
+      const faces = ph.querySelectorAll('.frn-face').length;
+      if (!ph.querySelector('img') && faces !== 1) out.push(`Nu thumbnail with ${faces} faces and no photo`);
+      if (!ph.querySelector('img') && getComputedStyle(ph).backgroundColor !== 'rgba(0, 0, 0, 0)') out.push('Nu face on a slab');
     }
     // Judge v3-1 fix 8: the header door's count is the status line's count.
     if (variant !== 'example') {
