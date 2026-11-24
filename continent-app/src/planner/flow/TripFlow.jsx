@@ -24,6 +24,7 @@ import { recallPlace, rememberPlace } from './flowMemory.js';
 import { tripsStore } from '../tripsStore.js';
 import { RefineCard } from './RefineCard.jsx';
 import { SaveStyleOffer, StyleSwitch } from './StyleBar.jsx';
+import { AssumptionBar } from './AssumptionBar.jsx';
 import NotYet from '../../components/NotYet.jsx';
 import { AirlineMark } from '../../components/flights/Flights.jsx';
 import { useAirlines, airlineName } from '../../lib/flights/useAirlines.js';
@@ -291,7 +292,9 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
           // behind the trips yet; back is the trip's own page.
           onBack={() => setPhase(walked ? questions[questions.length - 1] : 'home')}
           // G12 §12: with no travel style, Save as travel style after the first result.
-          refine={(<>{walked ? null : <RefineCard count={openGuideQuestions(settings).length || questions.length} onFit={start} onSleep={() => reopen('sleep')} />}<SaveStyleOffer settings={settings} /></>)}
+          // G12 §3.3: the shared assumption bar on the list and the found trip.
+          bar={<AssumptionBar settings={settings} save={save} onMore={() => setSettingsOpen(true)} />}
+          refine={(<><AssumptionBar settings={settings} save={save} onMore={() => setSettingsOpen(true)} />{walked ? null : <RefineCard count={openGuideQuestions(settings).length || questions.length} onFit={start} onSleep={() => reopen('sleep')} />}<SaveStyleOffer settings={settings} /></>)}
           headEnd={bar}
           onWiden={reopen}
           edits={finderEdits}

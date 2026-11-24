@@ -439,7 +439,7 @@ function WhenStrip({ trip, destinations, t, lang }) {
  *   onEdit(next)    the trip with a line swapped (a picker)
  *   onOpen(trip)    an alternative opened in its place
  */
-export function FoundTripPage({ trip, settings, destinations, ui, others = [], keepWith = null, onBack, onPlan, onEdit, onOpen }) {
+export function FoundTripPage({ trip, settings, destinations, ui, others = [], keepWith = null, onBack, onPlan, onEdit, onOpen, bar = null }) {
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -529,6 +529,8 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
           <>
             <Gallery photos={photos} name={name} t={t}>{null}</Gallery>
             {head}
+            {/* G12 §3.3: what this price assumed, the same bar as the list. */}
+            {bar}
           </>
         );
       })()}

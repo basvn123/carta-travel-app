@@ -46,6 +46,7 @@ import { useTripSave } from './trip/useTripSave.js';
 import { useTripMap } from './trip/useTripMap.js';
 import { useTripPlannerEffects } from './trip/useTripPlannerEffects.js';
 import { useTripHistory } from './trip/useTripHistory.js';
+import { AssumptionBar } from './flow/AssumptionBar.jsx';
 
 // The trip page's map card and its full-size view (T819): room above each
 // pin, which is drawn about 38 px over its point (tripmap-embed gotchas).
@@ -147,7 +148,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // planner's fields and the trip's own settings (dates, people, from,
   // name), so a chip, a stepper or a typed price all go back the same way.
   const app = useSettings();
-  const [, saveTripSet] = useTripSettings();
+  const [tripSettings, saveTripSet] = useTripSettings();
   const wideTrip = useMedia('(min-width: 1024px)');
   const { hist, toast, setToast, noteRef, headCount, carTip, carDelta } = useTripHistory({ app, countryInsights, lang, saveTripSet, t, tp, tripSet, wizardOpen });
 
@@ -672,6 +673,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       <div className="trip-planner-screen trip-planner-blank">
         <div className="pf is-trip is-trip-page">
           {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
+          {/* G12 §3.3: the shared assumption bar; its chips open the trip
+              settings, which keep the route, dates and party in step. */}
+          <AssumptionBar settings={tripSettings} save={saveTripSet} onEdit={() => setSettingsOpen(true)} onMore={() => setSettingsOpen(true)} />
           <TripPageSummary
             carDelta={carDelta} carTip={carTip} cardMap={cardMap} data={data} fullMap={fullMap}
             handleSave={handleSave} handleStartOver={handleStartOver} headCount={headCount}

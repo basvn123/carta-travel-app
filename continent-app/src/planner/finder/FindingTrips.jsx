@@ -232,7 +232,7 @@ function scrollerOf(el) {
  * The list shows the moment the trips are ranked: back from the planner
  * the run is memoised, so it is there at once (T867: no minimum stand).
  */
-export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, openId: arriveId = null, onBack, onWiden, onPlan, headEnd = null, refine = null }) {
+export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, openId: arriveId = null, onBack, onWiden, onPlan, headEnd = null, refine = null, bar = null }) {
   const { lang } = useI18n();
   const finder = useTripFinder(settings);
   const [openId, setOpenId] = useState(arriveId);
@@ -356,6 +356,7 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
           destinations={finder.data?.destinations}
           ui={ui}
           keepWith={keepWith}
+          bar={bar}
           others={finder.trips ? all : []}
           onBack={closeTrip}
           onOpen={openTrip}
