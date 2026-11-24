@@ -454,6 +454,41 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
             {card(trip, { feat: trip.id === featId })}
           </li>
         );
+        // G12 B7a: Search more also under a list with no themed rows yet (a
+        // small pool, a sort or a filter): the extra pricing still waits for the tap.
+        const searchMoreSection = input && trips.length > 0 && (
+          <section className="tff-search-more" aria-live="polite">
+            {moreFound ? (
+              <>
+                {moreFound.month.length > 0 && (
+                  <>
+                    <h3 className="tff-rows-h">{t('tf.row.month')}</h3>
+                    <ul className="tff-row-cards">
+                      {moreFound.month.map((m) => (
+                        <li key={m.trip.id}>{card(m.trip, { why: t('tf.row.monthWhy', { month: monthName(m.month, lang), eur: formatMoney(-m.diff, { locale: lang }) }) })}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                {moreFound.library.length > 0 && (
+                  <>
+                    <h3 className="tff-rows-h">{t('tf.row.carta')}</h3>
+                    <ul className="tff-row-cards">
+                      {moreFound.library.map((trip) => (
+                        <li key={trip.id}>{card(trip, { why: t('tf.row.cartaWhy', { title: trip.library.title }) })}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                {!moreFound.month.length && !moreFound.library.length && <p className="tff-spendref">{t('tf.more.none')}</p>}
+              </>
+            ) : (
+              <Button variant="secondary" size="sm" disabled={more === 'busy'} onClick={searchMore}>
+                {t(more === 'busy' ? 'tf.more.busy' : 'tf.more.search')}
+              </Button>
+            )}
+          </section>
+        );
         // G12 R2: with rows, the best pick and the diverse five, then the
         // rows, then the rest of the list under "Keep looking".
         const list = rows.length ? (
@@ -475,52 +510,15 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
                 </div>
               ))}
             </section>
-            {input && (
-              <section className="tff-search-more" aria-live="polite">
-                {moreFound ? (
-                  <>
-                    {moreFound.month.length > 0 && (
-                      <>
-                        <h3 className="tff-rows-h">{t('tf.row.month')}</h3>
-                        <ul className="tff-row-cards">
-                          {moreFound.month.map((m) => (
-                            <li key={m.trip.id}>{card(m.trip, { why: t('tf.row.monthWhy', { month: monthName(m.month, lang), eur: formatMoney(-m.diff, { locale: lang }) }) })}</li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
-                    {moreFound.library.length > 0 && (
-                      <>
-                        <h3 className="tff-rows-h">{t('tf.row.carta')}</h3>
-                        <ul className="tff-row-cards">
-                          {moreFound.library.map((trip) => (
-                            <li key={trip.id}>{card(trip, { why: t('tf.row.cartaWhy', { title: trip.library.title }) })}</li>
-                          ))}
-                        </ul>
-                      </>
-                    )}
-                    {!moreFound.month.length && !moreFound.library.length && <p className="tff-spendref">{t('tf.more.none')}</p>}
-                  </>
-                ) : (
-                  <Button variant="secondary" size="sm" disabled={more === 'busy'} onClick={searchMore}>
-                    {t(more === 'busy' ? 'tf.more.busy' : 'tf.more.search')}
-                  </Button>
-                )}
-              </section>
-            )}
+            {searchMoreSection}
             {trips.length > PAGE && <h3 className="tff-more-h">{t('tf.list.keepLooking')}</h3>}
             {shown > PAGE && <ol className="tff-list">{trips.slice(PAGE, shown).map(item)}</ol>}
           </>
         ) : (
-          <ol className="tff-list">
-            {trips.slice(0, shown).map((trip) => (
-              <li key={trip.id} className={[trip.id === featId ? 'is-feat' : '', trip.id === hotId ? 'is-hot' : ''].filter(Boolean).join(' ') || undefined}
-                onMouseEnter={side ? () => setHotId(trip.id) : undefined} onMouseLeave={side ? () => setHotId(null) : undefined}
-                ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
-                {card(trip, { feat: trip.id === featId })}
-              </li>
-            ))}
-          </ol>
+          <>
+            <ol className="tff-list">{trips.slice(0, shown).map(item)}</ol>
+            {searchMoreSection}
+          </>
         );
         const map = (
           <Suspense fallback={<div className="tff-map is-loading" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
