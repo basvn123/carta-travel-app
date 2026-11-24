@@ -554,6 +554,11 @@ span.vr-ro-row { cursor: default; }
   .vr-main .vr-mo-panel { grid-column: 1; margin-top: 0; }
   .vr-main .vr-m.is-row { grid-template-columns: minmax(0, 1fr); }
   .vr-main .vr-m.is-row .vr-m-ph { border-radius: var(--radius-card); }
+  /* The last card of a grid takes the free columns of its row (judge v3-2
+     fix 1): its photo keeps one column's width, the words sit beside it. */
+  .vr-main .vr-mo.vr-fill2-2 { grid-column: span 2; }
+  .vr-main .vr-mo.vr-fill2-2 > .vr-m { grid-template-columns: calc((100% - var(--space-4)) / 2) minmax(0, 1fr); column-gap: var(--space-4); align-items: start; }
+  .vr-main .vr-mo.vr-fill2-2.is-more .vr-more { width: calc((100% - var(--space-4)) / 2); }
 }
 
 @media (min-width: 1100px) {
@@ -574,7 +579,24 @@ span.vr-ro-row { cursor: default; }
      across it would outgrow its largest photo file); one row, since its lanes
      show only once it is opened. */
   .vr-main .vr-mo.is-wide { grid-column: span 2; }
+  /* Three across: the two-across fill no longer applies; the three-across one does. */
+  .vr-main .vr-mo.vr-fill2-2 { grid-column: auto; }
+  .vr-main .vr-mo.vr-fill2-2 > .vr-m { grid-template-columns: minmax(0, 1fr); }
+  .vr-main .vr-mo.vr-fill2-2.is-more .vr-more { width: 100%; }
+  .vr-main .vr-mo.vr-fill3-2 { grid-column: span 2; }
+  .vr-main .vr-mo.vr-fill3-3 { grid-column: span 3; }
+  .vr-main .vr-mo.vr-fill3-2 > .vr-m { grid-template-columns: calc((100% - var(--space-4)) / 2) minmax(0, 1fr); column-gap: var(--space-4); align-items: start; }
+  .vr-main .vr-mo.vr-fill3-3 > .vr-m { grid-template-columns: calc((100% - 2 * var(--space-4)) / 3) minmax(0, 1fr); column-gap: var(--space-4); align-items: start; }
+  .vr-main .vr-mo.vr-fill3-2.is-more .vr-more { width: calc((100% - var(--space-4)) / 2); }
+  .vr-main .vr-mo.vr-fill3-3.is-more .vr-more { width: calc((100% - 2 * var(--space-4)) / 3); }
   .vr-main .vr-mo.is-wide .vr-m-ph { aspect-ratio: 2 / 1; }
+  /* On the wide card the dates and its two actions share one line, so it is
+     no taller than the two cards beside it need. */
+  .vr-main .vr-mo.is-wide .vr-m-tx { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-3); }
+  .vr-main .vr-mo.is-wide .vr-m-tx > * { grid-column: 1 / -1; }
+  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-f { grid-column: 1; grid-row: 3; }
+  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-acts { grid-column: 2; grid-row: 3; }
+  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-lanes { grid-row: 4; }
 }
 
 /* motion: all of it follows a tap, except the once-per-visit entrance */

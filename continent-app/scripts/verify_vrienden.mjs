@@ -177,7 +177,9 @@ async function timelineRules(page, v) {
           .filter((li) => vis(li) && (grid.matches('.is-undated') || !li.closest('.is-undated'))).map((li) => li.getBoundingClientRect());
         const tops = [...new Set(items.map((r) => Math.round(r.top)))].sort((a, b) => a - b);
         const rowTops = tops.filter((t, i) => i === 0 || t - tops[i - 1] > 4);
-        for (const t of rowTops.slice(0, -1)) {
+        // Every row, the last one too (judge v3-2 fix 1): a short last row's
+        // cards span the free columns.
+        for (const t of rowTops) {
           for (const x of xs) {
             if (!items.some((r) => r.left <= x && r.right >= x && r.top <= t + 5 && r.bottom >= t + 5)) out.push(`hole at row ${Math.round(t - g.top)} column ${xs.indexOf(x) + 1}`);
           }

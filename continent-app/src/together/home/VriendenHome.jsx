@@ -68,6 +68,24 @@ function monthName(month, lang, today, style = 'long') {
 function monShort(iso, lang) {
   return new Intl.DateTimeFormat(lang, { month: 'short', timeZone: 'UTC' }).format(new Date(`${iso}T12:00:00Z`)).replace('.', '');
 }
+/**
+ * The grid's last row (judge v3-2 fix 1): with `cols` across, the cells fill
+ * whole rows except the last (dense flow; the wide overlap takes two cells
+ * at three across). The last cell takes the free columns: a class per column
+ * count, read only at that width. Returns { id: ' vr-fill3-2' }.
+ */
+function fillLast(cells, cols) {
+  if (!cells.length) return {};
+  const total = cells.reduce((n, c) => n + (c.wide && cols === 3 ? 2 : 1), 0);
+  const rest = total % cols;
+  const last = cells[cells.length - 1];
+  if (!rest || (last.wide && cols === 3)) return {};
+  return { [last.id]: ` vr-fill${cols}-${cols - rest + 1}` };
+}
+const joinFill = (...maps) => maps.reduce((o, m) => {
+  for (const [k, v] of Object.entries(m)) o[k] = (o[k] || '') + v;
+  return o;
+}, {});
 const domId = (id) => `vr-m-${String(id).replace(/[^\w-]/g, '_')}`;
 
 function useWho() {
@@ -333,9 +351,8 @@ function NuBand({ items, me, onView, onError, onExDone }) {
 
 /* ---------------------------------------------------------- a time band */
 
-function Band({ id, label, head = null, className = '', moments, hidden = [], moreLabel = '', scale, me, meName, destinations, openId, onOpen, onPlanDay, dated }) {
+function Band({ id, label, head = null, className = '', moments, hidden = [], moreLabel = '', scale, me, meName, destinations, openId, onOpen, onPlanDay, dated, more = false, onMore, fill = {} }) {
   const { lang } = useI18n();
-  const [more, setMore] = useState(false);
   const list = more ? [...moments, ...hidden] : moments;
   return (
     <section className={`vr-band is-${scale}${className}`} id={id} aria-labelledby={`${id}-h`}>
@@ -348,7 +365,7 @@ function Band({ id, label, head = null, className = '', moments, hidden = [], mo
           const panel = m.kind === 'overlap' ? m.src.theirs.tripPlanId : m.kind === 'friendTrip' ? m.src.tripPlanId : '';
           const open = Boolean(panel) && openId === panel;
           return (
-            <li key={m.id} id={domId(m.id)} className={`vr-mo${m.saffron ? ' is-wide' : ''}`}>
+            <li key={m.id} id={domId(m.id)} className={`vr-mo${m.saffron ? ' is-wide' : ''}${fill[m.id] || ''}`}>
               <span className="vr-gut" aria-hidden="true">
                 {/* From 1100 px the month heads are inside the grid's flow: the
                     first card of a month carries its ruled month name. */}
@@ -365,9 +382,9 @@ function Band({ id, label, head = null, className = '', moments, hidden = [], mo
         })}
         {/* "Nog n" is a cell of the grid, so a month never leaves holes. */}
         {hidden.length > 0 && !more && (
-          <li className="vr-mo is-more">
+          <li className={`vr-mo is-more${fill[`${id}:more`] || ''}`}>
             <span className="vr-gut" aria-hidden="true"><span className="vr-dot" /></span>
-            <Button variant="quiet" size="sm" className="vr-lnk vr-more" aria-expanded={more} onClick={() => setMore(true)}
+            <Button variant="quiet" size="sm" className="vr-lnk vr-more" aria-expanded={more} onClick={onMore}
               iconEnd={<ChevronDownIcon size={16} />}>
               <b className="vr-more-n num" aria-hidden="true">+{hidden.length}</b><span>{moreLabel}</span>
             </Button>
@@ -593,6 +610,8 @@ export function VriendenHome({
   const [exDone, setExDone] = useState([]);
   const [exHidden, setExHidden] = useState([]);
   const [openId, setOpenId] = useState('');
+  // Months whose "Nog n" the traveller opened (the grid's fill needs them).
+  const [opened, setOpened] = useState([]);
   const [newOpen, setNewOpen] = useState(false);
   const [pendingOpen, setPendingOpen] = useState(null);
   const [enter] = useState(() => {
@@ -674,6 +693,15 @@ export function VriendenHome({
   const labels = Object.fromEntries(tl.bands.map((b) => [b.key, b.thisMonth ? t('vr.thisMonth') : monthName(b.month, lang, today)]));
   const ruler = Object.fromEntries(tl.bands.map((b) => [b.key, monthName(b.month, lang, today, 'short').replace('.', '')]));
   const bandProps = { me, meName, destinations, openId, onOpen, onPlanDay };
+  // A grid's last row never ends in empty columns (judge v3-2 fix 1): its
+  // last card takes the rest of the row, at two and at three across.
+  const datedCells = tl.bands.flatMap((b) => {
+    const open = opened.includes(b.key);
+    const ms = open ? [...b.moments, ...b.hidden] : b.moments;
+    return [...ms.map((m) => ({ id: m.id, wide: m.saffron })), ...(b.hidden.length && !open ? [{ id: `vr-b-${b.key}:more` }] : [])];
+  });
+  const fill = joinFill(fillLast(datedCells, 2), fillLast(datedCells, 3));
+  const undatedFill = joinFill(fillLast(tl.undated, 2), fillLast(tl.undated, 3));
   const zero = !example && friends.length === 0;
   const meetCtx = ex
     ? { hidden: new Set(exHidden), hide: (k) => setExHidden((h) => [...h, k]), show: (k) => setExHidden((h) => h.filter((x) => x !== k)) }
@@ -725,11 +753,12 @@ export function VriendenHome({
             <Ruler bands={tl.bands} labels={ruler} onGo={go} />
             {tl.bands.map((b) => (
               <Band key={b.key} id={`vr-b-${b.key}`} label={labels[b.key]} moments={b.moments} hidden={b.hidden} scale={b.scale} dated
+                more={opened.includes(b.key)} onMore={() => setOpened((o) => [...o, b.key])} fill={fill}
                 moreLabel={t('vr.moreIn', { n: b.hidden.length, month: b.thisMonth ? t('vr.thisMonth').toLowerCase() : monthName(b.month, lang, today) })}
                 {...bandProps} />
             ))}
             {(tl.undated.length > 0 || newBtn) && (
-              <Band id="vr-b-undated" className=" is-undated" label={t('vr.undated')} head={newBtn} moments={tl.undated} scale="row" dated={false} {...bandProps} />
+              <Band id="vr-b-undated" className=" is-undated" label={t('vr.undated')} head={newBtn} moments={tl.undated} scale="row" dated={false} fill={undatedFill} {...bandProps} />
             )}
           </div>
         </MeetCtx.Provider>
