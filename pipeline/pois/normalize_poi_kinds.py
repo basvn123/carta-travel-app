@@ -133,13 +133,13 @@ DESC_KIND = [
     ("River", r"\briver\b"),
     ("Island", r"\b(island|islet|peninsula)\b"),
     ("Peak", r"\b(mountain|peak|hill|volcano|mountain pass)\b"),
-    ("Cave", r"\b(cave|cave system|cavern|grotto|grotte|h[oö]hle)\b"),
+    ("Cave", r"\b(cave|cave system|cavern|grotto|grotte|grotta|cueva|jaskinia|jeskyně|h[oö]hle)\b"),
     ("Park", r"\b(park|public park|country park|botanical garden|arboretum|garden|gardens|nature reserve|protected area|national park)\b"),
     ("Stadium", r"\b(stadium|arena|velodrome)\b"),
     # a town hall is a building to see, not a town (Gdansk Main Town Hall, Roemer)
     ("Palace", r"\b(town hall|city hall|town house|guildhall|rathaus|hotel de ville|hôtel de ville|raadhuis|stadhuis)\b"),
     ("Town", r"\b(town|city|market town|capital|city and municipality)\b"),
-    ("Village", r"\b(village|hamlet|comune|commune|municipality|human settlement|settlement|civil parish|former municipality|neighbourhood|gemeente|community|municipal unit)\b"),
+    ("Village", r"\b(village|hamlet|comune|commune|municipality|human settlement|settlement|civil parish|former municipality|neighbourhood|gemeente|community(?!\s+cent(?:re|er))|municipal unit)\b"),
 ]
 DESC_KIND = [(k, re.compile(p, re.IGNORECASE)) for k, p in DESC_KIND]
 

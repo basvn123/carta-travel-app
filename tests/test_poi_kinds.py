@@ -114,6 +114,14 @@ def test_event_names_with_ordinals_and_on():
         assert n.classify_poi(poi(name))["noise_reason"] == "event", name
 
 
+def test_a_community_centre_is_not_a_village_and_a_cueva_is_a_cave():
+    assert n.classify_poi(poi("Celje Hall", desc="Slovenian community center"),
+                          known=KNOWN)["kind"] not in ("Village", "Square")
+    assert n.classify_poi(poi("Cueva de Nerja", desc="cueva de riqueza geologica"))["kind"] != "Square"
+    assert n.classify_poi(poi("Cueva de Nerja", desc="cueva de riqueza geologica"),
+                          known=KNOWN | {"Cave"})["kind"] == "Cave"
+
+
 def test_a_town_hall_is_not_a_town():
     for name, desc in (("Gdansk Main Town Hall", "Town hall in Gdansk"),
                        ("Roemer", "City hall in Frankfurt"),
