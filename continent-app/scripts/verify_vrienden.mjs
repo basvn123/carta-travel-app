@@ -263,7 +263,10 @@ async function sharpness(page) {
       el.scrollTop = 0;
     }
   });
-  await page.waitForTimeout(1200);
+  // Photos come from remote hosts: wait for each one (up to 12 s) rather
+  // than a fixed pause, so a busy machine does not read as a missing photo.
+  await page.waitForFunction(() => [...document.querySelectorAll('.tg-panel .vr-m-ph img')]
+    .every((el) => !el.getBoundingClientRect().width || (el.complete && el.naturalWidth)), null, { timeout: 12000 }).catch(() => {});
   return page.evaluate(async () => {
     const root = document.querySelector('.tg-panel');
     const out = [];
