@@ -537,6 +537,8 @@ span.vr-ro-row { cursor: default; }
   .vr-main .vr-band, .vr-main .vr-band-l { display: contents; }
   .vr-main .vr-band:not(.is-undated) > .vr-band-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .vr-main .vr-band-head { margin-top: 0; }
+  /* The Nu band's spine ends before the first month head (judge v3-3). */
+  .vr-v3 .vr-side + .vr-main { margin-top: var(--space-7); }
   /* Room for the first month's ruled head when no month ruler sits above it. */
   .vr-v3 .vr-main:not(:has(> .vr-ruler)) { padding-top: var(--space-5); }
   /* The spine: every cell stands on a 1.5 px umber rule with its date plate
@@ -581,6 +583,7 @@ span.vr-ro-row { cursor: default; }
     max-height: calc(100dvh - 120px); overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-inline-end: var(--space-2);
   }
   .vr-v3 .vr-main { grid-column: 2; }
+  .vr-v3 .vr-side + .vr-main { margin-top: 0; }
   .vr-v3 .vr-status { position: static; }
   /* No friends yet: the first-use block heads the right column and your own
      trips run under it across the width; the status and Jij sit left. */

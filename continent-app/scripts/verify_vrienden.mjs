@@ -214,6 +214,17 @@ async function timelineRules(page, v) {
       if (!ph.querySelector('img') && faces !== 1) out.push(`Nu thumbnail with ${faces} faces and no photo`);
       if (!ph.querySelector('img') && getComputedStyle(ph).backgroundColor !== 'rgba(0, 0, 0, 0)') out.push('Nu face on a slab');
     }
+    // Judge v3-3: a month head never touches the Nu band; where the two share
+    // a column it sits at least 16 px below the band's end.
+    const nu = root.querySelector('.vr-band.is-nu');
+    if (nu && vis(nu)) {
+      const n = nu.getBoundingClientRect();
+      for (const mh of root.querySelectorAll('.vr-mo-month')) {
+        if (!vis(mh)) continue;
+        const r = mh.getBoundingClientRect();
+        if (r.left < n.right && r.right > n.left && r.top < n.bottom + 16 && r.bottom > n.top - 16) out.push(`month head ${Math.round(r.top - n.bottom)} px from the Nu band`);
+      }
+    }
     // Judge v3-1 fix 8: the header door's count is the status line's count.
     if (variant !== 'example') {
       const door = document.querySelector('.tg-door-n')?.textContent.trim() || '0';
