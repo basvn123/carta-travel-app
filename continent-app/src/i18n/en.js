@@ -2446,6 +2446,7 @@ export const en = {
   "vr.whatFriendsSee": "What friends see",
   "vr.earned": "Earned",
   "vr.locked": "Not yet",
+  "vr.purpose": "See when your friends travel and plan together",
   "vr.showDays": "Show the days",
   "vr.waitsOnYou1": "waits for you",
   "vr.waitsOnYou": "wait for you",

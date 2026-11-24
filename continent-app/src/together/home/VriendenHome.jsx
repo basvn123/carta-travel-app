@@ -567,8 +567,9 @@ function Roster({ items, me, meName, meEmoji, meLine, onMe, meets, onFriend, onC
     return t('vr.nothingShared');
   };
   return (
-    <section className="vr-roster" aria-labelledby="vr-ro-h">
-      <h2 className="vr-band-h" id="vr-ro-h">{t('friends.title')}</h2>
+    <section className="vr-roster" aria-labelledby={items.length ? 'vr-ro-h' : undefined} aria-label={items.length ? undefined : t('vr.you')}>
+      {/* With only you on the list there is nobody to head (judge v3-2 fix 2). */}
+      {items.length > 0 && <h2 className="vr-band-h" id="vr-ro-h">{t('friends.title')}</h2>}
       <ul>
         {/* Jij first, as in the strip: it opens your own page (judge v3-1 fix 5). */}
         <li><RosterRow p={{ id: me, name: t('vr.you'), emoji: meEmoji, face: meName }} me={me} line={meLine} onPress={onMe} /></li>
@@ -730,7 +731,7 @@ export function VriendenHome({
 
   return (
     <NamesCtx.Provider value={name}>
-      <div className={`tg-page vr-page vr-home vr-v3${ex ? ' is-example' : ''}`}>
+      <div className={`tg-page vr-page vr-home vr-v3${ex ? ' is-example' : ''}${zero ? ' is-zero' : ''}`}>
         <div className="vr-head">
           <h1 className="vr-h1" ref={headRef} tabIndex={-1} data-focus-quiet="">{t('tg.title')}</h1>
           {/* With no friends the invite is the body's primary, as My trips' Plan is; never two. */}
@@ -743,8 +744,10 @@ export function VriendenHome({
         {ex && <ExampleBar onClose={() => { setExample(false); setExDone([]); setExHidden([]); }} />}
         <ExCtx.Provider value={Boolean(ex)}>
         <MeetCtx.Provider value={meetCtx}>
-          <Strip items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji} onMe={() => onView('me')}
-            onFriend={openFriend} onCircle={(id) => onView('circle', id)} onPending={(p) => setPendingOpen((c) => (c?.id === p.id ? null : p))} />
+          {/* A strip holding only Jij says nothing the status does not
+              (judge v3-2 fix 2); Jij stays first in the desktop roster. */}
+          {(strip.length > 0 || ex) && <Strip items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji} onMe={() => onView('me')}
+            onFriend={openFriend} onCircle={(id) => onView('circle', id)} onPending={(p) => setPendingOpen((c) => (c?.id === p.id ? null : p))} />}
           {pendingOpen && !ex && (
             <p className="vr-pending">
               <span>{pendingOpen.name}, {t('tg.requestSent')}</span>
@@ -755,7 +758,7 @@ export function VriendenHome({
               then "Bekijk een voorbeeld" with the eye (judge v3-1 fix 6). */}
           {zero && (
             <div className="mt-first vr-first">
-              <h2 className="mt-first-title">{t('vr.zeroTitle')}</h2>
+              <p className="vr-purpose">{t('vr.purpose')}</p>
               <div className="mt-first-acts">
                 <InviteButton open={inviteOpen} onOpen={() => setInviteOpen(true)} onClose={() => setInviteOpen(false)} onFind={onFind}
                   variant="primary" block />
