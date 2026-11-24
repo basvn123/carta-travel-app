@@ -5,7 +5,11 @@
  *
  *   - a sentence cites at least one note, and only notes that exist
  *   - every figure in it is written in a note (or in the question)
- *   - every catalogue place it names is in the notes
+ *   - every figure is written in a note the sentence CITES (or in the question)
+ *     (A3: a right figure from the wrong note, place, day or trip is dropped)
+ *   - every catalogue place it names is in the notes, and in a cited note
+ *     or the question; a day it names ("day 2") is the day a cited note names
+ *   - with the noFigures option no figure shows at all (batch prose, L3)
  *   - a comparison or a verdict ("cheaper", "drier", "best") cites a note
  *     the code wrote for it (kind 'cmp', context.js comparisonNotes, T563)
  *   - a figure the notes give only as an estimate keeps its "~"
@@ -14,6 +18,10 @@
  * A failing sentence is dropped. When more than WITHDRAW of the sentences
  * fail, or none pass, the written answer is withdrawn and the facts answer
  * stays. Pure; runs in the browser on the stream and in node tests.
+ *
+ * Residual, stated: a sentence that names no place or day and cites a note
+ * that holds the same value by coincidence still passes (decision 2.1; the
+ * planted eval reports its share, results.md of the wave 4 run).
  */
 import { stripDashes } from '../format.js';
 import { foldName } from '../searchIndex.js';
@@ -87,39 +95,70 @@ const NOT_A_VERDICT = new RegExp([
   'beste reistijd', 'beste reisezeit',
 ].join('|'), 'g');
 
+// A day named in a sentence ("day 2", "Tag 3", "dag 2", "jour 2", "dia 2", "giorno 2"): the same
+// label and number must be written in a cited note, or "day 2" under a day 3 note slips through
+// on a "2" that happens to be a rain figure.
+const DAY_LABEL = /(?:^|[^\p{L}])(day|dag|tag|jour|dia|giorno)\s+(\d{1,3})(?![\d.,]\d)/giu;
+
+const hasName = (foldedText, name) => foldedText.includes(foldName(name));
+
 /**
  * The checker for one pack.
  *
  *   pack         context.js buildPack()
  *   knownPlaces  every catalogue city name ([name]), to catch a place the
  *                notes never mention
+ *   opts         { noFigures } the sentence may hold no figure at all (batch
+ *                prose, and live Ask once its figures come from code, L3):
+ *                a digit, a currency sign or a per cent outside a place name
+ *                fails with `figure-free`
+ *
+ * The old whole-pack rules run first and keep their reasons (figure, place,
+ * compare, estmark); the cited-note rules (A3, decision 2.1) add their own
+ * reasons after them, so nothing the old checker failed can pass now.
  */
-export function makeChecker(pack, knownPlaces = []) {
+export function makeChecker(pack, knownPlaces = [], opts = {}) {
   const noteText = pack.notes.map((n) => n.text).join(' ');
   const allowedFigures = new Set([...figuresOf(noteText), ...figuresOf(pack.question)]);
   const allowedText = foldName(`${noteText} ${pack.question}`);
   // Names of two letters or more that start with a capital, written as the
   // catalogue writes them; a name the notes or the question carry is fine.
-  const watch = [...new Set(knownPlaces)]
+  const names = [...new Set(knownPlaces)]
     .map((n) => String(n || '').replace(/\s*\(.*\)$/, '').trim())
-    .filter((n) => n.length >= 4 && /^\p{Lu}/u.test(n) && !allowedText.includes(foldName(n)));
-  const watchRe = watch.length
-    ? new RegExp(`(?:^|[^\\p{L}])(${watch.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?=$|[^\\p{L}])`, 'u')
-    : null;
+    .filter((n) => n.length >= 4 && /^\p{Lu}/u.test(n));
+  const nameRe = (list) => (list.length
+    ? new RegExp(`(?:^|[^\\p{L}])(${list.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})(?=$|[^\\p{L}])`, 'gu')
+    : null);
+  const watch = names.filter((n) => !allowedText.includes(foldName(n)));
+  const watchRe = nameRe(watch);
+  // The names the notes or the question do carry: such a name must sit in a note the sentence cites.
+  const seenRe = nameRe(names.filter((n) => allowedText.includes(foldName(n))));
+  let everyRe = null; // every name, only built for noFigures
   const cmpNotes = new Set(pack.notes.filter((n) => n.kind === 'cmp').map((n) => n.n));
   const noteFold = pack.notes.map((n) => foldName(n.text));
+  const questionFold = foldName(pack.question);
+  // Per note, the figures and the estimate-only figures it holds. A sentence's figures
+  // must come from the notes it cites (plus the question), not from any note of the pack.
+  const figuresByNote = pack.notes.map((n) => new Set(figuresOf(n.text)));
+  const questionFigures = new Set(figuresOf(pack.question));
   // Figures the notes write only as estimates ("~€87 est."): the sentence
   // must carry the tilde too.
-  const exact = new Set(figuresOf(noteText.replace(/~\s*[^\s;,]*\d[\d.,]*/g, ' ')));
-  const estOnly = new Set((noteText.match(/~\s*[^\s;,]*?\d[\d.,]*/g) || []).flatMap(figuresOf).filter((f) => !exact.has(f)));
-  return function check(sentence) {
+  const estOf = (text) => {
+    const exactSet = new Set(figuresOf(text.replace(/~\s*[^\s;,]*\d[\d.,]*/g, ' ')));
+    return new Set((text.match(/~\s*[^\s;,]*?\d[\d.,]*/g) || []).flatMap(figuresOf).filter((f) => !exactSet.has(f)));
+  };
+  const estOnly = estOf(noteText);
+  const estOnlyByNote = pack.notes.map((n) => estOf(n.text));
+  return function check(sentence, { noFigures = opts.noFigures } = {}) {
     const why = [];
     if (!sentence.cites.length) why.push('nocite');
     if (sentence.cites.some((c) => c < 1 || c > pack.notes.length)) why.push('badcite');
-    for (const f of figuresOf(sentence.text)) {
+    const sentenceFigures = figuresOf(sentence.text);
+    for (const f of sentenceFigures) {
       if (!allowedFigures.has(f)) { why.push(`figure:${f}`); break; }
     }
-    const hit = watchRe ? sentence.text.match(watchRe) : null;
+    if (watchRe) watchRe.lastIndex = 0;
+    const hit = watchRe ? watchRe.exec(sentence.text) : null;
     if (hit) why.push(`place:${hit[1]}`);
     const folded = foldName(sentence.text).replace(NOT_A_VERDICT, ' ');
     const verdict = folded.match(COMPARE);
@@ -127,7 +166,38 @@ export function makeChecker(pack, knownPlaces = []) {
     // note that makes the same comparison itself (a guide's "quieter than").
     if (verdict && !sentence.cites.some((c) => cmpNotes.has(c)
       || (noteFold[c - 1] || '').replace(NOT_A_VERDICT, ' ').includes(verdict[1]))) why.push(`compare:${verdict[1]}`);
-    if (!sentence.text.includes('~') && figuresOf(sentence.text).some((f) => estOnly.has(f))) why.push('estmark');
+    if (!sentence.text.includes('~') && sentenceFigures.some((f) => estOnly.has(f))) why.push('estmark');
+
+    // The cited-note rules (A3). They need a real cite: a sentence without one has already failed.
+    const cited = [...new Set(sentence.cites.filter((c) => c >= 1 && c <= pack.notes.length))];
+    if (cited.length) {
+      const okFigure = new Set(questionFigures);
+      for (const c of cited) for (const f of figuresByNote[c - 1]) okFigure.add(f);
+      const stray = sentenceFigures.find((f) => allowedFigures.has(f) && !okFigure.has(f));
+      if (stray) why.push(`figure-uncited:${stray}`);
+      const citedFold = cited.map((c) => noteFold[c - 1]).join(' ');
+      const seen = seenRe ? [...sentence.text.matchAll(seenRe)].map((m) => m[1]) : [];
+      const lost = seen.find((name) => !hasName(citedFold, name) && !hasName(questionFold, name));
+      if (lost) why.push(`place-uncited:${lost}`);
+      for (const m of foldName(sentence.text).matchAll(DAY_LABEL)) {
+        const label = new RegExp(`(?:^|[^\\p{L}])${m[1]}\\s+${m[2]}(?![\\d.,]\\d)`, 'u');
+        if (!label.test(citedFold) && !label.test(questionFold)) { why.push(`subject-uncited:${m[1]} ${m[2]}`); break; }
+      }
+      if (!sentence.text.includes('~')) {
+        const estCited = new Set();
+        const exactCited = new Set();
+        for (const c of cited) {
+          for (const f of estOnlyByNote[c - 1]) estCited.add(f);
+          for (const f of figuresByNote[c - 1]) if (!estOnlyByNote[c - 1].has(f)) exactCited.add(f);
+        }
+        if (!why.includes('estmark') && sentenceFigures.some((f) => estCited.has(f) && !exactCited.has(f))) why.push('estmark');
+      }
+    }
+    if (noFigures) {
+      everyRe ||= nameRe(names);
+      const bare = everyRe ? sentence.text.replace(everyRe, (m, name) => m.replace(name, ' ')) : sentence.text;
+      if (/[\d€£$%]/.test(bare)) why.push('figure-free');
+    }
     return { text: stripDashes(sentence.text), cites: sentence.cites, ok: why.length === 0, why };
   };
 }
@@ -136,8 +206,8 @@ export function makeChecker(pack, knownPlaces = []) {
  * The whole written answer checked: the sentences that pass, the ones that
  * did not (for the report and tests), and whether to withdraw it.
  */
-export function verifyAnswer(text, pack, knownPlaces = []) {
-  const check = makeChecker(pack, knownPlaces);
+export function verifyAnswer(text, pack, knownPlaces = [], opts = {}) {
+  const check = makeChecker(pack, knownPlaces, opts);
   const { sentences } = splitSentences(text);
   const checked = sentences.map(check);
   const kept = checked.filter((s) => s.ok);

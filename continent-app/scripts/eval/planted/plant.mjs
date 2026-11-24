@@ -47,12 +47,17 @@ export function figuresOf(text) {
 
 const has = (text, value) => norm(text).includes(norm(value));
 
-/** The sentence of a note that holds `value`, cut to a readable length. */
+/** The sentence of a note that holds `value`, cut to a readable length around the value (a cut that lost it made a plant that planted nothing). */
 function sentenceWith(text, value) {
   const parts = String(text).split(/(?<=[.!?])\s+/);
   const hit = parts.find((p) => has(p, value)) || String(text);
   const s = hit.replace(/\s*\[\d+\]/g, '').trim();
-  return s.length > 180 ? `${s.slice(0, 177).trimEnd()}...` : s;
+  if (s.length <= 180) return s;
+  const esc = String(value).trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/\s+/g, '\\s*');
+  const at = s.search(new RegExp(esc));
+  const from = Math.max(0, Math.min(at < 0 ? 0 : at - 60, s.length - 180));
+  const cut = s.slice(from, from + 180);
+  return `${from > 0 ? '...' : ''}${cut.trim()}${from + 180 < s.length ? '...' : ''}`;
 }
 
 const asSentence = (s, cite) => `${s.replace(/[.!?]+$/, '')}. [${cite}]`;

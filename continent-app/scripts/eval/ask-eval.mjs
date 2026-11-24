@@ -59,7 +59,7 @@ import { priceDays, DEFAULT_PRICE_REQUEST } from '../../src/lib/price/index.js';
 import { ASK_BM25_OPTIONS, bm25Doc } from '../../functions/_lib/askTerms.js';
 import { SPARSE_PER_SOURCE, loadSparse, sparseSearch } from '../../functions/_lib/askSparse.js';
 import { makeLinker, linkPlace } from '../../src/lib/linking/linker.js';
-import { scoreList, groundingChecks, summarise, gate, TOLERANCE } from './ask-eval-lib.mjs';
+import { scoreList, groundingChecks, groupRanks, summarise, gate, TOLERANCE } from './ask-eval-lib.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const app = resolve(here, '../..');
@@ -192,6 +192,34 @@ const strings = (a) => {
   return out.filter((s) => s != null).map(String);
 };
 
+/**
+ * Why a labelled place missed the top ten (A3, S5): one cause per missed group, the first stage that
+ * explains it. A heuristic read of the pipeline, not a trace: parse (the question left words the parser
+ * could not place, or no usable intent), filter (the place fails the facets), pool (a retriever ran and
+ * did not bring it back), rank (it was there and ranked below ten). 'catalogue' = no id of the group is
+ * in the shipped catalogue, so no stage could have found it.
+ */
+export function diagnose(groups, { intent, facts, found, retriever, ctx, today, cardIds }) {
+  const ranks = groupRanks(cardIds, groups);
+  let pred = null;
+  if (intent.type === 'find' || intent.type === 'near') {
+    try { pred = predicateOf(intent, { ...ctx, today }, new Set(facts.relaxed)); } catch { pred = null; }
+  }
+  const parseBad = intentIsEmpty(intent) || (intent.unknown?.length || 0) > 0;
+  return groups.map((g, i) => {
+    const r = ranks[i];
+    if (r >= 0 && r < 10) return { hit: true, rank: r };
+    const dests = g.map((id) => ctx.byId.get(id)).filter(Boolean);
+    let cause;
+    if (!dests.length) cause = 'catalogue';
+    else if (parseBad) cause = 'parse';
+    else if (pred && !dests.some((d) => pred(d))) cause = 'filter';
+    else if (retriever && !(found?.retrieved && g.some((id) => found.retrieved.has(id)))) cause = 'pool';
+    else cause = 'rank';
+    return { hit: false, rank: r, cause };
+  });
+}
+
 async function runCase(c, retriever, env) {
   const { vocab, ctx, today, t, labels } = env;
   const raw = parseIntent(c.q, { vocab, lang: c.lang, now: today, link: env.link });
@@ -229,6 +257,7 @@ async function runCase(c, retriever, env) {
   const out = { abstained, checks: groundingChecks(c.facts, read), top: cardIds.slice(0, 5) };
   if (env.dump?.includes(c.id)) out.notes = pack.notes.map((n) => `[${n.n}] ${n.text}`);
   if (c.places) {
+    out.diag = diagnose(c.places, { intent, facts, found, retriever, ctx, today, cardIds });
     out.cards = scoreList(cardIds, c.places);
     if (found?.retrieved) out.list = scoreList([...found.retrieved.keys()], c.places);
     else if (retriever) out.list = scoreList([], c.places);

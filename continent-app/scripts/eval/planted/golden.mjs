@@ -23,9 +23,12 @@ export function loadGolden() {
 }
 
 /** Score the frozen plants and the hand plants with `verify` ({ makeChecker, splitSentences }). */
-export function scoreGolden(verify, opts) {
+export function scoreGolden(verify, opts, { packLimit = null } = {}) {
   const g = loadGolden();
-  const generated = scorePlants(g.plants, (p) => g.packs[p.pack].pack, g.knownPlaces, verify, opts);
+  // packLimit: the first N packs only (a quick run for unit tests; CI's eval scores all).
+  const keep = packLimit ? new Set(Object.keys(g.packs).slice(0, packLimit)) : null;
+  const plants = keep ? g.plants.filter((p) => keep.has(p.pack)) : g.plants;
+  const generated = scorePlants(plants, (p) => g.packs[p.pack].pack, g.knownPlaces, verify, opts);
   const hand = scorePlants(handPlants(), (p) => p.pack, g.knownPlaces, verify, opts);
   // The reversed comparisons: expected to pass (the residual of the comparison rule), counted apart.
   const rev = reversedProbes();
@@ -33,7 +36,7 @@ export function scoreGolden(verify, opts) {
     const r = scorePlants([{ ...p, expect: 'drop' }], () => p.pack, g.knownPlaces, verify, opts);
     return { id: p.id, dropped: r.dropped === 1 };
   });
-  return { generated, hand, reversed, plants: g.plants.length, packs: Object.keys(g.packs).length, seed: g.seed };
+  return { generated, hand, reversed, plants: plants.length, packs: Object.keys(g.packs).length, seed: g.seed };
 }
 
 async function main() {
@@ -47,6 +50,7 @@ async function main() {
   const row = (name, x) => console.log(`${name.padEnd(20)} ${String(x.dropped).padStart(5)}/${String(x.planted).padEnd(5)} ${(x.dropShare * 100).toFixed(1)}%`);
   console.log(`verifier ${which}: ${r.plants} generated plants over ${r.packs} packs`);
   for (const [k, v] of Object.entries(r.generated.byKind)) row(k, v);
+  console.log(`  of the survivors, ${r.generated.explained} hold the value in a cited note or the question by the verifier's reading (${JSON.stringify(r.generated.explainedBy)}); unexplained ${r.generated.survivors.length}`);
   row('ALL generated', { dropped: r.generated.dropped, planted: r.generated.planted, dropShare: r.generated.dropShare });
   for (const [k, v] of Object.entries(r.hand.byKind)) row(`hand ${k}`, v);
   row('ALL hand', { dropped: r.hand.dropped, planted: r.hand.planted, dropShare: r.hand.dropShare });

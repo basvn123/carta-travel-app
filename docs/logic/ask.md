@@ -201,7 +201,8 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 ### ASK-030 Every sentence is checked
 - Decides: which model sentences the traveller sees.
 - Rule: a sentence shows only once finished ("9.1" and "est. a day" do not end it) and only if it cites at least one existing note, every figure in it is in a note or the question, it names no catalogue place (4+ letters, capitalised) missing from the notes and question; `<think>` blocks, markup and dashes are removed.
-- Constant: `makeChecker` in `continent-app/src/lib/ask/verify.js:97`
+- Rule (A3, wave 4): every figure and every catalogue place must also sit in a note the sentence cites or in the question (`figure-uncited`, `place-uncited`), a named day must be in a cited note (`subject-uncited`), option `noFigures` fails any figure (`figure-free`). Stated residual: the same value in the cited note passes.
+- Constant: `makeChecker` in `continent-app/src/lib/ask/verify.js`
 - Test: `continent-app/tests/askGenerate.test.mjs` :: "the checker drops invented figures, places and uncited sentences"
 - Test: `continent-app/tests/askGenerate.test.mjs` :: "sentences split on end marks, never inside 9.1 or est."
 
