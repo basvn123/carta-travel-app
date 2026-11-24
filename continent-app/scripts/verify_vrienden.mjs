@@ -190,6 +190,22 @@ async function timelineRules(page, v) {
         }
       }
     }
+    // Judge v3-2 fix 5: in a grid row the card titles share one top.
+    if (grid) {
+      const rows = new Map();
+      for (const li of root.querySelectorAll('.vr-main .vr-mo:not(.is-more)')) {
+        if (!vis(li) || /vr-fill/.test(li.className)) continue;
+        if (window.innerWidth >= 1100 ? /vr-fill3/.test(li.className) : /vr-fill2/.test(li.className)) continue;
+        const tt = li.querySelector('.vr-m-t');
+        if (!tt) continue;
+        const k = Math.round(li.getBoundingClientRect().top);
+        if (!rows.has(k)) rows.set(k, []);
+        rows.get(k).push(Math.round(tt.getBoundingClientRect().top));
+      }
+      // The wide overlap card's 2:1 photo is taller by design: its row is skipped.
+      const wideTop = [...root.querySelectorAll('.vr-main .vr-mo.is-wide')].filter(vis).map((li) => Math.round(li.getBoundingClientRect().top));
+      for (const [k, tops] of rows) if (!wideTop.includes(k) && Math.max(...tops) - Math.min(...tops) > 1) out.push(`titles in a row at ${tops.join(',')}`);
+    }
     // Judge v3-1 fix 8: the header door's count is the status line's count.
     if (variant !== 'example') {
       const door = document.querySelector('.tg-door-n')?.textContent.trim() || '0';

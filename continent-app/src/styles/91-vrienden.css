@@ -446,20 +446,20 @@ button.vr-day:focus-visible { outline: var(--stroke-focus) solid var(--focus); o
 /* A kring or group trip wears its own face, the strip's rounded umber square. */
 .vr-m-none.is-group .frn-face { border-radius: var(--radius-panel); background: var(--umber-800); color: var(--action-text); }
 .vr-m-tx { display: grid; gap: var(--space-1); justify-items: start; min-width: 0; }
-.vr-m-faces { display: inline-flex; align-items: center; }
+.vr-m-faces { display: inline-flex; align-items: center; min-height: 28px; }
 .vr-m-faces .frn-face { box-sizing: content-box; border: 2px solid var(--surface-page); }
 .vr-m-faces .frn-face + .frn-face { margin-left: -6px; }
 .vr-m-more { margin-inline-start: var(--space-1); font-size: var(--text-micro); font-weight: 700; color: var(--text-2); }
 .vr-m-t { width: 100%; margin: 0; font-size: var(--text-lead); font-weight: 700; line-height: 1.25; overflow-wrap: anywhere; }
-.vr-m-go { display: flex; align-items: center; width: 100%; min-height: var(--tap); padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: start; cursor: pointer; }
-span.vr-m-go { display: block; min-height: 0; }
+.vr-m-go { display: grid; gap: 2px; align-content: start; justify-items: start; width: 100%; min-height: var(--tap); padding: 0; border: 0; background: none; font: inherit; color: inherit; text-align: start; cursor: pointer; }
+span.vr-m-go { min-height: 0; }
 /* The title is the card's one link; its hit area covers the card, and the
    actions sit above it (no button inside a button). */
 button.vr-m-go::after { content: ""; position: absolute; inset: 0; border-radius: var(--radius-card); }
 /* The ring is drawn on the card-wide hit area below, not on the title. */
 button.vr-m-go:focus-visible { outline: var(--stroke-focus) solid transparent; }
 button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--focus); outline-offset: 3px; }
-.vr-m-f { font-size: var(--text-body); color: var(--text-2); overflow-wrap: anywhere; }
+.vr-m-f { font-size: var(--text-body); font-weight: 400; line-height: 1.35; color: var(--text-2); overflow-wrap: anywhere; }
 .vr-m-f.is-you { color: var(--umber-700); font-weight: 700; }
 .vr-m-acts { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); }
 .vr-m .vr-lanes { position: relative; z-index: 1; width: 100%; }
@@ -594,9 +594,9 @@ span.vr-ro-row { cursor: default; }
      no taller than the two cards beside it need. */
   .vr-main .vr-mo.is-wide .vr-m-tx { grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: var(--space-3); }
   .vr-main .vr-mo.is-wide .vr-m-tx > * { grid-column: 1 / -1; }
-  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-f { grid-column: 1; grid-row: 3; }
-  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-acts { grid-column: 2; grid-row: 3; }
-  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-lanes { grid-row: 4; }
+  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-t { grid-column: 1; grid-row: 2; }
+  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-m-acts { grid-column: 2; grid-row: 2; }
+  .vr-main .vr-mo.is-wide .vr-m-tx > .vr-lanes { grid-row: 3; }
 }
 
 /* motion: all of it follows a tap, except the once-per-visit entrance */
