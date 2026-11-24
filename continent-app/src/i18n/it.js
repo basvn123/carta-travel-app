@@ -9808,6 +9808,7 @@ export const it = {
   "tf.alt.month": "Un altro mese",
   "tf.alt.country": "Un altro paese",
   "tf.alt.closer": "Più vicino",
+  "tf.alt.none": "Ancora nessun altro viaggio per queste risposte",
   "tf.tp.price": "Quanto costa",
   "tf.cost.open": "Dettaglio",
   "tf.cost.close": "Nascondi",

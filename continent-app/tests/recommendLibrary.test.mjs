@@ -5,8 +5,9 @@
 // trips and no row is drawn. Run: npm test (continent-app/). Pure, made-up catalogue.
 import test from "node:test";
 import assert from "node:assert/strict";
-import { journeyStops, libraryCandidate, libraryShortlist, libraryTrips, ROW_MIN } from "../src/lib/recommend/moreSearch.js";
+import { journeyStops, landerPool, libraryCandidate, libraryShortlist, libraryTrips, ROW_MIN } from "../src/lib/recommend/moreSearch.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
+import { alternatives } from "../src/lib/recommend/alternatives.js";
 
 const DESTS = {
   LIS: { city: "Lisbon", iso2: "PT", country: "Portugal", city_lat: 38.72, city_lon: -9.14 },
@@ -69,4 +70,23 @@ test("libraryTrips: priced and marked, a ceiling holds, the list's own towns and
   const have = [{ places: [{ id: "LIS" }, { id: "OPO" }] }, { places: [{ id: "OPO" }] }];
   assert.deepEqual(libraryTrips(js, input(), REF, { price, rank, have }), [], `fewer than ${ROW_MIN}: no row`);
   assert.deepEqual(libraryTrips(js, input(), REF, { price: () => { throw new Error("x"); }, rank }), [], "a failed price is skipped");
+});
+
+test("landerPool (B7a): the open finder without the named places, some of the same country; alternatives stay like for like", () => {
+  const slots = (flight) => [{ id: "flight", eur: flight }, { id: "stay", eur: 300 }];
+  const cand = (id, iso2) => ({ iso2, places: [{ id, nights: 4 }] });
+  let asked = null;
+  const build = (inp) => { asked = inp.settings.places; return [cand("LIS", "PT"), cand("SEV", "ES"), cand("MAD", "ES"), cand("OPO", "PT"), cand("FAR", "PT"), cand("ROM", "IT")]; };
+  const notYet = (id) => id === "SEV";
+  const price = (c) => ({ id: c.places[0].id, iso2: c.iso2, shape: "one", places: c.places, slots: slots(notYet(c.places[0].id) ? null : 100), total: { group: notYet(c.places[0].id) ? 200 : 500 } });
+  const trip = { id: "LIS", iso2: "PT", shape: "one", places: [{ id: "LIS", nights: 4 }], slots: slots(100), total: { group: 700 } };
+  const s = settings({ places: [{ kind: "place", id: "LIS" }] });
+  const pool = landerPool(trip, input(s), { build, price, rank: (x) => x, tries: 4 });
+  assert.deepEqual(asked, [], "the named places dropped");
+  assert.deepEqual(pool.map((x) => x.id), ["OPO", "FAR", "SEV", "MAD"], "the trip itself out; two of its country first");
+  const rel = Object.fromEntries(alternatives(trip, pool, {}).map((r) => [r.key, r]));
+  assert.equal(rel.cheaper.trip.id, "OPO");
+  assert.equal(rel.country.trip.id, "SEV");
+  assert.equal(rel.country.diff, null, "a Not yet total shows no difference and never counts as cheaper");
+  assert.deepEqual(landerPool(trip, input(s), { build: () => { throw new Error("x"); }, price, rank: (x) => x }), []);
 });

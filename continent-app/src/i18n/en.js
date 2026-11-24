@@ -10435,6 +10435,7 @@ export const en = {
   "tf.alt.month": "Another month",
   "tf.alt.country": "Another country",
   "tf.alt.closer": "Closer",
+  "tf.alt.none": "No other trips found for these answers yet",
   "tf.tp.price": "What it costs",
   "tf.cost.open": "Breakdown",
   "tf.cost.close": "Hide",

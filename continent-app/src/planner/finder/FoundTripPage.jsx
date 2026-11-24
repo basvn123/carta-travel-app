@@ -440,8 +440,10 @@ function WhenStrip({ trip, destinations, t, lang }) {
  *   onPlan(trip)    "Plan this trip"
  *   onEdit(next)    the trip with a line swapped (a picker)
  *   onOpen(trip)    an alternative opened in its place
+ *   onSearchMore()  G12 B7a: with no list behind the page (the place lander),
+ *                   prices other trips for the alternatives on request
  */
-export function FoundTripPage({ trip, settings, destinations, ui, others = [], keepWith = null, onBack, onPlan, onEdit, onOpen, bar = null, input = null }) {
+export function FoundTripPage({ trip, settings, destinations, ui, others = [], keepWith = null, onBack, onPlan, onEdit, onOpen, bar = null, input = null, onSearchMore = null }) {
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -479,9 +481,20 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
   const more = useFoundMore(trip, input);
   // G12 R3: one alternative per relation (cheaper, another month, another
   // country, closer), replacing the list's next three.
+  // G12 B7a: the lander's own pool, priced only on Search more (L0 leaves
+  // no room for more pricing before the page shows). null = not asked.
+  const [searched, setSearched] = useState(null);
+  useEffect(() => { setSearched(null); }, [input]);
+  const pool = useMemo(() => (others.length ? others : Array.isArray(searched) ? searched : []), [others, searched]);
+  const canSearch = !others.length && Boolean(onSearchMore) && !Array.isArray(searched);
+  const searchMore = () => {
+    setSearched('busy');
+    // One frame first, so the button can say it is searching before the pricing blocks.
+    requestAnimationFrame(() => setSearched(onSearchMore() || []));
+  };
   const alts = useMemo(
-    () => alternatives(trip, others, { levers: more.levers, minutes: thereMinutes, windows: more.windows }),
-    [trip, others, more.levers, more.windows],
+    () => alternatives(trip, pool, { levers: more.levers, minutes: thereMinutes, windows: more.windows }),
+    [trip, pool, more.levers, more.windows],
   );
   const money = (d) => signedMoney(d, { locale: lang });
   const leverLabel = (l) => (l.key === 'nearby'
@@ -626,8 +639,8 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
             </section>
           )}
 
-          {alts.length > 0 && (
-            <section className="tff-sec" aria-labelledby="tff-tp-alts">
+          {(alts.length > 0 || canSearch || Array.isArray(searched)) && (
+            <section className="tff-sec" aria-labelledby="tff-tp-alts" aria-live="polite">
               <h2 className="tff-tp-h" id="tff-tp-alts">{t('tf.tp.alts')}</h2>
               <ol className="tff-list tff-tp-alts">
                 {alts.map(({ key, trip: x, diff }) => (
@@ -646,6 +659,12 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
                   </li>
                 ))}
               </ol>
+              {canSearch && (
+                <Button variant="secondary" size="sm" disabled={searched === 'busy'} onClick={searchMore}>
+                  {t(searched === 'busy' ? 'tf.more.busy' : 'tf.more.search')}
+                </Button>
+              )}
+              {Array.isArray(searched) && !alts.length && <p className="tff-spendref">{t('tf.alt.none')}</p>}
             </section>
           )}
         </div>

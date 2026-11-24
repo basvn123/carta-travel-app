@@ -19,6 +19,10 @@
  *                                            or null (no base towns, or none
  *                                            on the catalogue)
  *   libraryTrips(journeys, input, ref, opts) priced and ranked, at most `max`
+ *   landerPool(trip, input, opts)            G12 B7a: other trips for the place
+ *                                            lander's alternatives (Another
+ *                                            country, Closer, Cheaper of the
+ *                                            same country), priced on request
  *
  * Honest rules: a journey with no base towns (80 of 258) is skipped, never
  * given invented towns; a ceiling keeps every trip under it; fewer than
@@ -26,7 +30,7 @@
  * Pure: tests/recommendLibrary.test.mjs.
  */
 import { journeySeed } from '../plan/seedWriters.js';
-import { fliesThere, gatewayFor, transportFor } from './candidates.js';
+import { buildCandidates, fliesThere, gatewayFor, transportFor } from './candidates.js';
 import { priceCandidate } from './trips.js';
 import { rankTrips } from './rank.js';
 
@@ -143,4 +147,38 @@ export function libraryTrips(journeys, input, ref, { have = [], max = LIBRARY_MA
   const capped = input.settings.guide?.budget?.mode === 'cap';
   const list = capped ? ranked.filter((x) => !(Number.isFinite(x.budget?.delta) && x.budget.delta > 0)) : ranked;
   return list.length >= ROW_MIN ? list.slice(0, max) : [];
+}
+
+/** Trips priced for the place lander's alternatives on one "Search more". */
+export const LANDER_TRIES = 6;
+/** Of those, at most this many in the lander trip's own country (for Cheaper). */
+const LANDER_SAME = 2;
+
+/**
+ * G12 B7a: the place lander has one priced trip and no list behind it, so
+ * Another country, Closer and a Cheaper trip of the same country had
+ * nothing to choose from. On request this builds the open finder's
+ * candidates for the same answers with the named places dropped, takes a
+ * few of the trip's own country and the rest elsewhere, and prices them
+ * with the same engine. The relations, the like-for-like differences and
+ * the "Not yet" rule stay in alternatives.js. -> ranked trips, or [].
+ *   opts: { tries, build, price, rank } (build, price and rank for tests)
+ */
+export function landerPool(trip, input, { tries = LANDER_TRIES, build = buildCandidates, price = priceCandidate, rank = null } = {}) {
+  if (!trip || !input?.settings) return [];
+  const open = { ...input.settings, places: [] };
+  const own = (trip.places || []).map((p) => p.id).join();
+  let cands = [];
+  try { cands = build({ ...input, settings: open }) || []; } catch { cands = []; }
+  cands = cands.filter((c) => (c.places || []).map((p) => p.id).join() !== own);
+  const same = cands.filter((c) => up(c.iso2) === up(trip.iso2)).slice(0, LANDER_SAME);
+  const pick = [...same, ...cands.filter((c) => !same.includes(c))].slice(0, tries);
+  const priced = [];
+  for (const c of pick) {
+    try {
+      const x = price(c, input);
+      if (x) priced.push(x);
+    } catch { /* a trip that cannot be priced is left out */ }
+  }
+  return rank ? rank(priced) : rankTrips(priced, { settings: open, taste: input.taste || null, data: input.data });
 }

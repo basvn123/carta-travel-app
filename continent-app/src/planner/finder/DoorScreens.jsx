@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { landerPool } from '../../lib/recommend/moreSearch.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Card } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -256,6 +257,7 @@ export function KnowBuildScreen({ settings, onBack, onLand, ui = null, bar = nul
           bar={bar}
           others={[]}
           input={run.input}
+          onSearchMore={run.input ? () => landerPool(trip, run.input) : null}
           onBack={onList || onBack}
           onOpen={(x) => { setEdited(null); setShown(x); }}
           onPlan={(x) => onLand(planOf(x))}

@@ -9819,6 +9819,7 @@ export const nl = {
   "tf.alt.month": "Andere maand",
   "tf.alt.country": "Ander land",
   "tf.alt.closer": "Dichterbij",
+  "tf.alt.none": "Nog geen andere reizen gevonden voor deze antwoorden",
   "tf.tp.price": "Wat het kost",
   "tf.cost.open": "Opbouw",
   "tf.cost.close": "Verbergen",
