@@ -59,7 +59,11 @@ import { basisOf } from './lib/price/priceView.js';
 import { trackFunnel, stepOfTab } from './lib/funnelCounts.js';
 import { readTripShareFromUrl, decodeTripShare, readDayShareFromUrl } from './lib/shareLink.js';
 import { readShareTokenFromUrl, stripShareTokenFromUrl } from './auth/tripShares.js';
-import { readFriendHandleFromUrl, stripFriendHandleFromUrl } from './auth/friends.js';
+import { readFriendHandleFromUrl, stripFriendHandleFromUrl, holdFriendHandle } from './auth/friends.js';
+import { readCircleFromUrl, stripCircleFromUrl, holdCircle } from './auth/circles.js';
+import { OPEN_VRIENDEN } from './together/openVrienden.js';
+import { resolveNames } from './together/placeNameCache.js';
+import { togetherDestIds } from './together/useTogether.js';
 import { IconButton } from './components/ui/index.js';
 import { readCoplanTokenFromUrl, stripCoplanTokenFromUrl, holdCoplanToken, acceptCoplanLink } from './auth/coplanners.js';
 import { readGuideIdFromUrl, stripGuideIdFromUrl } from './community/guides.js';
@@ -189,7 +193,7 @@ function useLatestHandlers(fns) {
 }
 
 function TravelApp() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const {
     configured: authConfigured, user, recoveryMode,
     loading: authLoading, emailConfirmed, dismissEmailConfirmed,
@@ -256,13 +260,40 @@ function TravelApp() {
   // in is, and the handle waits: dropping it would waste the one tap the
   // sender was trying to save.
   // T928: the link opens Together's Add screen, the handle looked up there.
+  // G16: a guest's handle is held through sign-in (holdFriendHandle) and
+  // cleared once the signed-in Add screen has it.
   useEffect(() => {
     if (!pendingFriend) return;
     setSavedTripsOpen(false);
     setAccountOpen(false);
     setTogetherView({ view: user ? 'add' : 'home', id: '' });
     setTogetherOpen(true);
+    holdFriendHandle(user ? null : pendingFriend);
   }, [pendingFriend, user, setAccountOpen, setSavedTripsOpen]);
+
+  // G16 (block 6): any surface can open a friend or a Vrienden view
+  // (together/openVrienden.js) without a prop chain.
+  useEffect(() => {
+    const on = (e) => openTogether(e.detail?.view || 'home', e.detail?.id || '');
+    window.addEventListener(OPEN_VRIENDEN, on);
+    return () => window.removeEventListener(OPEN_VRIENDEN, on);
+  });
+
+  // A kring link (#circle=<id>, G16): held through sign-in like the friend
+  // handle, then the kring opens for its members. RLS answers nothing to a
+  // non-member, so the page says the kring was not found and shows nothing.
+  const [pendingCircle, setPendingCircle] = useState(() => readCircleFromUrl());
+  useEffect(() => {
+    if (!pendingCircle) return;
+    stripCircleFromUrl();
+    if (!user) { holdCircle(pendingCircle); setTogetherView({ view: 'home', id: '' }); setTogetherOpen(true); return; }
+    holdCircle(null);
+    setSavedTripsOpen(false);
+    setAccountOpen(false);
+    setTogetherView({ view: 'circle', id: pendingCircle });
+    setTogetherOpen(true);
+    setPendingCircle(null);
+  }, [pendingCircle, user, setAccountOpen, setSavedTripsOpen]);
 
   // An invite to plan a trip together (#coplan=<token>, migration 052, T434).
   // Held in session storage until it is used, so a guest can sign in or
@@ -399,6 +430,9 @@ function TravelApp() {
   // each sub-screen one more, so Back walks out of a friend's page onto the
   // page, then off the page.
   function openTogether(view = 'home', id = '') {
+    // G16 (judge 3 fix 1): the place names start loading with the press, so
+    // Vrienden opens with them in the reader's language.
+    resolveNames(data?.destinations, togetherDestIds(), lang);
     setGuidesOpen(false);
     setSavedTripsOpen(false);
     setAccountOpen(false);

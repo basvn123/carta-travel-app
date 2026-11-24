@@ -148,13 +148,34 @@ def stage_ids(kind, stage, cc):
     return _STAGES[key]
 
 
+DROPS_DIR = OUT_DIR / "export_drops"
+_DROPS = {}
+
+
+def export_drops(kind):
+    """{qid: gate} from the export's drop log (D25 b; the beach export writes
+    one), or {} when this machine has none."""
+    if kind not in _DROPS:
+        try:
+            path = DROPS_DIR / f"{kind}.json"
+            _DROPS[kind] = json.loads(path.read_text(encoding="utf-8")).get("drops", {})
+        except (OSError, ValueError):
+            _DROPS[kind] = {}
+    return _DROPS[kind]
+
+
 def stage_reason(kind, ref):
     """Where a missing beach, lake or mountain was lost, from the kind's own
     stages: not_in_catalogue (never harvested), not_enriched (harvested, cut
     before enrichment by the shortlist), dropped_at_export (enriched, then a
-    score, photo, dedupe or quota gate). None when no stage file is here."""
+    score, photo, dedupe or quota gate). With the export's drop log the last
+    one names the gate: dropped_at_export:photo:not_listed (D25 b). None when
+    no stage file is here."""
     if kind not in STAGE_KEY or not ref.get("qid"):
         return None
+    gate = export_drops(kind).get(ref["qid"])
+    if gate:
+        return f"dropped_at_export:{gate}"
     seen_any = False
     for cc in ref.get("countries") or []:
         raw, rich = stage_ids(kind, "raw", cc), stage_ids(kind, "rich", cc)
@@ -378,7 +399,8 @@ def handoff(kind, res, path=None):
            and seed_sane(kind, tier_a[r["wd"]])}
     for row in res["rows"]:
         if (row["tier"] != "A" or row["status"] != "missing"
-                or row.get("reason") not in HANDOFF_REASONS):
+                # "dropped_at_export:photo:not_listed" is a dropped_at_export
+                or (row.get("reason") or "").split(":")[0] not in HANDOFF_REASONS):
             continue
         ref = res["_refs"][row["id"]]
         # Points for the place kinds; a cycle route may have none (its OSM

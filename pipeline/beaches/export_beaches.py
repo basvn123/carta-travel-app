@@ -76,7 +76,7 @@ sys.path.insert(0, str(HERE))
 
 sys.path.insert(0, str(HERE.parents[1] / "pipeline"))
 
-from pipeline_io import in_europe  # noqa: E402
+from pipeline_io import in_europe, write_export_drops  # noqa: E402
 from sources import haversine_km, load_cache  # noqa: E402
 from harvest_beaches import COUNTRIES, name_tokens  # noqa: E402
 import beauty_index as bi  # noqa: E402
@@ -573,6 +573,43 @@ def named(beach):
 def publishable(beach):
     """The gate, minus the score (which needs the whole country first)."""
     return named(beach) and photo_gate(beach)
+
+
+# D25 b: the export logs why each enriched beach with a Wikidata item did not
+# reach the wire (pipeline_io.write_export_drops), so the famous coverage
+# report can name the gate instead of "dropped_at_export".
+def drop_reasons(scored, gated, deduped, rows, listed, min_score):
+    """{qid: reason} for the scored beaches that are on neither tier.
+
+    `gated` holds the ids that passed score, photo and reason into the rated
+    candidates, `deduped` those still there after the dedupe. Reasons:
+    no_name, outside_europe (hard, both tiers); dedupe and quota_cap (a rated
+    candidate cut by the dedupe, or by the region quota and the country
+    cap); and for the rest the rated gate it failed (score, photo, no_reason)
+    with ":not_listed", because the listed floor fill or its dedupe did not
+    take it either."""
+    kept = {r["id"] for r in rows} | {r["id"] for r in listed}
+    out = {}
+    for beach, _comps, score10 in scored:
+        qid = beach.get("wd")
+        if not qid:
+            continue
+        if not named(beach):
+            out[qid] = "no_name"
+            continue
+        if not in_europe(beach.get("lat"), beach.get("lon")):
+            out[qid] = "outside_europe"
+            continue
+        bid = bi.unique_beach_id(beach)
+        if bid in kept:
+            continue
+        if bid in gated:
+            out[qid] = "quota_cap" if bid in deduped else "dedupe"
+            continue
+        why = ("score" if score10 < min_score
+               else "photo" if not photo_gate(beach) else "no_reason")
+        out[qid] = why + ":not_listed"
+    return out
 
 
 def country_water_default(beaches):
@@ -1203,6 +1240,7 @@ def main():
     listed_by_country = {}
     total = 0
     credits = set()
+    drops = {}
 
     for cc in countries:
         if cc not in pools:
@@ -1247,13 +1285,17 @@ def main():
         # first into the dedupe, so it keeps its place over a neighbour, and
         # is never cut by the region quota, the country cap or PUBLISH_MAX.
         famous = famous_ids(b for b, _c, _s in scored)
+        gated = {r["id"] for r in rows}
         rows = dedupe(famous_first(rows, famous))
+        deduped = {r["id"] for r in rows}
         kept = quota_ordered(rows, qmod)[:args.max_per_country]
         rows = keep_famous(rows, kept, famous)
         rows.sort(key=lambda r: -r["score"])
         extra = famous_listed(rows, spare, famous)
         rows = clear_for_famous(rows, extra, famous)
         listed = dedupe_across(rows, extra + floor_fill(rows, spare, qmod))
+        drops.update(drop_reasons(scored, gated, deduped, rows, listed,
+                                  args.min_score))
         if not rows and not listed:
             if args.verbose:
                 print(f"  {cc}: nothing clears the gate")
@@ -1406,6 +1448,7 @@ def main():
                    ensure_ascii=False, separators=(",", ":")),
         encoding="utf-8")
     nature_tiers.save_parts("beaches")
+    write_export_drops("beaches", drops, generated, merge=bool(wanted))
     print(f"[beaches] published {total} beaches across {len(index)} countries "
           f"into {out_dir} (top.json holds {len(top)})")
     # index.json and top.json are built from THIS run's countries alone, so

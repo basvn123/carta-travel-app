@@ -155,3 +155,29 @@ def in_europe(lat, lon):
         return False
     w, s, e, n = EUROPE_WINDOW
     return w <= lon <= e and s <= lat <= n
+
+
+# D25 b: the drop log an export writes ({qid: the gate that kept it off the
+# wire}), read by pipeline/famous/coverage.py on the same machine.
+EXPORT_DROPS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                "data", "reports", "famous", "export_drops")
+
+
+def write_export_drops(kind, drops, generated, merge=False, path=None):
+    """Save an export's drop log. A --countries run passes merge=True, so the
+    countries it did not look at keep their reasons from the last log."""
+    path = path or os.path.join(EXPORT_DROPS_DIR, f"{kind}.json")
+    old = {}
+    if merge and os.path.exists(path):
+        try:
+            with open(path, encoding="utf-8") as f:
+                old = json.load(f).get("drops", {})
+        except (OSError, ValueError):
+            old = {}
+    merged = {**old, **drops}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump({"generated_at": generated, "n": len(merged),
+                   "drops": dict(sorted(merged.items()))},
+                  f, ensure_ascii=False, indent=0)
+        f.write("\n")

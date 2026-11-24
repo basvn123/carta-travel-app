@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { Button, Chip, Plate } from '../components/ui/index.js';
-import { CheckIcon, ChevronRightIcon, FriendsIcon, PlusIcon } from '../components/Icons.jsx';
+import { CheckIcon, ChevronRightIcon, PlusIcon } from '../components/Icons.jsx';
+import { HouseIcon } from '../components/HouseIcons.jsx';
 import { formatMoney } from '../lib/money.js';
 import { priceRequest, priceDay } from '../lib/price/index.js';
 import { nightsBetween } from '../lib/tripDates.js';
@@ -369,7 +370,7 @@ export function GroupBlock({ s, onView }) {
       {joined.map((g) => <GroupCard key={g.id} g={g} me={s.userId} onOpen={() => onView('group', g.id)} />)}
       {!joined.length && (
         <Button variant="quiet" block className="tg-start" onClick={() => onView('newgroup')}>
-          <span className="tg-start-ic" aria-hidden="true"><FriendsIcon size={20} /></span>
+          <span className="tg-start-ic" aria-hidden="true"><HouseIcon.people size={20} /></span>
           <span className="tg-pr-tx"><b>{t('tg.newGroup')}</b><span>{t('tg.groupPitch')}</span></span>
           <ChevronRightIcon size={16} className="tg-pr-go" />
         </Button>

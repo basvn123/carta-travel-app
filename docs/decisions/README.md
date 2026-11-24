@@ -27,3 +27,4 @@ Each file here records one decision that still matters, so nobody has to guess l
 | [0014](0014-spend-on-device.md) | Uitgaven: one page, a Reiskas split, capture on the device without AI | accepted | 2026-11-22 |
 | [0015](0015-my-trips-journey-line.md) | My trips speaks the map's language: the journey line, the wish hatch, past trips under the map | accepted | 2026-11-22 |
 | [0016](0016-my-trips-ink-and-photo.md) | My trips in ink and photo: larger photos, line and ink controls, no beige | accepted | 2026-11-22 |
+| [0017](0017-vrienden-and-kringen.md) | Vrienden and kringen: Samen renamed, people first in ink and photo, private kringen that vote, find dates and compare fares | accepted | 2026-11-23 |

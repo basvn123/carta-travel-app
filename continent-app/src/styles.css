@@ -77,6 +77,8 @@
 @import './styles/73-mytrips-ink.css';
 /* T928: Together, the header door and the friend signals. */
 @import './styles/90-together.css';
+/* G16, decision 0017: Vrienden and the kring tool in ink and photo. */
+@import './styles/91-vrienden.css';
 @import './styles/86-plan-flow.css';
 /* T1019: the umber cost card and the flight pass, shared by the plan tab and
    the place page. */

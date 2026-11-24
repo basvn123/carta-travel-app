@@ -19,7 +19,7 @@ const ROWS = [
   ['showMeet', 'tg.plansMeet'],
 ];
 
-export function FriendsSee({ onOpenSaved }) {
+export function FriendsSee({ onOpenSaved, title = null }) {
   const { t } = useI18n();
   const s = useTogether();
   const [error, setError] = useState('');
@@ -28,7 +28,7 @@ export function FriendsSee({ onOpenSaved }) {
     togetherActions.setVisibility({ [key]: on }).catch(() => setError(t('friends.unavailable')));
   };
   return (
-    <Block id="tg-see-h" title={t('tg.friendsSee')}>
+    <Block id="tg-see-h" title={title || t('tg.friendsSee')}>
       <div className="tg-toggles">
         <div className="tg-trow">
           <b>{t('tg.seeTrips')}</b>
