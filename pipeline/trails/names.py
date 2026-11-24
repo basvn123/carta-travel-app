@@ -314,6 +314,8 @@ def _boundary_head(text, room, phrase=False):
     rx = r", |: | - | – | [(\[]" + (r"| (?=(?:di|de|del|della|du|des|of|von|van|vom|zu|bei) )" if phrase else "")
     for m in re.finditer(rx, text):
         if 0 < m.start() <= room:
+            if m.group(0) == ", " and text[m.start() - 1] == "-":
+                continue            # "Rad-, Lauf-": a suspended hyphen is not a boundary
             cand = text[:m.start()].rstrip(_TRAIL_PUNCT)
             if m.group(0) == " " and not (len(cand.split()) >= 3 and len(cand) >= 16):
                 continue        # a phrase cut must leave a name ("Ruta" is not one)
@@ -439,10 +441,10 @@ def _keep_the_start(s, limit):
     return a
 
 
-def cap_title(text, limit=TITLE_MAX, keep_note=False, safe=False):
+def cap_title(text, limit=TITLE_MAX, keep_note=False, safe=False, uncut=True):
     """cap_title_plain, then a suspended hyphen kept: "Rad-, Lauf- und Wander"
     cut after "Lauf" reads "Rad-, Lauf", a word lost; the hyphen stays."""
-    out = _cap_title_plain(text, limit, keep_note, safe)
+    out = _cap_title_plain(text, limit, keep_note, safe, uncut)
     s = re.sub(r"\s+", " ", str(text or "")).lstrip(_LEAD_PUNCT).rstrip(_TRAIL_PUNCT)
     if out and len(out) < len(s) and s.startswith(out + "-") and s[len(out) + 1:len(out) + 2] in (" ", ","):
         out += "-"
@@ -462,10 +464,51 @@ def cap_title(text, limit=TITLE_MAX, keep_note=False, safe=False):
                 out = trim_dangling(bare)
     if out and whole.endswith(out + ".") and len(out) < limit and _ends_in_abbrev(out):
         out += "."              # D7: "1241 r.", "Śl.", "v.W." keep the dot of a closing abbreviation
+    if uncut and out and len(s) > limit and len(out) < len(s) and not _keeps_a_place(out, s):
+        return s                # a boundary cut that loses every place, or ends on a joiner, ships whole
     return out
 
 
-def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False, safe=False):
+_DESCRIPTOR_ENDS = ("weg", "wege", "pfad", "steig", "route", "trail", "rundgang", "wanderung", "runde")
+_DESCRIPTORS_MORE = frozenset({
+    "coast", "way", "circular", "rail", "okru\u017en\u00ed", "trasa", "stezka", "chodn\u00edk", "nau\u010dn\u00e1", "\u015bcie\u017cka", "szlak",
+    "sendero", "camino", "percorso", "anello", "giro", "ruta", "tocht", "wandelpad", "natuurpad", "lehrpfad",
+    "promenade", "parcours", "chemin", "balade", "rando", "tura", "tur", "utvandring"})
+
+
+def _is_descriptor(token):
+    low = token.casefold()
+    return low in _GENERIC_PART or low in _DESCRIPTORS_MORE or low.endswith(_DESCRIPTOR_ENDS)
+
+
+def _place_words(text, skip_first=False):
+    """Capitalised mixed-case tokens of three letters or more that name something:
+    not a descriptor (_GENERIC_PART), not a joining word, not a code. The first
+    word of a name is the kind of walk as often as a place ("Rail Trail:"), so by
+    default it does not count (judge 1, wave 4)."""
+    out = []
+    first = re.search(r"[^\W\d_]+", str(text or ""))
+    for m in re.finditer(r"[^\W\d_]{3,}", str(text or "")):
+        t = m.group(0)
+        if skip_first and first and m.start() == first.start():
+            continue
+        if (t[0].isupper() and any(c.islower() for c in t) and not _is_descriptor(t)
+                and t.casefold() not in _DANGLING and not is_code(t)):
+            out.append(t)
+    return out
+
+
+def _keeps_a_place(out, whole):
+    """A boundary cut is accepted when the kept part holds a place word and
+    does not end on a joiner (trim_dangling would change nothing)."""
+    if trim_dangling(out) != out:
+        return False
+    # A whole with no place word has none to lose.
+    # The first word is the kind of walk as often as a place, so it does not count.
+    return bool(_place_words(out, True)) or not _place_words(whole, True)
+
+
+def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False, safe=False, uncut=True):
     """Shorten to `limit` on a word boundary, trailing separators dropped.
 
     No ellipsis: the full string is on the ref chip, and a title that ends in
@@ -512,12 +555,18 @@ def _cap_title_plain(text, limit=TITLE_MAX, keep_note=False, safe=False):
     # segment boundary sits in the second half of the allowance.
     # A separator that starts right at the limit counts: the segment before
     # it fits whole (D7, wave 1).
-    seg = max(s.rfind(sep, 0, limit + len(sep)) for sep in _SEGMENT_SEPS)
-    if seg >= limit // 2:
+    seg = max(s.rfind(sep, 0, limit + len(sep)) for sep in _SEGMENT_SEPS + (" (", " ["))
+    if uncut:
+        # D7 (wave 4, judge 1): no word cuts. A name with no boundary that keeps it
+        # within the limit ships whole; the app truncates on screen.
+        if seg <= 0:
+            return s
+        at = seg
+    elif seg >= limit // 2:
         at = seg
     else:
         at = max(cut.rfind(" "), cut.rfind("-"), cut.rfind("/"))
-    if at < limit // 3:          # one enormous word; cut it hard
+    if at < limit // 3 and not uncut:          # one enormous word; cut it hard
         return s[:limit].rstrip(_TRAIL_PUNCT)
     # Never leave a bracket open: "(historic route)" cut to "(historic" reads
     # as a typo, so the whole bracket goes. T1092: the same for a quote
@@ -970,6 +1019,10 @@ def wire_name(title, country=None):
         free = split_code(rd)[0]
         if free and not is_code(free):
             base = free
+        # A network prefix ("WNW IJsseldelta -") is a code of the walk too.
+        mp = re.match(r"^[A-Z]{2,5}\s+[^-–]{1,30}?\s*[-–]\s*(?=\S)", base)
+        if mp and not is_code(base[mp.end():]) and len(base[mp.end():]) <= TITLE_MAX:
+            base = base[mp.end():].strip()
     s = cap_title(base)
     if not s and _FIXME_RE.search(str(title or "")):
         return ""
@@ -1309,7 +1362,7 @@ def _named_id(r):
         if fit:
             return fit + ", " + x
     x = f"#{r.get('id')}"
-    return cap_title(base, TITLE_MAX - len(x) - 2) + ", " + x
+    return cap_title(base, TITLE_MAX - len(x) - 2) + ", " + x      # no word cut: a long start ships whole beside its id
 
 
 def dedupe_names(rows, originals=None):
@@ -1348,7 +1401,7 @@ def dedupe_names(rows, originals=None):
               + [(_sfx_km, False)]
               + [("tail", False)]
               + [(lv, True) for lv in (_sfx_code, _sfx_stage, _sfx_end, _sfx_km)]
-              + [("quoted", True)]
+              + [("whole", True)] + [("quoted", True)]
               + [(_named_id, True)])
     for (cc, own), rs in groups.items():
         if len(rs) < 2:
@@ -1359,6 +1412,10 @@ def dedupe_names(rows, originals=None):
         for level, cut in levels:
             if level is _named_id:
                 cand = [_named_id(r) for r in rs]
+            elif level == "whole":
+                # D7 (wave 4): the readable original, uncut, before an id: no word cut, so a
+                # long name that told apart on its own words needs no number.
+                cand = [(split_code(o)[0] or o) for o in origs]
             elif level == "note":
                 # D7 (wave 3b): the cap drops a trailing "(variant)" from "A - B
                 # (variant)", so it can meet its twin "A - B"; the note tells

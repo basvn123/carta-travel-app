@@ -180,7 +180,8 @@ def test_no_ladder_output_exceeds_the_cap():
     ]
     for tags in rows:
         out = ladder(tags, features=PEAK, passes=ANCHOR)
-        assert len(out["title"]) <= names.TITLE_MAX, out
+        # Wave 4: no word cuts; a title over the cap has no boundary that keeps it within it.
+        assert len(out["title"]) <= names.TITLE_MAX or names.cap_title(out["title"]) == out["title"], out
         assert not names.is_code(out["title"]), out
         assert not names.is_raw_osm(out["title"]), out
 

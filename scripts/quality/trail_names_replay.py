@@ -17,7 +17,7 @@ and cap_title, then dedupe_names over each country) and counts:
 
 Also printed: id_suffix, names ending ", no. <id>" or ", #<id>" (77 on the
 2026-11-17 wire with the first dedupe, 57 with the second; it must not rise
-without a reason), and too_long (0 required: every title fits TITLE_MAX).
+without a reason), and too_long (allowed since wave 4: a name with no boundary ships whole, counted as kept_long).
 
 dedupe_cut / dedupe_trim / dedupe_replaced (judge 3, fix 5) say what the
 dedupe did to the start of a name it had to change (dedupe_kind). dedupe_cut,
@@ -252,6 +252,26 @@ def generic_only(n0: str, n1: str, cc: str | None = None) -> bool:
     return bool(new) and all(w in names._GENERIC_PART for w in new) and any(w not in names._GENERIC_PART for w in old)
 
 
+_PLACE = re.compile(r"[^\W\d_]{3,}")
+
+
+def place_lost(n0: str, n1: str, cc: str | None = None) -> bool:
+    """The readable wire name has a place word (a capitalised mixed-case token of
+    three letters or more that is no descriptor, joiner or code) and the new name has none."""
+    def places(t):
+        t = re.sub(r"^\[[^\]]*\]\s*", "", t)
+        first = re.search(r"[^\W\d_]+", t)       # the first word is the kind of walk as often as a place
+        return [m.group(0) for m in _PLACE.finditer(t)
+                if not (first and m.start() == first.start())
+                and m.group(0)[0].isupper() and any(c.islower() for c in m.group(0))
+                and not names._is_descriptor(m.group(0))
+                and m.group(0).casefold() not in names._DANGLING and not names.is_code(m.group(0))]
+    # Judged by word, not by position: "Willemsoord - oranje route" keeps the place of
+    # "WNW WaterReijk - Willemsoord - oranje route" whose network prefix is a documented removal.
+    old = places(codefree(n0, cc))
+    return bool(old) and not any(w.casefold() in n1.casefold() for w in old)
+
+
 def emptied(n0: str, n1: str, cc: str | None = None) -> bool:
     """A readable name with a word of three letters or more became nothing or a bare code."""
     r = names.readable(n0, cc)
@@ -327,7 +347,7 @@ def replay(rows: list[dict]) -> dict:
     b_groups, a_groups = collections.defaultdict(list), collections.defaultdict(list)
     res = {"walks": len(hikes), "changed": 0, "unclean_before": 0, "unclean_after": 0,
            "end_segment_losses": 0, "end_losses_over_cap": 0, "head_cut": 0, "id_suffix": 0,
-           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "generic_only": 0, "worse_than_wire": 0, "cap_kept_long": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
+           "mid_word_loss": 0, "start_tail_cut": 0, "dangling_end": 0, "stray_bracket": 0, "unit_dropped": 0, "emptied": 0, "generic_only": 0, "worse_than_wire": 0, "kept_long": 0, "place_lost": 0, "dedupe_cut": 0, "dedupe_trim": 0, "dedupe_replaced": 0, "end_losses_unexplained": 0}
     residual, end_ex, head_ex, mid_ex = collections.defaultdict(list), [], [], []
     stc_ex, dang_ex, worse_ex = [], [], []
     dd_ex = collections.defaultdict(list)
@@ -369,7 +389,9 @@ def replay(rows: list[dict]) -> dict:
         if why:
             res["worse_than_wire"] += 1
             worse_ex.append([r["id"], why, n0, n1])
-        res["cap_kept_long"] += cap_kept_long(n0, n1, r.get("country"))
+        # D7 (wave 4, judge 1): no word cuts, so a name with no boundary ships whole; allowed, counted.
+        res["kept_long"] += len(n1) > names.TITLE_MAX
+        res["place_lost"] += place_lost(n0, n1, r.get("country")) and n1 == pre[r["id"]]   # a dedupe base trim is counted by dedupe_trim
         if head_cut(n0, n1, r.get("country")):
             res["head_cut"] += 1
             if len(head_ex) < 25:
@@ -395,13 +417,15 @@ def replay(rows: list[dict]) -> dict:
     # acceptance asks for zero of the others, and for head_cut == 0: the start
     # of a name is never cut (judge fix 1; the over-cap deviation is recorded
     # in the wave 1 report and printed with every run).
-    res["accept"] = (res["unclean_after"] <= MAX_UNCLEAN
+    # D7 (wave 4): a name over 42 characters is allowed (kept_long), so it is not "unclean" here.
+    res["unclean_after_kept_long_apart"] = res["unclean_after"] - res["after"].get("too_long", 0)
+    res["accept"] = (res["unclean_after_kept_long_apart"] <= MAX_UNCLEAN
                      and res["end_losses_unexplained"] == 0
                      and res["dedupe_cut"] == 0 and res["dedupe_trim"] <= MAX_TRIM
                      and res["head_cut"] == 0 and res["mid_word_loss"] == 0 and res["start_tail_cut"] == 0
                      and res["dangling_end"] == 0 and res["stray_bracket"] == 0 and res["unit_dropped"] == 0
                      and res["emptied"] == 0 and res["generic_only"] == 0 and res["worse_than_wire"] == 0
-                     and res["after"].get("too_long", 0) == 0
+                     and res["place_lost"] == 0
                      and not new and res["walks"] > 0)
     res["examples"] = {"residual": residual, "end_losses": end_ex, "head_cuts": head_ex, "mid_word_loss": mid_ex, "start_tail_cut": stc_ex, "dangling_end": dang_ex, "worse_than_wire": worse_ex, "dedupe": dd_ex,
                        "new_dups": [[list(k), a_groups[k][:4]] for k in new[:25]]}
