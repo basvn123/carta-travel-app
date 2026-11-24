@@ -10,15 +10,20 @@ import { readSkips, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { SortMenu } from './SortMenu.jsx';
-import { PAGE, QUICK_FILTERS, SORTS, answersLine, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut } from './finderText.js';
+import { PAGE, QUICK_FILTERS, SORTS, answersLine, countryLabel, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut, tripName } from './finderText.js';
 import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
 import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { diverseOrder } from '../../lib/recommend/diversify.js';
 import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
+import { lessHint, lessOrder, likeThis, markOf } from '../../lib/recommend/moreLess.js';
+import { useHoldApp } from '../flow/StyleBar.jsx';
 
 /** The cheapest whole total in the list (the best-value pin), when two or more have one. */
+// The planner's own words for a trip shape (questions.js g:shape).
+const SHAPE_LABEL = { one: 'pf.o.shapeOne', towns: 'pf.o.shapeTowns', road: 'pf.o.shapeRoad', countries: 'pf.o.shapeCountries' };
+
 const cheapestOf = (trips) => {
   const whole = sortTrips(trips, 'cheapest').filter((x) => !totalLeavesOut(x) && Number.isFinite(x.total?.group ?? x.total?.perPerson));
   return whole.length > 1 ? whole[0].id : null;
@@ -48,6 +53,8 @@ function useWide() {
 // way (T868).
 const TICKS = new Map();
 const VIEW = new Map();
+// G12 R4: More and Less like this, per answer set for this visit only.
+const MORE_LESS = new Map();
 const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from, s.places]);
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
@@ -178,7 +185,13 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   const sorted = sortTrips(filterTrips(kept, quick, destinations), sort.sort, destinations);
   // G12 R1: in the engine's own order rank 1 stays the pure best and the next
   // five are picked to differ (country, shape, price band); the rest follow.
-  const trips = sort.sort === 'match' ? diverseOrder(sorted) : sorted;
+  const [ml, setMl] = useVisit(MORE_LESS, settings, { more: null, less: [], undo: null });
+  // G12 R4: what was marked "Less like this" sinks softly (capped, never a filter).
+  const trips = lessOrder(sort.sort === 'match' ? diverseOrder(sorted) : sorted, ml.less);
+  const moreOf = ml.more ? found.find((x) => x.id === ml.more) || null : null;
+  const likeRow = moreOf ? likeThis(moreOf, trips) : [];
+  const hint = lessHint(ml.less);
+  const app = useHoldApp();
   const hidden = capped.list.length - kept.length;
   const focusNext = useRef(null);
   const months = useMonths();
@@ -237,6 +250,19 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     setSkips([...skips, trip.id]);
   };
 
+  const moreLike = (trip) => setMl({ ...ml, more: trip.id, undo: null });
+  const lessLike = (trip) => {
+    skipOne(trip);
+    setMl({ ...ml, less: [...ml.less.filter((x) => x.id !== trip.id), markOf(trip)], undo: trip.id });
+  };
+  const undoLess = () => {
+    setSkips(skips.filter((x) => x !== ml.undo));
+    setMl({ ...ml, less: ml.less.filter((x) => x.id !== ml.undo), undo: null });
+  };
+  const hintText = hint && (hint.kind === 'country'
+    ? countryLabel({ iso2: hint.iso2, country: hint.iso2 }, lang)
+    : t(SHAPE_LABEL[hint.shape] || 'pf.o.shapeTowns'));
+
   const toggle = (id) => {
     const live = ticked.map((x) => x.id);
     if (live.includes(id)) {
@@ -284,7 +310,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
       marked={trip.id === markedId}
       onOpen={onOpen}
       compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, full: ticked.length >= MAX_COMPARE, onToggle: toggle }}
-      keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne }}
+      keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne, onMore: moreLike, onLess: lessLike }}
       ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
     />
   );
@@ -336,6 +362,29 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         )}
       </div>
 
+      {ml.undo && (
+        <p className="tff-ml-note" role="status">
+          <span>{t('tf.ml.lessDone')}</span>
+          <Button variant="quiet" size="sm" onClick={undoLess}>{t('pf.delta.undo')}</Button>
+        </p>
+      )}
+      {hint && app?.travelStyles?.setOpen && (
+        <p className="tff-ml-note">
+          <span>{t('tf.ml.hint', { what: hintText })}</span>
+          <Button variant="quiet" size="sm" onClick={() => app.travelStyles.setOpen({ view: 'overview' })}>{t('tf.ml.hintGo')}</Button>
+        </p>
+      )}
+      {likeRow.length > 0 && (
+        <section className="tff-row tff-ml-row" aria-labelledby="tff-ml-h">
+          <div className="tff-row-head">
+            <h3 className="tff-row-title" id="tff-ml-h">{t('tf.ml.rowTitle', { name: tripName(moreOf, destinations, lang) })}</h3>
+            <Button variant="quiet" size="sm" onClick={() => setMl({ ...ml, more: null })}>{t('pf.delta.undo')}</Button>
+          </div>
+          <ul className="tff-row-cards" aria-labelledby="tff-ml-h">
+            {likeRow.map((trip) => <li key={trip.id}>{card(trip)}</li>)}
+          </ul>
+        </section>
+      )}
       {(() => {
         const empty = !trips.length && quick.length > 0 && (
           <div className="tff-none" role="status">

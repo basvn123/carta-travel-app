@@ -1258,3 +1258,6 @@
 /* G12 L8: "Just over" under a ceiling, apart from the list. */
 .tff-near { display: grid; gap: var(--space-2); margin-top: var(--space-6); }
 .tff-near-note { margin: 0; color: var(--text-2); font-size: var(--text-label); }
+/* G12 R4: More and Less like this, the hint and the row on top. */
+.tff-ml-note { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); color: var(--text-2); font-size: var(--text-label); }
+.tff-ml-row { margin-bottom: var(--space-5); }
