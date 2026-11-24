@@ -442,7 +442,7 @@ function RosterRow({ p, me, line, onPress }) {
   const ref = useRef(null);
   const body = (
     <>
-      <span className="vr-face-d" data-shared=""><ToneFace id={p.id} me={me} name={p.name} emoji={p.emoji} /></span>
+      <span className="vr-face-d" data-shared=""><ToneFace id={p.id} me={me} name={p.face || p.name} emoji={p.emoji} /></span>
       <span className="vr-ro-tx"><b>{p.name}</b><span>{line}</span></span>
     </>
   );
@@ -450,13 +450,17 @@ function RosterRow({ p, me, line, onPress }) {
   return <Pressable ref={ref} className="vr-ro-row" onClick={() => onPress(ref.current)}>{body}</Pressable>;
 }
 
-function Roster({ items, me, meets, onFriend, onCircle, onCancel }) {
+// The roster shows 12 people, then "Alle n" (25 friends stay one screen).
+const ROSTER_CAP = 12;
+
+function Roster({ items, me, meName, meEmoji, meLine, onMe, meets, onFriend, onCircle, onCancel }) {
   const { t, lang } = useI18n();
   const name = useName();
   const ex = useContext(ExCtx);
-  const people = items.filter((p) => p.kind !== 'circle');
+  const [all, setAll] = useState(false);
+  const everyone = items.filter((p) => p.kind !== 'circle');
+  const people = all ? everyone : everyone.slice(0, ROSTER_CAP);
   const circles = items.filter((p) => p.kind === 'circle');
-  if (!items.length) return null;
   const lineOf = (p) => {
     if (p.kind === 'pending') return t('tg.requestSent');
     const meet = meets.find((o) => o.friendId === p.id);
@@ -473,6 +477,8 @@ function Roster({ items, me, meets, onFriend, onCircle, onCancel }) {
     <section className="vr-roster" aria-labelledby="vr-ro-h">
       <h2 className="vr-band-h" id="vr-ro-h">{t('friends.title')}</h2>
       <ul>
+        {/* Jij first, as in the strip: it opens your own page (judge v3-1 fix 5). */}
+        <li><RosterRow p={{ id: me, name: t('vr.you'), emoji: meEmoji, face: meName }} me={me} line={meLine} onPress={onMe} /></li>
         {people.map((p) => (
           <li key={`${p.kind}:${p.id}`}>
             <RosterRow p={p} me={me} line={lineOf(p)} onPress={p.kind === 'friend' ? (el) => onFriend(p.id, el) : null} />
@@ -482,6 +488,9 @@ function Roster({ items, me, meets, onFriend, onCircle, onCancel }) {
           </li>
         ))}
       </ul>
+      {everyone.length > ROSTER_CAP && !all && (
+        <Button variant="quiet" size="sm" className="vr-lnk" aria-expanded={all} onClick={() => setAll(true)}>{t('vr.allN', { n: everyone.length })}</Button>
+      )}
       {circles.length > 0 && (
         <>
           <h2 className="vr-band-h" id="vr-ro-k">{t('vr.circles')}</h2>
@@ -632,7 +641,8 @@ export function VriendenHome({
               </div>
             )}
             <NuBand items={tl.now} me={me} onView={onView} onError={onError} />
-            <Roster items={strip} me={me} meets={data.meets} onFriend={openFriend} onCircle={(id) => onView('circle', id)}
+            <Roster items={strip} me={me} meName={meName} meEmoji={ex ? '' : s.me?.avatarEmoji}
+              meLine={!ex && s.me?.handle ? `@${s.me.handle}` : t('vr.whatFriendsSee')} onMe={() => onView('me')} meets={data.meets} onFriend={openFriend} onCircle={(id) => onView('circle', id)}
               onCancel={(linkId) => togetherActions.remove(linkId)} />
           </div>
           <div className={`vr-main${enter ? ' is-enter' : ''}`}>

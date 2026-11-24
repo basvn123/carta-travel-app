@@ -488,6 +488,7 @@ button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--f
 /* desktop roster and month ruler */
 .vr-roster { gap: var(--space-1); align-content: start; }
 .vr-roster ul { display: grid; margin: 0; padding: 0; list-style: none; }
+.vr-roster > .btn { justify-self: start; }
 .vr-roster li { display: flex; align-items: center; gap: var(--space-2); min-width: 0; }
 .vr-ro-row {
   display: flex; align-items: center; gap: var(--space-3); flex: 1; min-width: 0; min-height: 56px; padding: var(--space-1) 0;
