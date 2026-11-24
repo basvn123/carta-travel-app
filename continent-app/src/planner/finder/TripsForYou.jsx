@@ -17,6 +17,7 @@ import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
 import { diverseOrder } from '../../lib/recommend/diversify.js';
 import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
+import { haversineKm } from '../../lib/nearby.js';
 import { lessHint, lessOrder, likeThis, markOf } from '../../lib/recommend/moreLess.js';
 import { useHoldApp } from '../flow/StyleBar.jsx';
 
@@ -280,11 +281,20 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   // G12 R2: themed rows from the trips already priced, under the best pick
   // and the diverse five, only in the engine's own order with no quick
   // filter (a sort or a filter is the traveller's own way to keep looking).
-  const acc = { minutes: thereMinutes, highs: (x) => dayHighs(x, destinations), crowd: (x) => crowdTier(x, destinations) };
+  // G12 B5: the straight-line distance from home, for Close by when the flight times are missing.
+  const kmFromHome = (x) => {
+    const d = destinations?.[x.places?.[0]?.id];
+    const lat = d?.city_lat ?? d?.lat;
+    const lon = d?.city_lon ?? d?.lon;
+    if (!Number.isFinite(home?.lat) || !Number.isFinite(home?.lon) || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    return haversineKm(home.lat, home.lon, lat, lon);
+  };
+  const acc = { minutes: thereMinutes, km: kmFromHome, highs: (x) => dayHighs(x, destinations), crowd: (x) => crowdTier(x, destinations) };
   const rows = sort.sort === 'match' && !quick.length && !onMap
     ? themedRows(trips, { ...acc, settings, topIds: trips.slice(0, PAGE).map((x) => x.id) })
     : [];
   const rowTitle = (r) => {
+    if (r.key === 'near' && r.basis === 'km') return t('tf.row.nearKm');
     if (r.key === 'warm') return r.month ? t('tf.row.warm', { month: monthName(r.month, lang) }) : t('tf.row.warmAny');
     return t(`tf.row.${r.key}`);
   };
@@ -294,6 +304,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     if (w.key === 'tf.row.less') return t(w.key, { eur: formatMoney(w.eur, { locale: lang }) });
     if (w.key === 'tf.row.time') return t(w.key, { time: shortDuration(t, w.minutes) });
     if (w.key === 'tf.row.high') return t(w.key, { c: w.c });
+    if (w.key === 'tf.row.km') return t(w.key, { km: new Intl.NumberFormat(lang).format(w.km) });
     return t(w.key, { month: monthName(w.month, lang) });
   };
   // "All n" opens the row's sort on the full list below.

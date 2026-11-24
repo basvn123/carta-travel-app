@@ -64,12 +64,17 @@ function sharedMonth(trips) {
  * The themed rows for a ranked list.
  *   opts: { settings, destinations, topIds (the cards above the rows),
  *           highs(trip) -> { hi } | null, crowd(trip) -> 0..3 | null,
- *           minutes(trip) -> n | null, max, perRow }
+ *           minutes(trip) -> n | null, km(trip) -> straight-line km from
+ *           home | null, max, perRow }
+ *   G12 B5: Close by needs the flight's clock times (`minutes`), which a
+ *   "Not yet" flight lacks; when too few trips have them, the row falls back
+ *   to the straight-line distance from home (`basis: 'km'`), labelled as a
+ *   distance, never as a travel time.
  *   -> [{ key, sort, month, trips: [...], n (all that fit the row), extra
  *         (how many are not in the top set), best (the best pick, for the why) }]
  */
 export function themedRows(trips, {
-  settings = null, topIds = [], highs = () => null, crowd = () => null, minutes = () => null,
+  settings = null, topIds = [], highs = () => null, crowd = () => null, minutes = () => null, km = () => null,
   max = MAX_ROWS, perRow = ROW_CARDS,
 } = {}) {
   const list = Array.isArray(trips) ? trips.filter(Boolean) : [];
@@ -83,9 +88,13 @@ export function themedRows(trips, {
     cheapest: () => pool
       .filter((x) => !leavesOut(x) && totalOf(x) != null)
       .sort((a, b) => totalOf(a) - totalOf(b)),
-    near: () => pool
-      .filter((x) => Number.isFinite(minutes(x)))
-      .sort((a, b) => minutes(a) - minutes(b)),
+    near: () => {
+      const timed = pool.filter((x) => Number.isFinite(minutes(x))).sort((a, b) => minutes(a) - minutes(b));
+      if (timed.filter((x) => !top.has(x.id)).length >= ROW_MIN_NEW) return timed;
+      const far = pool.filter((x) => Number.isFinite(km(x))).sort((a, b) => km(a) - km(b));
+      far.basis = 'km';
+      return far;
+    },
     warm: () => pool
       .filter((x) => (highs(x)?.hi ?? -Infinity) >= WARM_MIN)
       .sort((a, b) => highs(b).hi - highs(a).hi),
@@ -99,7 +108,7 @@ export function themedRows(trips, {
     const all = byKey[key]();
     const extra = all.filter((x) => !top.has(x.id)).length;
     if (extra < ROW_MIN_NEW) continue;
-    rows.push({ key, sort: ROW_SORT[key], month: key === 'warm' || key === 'quiet' ? month : 0, trips: all.slice(0, perRow), n: all.length, extra, best });
+    rows.push({ key, basis: all.basis || '', sort: ROW_SORT[key], month: key === 'warm' || key === 'quiet' ? month : 0, trips: all.slice(0, perRow), n: all.length, extra, best });
   }
   // The rows that show most beyond the cards above them come first; ties keep the start's order.
   return rows
@@ -115,12 +124,16 @@ export function themedRows(trips, {
  *   Cheapest says how much less than the best pick, only when both totals
  *   are complete and the card is really cheaper.
  */
-export function rowWhy(row, trip, { highs = () => null, crowd = () => null, minutes = () => null } = {}) {
+export function rowWhy(row, trip, { highs = () => null, crowd = () => null, minutes = () => null, km = () => null } = {}) {
   if (row.key === 'cheapest') {
     const a = totalOf(trip);
     const b = row.best && !leavesOut(row.best) ? totalOf(row.best) : null;
     if (a == null || b == null || !(b - a >= 1)) return null;
     return { key: 'tf.row.less', eur: b - a };
+  }
+  if (row.key === 'near' && row.basis === 'km') {
+    const d = km(trip);
+    return Number.isFinite(d) ? { key: 'tf.row.km', km: Math.round(d) } : null;
   }
   if (row.key === 'near') {
     const m = minutes(trip);

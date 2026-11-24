@@ -9599,6 +9599,8 @@ export const es = {
   "tf.row.allOf": "Los {n}: {row}",
   "tf.row.less": "{eur} menos que tu mejor opción",
   "tf.row.time": "{time} puerta a puerta",
+  "tf.row.nearKm": "Cerca, en línea recta",
+  "tf.row.km": "A {km} km de casa en línea recta",
   "tf.row.high": "{c}° de día",
   "tf.row.quietWhy": "Tranquilo en {month}",
   "tf.list.keepLooking": "Seguir buscando",

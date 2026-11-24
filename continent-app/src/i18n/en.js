@@ -10226,6 +10226,8 @@ export const en = {
   "tf.row.allOf": "All {n}: {row}",
   "tf.row.less": "{eur} less than your best pick",
   "tf.row.time": "{time} door to door",
+  "tf.row.nearKm": "Close by, as the crow flies",
+  "tf.row.km": "{km} km from home in a straight line",
   "tf.row.high": "{c}° by day",
   "tf.row.quietWhy": "Quiet in {month}",
   "tf.list.keepLooking": "Keep looking",

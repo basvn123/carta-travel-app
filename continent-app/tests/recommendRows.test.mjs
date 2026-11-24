@@ -89,3 +89,17 @@ test("R2: a row card's why is the row's reason, honest about money", () => {
   const near = rows.find((r) => r.key === "near");
   assert.deepEqual(rowWhy(near, pool[7], acc), { key: "tf.row.time", minutes: 80 });
 });
+
+test("G12 B5: Close by falls back to km from home when the flight times are missing, labelled as distance", () => {
+  const km = { g: 900, h: 400, i: 1200, x: 300 };
+  const untimed = pool.map((x) => ({ ...x, _m: null }));
+  const opts = { ...acc, minutes: () => null, km: (x) => km[x.id] ?? null, topIds };
+  const near = themedRows(untimed, opts).find((r) => r.key === "near");
+  assert.ok(near, "a distance row instead of none");
+  assert.equal(near.basis, "km");
+  assert.deepEqual(near.trips.map((x) => x.id), ["x", "h", "g", "i"]);
+  assert.deepEqual(rowWhy(near, near.trips[1], opts), { key: "tf.row.km", km: 400 });
+  // With enough clock times the row stays a travel time.
+  const timed = themedRows(pool, { ...acc, km: (x) => km[x.id] ?? null, topIds }).find((r) => r.key === "near");
+  assert.equal(timed.basis, "");
+});

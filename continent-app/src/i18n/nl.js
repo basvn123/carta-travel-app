@@ -9610,6 +9610,8 @@ export const nl = {
   "tf.row.allOf": "Alle {n}: {row}",
   "tf.row.less": "{eur} minder dan je beste keuze",
   "tf.row.time": "{time} van deur tot deur",
+  "tf.row.nearKm": "Dichtbij, in vogelvlucht",
+  "tf.row.km": "{km} km van huis in vogelvlucht",
   "tf.row.high": "{c}° overdag",
   "tf.row.quietWhy": "Rustig in {month}",
   "tf.list.keepLooking": "Verder kijken",
