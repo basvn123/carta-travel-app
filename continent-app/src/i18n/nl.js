@@ -9641,6 +9641,7 @@ export const nl = {
   "tf.lever.tier": "Eén soort bed lager",
   "tf.lever.nearby": "Slaap in {place}",
   "tf.lever.week": "Een andere week, {month}",
+  "tf.lever.saveOn": "{eur} minder voor {lines}",
   "tf.alt.cheaper": "Goedkoper",
   "tf.alt.month": "Andere maand",
   "tf.alt.country": "Ander land",

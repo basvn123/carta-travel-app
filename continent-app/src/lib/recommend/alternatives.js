@@ -18,7 +18,16 @@
  * Honest numbers (decision §3.3, §3.4): a difference shows only when both
  * trips price the same lines; a total with a "Not yet" line never counts as
  * cheaper; a lever or relation with no real difference is left out, so
- * nothing empty is ever drawn. Pure: tests/recommendAlternatives.test.mjs.
+ * nothing empty is ever drawn.
+ *
+ * Owner rule (2026-11-24, G12 B5): when the flight is "Not yet" in BOTH
+ * quotes the live lines are the same, so a lever that changes only priced
+ * lines (a bed tier down, a nearby base on the same gateway) may show its
+ * saving. It is marked `partial` with the `lines` that moved, and is worded
+ * as a saving on those lines ("40 euros less for beds"), never as a cheaper
+ * whole trip; a "Not yet" total still never wins Cheaper or a cheapest row,
+ * and an alternative of another place or month shows no difference then.
+ * Pure: tests/recommendAlternatives.test.mjs.
  */
 import { STAY_TIERS } from '../stayPrice.js';
 import { nearbyPlaces } from '../nearby.js';
@@ -87,6 +96,39 @@ function cheaper(base, next) {
   return diff != null && diff <= -MIN_SAVING ? diff : null;
 }
 
+/**
+ * The priced lines that moved between two trips with the same live lines:
+ * [{ id, diff }] (group euros), only lines priced in both.
+ */
+export function movedLines(base, next) {
+  if (!base || !next || linesOf(base) !== linesOf(next)) return [];
+  const eur = (t, id) => {
+    const s = t.slots.find((x) => x.id === id);
+    return s && s.eur != null ? (Number.isFinite(s.eurGroup) ? s.eurGroup : s.eur) : null;
+  };
+  return base.slots
+    .filter((s) => s.id !== 'activities' && eur(base, s.id) != null && eur(next, s.id) != null)
+    .map((s) => ({ id: s.id, diff: Math.round(eur(next, s.id) - eur(base, s.id)) }))
+    .filter((x) => Math.abs(x.diff) >= MIN_SAVING);
+}
+
+/**
+ * A lever on a trip with a "Not yet" line (owner rule above): the same live
+ * lines, the "Not yet" ones untouched, and cheaper on the priced lines that
+ * moved. { diff, lines } or null.
+ */
+function cheaperLines(base, next, mayMove) {
+  if (!next) return null;
+  const moved = movedLines(base, next);
+  if (!moved.length || moved.some((x) => !mayMove.includes(x.id))) return null;
+  const diff = moved.reduce((n, x) => n + x.diff, 0);
+  return diff <= -MIN_SAVING ? { diff, lines: moved.map((x) => x.id) } : null;
+}
+// The lines a bed tier and a nearby base may move: beds, and for a base
+// also its days and getting around; never the flight.
+const TIER_LINES = ['stay'];
+const BASE_LINES = ['stay', 'food', 'local'];
+
 /** The months ahead (as 'YYYY-MM') with a checked return of the trip's length to its gateway. */
 export function checkedWindows(trip, input) {
   const iata = trip?.gateway?.iata;
@@ -108,7 +150,8 @@ export function checkedWindows(trip, input) {
  * cheapest first. Each is the same trip priced again with one thing changed.
  */
 export function levers(trip, input) {
-  if (!trip || !input || leavesOut(trip)) return [];
+  if (!trip || !input) return [];
+  if (leavesOut(trip)) return partialLevers(trip, input);
   const out = [];
   // One bed tier down.
   const tier = input.stayTier || 'home';
@@ -150,6 +193,36 @@ export function levers(trip, input) {
 }
 
 /**
+ * The levers on a trip with a "Not yet" line: a bed tier down and a nearby
+ * base on the same gateway, each `partial` with the lines it saved on.
+ * No cheaper week: it moves the flight, which has no price.
+ */
+function partialLevers(trip, input) {
+  const out = [];
+  const tier = input.stayTier || 'home';
+  const i = STAY_TIERS.indexOf(tier);
+  if (i > 0) {
+    const down = STAY_TIERS[i - 1];
+    const next = safePrice(candidateOf(trip), { ...input, stayTier: down }, 'tier');
+    const r = cheaperLines(trip, next, TIER_LINES);
+    if (r) out.push({ key: 'tier', trip: next, diff: r.diff, lines: r.lines, partial: true, tier: down });
+  }
+  const destinations = input.data?.destinations || {};
+  if (trip.places?.length === 1) {
+    const here = destinations[trip.places[0].id];
+    let best = null;
+    for (const n of nearbyPlaces(here ? { ...here, id: trip.places[0].id } : null, destinations, NEARBY_TRIES)) {
+      const next = safePrice(candidateOf(trip, { places: [{ id: n.id, nights: trip.places[0].nights }] }), input, 'nearby');
+      if (!next || next.gateway?.iata !== trip.gateway?.iata) continue;
+      const r = cheaperLines(trip, next, BASE_LINES);
+      if (r && (!best || r.diff < best.diff)) best = { key: 'nearby', trip: next, diff: r.diff, lines: r.lines, partial: true, placeId: n.id };
+    }
+    if (best) out.push(best);
+  }
+  return out.sort((a, b) => a.diff - b.diff);
+}
+
+/**
  * One alternative per relation (Part 3): [{ key, trip, diff }] in the order
  * cheaper, month, country, closer, at most one each, none without a real
  * difference.
@@ -163,13 +236,15 @@ export function alternatives(trip, others = [], { levers: lv = [], minutes = () 
   const push = (key, x) => {
     if (!x || used.has(x.id)) return;
     used.add(x.id);
-    out.push({ key, trip: x, diff: priceDiff(trip, x) });
+    // A "Not yet" line on either side: no whole-trip difference (owner rule).
+    out.push({ key, trip: x, diff: leavesOut(trip) || leavesOut(x) ? null : priceDiff(trip, x) });
   };
-  // Cheaper: the best lever, else a complete trip of the same country or shape that costs less.
-  const lever = lv.find((l) => l.key !== 'week');
+  // Cheaper: the best complete lever, else a complete trip of the same
+  // country or shape that costs less. A partial lever never claims Cheaper.
+  const lever = lv.find((l) => l.key !== 'week' && !l.partial);
   if (lever) push('cheaper', lever.trip);
   else {
-    const c = pool.filter((x) => (x.iso2 === trip.iso2 || x.shape === trip.shape) && !leavesOut(x))
+    const c = leavesOut(trip) ? null : pool.filter((x) => (x.iso2 === trip.iso2 || x.shape === trip.shape) && !leavesOut(x))
       .map((x) => ({ x, d: priceDiff(trip, x) })).filter((r) => r.d != null && r.d <= -MIN_SAVING)
       .sort((a, b) => a.d - b.d)[0];
     if (c) push('cheaper', c.x);

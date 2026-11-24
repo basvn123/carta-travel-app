@@ -9630,6 +9630,7 @@ export const fr = {
   "tf.lever.tier": "Un type de lit en dessous",
   "tf.lever.nearby": "Dormir à {place}",
   "tf.lever.week": "Une autre semaine, {month}",
+  "tf.lever.saveOn": "{eur} de moins pour {lines}",
   "tf.alt.cheaper": "Moins cher",
   "tf.alt.month": "Un autre mois",
   "tf.alt.country": "Un autre pays",

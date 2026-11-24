@@ -615,7 +615,10 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
                   <li key={l.key}>
                     <Button variant="secondary" size="sm" className="tff-lever" onClick={() => onOpen(l.trip)}>
                       <span>{leverLabel(l)}</span>
-                      <span className="tff-lever-diff money">{money(l.diff)}</span>
+                      {/* G12 B5 owner rule: with the flight Not yet, the saving is on the lines that moved, never the whole trip. */}
+                      <span className="tff-lever-diff money">{l.partial
+                        ? t('tf.lever.saveOn', { eur: formatMoney(Math.abs(l.diff), { locale: lang }), lines: l.lines.map((id) => t(`pf.delta.l.${id}`)).join(', ') })
+                        : money(l.diff)}</span>
                     </Button>
                   </li>
                 ))}

@@ -9630,6 +9630,7 @@ export const de = {
   "tf.lever.tier": "Eine Unterkunftsart niedriger",
   "tf.lever.nearby": "Übernachten in {place}",
   "tf.lever.week": "Eine andere Woche, {month}",
+  "tf.lever.saveOn": "{eur} weniger für {lines}",
   "tf.alt.cheaper": "Günstiger",
   "tf.alt.month": "Anderer Monat",
   "tf.alt.country": "Anderes Land",

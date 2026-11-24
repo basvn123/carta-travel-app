@@ -10257,6 +10257,7 @@ export const en = {
   "tf.lever.tier": "One bed type down",
   "tf.lever.nearby": "Stay in {place}",
   "tf.lever.week": "Another week, {month}",
+  "tf.lever.saveOn": "{eur} less for {lines}",
   "tf.alt.cheaper": "Cheaper",
   "tf.alt.month": "Another month",
   "tf.alt.country": "Another country",

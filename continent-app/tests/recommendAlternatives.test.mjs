@@ -6,7 +6,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { alternatives, leavesOut, levers, priceDiff, MIN_WINDOWS } from "../src/lib/recommend/alternatives.js";
+import { alternatives, leavesOut, levers, movedLines, priceDiff, MIN_WINDOWS } from "../src/lib/recommend/alternatives.js";
 import { knowTrip } from "../src/lib/recommend/doorTrips.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 
@@ -72,8 +72,29 @@ test("levers on a real trip: each cheaper, complete and like for like, with its 
   for (const l of lv) {
     assert.ok(["tier", "nearby", "week"].includes(l.key));
     assert.ok(l.diff < 0, `${l.key} is cheaper`);
+    if (l.partial) {
+      // G12 B5 owner rule: the flight Not yet in both, the saving only on priced lines.
+      assert.equal(leavesOut(base), true);
+      assert.ok(l.lines.length && !l.lines.includes("flight"));
+      assert.notEqual(l.key, "week");
+      continue;
+    }
     assert.equal(priceDiff(base, l.trip), l.diff);
     assert.equal(leavesOut(l.trip), false);
     assert.notEqual(l.trip.id, base.id);
   }
+});
+
+test("owner rule (G12 B5): flight Not yet in both, a saving on the priced lines only, never Cheaper", () => {
+  const withStay = (id, stay, group) => ({ ...trip(id, { flight: null, group }), slots: [
+    { id: "flight", eur: null }, { id: "stay", eur: stay, eurGroup: stay * 2 }, { id: "food", eur: 150, eurGroup: 300 }, { id: "activities", eur: null },
+  ] });
+  const base = withStay("base", 300, 900);
+  const down = withStay("base~tier", 280, 860);
+  assert.deepEqual(movedLines(base, down), [{ id: "stay", diff: -40 }]);
+  assert.deepEqual(movedLines(base, trip("x")), [], "different live lines move nothing");
+  const lv = [{ key: "tier", trip: down, diff: -40, lines: ["stay"], partial: true }];
+  const alts = alternatives(base, [trip("es1", { iso2: "ES", group: 400 }), trip("pt-cheap", { group: 300 })], { levers: lv, minutes });
+  assert.ok(!alts.some((x) => x.key === "cheaper"), "a Not yet total never wins Cheaper");
+  assert.ok(alts.every((x) => x.diff === null), "no whole-trip difference against a Not yet total");
 });
