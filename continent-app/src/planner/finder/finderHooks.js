@@ -34,6 +34,7 @@ import { todayISO } from '../../lib/dates.js';
 import { engineOriginCode } from '../../lib/airportReach.js';
 import { EARLY, priceInSlices } from './priceSlices.js';
 import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
+import { checkedWindows, levers } from '../../lib/recommend/alternatives.js';
 import { rankTrips } from '../../lib/recommend/rank.js';
 import { useTasteVerdicts, verdictsKey } from '../../lib/taste/store.js';
 import { keptRecord } from '../../lib/recommend/kept.js';
@@ -260,6 +261,28 @@ export function useDoorRun(settings, kind) {
     origin,
     data,
   };
+}
+
+/**
+ * G12 L13, R3: the found trip's levers (one bed tier down, a nearby base,
+ * a cheaper checked week), priced on the trip's own engine input after the
+ * page has painted, and how many checked flight windows exist (another
+ * month needs two). -> { levers: [], windows, ready }
+ */
+export function useFoundMore(trip, input) {
+  const [state, setState] = useState({ id: null, levers: [], windows: 0 });
+  useEffect(() => {
+    if (!trip || !input) return undefined;
+    let live = true;
+    const id = setTimeout(() => {
+      const lv = levers(trip, input);
+      const windows = checkedWindows(trip, input).length;
+      if (live) setState({ id: trip.id, levers: lv, windows });
+    }, 60);
+    return () => { live = false; clearTimeout(id); };
+  }, [trip, input]);
+  const fresh = Boolean(trip) && state.id === trip.id;
+  return { levers: fresh ? state.levers : [], windows: fresh ? state.windows : 0, ready: fresh };
 }
 
 /**

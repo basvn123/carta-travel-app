@@ -218,10 +218,10 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
  * (CompareSheet, moved as is). With no `ui` (an older caller) it lands at
  * once, as before. A route that cannot be built says so in one line.
  *
- *   alternatives(trip, input) -> [{ key, trip, diff }]   G12 R3, optional
- *   levers(trip, input)       -> [{ key, trip, diff }]   G12 L13, optional
+ * The found trip prices its levers (G12 L13) and alternatives (R3) on the
+ * door run's own input.
  */
-export function KnowBuildScreen({ settings, onBack, onLand, ui = null, bar = null, onList = null, extras = null }) {
+export function KnowBuildScreen({ settings, onBack, onLand, ui = null, bar = null, onList = null }) {
   const { t, lang } = useI18n();
   const titleRef = useRef(null);
   const run = useDoorRun(settings, 'know');
@@ -243,7 +243,6 @@ export function KnowBuildScreen({ settings, onBack, onLand, ui = null, bar = nul
   const countries = useMemo(() => (settings.places || []).filter((p) => p.kind === 'country').map((p) => p.country || p.name).filter(Boolean), [settings.places]);
   const base = shown || run.result;
   const trip = edited && base && edited.id === base.id ? edited : base;
-  const more = useMemo(() => (ui && trip && run.input && extras ? extras(trip, run.input) : null), [ui, trip, run.input, extras]);
   if (ui && done && trip) {
     const keepWith = { origin: run.origin?.iata || null, file: run.input?.flights || null };
     return (
@@ -256,7 +255,7 @@ export function KnowBuildScreen({ settings, onBack, onLand, ui = null, bar = nul
           keepWith={keepWith}
           bar={bar}
           others={[]}
-          more={more}
+          input={run.input}
           onBack={onList || onBack}
           onOpen={(x) => { setEdited(null); setShown(x); }}
           onPlan={(x) => onLand(planOf(x))}

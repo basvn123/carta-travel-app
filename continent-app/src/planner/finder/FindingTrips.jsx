@@ -245,7 +245,9 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
   const keepWith = { origin: finder.origin?.iata || null, file: finder.input?.flights || null };
   const keeper = useKeepTrip({ destinations: finder.data?.destinations, lang, keepWith });
   const all = (finder.trips || finder.early || []).map((x) => edits[x.id] || x);
-  const open = openId ? all.find((x) => x.id === openId) : null;
+  // G12 L13, R3: a lever is a trip the list does not hold; it opens from here.
+  const [extra, setExtra] = useState({});
+  const open = openId ? (all.find((x) => x.id === openId) || extra[openId] || null) : null;
   const done = Boolean(finder.trips && finder.trips.length);
   // The search stands at least MIN_STAND_MS, then holds "8 trips found" for
   // FOUND_BEAT_MS (owner, plan flow walk). A run already done on arrival
@@ -360,8 +362,9 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
           keepWith={keepWith}
           bar={bar}
           others={finder.trips ? all : []}
+          input={finder.input}
           onBack={closeTrip}
-          onOpen={openTrip}
+          onOpen={(x) => { if (!all.some((y) => y.id === x.id)) setExtra((e) => ({ ...e, [x.id]: x })); openTrip(x); }}
           onPlan={planTrip}
           onEdit={(next) => setEdits((e) => ({ ...e, [open.id]: next }))}
         />
