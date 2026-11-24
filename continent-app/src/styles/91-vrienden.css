@@ -488,6 +488,8 @@ button.vr-m-go:focus-visible::after { outline: var(--stroke-focus) solid var(--f
   display: flex; align-items: center; gap: var(--space-2); min-height: var(--tap); padding: 0 var(--space-3);
   border: 0; border-radius: var(--radius-control); background: none; font: inherit; font-weight: 700; color: var(--text); text-align: start; cursor: pointer;
 }
+.vr-new-rows { display: grid; border-top: var(--stroke-hair) solid var(--border); }
+.vr-new-rows .vr-new-row { min-height: 56px; padding: 0; border-bottom: var(--stroke-hair) solid var(--border); border-radius: 0; }
 .vr-new-row:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: -2px; }
 @media (hover: hover) { .vr-new-row:hover { background: var(--surface-hover); } }
 
@@ -568,9 +570,10 @@ span.vr-ro-row { cursor: default; }
   .vr-roster { display: grid; }
   .vr-ruler { position: sticky; top: 0; z-index: 2; display: flex; flex-wrap: wrap; }
   .vr-v3 .vr-main, .vr-main .vr-band.is-undated { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  /* The soonest overlap spans two columns and two rows at 2:1 (only from
-     1100: at two across it would outgrow its largest photo file). */
-  .vr-main .vr-mo.is-wide { grid-column: span 2; grid-row: span 2; }
+  /* The soonest overlap spans two columns at 2:1 (only from 1100: at two
+     across it would outgrow its largest photo file); one row, since its lanes
+     show only once it is opened. */
+  .vr-main .vr-mo.is-wide { grid-column: span 2; }
   .vr-main .vr-mo.is-wide .vr-m-ph { aspect-ratio: 2 / 1; }
 }
 

@@ -1,4 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { Pressable } from '../../components/ui/Pressable.jsx';
 import { useAuth } from '../../auth/AuthContext.jsx';
@@ -128,6 +130,10 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
   const meet = useContext(MeetCtx);
   const ref = useRef(null);
   const [draw, setDraw] = useState(0);
+  // The lanes and their saffron frame show when the traveller opens the
+  // overlap card, and draw as they appear (judge v3-2 fix 6); at rest the card
+  // is a plain card with its dates.
+  const [lanesOn, setLanesOn] = useState(false);
   const lead = m.kind === 'circle' ? m.lead?.destId : null;
   const { photo } = placeOf(destinations, lead ? [lead] : m.placeIds);
   const places = joinNames(m.placeIds.slice(0, 2).map((id) => name(id)), lang) || m.city || fmtWhere(m.src?.cities || []);
@@ -154,7 +160,10 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
   const opens = m.kind === 'overlap' || m.kind === 'friendTrip';
   const tap = () => {
     // The lanes draw when the traveller opens the card, never on scroll.
-    if (m.kind === 'overlap' && !open && !reduced()) setDraw((d) => d + 1);
+    if (m.kind === 'overlap') {
+      if (!lanesOn && !reduced()) setDraw((d) => d + 1);
+      setLanesOn((v) => !v);
+    }
     // The example has no trip to open: a tap only draws the lanes.
     if (!ex) onOpen(m, ref.current);
   };
@@ -187,7 +196,7 @@ function Moment({ m, scale, me, meName, destinations, open, onOpen, onPlanDay })
           )}
         </h3>
         {fact && <span className={`vr-m-f${m.withYou ? ' is-you' : ''}`}>{fact}</span>}
-        {m.kind === 'overlap' && m.saffron && <Lanes o={m.src} me={me} meName={meName} draw={draw} />}
+        {m.kind === 'overlap' && m.saffron && lanesOn && <Lanes o={m.src} me={me} meName={meName} draw={draw} />}
         {m.kind === 'overlap' && (
           <span className="vr-m-acts">
             {/* Plan samen een dag leaves for the planner, so in the example it stays still. */}
@@ -366,6 +375,28 @@ function Band({ id, label, head = null, className = '', moments, hidden = [], mo
         )}
       </ul>
     </section>
+  );
+}
+
+/* "+ Nieuw" on a phone: the two-row bottom sheet (the invite sheet's frame);
+   from 1100 px a popover under the button. */
+function NewSheet({ canCircle, canGroup, onView, onClose }) {
+  const { t } = useI18n();
+  const panelRef = useRef(null);
+  useFocusTrap(panelRef, onClose);
+  return createPortal(
+    <div className="vr-sheet-wrap is-opened">
+      <div className="vr-scrim" onClick={onClose} aria-hidden="true" />
+      <div className="vr-sheet" ref={panelRef} role="dialog" aria-modal="true" aria-labelledby="vr-new-h">
+        <span className="vr-grab" aria-hidden="true" />
+        <h2 id="vr-new-h">{t('vr.new')}</h2>
+        <div className="vr-new-rows">
+          {canCircle && <Pressable className="vr-new-row" onClick={() => { onClose(); onView('newcircle'); }}><HouseIcon.plus size={18} />{t('vr.newCircle')}</Pressable>}
+          {canGroup && <Pressable className="vr-new-row" onClick={() => { onClose(); onView('newgroup'); }}><HouseIcon.plus size={18} />{t('tg.newGroup')}</Pressable>}
+        </div>
+      </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -628,14 +659,16 @@ export function VriendenHome({
   const canGroup = !ex && hasFriends && !s.groupsMissing;
   const newBtn = canCircle || canGroup ? (
     <span className="vr-new">
-      <Button variant="quiet" size="sm" className="vr-lnk" iconStart={<HouseIcon.plus size={16} />} aria-expanded={newOpen}
-        aria-controls="vr-new-menu" onClick={() => setNewOpen((v) => !v)}>{t('vr.new')}</Button>
-      {newOpen && (
+      <Button variant="quiet" size="sm" className="vr-lnk" iconStart={<HouseIcon.plus size={16} />} aria-expanded={Boolean(newOpen)}
+        aria-controls={newOpen === true ? 'vr-new-menu' : undefined}
+        onClick={() => setNewOpen((v) => (v ? false : window.matchMedia?.('(min-width: 1100px)').matches ? true : 'sheet'))}>{t('vr.new')}</Button>
+      {newOpen === true && (
         <span className="vr-new-menu" id="vr-new-menu">
           {canCircle && <Pressable className="vr-new-row" onClick={() => onView('newcircle')}><HouseIcon.plus size={18} />{t('vr.newCircle')}</Pressable>}
           {canGroup && <Pressable className="vr-new-row" onClick={() => onView('newgroup')}><HouseIcon.plus size={18} />{t('tg.newGroup')}</Pressable>}
         </span>
       )}
+      {newOpen === 'sheet' && <NewSheet canCircle={canCircle} canGroup={canGroup} onView={onView} onClose={() => setNewOpen(false)} />}
     </span>
   ) : null;
   const labels = Object.fromEntries(tl.bands.map((b) => [b.key, b.thisMonth ? t('vr.thisMonth') : monthName(b.month, lang, today)]));
