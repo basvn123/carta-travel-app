@@ -169,6 +169,12 @@ async function timelineRules(page, v) {
         }
       }
     }
+    // Judge v3-1 fix 8: the header door's count is the status line's count.
+    if (variant !== 'example') {
+      const door = document.querySelector('.tg-door-n')?.textContent.trim() || '0';
+      const ct = root.querySelector('.vr-ct')?.textContent.trim() || '0';
+      if (door !== '9+' && door !== ct) out.push(`door count ${door} but status ${ct}`);
+    }
     // Judge v3-1 fix 1: with nobody, no face but yours and no next trip; with
     // one friend, only that friend (Sam Martens, SM).
     const allowed = { empty: [], one: ['SM'] }[variant];

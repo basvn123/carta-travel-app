@@ -40,7 +40,8 @@ import {
   setMyAvailability, setMyHomeAirport, makeCircleTrip,
 } from '../auth/circles.js';
 import { mockCircles } from './circle/circleMock.js';
-import { owesVote, bandTopFrom } from './groupBand.js';
+import { bandTopFrom } from './groupBand.js';
+import { waitingOf } from './home/timeline.js';
 import { readHidden, hideOverlap } from './overlaps.js';
 import { IS_FRIENDS_MOCK, FRIENDS_MOCK, MOCK_ME, mockState } from './friendsMock.js';
 
@@ -141,13 +142,11 @@ export function refreshTogether() {
   return load(state.userId);
 }
 
-/** The count for the header door. */
+/** The count for the header door: the same rows as Vrienden's Nu band and
+ *  status line (waitingOf), so the two numbers never disagree (G16 v3,
+ *  judge 1 fix 8). Balances to settle count too. */
 export function waitingCount(s) {
-  const incoming = s.links.filter((l) => l.kind === 'incoming').length;
-  const groupInvites = s.groups.filter((g) => g.myStatus === 'invited').length;
-  const votes = s.groups.filter((g) => g.myStatus === 'joined' && !g.bookedPlanId
-    && (owesVote(g.options, g.votes, s.userId, 'when') || owesVote(g.options, g.votes, s.userId, 'where'))).length;
-  return incoming + s.invites.length + groupInvites + votes + (s.joinToMe?.length || 0) + circleWaits(s).length;
+  return waitingOf(s).length;
 }
 
 /** Kringen waiting on you (G16): an invitation, or proposals without your vote. */
