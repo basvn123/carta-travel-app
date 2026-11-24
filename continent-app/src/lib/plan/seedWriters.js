@@ -164,8 +164,8 @@ export function choiceStop(rawSeed) {
  * puts them after new ones), and the trip's own logged spend as `spendRef`:
  * a reference line only (decision 0013, logged spend is not like for like
  * with the engine), never a budget.
- *   past: { id, name, start (YYYY-MM-DD), nights, spendPP (whole trip, a
- *           person, or null), party: { adults, kids } | null }
+ *   past: { id, name, start (YYYY-MM-DD), nights, stops (how many), spendPP
+ *           (whole trip, a person, or null), party: { adults, kids } | null }
  *   opts: { been (ISO2 codes of every country been) }
  */
 export function pastAgainSeed(past, { been = [] } = {}) {
@@ -191,5 +191,6 @@ export function pastAgainSeed(past, { been = [] } = {}) {
     party,
     avoidIso2: been,
     spendRef: spend,
+    pastRef: Number(past.stops) > 0 ? { shape: Number(past.stops) > 1 ? 'towns' : 'one', year: start ? Number(start.slice(0, 4)) : 0 } : null,
   });
 }

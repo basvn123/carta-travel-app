@@ -12,6 +12,7 @@ import { TripCompare } from './TripCompare.jsx';
 import { SortMenu } from './SortMenu.jsx';
 import { PAGE, QUICK_FILTERS, SORTS, answersLine, countryLabel, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut, tripName } from './finderText.js';
 import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
+import { useKept } from '../../lib/recommend/keptStore.js';
 import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
@@ -175,6 +176,8 @@ function useVisit(store, settings, fallback) {
 export function TripsForYou({ settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
   const { t, lang } = useI18n();
   const [skips, setSkips] = useSkips(settings);
+  // G12 R5: the kept trips, for the Like your saved row.
+  const keptList = useKept();
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
   // G12 L8: under a ceiling the trips over it leave the list; up to three
@@ -298,11 +301,12 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
   };
   const acc = { minutes: thereMinutes, km: kmFromHome, highs: (x) => dayHighs(x, destinations), crowd: (x) => crowdTier(x, destinations) };
   const rows = sort.sort === 'match' && !quick.length && !onMap
-    ? themedRows(trips, { ...acc, settings, topIds: trips.slice(0, PAGE).map((x) => x.id) })
+    ? themedRows(trips, { ...acc, settings, kept: keptList, topIds: trips.slice(0, PAGE).map((x) => x.id) })
     : [];
   const rowTitle = (r) => {
     if (r.key === 'near' && r.basis === 'km') return t('tf.row.nearKm');
     if (r.key === 'warm') return r.month ? t('tf.row.warm', { month: monthName(r.month, lang) }) : t('tf.row.warmAny');
+    if (r.key === 'past') return t('tf.row.past', { name: r.name });
     return t(`tf.row.${r.key}`);
   };
   const whyText = (r, trip) => {
@@ -312,6 +316,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     if (w.key === 'tf.row.time') return t(w.key, { time: shortDuration(t, w.minutes) });
     if (w.key === 'tf.row.high') return t(w.key, { c: w.c });
     if (w.key === 'tf.row.km') return t(w.key, { km: new Intl.NumberFormat(lang).format(w.km) });
+    if ('country' in w || 'name' in w) return t(w.key, { country: w.country || '', name: w.name || '' });
     return t(w.key, { month: monthName(w.month, lang) });
   };
   // "All n" opens the row's sort on the full list below.

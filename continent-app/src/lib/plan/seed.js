@@ -139,6 +139,13 @@ function spendRefOf(r) {
   return { eurPP: Math.round(Number(r.eurPP)), nights: int(r.nights, 1, 60, 1), planId: str(String(r.planId || '')) || null, year: int(r.year, 0, 2200, 0) };
 }
 
+// G12 R5: the past trip a plan-again seed comes from, by its shape, for the
+// "Like <past trip>" row (one base or a few towns); never its places.
+function pastRefOf(r) {
+  if (!r || typeof r !== 'object' || !['one', 'towns'].includes(r.shape)) return null;
+  return { shape: r.shape, year: int(r.year, 0, 2200, 0) };
+}
+
 /** Any object made a safe PlanSeed (unknown keys dropped, every value checked). */
 export function makeSeed(raw = {}) {
   const r = raw && typeof raw === 'object' ? raw : {};
@@ -162,6 +169,7 @@ export function makeSeed(raw = {}) {
     groupId: r.groupId ? str(String(r.groupId), 64) : null,
     avoidIso2: Array.isArray(r.avoidIso2) ? [...new Set(r.avoidIso2.map(iso2Of).filter(Boolean))] : [],
     spendRef: spendRefOf(r.spendRef),
+    pastRef: pastRefOf(r.pastRef),
     pins: Array.isArray(r.pins) ? [...new Set(r.pins.filter((p) => Object.hasOwn(SEED_PINS, p)))] : [],
   };
 }
@@ -257,6 +265,7 @@ export function seedToSettings(rawSeed, { style = null, explore = null, base = n
   // the finder reads the countries been, the list shows the spend line.
   if (seed.avoidIso2.length) s = normalizeSettings({ ...s, avoidIso2: seed.avoidIso2 });
   if (seed.spendRef) s = normalizeSettings({ ...s, spendRef: { ...seed.spendRef, label: seed.label } });
+  if (seed.pastRef) s = normalizeSettings({ ...s, pastRef: { ...seed.pastRef, label: seed.label } });
   return s;
 }
 
@@ -351,5 +360,5 @@ export function seedTripPatch(rawSeed, settings) {
 /** True when the seed says nothing at all (an empty door): Plan's home, not a new trip. */
 export function emptySeed(rawSeed) {
   const s = makeSeed(rawSeed);
-  return !s.places.length && !s.stops.length && !s.when && !s.party && !s.budget && !s.booked && !s.avoidIso2.length && !s.spendRef && !s.coplanners.length && !s.transport;
+  return !s.places.length && !s.stops.length && !s.when && !s.party && !s.budget && !s.booked && !s.avoidIso2.length && !s.spendRef && !s.pastRef && !s.coplanners.length && !s.transport;
 }

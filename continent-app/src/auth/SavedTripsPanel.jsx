@@ -1329,6 +1329,7 @@ export function SavedTripsPanel({
         name: x.title,
         start: plain?.start || x.item?.start_date || '',
         nights: x.nights,
+        stops: (x.ids || []).length,
         spendPP: x.spendPP,
         party: mem?.travellers ? { adults: Number(mem.travellers.adults) || 0, kids: Number(mem.travellers.children) || 0 } : null,
       }, { been: [...beenIso] })) : null;

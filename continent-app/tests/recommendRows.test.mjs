@@ -103,3 +103,33 @@ test("G12 B5: Close by falls back to km from home when the flight times are miss
   const timed = themedRows(pool, { ...acc, km: (x) => km[x.id] ?? null, topIds }).find((r) => r.key === "near");
   assert.equal(timed.basis, "");
 });
+
+// G12 B6 (R5): Something new, Like <past trip>, Like your saved.
+test("R5: plan again shows Something new and Like <past trip>, never an empty row", () => {
+  const mixed = pool.map((x, i) => ({ ...x, iso2: i % 2 ? "PT" : "IT", country: i % 2 ? "Portugal" : "Italy", shape: i === 0 || i === 4 ? "towns" : "one", places: i === 0 || i === 4 ? [{ id: "p" }, { id: "q" }] : [{ id: "p" }] }));
+  const settings = { avoidIso2: ["PT"], pastRef: { shape: "one", label: "Lisbon", year: 2025 } };
+  assert.equal(startOf(settings), "past");
+  const rows = themedRows(mixed, { ...acc, topIds, settings });
+  const byKey = Object.fromEntries(rows.map((r) => [r.key, r]));
+  assert.ok(byKey.new, "Something new shows");
+  assert.ok(byKey.new.trips.every((x) => x.iso2 !== "PT"));
+  assert.ok(byKey.past, "Like Lisbon shows");
+  assert.equal(byKey.past.name, "Lisbon");
+  assert.ok(byKey.past.trips.every((x) => x.iso2 !== "PT" && x.places.length === 1));
+  assert.equal(rowWhy(byKey.new, byKey.new.trips[0]).key, "tf.row.newWhy");
+  assert.deepEqual(rowWhy(byKey.past, byKey.past.trips[0]), { key: "tf.row.pastOne", name: "Lisbon" });
+  // Every country been: no Something new row at all.
+  const none = themedRows(mixed, { ...acc, topIds, settings: { avoidIso2: ["PT", "IT"], pastRef: settings.pastRef } }).map((r) => r.key);
+  assert.ok(!none.includes("new") && !none.includes("past"));
+});
+
+test("R5: Like your saved under a budget, in a kept trip's country, never the kept trip", () => {
+  const mixed = pool.map((x, i) => ({ ...x, iso2: i < 5 ? "IT" : "ES", country: i < 5 ? "Italy" : "Spain" }));
+  const kept = [{ id: "g", iso2: "ES" }];
+  const rows = themedRows(mixed, { ...acc, topIds, kept, settings: { guide: { budget: { eur: 5000 } } } });
+  const row = rows.find((r) => r.key === "kept");
+  assert.ok(row, "the row shows");
+  assert.ok(row.trips.every((x) => x.iso2 === "ES" && x.id !== "g"));
+  assert.equal(rowWhy(row, row.trips[0]).key, "tf.row.keptWhy");
+  assert.ok(!themedRows(mixed, { ...acc, topIds, kept: [], settings: { guide: { budget: { eur: 5000 } } } }).some((r) => r.key === "kept"));
+});

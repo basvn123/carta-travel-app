@@ -395,7 +395,7 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
         spendPP = m.tripSpendPerPerson(past.planId, m.loadMemory(past.planId));
       } catch { spendPP = null; }
     }
-    onStart({ seed: pastAgainSeed({ id: past.planId, name: past.name, start: past.start, nights: past.nights, spendPP }, { been }) });
+    onStart({ seed: pastAgainSeed({ id: past.planId, name: past.name, start: past.start, nights: past.nights, stops: past.stopCount, spendPP }, { been }) });
   };
   const doorNode = (
     <PlanDoor onStart={onStart} kept={kept} onOpenKept={onOpenKept}

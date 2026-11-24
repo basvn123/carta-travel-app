@@ -7,7 +7,7 @@
  * May, Quiet), drawn from the trips the finder already priced: no row
  * prices anything again, so the 4 s loader is untouched (B1 lane L0).
  *
- *   startOf(settings)                    'open' | 'when' | 'budget' (decision §3.2 S1, S2/S3, S4)
+ *   startOf(settings)                    'open' | 'when' | 'budget' | 'past' (decision §3.2 S1, S2/S3, S4, S10)
  *   ROWS_BY_START                        which rows each start may show, in order
  *   themedRows(trips, opts)              [{ key, sort, month, trips, n, extra }] at most 4
  *
@@ -20,14 +20,20 @@
  * Pure: the trips are returned as they came, in a new order.
  */
 
-/** The rows a start may show (Van Carta and Other month need pricing: B6). */
+/**
+ * The rows a start may show. G12 B6 (R5): Something new and Like <past
+ * trip> for plan again (S10), Like your saved under a budget (S4). Van Carta
+ * and Other month add pricing, so they are not rows of the priced pool: they
+ * run behind "Search more" (lib/recommend/moreSearch.js).
+ */
 export const ROWS_BY_START = Object.freeze({
   open: Object.freeze(['cheapest', 'near', 'warm']),
   when: Object.freeze(['cheapest', 'near', 'quiet']),
-  budget: Object.freeze(['cheapest', 'near']),
+  budget: Object.freeze(['cheapest', 'near', 'kept']),
+  past: Object.freeze(['new', 'past', 'cheapest', 'near']),
 });
-/** Each row's sort on the full list ("All n" opens it), finderText SORTS. */
-export const ROW_SORT = Object.freeze({ cheapest: 'cheapest', near: 'shortest', warm: 'warmest', quiet: 'quietest' });
+/** Each row's sort on the full list ("All n" opens it), finderText SORTS; the engine's order for the R5 rows. */
+export const ROW_SORT = Object.freeze({ cheapest: 'cheapest', near: 'shortest', warm: 'warmest', quiet: 'quietest', new: 'match', past: 'match', kept: 'match' });
 export const MAX_ROWS = 4;
 export const ROW_CARDS = 8;
 /** A row needs this many trips the top set does not already show. */
@@ -36,6 +42,9 @@ export const ROW_MIN_NEW = 2;
 const WARM_MIN = 20;
 const QUIET_MAX = 1;
 
+const up = (x) => String(x || '').toUpperCase();
+/** One base or a few towns (a road trip counts as towns, as the past trip's stops do). */
+const shapeOf = (trip) => ((trip.places || []).length > 1 || (trip.shape && trip.shape !== 'one') ? 'towns' : 'one');
 const leavesOut = (trip) => Array.isArray(trip.slots) && trip.slots.some((s) => s.eur == null && s.id !== 'activities');
 const totalOf = (trip) => {
   const g = trip.total?.group;
@@ -48,6 +57,8 @@ const totalOf = (trip) => {
 export function startOf(settings) {
   const s = settings || {};
   if (Number(s.guide?.budget?.eur) > 0) return 'budget';
+  // G12 L12: plan again from a past trip (its month is a prefill, so this comes before 'when').
+  if ((s.avoidIso2 || []).length || s.pastRef) return 'past';
   const w = s.when || {};
   const given = (s.answered || []).includes('when');
   if (w.mode === 'exact' || w.mode === 'months' || given) return 'when';
@@ -75,7 +86,7 @@ function sharedMonth(trips) {
  */
 export function themedRows(trips, {
   settings = null, topIds = [], highs = () => null, crowd = () => null, minutes = () => null, km = () => null,
-  max = MAX_ROWS, perRow = ROW_CARDS,
+  kept = [], max = MAX_ROWS, perRow = ROW_CARDS,
 } = {}) {
   const list = Array.isArray(trips) ? trips.filter(Boolean) : [];
   if (list.length < ROW_MIN_NEW) return [];
@@ -84,6 +95,10 @@ export function themedRows(trips, {
   const top = new Set(topIds);
   const best = list[0];
   const month = sharedMonth(pool);
+  const been = new Set((settings?.avoidIso2 || []).map(up));
+  const pastShape = settings?.pastRef?.shape ? (settings.pastRef.shape === 'one' ? 'one' : 'towns') : '';
+  const keptIso = new Set((kept || []).map((r) => up(r?.iso2)).filter(Boolean));
+  const keptIds = new Set((kept || []).map((r) => r?.id).filter(Boolean));
   const byKey = {
     cheapest: () => pool
       .filter((x) => !leavesOut(x) && totalOf(x) != null)
@@ -101,6 +116,15 @@ export function themedRows(trips, {
     quiet: () => pool
       .filter((x) => { const c = crowd(x); return c != null && c <= QUIET_MAX; })
       .sort((a, b) => crowd(a) - crowd(b)),
+    // G12 R5: Something new, the trips in countries the traveller has not
+    // been (settings.avoidIso2), in the engine's order. No countries been: no row.
+    new: () => (been.size ? pool.filter((x) => !been.has(up(x.iso2))) : []),
+    // Like <past trip>: the past trip's shape (one base or a few towns) in a
+    // new country, so the row is "a trip like that one, somewhere else".
+    past: () => (pastShape ? pool.filter((x) => shapeOf(x) === pastShape && !been.has(up(x.iso2))) : []),
+    // Like your saved: trips in a country of a trip the traveller kept
+    // (keptStore), never the kept trip itself.
+    kept: () => (keptIso.size ? pool.filter((x) => keptIso.has(up(x.iso2)) && !keptIds.has(x.id)) : []),
   };
   const keys = ROWS_BY_START[startOf(settings)] || ROWS_BY_START.open;
   const rows = [];
@@ -108,7 +132,10 @@ export function themedRows(trips, {
     const all = byKey[key]();
     const extra = all.filter((x) => !top.has(x.id)).length;
     if (extra < ROW_MIN_NEW) continue;
-    rows.push({ key, basis: all.basis || '', sort: ROW_SORT[key], month: key === 'warm' || key === 'quiet' ? month : 0, trips: all.slice(0, perRow), n: all.length, extra, best });
+    rows.push({
+      key, basis: all.basis || '', sort: ROW_SORT[key], month: key === 'warm' || key === 'quiet' ? month : 0, trips: all.slice(0, perRow), n: all.length, extra, best,
+      ...(key === 'past' ? { name: settings?.pastRef?.label || '' } : {}),
+    });
   }
   // The rows that show most beyond the cards above them come first; ties keep the start's order.
   return rows
@@ -144,5 +171,8 @@ export function rowWhy(row, trip, { highs = () => null, crowd = () => null, minu
     return h ? { key: 'tf.row.high', c: h.hi } : null;
   }
   if (row.key === 'quiet') return crowd(trip) != null ? { key: 'tf.row.quietWhy', month: trip.month } : null;
+  if (row.key === 'new') return { key: 'tf.row.newWhy', country: trip.country || '' };
+  if (row.key === 'past') return { key: shapeOf(trip) === 'one' ? 'tf.row.pastOne' : 'tf.row.pastTowns', name: row.name || '' };
+  if (row.key === 'kept') return { key: 'tf.row.keptWhy', country: trip.country || '' };
   return null;
 }
