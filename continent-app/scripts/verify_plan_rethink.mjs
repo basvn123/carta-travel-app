@@ -355,11 +355,13 @@ await tapCheck('styled list');
 // ---- G12 browser pass 2: a typed booking sentence with prices ----
 // Each booked part keeps its own price (never the budget), the trip page
 // splits Paid and Still to plan, and the head and Still to book count alike.
+// The sentence's own budget (EUR 3,000 for two) is one the trip fits, so the
+// money-left line ("Money left") is seen in a browser too.
 await page.context().close();
 page = await openPage();
 await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
 await page.waitForSelector('.pf-door', { timeout: 90000 });
-await page.locator('#pf-door-field').fill('Flight to Lisbon on 3 May for 280 euros booked, hotel in Lisbon 4 nights for 900 euros booked');
+await page.locator('#pf-door-field').fill('Flight to Lisbon on 3 May for 280 euros booked, hotel in Lisbon 4 nights for 900 euros booked, budget 3000 for the two of us');
 await page.locator('.pf-door').getByText("I've booked something").first().click();
 for (let i = 0; i < 120 && !(await page.locator('.is-trip-page').count()); i++) {
   await page.waitForTimeout(400);
@@ -379,6 +381,8 @@ const head = (await page.locator('.tpg-pill').allInnerTexts()).map((s) => s.trim
 const list = await said('.tbp-n');
 check('booked: the head and Still to book count alike', Boolean(head) && head === list, `${head} | ${list}`);
 check('booked: no typed price became a budget', !/over your budget|€\s?280 a person|€\s?140/.test(await page.locator('.is-trip-page').innerText()));
+const leftLine = await said('[data-testid=tp-budget-left]');
+check('booked: the budget it fits shows the money left', /^€\s?[\d,]+ left for the group$/.test(leftLine), leftLine);
 check('booked: no sideways scroll', (await overflow()) <= 1, `${await overflow()}px`);
 
 check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
