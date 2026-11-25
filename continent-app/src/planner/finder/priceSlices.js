@@ -43,30 +43,38 @@ const now = () => (typeof performance !== 'undefined' ? performance.now() : Date
 
 /**
  * Every candidate priced, a slice at a time: after each slice the trips
- * priced so far go to `onSome` (the caller ranks them),
- * then the browser paints. Resolves to the priced trips in candidate
- * order, the same list buildTrips gives; null when `alive()` turned false.
+ * priced so far go to `onSome(priced, pending)` (the caller ranks them;
+ * `pending` the candidates not priced yet), then the browser paints.
+ * `order(candidates)` gives the indexes to price first (G12 early results:
+ * the best reachable trips first, so rank 1 settles early). Resolves to the
+ * priced trips in candidate order, the same list buildTrips gives whatever
+ * the order; null when `alive()` turned false.
  */
-export async function priceInSlices(input, { alive = () => true, onSome = null, yieldFrame = nextFrame, sliceMs = SLICE_MS } = {}) {
+export async function priceInSlices(input, { alive = () => true, onSome = null, yieldFrame = nextFrame, sliceMs = SLICE_MS, order = null } = {}) {
   const memo = input.data && typeof input.data === 'object' ? pricedFor(input.data) : null;
   const key = answerKey(input);
   if (memo?.has(key)) return memo.get(key);
   const candidates = buildCandidates(input);
   const qdata = quoteDataOf(input);
+  const seq = order ? order(candidates) : candidates.map((_, i) => i);
+  const byIndex = new Array(candidates.length);
   const priced = [];
   let start = now();
-  for (let i = 0; i < candidates.length; i++) {
-    priced.push(priceCandidate(candidates[i], input, qdata));
-    if (i < candidates.length - 1 && now() - start > sliceMs) {
-      onSome?.(priced.slice());
+  for (let n = 0; n < seq.length; n++) {
+    const trip = priceCandidate(candidates[seq[n]], input, qdata);
+    byIndex[seq[n]] = trip;
+    priced.push(trip);
+    if (n < seq.length - 1 && now() - start > sliceMs) {
+      onSome?.(priced.slice(), seq.slice(n + 1).map((i) => candidates[i]));
       await yieldFrame();
       if (!alive()) return null;
       start = now();
     }
   }
+  const out = byIndex.filter(Boolean);
   if (memo) {
     if (memo.size >= PRICED_SIZE) memo.delete(memo.keys().next().value);
-    memo.set(key, priced);
+    memo.set(key, out);
   }
-  return priced;
+  return out;
 }

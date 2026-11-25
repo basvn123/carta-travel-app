@@ -25,7 +25,7 @@
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { chooseOption } from './slots.js';
-import { buildTrips, keepHidden, repriceTrip } from './trips.js';
+import { buildTrips, keepHidden, repriceTrip, tripId } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { MATCH } from '../match.js';
@@ -299,8 +299,9 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
     const said = personaReason(trip, persona, destinations);
     // Q only: the country match's score is on its own scale, not the 0..10
     // rating, so it is no stand-in for the places' quality.
+    const shift = priority.get(trip.id) || 0;
     const score = (blendOf(info.F, p, info.Q ?? null) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10
-      + tasteNudge(trip, tasteLean, destinations) + shapeNudge(trip, settings) + (priority.get(trip.id) || 0);
+      + tasteNudge(trip, tasteLean, destinations) + shapeNudge(trip, settings) + shift;
     // T1021: the shown match keeps show_min too, not only the fit behind it: a
     // budget sink could pull a fitting trip's figure under it.
     const shown = matchPct(score);
@@ -319,6 +320,9 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
     };
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });
     Object.defineProperty(out, 'unpriced', { value: unpriced, enumerable: false });
+    // G12 early results: the part of the score that depends on the other
+    // trips priced (priorityPull), so lib/recommend/early.js can bound it.
+    Object.defineProperty(out, 'shift', { value: shift, enumerable: false });
     // A levered trip keeps its own quote and state (T819); else the base's.
     const own = trip.quote ? trip : trip.base;
     return own ? keepHidden(own, out) : out;
@@ -327,6 +331,44 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
   // it can (G12 judge round 3); with no budget nothing is unpriced, so the
   // order is the fit-first one as before.
   return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (Number(Boolean(a.unpriced)) - Number(Boolean(b.unpriced))) || (Number(Boolean(a.been)) - Number(Boolean(b.been))) || (b.score - a.score) || a.id.localeCompare(b.id));
+}
+
+/**
+ * G12 early results (owner decision 2026-11-25, "Show results early"): how
+ * far a score can still move while the other trips are priced. Only
+ * priorityPull reads the rest of the list (a centred shift of at most half
+ * of rank.priorityPull either way); the budget sink only lowers a score.
+ * A flight lever re-ranks by the whole list, so nothing is bounded then.
+ */
+export function pullRoom(settings, levers = null) {
+  if (levers?.flight) return Infinity;
+  return settings?.priority === 'price' || settings?.priority === 'comfort' ? RANK.priorityPull / 2 : 0;
+}
+
+/**
+ * G12 early results: a candidate's rank before it is priced, as bounds.
+ * Everything in the score except the budget sink and priorityPull reads the
+ * candidate's places, month and shape, which pricing does not change, so its
+ * best score is that part plus the pull room; its worst is unknown under a
+ * budget (the sink has no floor) and that part minus the room without one.
+ * Same terms as rankTrips, so the bounds hold for the trip once priced.
+ *   -> { id, qualified, been, hi, lo }
+ */
+export function candidateBound(candidate, { settings, taste = null, data, tasteLean = null } = {}) {
+  const t = tasteFor(settings, taste);
+  const destinations = data?.destinations || {};
+  const info = fitOf(candidate, t, destinations, settings);
+  const p = tripPersona(candidate, personaOf(settings.guide), destinations);
+  const part = (blendOf(info.F, p, info.Q ?? null) ?? 0) + tasteNudge(candidate, tasteLean, destinations) + shapeNudge(candidate, settings);
+  const room = pullRoom(settings);
+  const been = new Set(settings.avoidIso2 || []);
+  return {
+    id: tripId(candidate),
+    qualified: RANK.fitFirst ? qualifies(info, settings) : true,
+    been: been.size > 0 && been.has(String(candidate.iso2 || '').toUpperCase()),
+    hi: part + room,
+    lo: budgetOf(settings) ? -Infinity : part - room,
+  };
 }
 
 /**

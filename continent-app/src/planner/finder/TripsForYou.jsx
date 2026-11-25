@@ -5,7 +5,7 @@ import { CheckIcon, ListDayIcon, MapPinIcon, ScaleIcon } from '../../components/
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { MAX_COMPARE } from '../../lib/recommend/compare.js';
-import { answersOf } from './finderHooks.js';
+import { answersKey } from './finderHooks.js';
 import { readSkips, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
@@ -13,8 +13,8 @@ import { SortMenu } from './SortMenu.jsx';
 import { PAGE, QUICK_FILTERS, SORTS, answersLine, countryLabel, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut, tripName } from './finderText.js';
 import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
 import { useKept } from '../../lib/recommend/keptStore.js';
-import { otherMonthTrips } from '../../lib/recommend/alternatives.js';
-import { libraryShortlist, libraryTrips } from '../../lib/recommend/moreSearch.js';
+import { libraryShortlist } from '../../lib/recommend/moreSearch.js';
+import { searchMoreInSteps } from '../../lib/recommend/searchMore.js';
 import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { formatMoney } from '../../lib/money.js';
 import { monthName } from '../../lib/dates.js';
@@ -63,7 +63,6 @@ const TICKS = new Map();
 const VIEW = new Map();
 // G12 R4: More and Less like this, per answer set for this visit only.
 const MORE_LESS = new Map();
-const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from, s.places]);
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -179,9 +178,12 @@ function useVisit(store, settings, fallback) {
  * (keptStore), Skip in its menu hides it for these answers; the hidden ones
  * are counted under the list with "Show them again".
  */
-export function TripsForYou({ input = null, settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
+export function TripsForYou({ input = null, settings, trips: found, pricing = 0, pinned = [], destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
   const { t, lang } = useI18n();
   const [skips, setSkips] = useSkips(settings);
+  // G12 early results: a list that opened while pricing fades each new card
+  // in (opacity only, nothing slides; none under reduced motion).
+  const [arriving] = useState(() => pricing > 0);
   // G12 R5: the kept trips, for the Like your saved row.
   const keptList = useKept();
   // G12 R6: Another month, cheaper, priced only on "Search more" (L0: the
@@ -191,28 +193,31 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   const [more, setMore] = useState(null);
   const moreRun = useRef(0);
   // A new answer set is a new list: an earlier search no longer applies.
-  useEffect(() => { moreRun.current += 1; setMore(null); }, [found]);
+  // G12 early results: the list grows while it is priced, so only a new
+  // answer set (not each arriving card) clears it.
+  const listKey = answersKey(settings);
+  useEffect(() => { moreRun.current += 1; setMore(null); }, [listKey]);
   const searchMore = () => {
-    setMore('busy');
-    const run = moreRun.current;
+    const run = ++moreRun.current;
+    setMore({ month: [], library: [], left: null });
     const ref = found[0] || null;
     // G12 B7a (R6): Carta's own journeys that fit the window, loaded only
     // now (a few small files), placed on catalogue towns and priced by the
     // same engine as the list; the journey library loads in its own chunk.
-    import('../../lib/journeys.js')
+    // They load while the other months are priced.
+    const journeys = import('../../lib/journeys.js')
       .then(({ loadAllJourneyCards, loadJourney }) => loadAllJourneyCards()
         .then((cards) => Promise.all(libraryShortlist(cards, ref, { settings }).map((c) => loadJourney(c.id).catch(() => null)))))
-      .catch(() => [])
-      // One frame first, so the button can say it is searching before the pricing blocks.
-      .then((journeys) => requestAnimationFrame(() => {
-        if (run !== moreRun.current) return;
-        setMore({
-          month: otherMonthTrips(found, input),
-          library: libraryTrips((journeys || []).filter(Boolean), input, ref, { have: found }),
-        });
-      }));
+      .catch(() => []);
+    // G12 early results: each priced trip appends as it is ready (lib/recommend/searchMore.js).
+    searchMoreInSteps({
+      trips: found, input, ref, journeys,
+      alive: () => run === moreRun.current,
+      onSome: (some) => { if (run === moreRun.current) setMore(some); },
+    }).catch(() => { if (run === moreRun.current) setMore({ month: [], library: [], left: 0 }); });
   };
-  const moreFound = more && more !== 'busy' ? more : null;
+  const moreFound = more || null;
+  const moreBusy = Boolean(more) && more.left !== 0;
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
   const phone = useWide(PHONE);
@@ -227,7 +232,14 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   // five are picked to differ (country, shape, price band); the rest follow.
   const [ml, setMl] = useVisit(MORE_LESS, settings, { more: null, less: [], undo: null });
   // G12 R4: what was marked "Less like this" sinks softly (capped, never a filter).
-  const trips = lessOrder(sort.sort === 'match' ? diverseOrder(sorted) : sorted, ml.less);
+  // G12 early results: the cards shown while the list was priced (`pinned`)
+  // keep their slots; the rest of the diverse top set continues from them,
+  // and Less like this moves only the cards after them. While pricing, only
+  // the pinned cards show, whatever sort a past visit left.
+  const engineOrder = sort.sort === 'match' || pricing > 0;
+  const ordered = engineOrder ? diverseOrder(sorted, { pinned }) : sorted;
+  const firm = engineOrder ? pinned.filter((id) => sorted.some((x) => x.id === id)).length : 0;
+  const trips = pricing > 0 ? ordered.slice(0, firm) : [...ordered.slice(0, firm), ...lessOrder(ordered.slice(firm), ml.less)];
   const moreOf = ml.more ? found.find((x) => x.id === ml.more) || null : null;
   const likeRow = moreOf ? likeThis(moreOf, trips) : [];
   const hint = lessHint(ml.less);
@@ -316,7 +328,11 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
     }
   };
 
-  const cheapestId = cheapestOf(trips);
+  // G12 early results: the cheapest tag needs the whole list, and a tag added
+  // to a card shown while pricing would grow it and push the cards below; so
+  // it waits for the list and never lands on a card shown before that.
+  const cheapestId = pricing > 0 ? null : cheapestOf(trips);
+  const tagged = cheapestId && !pinned.includes(cheapestId) ? cheapestId : null;
   // G12 L12 (decision §3.4, 0013): the past trip's own logged spend a day, as
   // a reference line only. It is the traveller's figure, not like for like
   // with Carta's totals, so it never sets a budget, sorts, or is compared.
@@ -337,7 +353,9 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
     return haversineKm(home.lat, home.lon, lat, lon);
   };
   const acc = { minutes: thereMinutes, km: kmFromHome, highs: (x) => dayHighs(x, destinations), crowd: (x) => crowdTier(x, destinations) };
-  const rows = sort.sort === 'match' && !quick.length && !onMap
+  // G12 early results: rows read the whole priced list (a row's order would
+  // shift with each new trip), so they come below the top set once pricing ends.
+  const rows = sort.sort === 'match' && !quick.length && !onMap && !pricing
     ? themedRows(trips, { ...acc, settings, kept: keptList, topIds: trips.slice(0, PAGE).map((x) => x.id) })
     : [];
   const rowTitle = (r) => {
@@ -359,14 +377,16 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   // "All n" opens the row's sort on the full list below.
   const showAll = (r) => { setSort(r.sort); titleRef.current?.scrollIntoView?.({ block: 'start' }); };
   // The top pick takes a whole row while the list is in the engine's order (T879).
-  const featId = sort.sort === 'match' && trips.length > 2 ? trips[0].id : null;
+  // G12 early results: counted with the trips still to price, so rank 1 does
+  // not change its size when the third card arrives.
+  const featId = engineOrder && trips.length + pricing > 2 ? trips[0].id : null;
   const card = (trip, { feat = false, why = '' } = {}) => (
     <TripCard
       trip={trip}
       destinations={destinations}
       feat={feat}
       why={why}
-      best={trip.id === cheapestId}
+      best={trip.id === tagged}
       marked={trip.id === markedId}
       onOpen={onOpen}
       compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, full: ticked.length >= MAX_COMPARE, onToggle: toggle }}
@@ -376,16 +396,19 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
   );
 
   return (
-    <div className="pf-step tff-trips">
+    <div className={`pf-step tff-trips${arriving ? ' is-arriving' : ''}`}>
       <SheetHead onBack={onBack} backLabel={t('pf.back')} end={headEnd} />
       <div className="tff-head">
+        {/* G12 early results: no count until every trip is priced, so the head never claims a partial number. */}
         <h2 className="pf-title tff-title" tabIndex={-1} ref={titleRef} aria-live="polite">
-          {t(trips.length === 1 ? 'tf.list.titleOne' : 'tf.list.titleN', { n: trips.length })}
+          {pricing > 0 ? t('tf.list.title') : t(trips.length === 1 ? 'tf.list.titleOne' : 'tf.list.titleN', { n: trips.length })}
         </h2>
       </div>
       {spendLine && <p className="tff-spendref">{spendLine}</p>}
-      {/* G12 L15: a Vrienden group's band, the trips that fit everyone (only those that can be judged). */}
-      {band && band.judged > 0 && (
+      {/* G12 L15: a Vrienden group's band, the trips that fit everyone (only those that can be judged).
+          G12 early results: its line is held empty while pricing, so the cards under it do not move when it fills. */}
+      {pricing > 0 && settings.guide?.budget?.mode === 'band' && <p className="tff-spendref" data-band="" aria-hidden="true">{' '}</p>}
+      {!pricing && band && band.judged > 0 && (
         <p className="tff-spendref" data-band="">{t('tf.band.line', { eur: formatMoney(band.eur, { locale: lang }), n: band.fits, m: band.judged })}</p>
       )}
       {answers.chips.length > 0 && (
@@ -403,7 +426,11 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
       {/* T1103: after the short setup, the way to fit the trips closer. */}
       {refine}
 
-      <div className="tff-toolbar" role="toolbar" aria-label={t('tf.quick.label')}>
+      {/* G12 early results: a sort or filter would reorder cards that are still
+          arriving, so the toolbar waits for the whole list (React 18 has no
+          boolean inert, so it is written as an empty string). */}
+      <div className={`tff-toolbar${pricing > 0 ? ' is-waiting' : ''}`} role="toolbar" aria-label={t('tf.quick.label')}
+        inert={pricing > 0 ? '' : undefined} aria-disabled={pricing > 0 || undefined}>
         <SortMenu label={t('tf.sort.label')} value={sort.sort} onChange={setSort}
           options={SORTS.map((v) => ({ key: v, label: t(`tf.sort.${v}`) }))} />
         {ticked.length >= 2 && (
@@ -472,10 +499,20 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
             {card(trip, { feat: trip.id === featId })}
           </li>
         );
+        // G12 early results: one quiet line while trips are still priced; it
+        // sits under the cards, so it goes without moving any of them.
+        const pricingLine = (n) => (
+          <p className="tff-pricing">
+            <span className="tff-pricing-dot" aria-hidden="true" />
+            {n == null ? t('tf.more.busy') : t(n === 1 ? 'tf.list.pricingOne' : 'tf.list.pricingN', { n })}
+          </p>
+        );
         // G12 B7a: Search more also under a list with no themed rows yet (a
         // small pool, a sort or a filter): the extra pricing still waits for the tap.
-        const searchMoreSection = input && trips.length > 0 && (
-          <section className="tff-search-more" aria-live="polite">
+        // G12 early results: it waits for the list itself, and its trips
+        // append as each is priced (lib/recommend/searchMore.js).
+        const searchMoreSection = input && trips.length > 0 && !pricing && (
+          <section className="tff-search-more" aria-busy={moreBusy || undefined}>
             {moreFound ? (
               <>
                 {moreFound.month.length > 0 && (
@@ -498,12 +535,11 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
                     </ul>
                   </>
                 )}
-                {!moreFound.month.length && !moreFound.library.length && <p className="tff-spendref">{t('tf.more.none')}</p>}
+                {moreBusy && pricingLine(moreFound.left)}
+                {!moreBusy && !moreFound.month.length && !moreFound.library.length && <p className="tff-spendref" role="status">{t('tf.more.none')}</p>}
               </>
             ) : (
-              <Button variant="secondary" size="sm" disabled={more === 'busy'} onClick={searchMore}>
-                {t(more === 'busy' ? 'tf.more.busy' : 'tf.more.search')}
-              </Button>
+              <Button variant="secondary" size="sm" onClick={searchMore}>{t('tf.more.search')}</Button>
             )}
           </section>
         );
@@ -535,6 +571,7 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
         ) : (
           <>
             <ol className="tff-list">{trips.slice(0, shown).map(item)}</ol>
+            {pricing > 0 && pricingLine(pricing)}
             {searchMoreSection}
           </>
         );
@@ -584,7 +621,7 @@ export function TripsForYou({ input = null, settings, trips: found, destinations
           <Button variant="quiet" onClick={() => setShown(shown + PAGE)}>{t('tf.list.more')}</Button>
         </div>
       )}
-      {!onMap && capped.out > 0 && (
+      {!onMap && !pricing && capped.out > 0 && (
         <section className="tff-near" aria-labelledby="tff-near-h" data-near="">
           <h3 className="tff-rows-h" id="tff-near-h">{t('tf.near.title')}</h3>
           <p className="tff-near-note">{t('tf.near.out', { n: capped.out })}</p>

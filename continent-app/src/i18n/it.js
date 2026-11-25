@@ -9325,6 +9325,9 @@ export const it = {
   "tf.chip.budget": "Fino a {eur} a persona",
   "tf.chip.budgetDay": "Fino a {eur} a persona al giorno",
   "tf.list.title": "Viaggi per te",
+  // G12 early results: the quiet line while the list is still priced.
+  "tf.list.pricingOne": "Ancora 1 viaggio da calcolare",
+  "tf.list.pricingN": "Ancora {n} viaggi da calcolare",
   "tf.stage.flightsIn": "Voli da {city} a {months}",
   "tf.stage.stay.home": "Alloggi interi per {who}, {n} notti",
   "tf.stage.stay.dorm": "Dormitori in ostello per {who}, {n} notti",

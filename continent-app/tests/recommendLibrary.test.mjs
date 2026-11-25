@@ -8,6 +8,7 @@ import assert from "node:assert/strict";
 import { journeyStops, landerPool, libraryCandidate, libraryShortlist, libraryTrips, ROW_MIN } from "../src/lib/recommend/moreSearch.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 import { alternatives } from "../src/lib/recommend/alternatives.js";
+import { searchMoreInSteps } from "../src/lib/recommend/searchMore.js";
 
 const DESTS = {
   LIS: { city: "Lisbon", iso2: "PT", country: "Portugal", city_lat: 38.72, city_lon: -9.14 },
@@ -89,4 +90,40 @@ test("landerPool (B7a): the open finder without the named places, some of the sa
   assert.equal(rel.country.trip.id, "SEV");
   assert.equal(rel.country.diff, null, "a Not yet total shows no difference and never counts as cheaper");
   assert.deepEqual(landerPool(trip, input(s), { build: () => { throw new Error("x"); }, price, rank: (x) => x }), []);
+});
+
+test("G12 early results: Search more hands out each priced trip as it is ready and never re-sorts", async () => {
+  const slots = [{ id: "flight", eur: 100 }, { id: "stay", eur: 300 }];
+  const base = (id) => ({ id, places: [{ id }], slots, total: { group: 800 } });
+  const list = [base("A"), base("B"), base("C"), { ...base("N"), slots: [{ id: "flight", eur: null }] }];
+  // The lever finds a cheaper week for A (save 20) and C (save 90): C saves more but comes later.
+  const saves = { A: 20, C: 90 };
+  const lever = (t) => (saves[t.id] ? { trip: { id: `${t.id}-w` }, diff: -saves[t.id], month: 6 } : null);
+  const price = (c) => ({ id: c.places.map((p) => p.id).join("-"), places: c.places, slots: [], total: { group: 900 } });
+  const rank = (x) => ({ ...x, budget: null });
+  const js = [
+    journey("pt-a", LISBON_PORTO),
+    journey("pt-c", [day(1, "Porto", 41.15, -8.61), day(2, "Porto", 41.15, -8.61)]),
+    journey("es-a", [day(1, "Seville", 37.39, -5.99), day(2, "Seville", 37.39, -5.99)]),
+  ];
+  const seen = [];
+  let frames = 0;
+  const out = await searchMoreInSteps({
+    trips: list, input: input(), ref: REF, journeys: Promise.resolve(js), lever, price, rank,
+    yieldFrame: async () => { frames += 1; },
+    onSome: (s) => seen.push({ month: s.month.map((m) => m.trip.id), library: s.library.map((x) => x.id), left: s.left }),
+  });
+  assert.deepEqual(out.month.map((m) => m.trip.id), ["A-w", "C-w"], "in the list's order: the bigger saving found later stays below");
+  assert.deepEqual(out.library.map((x) => x.id), ["LIS-OPO~lib", "OPO~lib", "SEV~lib"]);
+  assert.ok(frames >= 6, "the browser paints between tries");
+  for (let i = 1; i < seen.length; i++) {
+    assert.deepEqual(seen[i].month.slice(0, seen[i - 1].month.length), seen[i - 1].month, "a shown week keeps its place");
+    assert.deepEqual(seen[i].library.slice(0, seen[i - 1].library.length), seen[i - 1].library, "a shown journey keeps its place");
+  }
+  assert.ok(seen.every((s) => s.library.length === 0 || s.library.length >= ROW_MIN), "never a row of one");
+  assert.equal(seen[0].left, null, "while the journeys load the count is unknown, not guessed");
+  assert.equal(seen.at(-1).left, 0);
+  let alive = true;
+  const stopped = await searchMoreInSteps({ trips: list, input: input(), ref: REF, journeys: js, lever, price, rank, alive: () => alive, yieldFrame: async () => { alive = false; } });
+  assert.equal(stopped, null, "a new answer set stops the search");
 });

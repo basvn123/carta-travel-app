@@ -132,6 +132,22 @@ for (let i = 0; i < 80 && !priced; i++) {
 }
 check('a priced list is reached', priced);
 check('the style control on every question', steps.styleBar === steps.questions, `${steps.styleBar}/${steps.questions}`);
+// G12 early results: the cards shown while the rest is priced keep their
+// place (relative to the list), and the quiet pricing line goes when done.
+const placed = () => page.evaluate(() => {
+  const box = document.querySelector('.tff-trips')?.getBoundingClientRect();
+  return [...document.querySelectorAll('.tff-trips .tff-list > li')].map((li) => {
+    const r = li.getBoundingClientRect();
+    return { name: li.querySelector('.tff-card-name')?.textContent || '', top: Math.round(r.top - (box?.top || 0)), left: Math.round(r.left - (box?.left || 0)), feat: li.classList.contains('is-feat') };
+  });
+});
+const firstSeen = await placed();
+const lineSeen = (await page.locator('.tff-trips .tff-pricing').count()) > 0;
+await page.waitForFunction(() => !document.querySelector('.tff-trips .tff-pricing'), null, { timeout: 120000 }).catch(() => {});
+check('early results: the pricing line goes when every trip is priced', (await page.locator('.tff-trips .tff-pricing').count()) === 0, lineSeen ? 'seen while pricing' : 'list came whole');
+const settled = await placed();
+const moved = firstSeen.filter((c, i) => !settled[i] || settled[i].name !== c.name || settled[i].top !== c.top || settled[i].left !== c.left || settled[i].feat !== c.feat);
+check('early results: no card shown early moves or changes size', firstSeen.length > 0 && moved.length === 0, `${firstSeen.length} shown first${moved.length ? `, moved: ${moved.map((m) => m.name).join(', ')}` : ''}`);
 await page.waitForTimeout(800);
 await shot('3-trips');
 
@@ -167,6 +183,37 @@ if (W < 820) {
     check('phone: no sideways scroll on the map', (await overflow()) <= 1);
     await tabs.getByRole('radio', { name: /list/i }).first().click().catch(async () => { await tabs.locator('button').first().click(); });
     await page.waitForTimeout(500);
+  }
+}
+
+// ---- Search more on the list (G12 early results: trips append as priced) ----
+{
+  const sm = page.locator('.tff-trips .tff-search-more');
+  const btn = sm.getByRole('button', { name: /search more/i });
+  if (await btn.count()) {
+    await btn.first().scrollIntoViewIfNeeded().catch(() => {});
+    await btn.first().click();
+    const seenWhile = [];
+    const start = Date.now();
+    while (Date.now() - start < 90000) {
+      await page.waitForTimeout(150);
+      const s = await sm.first().evaluate((el) => ({
+        busy: Boolean(el.querySelector('.tff-pricing')),
+        cards: [...el.querySelectorAll('.tff-row-cards li .tff-card-name')].map((n) => n.textContent),
+        heads: [...el.querySelectorAll(':scope > h3')].map((h) => ({ cards: h.nextElementSibling?.querySelectorAll('li').length || 0 })),
+        none: Boolean(el.querySelector('.tff-spendref')),
+      })).catch(() => null);
+      if (!s) break;
+      seenWhile.push(s);
+      if (!s.busy && (s.cards.length || s.none)) break;
+    }
+    const lastSeen = seenWhile.at(-1) || { busy: true, cards: [], heads: [], none: false };
+    check('list: Search more ends with trips or a plain "none found"', !lastSeen.busy && (lastSeen.cards.length > 0 || lastSeen.none), `${lastSeen.cards.length} trips`);
+    check('list: Search more shows progress while it prices', seenWhile.some((s) => s.busy) || seenWhile.length <= 1, `${seenWhile.filter((s) => s.busy).length} busy polls`);
+    const reordered = seenWhile.some((s, i) => i > 0 && seenWhile[i - 1].cards.some((c, j) => s.cards[j] !== c));
+    check('list: Search more only appends, never reorders', !reordered);
+    check('list: Search more never shows an empty heading', seenWhile.every((s) => s.heads.every((h) => h.cards > 0)));
+    await shot('4b-search-more');
   }
 }
 

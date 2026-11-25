@@ -120,6 +120,28 @@ export function libraryCandidate(journey, input, ref) {
   };
 }
 
+/** The routes a list already holds (place ids joined), so a journey never repeats one. */
+export const seenRoutes = (have) => new Set((have || []).map((x) => (x.places || []).map((p) => p.id).join()));
+
+/**
+ * One journey priced as a list trip ({ ...trip, library: { id, title } }),
+ * or null (no base towns, a route already in `seen`, or no price). Adds its
+ * route to `seen`. G12 early results: Search more prices one at a time.
+ */
+export function libraryTrip(j, input, ref, { seen = new Set(), price = priceCandidate } = {}) {
+  const c = libraryCandidate(j, input, ref);
+  if (!c || seen.has(c.places.map((p) => p.id).join())) return null;
+  let trip = null;
+  try { trip = price(c, input); } catch { trip = null; }
+  if (!trip) return null;
+  seen.add(c.places.map((p) => p.id).join());
+  // Set in place, not spread: the quote and state ride along as hidden
+  // fields (trips.js keepHidden), which a spread would drop.
+  trip.id = `${trip.id}~lib`;
+  trip.library = { id: String(j.id), title: j.title || '' };
+  return trip;
+}
+
 /**
  * The journeys priced and ranked as list trips: [{ ...trip, library: { id, title } }],
  * best first, at most `max`. A trip over a ceiling, or one whose towns the
@@ -128,20 +150,11 @@ export function libraryCandidate(journey, input, ref) {
  */
 export function libraryTrips(journeys, input, ref, { have = [], max = LIBRARY_MAX, price = priceCandidate, rank = null } = {}) {
   if (!input?.settings) return [];
-  const seen = new Set((have || []).map((x) => (x.places || []).map((p) => p.id).join()));
+  const seen = seenRoutes(have);
   const priced = [];
   for (const j of journeys || []) {
-    const c = libraryCandidate(j, input, ref);
-    if (!c || seen.has(c.places.map((p) => p.id).join())) continue;
-    let trip = null;
-    try { trip = price(c, input); } catch { trip = null; }
-    if (!trip) continue;
-    seen.add(c.places.map((p) => p.id).join());
-    // Set in place, not spread: the quote and state ride along as hidden
-    // fields (trips.js keepHidden), which a spread would drop.
-    trip.id = `${trip.id}~lib`;
-    trip.library = { id: String(j.id), title: j.title || '' };
-    priced.push(trip);
+    const trip = libraryTrip(j, input, ref, { seen, price });
+    if (trip) priced.push(trip);
   }
   const ranked = rank ? rank(priced) : rankTrips(priced, { settings: input.settings, taste: input.taste || null, data: input.data });
   const capped = input.settings.guide?.budget?.mode === 'cap';

@@ -1268,5 +1268,23 @@
 .tff-ml-row { margin-bottom: var(--space-5); }
 /* G12 R6: Search more (Another month, priced on request). */
 .tff-search-more { margin: var(--space-4) 0; }
+/* G12 early results: the quiet "still pricing" line, one still brown dot as
+   on the searching screen (no pulse); cards arriving after the list opened
+   fade in once, opacity only, so nothing on screen slides. */
+.tff-pricing { display: flex; align-items: center; gap: var(--space-2); margin: var(--space-3) 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-pricing-dot { flex: none; width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--action); }
+.tff-toolbar.is-waiting { opacity: 0.55; }
+.tff-trips.is-arriving .tff-list > li,
+.tff-trips.is-arriving .tff-row-cards > li,
+.tff-trips.is-arriving .tff-rows,
+.tff-search-more h3,
+.tff-search-more .tff-row-cards > li { animation: tff-in var(--dur-3) var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) {
+  .tff-trips.is-arriving .tff-list > li,
+  .tff-trips.is-arriving .tff-row-cards > li,
+  .tff-trips.is-arriving .tff-rows,
+  .tff-search-more h3,
+  .tff-search-more .tff-row-cards > li { animation: none; }
+}
 /* G12 L12: own past spend, a quiet reference line under the title (decision 0013). */
 .tff-spendref { margin: 0 0 var(--space-2); font-size: var(--text-caption); color: var(--text-2); }

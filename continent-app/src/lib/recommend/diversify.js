@@ -61,14 +61,17 @@ export function similarity(a, b, bands = new Map(), weights = DIVERSE.weights) {
 /**
  * The top k of a ranked list: rank 1 as it is, then greedily the trip with
  * the best (1 - lambda) * score - lambda * (closest similarity to a pick).
- *   opts: { k, lambda, weights }
+ *   opts: { k, lambda, weights, pinned (ids shown before pricing ended, kept first) }
  */
-export function diversify(ranked, { k = DIVERSE.k, lambda = DIVERSE.lambda, weights = DIVERSE.weights } = {}) {
+export function diversify(ranked, { k = DIVERSE.k, lambda = DIVERSE.lambda, weights = DIVERSE.weights, pinned = [] } = {}) {
   const list = Array.isArray(ranked) ? ranked.filter(Boolean) : [];
-  if (list.length <= 1 || k <= 1) return list.slice(0, Math.max(0, k));
+  // G12 early results: the cards already on screen (`pinned`, ids in their
+  // order) keep their slots; the next slots continue from them.
+  const held = pinned.map((id) => list.find((x) => x.id === id)).filter(Boolean);
+  if (!held.length && (list.length <= 1 || k <= 1)) return list.slice(0, Math.max(0, k));
   const bands = priceBands(list);
-  const picks = [list[0]];
-  const left = list.slice(1);
+  const picks = held.length ? held : [list[0]];
+  const left = list.filter((x) => !picks.includes(x));
   const score = (x) => (Number.isFinite(x.score) ? x.score : 0);
   while (picks.length < k && left.length) {
     // Qualified trips first, as rankTrips orders them: a trip that does not

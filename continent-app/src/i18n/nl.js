@@ -9336,6 +9336,9 @@ export const nl = {
   "tf.chip.budget": "Tot {eur} per persoon",
   "tf.chip.budgetDay": "Tot {eur} per persoon per dag",
   "tf.list.title": "Reizen voor jou",
+  // G12 early results: the quiet line while the list is still priced.
+  "tf.list.pricingOne": "Nog 1 reis aan het prijzen",
+  "tf.list.pricingN": "Nog {n} reizen aan het prijzen",
   "tf.stage.flightsIn": "Vluchten vanuit {city} in {months}",
   "tf.stage.stay.home": "Eigen plekken voor {who}, {n} nachten",
   "tf.stage.stay.dorm": "Hostelslaapzalen voor {who}, {n} nachten",
