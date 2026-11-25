@@ -215,8 +215,14 @@ export function useTripFinder(settings) {
         // when they can narrow something (rank.js floorHelps) and only while
         // rank 1 is not yet settled by the plain bounds; both are true
         // bounds, so either proof holds.
+        // Switched OFF (G12, 2026-11-25): on the emulated phone the floors
+        // gave no gain at 4x and were slower at 6x (price first 9.8 -> 20.3 s
+        // median, one run 47.5 s; progress.md "Early results 2"). The proof
+        // and its tests stay; turn this on once a floor is cheap enough
+        // (computed in steps or off the main thread).
+        const PRICE_FLOORS = false;
         const qdata = quoteData(input);
-        const floors = floorHelps(answers);
+        const floors = PRICE_FLOORS && floorHelps(answers);
         const bounds = new Map();
         const boundOf = (c) => {
           if (!bounds.has(c)) bounds.set(c, candidateBound(c, rankOpts));
