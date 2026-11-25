@@ -22,7 +22,7 @@ const argv = Object.fromEntries(process.argv.slice(2).map((a) => {
 }));
 const BASE = (argv.url || 'http://127.0.0.1:5209/').replace(/\/?$/, '/');
 const RUNS = Number(argv.runs || 3);
-const WATCH = ['TripPlannerTab', 'GuidedTripWizard', 'DayPlannerTab', 'TripMap', 'CityPickerMap', 'DayExploreMap'];
+const WATCH = ['TripPlannerTab', 'TripFlow', 'DayPlannerTab', 'TripMap', 'DayExploreMap'];
 
 const GEO = [{
   display_name: 'Hotel Artemide, Via Nazionale, Rome, Lazio, Italy', name: 'Hotel Artemide',

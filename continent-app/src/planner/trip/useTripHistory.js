@@ -7,7 +7,7 @@ import { carAdvice } from '../../lib/transport.js';
 import { budgetCheck } from '../flow/budget.js';
 import { formatMoney } from '../../lib/money.js';
 
-export function useTripHistory({ app, countryInsights, lang, saveTripSet, t, tp, tripSet, wizardOpen }) {
+export function useTripHistory({ app, countryInsights, lang, saveTripSet, t, tp, tripSet }) {
   const histState = {
     ...tp.editState,
     set: { when: tripSet.when, party: tripSet.party, from: tripSet.from || null, name: tripSet.trip?.name || '', budget: tripSet.guide?.budget || null },
@@ -28,7 +28,7 @@ export function useTripHistory({ app, countryInsights, lang, saveTripSet, t, tp,
   const hist = useEditHistory({
     state: histState,
     restore: restoreHist,
-    enabled: tp.planned && tp.stops.length > 0 && !wizardOpen,
+    enabled: tp.planned && tp.stops.length > 0,
     resetKey: tp.planId || tp.deviceKey || 'draft',
   });
   // The Undo message for the newest step (not for a name being typed), or a

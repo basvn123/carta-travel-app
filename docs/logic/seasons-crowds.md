@@ -212,10 +212,9 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Constant: literal `peak * 0.6` in `continent-app/src/browse/CountryPage.jsx:137`
 - Test: no test
 
-### SEASON-032 Country brief month verdict
-- Decides: whether the planner's country brief calls the trip month good, shoulder or off.
-- Rule: good when the month is in the country guide's `best_months`; ok (shoulder) when the month before or after is; otherwise off; no verdict without a month or a list.
-- Constant: `monthVerdict` in `continent-app/src/planner/CountryBrief.jsx:139`
+### SEASON-032 Country brief month verdict (retired)
+- Decides: nothing any more.
+- Rule: retired 2026-11-25 with the wizard's country brief (ROADMAP G12, lane L14): the brief lived only on the wizard's Where step. A country's good months show on its country page (SEASON-031).
 - Test: no test
 
 ### SEASON-033 Best months key fact

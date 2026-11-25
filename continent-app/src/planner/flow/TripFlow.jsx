@@ -16,8 +16,7 @@ import { groupsOf, stepAnswer } from './stepText.js';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { selectionOfPlan } from '../../lib/plan/doors.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, landingOf, engineScreens, firstOpenGuide, guideQuestions, guideScreens, hasDoors, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
-import { normalizeSettings, quizAnswers, spendFor } from './tripSettings.js';
+import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, landingOf, firstOpenGuide, guideQuestions, guideScreens, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import { clearQuickStart, peekQuickMode } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
@@ -53,16 +52,14 @@ const FINDER_UI = { NotYet, AirlineMark, useAirlines, airlineName };
  * page after the Polarsteps trip view (the map on top, the sheet with when it
  * starts, the nights planned and Start planning), then the help-me-choose
  * questions, the last of them how to plan (the whole trip: the trips for
- * you; the flights first: their screen), and, for a country page's "Plan a
- * trip here", the planning engine itself, the wizard's planning steps,
- * rendered by the caller through `renderEngine`.
+ * you; the flights first: their screen), or a known place's found trip.
+ * G12 L14: the planning engine (the old wizard's steps) is folded; a country
+ * page's Plan a trip here reaches the place lander through openPlan.
  *
- *   renderEngine({ flowSteps, initialWhereTab, lockWhereTab, onCancel })
- *      the caller's GuidedTripWizard mount with those props
  *   onLand(selection)   T863 to T866: a trip a door made, straight onto the
  *                       trip page (the planner's loadFromWizard hand-over)
  */
-export function TripFlow({ renderEngine, seed = null, onLand = null }) {
+export function TripFlow({ onLand = null }) {
   const { t, lang } = useI18n();
   const [settings, save] = useTripSettings();
   // T870: an address with a trip page on it (#tf=<id>) opens on the trips,
@@ -81,7 +78,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // to the screen it left, the priced trips above all, instead of the trip's
   // empty home. Not over an address's trip page, a fresh short setup or a
   // country page's seed, which each say where to open.
-  const [kept] = useState(() => (arriveTrip.current || fresh || seed?.iso2 ? null
+  const [kept] = useState(() => (arriveTrip.current || fresh ? null
     : recallPlace('trip', tripsStore.getActiveId(), [...guideScreens(settings), 'ff', 'home', 'know'])));
   // The trip came from the short setup (now, or before the reload).
   const quick = useRef(fresh || Boolean(kept?.quick));
@@ -90,15 +87,14 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
     if (arriveTrip.current) return TRIPS_SCREEN;
     if (fresh) return asking ? (firstOpenGuide(settings) || landingOf(settings)) : landingOf(settings);
     return kept?.phase || 'home';
-  }); // home | g:* | ff | engine
+  }); // home | g:* | ff | know
   // House style: the question settles in when the step changes (presentation only).
   const stepRef = useRef(null);
   useStepIn(stepRef, phase);
   usePickTick(stepRef);
   useEffect(() => {
-    rememberPlace('trip', tripsStore.getActiveId(), phase === 'engine' ? null : { phase, walked, quick: quick.current });
+    rememberPlace('trip', tripsStore.getActiveId(), { phase, walked, quick: quick.current });
   }, [phase, walked]);
-  const [door, setDoor] = useState(() => settings.door || 'guide');
   const [settingsOpen, setSettingsOpen] = useState(false);
   // A question reopened from the trips' answers bar (T798) comes straight
   // back to the trips on Continue, not through the questions after it.
@@ -112,37 +108,11 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const rootRef = useRef(null);
 
   useEffect(() => {
-    if (phase === 'home' || phase === 'engine') return;
+    if (phase === 'home') return;
     rootRef.current?.querySelector('.pf-title')?.focus({ preventScroll: true });
     rootRef.current?.scrollIntoView?.({ block: 'start' });
   }, [phase]);
 
-  /** Hand over to the engine: its first step by name, the build mode the
-   *  door implies, and (behind Guide me) the quiz answered from the guide, so
-   *  its Where step opens on the matches. T872: only the paths with no
-   *  picked trip reach it now (a country page's Plan a trip here); a picked
-   *  trip lands on the trip page. */
-  const startEngine = (d = door, s = settings) => {
-    const steps = engineScreens(s, hasDoors(s) ? d : 'know').map((x) => x.slice(2));
-    const wizard = { stepName: steps[0], step: 1, buildMode: d === 'ready' ? 'ready' : 'custom', finder: null };
-    if (d === 'guide') wizard.quiz = { ...quizAnswers(s, spendFor(s)), editing: '' };
-    // A flight read from an uploaded booking brings its price: the way there
-    // and home start as the traveller's own figures, never overwriting one
-    // they typed (T657).
-    const tv = { ...(plannerStore.getState().wizard?.travelValues || {}) };
-    for (const b of s.imports) {
-      const key = b.kind === 'flight_home' ? 'back' : (b.kind === 'flight_out' || b.kind === 'flight' ? 'out' : '');
-      if (key && b.eur > 0 && !tv[key]?.eur) tv[key] = { mode: 'fly', service: b.title || b.code || '', eur: String(b.eur) };
-    }
-    // "No flying" makes the train the way there and home until the traveller
-    // picks another; they type what it cost (Carta has no train fares yet).
-    if (s.guide.reach === 'overland') {
-      for (const key of ['out', 'back']) if (!tv[key]?.mode) tv[key] = { ...(tv[key] || {}), mode: 'train' };
-    }
-    if (Object.keys(tv).length) wizard.travelValues = tv;
-    plannerStore.setWizard(wizard);
-    setPhase('engine');
-  };
   /** T863 to T866: a door's trip onto the trip page, the door kept on the
    *  trip and the dates and party set as the planner reads them. */
   const land = (selection, d, s = settings) => {
@@ -158,24 +128,12 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   };
   const landPlan = (plan, d) => land(selectionOfPlan(plan, { label: settings.trip.name || '' }), d);
 
-  // T675 (row T656-d): "Plan a trip here" is the I know where door with the
-  // country picked; the engine lands on its Where. Booked stays switch off,
-  // as they did in the old wizard: that path has no Where to land on.
-  useEffect(() => {
-    if (!seed?.iso2) return;
-    const next = { ...settings, booked: { ...settings.booked, stays: false } };
-    if (settings.booked.stays) save(next);
-    setDoor('know');
-    startEngine('know', normalizeSettings(next));
-  }, [seed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off per seed; the wizard consumes it and clears it
-
   // T806: a kept trip planned from My trips (keptStore holdPlan) opens the
   // planner on it, the same hand-off as the finder's "Plan this trip"
   // (T872: straight onto the trip page, no wizard).
   useEffect(() => {
     const plan = takePlan();
     if (!plan) return;
-    setDoor('guide');
     setMarkedId(plan.tripId);
     landPlan(plan, 'guide');
   }, []); // eslint-disable-line react-hooks/exhaustive-deps -- read once, on arrival
@@ -222,7 +180,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   const afterGuide = (id, s) => {
     if (returnTo) { setReturnTo(null); setPhase(returnTo); return; }
     // How do you want to plan: the flights first opens their screen.
-    if (id === 'g:how') { setDoor(s.door || 'guide'); setPhase(s.door === 'flight' ? 'ff' : landingOf(s)); return; }
+    if (id === 'g:how') { setPhase(s.door === 'flight' ? 'ff' : landingOf(s)); return; }
     // Skip what the Tell sentence or the travel style answered (never the trips).
     const k = continueTo(guideScreens(s), id, s, TRIPS_SCREEN, GUIDE_SKIP);
     // G12 L6: a known place lands on its found trip, not the list.
@@ -234,19 +192,7 @@ export function TripFlow({ renderEngine, seed = null, onLand = null }) {
   // opening already asked, so Start planning goes straight into the
   // help-me-choose questions; the last of them (g:how) asks whole trip or
   // flights first.
-  const start = () => { setDoor('guide'); setWalked(true); setReturnTo(null); setPhase(firstOpenGuide(settings) || guide[0]); };
-
-  if (phase === 'engine') {
-    const d = hasDoors(settings) ? door : 'know';
-    return renderEngine({
-      flowSteps: engineScreens(settings, d).map((x) => x.slice(2)),
-      initialWhereTab: d === 'guide' ? 'help' : 'hand',
-      // "I know where" is the picker alone (T752): no Help me choose tab.
-      lockWhereTab: d === 'know',
-      // Behind Guide me the step before the planner is Trips for you (T801).
-      onCancel: () => setPhase(d === 'guide' ? TRIPS_SCREEN : 'home'),
-    });
-  }
+  const start = () => { setWalked(true); setReturnTo(null); setPhase(firstOpenGuide(settings) || guide[0]); };
 
   const bar = (
     <IconButton ref={gearRef} tone="surface" label={t('pf.settings')} onClick={() => setSettingsOpen(true)} className="pf-round">

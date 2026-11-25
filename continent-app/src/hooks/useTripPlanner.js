@@ -15,7 +15,7 @@ import { assignmentsKey, prefsKey, extrasKey, persistAssignments, persistPrefs, 
 import { loadRestorableDraft, persistTripDraft, clearTripDraft } from '../planner/tripDraftStore.js';
 import { plannerStore, usePlannerStore } from '../planner/plannerStore.js';
 import { fromDraft, flightPrefsFor, flightRanking } from '../planner/flow/tripSettings.js';
-import { pickedLive } from '../planner/wizard/flightChoices.js';
+import { pickedLive } from '../lib/flights/flightChoices.js';
 import { fitsPrefs, NO_FLIGHT_PREFS } from '../lib/flights/flights.js';
 
 

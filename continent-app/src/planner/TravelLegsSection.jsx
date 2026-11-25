@@ -17,7 +17,7 @@ import { cityLabel } from '../lib/placeName.js';
 import { paidEur } from '../lib/tripTotal.js';
 import { liveKey } from '../lib/flights/useLiveFlights.js';
 import { airlineName, useAirlines } from '../lib/flights/useAirlines.js';
-import { flightChoices, sameFlight } from './wizard/flightChoices.js';
+import { flightChoices, sameFlight } from '../lib/flights/flightChoices.js';
 import { PaidField } from './PlanTotal.jsx';
 import { AirlineMark, FlightLink } from '../components/flights/Flights.jsx';
 

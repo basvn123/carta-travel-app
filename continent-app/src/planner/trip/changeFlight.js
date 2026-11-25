@@ -18,7 +18,7 @@
  */
 import { fitsPrefs, legCost } from '../../lib/flights/flights.js';
 import { BABY_LAP_FEE_LEG } from '../../lib/party.js';
-import { sameFlight } from '../wizard/flightChoices.js';
+import { sameFlight } from '../../lib/flights/flightChoices.js';
 
 const r2 = (n) => Math.round(n * 100) / 100;
 

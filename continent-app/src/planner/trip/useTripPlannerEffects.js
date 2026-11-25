@@ -5,7 +5,7 @@ import { scrollBehavior } from '../../lib/motion.js';
 export function useTripPlannerEffects({
   destinations, hist, onOpenPlanConsumed, onSharedTripConsumed, openPlanId, openSharedTrip,
   selectedStop, setChipOpen, setDeviceTrip, setSaveError, setSelectedStop, setToast, setTripTab,
-  setView, setWizardOpen, stopRefs, t, tp, tripSeed,
+  setView, stopRefs, t, tp,
 }) {
   // Ctrl or Cmd with Z (and Shift, or Y) on a keyboard, outside a field.
   const { undo: histUndo, redo: histRedo } = hist;
@@ -109,14 +109,6 @@ export function useTripPlannerEffects({
     }
     onSharedTripConsumed && onSharedTripConsumed();
   }, [openSharedTrip]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: tp is a fresh object every render, and a re-run before App clears the trip would load it twice
-
-  // A country seed ("Plan a trip here") with a trip already on the map: the
-  // wizard is not on screen, so open it as the modal and let it take the
-  // seed from there. On an empty planner the inline wizard already holds it.
-  useEffect(() => {
-    if (!tripSeed) return;
-    if (tp.planned || tp.stopDetails.length > 0) setWizardOpen(true);
-  }, [tripSeed, tp.planned, tp.stopDetails.length, setWizardOpen]);
 
   // Selecting a stop (via pin or card) scrolls its card into view.
   useEffect(() => {

@@ -1,10 +1,12 @@
 /**
  * The flights Getting there offers for one way, and the pick that prices the
  * trip on one of them (T812). Pure, so the node tests hold it.
+ * G12 L14: moved out of planner/wizard/ when the wizard was folded; the trip
+ * page's Getting there (TravelLegsSection) and the draft store read it.
  */
-import { legCost } from '../../lib/flights/flights.js';
-import { liveKey } from '../../lib/flights/useLiveFlights.js';
-import { BABY_LAP_FEE_LEG } from '../../lib/party.js';
+import { legCost } from './flights.js';
+import { liveKey } from './useLiveFlights.js';
+import { BABY_LAP_FEE_LEG } from '../party.js';
 
 /** The same flight: one airline, one departure, one arrival. */
 export const sameFlight = (a, b) => Boolean(a && b && a.airline === b.airline && a.dep === b.dep && a.arr === b.arr);

@@ -15,6 +15,30 @@ import { FoundTripPage } from './FoundTripPage.jsx';
 import { CompareSheet } from '../CompareSheet.jsx';
 import { MAX_COMPARE } from '../../lib/countryCompare.js';
 import { priceDays, tripRequest } from '../../lib/price/index.js';
+import { googleFlightsExploreLink } from '../../lib/transportLinks.js';
+import { PlaneIcon } from '../../components/TransportIcons.jsx';
+
+/**
+ * Google Flights Explore from the home airport (G12 L14): the wizard's Where
+ * step was the only place it showed, so it moved here with the fold, beside
+ * the fares Carta has, for a traveller who wants to see every place cheap to
+ * reach. It needs only the airport; the month is added when the trip has one.
+ */
+function ExploreFlightsCard({ airport, month = '' }) {
+  const { t, lang } = useI18n();
+  const url = googleFlightsExploreLink({ fromIata: airport?.iata, fromCity: airport?.name, month, lang });
+  if (!url) return null;
+  return (
+    <a className="guide-explore-card" href={url} target="_blank" rel="noopener noreferrer">
+      <span className="guide-explore-icon"><PlaneIcon size={16} /></span>
+      <span className="guide-explore-text">
+        <b>{t('ff.exploreTitle')}</b>
+        <small>{t('ff.exploreCta', { airport: airport?.iata || airport?.name || '' })}</small>
+      </span>
+      <span className="ext-arrow" aria-hidden="true">&#8599;</span>
+    </a>
+  );
+}
 
 /**
  * The wizard's country compare (T670), moved as is onto the place lander
@@ -122,6 +146,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
   const destinations = run.data?.destinations || {};
   const people = Math.max(1, settings.party.adults + settings.party.kids);
   const dates = when.start && when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start;
+  const exploreMonth = settings.when?.mode === 'exact' ? String(settings.when.start || '').slice(0, 7) : '';
 
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, [done]);
 
@@ -155,6 +180,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
       <div className="pf-step tff-load">
         {head}
         <p className="tff-fail" role="status">{t('ff.none')}</p>
+        <ExploreFlightsCard airport={run.origin} month={exploreMonth} />
         <div className="pf-foot">
           <Button variant="primary" block onClick={onChange}>{t('ff.change')}</Button>
         </div>
@@ -203,6 +229,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
         </div>
       )}
       <p className="ffl-note">{t('ff.mayChange')}</p>
+      <ExploreFlightsCard airport={run.origin} month={exploreMonth} />
     </div>
   );
 }

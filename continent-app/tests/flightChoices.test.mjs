@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { flightChoices, pickedLive, sameFlight } from "../src/planner/wizard/flightChoices.js";
+import { flightChoices, pickedLive, sameFlight } from "../src/lib/flights/flightChoices.js";
 import { legCost, pickLeg } from "../src/lib/flights/flights.js";
 import { BABY_LAP_FEE_LEG } from "../src/lib/party.js";
 

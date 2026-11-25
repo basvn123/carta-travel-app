@@ -21,15 +21,14 @@
  *             trips: the loader and the priced trips the answers lead to
  *             (TF2, T797), the one screen of the run that is not a question.
  *             The flights first leave the run for their own screen.
- *   plan      the planning engine's own steps by name, from wizardSteps
- *             (Where, Trips or Stay, Stays, From, Getting, Finish) without the
- *             Booked and When steps the setup already asked
+ *   plan      G12 L14: the planning engine's own steps (the old wizard's
+ *             Where, Stay, Getting, Finish) are folded; every door lands
+ *             on a priced trip, so the plan run is the guide alone
  *   days      days?, then the day rhythm, then guide or plan yourself
  *
  * Every function is pure: same settings in, same screen list out. Screen ids
  * are strings: 'booked', 'g:likes', 'p:Where', 'r:pace' and so on.
  */
-import { wizardSteps } from '../wizard/wizardSteps.js';
 import { datesFromBookings } from './tripSettings.js';
 
 export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'from', 'way', 'airports'];
@@ -194,18 +193,11 @@ export function guideQuestions(s) {
   return guideScreens(s).filter((id) => id !== TRIPS_SCREEN);
 }
 
-/** The planning engine's steps for this trip, prefixed 'p:'. */
-export function engineScreens(s, door = 'know') {
-  const buildMode = door === 'ready' ? 'ready' : 'custom';
-  return wizardSteps({ travel: s.booked.flights, stays: s.booked.stays }, buildMode)
-    .filter((n) => n !== 'Booked' && n !== 'When')
-    .map((n) => `p:${n}`);
-}
-
-/** Everything after the trip home: guide (when chosen) then the engine. */
+/** Everything after the trip home: the guide, when chosen. G12 L14: the
+ *  engine's steps that followed it are folded (a door lands on a trip). */
 export function planScreens(s, door = 'know') {
   const d = hasDoors(s) ? door : 'know';
-  return [...(d === 'guide' ? guideScreens(s) : []), ...engineScreens(s, d)];
+  return d === 'guide' ? guideScreens(s) : [];
 }
 
 /** The days run: the question, the rhythm (answered ones skipped unless

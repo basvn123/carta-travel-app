@@ -6,7 +6,7 @@
 // flight was picked in Getting there the days screen said 1,939.20 where
 // the trip said 1,931.20 (row T826-a). Both read this now.
 import { DEFAULT_LIFESTYLE } from '../runtime_pricing.js';
-import { pickedLive } from '../../planner/wizard/flightChoices.js';
+import { pickedLive } from '../flights/flightChoices.js';
 
 /** The eating habits the trip prices with (useTripPlanner's rule). */
 export function draftLifestyle(draft, appLifestyle = null) {

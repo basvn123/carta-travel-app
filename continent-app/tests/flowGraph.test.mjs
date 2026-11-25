@@ -15,18 +15,17 @@ test("nothing booked: every setup question, then the guide", () => {
   assert.equal(hasDoors(n), true);
   assert.deepEqual(planScreens(n, "guide"), [
     "g:shape", "g:likes", "g:weather", "g:reach", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
-    "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
-  assert.deepEqual(planScreens(n, "ready"), ["p:Where", "p:Trips", "p:Getting", "p:Finish"]);
-  assert.deepEqual(planScreens(n, "know"), ["p:Where", "p:Stay", "p:Getting", "p:Finish"]);
+  // G12 L14: the wizard's engine steps are folded; the other doors land on a trip.
+  assert.deepEqual(planScreens(n, "ready"), []);
+  assert.deepEqual(planScreens(n, "know"), []);
 });
 
-test("flights booked: no When, no From in setup; arrival asked in planning; no reach", () => {
+test("flights booked: no When, no From in setup; no reach", () => {
   const f = s({ booked: { flights: true } });
   assert.deepEqual(setupScreens(f), ["tell", "booked", "who", "sleep", "priority"]);
   assert.deepEqual(planScreens(f, "guide"), [
     "g:shape", "g:likes", "g:weather", "g:around", "g:avoid", "g:budget", "g:pick", "g:how", "g:trips",
-    "p:From", "p:Where", "p:Stay", "p:Getting", "p:Finish",
   ]);
 });
 
@@ -39,16 +38,16 @@ test("T860: the airports in reach are asked only for a way there that may fly", 
   assert.equal(s({ way: "boat" }).way, "");
 });
 
-test("stays booked: the engine goes straight to the stays; no doors screen (plan flow walk)", () => {
+test("stays booked: no guide walk and no doors screen (G12 L14: the booked route lands on the trip)", () => {
   const st = s({ booked: { stays: true } });
   assert.equal(hasDoors(st), false);
-  assert.deepEqual(planScreens(st, "guide"), ["p:Stays", "p:Getting", "p:Finish"]);
+  assert.deepEqual(planScreens(st, "guide"), []);
   assert.ok(!fullFlow(st).includes("doors"));
 });
 
-test("both booked: stays then review", () => {
+test("both booked: no plan screens", () => {
   const b = s({ booked: { flights: true, stays: true } });
-  assert.deepEqual(planScreens(b), ["p:From", "p:Stays", "p:Finish"]);
+  assert.deepEqual(planScreens(b), []);
 });
 
 test("day screens skip answered rhythm unless asked for all", () => {
@@ -123,7 +122,7 @@ test("T797: the trips come after question 7 and are not a question", async () =>
   assert.equal(guideQuestions(n).length, 9);
   assert.equal(nextScreen(planScreens(n, "guide"), "g:pick"), "g:how");
   assert.equal(nextScreen(planScreens(n, "guide"), "g:how"), "g:trips");
-  assert.equal(nextScreen(planScreens(n, "guide"), "g:trips"), "p:Where");
+  assert.equal(nextScreen(planScreens(n, "guide"), "g:trips"), null);
 });
 
 test("plan flow walk: how to plan is the trip door, the whole trip by default", () => {
