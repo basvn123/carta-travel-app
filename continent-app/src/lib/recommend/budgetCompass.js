@@ -124,13 +124,17 @@ export function moneyLeft(priced, budget, { party = 1, nights = 0, missing = [] 
   const people = Math.max(1, party || 1);
   if (b.kind === 'total') {
     if (missing.length || !Number.isFinite(priced.perPerson)) return null;
-    const person = b.eur - priced.perPerson;
-    return person >= 0.5 ? { person: Math.round(person), group: Math.round(person * people) } : null;
+    // G12 (browser pass 2): the group figure is the shown per-person figure
+    // times the party, so "€731 under" never sits over "€1,463 left for the
+    // group" (731 x 2 = 1,462); each figure is rounded once, as shown.
+    const person = Math.round(b.eur - priced.perPerson);
+    return person >= 1 ? { person, group: person * people } : null;
   }
   if (missing.some((k) => k === 'stay' || k === 'food')) return null;
   const spent = dayBasisSpend(priced.parts, people, nights);
   if (spent == null) return null;
-  const perNight = b.eur - spent;
-  if (perNight < 0.5) return null;
-  return { person: Math.round(perNight * nights), group: Math.round(perNight * nights * people), perNight: Math.round(perNight) };
+  // The same for a day budget: the card shows the day gap rounded, so the trip figures build on it.
+  const perNight = Math.round(b.eur - spent);
+  if (perNight < 1) return null;
+  return { person: perNight * nights, group: perNight * nights * people, perNight };
 }

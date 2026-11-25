@@ -60,6 +60,27 @@ test("the card names what an under-budget trip figure leaves out, and judges no 
   assert.equal(budgetBadge(notYet), null);
 });
 
+test("G12 rounding: the group's money left is the shown per-person figure times the party", async () => {
+  const { budgetCheck } = await import("../src/planner/flow/budget.js");
+  const { formatMoney } = await import("../src/lib/money.js");
+  // The browser pass's trip: a EUR 1,500 budget a person, EUR 768.64 spent (gap 731.36).
+  const priced = { perPerson: 768.64, parts: { beds: 900, days: 400 } };
+  const budget = { eur: 1500, kind: "total" };
+  const gap = budgetCheck(priced, budget, { party: 2 }).gap;
+  const left = moneyLeft(priced, budget, { party: 2, nights: 7 });
+  assert.equal(formatMoney(gap, { locale: "en" }), formatMoney(left.person, { locale: "en" }), "the under line and the person figure agree");
+  assert.equal(left.group, 1462, "731 x 2, never the 1,463 of the unrounded gap");
+  // A day budget: the shown day gap, times the nights and the party.
+  for (const beds of [500.3, 517.9, 560]) {
+    const day = moneyLeft({ parts: { beds, days: 280 } }, { eur: 80, kind: "day" }, { party: 2, nights: 7 });
+    const shown = budgetCheck({ parts: { beds, days: 280 } }, { eur: 80, kind: "day" }, { party: 2, nights: 7 }).gap;
+    assert.equal(day.perNight, shown, "the day figure is the card's");
+    assert.equal(day.person, day.perNight * 7);
+    assert.equal(day.group, day.perNight * 7 * 2);
+  }
+  assert.equal(moneyLeft({ perPerson: 999.6 }, { eur: 1000, kind: "total" }, { party: 2 }), null, "under half a euro: no line");
+});
+
 test("money left: the group's, only with every line priced and under budget", () => {
   const priced = { perPerson: 800, parts: { beds: 560, days: 280 } };
   assert.deepEqual(moneyLeft(priced, cap, { party: 2, nights: 7 }), { person: 200, group: 400 });
