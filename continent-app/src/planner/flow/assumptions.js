@@ -42,7 +42,10 @@ export function assumptionChips(settings, { t, when = null, fromName = '' } = {}
   const nights = s.when?.mode === 'exact' && s.when.start && s.when.end
     ? Math.max(1, Math.round((Date.parse(`${s.when.end}T12:00:00Z`) - Date.parse(`${s.when.start}T12:00:00Z`)) / 86400000))
     : s.when?.nights;
-  const dates = when?.start ? (when.end ? t('plan.dateRange', { a: when.start, b: when.end }) : when.start) : t('pf.when.unsure');
+  // G12 browser pass: whenText's `end` is the nights for months and "any
+  // time", so only exact dates read as a range ("May to 7 nights" before).
+  const range = s.when?.mode === 'exact' && when?.end;
+  const dates = when?.start ? (range ? t('plan.dateRange', { a: when.start, b: when.end }) : when.start) : t('pf.when.unsure');
   return [
     { id: 'who', label: partyText(t, { adults: p.adults, children: p.kids, babies: p.babies }), assumed: assumed(s, 'who') },
     { id: 'from', label: s.from?.name || fromName || t('pf.home.starts'), assumed: assumed(s, 'from') },

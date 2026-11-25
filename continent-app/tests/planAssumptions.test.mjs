@@ -31,6 +31,15 @@ test("given answers are solid, whoever gave them", () => {
   assert.equal(assumptionChips(seeded, { t })[0].assumed, false);
 });
 
+test("months and any time read as the name and the nights once, never a range (G12)", () => {
+  const months = markAnswered(normalizeSettings({ when: { mode: "months", months: [5], nights: 7 } }), "when");
+  const m = assumptionChips(months, { t, when: { start: "May", end: "7 nights" } })[2];
+  assert.equal(m.label, `May, ${t("tf.keep.nights", { n: 7 })}`);
+  const any = normalizeSettings({ when: { mode: "any", nights: 5 } });
+  const a = assumptionChips(any, { t, when: { start: "Any time", end: "5 nights" } })[2];
+  assert.equal(a.label, `Any time, ${t("tf.keep.nights", { n: 5 })}`);
+});
+
 test("exact dates read as a range and their nights", () => {
   const s = markAnswered(normalizeSettings({ when: { mode: "exact", start: "2027-05-03", end: "2027-05-10" } }), "when");
   const c = assumptionChips(s, { t, when: { start: "3 May", end: "10 May" } })[2];
