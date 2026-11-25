@@ -14,13 +14,17 @@
  * by rank.js. The same answers give the same trips with the same ids, and
  * are built once (memoised per answer set).
  */
-import { quoteTrip } from '../price/trip.js';
+import { quoteTrip, stayCostsOf, tripParty, tripStopDetails } from '../price/trip.js';
 import { wizardPlannerState } from '../tripTotal.js';
 import { flightStateOf, partySize, tradeoffsOf } from '../../planner/flow/tripSettings.js';
 import { buildCandidates, wantsNoCar } from './candidates.js';
 import { SLOT_ROWS, ADAPTERS, buildSlots, prepareState, slotTotals } from './slots.js';
 import { planOf, finderState } from '../../planner/finder/planOf.js';
-import { budgetRulerFor } from '../budgetBasis.js';
+import { budgetRulerFor, dayBasisSpend } from '../budgetBasis.js';
+import { foodOf } from './adapters/food.js';
+import { localFares } from './adapters/local.js';
+import { round2 } from '../math.js';
+import { destAnchor } from '../origins.js';
 
 /** A short stable hash (FNV-1a, base 36) of a string. */
 export function stableHash(s) {
@@ -88,7 +92,7 @@ function plannerState(c, input) {
 }
 
 /** The data the engine prices with: the catalogue, the origin and its swept flights. */
-function quoteData(input) {
+export function quoteData(input) {
   const { data, flights, origin } = input;
   return {
     ...data,
@@ -97,10 +101,10 @@ function quoteData(input) {
   };
 }
 
-/** One candidate priced: the trip, with its quote kept beside it (not enumerable). */
-export function priceCandidate(c, input, qdata = quoteData(input), registry = {}) {
+/** What every adapter reads beside the quote. */
+function ctxOf(input, qdata) {
   const s = input.settings;
-  const ctx = {
+  return {
     data: qdata,
     countryInsights: input.countryInsights || null,
     flights: input.flights || null,
@@ -112,6 +116,97 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
     ownFlight: input.ownFlight || null,
     settings: s,
   };
+}
+
+/**
+ * G12 early results (owner decision 2026-11-25, "go on"): a price floor of a
+ * candidate before it is priced, so rank 1 can be proven final early under a
+ * budget and with price first too. The beds and days are the quote's own
+ * (lib/price/trip.js stayCostsOf on the same planner state, so exact); the
+ * flight is at least the cheapest swept fare each way to any airport the
+ * trip can fly (flightFloor); the transfers, the hops and a car have no
+ * sound bound before pricing and count as 0, which they never go under.
+ *   -> { perPerson   a floor of total.perPerson, whatever is priced or "Not yet"
+ *        full        a floor of total.perPerson once every line is priced (the flight's floor added)
+ *        day         the exact day-basis spend a person a night (lib/budgetBasis.js), or null
+ *        stay, food  whether those lines will have a price
+ *        flight      false when no fare exists for the trip at all (its line will be "Not yet"), else null (not known) }
+ * A wrong floor would let a wrong rank 1 through, so tests/recommendEarly.test.mjs
+ * checks it against every priced trip.
+ */
+export function priceFloor(c, input, qdata = quoteData(input)) {
+  const ctx = ctxOf(input, qdata);
+  const state = prepareState(plannerState(c, input), ctx);
+  const destinations = qdata?.destinations || {};
+  const stopDetails = tripStopDetails(state.stops, destinations, state.tripStart);
+  const stayCosts = stayCostsOf(stopDetails, state, destinations);
+  const live = (id) => SLOT_ROWS.some((r) => r.id === id && r.status === 'live');
+  // The same tests as the stay and food adapters.
+  const stay = live('stay') && stayCosts.some((x) => x?.accom);
+  const per = stayCosts.filter((x) => x && x.nights);
+  const food = live('food') && per.length > 0 && per.every((x) => foodOf(x) != null);
+  const head = Math.max(1, tripParty(state).groupSize);
+  const group = (stay ? stayCosts.reduce((n, x) => n + (x?.accomTotal || 0), 0) : 0)
+    + (food ? per.reduce((n, x) => n + foodOf(x), 0) : 0)
+    + (live('local') ? localFares({ stayCosts }) : 0);
+  // The slots round to the cent a line (slots.js), so the floor gives a few cents.
+  const perPerson = Math.max(0, group / head - 0.05);
+  // The day basis reads the quote's parts as quoteTrip sums them.
+  const parts = {
+    beds: round2(stayCosts.reduce((n, x) => n + (x?.accomTotal || 0), 0)),
+    days: round2(stayCosts.reduce((n, x) => n + (x?.groundTotal || 0), 0)),
+  };
+  const day = dayBasisSpend(parts, partySize(input.settings), c.nights);
+  const fl = live('flight') ? flightFloor(c, state, stopDetails, qdata, input) : { eur: 0, none: true };
+  return { perPerson, full: perPerson + fl.eur / head, day, stay, food, flight: fl.none ? false : null };
+}
+
+/** The cheapest fare a seat in a swept file, one way, to or from any of `airports`, any day. */
+function cheapestFare(files, dir, airports) {
+  let min = Infinity;
+  for (const f of files) {
+    for (const a of airports) {
+      for (const v of Object.values(f?.[dir]?.[a] || {})) if (Array.isArray(v) && v[0] < min) min = v[0];
+    }
+  }
+  return min;
+}
+
+/**
+ * G12 early results: the floor of the flight line for the party, before
+ * pricing, { eur, none }. The flight adapter (adapters/flight.js) prices
+ * both ways from a swept file: quoteTrip's routed airports (the arrival
+ * anchor or the first stop in, the return anchor, the last stop or the
+ * anchor home) or the gateway's own (nearLegs). Each way costs at least the
+ * cheapest fare to any of those airports on any day, a seat, times the
+ * seats that pay (bags and a lap fee only add). A typed or booked flight
+ * and driving their own car are the traveller's figures: no floor (0).
+ * `none`: no file holds a fare for those airports at all, so the line will
+ * be "Not yet" (the finder has no live fares and holds no flight).
+ */
+function flightFloor(c, state, stopDetails, qdata, input) {
+  if (state.transportPref === 'owncar' || input.ownFlight || state.ownFlight) return { eur: 0, none: false };
+  const destinations = qdata?.destinations || {};
+  const first = stopDetails[0]?.dest;
+  const last = stopDetails[stopDetails.length - 1]?.dest;
+  const anchor = state.anchorId ? destinations[state.anchorId] : null;
+  const back = state.returnAnchorId ? destinations[state.returnAnchorId] : null;
+  const gw = c.gateway?.iata || null;
+  const ins = [destAnchor(anchor), destAnchor(first), gw].filter(Boolean);
+  const outs = [destAnchor(back), destAnchor(last), destAnchor(anchor), gw].filter(Boolean);
+  const files = [...new Set([qdata?.flights, ...Object.values(qdata?.flightsBy || {})].filter(Boolean))];
+  const there = cheapestFare(files, 'to', ins);
+  const home = cheapestFare(files, 'back', outs);
+  // Both ways or no flight line at all (the adapter never prices half).
+  if (!Number.isFinite(there) || !Number.isFinite(home)) return { eur: 0, none: true };
+  const paying = Math.min(tripParty(state).groupSize, partySize(input.settings));
+  return { eur: Math.max(0, (there + home) * paying), none: false };
+}
+
+/** One candidate priced: the trip, with its quote kept beside it (not enumerable). */
+export function priceCandidate(c, input, qdata = quoteData(input), registry = {}) {
+  const s = input.settings;
+  const ctx = ctxOf(input, qdata);
   const reg = { rows: registry.rows || SLOT_ROWS, adapters: registry.adapters || ADAPTERS };
   const state = prepareState(plannerState(c, input), ctx, reg);
   const quote = quoteTrip(state, { data: qdata, countryInsights: ctx.countryInsights });

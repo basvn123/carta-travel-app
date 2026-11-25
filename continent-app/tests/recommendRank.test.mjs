@@ -91,6 +91,11 @@ test("G12 L1: a day budget holds bed and days a night against it, never the whol
   assert.deepEqual(budgetRuler(fakeTrip("n", "a", 900), s), { eur: 100, kind: "day", delta: null });
   const over = catchFor(withQuote(1400), { info: { conflicts: [], bars: [] }, budget: budgetRuler(withQuote(1400), tight) });
   assert.equal(over.key, "tf.catch.budgetDay");
+  // G12 price floor: rankTrips copies each trip, which drops the hidden
+  // quote; the ranked trip still reads its day spend (it read "Not yet" before).
+  const [ranked] = rankTrips([withQuote(1400)], { settings: tight, data: FAKE });
+  assert.deepEqual(ranked.budget, { eur: 80, kind: "day", delta: 20 });
+  assert.equal(ranked.unpriced, false, "a day budget judges a priced trip");
 });
 
 test("the budget ranks: a trip over it sinks by the configured amount", () => {

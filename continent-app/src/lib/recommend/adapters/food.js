@@ -11,7 +11,7 @@ import { quoteStay } from '../../price/stay.js';
 import { PROFILES } from '../../lifestyleProfiles.js';
 
 /** Food and drink of one stop's quote for the party, or null without a food price. */
-const foodOf = (sc) => (sc?.day?.foodEur != null ? sc.day.foodEur * sc.nights * sc.seats : null);
+export const foodOf = (sc) => (sc?.day?.foodEur != null ? sc.day.foodEur * sc.nights * sc.seats : null);
 
 function foodAt(quote, lifestyle, destinations) {
   const req = { ...quote.request, lifestyle };

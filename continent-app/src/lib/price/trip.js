@@ -127,26 +127,60 @@ function heldAsLeg(h) {
   };
 }
 
+/**
+ * The party (T458, T702): everyone 12 and over counts as an adult;
+ * children 3 to 11 take a seat, a bed and a child's share of meals and
+ * public fares (config party.shares, the same shares the day price reads);
+ * babies 0 to 2 sit on a lap. Cars are priced per car and need a seat for
+ * everyone. `groupSize` (the seats Carta prices beds and legs for) is
+ * adults plus children. Exported for the finder's price floor (G12).
+ */
+export function tripParty(state) {
+  const adults = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
+  const children = Math.max(0, Math.min(MAX_PARTY - adults, Math.round(state?.children || 0)));
+  const babies = Math.max(0, Math.min(MAX_PARTY - adults - children, Math.round(state?.babies || 0)));
+  const groupSize = adults + children;
+  return { adults, children, babies, groupSize, seats: groupSize + babies };
+}
+
+/**
+ * Each stop's bed and days for the party (quoteStay), null for a stop the
+ * catalogue lacks; a bed the traveller typed replaces the estimate. A stop
+ * may sleep its own way (T842, owner D2 2026-10-29): its stayTier prices
+ * that stop's beds; every other stop keeps the trip's. G12 early results:
+ * the finder's price floor (lib/recommend/trips.js priceFloor) reads these
+ * same figures before a trip is priced, so the floor is the quote's own beds
+ * and days and can never pass what the quote returns.
+ */
+export function stayCostsOf(stopDetails, state, destinations = NO_DESTINATIONS) {
+  const ownStays = state?.ownStays || {};
+  const request = tripRequest(state);
+  return stopDetails.map((s) => {
+    if (!s.dest) return null;
+    const req = s.stayTier ? { ...request, stay: s.stayTier } : request;
+    const est = quoteStay(s.dest, s.nights, s.arriveDate, req, destinations);
+    const own = paidEur(ownStays?.[s.destinationId]);
+    if (!est || !own) return est ? { ...est, ownAccom: false } : est;
+    return {
+      ...est,
+      estAccomTotal: est.accomTotal,
+      accomTotal: own,
+      ownAccom: true,
+      total: round2(own + est.groundTotal),
+    };
+  });
+}
+
 export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const destinations = data?.destinations || NO_DESTINATIONS;
   const carModel = data?.meta?.car_model || null;
   const engineCar = carModelOf(data);
   const {
     stops = [], tripStart = '', transportPref = 'auto', legModes = {}, ownLegs = {},
-    ownStays = {}, anchorId = null, anchorOrigin = null,
+    anchorId = null, anchorOrigin = null,
     returnAnchorId = null, ownFlight = null, carHome = null,
   } = state || {};
-  // The party (T458, T702): everyone 12 and over counts as an adult;
-  // children 3 to 11 take a seat, a bed and a child's share of meals and
-  // public fares (config party.shares, the same shares the day price reads);
-  // babies 0 to 2 sit on a lap. Cars are priced per car and need a seat for
-  // everyone. `groupSize` (the seats Carta prices beds and legs for) is
-  // adults plus children.
-  const adults = Math.max(1, Math.min(MAX_PARTY, Math.round(state?.groupSize || 1)));
-  const children = Math.max(0, Math.min(MAX_PARTY - adults, Math.round(state?.children || 0)));
-  const babies = Math.max(0, Math.min(MAX_PARTY - adults - children, Math.round(state?.babies || 0)));
-  const groupSize = adults + children;
-  const seats = groupSize + babies;
+  const { adults, children, babies, groupSize, seats } = tripParty(state);
   const party = { adults, children, babies, seats: groupSize };
   const weight = ticketShare(party);
   const PUBLIC = new Set(['train', 'bus', 'ferry', 'public']);
@@ -542,24 +576,9 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   // Each stop is the day price at the stop's own dates (T702): the same
   // engine row Explore and the destination page show, times the seats and
   // the nights. A bed the traveller has booked and typed in replaces Carta's
-  // estimate for that stay; the days there stay Carta's.
-  // A stop may sleep its own way (T842, owner D2 2026-10-29): its stayTier
-  // prices that stop's beds; every other stop keeps the trip's.
+  // estimate for that stay; the days there stay Carta's (stayCostsOf).
   const request = tripRequest(state);
-  const stayCosts = stopDetails.map((s) => {
-    if (!s.dest) return null;
-    const req = s.stayTier ? { ...request, stay: s.stayTier } : request;
-    const est = quoteStay(s.dest, s.nights, s.arriveDate, req, destinations);
-    const own = paidEur(ownStays?.[s.destinationId]);
-    if (!est || !own) return est ? { ...est, ownAccom: false } : est;
-    return {
-      ...est,
-      estAccomTotal: est.accomTotal,
-      accomTotal: own,
-      ownAccom: true,
-      total: round2(own + est.groundTotal),
-    };
-  });
+  const stayCosts = stayCostsOf(stopDetails, state, destinations);
 
   // ---- The parts, each once ------------------------------------------------
   const parts = {

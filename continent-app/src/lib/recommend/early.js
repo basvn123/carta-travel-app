@@ -40,27 +40,44 @@ export function pricingOrder(bounds) {
     .map((x) => x.i);
 }
 
-/** One entry per trip: a priced one from the ranked pool, or a bound of one still to price. */
-function entries(pool, pending, room) {
+/**
+ * One entry per trip: a priced one from the ranked pool, or a bound of one
+ * still to price. `pull` (rank.js pullRange) narrows the pull room per trip
+ * when it can; a trip a ceiling is sure to take out (`out`) never shows.
+ */
+function entries(pool, pending, room, pull) {
+  const range = (id) => pull?.get(id) || [-room, room];
   const priced = pool.map((x) => {
     const base = (Number.isFinite(x.score) ? x.score : 0) - (x.shift || 0);
+    const [least, most] = range(x.id);
     return {
       id: x.id, trip: x, qualified: x.qualified !== false, unpriced: Boolean(x.unpriced), been: Boolean(x.been),
-      lo: base - room, hi: base + room, banded: !leavesOut(x),
+      lo: base + least, hi: base + most, hiFull: base + most, banded: !leavesOut(x),
     };
   });
-  const later = pending.map((b) => ({ id: b.id, trip: null, qualified: b.qualified !== false, unpriced: null, been: Boolean(b.been), lo: b.lo, hi: b.hi, banded: true }));
+  const later = pending.filter((b) => !b.out).map((b) => {
+    const e = { id: b.id, trip: null, qualified: b.qualified !== false, unpriced: b.unpriced ?? null, been: Boolean(b.been), lo: b.lo, hi: b.hi, hiFull: b.hiFull ?? b.hi, banded: true };
+    if (!pull?.has(b.id) || !Number.isFinite(b.part)) return e;
+    // Same terms as rank.js boundFrom, with this trip's own pull range.
+    const [least, most] = pull.get(b.id);
+    const sink = b.sink || [0, Infinity];
+    e.hiFull = b.part + most - sink[0];
+    e.hi = e.unpriced === false ? e.hiFull : b.part + most;
+    e.lo = b.part + least - sink[1];
+    return e;
+  });
   return [...priced, ...later];
 }
 
 /** True when `a` (priced) stays ahead of `b` however the rest is priced (rankTrips' sort). */
 function beats(a, b) {
   if (a.qualified !== b.qualified) return a.qualified;
-  // A trip still to price may turn out fully priced (its best case).
-  const bUnpriced = b.unpriced ?? false;
-  if (a.unpriced !== bUnpriced) return !a.unpriced;
-  if (a.been !== b.been) return !a.been;
-  return a.lo > b.hi + EPS;
+  const tie = (hi) => (a.been !== b.been ? !a.been : a.lo > hi + EPS);
+  // Not known yet whether `b` gets a "Not yet" line: if it does, a fully
+  // priced `a` comes first; if not, `b` is fully priced and has its sink.
+  if (b.unpriced == null) return a.unpriced ? false : tie(b.hiFull);
+  if (a.unpriced !== b.unpriced) return !a.unpriced;
+  return tie(b.hi);
 }
 
 /**
@@ -69,11 +86,12 @@ function beats(a, b) {
  *   pool     the trips priced so far, ranked (rankTrips) and filtered as the
  *            list shows them (ceiling, skipped)
  *   pending  candidateBound() of every trip not yet priced
- *   opts     { pinned (ids), room (rank.js pullRoom), k, lambda, weights }
+ *   opts     { pinned (ids), room (rank.js pullRoom), pull (rank.js
+ *            pullRange, or null), k, lambda, weights }
  */
-export function pinTop(pool, pending, { pinned = [], room = 0, k = DIVERSE.k, lambda = DIVERSE.lambda, weights = DIVERSE.weights } = {}) {
+export function pinTop(pool, pending, { pinned = [], room = 0, pull = null, k = DIVERSE.k, lambda = DIVERSE.lambda, weights = DIVERSE.weights } = {}) {
   if (!Number.isFinite(room)) return pinned.slice();
-  const all = entries(pool || [], pending || [], room);
+  const all = entries(pool || [], pending || [], room, pull);
   const byId = new Map(all.map((e) => [e.id, e]));
   const picks = pinned.map((id) => byId.get(id)).filter((e) => e?.trip);
   const out = picks.map((e) => e.id);

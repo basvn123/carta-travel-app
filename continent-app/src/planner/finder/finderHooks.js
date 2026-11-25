@@ -36,8 +36,9 @@ import { EARLY, priceInSlices } from './priceSlices.js';
 import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
 import { bookedTrip } from '../../lib/plan/doors.js';
 import { checkedWindows, levers } from '../../lib/recommend/alternatives.js';
-import { candidateBound, pullRoom, rankTrips } from '../../lib/recommend/rank.js';
+import { candidateBound, floorHelps, pullRange, pullRoom, rankTrips } from '../../lib/recommend/rank.js';
 import { pinTop, pricingOrder } from '../../lib/recommend/early.js';
+import { priceFloor, quoteData } from '../../lib/recommend/trips.js';
 import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
 import { readSkips } from '../../lib/recommend/keptStore.js';
 import { useTasteVerdicts, verdictsKey } from '../../lib/taste/store.js';
@@ -205,9 +206,16 @@ export function useTripFinder(settings) {
         // best reachable score are priced first, and a top card shows once no
         // trip still to price can take its slot (lib/recommend/early.js).
         const rankOpts = { settings: answers, taste, data, tasteLean };
+        // The owner's "go on" (2026-11-25): each candidate's price floor
+        // (its beds and days, exact before pricing, and the cheapest swept
+        // fare each way) narrows the budget sink and the price pull, so rank 1
+        // can settle early under a budget and with price first too; only
+        // computed when it can narrow something (rank.js floorHelps).
+        const qdata = quoteData(input);
+        const floors = floorHelps(answers);
         const bounds = new Map();
         const boundOf = (c) => {
-          if (!bounds.has(c)) bounds.set(c, candidateBound(c, rankOpts));
+          if (!bounds.has(c)) bounds.set(c, candidateBound(c, { ...rankOpts, floor: floors ? priceFloor(c, input, qdata) : null }));
           return bounds.get(c);
         };
         const room = pullRoom(answers);
@@ -225,7 +233,8 @@ export function useTripFinder(settings) {
           onSome: (some, pending) => {
             if (!alive()) return;
             const ranked = rank(some);
-            const ids = pinTop(visible(ranked), pending.map(boundOf), { pinned: pins.ids, room });
+            const later = pending.map(boundOf);
+            const ids = pinTop(visible(ranked), later, { pinned: pins.ids, room, pull: pullRange(ranked, later, answers) });
             const grew = ids.length > pins.ids.length;
             if (grew) {
               const trips = new Map(pins.trips);
