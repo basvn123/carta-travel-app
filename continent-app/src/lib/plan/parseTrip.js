@@ -230,6 +230,11 @@ const STOPW = new Set('the and or de la le el il lo van von der den das des du l
 const BUDGET_CUE = ['budget', 'total', 'in total', 'spend', 'max', 'maximum', 'up to', 'under', 'around', 'about', 'roughly', 'tops', 'totaal',
   'uitgeven', 'maximaal', 'rond de', 'gesamt', 'ausgeben', 'maximal', 'etwa', 'depenser', 'environ', 'jusqu a', 'gastar', 'presupuesto', 'hasta',
   'unos', 'spendere', 'circa', 'fino a', 'massimo'];
+// G12: the words that make money after them the trip's budget, not a booked
+// part's price ("flight booked €180, budget 1500"), and the words that undo
+// a booking verb ("hotel not booked yet").
+const BUDGET_WORD = ['budget', 'budgets', 'presupuesto', 'bilancio', 'totaal', 'total', 'gesamt'];
+const NEGATE = ['not', 'no', 'niet', 'nicht', 'pas', 'non', 'ne', 'nada', 'nulla'];
 
 // ---- Folding -----------------------------------------------------------------
 
@@ -247,7 +252,7 @@ const L = {
   bookObj: Object.entries(BOOK_OBJECT).map(([k, v]) => [k, fold(v)]), nothingBooked: fold(NOTHING_BOOKED),
   stay: STAY.map(([k, v]) => [k, fold(v)]), stars: new Set(STARS.map(f)),
   way: Object.entries(WAY).map(([k, v]) => [k, fold(v)]), noFly: fold(NO_FLY), noCar: fold(NO_CAR), road: fold(ROAD), flightFirst: fold(FLIGHT_FIRST),
-  budgetCue: fold(BUDGET_CUE), origin: fold(ORIGIN), anyTime: fold(ANY_TIME), rangeTo: fold(RANGE_TO),
+  budgetCue: fold(BUDGET_CUE), budgetWord: new Set(BUDGET_WORD.map(f)), negate: new Set(NEGATE.map(f)), origin: fold(ORIGIN), anyTime: fold(ANY_TIME), rangeTo: fold(RANGE_TO),
   perPerson: fold(PER_PERSON), perGroup: fold(PER_GROUP), perDay: fold(PER_DAY), nextMonth: fold(NEXT_MONTH),
   seasons: SEASONS.map(([m, v]) => [m, fold(v)]),
 };
@@ -445,6 +450,7 @@ export function parseTrip(text, ctx = {}) {
   // -- Booked, before the stay and way words read "hotel" or "flight" as a wish.
   const booked = { flights: false, stays: false, car: false, tickets: false };
   const bookSpans = [];
+  const parts = [];
   for (let i = 0; i < toks.length; i++) {
     const n = matchAt(toks, i, L.nothingBooked, used);
     if (n) { bookSpans.push([i, n]); take(i, n); }
@@ -454,6 +460,8 @@ export function parseTrip(text, ctx = {}) {
     // "Flights booked", "we booked the hotel": an object either side. "We
     // have a hotel": only after the verb, close by.
     const strong = L.bookStrong.has(toks[i]);
+    // G12: "hotel not booked yet" is the opposite of a booking.
+    if (toks.slice(Math.max(0, i - 2), i).some((w) => L.negate.has(w))) continue;
     let lo = i + 1;
     if (strong) { lo = i; while (lo > 0 && lo > i - 3 && !stop[lo - 1]) lo -= 1; }
     let hi = i;
@@ -470,6 +478,58 @@ export function parseTrip(text, ctx = {}) {
       }
     }
   }
+  // -- G12 browser pass 2: each booked part with its own price. "Vlucht naar
+  // Lissabon 3 mei €180 geboekt, hotel 4 nachten €420 geboekt": the verb may
+  // sit far after its object, and the money is what that part cost, never the
+  // trip budget. A part runs from its object word to the next one; money in
+  // it (with a euro sign or word) is its price, unless a budget word stands
+  // before the money, which ends the part.
+  const objs = [];
+  for (let i = 0; i < toks.length; i++) {
+    for (const [k, list] of L.bookObj) {
+      const n = matchAt(toks, i, list, null);
+      if (n) { objs.push({ i, n, k }); i += n - 1; break; }
+    }
+  }
+  const partSpans = [];
+  objs.forEach((o, x) => {
+    if (o.k !== 'flights' && o.k !== 'stays') return;
+    const next = objs[x + 1];
+    let end = next ? next.i : toks.length;
+    for (let j = o.i + o.n; j < end; j++) if (L.budgetWord.has(toks[j])) { end = j; break; }
+    const marked = bookSpans.some(([j, n]) => j === o.i && n === o.n);
+    // A strong verb belongs to the next object when it stands right before
+    // it in one clause ("flight to Lisbon and we booked the hotel").
+    const ownVerb = (v) => {
+      if (used[v] || !L.bookStrong.has(toks[v])) return false;
+      for (let j = Math.max(0, v - 2); j < v; j++) if (L.negate.has(toks[j])) return false;
+      if (next && next.i - v <= 3 && !stop.slice(v, next.i).some(Boolean)) return false;
+      return true;
+    };
+    let verb = -1;
+    for (let v = o.i + o.n; v < end && verb < 0; v++) if (ownVerb(v)) verb = v;
+    if (!marked && verb < 0) return;
+    let eur = null; let per = 'group'; let nights = 0;
+    for (let m = o.i + o.n; m < end && eur == null; m++) {
+      if (!/^\d{2,6}$/.test(toks[m]) || used[m]) continue;
+      const before = toks[m - 1] === 'eur';
+      if (!before && toks[m + 1] !== 'eur') continue;
+      eur = Number(toks[m]);
+      const span = before ? [m - 1, 2] : [m, 2];
+      take(...span);
+      partSpans.push(span);
+      for (let j = m + 1; j <= Math.min(end - 1, m + 3); j++) {
+        const n = matchAt(toks, j, L.perPerson, used);
+        if (n) { per = 'person'; take(j, n); partSpans.push([j, n]); break; }
+      }
+    }
+    if (o.k === 'stays') {
+      for (let j = o.i + o.n; j < end - 1 && !nights; j++) if (L.night.has(toks[j + 1]) && numOf(toks[j]) > 0) nights = numOf(toks[j]);
+    }
+    booked[o.k] = true;
+    if (!marked) { bookSpans.push([o.i, o.n], [verb, 1]); take(o.i, o.n); used[verb] = true; }
+    parts.push({ kind: o.k === 'flights' ? 'flight' : 'stay', eur: eur >= 1 ? eur : null, per, nights, from: o.i, to: end });
+  });
   if (bookSpans.length) set('booked', booked, bookSpans);
 
   // -- T863: the flight first ("just a cheap flight", "solo el vuelo"), read
@@ -822,6 +882,18 @@ export function parseTrip(text, ctx = {}) {
   const kept = places.filter((p, k, a) => !(p.kind === 'country' && towns.has(p.id))
     && a.findIndex((x) => x.kind === p.kind && x.id === p.id) === k).slice(0, 6);
   if (kept.length) set('places', kept, placeSpans);
+  // G12 browser pass 2: each booked part's town is the town named in it,
+  // else the trip's one town, in the catalogue's spelling so the booking rows
+  // find it (importStays.js cityIndex).
+  if (parts.length) {
+    const townsSaid = places.map((p, k) => ({ p, at: placeSpans[k][0] })).filter((x) => x.p.kind === 'place');
+    const only = new Set(townsSaid.map((x) => x.p.id)).size === 1 ? townsSaid[0].p : null;
+    const value = parts.map(({ from, to, ...part }) => {
+      const p = townsSaid.find((x) => x.at >= from && x.at < to)?.p || only;
+      return { ...part, id: p?.id || '', city: p ? cityName(destinations[p.id]?.city || p.name) : '' };
+    });
+    set('bookedParts', value, partSpans);
+  }
   // "Beaches in Spain": a like word left after the places.
   if (likes.length) set('likes', likes.slice(0, 3), likeSpans);
 
@@ -881,7 +953,18 @@ export function applyTrip(s, parsed, { keep = [] } = {}) {
     patch.from = { name, lat, lng, countryCode };
     answered.push('from');
   }
-  if (F.booked && free('booked')) { patch.booked = F.booked.value; answered.push('booked'); }
+  if (F.booked && free('booked')) {
+    patch.booked = F.booked.value;
+    answered.push('booked');
+    // G12 browser pass 2: the typed booked parts become the trip's booking
+    // rows (the upload's import shape), so the trip page marks them the
+    // traveller's and the receipt reads "Paid · Still to plan". A file's rows
+    // (parse-booking) win: the words never stand beside an upload. Rows the
+    // words made earlier (said) are replaced as the words change.
+    const files = (s?.imports || []).filter((b) => b && !b.said);
+    const rows = files.length ? [] : saidImports(F.bookedParts?.value, patch.when || s?.when, patch.party || s?.party);
+    if (rows.length || (s?.imports || []).some((b) => b?.said)) patch.imports = [...files, ...rows];
+  }
   if (F.priority && free('priority')) { patch.priority = F.priority.value; answered.push('priority'); }
   if (F.likes && free('g:likes')) { guide.likes = F.likes.value; guideTouched = true; answered.push('g:likes'); }
   if (F.budget && free('g:budget')) {
@@ -913,6 +996,29 @@ export function applyTrip(s, parsed, { keep = [] } = {}) {
   // T863: the words may choose the door ("just a cheap flight").
   if (F.door && free('doors')) { patch.door = F.door.value; answered.push('doors'); }
   return { patch, answered, choices };
+}
+
+/**
+ * G12 browser pass 2: the booked parts a sentence named as booking rows in
+ * the upload's import shape (tripSettings normalizeImport), marked `said`.
+ * A flight is one row both ways on the trip's first day; a stay checks in
+ * on it. A price "per person" is for the whole party, as a file prints it.
+ * A part with no town the catalogue holds still counts as booked (the
+ * booked flags) but makes no row: no town is guessed.
+ */
+export function saidImports(parts, when, party) {
+  const start = when?.mode === 'exact' && when.start ? when.start : '';
+  const people = Math.max(1, (party?.adults || 1) + (party?.kids || 0));
+  return (parts || []).filter((p) => p?.city).map((p) => ({
+    kind: p.kind === 'flight' ? 'flight' : 'stay',
+    title: '',
+    city: p.city,
+    date: start,
+    eur: p.eur > 0 ? (p.per === 'person' ? p.eur * people : p.eur) : null,
+    code: '',
+    link: '',
+    said: true,
+  }));
 }
 
 /** The catalogue country names of the named places (the Where step's picks). */

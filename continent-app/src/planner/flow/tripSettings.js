@@ -353,6 +353,9 @@ function normalizeImport(b) {
     eur: Number.isFinite(eur) && eur >= 0 ? Math.round(eur * 100) / 100 : null,
     code: String(b.code || '').slice(0, 40),
     link: /^https:\/\//.test(String(b.link || '')) ? String(b.link) : '',
+    // G12: a row the typed words made (parseTrip saidImports), replaced as
+    // the words change; a file's rows carry no mark.
+    ...(b.said ? { said: true } : {}),
   };
 }
 

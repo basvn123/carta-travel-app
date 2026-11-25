@@ -9,6 +9,9 @@
 // the bar's gutter on its trip page) and a styled traveller (decision §12:
 // held questions skipped, When and From asked, none twice, the bar names
 // the style, a switch holds for the trip and leaves the app's style alone).
+// Browser pass 2 added a typed booking sentence with prices: Paid and Still
+// to plan on its trip page, no price read as a budget, and the head's booked
+// count equal to Still to book's.
 //
 // Checked at every width: no sideways scroll, no empty row or lever list,
 // the style control on every step. On a phone (< 769 px): every visible tap
@@ -347,6 +350,35 @@ const active = await page.evaluate(() => JSON.parse(localStorage.getItem('carta.
 check('styled: the app-wide style is unchanged until Keep', active === 'v1', active);
 check('styled: no sideways scroll on the list', (await overflow()) <= 1, `${await overflow()}px`);
 await tapCheck('styled list');
+
+// ---- G12 browser pass 2: a typed booking sentence with prices ----
+// Each booked part keeps its own price (never the budget), the trip page
+// splits Paid and Still to plan, and the head and Still to book count alike.
+await page.context().close();
+page = await openPage();
+await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
+await page.waitForSelector('.pf-door', { timeout: 90000 });
+await page.locator('#pf-door-field').fill('Flight to Lisbon on 3 May for 280 euros booked, hotel in Lisbon 4 nights for 900 euros booked');
+await page.locator('.pf-door').getByText("I've booked something").first().click();
+for (let i = 0; i < 120 && !(await page.locator('.is-trip-page').count()); i++) {
+  await page.waitForTimeout(400);
+  const btn = page.locator('.pf-foot .btn-primary').first();
+  if ((await btn.count()) && !(await btn.isDisabled())) { await btn.click(); continue; }
+  const opt = page.locator('.pf-sheet [role=radio]').first();
+  if (await opt.count()) await opt.click();
+}
+await page.waitForSelector('[data-booked-split]', { timeout: 30000 }).catch(() => {});
+await page.waitForTimeout(1500);
+await shot('10-booked-trip');
+const said = async (sel) => ((await page.locator(sel).first().innerText().catch(() => '')) || '').replace(/\s+/g, ' ').trim();
+check('booked: the sentence lands on its trip page', (await page.locator('.is-trip-page').count()) === 1);
+const split = await said('[data-booked-split]');
+check('booked: Paid is the typed flight and hotel, Still to plan the rest', /^Paid €\s?1,180, Still to plan €\s?[\d,]+/.test(split), split);
+const head = (await page.locator('.tpg-pill').allInnerTexts()).map((s) => s.trim()).find((s) => /booked/.test(s)) || '';
+const list = await said('.tbp-n');
+check('booked: the head and Still to book count alike', Boolean(head) && head === list, `${head} | ${list}`);
+check('booked: no typed price became a budget', !/over your budget|€\s?280 a person|€\s?140/.test(await page.locator('.is-trip-page').innerText()));
+check('booked: no sideways scroll', (await overflow()) <= 1, `${await overflow()}px`);
 
 check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
 console.log(JSON.stringify({ width: W, questions: steps.questions, rows: rowCount, failed: results.filter((r) => !r.ok).map((r) => `${r.name} ${r.extra}`) }));

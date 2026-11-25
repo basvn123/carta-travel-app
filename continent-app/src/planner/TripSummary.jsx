@@ -195,9 +195,9 @@ export function TripSummary({
   const { t, lang } = useI18n();
   const title = shownTripName(name, stopDetails, lang) || t('itin.myTrip');
   const countdown = countdownText(t, tripStart, tripEnd);
-  const bookedNow = bookedCount({ flight, priced, ownFlight, stopDetails, stayCosts, booked });
   const airlinesAll = useAirlines();
   const rows = bookRows({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, party, booked, book }, { t, lang, airlines: airlinesAll });
+  const bookedNow = bookedCount(rows);
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();

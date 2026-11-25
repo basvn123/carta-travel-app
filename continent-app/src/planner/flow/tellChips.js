@@ -57,7 +57,9 @@ export function tellSettings(base, parsed, overrides = {}) {
     const sources = { ...s.sources };
     for (const id of stale) delete sources[id];
     s = { ...s, answered: s.answered.filter((id) => !stale.includes(id)), sources, places: stale.includes('places') ? [] : s.places,
-      door: stale.includes('doors') ? '' : s.door };
+      door: stale.includes('doors') ? '' : s.door,
+      // G12: booking rows only the words made go with the words.
+      imports: stale.includes('booked') ? s.imports.filter((b) => !b.said) : s.imports };
   }
   for (const id of answered) s = markAnswered(s, id, 'words');
   s = withOverrides(s, overrides);
