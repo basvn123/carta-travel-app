@@ -10,6 +10,7 @@ import { tally, leader, fitsBand, barScale, owesVote, tripTotal } from './groupB
 import { useTogether, togetherActions } from './useTogether.js';
 import { Block, ToneFace, ToneFaces, fmtShort, nameOf } from './parts.jsx';
 import { GroupCosts } from './SettleUp.jsx';
+import { planGroupTrip } from './signals.jsx';
 
 /**
  * Group trips (T931, migration 055): a few accepted friends decide one trip.
@@ -309,6 +310,14 @@ export function GroupView({ back, headRef, groupId, destinations, choices, onOpe
               ) : isOwner ? (
                 <Button variant="primary" loading={busy} onClick={book}>{t('tg.bookFor', { n: joined.length })}</Button>
               ) : null}
+              {/* G12 L15 seam: the leading place and dates priced as whole
+                  trips in Plan, the group's band as a guide. */}
+              {!g.bookedPlanId && (
+                <Button variant="secondary" onClick={() => planGroupTrip(g, {
+                  destId: placeId, iso2: destinations?.[placeId]?.iso2 || '', name: destinations?.[placeId]?.city || '',
+                  start: lead.when.start, end: lead.when.end,
+                })}>{t('tg.planIt')}</Button>
+              )}
             </article>
           )}
           {onSettle && <GroupCosts g={g} onOpen={onSettle} />}

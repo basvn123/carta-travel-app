@@ -235,14 +235,19 @@ export function pastAgainSeed(past, { been = [] } = {}) {
  * computed on the server, ready from three members) becomes this trip's
  * budget in mode 'band', so the list can say which trips fit everyone; no
  * member's own maximum is read. A group with no band gets no budget.
+ * B7b: the band is a guide (soft), never a ceiling (orchestrator decision,
+ * an owner call to change): budgetCompass.activeBudget reads 'band' as soft.
+ * The group's leading dates (`start`, `end`), when it has them, fix the window.
  *   group: { id, title, members: [{ userId, status }], band: { top, ready } }
  */
-export function friendsSeed(group, { destId = null, iso2 = '', name = '' } = {}) {
+export function friendsSeed(group, { destId = null, iso2 = '', name = '', start = '', end = '' } = {}) {
   if (!group?.id) return null;
   const cc = ISO2_RE.test(String(iso2 || '')) ? String(iso2).toUpperCase() : '';
   const places = destId ? [{ kind: 'place', id: String(destId), iso2: cc, name }] : cc ? [{ kind: 'country', id: cc, iso2: cc, name }] : [];
   const band = group.band?.ready && Number(group.band.top) > 0 ? { eur: Number(group.band.top), kind: 'total', per: 'person', mode: 'band' } : null;
   const joined = (group.members || []).filter((m) => m?.status === 'joined' && m.userId).map((m) => m.userId);
+  const iso = /^\d{4}-\d{2}-\d{2}$/;
+  const when = iso.test(String(start)) && iso.test(String(end)) && end > start ? { mode: 'exact', start, end } : null;
   return makeSeed({
     source: 'friends',
     ref: { kind: 'group', id: String(group.id) },
@@ -250,7 +255,8 @@ export function friendsSeed(group, { destId = null, iso2 = '', name = '' } = {})
     groupId: String(group.id),
     coplanners: joined,
     places,
+    when,
     budget: band,
-    pins: [...(places.length ? ['places'] : []), ...(band ? ['budget'] : [])],
+    pins: [...(places.length ? ['places'] : []), ...(when ? ['when'] : []), ...(band ? ['budget'] : [])],
   });
 }

@@ -8,7 +8,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { friendsSeed } from "../src/lib/plan/seedWriters.js";
 import { routeSeed, seedToSettings } from "../src/lib/plan/seed.js";
-import { bandFit } from "../src/lib/recommend/budgetCompass.js";
+import { activeBudget, bandFit } from "../src/lib/recommend/budgetCompass.js";
 
 const group = (band) => ({
   id: "g1", title: "Lisbon with the club",
@@ -48,4 +48,21 @@ test("the seam: App listens for carta:plan-group and Vrienden has one call for i
   assert.match(openers, /friendsSeed\(group, place \|\| \{\}\)/);
   const signals = readFileSync(new URL("../src/together/signals.jsx", import.meta.url), "utf8");
   assert.match(signals, /export function planGroupTrip\(group, place = \{\}\)/);
+});
+
+test("B7b: the group's dates fix the window; the band is a guide, never a ceiling", () => {
+  const g = group({ top: 900, ready: true, set: 3, members: 3 });
+  const s = friendsSeed(g, { destId: "LIS", iso2: "PT", name: "Lisbon", start: "2027-05-01", end: "2027-05-06" });
+  assert.equal(s.when.mode, "exact");
+  assert.equal(s.when.start, "2027-05-01");
+  assert.equal(s.when.end, "2027-05-06");
+  assert.ok(s.pins.includes("when"));
+  assert.equal(friendsSeed(g, { destId: "LIS", start: "2027-05-06", end: "2027-05-01" }).when, null, "a window backwards is no window");
+  assert.equal(activeBudget(s.budget).mode, "soft", "orchestrator decision: the band guides, it does not cap");
+});
+
+test("B7b: Vrienden's group result has one Plan this trip button through planGroupTrip", () => {
+  const src = readFileSync(new URL("../src/together/GroupTrips.jsx", import.meta.url), "utf8");
+  assert.equal((src.match(/planGroupTrip\(/g) || []).length, 1);
+  assert.match(src, /t\('tg\.planIt'\)/);
 });

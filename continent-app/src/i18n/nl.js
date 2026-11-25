@@ -2144,6 +2144,7 @@ export const nl = {
   "tg.change": "Wijzigen",
   "tg.resultTitle": "{place}, {dates}",
   "tg.bookFor": "Boek het voor {n}",
+  "tg.planIt": "Plan deze reis",
   "tg.privacy": "Privacy",
   "tg.friendsSee": "Vrienden zien",
   "tg.seeTrips": "Reizen",
