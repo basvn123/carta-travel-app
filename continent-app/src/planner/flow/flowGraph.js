@@ -140,6 +140,19 @@ export function nextAsked(list, id, s, stop = null) {
   return k;
 }
 
+/**
+ * G12 browser pass: the screen after `id` when `resume` holds the mode a
+ * quickStop interrupted (the trips were already asked for, by the last
+ * question or Show the trips now, and Ages or From stood in the way). Once
+ * answered the walk returns to the trips ('create') instead of walking on
+ * from the stop's place, which re-asked When, From and the airports after a
+ * style switch added children. Without `resume` it is nextAsked.
+ */
+export function nextAfterAnswer(list, id, s, resume = null) {
+  if (resume) return 'create';
+  return nextAsked(list, id, s, 'create') || 'create';
+}
+
 /** The first question of the setup still to ask, or null when the style, Explore pins and words hold them all. */
 export function firstAsked(s) {
   return askedSetup(s).find((id) => askOpen(s, id)) || null;

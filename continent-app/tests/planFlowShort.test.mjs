@@ -16,7 +16,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeSettings, markAnswered } from "../src/planner/flow/tripSettings.js";
 import {
-  askedSetup, askOpen, firstAsked, nextAsked, kidAgesMissing, quickStop, openingGuide, landingOf, KNOW_SCREEN, SETUP_SKIP, guideScreens, guideQuestions,
+  askedSetup, askOpen, firstAsked, nextAsked, nextAfterAnswer, kidAgesMissing, quickStop, openingGuide, landingOf, KNOW_SCREEN, SETUP_SKIP, guideScreens, guideQuestions,
   openGuideQuestions, firstOpenGuide, tripUnderWay, TRIPS_SCREEN, setupScreens, FIRST_SETUP, firstSetup,
 } from "../src/planner/flow/flowGraph.js";
 import { newTripSettings, restyleTrip, holdForTrip, styleDraftOfTrip } from "../src/planner/flow/styleSeed.js";
@@ -184,6 +184,19 @@ test("G12 judge round 3: Show the trips now stops at kid ages, then at a missing
   assert.equal(quickStop(s({ from: HOME })), null, "nothing missing: the trip is made");
   // Ages come first, the setup's order.
   assert.equal(quickStop(s({ party: { kind: "family", adults: 2, kids: 1, kidAges: [] } })), "ages");
+});
+
+test("G12 browser pass: after a quick stop's answer the walk returns to the trips, never re-asks", () => {
+  // A style switch at When added two children; the last question sent the
+  // traveller to Ages. When, From and the airports were already answered.
+  let kids = s({ party: { kind: "family", adults: 2, kids: 2, kidAges: [6, 9] }, from: HOME });
+  for (const id of ["when", "from", "airports"]) kids = markAnswered(kids, id);
+  const list = ["tell", ...askedSetup(kids), "create"];
+  const plain = nextAsked(list, "ages", kids, "create");
+  assert.notEqual(plain, "create", "the plain walk goes on to a question already passed (the defect)");
+  assert.equal(nextAfterAnswer(list, "ages", kids, "ask"), "create");
+  assert.equal(nextAfterAnswer(list, "ages", kids, "trips"), "create");
+  assert.equal(nextAfterAnswer(list, "ages", kids, null), plain, "no stop: Continue walks in order as before");
 });
 
 test("G12 judge round 3: a known place with every guide question answered opens its found trip", () => {

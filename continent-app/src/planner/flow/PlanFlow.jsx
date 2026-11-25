@@ -7,7 +7,7 @@ import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
-import { askedSetup, askOpen, firstAsked, nextAsked, tripUnderWay, prevScreen, progressOf, quickStop } from './flowGraph.js';
+import { askedSetup, askOpen, firstAsked, nextAfterAnswer, tripUnderWay, prevScreen, progressOf, quickStop } from './flowGraph.js';
 import { normalizeSettings, nothingBooked } from './tripSettings.js';
 import { exploreAnswers, seedToSettings } from '../../lib/plan/seed.js';
 import { bookedLanding } from '../../lib/plan/doors.js';
@@ -118,12 +118,17 @@ export function PlanFlow({
   /** The trip made with its defaults (no name, cover or buddies yet; the
    *  trip settings hold them). `mode` 'ask' opens the planner on the
    *  questions still open, 'trips' (Show the trips now) on the priced trips. */
+  // G12 browser pass: the mode a quickStop interrupted, or null.
+  const stopResume = useRef(null);
   const quickCreate = (s, mode = 'ask') => {
     // G12 judge round 3: Show the trips now stands on screens before Who and
     // Ages, so it must not price a trip with children of no age or with no
     // origin at all (decision §1.3): it goes to that question instead.
     const stop = quickStop(s, { origin: app?.origin || app?.fromPlace || app?.model?.fromPlace || null, airports: app?.airports || [] });
-    if (stop) { go(stop); return; }
+    // The stop's answer then returns here (nextAfterAnswer), not to the
+    // questions after the stop's place, which were already walked.
+    if (stop) { stopResume.current = mode; go(stop); return; }
+    stopResume.current = null;
     if (!nothingBooked(s) && landBooked(s)) return;
     save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
     markQuickStart(mode);
@@ -191,15 +196,18 @@ export function PlanFlow({
     const l = ['tell', ...askedSetup(s), 'create'];
     // Skip what the style, the words or the source page hold (the question
     // rule); a question answered on its own screen is the next stop again.
-    const k = nextAsked(l, id, s, 'create') || 'create';
+    const resume = stopResume.current;
+    const k = nextAfterAnswer(l, id, s, resume);
     // A trip under way keeps its Create screen (it names a trip already
     // travelled); a new trip goes straight to its priced trips.
-    if (k === 'create' && s.kind !== 'now') { quickCreate(s); return; }
+    if (k === 'create' && s.kind !== 'now') { quickCreate(s, resume || 'ask'); return; }
+    stopResume.current = null;
     go(k);
   };
   // Back passes over what was never asked (held by the style, the words or
   // the source page), and over Tell when nothing was typed.
   const back = () => {
+    stopResume.current = null;
     let k = prevScreen(list, screen);
     while (k && (k === 'tell' ? !(settings.note || '').trim() : !askOpen(settings, k))) k = prevScreen(list, k);
     go(k || (kindAsked ? 'kind' : 'home'));
