@@ -425,3 +425,32 @@ test('signing in keeps every priced choice of a held trip', async () => {
   for (const k of ['group_size', 'children', 'stay_tier', 'transport_mode']) assert.equal(out[k], local[k], k);
   assert.equal(out.style_held, true);
 });
+
+// G12 browser pass 2 (decision §12): a likes or avoid list the traveller
+// saved empty in the Style Studio ("no preference") holds that question; a
+// list never set (an old style, or a step an early Save skipped) asks it.
+test('an empty likes or avoid list holds only when the traveller chose it', async () => {
+  const { withAnswered } = await import('../src/browse/styles/studioSteps.js');
+  const { styleDraftOfTrip } = await import('../src/planner/flow/styleSeed.js');
+  const base = { id: 's', name: 'Plain', who: { kind: 'couple', adults: 2 }, explore: { shapes: ['towns'], likes: [], avoid: [], around: 'public' } };
+  const never = newTripSettings(base);
+  assert.ok(!never.answered.includes('g:likes') && !never.answered.includes('g:avoid'), 'never set: both asked');
+  // The Studio: likes and avoid passed with Next, nothing picked.
+  const saved = normalizeStyle(withAnswered(base, new Set(['name', 'likes', 'avoid'])));
+  assert.deepEqual(saved.explore.answered, ['likes', 'avoid']);
+  const held = newTripSettings(saved);
+  assert.equal(held.sources['g:likes'], 'style');
+  assert.equal(held.sources['g:avoid'], 'style');
+  assert.deepEqual(held.guide.avoid, []);
+  // An early Save before the avoid step: avoid stays a question.
+  const early = newTripSettings(normalizeStyle(withAnswered(base, new Set(['name', 'likes']))));
+  assert.ok(early.answered.includes('g:likes') && !early.answered.includes('g:avoid'));
+  // Saved earlier stays saved; a full list always holds.
+  assert.deepEqual(withAnswered(saved, new Set()).explore.answered, ['likes', 'avoid']);
+  assert.ok(newTripSettings({ ...base, explore: { ...base.explore, avoid: ['crowds'] } }).answered.includes('g:avoid'));
+  // Old stored styles carry no mark: unchanged, asked.
+  assert.deepEqual(normalizeStyle(base).explore.answered, []);
+  // "Save as travel style" from a trip that answered avoid with nothing.
+  const trip = normalizeSettings({ ...defaultSettings(), answered: ['g:avoid'], guide: { ...defaultSettings().guide, avoid: [] } });
+  assert.deepEqual(normalizeStyle(styleDraftOfTrip(trip)).explore.answered, ['avoid']);
+});

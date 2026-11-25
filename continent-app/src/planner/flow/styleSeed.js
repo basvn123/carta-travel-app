@@ -94,7 +94,10 @@ export function styleDraftOfTrip(settings, choices = {}) {
     way: WAYS.includes(s.way) ? s.way : 'any',
     priority: s.priority,
     tradeoffs: s.tradeoffs || undefined,
-    explore: { shapes: g.shapes, likes: g.likes, avoid: g.avoid, around: g.around, personas: g.personas || [] },
+    // G12: a likes or avoid question the trip answered, even with nothing
+    // picked, is the new style's answer (travelStyles normalizeStyle answered).
+    explore: { shapes: g.shapes, likes: g.likes, avoid: g.avoid, around: g.around, personas: g.personas || [],
+      answered: [['g:likes', 'likes'], ['g:avoid', 'avoid']].filter(([id]) => s.answered.includes(id)).map(([, k]) => k) },
     days: { mornings: s.rhythm.mornings, pace: s.rhythm.pace },
   };
 }

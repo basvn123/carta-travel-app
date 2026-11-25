@@ -310,7 +310,8 @@ const STYLES = {
 };
 // Both styles fill every held field: a style holds g:shape, g:likes, g:avoid
 // and g:around only when it has an answer there (travelStyles
-// seedTripSettings), since an empty list cannot tell "none" from "not asked".
+// seedTripSettings); since browser pass 2 an empty likes or avoid list holds
+// too when the Style Studio marked it answered (explore.answered).
 // The questions a style holds (lib/travelStyles STYLE_ANSWERS plus the way there).
 const HELD = [/^Who's going/, /^How do you like to travel/, /^What matters most/, /^How do you want to get there/, /^What kind of trip/, /^What are you up for/, /^How will you get around there/, /^Anything you'd rather avoid/];
 await page.context().close();

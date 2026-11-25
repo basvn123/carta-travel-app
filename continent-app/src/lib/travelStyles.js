@@ -139,6 +139,8 @@ const clampInt = (v, lo, hi, d) => {
   return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d;
 };
 const oneOf = (v, list, d) => (list.includes(v) ? v : d);
+/** G12: the style's list answers that may be saved empty and still hold. */
+export const ANSWERED_LISTS = ['likes', 'avoid'];
 const someOf = (v, list, max = 99) => (Array.isArray(v) ? [...new Set(v.filter((x) => list.includes(x)))].slice(0, max) : []);
 
 /** The lifestyle counts made safe (the same keys the studio's spend step keeps). */
@@ -217,6 +219,10 @@ export function normalizeStyle(raw) {
       personas,
       likes: someOf(e.likes, LIKES, 3),
       avoid: someOf(e.avoid, AVOID),
+      // G12 browser pass 2 (decision §12): the lists the traveller passed in
+      // the Style Studio, so an empty one reads "no preference" (held) and
+      // not "never asked" (the trip asks it). Old styles have none: asked.
+      answered: someOf(e.answered, ANSWERED_LISTS),
       around: oneOf(e.around, AROUND, ''),
       size: oneOf(e.size, SIZES, ''),
       quiet: oneOf(e.quiet, QUIET, ''),
@@ -713,8 +719,10 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
   const guide = { ...s.guide };
   if (!mine('g:shape') && e.shapes.length) guide.shapes = e.shapes;
   if (!mine('g:persona') && e.personas.length) { guide.personas = e.personas; guide.personaMost = ''; guide.persona = e.personas[0]; }
-  if (!mine('g:likes') && e.likes.length) guide.likes = e.likes;
-  if (!mine('g:avoid') && e.avoid.length) guide.avoid = e.avoid;
+  // An empty list the traveller chose ("no preference") holds as well as a full one.
+  const holds = (k) => e[k].length > 0 || e.answered.includes(k);
+  if (!mine('g:likes') && holds('likes')) guide.likes = e.likes;
+  if (!mine('g:avoid') && holds('avoid')) guide.avoid = e.avoid;
   // The place facets have no planner question; they feed the trip's own
   // personas when the traveller later changes a shape, a like or the pace.
   guide.size = e.size;
@@ -732,8 +740,8 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
     priority: true,
     'g:shape': e.shapes.length > 0,
     'g:persona': e.personas.length > 0,
-    'g:likes': e.likes.length > 0,
-    'g:avoid': e.avoid.length > 0,
+    'g:likes': holds('likes'),
+    'g:avoid': holds('avoid'),
     'g:around': Boolean(e.around),
     'r:mornings': Boolean(st.days.mornings),
     'r:pace': Boolean(st.days.pace),
