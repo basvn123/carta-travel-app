@@ -11,7 +11,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { parseTrip, tripVocab, applyTrip, saidImports } from "../src/lib/plan/parseTrip.js";
 import { bookedLanding, bookedTrip } from "../src/lib/plan/doors.js";
 import { bookedSplit } from "../src/lib/plan/bookedReceipt.js";
-import { defaultSettings, normalizeSettings } from "../src/planner/flow/tripSettings.js";
+import { defaultSettings, fromImports, markAnswered, normalizeSettings } from "../src/planner/flow/tripSettings.js";
+import { sanitizeParsed } from "../../supabase/functions/parse-booking/logic.mjs";
 import { tellSettings } from "../src/planner/flow/tellChips.js";
 import { quoteTrip, wizardPlannerState } from "../src/lib/tripTotal.js";
 
@@ -111,4 +112,32 @@ test("saidImports: a price per person is the party's; a part with no known town 
   assert.deepEqual(rows, [{ kind: "flight", title: "", city: "Lisbon", date: "2027-05-03", eur: 450, code: "", link: "", said: true }]);
   const plain = applyTrip(defaultSettings(), { fields: { booked: { value: { flights: true } } } });
   assert.equal(plain.patch.imports, undefined, "no parts: no rows, the typed-flight fallback stands");
+});
+
+// G12 browser pass 2, fix 2: the uploaded path. parse-booking itself calls
+// Gemini behind the Pass and cannot run here, so the test starts from a
+// model parse (tests/fixtures/parse-booking-lisbon.json) put through the
+// function's own sanitizeParsed, then follows the client: QuestionScreen
+// onFiles (fromImports, the booked answer), Tell with no words, the landing,
+// quoteTrip and the receipt.
+test("an uploaded booking (parse-booking's result shape) reaches Paid and Still to plan", { skip }, () => {
+  const { raw, destinations } = ctx();
+  const model = JSON.parse(readFileSync(new URL("./fixtures/parse-booking-lisbon.json", import.meta.url), "utf8"));
+  const { bookings, reason } = sanitizeParsed(model);
+  assert.equal(reason, null);
+  assert.equal(bookings.length, 3);
+  const uploaded = markAnswered(fromImports(defaultSettings(), bookings), "booked");
+  const s = tellSettings(uploaded, parseTrip("", {})).settings;
+  assert.deepEqual(s.imports.map((b) => [b.kind, b.eur, Boolean(b.said)]), [["flight_out", 212.4, false], ["flight_home", 198, false], ["stay", 640, false]]);
+  assert.deepEqual([s.when.start, s.when.end], ["2027-05-03", "2027-05-10"]);
+  const land = bookedLanding(s, destinations);
+  assert.deepEqual(land.stops.map((x) => [x.destinationId, x.nights]), [["LIS", 7]]);
+  assert.deepEqual([land.ownFlight.costOut, land.ownFlight.costBack, land.ownFlight.costTotal], [212.4, 198, 410.4]);
+  assert.deepEqual(land.ownStays, { LIS: 640 });
+  const made = bookedTrip(s, destinations);
+  const q = quoteTrip(wizardPlannerState(made.selection, { stayTier: "home" }), { data: { ...raw, destinations } });
+  const split = bookedSplit(q);
+  assert.equal(split.paid, 1050.4, "both flights and the hotel, as printed");
+  assert.ok(Math.abs(split.paid + split.toPlan - q.grandTotal) < 0.01);
+  assert.deepEqual(split.unpriced, []);
 });
