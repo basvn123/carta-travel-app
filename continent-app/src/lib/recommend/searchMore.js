@@ -10,10 +10,13 @@
  * Two parts, in the order they show on screen, so a later part only ever
  * appears below an earlier one:
  *   1. Another month: a cheaper week (alternatives.js weekLever) for the
- *      list's first `tries` complete trips, in the list's order, at most
- *      `monthMax`. They append in the order found and never re-sort: a
- *      cheaper week found later goes below the ones shown (G12: a shown card
- *      never moves). Before, the six were priced first and sorted by saving.
+ *      list's first `tries` complete trips, at most `monthMax`, biggest
+ *      saving first. G12 (owner decision 2026-11-25, "go on"): appending in
+ *      the order found lost that order, and sorting while showing would move
+ *      a shown week. The simplest way to keep both: the few weeks are held
+ *      until their tries are done (the pricing line counts them), then show
+ *      together, sorted once, and never move after. The journeys below
+ *      still arrive a trip at a time.
  *   2. Van Carta: the shortlisted journeys (moreSearch.js libraryTrip), each
  *      ranked alone, so its match and figures are final when it shows (a
  *      ranking over the row would move with each new trip; priorityPull is
@@ -43,13 +46,16 @@ export async function searchMoreInSteps({
   const bases = (trips || []).filter((x) => x && !leavesOut(x)).slice(0, tries);
   let list = Array.isArray(journeys) ? journeys.filter(Boolean) : null;
   const report = (left) => onSome?.({ month: month.slice(), library: library(), left });
-  for (let i = 0; i < bases.length && month.length < monthMax; i++) {
+  const held = [];
+  for (let i = 0; i < bases.length && held.length < monthMax; i++) {
     report(list ? bases.length - i + list.length : null);
     await yieldFrame();
     if (!alive()) return null;
     const w = lever(bases[i], input);
-    if (w) month.push({ trip: w.trip, base: bases[i], diff: w.diff, month: w.month });
+    if (w) held.push({ trip: w.trip, base: bases[i], diff: w.diff, month: w.month });
   }
+  // The most negative difference is the biggest saving; ties keep the list's order.
+  month.push(...held.sort((a, b) => a.diff - b.diff));
   if (!list) list = ((await Promise.resolve(journeys).catch(() => [])) || []).filter(Boolean);
   if (!alive()) return null;
   const seen = seenRoutes(trips);

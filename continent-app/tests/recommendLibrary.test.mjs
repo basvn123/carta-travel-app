@@ -92,7 +92,7 @@ test("landerPool (B7a): the open finder without the named places, some of the sa
   assert.deepEqual(landerPool(trip, input(s), { build: () => { throw new Error("x"); }, price, rank: (x) => x }), []);
 });
 
-test("G12 early results: Search more hands out each priced trip as it is ready and never re-sorts", async () => {
+test("G12 early results: Search more shows the cheaper months biggest saving first, then each journey as it is ready, and never re-sorts", async () => {
   const slots = [{ id: "flight", eur: 100 }, { id: "stay", eur: 300 }];
   const base = (id) => ({ id, places: [{ id }], slots, total: { group: 800 } });
   const list = [base("A"), base("B"), base("C"), { ...base("N"), slots: [{ id: "flight", eur: null }] }];
@@ -113,7 +113,9 @@ test("G12 early results: Search more hands out each priced trip as it is ready a
     yieldFrame: async () => { frames += 1; },
     onSome: (s) => seen.push({ month: s.month.map((m) => m.trip.id), library: s.library.map((x) => x.id), left: s.left }),
   });
-  assert.deepEqual(out.month.map((m) => m.trip.id), ["A-w", "C-w"], "in the list's order: the bigger saving found later stays below");
+  assert.deepEqual(out.month.map((m) => m.trip.id), ["C-w", "A-w"], "the biggest saving first, though found later (G12 go on)");
+  const firstMonth = seen.findIndex((x) => x.month.length);
+  assert.deepEqual(seen[firstMonth].month, ["C-w", "A-w"], "the months show together once their tries are done, never one by one");
   assert.deepEqual(out.library.map((x) => x.id), ["LIS-OPO~lib", "OPO~lib", "SEV~lib"]);
   assert.ok(frames >= 6, "the browser paints between tries");
   for (let i = 1; i < seen.length; i++) {
