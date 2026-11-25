@@ -15,7 +15,8 @@
 //
 // Build (fast build) and serve it with the data, then
 //   node scripts/serve_static.mjs ../.fastbuild <public> 5872
-//   node scripts/perf/plan_phone_timing_G12.mjs [base] [--rates 4,6] [--runs 3] [--sets A,B,C,D,L]
+//   node scripts/perf/plan_phone_timing_G12.mjs [base] [--rates 4,6] [--runs 3] [--sets A,B,C,D,E,F,G,L]
+// E has a trip budget, F price first, G both (G12 price floors).
 // Chromium runs with --disable-web-security: the live flight files sit on
 // the data host, which allows only the real origins, and without them every
 // flight is "Not yet" and the pricing is lighter than in production.
@@ -40,12 +41,18 @@ const month = async (page, name) => {
   await sheet(page).getByRole('button', { name, exact: true }).first().click();
 };
 const noBudget = (page) => sheet(page).getByText('No set budget').first().click();
+// G12 "go on" (owner 2026-11-25): sets with a trip budget and with price first.
+const budgetOf = (eur) => (page) => page.locator('#pf-budget-eur').fill(String(eur));
+const priceFirst = (page) => sheet(page).getByText('The lowest price').first().click();
 /** The answer sets: real answers, each ending on the tap that asks for the trips. */
 const SETS = {
   A: { desc: 'no style, Surprise me, Show the trips now on the first question', at: /booked/, answers: [] },
   B: { desc: 'style (couple, food), May, Show the trips now on From', styles: STYLES, at: /leave from/, answers: [[/^When/, (p) => month(p, 'May')]] },
   C: { desc: 'style (couple, food), any time, Show the trips now on From', styles: STYLES, at: /leave from/, answers: [[/^When/, (p) => sheet(p).getByText('Any time, cheapest wins').first().click()]] },
   D: { desc: 'no style, every question answered (June, beaches), the last Continue', at: /How do you want to plan/, last: true, answers: [[/^When/, (p) => month(p, 'June')], [/up for/, (p) => sheet(p).getByText('Beaches').first().click()], [/budget\?/, noBudget]] },
+  E: { desc: 'no style, every question answered (June, beaches, a EUR 1,000 trip budget a person), the last Continue', at: /How do you want to plan/, last: true, answers: [[/^When/, (p) => month(p, 'June')], [/up for/, (p) => sheet(p).getByText('Beaches').first().click()], [/budget\?/, budgetOf(1000)]] },
+  F: { desc: 'no style, every question answered (the lowest price first, June, beaches, no budget), the last Continue', at: /How do you want to plan/, last: true, answers: [[/matters most/, priceFirst], [/^When/, (p) => month(p, 'June')], [/up for/, (p) => sheet(p).getByText('Beaches').first().click()], [/budget\?/, noBudget]] },
+  G: { desc: 'no style, every question answered (the lowest price first, June, beaches, a EUR 900 trip budget a person), the last Continue', at: /How do you want to plan/, last: true, answers: [[/matters most/, priceFirst], [/^When/, (p) => month(p, 'June')], [/up for/, (p) => sheet(p).getByText('Beaches').first().click()], [/budget\?/, budgetOf(900)]] },
   L: { desc: 'the lander, "Porto and Lisbon", June, the last Continue', line: 'Porto and Lisbon', at: /How do you want to plan/, last: true, lander: true, answers: [[/^When/, (p) => month(p, 'June')], [/budget\?/, noBudget]] },
 };
 

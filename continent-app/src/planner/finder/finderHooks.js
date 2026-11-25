@@ -209,14 +209,23 @@ export function useTripFinder(settings) {
         // The owner's "go on" (2026-11-25): each candidate's price floor
         // (its beds and days, exact before pricing, and the cheapest swept
         // fare each way) narrows the budget sink and the price pull, so rank 1
-        // can settle early under a budget and with price first too; only
-        // computed when it can narrow something (rank.js floorHelps).
+        // can settle early under a budget and with price first too. Measured
+        // on an emulated phone, computing every floor up front delayed the
+        // first slice (about 1 s at 6x CPU), so the floors are only computed
+        // when they can narrow something (rank.js floorHelps) and only while
+        // rank 1 is not yet settled by the plain bounds; both are true
+        // bounds, so either proof holds.
         const qdata = quoteData(input);
         const floors = floorHelps(answers);
         const bounds = new Map();
         const boundOf = (c) => {
-          if (!bounds.has(c)) bounds.set(c, candidateBound(c, { ...rankOpts, floor: floors ? priceFloor(c, input, qdata) : null }));
+          if (!bounds.has(c)) bounds.set(c, candidateBound(c, rankOpts));
           return bounds.get(c);
+        };
+        const tight = new Map();
+        const tightOf = (c) => {
+          if (!tight.has(c)) tight.set(c, candidateBound(c, { ...rankOpts, floor: priceFloor(c, input, qdata) }));
+          return tight.get(c);
         };
         const room = pullRoom(answers);
         const listKey = answersKey(settings);
@@ -233,8 +242,11 @@ export function useTripFinder(settings) {
           onSome: (some, pending) => {
             if (!alive()) return;
             const ranked = rank(some);
-            const later = pending.map(boundOf);
-            const ids = pinTop(visible(ranked), later, { pinned: pins.ids, room, pull: pullRange(ranked, later, answers) });
+            let ids = pinTop(visible(ranked), pending.map(boundOf), { pinned: pins.ids, room });
+            if (floors && !ids.length) {
+              const later = pending.map(tightOf);
+              ids = pinTop(visible(ranked), later, { pinned: pins.ids, room, pull: pullRange(ranked, later, answers) });
+            }
             const grew = ids.length > pins.ids.length;
             if (grew) {
               const trips = new Map(pins.trips);
