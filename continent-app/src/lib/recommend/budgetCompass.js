@@ -65,7 +65,8 @@ export function tripVerdict(trip, budget) {
  * they are. With a ceiling a trip over it leaves the list; up to NEAR_MAX
  * of those within NEAR_SHARE come back apart as `near` (least over first);
  * a trip whose figure cannot be judged stays in the list (it is never
- * counted as fitting, its card says so). `out` counts the trips that left.
+ * counted as fitting, its card says so), unless its priced lines alone
+ * already pass the ceiling. `out` counts the trips that left.
  */
 export function budgetSplit(trips, budget) {
   const list = Array.isArray(trips) ? trips : [];
@@ -76,10 +77,15 @@ export function budgetSplit(trips, budget) {
   for (const trip of list) {
     const v = tripVerdict(trip, b);
     if (v?.state === 'over') over.push({ trip, verdict: v });
+    // G12 browser pass: a "Not yet" line only adds to a figure, so a trip
+    // whose priced lines alone pass the ceiling is over it (a EUR 900
+    // ceiling listed Bruges at EUR 1,365 before the flight as best pick).
+    // Its gap is a floor, so it never comes back as "Slightly over".
+    else if (v?.state === 'unknown' && budgetRulerFor(trip, b)?.delta > 0.5) over.push({ trip, verdict: { ...v, partial: true } });
     else keep.push(trip);
   }
   const near = over
-    .filter((x) => x.verdict.share <= NEAR_SHARE)
+    .filter((x) => !x.verdict.partial && x.verdict.share <= NEAR_SHARE)
     .sort((a, b2) => a.verdict.gap - b2.verdict.gap)
     .slice(0, NEAR_MAX);
   return { list: keep, near, out: over.length };

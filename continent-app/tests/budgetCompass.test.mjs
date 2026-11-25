@@ -41,6 +41,18 @@ test("a trip with a Not yet line is never fitting and never dropped", () => {
   assert.deepEqual(tripVerdict(t, day).missing, []);
 });
 
+test("G12 browser pass: a Not yet trip whose priced lines already pass the ceiling leaves the list, never as Slightly over", () => {
+  // Bed and food alone, EUR 1,365 a person against a EUR 1,000 ceiling.
+  const over = trip("bruges", 1365, { flight: null });
+  const edge = trip("granada", 1030, { flight: null });
+  const under = trip("x", 600, { flight: null });
+  assert.equal(tripVerdict(over, cap).state, "unknown", "the card still says it cannot judge the whole trip");
+  const s = budgetSplit([over, edge, under], cap);
+  assert.deepEqual(s.list.map((x) => x.id), ["x"]);
+  assert.deepEqual(s.near, [], "a floor is not a gap: never Slightly over");
+  assert.equal(s.out, 2);
+});
+
 test("the card names what an under-budget trip figure leaves out, and judges no Not yet total", () => {
   const under = { ...trip("a", 900), budget: { eur: 1000, kind: "total", delta: -100 } };
   assert.equal(budgetBadge(under).key, "tf.card.underNoTickets");
