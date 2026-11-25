@@ -940,6 +940,8 @@
 .tff-tp-gal .tff-gal-cap { padding: var(--space-1) 0 0; }
 .tff-tp-cap-end { display: inline-flex; flex: none; gap: var(--space-3); min-width: 0; }
 .tff-tp-credit { color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch; }
+/* G12 L16: a 44 px tap target on a phone without moving the caption line. */
+.tff-tp-credit { display: inline-block; padding-block: 13px; margin-block: -13px; }
 @media (min-width: 769px) {
   .tff-tp-gal .tff-gal-track { grid-auto-columns: calc((100% - 4px) / 2.2); }
   .tff-tp-gal .tff-gal-slide { height: 380px; }

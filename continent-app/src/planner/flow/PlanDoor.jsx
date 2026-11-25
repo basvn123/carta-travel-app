@@ -88,6 +88,15 @@ export function PlanDoor({ onStart, kept = [], onOpenKept = null, past = null })
           <Button variant="quiet" size="sm" onClick={() => ts.setOpen({ view: 'overview' })}>{t('pf.door.styleChange')}</Button>
         </p>
       )}
+      {/* G12 L16: the style control stands on every step, the door too; with
+          no style it says so and opens the Style Studio to pick one. */}
+      {!st && ts && (
+        <p className="pf-door-knows">
+          {t('pf.style.none')}
+          {' '}
+          <Button variant="quiet" size="sm" onClick={() => ts.setOpen({ view: 'overview' })}>{t('pf.door.styleChoose')}</Button>
+        </p>
+      )}
       {(kept.length > 0 || past) && (
         <ul className="pf-door-cards">
           {kept.length > 0 && onOpenKept && (

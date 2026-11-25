@@ -8591,6 +8591,7 @@ export const nl = {
   "pf.door.cap": "Een plafond, geen richtlijn",
   "pf.door.knows": "Carta weet: {style}, {who}.",
   "pf.door.styleChange": "Andere stijl",
+  "pf.door.styleChoose": "Kies een stijl",
   "pf.door.saved": "Uit je bewaarde ({n})",
   "pf.door.like": "Zoals {name}",
   "pf.abar.label": "Waar deze prijzen van uitgaan",

@@ -8580,6 +8580,7 @@ export const es = {
   "pf.door.cap": "Un tope, no una guía",
   "pf.door.knows": "Carta sabe: {style}, {who}.",
   "pf.door.styleChange": "Cambiar estilo",
+  "pf.door.styleChoose": "Elegir un estilo",
   "pf.door.saved": "De tus guardados ({n})",
   "pf.door.like": "Como {name}",
   "pf.abar.label": "Lo que suponen estos precios",

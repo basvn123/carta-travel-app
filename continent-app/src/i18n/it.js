@@ -8580,6 +8580,7 @@ export const it = {
   "pf.door.cap": "Un tetto, non una guida",
   "pf.door.knows": "Carta sa: {style}, {who}.",
   "pf.door.styleChange": "Cambia stile",
+  "pf.door.styleChoose": "Scegli uno stile",
   "pf.door.saved": "Dai tuoi salvati ({n})",
   "pf.door.like": "Come {name}",
   "pf.abar.label": "Cosa presuppongono questi prezzi",

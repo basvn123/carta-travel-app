@@ -8580,6 +8580,7 @@ export const de = {
   "pf.door.cap": "Eine Obergrenze, kein Richtwert",
   "pf.door.knows": "Carta weiß: {style}, {who}.",
   "pf.door.styleChange": "Stil ändern",
+  "pf.door.styleChoose": "Stil wählen",
   "pf.door.saved": "Aus deinen gemerkten ({n})",
   "pf.door.like": "Wie {name}",
   "pf.abar.label": "Wovon diese Preise ausgehen",

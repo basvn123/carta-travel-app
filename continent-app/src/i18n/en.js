@@ -9173,6 +9173,7 @@ export const en = {
   "pf.door.cap": "A ceiling, not a guide",
   "pf.door.knows": "Carta knows: {style}, {who}.",
   "pf.door.styleChange": "Change style",
+  "pf.door.styleChoose": "Choose a style",
   "pf.door.saved": "From your saved ({n})",
   "pf.door.like": "Like {name}",
   "pf.abar.label": "What these prices assume",
