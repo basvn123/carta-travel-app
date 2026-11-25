@@ -15,6 +15,20 @@ import { PROFILES } from '../src/lib/lifestyleProfiles.js';
 
 const family = () => styleFromTemplate('family');
 
+test('G12: the lists a style answered survive the account sync (user_settings.settings jsonb)', async () => {
+  const { mergeAccountChoices } = await import('../src/lib/taste.js');
+  const { exploreFromTaste, mergeStyles } = await import('../src/lib/travelStyles.js');
+  const s = normalizeStyle({ ...family(), id: 's1', explore: { ...family().explore, likes: [], avoid: [], answered: ['likes', 'avoid'] } });
+  const store = normalizeStyles({ list: [s], active: 's1' });
+  // The push writes choices whole into the jsonb blob; the pull reads it back.
+  const pulled = JSON.parse(JSON.stringify({ choices: { travel_styles: store } }));
+  const onDevice = mergeAccountChoices({ travel_styles: normalizeStyles({ list: [], active: '' }) }, pulled.choices);
+  assert.deepEqual(activeStyle(onDevice.travel_styles).explore.answered, ['likes', 'avoid'], 'a fresh device');
+  const merged = mergeStyles(store, pulled.choices.travel_styles);
+  assert.deepEqual(merged.list[0].explore.answered, ['likes', 'avoid'], 'merged by id');
+  assert.deepEqual(exploreFromTaste(s, { likes: ['food'] }).explore.answered, ['likes', 'avoid'], 'a taste write-back keeps it');
+});
+
 test('every template makes a whole, valid style', () => {
   for (const id of TEMPLATE_IDS) {
     const s = styleFromTemplate(id);
