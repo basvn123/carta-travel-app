@@ -7,6 +7,18 @@
  * hold it; the words come from the caller's `t`.
  */
 import { partyText } from '../../lib/party.js';
+import { engineOriginCode } from '../../lib/airportReach.js';
+
+/**
+ * The town the finder prices from when the trip has no From (G12 browser
+ * pass): the engine's home airport (finderHooks originOf), so the dashed
+ * chip names what the prices really use rather than "Trip starts".
+ */
+export function pricedFromName(data) {
+  const code = engineOriginCode(data);
+  if (!code) return '';
+  return data?.meta?.origins?.[code]?.city || code;
+}
 
 export const ASSUMPTION_IDS = Object.freeze(['who', 'from', 'when']);
 

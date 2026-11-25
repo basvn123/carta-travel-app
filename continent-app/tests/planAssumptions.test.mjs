@@ -5,7 +5,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeSettings, markAnswered } from "../src/planner/flow/tripSettings.js";
-import { assumptionChips, assumed, ASSUMPTION_IDS } from "../src/planner/flow/assumptions.js";
+import { assumptionChips, assumed, pricedFromName, ASSUMPTION_IDS } from "../src/planner/flow/assumptions.js";
 import { seedToSettings } from "../src/lib/plan/seed.js";
 import { en } from "../src/i18n/en.js";
 
@@ -29,6 +29,16 @@ test("given answers are solid, whoever gave them", () => {
   // A seed pin is the source page's answer: solid.
   const seeded = seedToSettings({ party: { kind: "solo", adults: 1 }, pins: ["party"] });
   assert.equal(assumptionChips(seeded, { t })[0].assumed, false);
+});
+
+test("with no From the chip names the airport the finder prices from (G12)", () => {
+  const data = { meta: { selected_origin: "BRU", origins: { BRU: { city: "Brussels" } } } };
+  assert.equal(pricedFromName(data), "Brussels");
+  assert.equal(pricedFromName({ meta: { selected_origin: "XYZ" } }), "XYZ");
+  assert.equal(pricedFromName(null), "");
+  const chips = assumptionChips(normalizeSettings({}), { t, fromName: pricedFromName(data) });
+  assert.equal(chips[1].label, "Brussels");
+  assert.equal(chips[1].assumed, true);
 });
 
 test("months and any time read as the name and the nights once, never a range (G12)", () => {

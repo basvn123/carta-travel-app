@@ -7,7 +7,7 @@ import { QUESTIONS } from './questions.js';
 import { QuestionBody } from './QuestionScreen.jsx';
 import { StyleSwitch } from './StyleBar.jsx';
 import { useBcp47, useMonths, whenText } from './flowHooks.js';
-import { assumptionChips, checkWalk } from './assumptions.js';
+import { assumptionChips, checkWalk, pricedFromName } from './assumptions.js';
 import { useChipDelta } from './useChipDelta.js';
 import { signedMoney } from '../finder/finderText.js';
 
@@ -41,7 +41,7 @@ export function AssumptionBar({ settings, save, onEdit = null, onMore = null, re
   const [walk, setWalk] = useState([]);
   const anchorRef = useRef(null);
   const when = whenText(t, settings.when, months, bcp47);
-  const chips = assumptionChips(settings, { t, when, fromName: app?.model?.fromPlace?.name || '' });
+  const chips = assumptionChips(settings, { t, when, fromName: app?.model?.fromPlace?.name || pricedFromName(app?.data) });
   const toCheck = checkWalk(settings);
   const edit = (id, el) => {
     if (onEdit) { onEdit(id); return; }
