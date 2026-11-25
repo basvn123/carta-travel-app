@@ -8,6 +8,8 @@ import { tokenColour } from '../../map/tokenColors.js';
 import { fallbackSrc } from '../../lib/heroImage.js';
 import { shortDuration, thereMinutes, tripPhotos } from './finderText.js';
 import { houseBasemap } from '../../map/houseBasemap.js';
+import { durationMs } from '../../lib/motion.js';
+import { mapFit } from './mapFit.js';
 
 /**
  * Trips for you on a map (T868; T883, the owner's free direction
@@ -64,6 +66,7 @@ export default function TripsMap({ trips, destinations, pickedId, cheapestId = n
   const { t, lang } = useI18n();
   const el = useRef(null);
   const mapRef = useRef(null);
+  const touched = useRef(false);
   const pins = useRef(new Map());
   const pickRef = useRef(onPick);
   const hotRef = useRef(onHot);
@@ -95,12 +98,16 @@ export default function TripsMap({ trips, destinations, pickedId, cheapestId = n
     map.touchZoomRotate.disableRotation();
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right');
     map.on('load', () => { map.resize(); map.getContainer().classList.add('is-live'); });
+    // G12 early results: once the traveller pans or zooms (an event with an
+    // originalEvent; the camera's own fits have none), the view is theirs.
+    map.on('movestart', (e) => { if (e?.originalEvent) touched.current = true; });
     map.on('error', (e) => { if (e?.error?.status >= 400 && !map.isStyleLoaded()) setFailed(true); });
     mapRef.current = map;
     return () => { map.remove(); mapRef.current = null; pins.current = new Map(); times.current = []; };
   }, []);
 
-  // The pins, for the trips as they stand; the camera fits them once.
+  // The pins, for the trips as they stand; the camera fits them first, and
+  // again as cards arrive (see below).
   const fitted = useRef(false);
   const ids = trips.map((x) => x.id).join();
   useEffect(() => {
@@ -184,9 +191,15 @@ export default function TripsMap({ trips, destinations, pickedId, cheapestId = n
       map.addLayer({ ...base, id: `${ARCS}-picked`, filter: ['==', ['get', 'id'], ''], paint: { 'line-color': tokenColour('--action'), 'line-width': 2.5 } });
     };
     if (map.isStyleLoaded()) draw(); else map.once('load', draw);
-    if (!fitted.current && !bounds.isEmpty()) {
+    if (!bounds.isEmpty()) {
+      const view = map.getBounds();
+      const inView = view.contains(bounds.getSouthWest()) && view.contains(bounds.getNorthEast());
+      // G12 early results: the first fit saw only the first cards, so a pin
+      // arriving outside the view widens it, gently (a jump under reduced
+      // motion), but never while or after the traveller moved the map.
+      const fit = mapFit({ fitted: fitted.current, inView, touched: touched.current, moving: map.isMoving() });
       fitted.current = true;
-      map.fitBounds(bounds, { padding: pad, maxZoom: 7, duration: 0 });
+      if (fit) map.fitBounds(bounds, { padding: pad, maxZoom: 7, duration: fit === 'first' ? 0 : durationMs('--dur-3') });
     }
   }, [ids, destinations, lang, cheapestId, home?.lat, home?.lon]); // eslint-disable-line react-hooks/exhaustive-deps -- ids stands for the trips
 
