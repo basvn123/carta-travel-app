@@ -107,7 +107,9 @@ async function runOnce(rate, key) {
         if (k && /€\d/.test(k)) {
           if (r.shown == null) r.shown = Math.round(now);
           if (k !== prev) { r.rank1.push([Math.round(now), k]); prev = k; }
-          if (now - r.shown > 5000) break;
+          // G12 early results: complete = the list is there and its pricing line is gone.
+          if (r.complete == null && (lander || (document.querySelector('.tff-trips') && !document.querySelector('.tff-trips .tff-pricing')))) r.complete = Math.round(now);
+          if (r.complete != null && now - r.complete > 3000) break;
         }
       }
       return r;
@@ -119,18 +121,24 @@ async function runOnce(rate, key) {
       await more.scrollIntoViewIfNeeded().catch(() => {});
       const m0 = await page.evaluate(() => performance.now());
       await more.click();
-      out.more = await page.evaluate(async ({ m0, lander }) => {
+      // G12 early results: Search more's first trip on screen (`more`) and its end (`moreDone`, the pricing line gone).
+      const m = await page.evaluate(async ({ m0, lander }) => {
         const start = performance.now();
-        while (performance.now() - start < 60000) {
+        let first = null;
+        while (performance.now() - start < 90000) {
           await new Promise((res) => setTimeout(res, 50));
           const sm = document.querySelector('.tff-search-more');
-          const done = lander
+          const some = lander
             ? document.querySelectorAll('section[aria-labelledby="tff-tp-alts"] [data-alt]').length > 0
             : Boolean(sm && sm.querySelector('.tff-row-cards li, .tff-spendref'));
-          if (done) return Math.round(performance.now() - m0);
+          const t = Math.round(performance.now() - m0);
+          if (some && first == null) first = t;
+          if (some && (lander || !sm.querySelector('.tff-pricing'))) return { first, done: t };
         }
-        return null;
+        return { first, done: null };
       }, { m0, lander: Boolean(set.lander) });
+      out.more = m.first;
+      out.moreDone = m.done;
     }
     return out;
   } finally {
@@ -150,6 +158,6 @@ for (const rate of RATES) {
       console.log(JSON.stringify({ rate, set: key, run: i + 1, ...r }));
     }
     const col = (k) => runs.map((r) => r[k]);
-    console.log(`${rate}x ${key} (${SETS[key].desc}): pricing done median ${median(col('allOn'))} worst ${worst(col('allOn'))}; rank 1 shown median ${median(col('shown'))} worst ${worst(col('shown'))}; stable median ${median(col('stable'))} worst ${worst(col('stable'))}; Search more median ${median(col('more'))} worst ${worst(col('more'))}`);
+    console.log(`${rate}x ${key} (${SETS[key].desc}): pricing done median ${median(col('allOn'))} worst ${worst(col('allOn'))}; rank 1 shown median ${median(col('shown'))} worst ${worst(col('shown'))}; stable median ${median(col('stable'))} worst ${worst(col('stable'))}; Search more median ${median(col('more'))} worst ${worst(col('more'))}; complete median ${median(col('complete'))} worst ${worst(col('complete'))}; Search more done median ${median(col('moreDone'))} worst ${worst(col('moreDone'))}`);
   }
 }
