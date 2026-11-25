@@ -958,7 +958,7 @@ export function applyTrip(s, parsed, { keep = [] } = {}) {
     answered.push('booked');
     // G12 browser pass 2: the typed booked parts become the trip's booking
     // rows (the upload's import shape), so the trip page marks them the
-    // traveller's and the receipt reads "Paid · Still to plan". A file's rows
+    // traveller's and the receipt shows the Paid and Still to plan lines. A file's rows
     // (parse-booking) win: the words never stand beside an upload. Rows the
     // words made earlier (said) are replaced as the words change.
     const files = (s?.imports || []).filter((b) => b && !b.said);
