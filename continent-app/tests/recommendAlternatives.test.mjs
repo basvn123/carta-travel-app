@@ -6,7 +6,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
-import { alternatives, leavesOut, levers, movedLines, priceDiff, MIN_WINDOWS } from "../src/lib/recommend/alternatives.js";
+import { alternatives, checkedWindows, leavesOut, levers, movedLines, priceDiff, weekWindows, MIN_WINDOWS, WEEK_NEAR_DAYS } from "../src/lib/recommend/alternatives.js";
 import { knowTrip } from "../src/lib/recommend/doorTrips.js";
 import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
 
@@ -113,4 +113,36 @@ test("G12 judge round 3: a pool trip with no places does not throw", () => {
   assert.doesNotThrow(() => alternatives(trip("base"), [bare], { minutes, windows: MIN_WINDOWS }));
   const alts = alternatives(trip("base"), [bare, trip("pt-june", { month: 6, group: 700 })], { minutes, windows: MIN_WINDOWS });
   assert.equal(alts.find((x) => x.key === "month").trip.id, "pt-june");
+});
+
+// G12 browser pass 2: a May trip was offered "Another week, January". The
+// week lever stays within four weeks of the trip's way out, or in the months
+// the traveller allowed; "any time" allows every checked window. A synthetic
+// sweep (the fixture holds only Nov to Dec): every day from December to
+// June, January far cheaper than May.
+test("weekWindows: near the trip's day, or a month the traveller allowed", () => {
+  const at = Math.floor(Date.now() / 60000) - 30;
+  const to = {}; const back = {};
+  for (let d = Date.parse("2026-12-01T00:00:00Z"); d <= Date.parse("2027-06-30T00:00:00Z"); d += 86400000) {
+    const iso = new Date(d).toISOString().slice(0, 10);
+    const fare = iso.slice(5, 7) === "01" ? 40 : 150 + (Number(iso.slice(8, 10)) % 7) * 5;
+    to[iso] = [fare, "JU", "09:15", "11:00", 0, at];
+    back[iso] = [fare, "JU", "12:00", "13:45", 0, at];
+  }
+  const flights = { v: 1, from: "BRU", checked: at, to: { LJU: to }, back: { LJU: back } };
+  const trip = { id: "lju", nights: 7, gateway: { iata: "LJU" }, dates: { out: "2027-05-10" } };
+  const inputOf = (when) => ({ flights, today: "2026-12-01", settings: { when } });
+  const day = Date.parse("2027-05-10T00:00:00Z");
+  const gap = (iso) => Math.abs(Date.parse(`${iso}T00:00:00Z`) - day) / 86400000;
+  const all = checkedWindows(trip, inputOf({ mode: "exact" }));
+  assert.ok(all.some((w) => w.ym === "2027-01"), "the sweep holds January (the bug)");
+  const near = weekWindows(trip, inputOf({ mode: "exact", start: "2027-05-10", end: "2027-05-17" }));
+  assert.ok(near.length > 0, "checked ways out near the trip");
+  assert.ok(near.every((w) => gap(w.pair.out.date) <= WEEK_NEAR_DAYS), "set dates: nothing beyond four weeks");
+  const cheapest = [...near].sort((a, b) => a.pair.perSeat - b.pair.perSeat)[0];
+  assert.notEqual(cheapest.ym, "2027-01");
+  // A month the traveller allowed counts too; any time allows every window.
+  assert.ok(weekWindows(trip, inputOf({ mode: "months", months: [5, 1] })).some((w) => w.ym === "2027-01"), "an allowed January");
+  assert.ok(!weekWindows(trip, inputOf({ mode: "months", months: [5] })).some((w) => w.ym === "2027-01"));
+  assert.equal(weekWindows(trip, inputOf({ mode: "any" })).length, all.length);
 });

@@ -31,13 +31,15 @@
  */
 import { STAY_TIERS } from '../stayPrice.js';
 import { nearbyPlaces } from '../nearby.js';
-import { cheapestPair } from '../flights/pairs.js';
+import { cheapestPair, pairNear } from '../flights/pairs.js';
 import { priceCandidate } from './trips.js';
 
 /** Up to this many nearby bases are priced for the 'nearby' lever. */
 export const NEARBY_TRIES = 2;
-/** The months ahead a cheaper week is looked for in. */
+/** The months ahead checked windows are counted in (another month, the week lever's guard). */
 export const WEEK_MONTHS = 6;
+/** G12 browser pass 2: a cheaper week leaves at most this many days from the trip's own way out. */
+export const WEEK_NEAR_DAYS = 28;
 /** Another month needs at least this many checked windows (the sweep is sparse). */
 export const MIN_WINDOWS = 2;
 /** A saving below this many euros is no saving. */
@@ -180,6 +182,33 @@ export function levers(trip, input) {
 }
 
 /**
+ * G12 browser pass 2: the checked windows a cheaper week may move the trip
+ * to. A May trip was offered "Another week, January": the lever looked at
+ * every month of the sweep. It now stays near the trip: every checked way
+ * out within WEEK_NEAR_DAYS of the trip's own (each day on its own, since a
+ * month's cheapest pair may fall outside the range), plus the months the
+ * traveller allowed (When "months"); with When "any time" every checked
+ * window is allowed.
+ */
+export function weekWindows(trip, input) {
+  const all = checkedWindows(trip, input);
+  const when = input?.settings?.when || {};
+  if (when.mode === 'any') return all;
+  const months = new Set(when.mode === 'months' ? (when.months || []).map(Number) : []);
+  const out = all.filter((w) => months.has(Number(w.ym.slice(5, 7))));
+  const day = trip?.dates?.out || '';
+  const iata = trip?.gateway?.iata;
+  if (day && iata && input?.flights) {
+    for (let k = -WEEK_NEAR_DAYS; k <= WEEK_NEAR_DAYS; k += 1) {
+      if (!k) continue;
+      const pair = pairNear(input.flights, iata, addDays(day, k), { nights: trip.nights, spread: 0, bagKey: input.baggage || undefined });
+      if (pair) out.push({ ym: pair.out.date.slice(0, 7), pair });
+    }
+  }
+  return out;
+}
+
+/**
  * A cheaper week: only with at least two checked windows, so "cheaper"
  * compares checked fares, never a sparse guess. The same trip priced on the
  * cheapest other checked window, kept only when complete, like for like and
@@ -189,7 +218,7 @@ export function weekLever(trip, input) {
   if (!trip || !input || leavesOut(trip)) return null;
   const windows = checkedWindows(trip, input);
   if (windows.length < MIN_WINDOWS) return null;
-  const other = windows
+  const other = weekWindows(trip, input)
     .filter((w) => w.pair.out.date !== trip.dates?.out)
     .sort((a, b) => a.pair.perSeat - b.pair.perSeat)[0];
   if (!other) return null;
