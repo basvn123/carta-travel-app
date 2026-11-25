@@ -277,7 +277,9 @@ export function alternatives(trip, others = [], { levers: lv = [], minutes = () 
   const week = lv.find((l) => l.key === 'week');
   if (week) push('month', week.trip);
   else if (windows >= MIN_WINDOWS) {
-    const same = (x) => x.places.map((p) => p.id).join() === trip.places.map((p) => p.id).join();
+    // G12 judge round 3: a pool trip with no places must not throw here.
+    const ids = (x) => (x.places || []).map((p) => p.id).join();
+    const same = (x) => ids(x) !== '' && ids(x) === ids(trip);
     push('month', pool.find((x) => same(x) && x.month !== trip.month));
   }
   // Another country: the best ranked trip elsewhere.

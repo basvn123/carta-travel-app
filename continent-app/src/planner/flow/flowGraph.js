@@ -30,6 +30,7 @@
  * are strings: 'booked', 'g:likes', 'p:Where', 'r:pace' and so on.
  */
 import { datesFromBookings } from './tripSettings.js';
+import { missingEssentials } from '../../lib/plan/seed.js';
 
 export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'from', 'way', 'airports'];
 /** T860: the ways there that may fly, so the airports in reach are asked. */
@@ -85,18 +86,32 @@ export function firstSetup(s) {
   return s.kind === 'now' ? all : all.filter((id) => FIRST_SETUP.includes(id));
 }
 
-/**
- * G12 plan rethink, the question rule (decision §12, owner, binding): "for
- * every question, check whether the travel style captures it; if not, keep
- * the question". These are the questions a style answers (lib/travelStyles
- * STYLE_ANSWERS, plus the way there, styleSeed withStyle); with a style
- * they are passed over (source 'style'), without one they are asked once.
- */
-export const STYLE_HELD = Object.freeze(['who', 'sleep', 'priority', 'way', 'g:shape', 'g:likes', 'g:around', 'g:avoid', 'r:mornings', 'r:pace']);
+// G12 plan rethink, the question rule (decision §12, owner, binding): "for
+// every question, check whether the travel style captures it; if not, keep
+// the question". The questions a style holds are the ones it marks with the
+// source 'style' (lib/travelStyles STYLE_ANSWERS, plus the way there,
+// styleSeed withStyle); SETUP_SKIP and GUIDE_SKIP pass them over. That mark
+// is the single source, so no list of held ids is kept here (G12 judge
+// round 3: a second list could drift from it).
 
 /** Children counted without an age each: the one party gap that stops the flow (decision §1.3). */
 export function kidAgesMissing(s) {
   return s.party.kids > 0 && s.party.kidAges.length < s.party.kids;
+}
+
+/**
+ * G12 judge round 3: "Show the trips now" may skip every question except
+ * the two that stop the flow (decision §1.3, lib/plan/seed missingEssentials):
+ * children without ages, and no origin at all. The question screen to go to
+ * first ('ages' before 'from', the setup's order), or null when the trip
+ * can be made and priced.
+ *   opts: { origin, airports } as missingEssentials
+ */
+export function quickStop(s, opts = {}) {
+  const missing = missingEssentials(s, opts);
+  if (missing.includes('kidAges')) return 'ages';
+  if (missing.includes('from')) return 'from';
+  return null;
 }
 
 /**
@@ -254,6 +269,16 @@ export const GUIDE_SKIP = ['words', 'style', 'seed'];
 export function firstOpenGuide(s) {
   const list = guideScreens(s);
   return list.find((id) => id === TRIPS_SCREEN || !givenBy(s, id, GUIDE_SKIP)) || TRIPS_SCREEN;
+}
+
+/**
+ * Where the guide walk opens: its first open question, or, when every one
+ * is answered, where the trips land (G12 judge round 3: a known place opens
+ * its found trip, landingOf, not the list).
+ */
+export function openingGuide(s) {
+  const f = firstOpenGuide(s);
+  return f === TRIPS_SCREEN ? landingOf(s) : f;
 }
 
 /** The guide questions still open (not given by words or the style). */

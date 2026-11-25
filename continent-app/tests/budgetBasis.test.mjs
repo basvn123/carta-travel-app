@@ -51,6 +51,12 @@ test("the badge names a day gap as a day's", () => {
   assert.equal(budgetBadge({ ...day, budget: { eur: 110, kind: "day", delta: -10 } }).key, "tf.card.underDay");
   assert.equal(budgetBadge({ ...day, budget: { eur: 1500, kind: "total", delta: -100 } }).key, "tf.card.underNoTickets", "G12 L8: a trip figure names what it leaves out");
   assert.equal(budgetBadge({ ...day, budget: { eur: 90, kind: "day", delta: null } }), null, "an unknown spend has no badge");
+  // G12 judge round 3: a "Not yet" bed counts as 0 on the day basis, so it is never judged under budget.
+  const noBed = { ...day, slots: day.slots.map((x) => (x.id === "stay" ? { ...x, eur: null, eurGroup: null } : x)), budget: { eur: 110, kind: "day", delta: -10 } };
+  assert.equal(budgetBadge(noBed), null);
+  // A missing flight is not a day line: the day badge still shows.
+  const noFlight = { ...day, slots: day.slots.map((x) => (x.id === "flight" ? { ...x, eur: null, eurGroup: null } : x)), budget: { eur: 110, kind: "day", delta: -10 } };
+  assert.equal(budgetBadge(noFlight).key, "tf.card.underDay");
 });
 
 test("a swap on a trip without its pricing context keeps the ruler's basis", () => {

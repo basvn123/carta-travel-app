@@ -16,7 +16,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { normalizeSettings, markAnswered } from "../src/planner/flow/tripSettings.js";
 import {
-  askedSetup, askOpen, firstAsked, nextAsked, kidAgesMissing, STYLE_HELD, SETUP_SKIP, guideScreens, guideQuestions,
+  askedSetup, askOpen, firstAsked, nextAsked, kidAgesMissing, quickStop, openingGuide, landingOf, KNOW_SCREEN, SETUP_SKIP, guideScreens, guideQuestions,
   openGuideQuestions, firstOpenGuide, tripUnderWay, TRIPS_SCREEN, setupScreens, FIRST_SETUP, firstSetup,
 } from "../src/planner/flow/flowGraph.js";
 import { newTripSettings, restyleTrip, holdForTrip, styleDraftOfTrip } from "../src/planner/flow/styleSeed.js";
@@ -73,8 +73,13 @@ test("§12: a returning traveller with a style and an open place passes 11 scree
 });
 
 test("§12: the held ids are the style's answers plus the way there", () => {
-  for (const id of STYLE_ANSWERS.filter((x) => x !== "g:persona")) assert.ok(STYLE_HELD.includes(id), id);
-  assert.ok(STYLE_HELD.includes("way"));
+  // G12 judge round 3: the source 'style' is the one list of what a style
+  // holds; every id it marks is a style answer or the way there.
+  const x = newTripSettings(style());
+  const held = x.answered.filter((id) => x.sources?.[id] === "style");
+  for (const id of STYLE_ANSWERS.filter((y) => y !== "g:persona")) assert.ok(held.includes(id), id);
+  assert.ok(held.includes("way"));
+  for (const id of held) assert.ok([...STYLE_ANSWERS, "way"].includes(id), id);
   assert.ok(SETUP_SKIP.includes("style") && SETUP_SKIP.includes("words") && SETUP_SKIP.includes("seed"));
   assert.ok(!SETUP_SKIP.includes("explore"), "Explore's answers are asked, prefilled");
 });
@@ -166,4 +171,30 @@ test("quick-start mark: its mode survives a peek and goes on clear", () => {
   assert.equal(peekQuickMode(), "trips");
   clearQuickStart();
   assert.equal(peekQuickStart(), false);
+});
+
+const HOME = { name: "Brussels", lat: 50.85, lng: 4.35, countryCode: "BE" };
+test("G12 judge round 3: Show the trips now stops at kid ages, then at a missing origin", () => {
+  const kids = s({ party: { kind: "family", adults: 2, kids: 2, kidAges: [] }, from: HOME });
+  assert.equal(quickStop(kids), "ages", "children without ages go to the ages question");
+  const none = s({});
+  assert.equal(quickStop(none), "from", "no origin at all goes to From");
+  assert.equal(quickStop(none, { origin: "BRU" }), null, "the app's start is an origin");
+  assert.equal(quickStop(none, { airports: ["CRL"] }), null);
+  assert.equal(quickStop(s({ from: HOME })), null, "nothing missing: the trip is made");
+  // Ages come first, the setup's order.
+  assert.equal(quickStop(s({ party: { kind: "family", adults: 2, kids: 1, kidAges: [] } })), "ages");
+});
+
+test("G12 judge round 3: a known place with every guide question answered opens its found trip", () => {
+  const placed = normalizeSettings({ ...newTripSettings(style()), places: [{ kind: "place", id: "lisbon" }] });
+  let all = placed;
+  for (const id of guideQuestions(placed)) all = markAnswered(all, id, "words");
+  assert.equal(openingGuide(all), KNOW_SCREEN);
+  assert.equal(openingGuide(all), landingOf(all));
+  // No place named: the list. An open question: that question.
+  let open = newTripSettings(style());
+  for (const id of guideQuestions(open)) open = markAnswered(open, id, "words");
+  assert.equal(openingGuide(open), TRIPS_SCREEN);
+  assert.equal(openingGuide(newTripSettings(style())), "g:weather");
 });

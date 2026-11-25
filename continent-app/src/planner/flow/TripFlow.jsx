@@ -16,7 +16,7 @@ import { groupsOf, stepAnswer } from './stepText.js';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { selectionOfPlan } from '../../lib/plan/doors.js';
 import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
-import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, landingOf, firstOpenGuide, guideQuestions, guideScreens, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
+import { GUIDE_SKIP, TRIPS_SCREEN, continueTo, landingOf, openingGuide, guideQuestions, guideScreens, openGuideQuestions, prevScreen, progressOf } from './flowGraph.js';
 import { takePlan } from '../../lib/recommend/keptStore.js';
 import { clearQuickStart, peekQuickMode } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
@@ -85,7 +85,9 @@ export function TripFlow({ onLand = null }) {
   const [walked, setWalked] = useState(kept ? Boolean(kept.walked) : (!fresh || asking));
   const [phase, setPhase] = useState(() => {
     if (arriveTrip.current) return TRIPS_SCREEN;
-    if (fresh) return asking ? (firstOpenGuide(settings) || landingOf(settings)) : landingOf(settings);
+    // G12 judge round 3: with every guide question answered a known place
+    // opens its found trip (openingGuide), not the list.
+    if (fresh) return asking ? openingGuide(settings) : landingOf(settings);
     return kept?.phase || 'home';
   }); // home | g:* | ff | know
   // House style: the question settles in when the step changes (presentation only).
@@ -192,7 +194,7 @@ export function TripFlow({ onLand = null }) {
   // opening already asked, so Start planning goes straight into the
   // help-me-choose questions; the last of them (g:how) asks whole trip or
   // flights first.
-  const start = () => { setWalked(true); setReturnTo(null); setPhase(firstOpenGuide(settings) || guide[0]); };
+  const start = () => { setWalked(true); setReturnTo(null); setPhase(openingGuide(settings) || guide[0]); };
 
   const bar = (
     <IconButton ref={gearRef} tone="surface" label={t('pf.settings')} onClick={() => setSettingsOpen(true)} className="pf-round">

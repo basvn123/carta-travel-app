@@ -33,6 +33,7 @@ import { flightLeverKeys } from './adapters/flight.js';
 import { personaOf, picksOf, personaReason, tripPersona, personaShapes } from './persona.js';
 import { avoidsHeat } from './prefs.js';
 import { budgetKind, budgetRulerFor } from '../budgetBasis.js';
+import { missingLines } from './budgetCompass.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -284,7 +285,12 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
   const ranked = levered.map((trip) => {
     const info = fitOf(trip, t, destinations, settings);
     const budget = budgetRuler(trip, settings);
-    const sink = budget && budget.delta > 0 ? (RECOMMEND.budget.sinkPer100 * budget.delta) / 100 : 0;
+    // G12 judge round 3 (decision §3.4, like with like): a trip with a line
+    // still "Not yet" on the budget's basis has a spend that leaves that
+    // line out, so it gets no sink and no lift from it; it ranks after the
+    // fully priced trips instead (`unpriced`, in the sort below).
+    const unpriced = Boolean(budget) && (!Number.isFinite(budget.delta) || missingLines(trip, budget.kind).length > 0);
+    const sink = budget && !unpriced && budget.delta > 0 ? (RECOMMEND.budget.sinkPer100 * budget.delta) / 100 : 0;
     // The persona (owner, plan flow walk): P the trip's places' persona fit
     // by nights (persona.js), part of the answers in the blend; its reason
     // leads the card.
@@ -312,11 +318,15 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
       ...(isBeen(trip) ? { been: true } : {}),
     };
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });
+    Object.defineProperty(out, 'unpriced', { value: unpriced, enumerable: false });
     // A levered trip keeps its own quote and state (T819); else the base's.
     const own = trip.quote ? trip : trip.base;
     return own ? keepHidden(own, out) : out;
   });
-  return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (Number(Boolean(a.been)) - Number(Boolean(b.been))) || (b.score - a.score) || a.id.localeCompare(b.id));
+  // Under a budget a trip it cannot be judged against comes after the ones
+  // it can (G12 judge round 3); with no budget nothing is unpriced, so the
+  // order is the fit-first one as before.
+  return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (Number(Boolean(a.unpriced)) - Number(Boolean(b.unpriced))) || (Number(Boolean(a.been)) - Number(Boolean(b.been))) || (b.score - a.score) || a.id.localeCompare(b.id));
 }
 
 /**

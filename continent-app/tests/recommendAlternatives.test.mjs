@@ -107,3 +107,10 @@ test("R6: otherMonthTrips skips Not yet trips and needs checked windows", async 
   assert.deepEqual(otherMonthTrips([t("a", true), t("b", false)], { flights: null, today: "2026-11-25" }), []);
   assert.deepEqual(otherMonthTrips([], {}), []);
 });
+
+test("G12 judge round 3: a pool trip with no places does not throw", () => {
+  const bare = { ...trip("bare", { month: 6 }), places: undefined };
+  assert.doesNotThrow(() => alternatives(trip("base"), [bare], { minutes, windows: MIN_WINDOWS }));
+  const alts = alternatives(trip("base"), [bare, trip("pt-june", { month: 6, group: 700 })], { minutes, windows: MIN_WINDOWS });
+  assert.equal(alts.find((x) => x.key === "month").trip.id, "pt-june");
+});

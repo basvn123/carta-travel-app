@@ -7,7 +7,7 @@ import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
-import { askedSetup, askOpen, firstAsked, nextAsked, tripUnderWay, prevScreen, progressOf } from './flowGraph.js';
+import { askedSetup, askOpen, firstAsked, nextAsked, tripUnderWay, prevScreen, progressOf, quickStop } from './flowGraph.js';
 import { normalizeSettings, nothingBooked } from './tripSettings.js';
 import { exploreAnswers, seedToSettings } from '../../lib/plan/seed.js';
 import { bookedLanding } from '../../lib/plan/doors.js';
@@ -119,6 +119,11 @@ export function PlanFlow({
    *  trip settings hold them). `mode` 'ask' opens the planner on the
    *  questions still open, 'trips' (Show the trips now) on the priced trips. */
   const quickCreate = (s, mode = 'ask') => {
+    // G12 judge round 3: Show the trips now stands on screens before Who and
+    // Ages, so it must not price a trip with children of no age or with no
+    // origin at all (decision §1.3): it goes to that question instead.
+    const stop = quickStop(s, { origin: app?.origin || app?.fromPlace || app?.model?.fromPlace || null, airports: app?.airports || [] });
+    if (stop) { go(stop); return; }
     if (!nothingBooked(s) && landBooked(s)) return;
     save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
     markQuickStart(mode);

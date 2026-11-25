@@ -17,6 +17,7 @@ import { keepHidden, repriceTrip } from '../../lib/recommend/trips.js';
 import { crowdTier, dayHighs, doorMinutes } from '../../lib/recommend/compare.js';
 import { partyText } from '../../lib/party.js';
 import { budgetRulerFor } from '../../lib/budgetBasis.js';
+import { missingLines } from '../../lib/recommend/budgetCompass.js';
 
 /** How many trips before "Show more trips" (the CountryMatchCards page). */
 export const PAGE = 6;
@@ -129,6 +130,10 @@ export function budgetBadge(trip, { locale } = {}) {
   // "Not yet" is not judged (a missing flight would read as under budget);
   // an under-budget trip figure names what it never holds (things to do).
   if (!day && totalLeavesOut(trip)) return null;
+  // G12 judge round 3: the day basis counts a missing bed as 0
+  // (budgetBasis dayBasisSpend), so a day budget is judged only when its
+  // own lines (bed and days) are priced, as budgetCompass tripVerdict does.
+  if (day && missingLines(trip, 'day').length) return null;
   if (Math.round(b.delta) === 0) return { key: `tf.budget.on${day}`, vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
   if (b.delta < 0 && !day) return { key: 'tf.card.underNoTickets', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: false };
   return { key: `${b.delta < 0 ? 'tf.card.under' : 'tf.card.over'}${day}`, vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };

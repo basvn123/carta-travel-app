@@ -106,6 +106,20 @@ test("the budget ranks: a trip over it sinks by the configured amount", () => {
   assert.ok(Math.abs((o1.score - o2.score) - ((400 / 100) * 0.3) / 10) < 1e-9);
 });
 
+test("G12 judge round 3: under a budget a trip with a Not yet line ranks after the fully priced ones", () => {
+  // Echo fits better and rates higher, but its flight is Not yet: its total
+  // leaves the flight out, so it is not judged against the budget.
+  const notYet = fakeTrip("notyet", "e", 700);
+  notYet.slots = notYet.slots.map((x) => (x.id === "flight" ? slotRow("flight", null) : x));
+  notYet.total = slotTotals(notYet.slots);
+  const trips = [notYet, fakeTrip("fits", "a", 900)];
+  const ranked = rankTrips(trips, { settings: settings(), data: FAKE });
+  assert.deepEqual(ranked.map((t) => t.id), ["fits", "notyet"]);
+  // No budget: nothing is unpriced, the better place leads as before.
+  const none = rankTrips(trips, { settings: settings({ budget: { kind: "total", eur: 0 } }), data: FAKE });
+  assert.equal(none[0].id, "notyet");
+});
+
 test("fit first: a trip whose main like reads under the minimum ranks below", () => {
   const trips = [fakeTrip("weak", "c", 800), fakeTrip("fits", "a", 800)];
   const ranked = rankTrips(trips, { settings: settings(), data: FAKE });
