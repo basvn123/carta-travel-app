@@ -301,12 +301,12 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### REC-038 Doors: flight first and "I know where"
 - Decides: the trips the "Find my flight first" and "I know where I'm going" doors show.
-- Rule: flight first builds one-base trips from up to 48 places (named places, else up to 4 per matched country, else the 4 best rated places with a photo per country), only where a swept gateway exists, one row per arrival airport; drops a trip whose flight or total a person is over the budget; sorts by the group flight price, then stops, then id; at most 30 rows. "I know where": the named towns (up to 4) are the route in the order named, nights split the planner's way; with only countries named, the finder's top-ranked trip.
+- Rule: flight first builds one-base trips from up to 48 places (named places, else up to 4 per matched country, else the 4 best rated places with a photo per country), only where a swept gateway exists, one row per arrival airport; drops a trip whose flight or total a person is over the budget; sorts by the group flight price, then stops, then id; at most 30 rows. "I know where": the named towns (up to 4) are the route, ordered from home by `routeOrder` (G12 B4), nights split the planner's way; with only countries named, the finder's top-ranked trip.
 - Constant: `FLIGHT_FIRST` in `continent-app/src/lib/recommend/doorTrips.js:36` = pool 48, perCountry 4, rows 30
 - Constant: `flightRows` / `knowTrip` in `continent-app/src/lib/recommend/doorTrips.js:139` and `:177`
 - Test: `continent-app/tests/doors.test.mjs` :: "Find my flight first: one row a place, cheapest flight for the group first, each with both legs"
 - Test: `continent-app/tests/doors.test.mjs` :: "Find my flight first is narrowed by the answers: a named country, the budget"
-- Test: `continent-app/tests/doors.test.mjs` :: "I know where: the named towns are the route, in the order named, the nights split"
+- Test: `continent-app/tests/doors.test.mjs` :: "I know where: the named towns are the route, routed from home, the nights split"
 
 ## Rules with no test
 

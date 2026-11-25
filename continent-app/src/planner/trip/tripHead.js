@@ -37,15 +37,12 @@ export function shownTripName(name, stopDetails, lang = 'en') {
 }
 
 /**
- * What is booked of what can be (T885): the flight each way (one booking
- * covers both) and each stay; a drive or a stay the traveller put in as
- * their own counts as nothing to book.
+ * What is booked of what can be (T885): counted over the trip's bookable
+ * rows (ReadyToBook.jsx bookRows), the same rows Still to book lists. G12
+ * browser pass 2: the head once counted on its own rule and said "2 of 3
+ * booked" while the list said "0 of 1"; one source keeps the two equal.
  */
-export function bookedCount({ flight, priced, ownFlight, stopDetails, stayCosts = [], booked }) {
-  const flies = !flight?.driving && Boolean(priced?.cartaFlight?.out || priced?.cartaFlight?.back || flight?.combinable || ownFlight);
-  const stays = stopDetails.map((s, i) => ({ s, i })).filter(({ s, i }) => s.dest && !stayCosts[i]?.ownAccom);
-  const bookedStays = new Set(booked?.stays || []);
-  const of = (flies ? 2 : 0) + stays.length;
-  const n = (flies && booked?.flights ? 2 : 0) + stays.filter(({ s }) => bookedStays.has(s.destinationId)).length;
-  return { n, of };
+export function bookedCount(rows) {
+  const list = Array.isArray(rows) ? rows : [];
+  return { n: list.filter((r) => r?.booked).length, of: list.length };
 }

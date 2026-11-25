@@ -21,16 +21,16 @@
  *             trips: the loader and the priced trips the answers lead to
  *             (TF2, T797), the one screen of the run that is not a question.
  *             The flights first leave the run for their own screen.
- *   plan      the planning engine's own steps by name, from wizardSteps
- *             (Where, Trips or Stay, Stays, From, Getting, Finish) without the
- *             Booked and When steps the setup already asked
+ *   plan      G12 L14: the planning engine's own steps (the old wizard's
+ *             Where, Stay, Getting, Finish) are folded; every door lands
+ *             on a priced trip, so the plan run is the guide alone
  *   days      days?, then the day rhythm, then guide or plan yourself
  *
  * Every function is pure: same settings in, same screen list out. Screen ids
  * are strings: 'booked', 'g:likes', 'p:Where', 'r:pace' and so on.
  */
-import { wizardSteps } from '../wizard/wizardSteps.js';
 import { datesFromBookings } from './tripSettings.js';
+import { missingEssentials } from '../../lib/plan/seed.js';
 
 export const SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'when', 'from', 'way', 'airports'];
 /** T860: the ways there that may fly, so the airports in reach are asked. */
@@ -43,6 +43,16 @@ export const NOW_SETUP = ['tell', 'booked', 'who', 'sleep', 'priority', 'nowWher
 export const GUIDE = ['g:shape', 'g:likes', 'g:weather', 'g:reach', 'g:around', 'g:avoid', 'g:budget', 'g:pick', 'g:how', 'g:trips'];
 /** The help-me-choose screen that answers rather than asks (T797). */
 export const TRIPS_SCREEN = 'g:trips';
+/** G12 L6: the place lander, a known place's priced found trip (TripFlow phase). */
+export const KNOW_SCREEN = 'know';
+/**
+ * G12 L6 (decision §3.2 S5, S6, S9): where the trips open. With a place
+ * named (a place page, typed towns, Saved's hearts) the answers land on that
+ * place's priced found trip; with none, on Trips for you.
+ */
+export function landingOf(settings) {
+  return (settings?.places || []).some((p) => p && (p.kind === 'place' || p.kind === 'country')) ? KNOW_SCREEN : TRIPS_SCREEN;
+}
 // Getting around is asked once (g:around) and the day goal is read from the
 // Plan your days moods (tripSettings aroundOf, goalOfGoals): neither is a
 // days question of its own any more.
@@ -74,6 +84,78 @@ export const FIRST_SETUP = ['tell', 'who', 'when', 'from'];
 export function firstSetup(s) {
   const all = setupScreens(s);
   return s.kind === 'now' ? all : all.filter((id) => FIRST_SETUP.includes(id));
+}
+
+// G12 plan rethink, the question rule (decision §12, owner, binding): "for
+// every question, check whether the travel style captures it; if not, keep
+// the question". The questions a style holds are the ones it marks with the
+// source 'style' (lib/travelStyles STYLE_ANSWERS, plus the way there,
+// styleSeed withStyle); SETUP_SKIP and GUIDE_SKIP pass them over. That mark
+// is the single source, so no list of held ids is kept here (G12 judge
+// round 3: a second list could drift from it).
+
+/** Children counted without an age each: the one party gap that stops the flow (decision §1.3). */
+export function kidAgesMissing(s) {
+  return s.party.kids > 0 && s.party.kidAges.length < s.party.kids;
+}
+
+/**
+ * G12 judge round 3: "Show the trips now" may skip every question except
+ * the two that stop the flow (decision §1.3, lib/plan/seed missingEssentials):
+ * children without ages, and no origin at all. The question screen to go to
+ * first ('ages' before 'from', the setup's order), or null when the trip
+ * can be made and priced.
+ *   opts: { origin, airports } as missingEssentials
+ */
+export function quickStop(s, opts = {}) {
+  const missing = missingEssentials(s, opts);
+  if (missing.includes('kidAges')) return 'ages';
+  if (missing.includes('from')) return 'from';
+  return null;
+}
+
+/**
+ * The setup a new trip asks after the door (G12 §12). Tell is the door's
+ * own line, so it is not a step here (a typed line still opens it). Kid
+ * ages follow Who whenever there are children: a style knows how many come,
+ * never how old they are. A trip under way keeps its own run.
+ */
+export function askedSetup(s) {
+  if (s.kind === 'now') return NOW_SETUP.filter((id) => id !== 'tell');
+  const list = setupScreens(s).filter((id) => id !== 'tell');
+  if (s.party.kids > 0) list.splice(list.indexOf('who') + 1, 0, 'ages');
+  return list;
+}
+
+/** Whether question `id` is still to ask: kid ages while one is missing, else not given by words, a seed pin or the style. */
+export function askOpen(s, id) {
+  if (id === 'ages') return kidAgesMissing(s);
+  return !givenBy(s, id, SETUP_SKIP);
+}
+
+/** The next question in `list` after `id` still to ask (stop ends the walk early). */
+export function nextAsked(list, id, s, stop = null) {
+  let k = nextScreen(list, id);
+  while (k && k !== stop && !askOpen(s, k)) k = nextScreen(list, k);
+  return k;
+}
+
+/**
+ * G12 browser pass: the screen after `id` when `resume` holds the mode a
+ * quickStop interrupted (the trips were already asked for, by the last
+ * question or Show the trips now, and Ages or From stood in the way). Once
+ * answered the walk returns to the trips ('create') instead of walking on
+ * from the stop's place, which re-asked When, From and the airports after a
+ * style switch added children. Without `resume` it is nextAsked.
+ */
+export function nextAfterAnswer(list, id, s, resume = null) {
+  if (resume) return 'create';
+  return nextAsked(list, id, s, 'create') || 'create';
+}
+
+/** The first question of the setup still to ask, or null when the style, Explore pins and words hold them all. */
+export function firstAsked(s) {
+  return askedSetup(s).find((id) => askOpen(s, id)) || null;
 }
 
 /**
@@ -126,6 +208,9 @@ export function guideScreens(s) {
     // to fly would ask it twice (and could contradict it).
     if (id === 'g:reach' && OVERLAND_WAYS.includes(s.way || '')) return false;
     if (places.length && WHERE_QUESTIONS.includes(id)) return false;
+    // G12 §12: the shape is not asked once the place is known (Carta
+    // orders and sizes the named places, decision §3.2 S5/S6).
+    if (places.length && id === 'g:shape') return false;
     if (town && id === 'g:likes') return false;
     return true;
   });
@@ -136,18 +221,11 @@ export function guideQuestions(s) {
   return guideScreens(s).filter((id) => id !== TRIPS_SCREEN);
 }
 
-/** The planning engine's steps for this trip, prefixed 'p:'. */
-export function engineScreens(s, door = 'know') {
-  const buildMode = door === 'ready' ? 'ready' : 'custom';
-  return wizardSteps({ travel: s.booked.flights, stays: s.booked.stays }, buildMode)
-    .filter((n) => n !== 'Booked' && n !== 'When')
-    .map((n) => `p:${n}`);
-}
-
-/** Everything after the trip home: guide (when chosen) then the engine. */
+/** Everything after the trip home: the guide, when chosen. G12 L14: the
+ *  engine's steps that followed it are folded (a door lands on a trip). */
 export function planScreens(s, door = 'know') {
   const d = hasDoors(s) ? door : 'know';
-  return [...(d === 'guide' ? guideScreens(s) : []), ...engineScreens(s, d)];
+  return d === 'guide' ? guideScreens(s) : [];
 }
 
 /** The days run: the question, the rhythm (answered ones skipped unless
@@ -163,6 +241,16 @@ export function fullFlow(s, door = 'know') {
 }
 
 /**
+ * The sources the setup passes over (G12 plan rethink, decision §12): the
+ * words, and what the page the trip was opened from fixed ('seed', a
+ * PlanSeed pin). What Explore prefilled ('explore') is still asked, so one
+ * tap confirms it; what the style gave is skipped by the guide walk
+ * (GUIDE_SKIP) and, G12 B3, by the setup per the question rule (Who, the
+ * bed, what matters most and the way there, when a style holds them).
+ */
+export const SETUP_SKIP = Object.freeze(['words', 'seed', 'style']);
+
+/**
  * The screen Continue goes to after `id` (owner, plan flow walk 2026-10-30:
  * "Continue always goes to the next question"). Only a question the Tell
  * sentence answered, and not yet seen on its own screen, is passed over; a
@@ -170,7 +258,7 @@ export function fullFlow(s, door = 'know') {
  * back and on walks the questions in order. `stop` ends the walk early (the
  * create screen, the trips) even when it carries an answer.
  */
-export function continueTo(list, id, s, stop = null, skip = ['words']) {
+export function continueTo(list, id, s, stop = null, skip = SETUP_SKIP) {
   let k = nextScreen(list, id);
   while (k && k !== stop && givenBy(s, k, skip)) k = nextScreen(list, k);
   return k;
@@ -188,12 +276,22 @@ export function givenBy(s, id, from) {
  * changing there. The Who screen of the setup is not passed over: it is
  * where the style is chosen for this trip.
  */
-export const GUIDE_SKIP = ['words', 'style'];
+export const GUIDE_SKIP = ['words', 'style', 'seed'];
 
 /** The first guide screen still open for this trip (the trips when none is). */
 export function firstOpenGuide(s) {
   const list = guideScreens(s);
   return list.find((id) => id === TRIPS_SCREEN || !givenBy(s, id, GUIDE_SKIP)) || TRIPS_SCREEN;
+}
+
+/**
+ * Where the guide walk opens: its first open question, or, when every one
+ * is answered, where the trips land (G12 judge round 3: a known place opens
+ * its found trip, landingOf, not the list).
+ */
+export function openingGuide(s) {
+  const f = firstOpenGuide(s);
+  return f === TRIPS_SCREEN ? landingOf(s) : f;
 }
 
 /** The guide questions still open (not given by words or the style). */

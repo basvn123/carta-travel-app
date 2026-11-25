@@ -14,6 +14,7 @@ import { makeRetriever } from '../lib/ask/retrieve.js';
 import { AiMark, AiReport } from '../components/AiMark.jsx';
 import '../styles/75-ask.css';
 import AiTag from '../components/AiTag.jsx';
+import { askPlanSeed } from '../lib/plan/askSeed.js';
 
 // One hybrid retriever for the app (T554): BM25 in the browser, /api/ask dense.
 const RETRIEVE = makeRetriever();
@@ -113,7 +114,10 @@ export function AskSearchFull({
       .filter((s) => s.nights > 0);
     if (!stops.length) return;
     setOpen(false);
-    onPlanTrip?.({ stops, transport: intent.budget.mode === 'car' ? 'car' : 'public' });
+    // G12 B2 (S12): the question is read by the planner's own parser too
+    // (askPlanSeed, parseTrip), so its dates, party and budget reach the trip.
+    const route = { stops, transport: intent.budget.mode === 'car' ? 'car' : 'public' };
+    onPlanTrip?.(askPlanSeed(route, text, { lang }) || route);
   };
   const open1 = (id) => { setOpen(false); onOpenPlace(id); };
 

@@ -33,7 +33,8 @@ test("named places skip the where questions; a town skips what they like too", (
   assert.ok(none.includes("g:weather") && none.includes("g:reach") && none.includes("g:likes"));
   const pt = guideScreens(normalizeSettings({ places: [country("PT", "Portugal")] }));
   assert.ok(!pt.includes("g:weather") && !pt.includes("g:reach"));
-  assert.ok(pt.includes("g:likes") && pt.includes("g:shape") && pt.includes("g:budget") && pt.includes("g:trips"));
+  // G12 §12: the shape is not asked once the place is known either.
+  assert.ok(pt.includes("g:likes") && !pt.includes("g:shape") && pt.includes("g:budget") && pt.includes("g:trips"));
   const lis = guideScreens(normalizeSettings({ places: [{ kind: "place", id: "LIS", name: "Lisbon", country: "Portugal" }] }));
   assert.ok(!lis.includes("g:likes") && !lis.includes("g:weather"));
   assert.ok(lis.includes("g:avoid") && lis.includes("g:pick"));

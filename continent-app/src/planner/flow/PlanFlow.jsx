@@ -7,9 +7,10 @@ import { ClockIcon, SettingsIcon } from '../../components/Icons.jsx';
 import { PlanStage, SheetHead } from './PlanStage.jsx';
 import { usePickTick, useStepIn } from './paintGuard.js';
 import { QUESTIONS } from './questions.js';
-import { firstSetup, tripUnderWay, continueTo, prevScreen, progressOf } from './flowGraph.js';
-import { normalizeSettings } from './tripSettings.js';
-import { newTripSettings } from './styleSeed.js';
+import { askedSetup, askOpen, firstAsked, nextAfterAnswer, tripUnderWay, prevScreen, progressOf, quickStop } from './flowGraph.js';
+import { normalizeSettings, nothingBooked } from './tripSettings.js';
+import { exploreAnswers, seedToSettings } from '../../lib/plan/seed.js';
+import { bookedLanding } from '../../lib/plan/doors.js';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { markQuickStart } from './quickStart.js';
 import { recallPlace, rememberPlace } from './flowMemory.js';
@@ -19,6 +20,7 @@ import { useBcp47, useMonths, useTripSettings, whenText } from './flowHooks.js';
 import { FlowRail } from './FlowRail.jsx';
 import { stepAnswer } from './stepText.js';
 import { CreateScreen } from './setupScreens.jsx';
+import { StyleSwitch } from './StyleBar.jsx';
 import { TripSettingsSheet } from './TripSettingsSheet.jsx';
 import { PlanHome } from './PlanHome.jsx';
 import { showKeptNext } from '../../lib/recommend/keptStore.js';
@@ -39,13 +41,17 @@ import { useAuth } from '../../auth/AuthContext.jsx';
  *   onOpenJourney(id)  one of Carta's own trips, its whole week (T752)
  *   onOpenPlan(id)     an account trip, through App's open-saved-trip path
  *   destinations       the catalogue by id, for a trip's first photo and towns
+ *   openAt             a door's request: { screen: 'carta', ... } or, G12 B2,
+ *                      { screen: 'seed', seed, n } from App's openPlan
+ *   onLandTrip(shared) G12 B2: a booked trip straight onto the trip page
+ *                      (App's pendingSharedTrip)
  *
  * T809: the opening lists every trip on this device (tripsStore) and, signed
  * in, the account's trips; Start planning always starts a new one.
  */
 export function PlanFlow({
   onNavigate, onCreated, onAddPast = null, onOpenJourney = null, onOpenPlan = null, destinations = null, pageOver = false,
-  openAt = null, onInnerChange = null,
+  openAt = null, onInnerChange = null, onLandTrip = null,
 }) {
   const { t, lang } = useI18n();
   const months = useMonths();
@@ -57,7 +63,7 @@ export function PlanFlow({
   // question (the answers were never lost, only the screen), not to the
   // opening, whose Start planning would begin another trip.
   const [kept] = useState(() => (settings.trip.created ? null
-    : recallPlace('opening', tripsStore.getActiveId(), [...firstSetup(settings), 'create', 'kind', 'now'])));
+    : recallPlace('opening', tripsStore.getActiveId(), ['tell', ...askedSetup(settings), 'create', 'kind', 'now'])));
   const [screen, setScreen] = useState(kept?.screen || 'home');
   // House style: the question settles in when the step changes (presentation only).
   const stepRef = useRef(null);
@@ -102,29 +108,110 @@ export function PlanFlow({
     sheetRef.current?.scrollIntoView?.({ block: 'start' });
   }, [screen]);
 
-  // T1103 (G12): a new trip asks Tell, who, when and from, then is made
-  // and opens on its priced trips; the rest refines them from there.
-  const list = useMemo(() => [...firstSetup(settings), 'create'], [settings]);
+  // G12 plan rethink, the question rule (decision §12): a new trip asks
+  // only what its travel style does not hold (no style: every question
+  // once), When and From prefilled from Explore so one tap confirms them,
+  // kid ages whenever children come; then the trip is made and the planner
+  // walks the help-me-choose questions the style leaves open.
+  const list = useMemo(() => ['tell', ...askedSetup(settings), 'create'], [settings]);
   const go = (id) => setScreen(id);
   /** The trip made with its defaults (no name, cover or buddies yet; the
-   *  trip settings hold them), the planner told to open on the trips. */
-  const quickCreate = (s) => {
+   *  trip settings hold them). `mode` 'ask' opens the planner on the
+   *  questions still open, 'trips' (Show the trips now) on the priced trips. */
+  // G12 browser pass: the mode a quickStop interrupted, or null.
+  const stopResume = useRef(null);
+  const quickCreate = (s, mode = 'ask') => {
+    // G12 judge round 3: Show the trips now stands on screens before Who and
+    // Ages, so it must not price a trip with children of no age or with no
+    // origin at all (decision §1.3): it goes to that question instead.
+    const stop = quickStop(s, { origin: app?.origin || app?.fromPlace || app?.model?.fromPlace || null, airports: app?.airports || [] });
+    // The stop's answer then returns here (nextAfterAnswer), not to the
+    // questions after the stop's place, which were already walked.
+    if (stop) { stopResume.current = mode; go(stop); return; }
+    stopResume.current = null;
+    if (!nothingBooked(s) && landBooked(s)) return;
     save(normalizeSettings({ ...s, trip: { ...s.trip, name: (s.trip.name || '').trim(), created: s.trip.created || Date.now() } }));
-    markQuickStart();
+    markQuickStart(mode);
     rememberPlace('opening', tripsStore.getActiveId(), null);
     if (onCreated) onCreated();
   };
+  /** G12 B2 (lane L4, S7): a trip with bookings Carta can place lands on
+   *  the trip page they make (doors.js bookedTrip), the booked flight and
+   *  stays the traveller's own, the rest priced; false when they place nothing. */
+  const landBooked = (s) => {
+    if (!onLandTrip) return false;
+    const shared = bookedLanding(s, destinations || {}, { label: (s.trip.name || '').trim() });
+    if (!shared) return false;
+    save(normalizeSettings({ ...s, door: 'booked', trip: { ...s.trip, created: s.trip.created || Date.now() } }));
+    rememberPlace('opening', tripsStore.getActiveId(), null);
+    onLandTrip(shared);
+    return true;
+  };
+  // G12 B2 (lane L3): a door's seed (App's openPlan) starts a new trip on
+  // the seed's settings (style < Explore < seed, lib/plan/seed.js), and the
+  // flow opens on the first question the seed did not answer, so a place
+  // page's town is the trip's place from the first screen.
+  useEffect(() => {
+    if (openAt?.screen !== 'seed' || !openAt.seed) return;
+    tripsStore.startNew();
+    const style = app?.travelStyles?.active || null;
+    const s = seedToSettings(openAt.seed, { style, explore: exploreAnswers(app?.model || null) });
+    save(s);
+    setKind('new');
+    setKindAsked(false);
+    if (!nothingBooked(s) && landBooked(s)) return;
+    const first = firstAsked(s);
+    if (first) go(first); else quickCreate(s);
+  }, [openAt?.n]); // eslint-disable-line react-hooks/exhaustive-deps -- one start per door tap
+  /**
+   * G12 L5: the door starts a trip. The style answers what it holds,
+   * Explore prefills When and From (seedToSettings: style < Explore < seed),
+   * a door chip's budget arrives as a pinned seed field. A typed line opens
+   * Tell with it, where the words are read and shown as chips.
+   */
+  const tellNext = useRef(false);
+  const startTrip = ({ text = '', seed = null, tell = false } = {}) => {
+    // The booked chip opens Tell (its upload and typed sentence) even with no line.
+    tellNext.current = Boolean(tell);
+    tripsStore.startNew();
+    const style = app?.travelStyles?.active || null;
+    const base = seedToSettings(seed || {}, { style, explore: exploreAnswers(app?.model || null) });
+    const s = text ? normalizeSettings({ ...base, note: text }) : base;
+    save(s);
+    setKind('new');
+    // T1103 (G12, P-33): the choice between a new trip and the one under
+    // way is asked only when a trip is under way today.
+    const ask = tripUnderWay(trips, todayISO());
+    setKindAsked(ask);
+    if (ask) { go('kind'); return; }
+    afterKind(s);
+  };
+  /** After the kind sheet: Tell with a typed line, else the first open question. */
+  const afterKind = (s) => {
+    if ((s.note || '').trim() || tellNext.current) { tellNext.current = false; go('tell'); return; }
+    const first = firstAsked(s);
+    if (first) go(first); else quickCreate(s);
+  };
   const next = (id, s) => {
-    const l = [...firstSetup(s), 'create'];
-    // Skip only what the Tell sentence answered; a question answered on its
-    // own screen is the next stop again (continueTo).
-    const k = continueTo(l, id, s, 'create') || 'create';
+    const l = ['tell', ...askedSetup(s), 'create'];
+    // Skip what the style, the words or the source page hold (the question
+    // rule); a question answered on its own screen is the next stop again.
+    const resume = stopResume.current;
+    const k = nextAfterAnswer(l, id, s, resume);
     // A trip under way keeps its Create screen (it names a trip already
     // travelled); a new trip goes straight to its priced trips.
-    if (k === 'create' && s.kind !== 'now') { quickCreate(s); return; }
+    if (k === 'create' && s.kind !== 'now') { quickCreate(s, resume || 'ask'); return; }
+    stopResume.current = null;
     go(k);
   };
-  const back = () => go(prevScreen(list, screen) || (kindAsked ? 'kind' : 'home'));
+  // Back passes over what was never asked (held by the style, the words or
+  // the source page), and over Tell when nothing was typed.
+  const back = () => {
+    stopResume.current = null;
+    let k = prevScreen(list, screen);
+    while (k && (k === 'tell' ? !(settings.note || '').trim() : !askOpen(settings, k))) k = prevScreen(list, k);
+    go(k || (kindAsked ? 'kind' : 'home'));
+  };
 
   const draft = loadTripDraft();
   const hasTrip = Boolean(settings.trip.created || draft?.stops?.length || draft?.planId);
@@ -142,23 +229,10 @@ export function PlanFlow({
         <PlanHome
           titleTag={Title}
           trips={trips}
-          onStart={() => {
-            // A new trip every time; the one open stays in the list. T856:
-            // always, so an open draft too empty to be listed (answers with
-            // no trip made yet) never hands its old answers to the new plan.
-            tripsStore.startNew();
-            // The traveller's travel style answers what it can (who, what
-            // matters most, how they explore), so the planner asks only the
-            // rest; the Who screen shows the style and can swap it.
-            const style = app?.travelStyles?.active;
-            if (style) save(newTripSettings(style));
-            setKind('new');
-            // T1103 (G12, P-33): the choice between a new trip and the one
-            // under way is asked only when a trip is under way today.
-            const ask = tripUnderWay(trips, todayISO());
-            setKindAsked(ask);
-            go(ask ? 'kind' : 'tell');
-          }}
+          // A new trip every time; the one open stays in the list. T856:
+          // always, so an open draft too empty to be listed (answers with no
+          // trip made yet) never hands its old answers to the new plan.
+          onStart={(door) => startTrip(door || {})}
           onOpenTrip={(trip) => {
             if (trip.device) tripsStore.open(trip.id);
             if (trip.planId && onOpenPlan) { onOpenPlan(trip.planId); return; }
@@ -203,8 +277,9 @@ export function PlanFlow({
         onClose={() => go('home')}
         onContinue={() => {
           if (kind === 'now') { go('now'); return; }
-          if (settings.kind !== 'new') save({ ...settings, kind: 'new' });
-          go('tell');
+          const s = settings.kind !== 'new' ? normalizeSettings({ ...settings, kind: 'new' }) : settings;
+          if (s !== settings) save(s);
+          afterKind(s);
         }}
         onPast={() => (onAddPast ? onAddPast() : onNavigate('trips'))}
       />
@@ -266,12 +341,21 @@ export function PlanFlow({
           position={t('pf.position', { x: pos.index + 1, n: steps.length })}
           marks={steps.map((id) => ({ key: id, now: id === screen, done: settings.answered.includes(id) }))}
         />
+        {/* G12: the trip's style, switchable for this trip, on every step. */}
+        {settings.kind !== 'now' && <StyleSwitch settings={settings} save={save} />}
         <h2 className="pf-title" tabIndex={-1}>{q ? t(q.titleKey) : ''}</h2>
         <QuestionBody
           id={screen}
           settings={settings}
           commit={(s) => { save(s); next(screen, s); }}
         />
+        {/* G12 §12: a quiet way past the rest; what was not answered keeps
+            its default and shows dashed in the assumption bar. */}
+        {settings.kind !== 'now' && screen !== 'tell' && (
+          <Button variant="quiet" size="sm" className="pf-show-now" onClick={() => quickCreate(settings, 'trips')}>
+            {t('pf.showNow')}
+          </Button>
+        )}
       </div>
     );
   }
@@ -330,6 +414,8 @@ function useHomeTrips(destinations) {
       return '';
     };
     const towns = (ids) => [...new Set(ids.map((id) => dest[id]?.city).filter(Boolean))].slice(0, 2).join(', ');
+    // G12 L12: a trip's countries, so the door's plan again knows where the traveller has been.
+    const isoOf = (ids) => [...new Set(ids.map((id) => String(dest[id]?.iso2 || '').toUpperCase()).filter(Boolean))];
     // T890: a name that is only the country a finder trip landed with
     // ("Italy" for a week in Rome) reads as its places, as on the trip page.
     const named = (name, ids) => {
@@ -352,6 +438,7 @@ function useHomeTrips(destinations) {
       months: x.meta.months,
       nights: x.meta.nights,
       stopCount: x.meta.stops.length,
+      iso2s: isoOf(x.meta.stops),
       status: x.meta.status,
       account: Boolean(x.meta.planId),
     }));
@@ -371,6 +458,7 @@ function useHomeTrips(destinations) {
         months: [],
         nights: nights > 0 ? nights : null,
         stopCount: ids.length,
+        iso2s: isoOf(ids),
         status: ids.length ? 'planned' : 'planning',
         account: true,
       };

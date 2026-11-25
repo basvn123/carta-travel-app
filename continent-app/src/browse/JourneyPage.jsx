@@ -563,7 +563,10 @@ export function JourneyPage({
     }).filter(Boolean)
     : [];
 
-  const planTrip = onPlanTrip || (trip.countryCode ? () => {
+  // G12 B2 (S8): the route's own stops go along (the seed places them on
+  // the catalogue), not only the country; the address form stays the
+  // fallback where no opener is wired.
+  const planTrip = onPlanTrip ? () => onPlanTrip(trip, stops) : (trip.countryCode ? () => {
     const url = `${window.location.pathname}?tab=trip&cc=${encodeURIComponent(trip.countryCode)}`;
     leaveTo(() => window.location.assign(url));
   } : null);

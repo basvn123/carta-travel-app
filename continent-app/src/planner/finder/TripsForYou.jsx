@@ -1,18 +1,33 @@
 import React, { Suspense, lazy, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button } from '../../components/ui/index.js';
+import { Button, Segmented } from '../../components/ui/index.js';
 import { CheckIcon, ListDayIcon, MapPinIcon, ScaleIcon } from '../../components/Icons.jsx';
 import { SheetHead } from '../flow/PlanStage.jsx';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { MAX_COMPARE } from '../../lib/recommend/compare.js';
-import { answersOf } from './finderHooks.js';
+import { answersKey } from './finderHooks.js';
 import { readSkips, writeSkips } from '../../lib/recommend/keptStore.js';
 import { TripCard } from './TripCard.jsx';
 import { TripCompare } from './TripCompare.jsx';
 import { SortMenu } from './SortMenu.jsx';
-import { PAGE, QUICK_FILTERS, SORTS, answersLine, filterTrips, sortTrips, totalLeavesOut } from './finderText.js';
+import { PAGE, QUICK_FILTERS, SORTS, answersLine, countryLabel, filterTrips, shortDuration, sortTrips, thereMinutes, totalLeavesOut, tripName } from './finderText.js';
+import { themedRows, rowWhy } from '../../lib/recommend/rows.js';
+import { useKept } from '../../lib/recommend/keptStore.js';
+import { libraryShortlist } from '../../lib/recommend/moreSearch.js';
+import { searchMoreInSteps } from '../../lib/recommend/searchMore.js';
+import { crowdTier, dayHighs } from '../../lib/recommend/compare.js';
+import { formatMoney } from '../../lib/money.js';
+import { monthName } from '../../lib/dates.js';
+import { diverseOrder } from '../../lib/recommend/diversify.js';
+import { bandFit, budgetSplit } from '../../lib/recommend/budgetCompass.js';
+import { haversineKm } from '../../lib/nearby.js';
+import { lessHint, lessOrder, likeThis, markOf } from '../../lib/recommend/moreLess.js';
+import { useHoldApp } from '../flow/StyleBar.jsx';
 
 /** The cheapest whole total in the list (the best-value pin), when two or more have one. */
+// The planner's own words for a trip shape (questions.js g:shape).
+const SHAPE_LABEL = { one: 'pf.o.shapeOne', towns: 'pf.o.shapeTowns', road: 'pf.o.shapeRoad', countries: 'pf.o.shapeCountries' };
+
 const cheapestOf = (trips) => {
   const whole = sortTrips(trips, 'cheapest').filter((x) => !totalLeavesOut(x) && Number.isFinite(x.total?.group ?? x.total?.perPerson));
   return whole.length > 1 ? whole[0].id : null;
@@ -23,15 +38,19 @@ const TripsMap = lazy(() => import('./TripsMap.jsx'));
 
 // From 1024 px the map stands beside the list (T880), as on Explore.
 const WIDE = '(min-width: 1024px)';
-function useWide() {
-  const [wide, setWide] = useState(() => typeof window !== 'undefined' && window.matchMedia?.(WIDE).matches);
+// G12 B7a (R7): below 820 px List and Map are two tabs at the top of the
+// results, not a floating pill the traveller has to find; 820 to 1023 px
+// keeps the pill, and from 1024 px the map stands beside the list.
+const PHONE = '(max-width: 819.98px)';
+function useWide(query = WIDE) {
+  const [wide, setWide] = useState(() => typeof window !== 'undefined' && Boolean(window.matchMedia?.(query).matches));
   useEffect(() => {
-    const mq = window.matchMedia?.(WIDE);
+    const mq = window.matchMedia?.(query);
     if (!mq) return undefined;
     const on = (e) => setWide(e.matches);
     mq.addEventListener('change', on);
     return () => mq.removeEventListener('change', on);
-  }, []);
+  }, [query]);
   return wide;
 }
 
@@ -42,7 +61,8 @@ function useWide() {
 // way (T868).
 const TICKS = new Map();
 const VIEW = new Map();
-const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from, s.places]);
+// G12 R4: More and Less like this, per answer set for this visit only.
+const MORE_LESS = new Map();
 
 const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
 
@@ -158,15 +178,73 @@ function useVisit(store, settings, fallback) {
  * (keptStore), Skip in its menu hides it for these answers; the hidden ones
  * are counted under the list with "Show them again".
  */
-export function TripsForYou({ settings, trips: found, destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
+export function TripsForYou({ input = null, settings, trips: found, pricing = 0, pinned = [], destinations, originName, home = null, markedId = null, onBack, onOpen, onReopen, onPlan, cardRefs, keeper, ui, headEnd = null, refine = null }) {
   const { t, lang } = useI18n();
   const [skips, setSkips] = useSkips(settings);
+  // G12 early results: a list that opened while pricing fades each new card
+  // in (opacity only, nothing slides; none under reduced motion).
+  const [arriving] = useState(() => pricing > 0);
+  // G12 R5: the kept trips, for the Like your saved row.
+  const keptList = useKept();
+  // G12 R6: Another month, cheaper, priced only on "Search more" (L0: the
+  // first run already takes 2 to 3.5 s on a desktop, so no extra pricing
+  // runs before the traveller asks). null = not asked, 'busy', then
+  // { month, library } (each [] when none found).
+  const [more, setMore] = useState(null);
+  const moreRun = useRef(0);
+  // A new answer set is a new list: an earlier search no longer applies.
+  // G12 early results: the list grows while it is priced, so only a new
+  // answer set (not each arriving card) clears it.
+  const listKey = answersKey(settings);
+  useEffect(() => { moreRun.current += 1; setMore(null); }, [listKey]);
+  const searchMore = () => {
+    const run = ++moreRun.current;
+    setMore({ month: [], library: [], left: null });
+    const ref = found[0] || null;
+    // G12 B7a (R6): Carta's own journeys that fit the window, loaded only
+    // now (a few small files), placed on catalogue towns and priced by the
+    // same engine as the list; the journey library loads in its own chunk.
+    // They load while the other months are priced.
+    const journeys = import('../../lib/journeys.js')
+      .then(({ loadAllJourneyCards, loadJourney }) => loadAllJourneyCards()
+        .then((cards) => Promise.all(libraryShortlist(cards, ref, { settings }).map((c) => loadJourney(c.id).catch(() => null)))))
+      .catch(() => []);
+    // G12 early results: each priced trip appends as it is ready (lib/recommend/searchMore.js).
+    searchMoreInSteps({
+      trips: found, input, ref, journeys,
+      alive: () => run === moreRun.current,
+      onSome: (some) => { if (run === moreRun.current) setMore(some); },
+    }).catch(() => { if (run === moreRun.current) setMore({ month: [], library: [], left: 0 }); });
+  };
+  const moreFound = more || null;
+  const moreBusy = Boolean(more) && more.left !== 0;
   const [sort, setSortState] = useVisit(VIEW, settings, { sort: 'match', map: false, side: true, quick: [] });
   const wide = useWide();
-  const kept = skips.length ? found.filter((x) => !skips.includes(x.id)) : found;
+  const phone = useWide(PHONE);
+  // G12 L8: under a ceiling the trips over it leave the list; up to three
+  // just over (within 10%) come back apart under "Just over".
+  const capped = budgetSplit(found, settings.guide?.budget);
+  const kept = skips.length ? capped.list.filter((x) => !skips.includes(x.id)) : capped.list;
+  const nearBy = capped.near.filter((x) => !skips.includes(x.trip.id));
   const quick = sort.quick || [];
-  const trips = sortTrips(filterTrips(kept, quick, destinations), sort.sort, destinations);
-  const hidden = found.length - kept.length;
+  const sorted = sortTrips(filterTrips(kept, quick, destinations), sort.sort, destinations);
+  // G12 R1: in the engine's own order rank 1 stays the pure best and the next
+  // five are picked to differ (country, shape, price band); the rest follow.
+  const [ml, setMl] = useVisit(MORE_LESS, settings, { more: null, less: [], undo: null });
+  // G12 R4: what was marked "Less like this" sinks softly (capped, never a filter).
+  // G12 early results: the cards shown while the list was priced (`pinned`)
+  // keep their slots; the rest of the diverse top set continues from them,
+  // and Less like this moves only the cards after them. While pricing, only
+  // the pinned cards show, whatever sort a past visit left.
+  const engineOrder = sort.sort === 'match' || pricing > 0;
+  const ordered = engineOrder ? diverseOrder(sorted, { pinned }) : sorted;
+  const firm = engineOrder ? pinned.filter((id) => sorted.some((x) => x.id === id)).length : 0;
+  const trips = pricing > 0 ? ordered.slice(0, firm) : [...ordered.slice(0, firm), ...lessOrder(ordered.slice(firm), ml.less)];
+  const moreOf = ml.more ? found.find((x) => x.id === ml.more) || null : null;
+  const likeRow = moreOf ? likeThis(moreOf, trips) : [];
+  const hint = lessHint(ml.less);
+  const app = useHoldApp();
+  const hidden = capped.list.length - kept.length;
   const focusNext = useRef(null);
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -224,6 +302,19 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     setSkips([...skips, trip.id]);
   };
 
+  const moreLike = (trip) => setMl({ ...ml, more: trip.id, undo: null });
+  const lessLike = (trip) => {
+    skipOne(trip);
+    setMl({ ...ml, less: [...ml.less.filter((x) => x.id !== trip.id), markOf(trip)], undo: trip.id });
+  };
+  const undoLess = () => {
+    setSkips(skips.filter((x) => x !== ml.undo));
+    setMl({ ...ml, less: ml.less.filter((x) => x.id !== ml.undo), undo: null });
+  };
+  const hintText = hint && (hint.kind === 'country'
+    ? countryLabel({ iso2: hint.iso2, country: hint.iso2 }, lang)
+    : t(SHAPE_LABEL[hint.shape] || 'pf.o.shapeTowns'));
+
   const toggle = (id) => {
     const live = ticked.map((x) => x.id);
     if (live.includes(id)) {
@@ -237,31 +328,89 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
     }
   };
 
-  const cheapestId = cheapestOf(trips);
+  // G12 early results: the cheapest tag needs the whole list, and a tag added
+  // to a card shown while pricing would grow it and push the cards below; so
+  // it waits for the list and never lands on a card shown before that.
+  const cheapestId = pricing > 0 ? null : cheapestOf(trips);
+  const tagged = cheapestId && !pinned.includes(cheapestId) ? cheapestId : null;
+  // G12 L12 (decision §3.4, 0013): the past trip's own logged spend a day, as
+  // a reference line only. It is the traveller's figure, not like for like
+  // with Carta's totals, so it never sets a budget, sorts, or is compared.
+  const band = bandFit(trips, settings.guide?.budget);
+  const ref = settings.spendRef;
+  const spendLine = ref?.eurPP > 0 && ref.nights > 0
+    ? t('tf.spendRef', { name: [ref.label, ref.year || ''].filter(Boolean).join(' '), eur: formatMoney(ref.eurPP / ref.nights, { locale: lang }) })
+    : '';
+  // G12 R2: themed rows from the trips already priced, under the best pick
+  // and the diverse five, only in the engine's own order with no quick
+  // filter (a sort or a filter is the traveller's own way to keep looking).
+  // G12 B5: the straight-line distance from home, for Close by when the flight times are missing.
+  const kmFromHome = (x) => {
+    const d = destinations?.[x.places?.[0]?.id];
+    const lat = d?.city_lat ?? d?.lat;
+    const lon = d?.city_lon ?? d?.lon;
+    if (!Number.isFinite(home?.lat) || !Number.isFinite(home?.lon) || !Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+    return haversineKm(home.lat, home.lon, lat, lon);
+  };
+  const acc = { minutes: thereMinutes, km: kmFromHome, highs: (x) => dayHighs(x, destinations), crowd: (x) => crowdTier(x, destinations) };
+  // G12 early results: rows read the whole priced list (a row's order would
+  // shift with each new trip), so they come below the top set once pricing ends.
+  const rows = sort.sort === 'match' && !quick.length && !onMap && !pricing
+    ? themedRows(trips, { ...acc, settings, kept: keptList, topIds: trips.slice(0, PAGE).map((x) => x.id) })
+    : [];
+  const rowTitle = (r) => {
+    if (r.key === 'near' && r.basis === 'km') return t('tf.row.nearKm');
+    if (r.key === 'warm') return r.month ? t('tf.row.warm', { month: monthName(r.month, lang) }) : t('tf.row.warmAny');
+    if (r.key === 'past') return t('tf.row.past', { name: r.name });
+    return t(`tf.row.${r.key}`);
+  };
+  const whyText = (r, trip) => {
+    const w = rowWhy(r, trip, acc);
+    if (!w) return '';
+    if (w.key === 'tf.row.less') return t(w.key, { eur: formatMoney(w.eur, { locale: lang }) });
+    if (w.key === 'tf.row.time') return t(w.key, { time: shortDuration(t, w.minutes) });
+    if (w.key === 'tf.row.high') return t(w.key, { c: w.c });
+    if (w.key === 'tf.row.km') return t(w.key, { km: new Intl.NumberFormat(lang).format(w.km) });
+    if ('country' in w || 'name' in w) return t(w.key, { country: w.country || '', name: w.name || '' });
+    return t(w.key, { month: monthName(w.month, lang) });
+  };
+  // "All n" opens the row's sort on the full list below.
+  const showAll = (r) => { setSort(r.sort); titleRef.current?.scrollIntoView?.({ block: 'start' }); };
   // The top pick takes a whole row while the list is in the engine's order (T879).
-  const featId = sort.sort === 'match' && trips.length > 2 ? trips[0].id : null;
-  const card = (trip, { feat = false } = {}) => (
+  // G12 early results: counted with the trips still to price, so rank 1 does
+  // not change its size when the third card arrives.
+  const featId = engineOrder && trips.length + pricing > 2 ? trips[0].id : null;
+  const card = (trip, { feat = false, why = '' } = {}) => (
     <TripCard
       trip={trip}
       destinations={destinations}
       feat={feat}
-      best={trip.id === cheapestId}
+      why={why}
+      best={trip.id === tagged}
       marked={trip.id === markedId}
       onOpen={onOpen}
       compare={{ ticked: ticks.includes(trip.id), refused: refused === trip.id, full: ticked.length >= MAX_COMPARE, onToggle: toggle }}
-      keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne }}
+      keep={{ kept: keeper.isKept(trip.id), onKeep: keeper.toggle, onSkip: skipOne, onMore: moreLike, onLess: lessLike }}
       ref={(el) => { if (el) cardRefs.current.set(trip.id, el); else cardRefs.current.delete(trip.id); }}
     />
   );
 
   return (
-    <div className="pf-step tff-trips">
+    <div className={`pf-step tff-trips${arriving ? ' is-arriving' : ''}`}>
       <SheetHead onBack={onBack} backLabel={t('pf.back')} end={headEnd} />
       <div className="tff-head">
+        {/* G12 early results: no count until every trip is priced, so the head never claims a partial number. */}
         <h2 className="pf-title tff-title" tabIndex={-1} ref={titleRef} aria-live="polite">
-          {t(trips.length === 1 ? 'tf.list.titleOne' : 'tf.list.titleN', { n: trips.length })}
+          {pricing > 0 ? t('tf.list.title') : t(trips.length === 1 ? 'tf.list.titleOne' : 'tf.list.titleN', { n: trips.length })}
         </h2>
       </div>
+      {spendLine && <p className="tff-spendref">{spendLine}</p>}
+      {/* G12 L15: a Vrienden group's band, the trips that fit everyone (only those that can be judged).
+          G12 early results: its line is held empty while pricing, so the cards under it do not move when it fills. */}
+      {pricing > 0 && settings.guide?.budget?.mode === 'band' && <p className="tff-spendref" data-band="" aria-hidden="true">{' '}</p>}
+      {!pricing && band && band.judged > 0 && (
+        <p className="tff-spendref" data-band="">{t('tf.band.line', { eur: formatMoney(band.eur, { locale: lang }), n: band.fits, m: band.judged })}</p>
+      )}
       {answers.chips.length > 0 && (
         <ul className="tff-answers" aria-label={t('tf.chip.change')}>
           {answers.chips.map((c) => (
@@ -277,7 +426,11 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
       {/* T1103: after the short setup, the way to fit the trips closer. */}
       {refine}
 
-      <div className="tff-toolbar" role="toolbar" aria-label={t('tf.quick.label')}>
+      {/* G12 early results: a sort or filter would reorder cards that are still
+          arriving, so the toolbar waits for the whole list (React 18 has no
+          boolean inert, so it is written as an empty string). */}
+      <div className={`tff-toolbar${pricing > 0 ? ' is-waiting' : ''}`} role="toolbar" aria-label={t('tf.quick.label')}
+        inert={pricing > 0 ? '' : undefined} aria-disabled={pricing > 0 || undefined}>
         <SortMenu label={t('tf.sort.label')} value={sort.sort} onChange={setSort}
           options={SORTS.map((v) => ({ key: v, label: t(`tf.sort.${v}`) }))} />
         {ticked.length >= 2 && (
@@ -301,6 +454,37 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         )}
       </div>
 
+      {phone && trips.length > 0 && (
+        <Segmented size="sm" block className="tff-viewtabs" label={t('tf.view.label')} value={onMap ? 'map' : 'list'}
+          onChange={(v) => setMap(v === 'map')}
+          options={[
+            { value: 'list', label: t('explore.viewList'), icon: <ListDayIcon size={16} /> },
+            { value: 'map', label: t('explore.viewMap'), icon: <MapPinIcon size={16} /> },
+          ]} />
+      )}
+      {ml.undo && (
+        <p className="tff-ml-note" role="status">
+          <span>{t('tf.ml.lessDone')}</span>
+          <Button variant="quiet" size="sm" onClick={undoLess}>{t('pf.delta.undo')}</Button>
+        </p>
+      )}
+      {hint && app?.travelStyles?.setOpen && (
+        <p className="tff-ml-note">
+          <span>{t('tf.ml.hint', { what: hintText })}</span>
+          <Button variant="quiet" size="sm" onClick={() => app.travelStyles.setOpen({ view: 'overview' })}>{t('tf.ml.hintGo')}</Button>
+        </p>
+      )}
+      {likeRow.length > 0 && (
+        <section className="tff-row tff-ml-row" aria-labelledby="tff-ml-h">
+          <div className="tff-row-head">
+            <h3 className="tff-row-title" id="tff-ml-h">{t('tf.ml.rowTitle', { name: tripName(moreOf, destinations, lang) })}</h3>
+            <Button variant="quiet" size="sm" onClick={() => setMl({ ...ml, more: null })}>{t('pf.delta.undo')}</Button>
+          </div>
+          <ul className="tff-row-cards" aria-labelledby="tff-ml-h">
+            {likeRow.map((trip) => <li key={trip.id}>{card(trip)}</li>)}
+          </ul>
+        </section>
+      )}
       {(() => {
         const empty = !trips.length && quick.length > 0 && (
           <div className="tff-none" role="status">
@@ -308,16 +492,88 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
             <Button variant="secondary" size="sm" onClick={() => setSortState({ ...sort, quick: [] })}>{t('tf.quick.clear')}</Button>
           </div>
         );
-        const list = (
-          <ol className="tff-list">
-            {trips.slice(0, shown).map((trip) => (
-              <li key={trip.id} className={[trip.id === featId ? 'is-feat' : '', trip.id === hotId ? 'is-hot' : ''].filter(Boolean).join(' ') || undefined}
-                onMouseEnter={side ? () => setHotId(trip.id) : undefined} onMouseLeave={side ? () => setHotId(null) : undefined}
-                ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
-                {card(trip, { feat: trip.id === featId })}
-              </li>
-            ))}
-          </ol>
+        const item = (trip) => (
+          <li key={trip.id} className={[trip.id === featId ? 'is-feat' : '', trip.id === hotId ? 'is-hot' : ''].filter(Boolean).join(' ') || undefined}
+            onMouseEnter={side ? () => setHotId(trip.id) : undefined} onMouseLeave={side ? () => setHotId(null) : undefined}
+            ref={(el) => { if (el) items.current.set(trip.id, el); else items.current.delete(trip.id); }}>
+            {card(trip, { feat: trip.id === featId })}
+          </li>
+        );
+        // G12 early results: one quiet line while trips are still priced; it
+        // sits under the cards, so it goes without moving any of them.
+        const pricingLine = (n) => (
+          <p className="tff-pricing">
+            <span className="tff-pricing-dot" aria-hidden="true" />
+            {n == null ? t('tf.more.busy') : t(n === 1 ? 'tf.list.pricingOne' : 'tf.list.pricingN', { n })}
+          </p>
+        );
+        // G12 B7a: Search more also under a list with no themed rows yet (a
+        // small pool, a sort or a filter): the extra pricing still waits for the tap.
+        // G12 early results: it waits for the list itself, and its trips
+        // append as each is priced (lib/recommend/searchMore.js).
+        const searchMoreSection = input && trips.length > 0 && !pricing && (
+          <section className="tff-search-more" aria-busy={moreBusy || undefined}>
+            {moreFound ? (
+              <>
+                {moreFound.month.length > 0 && (
+                  <>
+                    <h3 className="tff-rows-h">{t('tf.row.month')}</h3>
+                    <ul className="tff-row-cards">
+                      {moreFound.month.map((m) => (
+                        <li key={m.trip.id}>{card(m.trip, { why: t('tf.row.monthWhy', { month: monthName(m.month, lang), eur: formatMoney(-m.diff, { locale: lang }) }) })}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                {moreFound.library.length > 0 && (
+                  <>
+                    <h3 className="tff-rows-h">{t('tf.row.carta')}</h3>
+                    <ul className="tff-row-cards">
+                      {moreFound.library.map((trip) => (
+                        <li key={trip.id}>{card(trip, { why: t('tf.row.cartaWhy', { title: trip.library.title }) })}</li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+                {moreBusy && pricingLine(moreFound.left)}
+                {!moreBusy && !moreFound.month.length && !moreFound.library.length && <p className="tff-spendref" role="status">{t('tf.more.none')}</p>}
+              </>
+            ) : (
+              <Button variant="secondary" size="sm" onClick={searchMore}>{t('tf.more.search')}</Button>
+            )}
+          </section>
+        );
+        // G12 R2: with rows, the best pick and the diverse five, then the
+        // rows, then the rest of the list under "Keep looking".
+        const list = rows.length ? (
+          <>
+            <ol className="tff-list">{trips.slice(0, PAGE).map(item)}</ol>
+            <section className="tff-rows" aria-labelledby="tff-rows-h">
+              <h3 className="tff-rows-h" id="tff-rows-h">{t('tf.row.label')}</h3>
+              {rows.map((r) => (
+                <div key={r.key} className="tff-row">
+                  <div className="tff-row-head">
+                    <h4 className="tff-row-title">{rowTitle(r)}</h4>
+                    <Button variant="quiet" size="sm" aria-label={t('tf.row.allOf', { n: r.n, row: rowTitle(r) })} onClick={() => showAll(r)}>
+                      {t('tf.row.all', { n: r.n })}
+                    </Button>
+                  </div>
+                  <ul className="tff-row-cards" aria-label={rowTitle(r)}>
+                    {r.trips.map((trip) => <li key={trip.id}>{card(trip, { why: whyText(r, trip) })}</li>)}
+                  </ul>
+                </div>
+              ))}
+            </section>
+            {searchMoreSection}
+            {trips.length > PAGE && <h3 className="tff-more-h">{t('tf.list.keepLooking')}</h3>}
+            {shown > PAGE && <ol className="tff-list">{trips.slice(PAGE, shown).map(item)}</ol>}
+          </>
+        ) : (
+          <>
+            <ol className="tff-list">{trips.slice(0, shown).map(item)}</ol>
+            {pricing > 0 && pricingLine(pricing)}
+            {searchMoreSection}
+          </>
         );
         const map = (
           <Suspense fallback={<div className="tff-map is-loading" aria-busy="true"><span className="sr-only">{t('state.loading')}</span></div>}>
@@ -347,7 +603,7 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         }
         return empty || list;
       })()}
-      {!wide && trips.length > 0 && (
+      {!wide && !phone && trips.length > 0 && (
         <div className="tff-fab-slot">
           <Button variant="secondary" size="sm" className="tff-fab" iconStart={onMap ? <ListDayIcon size={16} /> : <MapPinIcon size={16} />} onClick={() => setMap(!onMap)}>
             {t(onMap ? 'explore.viewList' : 'explore.viewMap')}
@@ -364,6 +620,19 @@ export function TripsForYou({ settings, trips: found, destinations, originName, 
         <div className="tff-more">
           <Button variant="quiet" onClick={() => setShown(shown + PAGE)}>{t('tf.list.more')}</Button>
         </div>
+      )}
+      {!onMap && !pricing && capped.out > 0 && (
+        <section className="tff-near" aria-labelledby="tff-near-h" data-near="">
+          <h3 className="tff-rows-h" id="tff-near-h">{t('tf.near.title')}</h3>
+          <p className="tff-near-note">{t('tf.near.out', { n: capped.out })}</p>
+          {nearBy.length > 0 && (
+            <ul className="tff-row-cards" aria-labelledby="tff-near-h">
+              {nearBy.map(({ trip, verdict }) => (
+                <li key={trip.id}>{card(trip, { why: t(settings.guide?.budget?.kind === 'day' ? 'tf.near.whyDay' : 'tf.near.why', { eur: formatMoney(verdict.gap, { locale: lang }) }) })}</li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
       {comparing && ticked.length >= 2 && (
         <TripCompare

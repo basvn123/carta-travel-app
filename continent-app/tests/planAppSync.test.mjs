@@ -49,3 +49,13 @@ test("party parts", () => {
   assert.deepEqual(app.calls.party, { adults: 2, children: 1, babies: 0 });
   syncParty(null, { adults: 1, kids: 0, babies: 0 });
 });
+
+test("G12 §12: a When prefilled from Explore and confirmed syncs back the same window", async () => {
+  const { exploreAnswers, seedToSettings } = await import("../src/lib/plan/seed.js");
+  const model = { whenSet: true, dateMode: "month", month: "2027-05", nightsSet: true, tripNights: 5, nights: 5 };
+  const s = seedToSettings({}, { explore: exploreAnswers(model) });
+  assert.equal(s.sources.when, "explore");
+  const app = fakeApp();
+  syncWhen(app, s.when, new Date(2026, 10, 3));
+  assert.deepEqual(app.calls, { flex: "month", depart: "2027-05-01", ret: "2027-05-06" });
+});

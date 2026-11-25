@@ -1,0 +1,10 @@
+{
+  "_note": "G12 browser pass 2: a model parse as parse-booking receives it from Gemini (two flight confirmations and a hotel, one file), before sanitizeParsed. Invented booking, no real person or code.",
+  "bookings": [
+    { "kind": "flight_out", "title": "TAP Air Portugal TP 643", "city": "Lisbon", "code": "XK7Q2P", "eur": 212.4, "amount": 212.4, "currency": "EUR", "link": "", "date": "2027-05-03" },
+    { "kind": "flight_home", "title": "TAP Air Portugal TP 644", "city": "Brussels", "code": "XK7Q2P", "eur": 198, "amount": 198, "currency": "EUR", "link": "", "date": "2027-05-10" },
+    { "kind": "stay", "title": "Hotel Alfama", "city": "Lisbon", "code": "4471", "eur": 640, "amount": 640, "currency": "EUR", "link": "https://example.com/booking/4471", "date": "2027-05-03" }
+  ],
+  "activities": [],
+  "summary": "Return flights to Lisbon and seven nights in a hotel."
+}

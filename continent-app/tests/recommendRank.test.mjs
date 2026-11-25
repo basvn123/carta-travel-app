@@ -67,10 +67,35 @@ const fakeTrip = (id, placeId, perPerson, extra = {}) => {
 test("the budget ruler: under is negative, over positive, none is null", () => {
   const s = settings();
   const t = fakeTrip("t1", "a", 884);
-  assert.deepEqual(budgetRuler(t, s), { eur: 1000, delta: -116 });
-  assert.deepEqual(budgetRuler(fakeTrip("t2", "a", 1100), s), { eur: 1000, delta: 100 });
+  assert.deepEqual(budgetRuler(t, s), { eur: 1000, kind: "total", delta: -116 });
+  assert.deepEqual(budgetRuler(fakeTrip("t2", "a", 1100), s), { eur: 1000, kind: "total", delta: 100 });
   assert.equal(budgetRuler(t, settings({ budget: { kind: "total", eur: 0 } })), null);
-  assert.equal(budgetOf(settings({ budget: { kind: "day", eur: 100 } }), 7), 700);
+  // G12 (L1): a day budget stays a day figure, never times the nights.
+  assert.deepEqual(budgetOf(settings({ budget: { kind: "day", eur: 100 } })), { eur: 100, kind: "day" });
+});
+
+test("G12 L1: a day budget holds bed and days a night against it, never the whole trip with its flight", () => {
+  const s = settings({ budget: { kind: "day", eur: 100 } });
+  // Two people, 7 nights: beds 840 + days 560 for the group = 100 a person a night.
+  const quote = { parts: { beds: 840, days: 560, flights: 600 } };
+  const withQuote = (perPerson) => {
+    const t = { ...fakeTrip("d", "a", perPerson), party: { adults: 2, children: 0, babies: 0, head: 2 } };
+    Object.defineProperty(t, "quote", { value: quote, enumerable: false });
+    return t;
+  };
+  // The whole trip is 1,400 a person; the old ruler read 1,400 against 700 (100 x 7) and called it 700 over.
+  assert.deepEqual(budgetRuler(withQuote(1400), s), { eur: 100, kind: "day", delta: 0 });
+  const tight = settings({ budget: { kind: "day", eur: 80 } });
+  assert.deepEqual(budgetRuler(withQuote(1400), tight), { eur: 80, kind: "day", delta: 20 });
+  // No quote, no day spend: unknown, never "within budget".
+  assert.deepEqual(budgetRuler(fakeTrip("n", "a", 900), s), { eur: 100, kind: "day", delta: null });
+  const over = catchFor(withQuote(1400), { info: { conflicts: [], bars: [] }, budget: budgetRuler(withQuote(1400), tight) });
+  assert.equal(over.key, "tf.catch.budgetDay");
+  // G12 price floor: rankTrips copies each trip, which drops the hidden
+  // quote; the ranked trip still reads its day spend (it read "Not yet" before).
+  const [ranked] = rankTrips([withQuote(1400)], { settings: tight, data: FAKE });
+  assert.deepEqual(ranked.budget, { eur: 80, kind: "day", delta: 20 });
+  assert.equal(ranked.unpriced, false, "a day budget judges a priced trip");
 });
 
 test("the budget ranks: a trip over it sinks by the configured amount", () => {
@@ -84,6 +109,20 @@ test("the budget ranks: a trip over it sinks by the configured amount", () => {
   const o2 = withBudget.find((t) => t.id === "over");
   // 0.3 points (of 10) a hundred euros over, on the blend's 0..1 scale (T884).
   assert.ok(Math.abs((o1.score - o2.score) - ((400 / 100) * 0.3) / 10) < 1e-9);
+});
+
+test("G12 judge round 3: under a budget a trip with a Not yet line ranks after the fully priced ones", () => {
+  // Echo fits better and rates higher, but its flight is Not yet: its total
+  // leaves the flight out, so it is not judged against the budget.
+  const notYet = fakeTrip("notyet", "e", 700);
+  notYet.slots = notYet.slots.map((x) => (x.id === "flight" ? slotRow("flight", null) : x));
+  notYet.total = slotTotals(notYet.slots);
+  const trips = [notYet, fakeTrip("fits", "a", 900)];
+  const ranked = rankTrips(trips, { settings: settings(), data: FAKE });
+  assert.deepEqual(ranked.map((t) => t.id), ["fits", "notyet"]);
+  // No budget: nothing is unpriced, the better place leads as before.
+  const none = rankTrips(trips, { settings: settings({ budget: { kind: "total", eur: 0 } }), data: FAKE });
+  assert.equal(none[0].id, "notyet");
 });
 
 test("fit first: a trip whose main like reads under the minimum ranks below", () => {
@@ -190,7 +229,7 @@ test("the example answers: every trip carries a match or null, up to 3 reasons a
     assert.ok(t.reasons.length <= 3);
     for (const r of t.reasons) assert.ok(r.key.startsWith("tf.reason."), r.key);
     assert.ok(t.catch && t.catch.key.startsWith("tf.catch."), `${t.country} has a catch`);
-    assert.deepEqual(t.budget, { eur: 1200, delta: t.total.perPerson - 1200 });
+    assert.deepEqual(t.budget, { eur: 1200, kind: "total", delta: t.total.perPerson - 1200 });
     assert.deepEqual(t.slots.map((s) => s.id), SLOT_ROWS.map((r) => r.id));
   }
   for (let i = 1; i < trips.length; i++) {

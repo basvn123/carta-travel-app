@@ -78,6 +78,7 @@ import { useSavedLists, loadSavedLists, noteSaved, createList, setNote } from '.
 import { scrollBehavior } from '../lib/motion.js';
 import { TodayCard } from './mytrips/TodayCard.jsx';
 import { UnitSheet, UnitButton, RateTrip, tripInUnit, unitWords } from './mytrips/TripParts.jsx';
+import { pastAgainSeed } from '../lib/plan/seedWriters.js';
 import { shareRouteImage } from './mytrips/atlas/routeImage.js';
 import { project } from './mytrips/atlas/project.js';
 
@@ -274,7 +275,9 @@ export function SavedTripsPanel({
   // The day-cost map Explore prints from, and the Lifestyle the trip planner
   // prices with, so every figure here is the figure there.
   costs = null, stayTier = 'home', lifestyle = null,
-  onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null,
+  onOpenFriends = null, onOpenDeviceTrip = null, onPlanStops = null, onPlanKept = null, onPlanTripCountry = null,
+  // G12 B3 (L5): My trips' plan buttons hand Plan a seed (App's openPlan), not a bare tab.
+  onPlanSeed = null,
   // T659: Plan's "Add a past trip" opens My trips on the past-trip form.
   startWithPast = false, onPastStarted = null,
   // G12 Phase C: the "Prijzen tonen" setting the trip plate and the rows
@@ -1318,6 +1321,18 @@ export function SavedTripsPanel({
       const open = openMemory === x.id;
       const mem = x.mem;
       const edit = () => openPastForm(x.kind === 'plan' ? editableFromPlan(x.item, mem) : editableFromDayPlan(x.item, mem));
+      // G12 L12: plan again, somewhere new, from this trip: its length, month
+      // and party, every country been after the new ones, and its own spend
+      // as a reference line only (decision 0013).
+      const again = onPlanSeed ? () => onPlanSeed(pastAgainSeed({
+        id: x.id,
+        name: x.title,
+        start: plain?.start || x.item?.start_date || '',
+        nights: x.nights,
+        stops: (x.ids || []).length,
+        spendPP: x.spendPP,
+        party: mem?.travellers ? { adults: Number(mem.travellers.adults) || 0, kids: Number(mem.travellers.children) || 0 } : null,
+      }, { been: [...beenIso] })) : null;
       return {
         ...row,
         year: tripYear(plain) ?? yearOf(x.end),
@@ -1338,6 +1353,7 @@ export function SavedTripsPanel({
               </span>
             )}
             {mem && !mem.photos?.length && <Button size="sm" iconStart={<CameraIcon size={14} />} onClick={edit}>{t('mt.addPhotos')}</Button>}
+            {again && <Button size="sm" variant="quiet" onClick={again}>{t('mt.planAgain')}</Button>}
           </div>
         ) : row.below && !mem ? row.below : null,
       };
@@ -1525,7 +1541,12 @@ export function SavedTripsPanel({
               friendsShared={friendTrips.length}
               friendFaces={ownersOf(friendTrips)}
               onOpenFriends={onOpenFriends}
-              onPlanTrip={() => onGoToTab?.('planstart')}
+              // G12 L5: with past trips, plan again somewhere new (the
+              // countries been are the seed's avoidIso2; the finder honours
+              // it in B6); else the door on Plan home.
+              onPlanTrip={() => (pastTrips.length > 0 && beenIso.size > 0 && onPlanSeed
+                ? onPlanSeed({ source: 'past', avoidIso2: [...beenIso] })
+                : onGoToTab?.('planstart'))}
               onAllInPlan={() => onGoToTab?.('planstart')}
               onSignIn={onOpenAuth}
               signInLine={!devicePlan}
@@ -1563,7 +1584,8 @@ export function SavedTripsPanel({
                 <>
                   {/* Kept trips from the trip finder (T806): planning one hands
                       its plan to the Plan tab, which opens the planner on it. */}
-                  <KeptTrips onPlan={(r) => { holdPlan(r.plan); onGoToTab?.('trip'); }} />
+                  {/* G12 B2: through App's openPlan, which keeps the finder's priced plan. */}
+                  <KeptTrips onPlan={(r) => { if (onPlanKept) onPlanKept(r.plan); else { holdPlan(r.plan); onGoToTab?.('trip'); } }} />
                   {onOpenFeature && <SavedJourneys onOpen={(id) => onOpenFeature('journey', { id })} />}
                 </>
               )}
@@ -1609,9 +1631,14 @@ export function SavedTripsPanel({
             onToggle={(cc) => { toggleIso(cc); setCountry(''); }}
             onShowSaved={() => { setSavedCc(countryInfo.cc); setCountry(''); pickTab('saved'); }}
             onPlan={() => {
-              const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc).map((r) => r.id);
+              // G12 B2: the saved towns as stops ({ dest, nights }, the shape
+              // openTripInPlanner reads; bare ids were dropped there), else the
+              // country itself as the place to plan.
+              const stops = shortRows.filter((r) => r.kind === 'dest' && (r.cc || destinations[r.id]?.iso2) === countryInfo.cc)
+                .map((r) => ({ dest: r.id, nights: 2, dayActivities: [] }));
               setCountry('');
               if (stops.length && onPlanStops) onPlanStops(stops);
+              else if (onPlanTripCountry) onPlanTripCountry(countryInfo.cc);
               else onGoToTab?.('planstart');
             }}
           />

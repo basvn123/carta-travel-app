@@ -33,6 +33,8 @@ export const QUESTIONS = {
     },
   },
   who: { titleKey: 'pf.q.who', custom: true },
+  // G12 §12: the children's ages, asked whenever children come (a style holds the count only).
+  ages: { titleKey: 'pf.q.ages', custom: true },
   sleep: { titleKey: 'pf.q.sleep', custom: true },
   // T862: where to sleep alone (Tell Carta's stay chip); it answers sleep.
   stay: { titleKey: 'pf.q.stay', custom: true },

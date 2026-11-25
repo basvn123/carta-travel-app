@@ -15,6 +15,20 @@ import { PROFILES } from '../src/lib/lifestyleProfiles.js';
 
 const family = () => styleFromTemplate('family');
 
+test('G12: the lists a style answered survive the account sync (user_settings.settings jsonb)', async () => {
+  const { mergeAccountChoices } = await import('../src/lib/taste.js');
+  const { exploreFromTaste, mergeStyles } = await import('../src/lib/travelStyles.js');
+  const s = normalizeStyle({ ...family(), id: 's1', explore: { ...family().explore, likes: [], avoid: [], answered: ['likes', 'avoid'] } });
+  const store = normalizeStyles({ list: [s], active: 's1' });
+  // The push writes choices whole into the jsonb blob; the pull reads it back.
+  const pulled = JSON.parse(JSON.stringify({ choices: { travel_styles: store } }));
+  const onDevice = mergeAccountChoices({ travel_styles: normalizeStyles({ list: [], active: '' }) }, pulled.choices);
+  assert.deepEqual(activeStyle(onDevice.travel_styles).explore.answered, ['likes', 'avoid'], 'a fresh device');
+  const merged = mergeStyles(store, pulled.choices.travel_styles);
+  assert.deepEqual(merged.list[0].explore.answered, ['likes', 'avoid'], 'merged by id');
+  assert.deepEqual(exploreFromTaste(s, { likes: ['food'] }).explore.answered, ['likes', 'avoid'], 'a taste write-back keeps it');
+});
+
 test('every template makes a whole, valid style', () => {
   for (const id of TEMPLATE_IDS) {
     const s = styleFromTemplate(id);
@@ -145,9 +159,10 @@ test('the planner passes over what the style answered, never the trips', () => {
   const open = openGuideQuestions(s);
   assert.ok(!open.includes('g:shape') && !open.includes('g:persona') && !open.includes('g:around'));
   assert.ok(open.includes('g:likes') && open.includes('g:budget'));
-  // continueTo with the guide's skip list jumps the style's, the setup's
-  // default (words only) does not, so the Who screen still shows the style.
-  assert.equal(continueTo(['tell', 'who', 'when'], 'tell', s), 'who');
+  // G12 §12 (the question rule): the setup passes over what the style
+  // holds too, so Who is not asked with a style; the style switch on every
+  // step is where another style is picked for this trip.
+  assert.equal(continueTo(['tell', 'who', 'when'], 'tell', s), 'when');
   const k = continueTo(list, 'g:persona', s, TRIPS_SCREEN, GUIDE_SKIP);
   assert.ok(!['g:shape'].includes(k));
 });
@@ -423,4 +438,33 @@ test('signing in keeps every priced choice of a held trip', async () => {
   const out = mergeAccountChoices(local, { travel_styles: st, ...choicesFromStyle(fam) });
   for (const k of ['group_size', 'children', 'stay_tier', 'transport_mode']) assert.equal(out[k], local[k], k);
   assert.equal(out.style_held, true);
+});
+
+// G12 browser pass 2 (decision §12): a likes or avoid list the traveller
+// saved empty in the Style Studio ("no preference") holds that question; a
+// list never set (an old style, or a step an early Save skipped) asks it.
+test('an empty likes or avoid list holds only when the traveller chose it', async () => {
+  const { withAnswered } = await import('../src/browse/styles/studioSteps.js');
+  const { styleDraftOfTrip } = await import('../src/planner/flow/styleSeed.js');
+  const base = { id: 's', name: 'Plain', who: { kind: 'couple', adults: 2 }, explore: { shapes: ['towns'], likes: [], avoid: [], around: 'public' } };
+  const never = newTripSettings(base);
+  assert.ok(!never.answered.includes('g:likes') && !never.answered.includes('g:avoid'), 'never set: both asked');
+  // The Studio: likes and avoid passed with Next, nothing picked.
+  const saved = normalizeStyle(withAnswered(base, new Set(['name', 'likes', 'avoid'])));
+  assert.deepEqual(saved.explore.answered, ['likes', 'avoid']);
+  const held = newTripSettings(saved);
+  assert.equal(held.sources['g:likes'], 'style');
+  assert.equal(held.sources['g:avoid'], 'style');
+  assert.deepEqual(held.guide.avoid, []);
+  // An early Save before the avoid step: avoid stays a question.
+  const early = newTripSettings(normalizeStyle(withAnswered(base, new Set(['name', 'likes']))));
+  assert.ok(early.answered.includes('g:likes') && !early.answered.includes('g:avoid'));
+  // Saved earlier stays saved; a full list always holds.
+  assert.deepEqual(withAnswered(saved, new Set()).explore.answered, ['likes', 'avoid']);
+  assert.ok(newTripSettings({ ...base, explore: { ...base.explore, avoid: ['crowds'] } }).answered.includes('g:avoid'));
+  // Old stored styles carry no mark: unchanged, asked.
+  assert.deepEqual(normalizeStyle(base).explore.answered, []);
+  // "Save as travel style" from a trip that answered avoid with nothing.
+  const trip = normalizeSettings({ ...defaultSettings(), answered: ['g:avoid'], guide: { ...defaultSettings().guide, avoid: [] } });
+  assert.deepEqual(normalizeStyle(styleDraftOfTrip(trip)).explore.answered, ['avoid']);
 });

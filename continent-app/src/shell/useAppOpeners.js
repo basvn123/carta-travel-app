@@ -1,12 +1,19 @@
 import { useCallback, useState, useEffect, useRef } from 'react';
 import { readJourneyFromUrl } from '../lib/journeys.js';
 import { countryFromHash, countryHash } from '../lib/urlState.js';
+import { emptySeed, exploreAnswers, makeSeed, routeSeed, seedToSharedTrip, seedTripPatch } from '../lib/plan/seed.js';
+import { plannerStore } from '../planner/plannerStore.js';
+import { draftPatch, fromDraft } from '../planner/flow/tripSettings.js';
+import { choiceStop, friendsSeed, openTripOf, placeSeed, routeSeedOf } from '../lib/plan/seedWriters.js';
+import { loadTripDraft } from '../planner/tripDraftStore.js';
+import { tripsStore } from '../planner/tripsStore.js';
+import { holdPlan } from '../lib/recommend/keptStore.js';
 
 export function useAppOpeners({
   goToTab, setCountryFilter, setPendingBeach, setPendingCategory, setPendingCountry,
   setPendingCycle, setPendingDaySeed, setPendingLake, setPendingMountain, setPendingRegion,
   setPendingSharedTrip, setPendingTrail, setPendingTrip, setPendingTripPlanId,
-  setPendingTripSeed,
+  setPendingAddStop = null, planCtxRef = null,
 }) {
   // The six category tiles (T498, roadmap 1.3b A) and every door that names
   // a layer come through here. The country travels with the traveller
@@ -66,40 +73,73 @@ export function useAppOpeners({
     // Once, at boot: the id is read once and never changes.
   }, [bootJourney, goToTab, setPendingCategory]);
 
-  // A published itinerary handed to the trip planner, where every stop, night
-  // and date stays editable. It goes in through the same door a shared trip
-  // uses, so the planner needs no new code path for it.
-  const openTripInPlanner = useCallback((trip) => {
-    const stops = (trip.stops || [])
-      // T942: a stop from Saved may carry day activities (a trail or a beach
-      // at its nearest town), by name, as the planner keeps them.
-      .map((st) => ({
-        destinationId: st.dest,
-        nights: st.nights,
-        activities: Array.isArray(st.dayActivities) ? st.dayActivities.slice(0, 20).map((a) => String(a).slice(0, 80)) : [],
-      }))
-      .filter((st) => st.destinationId && st.nights);
-    if (!stops.length) return;
-    // The published trip already says how each hop is made: bus here, train
-    // there, a ferry where there is water. That was thrown away at this door,
-    // so a traveller who had just read "bus to Barcelona" arrived in the
-    // planner and was asked how they were getting to Barcelona. The legs keep
-    // their modes, keyed by leg index the way the planner keys them.
-    const legModes = {};
-    (trip.legs || []).forEach((leg, i) => {
-      if (leg?.mode) legModes[i] = leg.mode === 'drive' ? 'car' : leg.mode;
-    });
-    setPendingSharedTrip({
-      stops,
-      label: trip.name || '',
-      transportPref: trip.transport === 'car' ? 'owncar' : 'public',
-      legModes,
-      // Nobody has said when. The planner asks for the window itself rather
-      // than inventing dates a published trip never carried.
-      tripStart: '',
-    });
+  // openPlan(seed): the one door into Plan (G12 plan rethink, lane L3,
+  // decision §6). Every tab that starts a trip hands a PlanSeed
+  // (lib/plan/seed.js, built in lib/plan/seedWriters.js) and routeSeed picks
+  // the landing: a fixed route opens on the trip page with its stops, nights
+  // and legs; a place, a booking or a wish opens Plan's flow on the seed's
+  // settings (PlanFlow, openAt.screen 'seed'); a place page while a trip is
+  // open asks first (S15). planCtxRef.current gives what App knows at the
+  // tap: { destinations, exploreModel (lib/settings readSettings), tripName }.
+  const [planChoice, setPlanChoice] = useState(null);
+  const openPlan = useCallback((raw, { plan = null, fresh = false } = {}) => {
+    const ctx = planCtxRef?.current || {};
+    // A kept trip (T806) lands as the finder priced it: its plan holds the
+    // flights and the stays the seed has no field for. A new trip in the
+    // list when one with stops is open (T809), so the plan is not dropped.
+    if (plan) {
+      if (loadTripDraft()) tripsStore.startNew();
+      holdPlan(plan);
+      goToTab('trip');
+      return 'trip';
+    }
+    const seed = makeSeed(raw);
+    const openTrip = fresh ? null : openTripOf(loadTripDraft(), ctx.tripName || '', ctx.destinations);
+    const landing = routeSeed(seed, { openTrip });
+    // The caller keeps its page open for this one: the choice is made on it.
+    if (landing === 'choose') { setPlanChoice({ seed, trip: openTrip }); return landing; }
+    if (landing === 'trip') {
+      const shared = seedToSharedTrip(seed, { explore: exploreAnswers(ctx.exploreModel || null) });
+      if (!shared) return null;
+      // A route is a trip of its own: one with stops already open stays in
+      // the list (as a kept trip does) instead of being overwritten.
+      if (loadTripDraft()) tripsStore.startNew();
+      // G12 L6: the seed's month, length and budget reach the trip's settings too.
+      const cur = fromDraft(plannerStore.getState());
+      const next = seedTripPatch(seed, cur);
+      if (next !== cur) plannerStore.set(draftPatch(next, plannerStore.getState()));
+      setPendingSharedTrip(shared);
+      goToTab('trip');
+      return landing;
+    }
+    if (emptySeed(seed)) { goToTab('planstart'); return 'home'; }
+    setPlanOpen({ screen: 'seed', seed, n: Date.now() });
+    goToTab('planstart');
+    return landing;
+  }, [goToTab, planCtxRef, setPendingSharedTrip]);
+  // S15's two answers: the place as a stop of the open trip, or a new trip.
+  const resolvePlanChoice = useCallback((pick) => {
+    const cur = planChoice;
+    setPlanChoice(null);
+    if (!cur || !pick) return;
+    if (pick === 'new') { openPlan(cur.seed, { fresh: true }); return; }
+    const destId = choiceStop(cur.seed);
+    const iso2 = cur.seed.places[0]?.iso2 || '';
+    setPendingAddStop?.(destId ? { destId, n: Date.now() } : { iso2, n: Date.now() });
     goToTab('trip');
-  }, [goToTab, setPendingSharedTrip]);
+  }, [planChoice, openPlan, goToTab, setPendingAddStop]);
+
+  // A published itinerary handed to the trip planner (a library trip, Ask,
+  // Saved), where every stop, night and date stays editable. G12: through
+  // openPlan, so the stops, nights, day activities (T942), the leg modes
+  // (a published "bus to Barcelona" is not asked again) and the label are
+  // the seed's, and Explore's dates fill the window when it has exact ones.
+  const openTripInPlanner = useCallback((trip, source = 'trip') => {
+    // Ask hands a seed of its own (lib/plan/askSeed.js: the question read too).
+    if (trip?.v === 1) return openPlan(trip);
+    const seed = routeSeedOf(trip, { source, destinations: planCtxRef?.current?.destinations || null });
+    return seed ? openPlan(seed) : null;
+  }, [openPlan, planCtxRef]);
 
   /** Open one published trip's page from the planner. Stable, like every
    *  other callback handed to the two planner tabs: they stay mounted behind
@@ -111,19 +151,14 @@ export function useAppOpeners({
     goToTab('places');
   }, [goToTab, setPendingTrip]);
 
-  /** "Plan a trip here" on a destination page: the trip wizard's Where step
-   *  with that destination's country already picked. The wizard maps the
-   *  iso2 onto the country name it keys its picks by. */
-  const openTripForCountry = useCallback((iso2, destId = null) => {
-    if (!iso2 || !/^[A-Za-z]{2}$/.test(String(iso2))) return;
-    // T504 (row T498-b): a region page names its nearest priced town too.
-    // The wizard reads only the country so far (GuidedTripWizard.jsx, the
-    // seed effect); `destId` is there for it to take as the first stop.
-    setPendingTripSeed(destId
-      ? { iso2: String(iso2).toUpperCase(), destId: String(destId) }
-      : { iso2: String(iso2).toUpperCase() });
-    goToTab('trip');
-  }, [goToTab, setPendingTripSeed]);
+  /** "Plan a trip here" on a place, region or country page (G12: through
+   *  openPlan). The town is kept, not only the country (T504 named it for
+   *  the wizard, which never read it): a place page passes its own id, a
+   *  region its nearest priced town, a country page none. */
+  const openTripForCountry = useCallback((iso2, destId = null, { source = null, name = '', regionId = null } = {}) => {
+    const seed = placeSeed({ source: source || (destId ? 'place' : 'country'), iso2, destId, name, regionId });
+    return seed ? openPlan(seed) : null;
+  }, [openPlan]);
 
   /** "Plan a day here" on a destination page: the day flow, staying in that
    *  city, opened on the When question. */
@@ -141,6 +176,20 @@ export function useAppOpeners({
     window.addEventListener('carta:plan-day', onPlanDay);
     return () => window.removeEventListener('carta:plan-day', onPlanDay);
   }, [openDayForDest]);
+
+  /** G12 L15: plan a Vrienden group trip through the one door, openPlan
+   *  with source 'friends' (lib/plan/seedWriters.js friendsSeed): the group,
+   *  its joined members and its band as the trip's budget. Vrienden calls it
+   *  with one event (together/signals.jsx planGroupTrip), as Plan a day does. */
+  const openPlanForGroup = useCallback((group, place = {}) => {
+    const seed = friendsSeed(group, place || {});
+    return seed ? openPlan(seed) : null;
+  }, [openPlan]);
+  useEffect(() => {
+    const onPlanGroup = (e) => { if (e.detail?.group) openPlanForGroup(e.detail.group, e.detail.place || {}); };
+    window.addEventListener('carta:plan-group', onPlanGroup);
+    return () => window.removeEventListener('carta:plan-group', onPlanGroup);
+  }, [openPlanForGroup]);
 
   /** "Add to a day plan" on a trail, beach, lake or mountain page: the day
    *  flow with that place as the first idea, staying in the nearest town.
@@ -269,5 +318,5 @@ export function useAppOpeners({
     } catch { /* sandboxed: the page still opens */ }
     setPendingRegion({ id });
   }, [setPendingRegion]);
-  return { openExploreSection, pendingStyle, setPendingStyle, planOpen, planInner, setPlanInner, openTripStyles, onJourneyClosed, pendingJourney, clearPendingJourney, bootJourney, openTripInPlanner, openTripPage, openTripForCountry, openDayForDest, openDayForFeature, openTripFromDay, openFeature, openJourneyPage, countryPage, setCountryPage, openCountryPage, leaveCountryPage, regionPushedRef, regionHandoffRef, openRegionPage };
+  return { openPlan, planChoice, resolvePlanChoice, openExploreSection, pendingStyle, setPendingStyle, planOpen, planInner, setPlanInner, openTripStyles, onJourneyClosed, pendingJourney, clearPendingJourney, bootJourney, openTripInPlanner, openTripPage, openTripForCountry, openPlanForGroup, openDayForDest, openDayForFeature, openTripFromDay, openFeature, openJourneyPage, countryPage, setCountryPage, openCountryPage, leaveCountryPage, regionPushedRef, regionHandoffRef, openRegionPage };
 }

@@ -29,7 +29,7 @@ export function TripPhotos({ trip, destinations, className = '', sizes = '(max-w
  * these answers. Escape, a tap outside or tabbing out closes it; Escape
  * gives focus back to the button. The arrow keys move between the items.
  */
-function CardMenu({ name, compare, onSkip }) {
+function CardMenu({ name, compare, onSkip, onMore = null, onLess = null }) {
   const { t } = useI18n();
   const [open, setOpen] = useState(false);
   const boxRef = useRef(null);
@@ -88,6 +88,17 @@ function CardMenu({ name, compare, onSkip }) {
               {t('tf.keep.skipFor')}
             </Button>
           )}
+          {/* G12 R4: for this trip's list only; never an edit of the style. */}
+          {onMore && (
+            <Button variant="quiet" role="menuitem" className="tff-card-item" onClick={() => { close(false); onMore(); }}>
+              {t('tf.ml.more')}
+            </Button>
+          )}
+          {onLess && (
+            <Button variant="quiet" role="menuitem" className="tff-card-item" onClick={() => { close(false); onLess(); }}>
+              {t('tf.ml.less')}
+            </Button>
+          )}
           {full && <p className="tff-card-full" role="status">{t('tf.cmp.full', { n: 4 })}</p>}
         </div>
       )}
@@ -140,11 +151,13 @@ function CrowdMeter({ tier }) {
  *
  *   onOpen(trip, el)   the trip; `el` (the name's link) gets focus back
  *   compare            { ticked, refused, full, onToggle(id) }: the Compare tick (T802)
- *   keep               { kept, onKeep(trip), onSkip(trip) }: the heart and Skip (T806)
+ *   keep               { kept, onKeep(trip), onSkip(trip), onMore(trip), onLess(trip) }:
+ *                      the heart and Skip (T806), More and Less like this (G12 R4)
  *   feat               the top pick: a whole row and its reasons on the photo
  *   best               the cheapest whole total in the list
+ *   why                G12 R2: a row's own reason, said instead of the trip's first
  */
-export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, compare = null, keep = null, feat = false, best = false }, ref) {
+export const TripCard = forwardRef(function TripCard({ trip, destinations, marked = false, onOpen, compare = null, keep = null, feat = false, best = false, why = '' }, ref) {
   const { t, lang } = useI18n();
   const openRef = useRef(null);
   const name = tripName(trip, destinations, lang);
@@ -173,7 +186,8 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
     return s ? (Number.isFinite(s.eurGroup) ? s.eurGroup : null) : undefined;
   };
   const flightEur = slotEur('flight');
-  const reasons = feat ? (trip.reasons || []).slice(0, 2).map((r) => factText(r, { t, lang })).filter(Boolean) : [];
+  // G12 R1: every card says why it is here: two facts on the best pick, one on the rest.
+  const reasons = why ? [why] : (trip.reasons || []).slice(0, feat ? 2 : 1).map((r) => factText(r, { t, lang })).filter(Boolean);
 
   const setRefs = (el) => {
     openRef.current = el;
@@ -286,6 +300,8 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
               name={name}
               compare={compare ? { ...compare, onToggle: () => compare.onToggle(trip.id) } : null}
               onSkip={keep?.onSkip ? () => keep.onSkip(trip) : null}
+              onMore={keep?.onMore ? () => keep.onMore(trip) : null}
+              onLess={keep?.onLess ? () => keep.onLess(trip) : null}
             />
           )}
         </div>

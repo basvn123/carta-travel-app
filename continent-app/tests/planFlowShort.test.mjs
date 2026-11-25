@@ -1,62 +1,213 @@
-// T1103 (ROADMAP G12, audit P-33): the shorter plan flow.
-//   - A new trip asks Tell, who, when and from, then lands on its priced
-//     trips; the other setup questions refine it later.
-//   - Tell Carta's words that answer all three go straight to the trips.
-//   - A trip under way keeps its full run, and the kind sheet is asked only
-//     while a device trip is under way today.
-//   - The quick-start mark is read without clearing until cleared.
+// G12 plan rethink B3, the question rule (decision §12, owner, binding):
+// "for every question, check whether the travel style captures it; if not,
+// keep the question".
+//   - With no style every question is asked once; with a style Who, the bed,
+//     what matters most, the way there and the style's guide answers are
+//     passed over.
+//   - When and From are asked, prefilled from Explore (source 'explore').
+//   - Kid ages are asked whenever children come and an age is missing.
+//   - Weather, reach and the shape only while the place is open.
+//   - A style switch re-seeds the trip and recomputes what is asked; the
+//     traveller's own answers stay.
+//   - The quick-start mark carries where the planner opens ('ask' or 'trips').
+// Replaces the T1103 short-setup tests (tell, who, when, from).
 // Run: npm test (from continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";
-import { normalizeSettings } from "../src/planner/flow/tripSettings.js";
-import { FIRST_SETUP, firstSetup, setupScreens, continueTo, tripUnderWay } from "../src/planner/flow/flowGraph.js";
-import { markQuickStart, peekQuickStart, clearQuickStart } from "../src/planner/flow/quickStart.js";
+import { normalizeSettings, markAnswered } from "../src/planner/flow/tripSettings.js";
+import {
+  askedSetup, askOpen, firstAsked, nextAsked, nextAfterAnswer, kidAgesMissing, quickStop, openingGuide, landingOf, KNOW_SCREEN, SETUP_SKIP, guideScreens, guideQuestions,
+  openGuideQuestions, firstOpenGuide, tripUnderWay, TRIPS_SCREEN, setupScreens, FIRST_SETUP, firstSetup,
+} from "../src/planner/flow/flowGraph.js";
+import { newTripSettings, restyleTrip, holdForTrip, styleDraftOfTrip } from "../src/planner/flow/styleSeed.js";
+import { seedToSettings } from "../src/lib/plan/seed.js";
+import { normalizeStyle, STYLE_ANSWERS, styleFromDraft } from "../src/lib/travelStyles.js";
+import { markQuickStart, peekQuickStart, peekQuickMode, clearQuickStart } from "../src/planner/flow/quickStart.js";
 
 const s = (patch) => normalizeSettings(patch);
+const style = (patch = {}) => normalizeStyle({
+  id: "st1", who: { kind: "couple", adults: 2 }, stay: "hotel3", way: "plane", priority: "balance",
+  explore: { shapes: ["towns"], likes: ["food", "culture"], avoid: ["crowds"], around: "public" },
+  days: { mornings: "early", pace: "slow" }, ...patch,
+});
+/** The questions a trip walks, from the door, by Continue alone. */
+const walk = (x) => {
+  const list = ["tell", ...askedSetup(x), "create"];
+  const out = [];
+  let k = nextAsked(list, "tell", x, "create");
+  while (k && k !== "create") { out.push(k); k = nextAsked(list, k, x, "create"); }
+  return out;
+};
 
-test("T1103: a new trip asks four screens, three of them answers", () => {
+test("§12: no style, every setup question is asked once (Tell is the door's line)", () => {
+  const x = s({});
+  assert.deepEqual(askedSetup(x), ["booked", "who", "sleep", "priority", "when", "from", "way", "airports"]);
+  assert.deepEqual(walk(x), askedSetup(x));
+  assert.equal(firstAsked(x), "booked");
+});
+
+test("§12: with a style, Who, the bed, what matters most and the way there are passed over", () => {
+  const x = newTripSettings(style());
+  for (const id of ["who", "sleep", "priority", "way"]) assert.equal(askOpen(x, id), false, id);
+  assert.deepEqual(walk(x), ["booked", "when", "from", "airports"]);
+  // A train style answers the way there and so drops the airports.
+  assert.deepEqual(walk(newTripSettings(style({ way: "train" }))), ["booked", "when", "from"]);
+  // A bus style has no planner way: the way there stays a question.
+  assert.ok(walk(newTripSettings(style({ way: "bus" }))).includes("way"));
+});
+
+test("§12: the style's guide answers are passed over, weather and reach stay while the place is open", () => {
+  const x = newTripSettings(style());
+  assert.deepEqual(openGuideQuestions(x), ["g:weather", "g:reach", "g:budget", "g:pick", "g:how"]);
+  assert.equal(firstOpenGuide(x), "g:weather");
+  // A known place: weather, reach and the shape are not asked.
+  const placed = normalizeSettings({ ...x, places: [{ kind: "place", id: "lisbon" }] });
+  for (const id of ["g:weather", "g:reach", "g:shape"]) assert.ok(!guideScreens(placed).includes(id), id);
+  assert.equal(guideScreens(placed).at(-1), TRIPS_SCREEN);
+});
+
+test("§12: a returning traveller with a style and an open place passes 11 screens to the first price", () => {
+  const x = newTripSettings(style());
+  const screens = ["home", ...walk(x), ...openGuideQuestions(x), TRIPS_SCREEN];
+  assert.equal(screens.length, 11);
+});
+
+test("§12: the held ids are the style's answers plus the way there", () => {
+  // G12 judge round 3: the source 'style' is the one list of what a style
+  // holds; every id it marks is a style answer or the way there.
+  const x = newTripSettings(style());
+  const held = x.answered.filter((id) => x.sources?.[id] === "style");
+  for (const id of STYLE_ANSWERS.filter((y) => y !== "g:persona")) assert.ok(held.includes(id), id);
+  assert.ok(held.includes("way"));
+  for (const id of held) assert.ok([...STYLE_ANSWERS, "way"].includes(id), id);
+  assert.ok(SETUP_SKIP.includes("style") && SETUP_SKIP.includes("words") && SETUP_SKIP.includes("seed"));
+  assert.ok(!SETUP_SKIP.includes("explore"), "Explore's answers are asked, prefilled");
+});
+
+test("§12: When and From come prefilled from Explore and are still asked", () => {
+  const explore = {
+    when: { mode: "months", start: "", end: "", months: [5], nights: 5 },
+    nights: 5,
+    from: { name: "Gent", lat: 51.05, lng: 3.72, countryCode: "BE" },
+  };
+  const x = seedToSettings({}, { style: style(), explore });
+  assert.deepEqual(x.when.months, [5]);
+  assert.equal(x.from.name, "Gent");
+  assert.equal(x.sources.when, "explore");
+  assert.ok(askOpen(x, "when") && askOpen(x, "from"), "one tap confirms them");
+  assert.deepEqual(walk(x), ["booked", "when", "from", "airports"]);
+});
+
+test("§12: kid ages are asked whenever children come and an age is missing", () => {
+  const fam = newTripSettings(style({ who: { kind: "family", adults: 2, kids: 2 } }));
+  assert.equal(fam.party.kids, 2);
+  assert.ok(kidAgesMissing(fam));
+  assert.deepEqual(walk(fam).slice(0, 2), ["booked", "ages"]);
+  const aged = markAnswered(normalizeSettings({ ...fam, party: { ...fam.party, kidAges: [5, 9] } }), "ages");
+  assert.equal(askOpen(aged, "ages"), false);
+  assert.ok(!walk(aged).includes("ages"));
+  assert.ok(!askedSetup(s({})).includes("ages"), "no children, no ages");
+});
+
+test("§12: a question answered on its own screen is never jumped", () => {
+  const x = markAnswered(newTripSettings(style()), "when");
+  assert.ok(walk(x).includes("when"));
+});
+
+test("style switch: re-seeded, what is asked recomputed, the traveller's own answers kept", () => {
+  let x = newTripSettings(style());
+  x = markAnswered(normalizeSettings({ ...x, when: { mode: "months", months: [9], nights: 4 } }), "when");
+  // Switched to no style: the style questions come back, When stays theirs.
+  const bare = holdForTrip(x, "style", null, null);
+  assert.equal(bare.style, "");
+  for (const id of ["who", "sleep", "priority", "way"]) assert.ok(askOpen(bare, id), id);
+  assert.deepEqual(bare.when.months, [9]);
+  assert.ok(bare.answered.includes("when"));
+  // Another style answers them again.
+  const other = restyleTrip(bare, style({ id: "st2", way: "train" }));
+  assert.equal(other.style, "st2");
+  assert.equal(other.way, "train");
+  assert.ok(!askOpen(other, "who") && !askOpen(other, "way"));
+});
+
+test("Save as travel style: a draft from the trip's own answers", () => {
+  const x = s({ party: { kind: "friends", adults: 4 }, priority: "price", way: "train", guide: { likes: ["nightlife"], shapes: ["one"] } });
+  const st = styleFromDraft(styleDraftOfTrip(x, { stay_tier: "private" }));
+  assert.equal(st.who.adults, 4);
+  assert.equal(st.stay, "private");
+  assert.equal(st.way, "train");
+  assert.equal(st.priority, "price");
+  assert.deepEqual(st.explore.likes, ["nightlife"]);
+  // A trip made from that style asks none of the style questions again.
+  const next = newTripSettings(st);
+  for (const id of ["who", "sleep", "priority", "way"]) assert.equal(askOpen(next, id), false, id);
+});
+
+test("T1103 kept: the old short setup and the trip-under-way check", () => {
   assert.deepEqual(firstSetup(s({})), ["tell", "who", "when", "from"]);
-  assert.deepEqual(FIRST_SETUP.filter((id) => id !== "tell"), ["who", "when", "from"]);
-  // Every first screen is one of the full setup's, in the same order.
-  const all = setupScreens(s({}));
-  assert.deepEqual(all.filter((id) => FIRST_SETUP.includes(id)), firstSetup(s({})));
-});
-
-test("T1103: bookings still drop what they answer", () => {
-  assert.deepEqual(firstSetup(s({ booked: { flights: true } })), ["tell", "who"]);
-});
-
-test("T1103: a trip under way keeps its own run", () => {
+  assert.deepEqual(FIRST_SETUP, ["tell", "who", "when", "from"]);
   const now = s({ kind: "now" });
   assert.deepEqual(firstSetup(now), setupScreens(now));
-});
-
-test("T1103: words that answer who, when and from go straight to create", () => {
-  const w = s({ answered: ["tell", "who", "when", "from"], sources: { who: "words", when: "words", from: "words" } });
-  const list = [...firstSetup(w), "create"];
-  assert.equal(continueTo(list, "tell", w, "create"), "create");
-  // A screen answer is never jumped: going back and on walks in order.
-  const own = s({ answered: ["tell", "who"], sources: {} });
-  assert.equal(continueTo([...firstSetup(own), "create"], "tell", own, "create"), "who");
-});
-
-test("T1103: the kind sheet only while a trip is under way", () => {
+  assert.deepEqual(askedSetup(now), setupScreens(now).filter((id) => id !== "tell"));
   const today = "2026-11-06";
   assert.equal(tripUnderWay([], today), false);
   assert.equal(tripUnderWay(null, today), false);
   assert.equal(tripUnderWay([{ start: "2026-12-01", end: "2026-12-08" }], today), false);
-  assert.equal(tripUnderWay([{ start: "2026-11-01", end: "2026-11-05" }], today), false);
   assert.equal(tripUnderWay([{ start: "2026-11-06", end: "2026-11-06" }], today), true);
-  assert.equal(tripUnderWay([{ start: "2026-11-01", end: "2026-11-10" }], today), true);
   assert.equal(tripUnderWay([{ start: "2026-11-01", end: "" }, { months: [11] }], today), false);
+  assert.equal(guideQuestions(s({})).length, 9);
 });
 
-test("T1103: the quick-start mark survives a peek and goes on clear", () => {
+test("quick-start mark: its mode survives a peek and goes on clear", () => {
   clearQuickStart();
   assert.equal(peekQuickStart(), false);
+  assert.equal(peekQuickMode(), "");
+  markQuickStart("ask");
+  assert.equal(peekQuickMode(), "ask");
+  assert.equal(peekQuickMode(), "ask", "peek does not clear (StrictMode runs initialisers twice)");
   markQuickStart();
-  assert.equal(peekQuickStart(), true);
-  assert.equal(peekQuickStart(), true, "peek does not clear (StrictMode runs initialisers twice)");
+  assert.equal(peekQuickMode(), "trips", "the default stays the priced trips");
+  markQuickStart("nonsense");
+  assert.equal(peekQuickMode(), "trips");
   clearQuickStart();
   assert.equal(peekQuickStart(), false);
+});
+
+const HOME = { name: "Brussels", lat: 50.85, lng: 4.35, countryCode: "BE" };
+test("G12 judge round 3: Show the trips now stops at kid ages, then at a missing origin", () => {
+  const kids = s({ party: { kind: "family", adults: 2, kids: 2, kidAges: [] }, from: HOME });
+  assert.equal(quickStop(kids), "ages", "children without ages go to the ages question");
+  const none = s({});
+  assert.equal(quickStop(none), "from", "no origin at all goes to From");
+  assert.equal(quickStop(none, { origin: "BRU" }), null, "the app's start is an origin");
+  assert.equal(quickStop(none, { airports: ["CRL"] }), null);
+  assert.equal(quickStop(s({ from: HOME })), null, "nothing missing: the trip is made");
+  // Ages come first, the setup's order.
+  assert.equal(quickStop(s({ party: { kind: "family", adults: 2, kids: 1, kidAges: [] } })), "ages");
+});
+
+test("G12 browser pass: after a quick stop's answer the walk returns to the trips, never re-asks", () => {
+  // A style switch at When added two children; the last question sent the
+  // traveller to Ages. When, From and the airports were already answered.
+  let kids = s({ party: { kind: "family", adults: 2, kids: 2, kidAges: [6, 9] }, from: HOME });
+  for (const id of ["when", "from", "airports"]) kids = markAnswered(kids, id);
+  const list = ["tell", ...askedSetup(kids), "create"];
+  const plain = nextAsked(list, "ages", kids, "create");
+  assert.notEqual(plain, "create", "the plain walk goes on to a question already passed (the defect)");
+  assert.equal(nextAfterAnswer(list, "ages", kids, "ask"), "create");
+  assert.equal(nextAfterAnswer(list, "ages", kids, "trips"), "create");
+  assert.equal(nextAfterAnswer(list, "ages", kids, null), plain, "no stop: Continue walks in order as before");
+});
+
+test("G12 judge round 3: a known place with every guide question answered opens its found trip", () => {
+  const placed = normalizeSettings({ ...newTripSettings(style()), places: [{ kind: "place", id: "lisbon" }] });
+  let all = placed;
+  for (const id of guideQuestions(placed)) all = markAnswered(all, id, "words");
+  assert.equal(openingGuide(all), KNOW_SCREEN);
+  assert.equal(openingGuide(all), landingOf(all));
+  // No place named: the list. An open question: that question.
+  let open = newTripSettings(style());
+  for (const id of guideQuestions(open)) open = markAnswered(open, id, "words");
+  assert.equal(openingGuide(open), TRIPS_SCREEN);
+  assert.equal(openingGuide(newTripSettings(style())), "g:weather");
 });

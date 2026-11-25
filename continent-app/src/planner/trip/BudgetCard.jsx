@@ -4,6 +4,8 @@ import { Button, Field, Money, Segmented } from '../../components/ui/index.js';
 import NotYet from '../../components/NotYet.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { budgetCheck } from '../flow/budget.js';
+import { moneyLeft } from '../../lib/recommend/budgetCompass.js';
+import { costTiles } from '../../lib/price/tiles.js';
 
 /**
  * The trip's total against its budget (T846, owner board panel 3, after
@@ -24,6 +26,11 @@ import { budgetCheck } from '../flow/budget.js';
  *   onSave(budget)
  *   compact  T886: inside the cost card, so no title and no second total;
  *            the bar, the line and Edit budget (or Set a budget) only
+ *
+ * G12 plan rethink (lane L8, decision §3.4): the budget is a ceiling or a
+ * guide (`mode`, kept on save); under it the card says the money left
+ * ("Geld over") for the group, only when every line on the budget's basis
+ * has a price (a missing flight never reads as money left).
  */
 export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave, compact = false }) {
   const { t, lang } = useI18n();
@@ -31,17 +38,20 @@ export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave, comp
   // A first budget is for the whole trip (the card's own figure); a set one keeps its kind.
   const [kind, setKind] = useState(budget?.eur > 0 && budget?.kind === 'day' ? 'day' : 'total');
   const [eur, setEur] = useState(budget?.eur > 0 ? String(budget.eur) : '');
+  const [mode, setMode] = useState(budget?.mode === 'cap' ? 'cap' : 'soft');
   const total = priced?.grandTotal;
   const has = budget?.eur > 0;
   const check = has ? budgetCheck(priced, budget, { party, nights }) : null;
   const spent = has
     ? (budget.kind === 'total' ? priced?.perPerson : ((priced?.parts?.beds || 0) + (priced?.parts?.days || 0)) / Math.max(1, party) / Math.max(1, nights))
     : null;
+  const missing = has ? costTiles(priced).filter((x) => x.missing).map((x) => x.key) : [];
+  const left = has && check && !check.over ? moneyLeft(priced, budget, { party, nights, missing }) : null;
   const share = has && Number.isFinite(spent) ? Math.min(1, spent / budget.eur) : 0;
   const money = (v, p = 'cents') => formatMoney(v, { precision: p, locale: lang });
   const save = () => {
     const n = Math.round(Number(String(eur).replace(',', '.')) || 0);
-    onSave({ kind, eur: Math.max(0, Math.min(100000, n)) });
+    onSave({ ...(budget || {}), kind, mode, eur: Math.max(0, Math.min(100000, n)) });
     setEditing(false);
   };
 
@@ -74,6 +84,11 @@ export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave, comp
               {t(check.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: money(check.gap, 'whole') })}
             </span>
           </p>
+          {left && (
+            <p className="tpbud-left" data-testid="tp-budget-left">
+              {t(party > 1 ? 'tp.bud.leftGroup' : 'tp.bud.left', { eur: money(left.group, 'whole') })}
+            </p>
+          )}
         </>
       )}
       {compact && !editing && (
@@ -85,12 +100,14 @@ export function BudgetCard({ priced, party = 1, nights = 0, budget, onSave, comp
         <div className="tpbud-form">
           <Segmented block size="sm" label={t('tp.bud.kind')} value={kind} onChange={setKind}
             options={[{ value: 'total', label: t('tp.bud.kindTrip') }, { value: 'day', label: t('tp.bud.kindDay') }]} />
+          <Segmented block size="sm" label={t('tp.bud.mode')} value={mode} onChange={setMode}
+            options={[{ value: 'soft', label: t('tp.bud.modeSoft') }, { value: 'cap', label: t('tp.bud.modeCap') }]} />
           <Field label={t(kind === 'total' ? 'tp.bud.eurTrip' : 'tp.bud.eurDay')} value={eur} inputMode="numeric" autoComplete="off"
             onChange={(e) => setEur(e.target.value.replace(/[^\d]/g, ''))}
             onKeyDown={(e) => { if (e.key === 'Enter') save(); }} />
           <div className="tpbud-acts">
             <Button variant="secondary" size="sm" onClick={save}>{t('tp.ed.save')}</Button>
-            {has && <Button variant="quiet" size="sm" onClick={() => { onSave({ kind, eur: 0 }); setEur(''); setEditing(false); }}>{t('tp.bud.clear')}</Button>}
+            {has && <Button variant="quiet" size="sm" onClick={() => { onSave({ ...(budget || {}), kind, mode, eur: 0 }); setEur(''); setEditing(false); }}>{t('tp.bud.clear')}</Button>}
             <Button variant="quiet" size="sm" onClick={() => setEditing(false)}>{t('tp.bal.cancel')}</Button>
           </div>
         </div>

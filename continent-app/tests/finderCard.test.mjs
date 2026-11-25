@@ -38,7 +38,7 @@ test("the three figures: flight, stay, days (food plus getting around)", () => {
 });
 
 test("the budget badge (T810): under, over, on, none", () => {
-  assert.deepEqual(budgetBadge(trip(), { locale: "en" }), { key: "tf.card.under", vars: { eur: "€116" }, over: false });
+  assert.deepEqual(budgetBadge(trip(), { locale: "en" }), { key: "tf.card.underNoTickets", vars: { eur: "€116" }, over: false });
   const over = budgetBadge(trip({ budget: { eur: 1000, delta: 84 } }), { locale: "en" });
   assert.equal(over.key, "tf.card.over");
   assert.equal(over.over, true);

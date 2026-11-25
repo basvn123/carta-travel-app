@@ -34,7 +34,13 @@ import { todayISO } from '../../lib/dates.js';
 import { engineOriginCode } from '../../lib/airportReach.js';
 import { EARLY, priceInSlices } from './priceSlices.js';
 import { flightRows, knowTrip } from '../../lib/recommend/doorTrips.js';
-import { rankTrips } from '../../lib/recommend/rank.js';
+import { bookedTrip } from '../../lib/plan/doors.js';
+import { checkedWindows, levers } from '../../lib/recommend/alternatives.js';
+import { candidateBound, floorHelps, pullRange, pullRoom, rankTrips } from '../../lib/recommend/rank.js';
+import { pinTop, pricingOrder } from '../../lib/recommend/early.js';
+import { priceFloor, quoteData } from '../../lib/recommend/trips.js';
+import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
+import { readSkips } from '../../lib/recommend/keptStore.js';
 import { useTasteVerdicts, verdictsKey } from '../../lib/taste/store.js';
 import { keptRecord } from '../../lib/recommend/kept.js';
 import { keep, unkeep, useKept } from '../../lib/recommend/keptStore.js';
@@ -70,6 +76,26 @@ export function answersOf(settings) {
   delete guide.levers;
   return { ...settings, guide };
 }
+
+/** The list's own key for one answer set: its skips, sort, ticks and view (TripsForYou). */
+export const answersKey = (s) => JSON.stringify([answersOf(s).guide, s.when, s.party, s.priority, s.from, s.places]);
+
+/**
+ * G12 early results: the cards shown before pricing ended, per finder run
+ * key, so the same answers come back to the same top cards in the same
+ * slots: { ids, trips (id -> the trip as first shown, so its figures never
+ * change under the traveller's finger) }.
+ */
+const PINS = new Map();
+const PINS_SIZE = 8;
+const pinsFor = (key) => PINS.get(key) || { ids: [], trips: new Map() };
+const keepPins = (key, pins) => {
+  if (!PINS.has(key) && PINS.size >= PINS_SIZE) PINS.delete(PINS.keys().next().value);
+  PINS.set(key, pins);
+};
+/** How often the "n trips still to price" count may repaint the list (ms). */
+const LEFT_EVERY_MS = 400;
+const clock = () => (typeof performance !== 'undefined' ? performance.now() : Date.now());
 
 /**
  * The record a heart keeps (T806): the card's name and photo as they read
@@ -124,7 +150,9 @@ const nextFrame = () => new Promise((r) => {
  * Returns { stages, early, trips, error, input, data, origin, stayTier }: `early` is
  * the best few trips priced so far (null until a slice is priced),
  * `trips` is null until ranked, then the ranked list (possibly empty);
- * `error` is set when the engine threw.
+ * `error` is set when the engine threw. G12 early results: `shown` is the
+ * top cards settled so far, in their slots (empty until rank 1 settles),
+ * and `left` how many trips are still to price (0 when done).
  */
 export function useTripFinder(settings) {
   const firstRun = useFirstRun();
@@ -135,7 +163,7 @@ export function useTripFinder(settings) {
   // The Yes and Not me on the taste chips (T1215, T1152-c), node and verdict only.
   const { verdicts } = useTasteVerdicts();
   const verdictKey = verdictsKey(verdicts);
-  const [run, setRun] = useState({ key: null, stages: NO_STAGES, early: null, trips: null, error: null, input: null });
+  const [run, setRun] = useState({ key: null, stages: NO_STAGES, early: null, shown: null, left: null, trips: null, error: null, input: null });
   const runId = useRef(0);
 
   const origin = useMemo(() => originOf(data), [data]);
@@ -143,7 +171,7 @@ export function useTripFinder(settings) {
   const stayTier = choices.stay_tier || null;
   // The answer set this run is for; a new one restarts the stages.
   const answers = answersOf(settings);
-  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
+  const key = useMemo(() => JSON.stringify([answers.guide, settings.when, settings.party, settings.priority, settings.places, settings.way, settings.booked, settings.imports, settings.avoidIso2, origin?.iata, stayTier, lifestyle, taste, choices.baggage_key,
     (data?.meta?.home_airports || []).map((a) => a.iata), verdictKey]),
   [settings, origin, stayTier, lifestyle, taste, data, verdictKey]); // eslint-disable-line react-hooks/exhaustive-deps -- answers is settings without old levers
 
@@ -151,7 +179,7 @@ export function useTripFinder(settings) {
     if (!data?.destinations || countryInsights == null) return undefined;
     const id = ++runId.current;
     const alive = () => runId.current === id;
-    setRun({ key, stages: NO_STAGES, early: null, trips: null, error: null, input: null });
+    setRun({ key, stages: NO_STAGES, early: null, shown: null, left: null, trips: null, error: null, input: null });
     (async () => {
       try {
         const [flights, layerIndexes] = await Promise.all([
@@ -164,6 +192,8 @@ export function useTripFinder(settings) {
           lifestyle, stayTier, today: todayISO(),
           // The traveller's bag prices the flight (lib/recommend/trips.js).
           baggage: choices.baggage_key || null,
+          // G12 L10: a booked flight is the traveller's own fare on every trip.
+          ownFlight: bookedOwnFlight(answers, data.destinations),
         };
         // The taxonomy only loads when the traveller gave a verdict.
         const tasteLean = await tasteLeanFor(verdicts);
@@ -172,16 +202,81 @@ export function useTripFinder(settings) {
         setRun((r) => ({ ...r, input, stages: { ...r.stages, flights: true } }));
         await nextFrame();
         if (!alive()) return;
+        // G12 early results (owner decision 2026-11-25): the trips with the
+        // best reachable score are priced first, and a top card shows once no
+        // trip still to price can take its slot (lib/recommend/early.js).
+        const rankOpts = { settings: answers, taste, data, tasteLean };
+        // The owner's "go on" (2026-11-25): each candidate's price floor
+        // (its beds and days, exact before pricing, and the cheapest swept
+        // fare each way) narrows the budget sink and the price pull, so rank 1
+        // can settle early under a budget and with price first too. Measured
+        // on an emulated phone, computing every floor up front delayed the
+        // first slice (about 1 s at 6x CPU), so the floors are only computed
+        // when they can narrow something (rank.js floorHelps) and only while
+        // rank 1 is not yet settled by the plain bounds; both are true
+        // bounds, so either proof holds.
+        // Switched OFF (G12, 2026-11-25): on the emulated phone the floors
+        // gave no gain at 4x and were slower at 6x (price first 9.8 -> 20.3 s
+        // median, one run 47.5 s; progress.md "Early results 2"). The proof
+        // and its tests stay; turn this on once a floor is cheap enough
+        // (computed in steps or off the main thread).
+        const PRICE_FLOORS = false;
+        const qdata = quoteData(input);
+        const floors = PRICE_FLOORS && floorHelps(answers);
+        const bounds = new Map();
+        const boundOf = (c) => {
+          if (!bounds.has(c)) bounds.set(c, candidateBound(c, rankOpts));
+          return bounds.get(c);
+        };
+        const tight = new Map();
+        const tightOf = (c) => {
+          if (!tight.has(c)) tight.set(c, candidateBound(c, { ...rankOpts, floor: priceFloor(c, input, qdata) }));
+          return tight.get(c);
+        };
+        const room = pullRoom(answers);
+        const listKey = answersKey(settings);
+        // The list shows the trips under a ceiling and not skipped (TripsForYou), so the slots are settled on those.
+        const visible = (ranked) => {
+          const skips = new Set(readSkips(listKey));
+          return budgetSplit(ranked, answers.guide?.budget).list.filter((x) => !skips.has(x.id));
+        };
+        let pins = pinsFor(key);
+        let pushedAt = 0;
         const built = await priceInSlices(input, {
           alive,
-          onSome: (some) => { if (alive()) setRun((r) => ({ ...r, early: rank(some).slice(0, EARLY) })); },
+          order: (cands) => pricingOrder(cands.map(boundOf)),
+          onSome: (some, pending) => {
+            if (!alive()) return;
+            const ranked = rank(some);
+            let ids = pinTop(visible(ranked), pending.map(boundOf), { pinned: pins.ids, room });
+            if (floors && !ids.length) {
+              const later = pending.map(tightOf);
+              ids = pinTop(visible(ranked), later, { pinned: pins.ids, room, pull: pullRange(ranked, later, answers) });
+            }
+            const grew = ids.length > pins.ids.length;
+            if (grew) {
+              const trips = new Map(pins.trips);
+              for (const id of ids) if (!trips.has(id)) trips.set(id, ranked.find((x) => x.id === id));
+              pins = { ids, trips };
+              keepPins(key, pins);
+            }
+            // Before the first card the searching screen's photos follow every
+            // slice, as before; after it the count repaints at most every LEFT_EVERY_MS.
+            if (!grew && pins.ids.length && clock() - pushedAt < LEFT_EVERY_MS) return;
+            pushedAt = clock();
+            const shown = pins.ids.map((id) => pins.trips.get(id));
+            setRun((r) => ({ ...r, early: ranked.slice(0, EARLY), shown, left: pending.length }));
+          },
         });
         if (!built || !alive()) return;
         setRun((r) => ({ ...r, stages: { ...r.stages, stays: true } }));
         await nextFrame();
         if (!alive()) return;
-        const trips = rank(built);
-        setRun((r) => ({ ...r, trips, early: trips.slice(0, EARLY), stages: { ...r.stages, likes: true } }));
+        // A shown card keeps the object it was first shown as, so its match
+        // and figures never change when the rest of the list arrives.
+        const trips = rank(built).map((x) => pins.trips.get(x.id) || x);
+        const shown = pins.ids.map((id) => pins.trips.get(id));
+        setRun((r) => ({ ...r, trips, shown, left: 0, early: trips.slice(0, EARLY), stages: { ...r.stages, likes: true } }));
       } catch (error) {
         if (alive()) setRun((r) => ({ ...r, trips: [], error }));
       }
@@ -193,6 +288,9 @@ export function useTripFinder(settings) {
   return {
     stages: fresh ? run.stages : NO_STAGES,
     early: fresh ? run.early : null,
+    shown: fresh ? run.shown : null,
+    left: fresh ? run.left : null,
+    key,
     trips: fresh ? run.trips : null,
     error: fresh ? run.error : null,
     input: fresh ? run.input : null,
@@ -202,6 +300,12 @@ export function useTripFinder(settings) {
     // so the searching screen names it from its first frame.
     stayTier,
   };
+}
+
+/** G12 L10: the booked flight as the engine's own flight (doors.js bookedTrip), or null. */
+function bookedOwnFlight(settings, destinations) {
+  if (!settings?.booked?.flights) return null;
+  return bookedTrip(settings, destinations)?.selection?.ownFlight || null;
 }
 
 /**
@@ -242,7 +346,9 @@ export function useDoorRun(settings, kind) {
         if (!alive) return;
         const input = { data, countryInsights, layerIndexes, settings: answersOf(settings), taste, origin, flights, lifestyle, stayTier, baggage: choices.baggage_key || null, today: todayISO() };
         const result = kind === 'flight' ? flightRows(input) : knowTrip(input);
-        setRun((r) => ({ ...r, result, stages: { flights: true, priced: true } }));
+        // G12 L6: the input stays beside the result, so the place lander can
+        // price its levers and alternatives on the same engine and files.
+        setRun((r) => ({ ...r, result, input, stages: { flights: true, priced: true } }));
       } catch (error) {
         if (alive) setRun((r) => ({ ...r, result: null, error }));
       }
@@ -254,9 +360,32 @@ export function useDoorRun(settings, kind) {
     stages: fresh ? run.stages : { flights: false, priced: false },
     result: fresh ? run.result : undefined,
     error: fresh ? run.error : null,
+    input: fresh ? run.input || null : null,
     origin,
     data,
   };
+}
+
+/**
+ * G12 L13, R3: the found trip's levers (one bed tier down, a nearby base,
+ * a cheaper checked week), priced on the trip's own engine input after the
+ * page has painted, and how many checked flight windows exist (another
+ * month needs two). -> { levers: [], windows, ready }
+ */
+export function useFoundMore(trip, input) {
+  const [state, setState] = useState({ id: null, levers: [], windows: 0 });
+  useEffect(() => {
+    if (!trip || !input) return undefined;
+    let live = true;
+    const id = setTimeout(() => {
+      const lv = levers(trip, input);
+      const windows = checkedWindows(trip, input).length;
+      if (live) setState({ id: trip.id, levers: lv, windows });
+    }, 60);
+    return () => { live = false; clearTimeout(id); };
+  }, [trip, input]);
+  const fresh = Boolean(trip) && state.id === trip.id;
+  return { levers: fresh ? state.levers : [], windows: fresh ? state.windows : 0, ready: fresh };
 }
 
 /**

@@ -16,6 +16,8 @@ import { stayTierFor } from '../../lib/recommend/adapters/stay.js';
 import { keepHidden, repriceTrip } from '../../lib/recommend/trips.js';
 import { crowdTier, dayHighs, doorMinutes } from '../../lib/recommend/compare.js';
 import { partyText } from '../../lib/party.js';
+import { budgetRulerFor } from '../../lib/budgetBasis.js';
+import { missingLines } from '../../lib/recommend/budgetCompass.js';
 
 /** How many trips before "Show more trips" (the CountryMatchCards page). */
 export const PAGE = 6;
@@ -122,8 +124,19 @@ export function budgetBadge(trip, { locale } = {}) {
   const b = trip.budget;
   if (!b?.eur || !Number.isFinite(b.delta)) return null;
   // Totals carry cents (T818): within half a euro is on budget, never "0 under".
-  if (Math.round(b.delta) === 0) return { key: 'tf.budget.on', vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
-  return { key: b.delta < 0 ? 'tf.card.under' : 'tf.card.over', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };
+  // G12 (L1): a day budget's gap is a day's, and the badge says so.
+  const day = b.kind === 'day' ? 'Day' : '';
+  // G12 L8 (decision §3.4): like with like. A trip figure with a line still
+  // "Not yet" is not judged (a missing flight would read as under budget);
+  // an under-budget trip figure names what it never holds (things to do).
+  if (!day && totalLeavesOut(trip)) return null;
+  // G12 judge round 3: the day basis counts a missing bed as 0
+  // (budgetBasis dayBasisSpend), so a day budget is judged only when its
+  // own lines (bed and days) are priced, as budgetCompass tripVerdict does.
+  if (day && missingLines(trip, 'day').length) return null;
+  if (Math.round(b.delta) === 0) return { key: `tf.budget.on${day}`, vars: { eur: formatMoney(b.eur, { locale }) }, over: false };
+  if (b.delta < 0 && !day) return { key: 'tf.card.underNoTickets', vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: false };
+  return { key: `${b.delta < 0 ? 'tf.card.under' : 'tf.card.over'}${day}`, vars: { eur: formatMoney(Math.abs(b.delta), { locale }) }, over: b.delta > 0 };
 }
 
 /** Does the trip's total leave a line out (a slot with no figure, things to do aside)? */
@@ -234,7 +247,8 @@ export function withSlot(trip, next, sumSlots = slotTotals) {
   return keepHidden(trip, {
     ...swapped,
     total,
-    budget: trip.budget ? { eur: trip.budget.eur, delta: total.perPerson - trip.budget.eur } : null,
+    // G12 (L1): the ruler keeps its basis (a day budget, bed and days a night).
+    budget: trip.budget ? budgetRulerFor({ ...trip, total }, trip.budget) : null,
   });
 }
 

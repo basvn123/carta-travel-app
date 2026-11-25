@@ -63,6 +63,7 @@ import { ItineraryList } from './destinations/ItineraryList.jsx';
 import { MountainList } from './destinations/MountainList.jsx';
 import { LakeList } from './destinations/LakeList.jsx';
 import { BeachList } from './destinations/BeachList.jsx';
+import { journeySeed } from '../lib/plan/seedWriters.js';
 
 
 
@@ -90,7 +91,7 @@ export function DestinationsTab({
   openLake = null, onOpenLakeConsumed,
   openMountain = null, onOpenMountainConsumed,
   openCycle = null, onOpenCycleConsumed,
-  openTrip = null, onOpenTripConsumed, onOpenTripInPlanner,
+  openTrip = null, onOpenTripConsumed, onOpenTripInPlanner, onPlanSeed = null,
   // One country, asked for from somewhere else in the app (the planner's
   // country brief). Just the filter, in whatever category is showing: no
   // layer to wait for and nothing to open once it lands.
@@ -2132,6 +2133,10 @@ export function DestinationsTab({
             onClose={() => setPageJourney(null)}
             onSelectDest={(id) => { setPageJourney(null); onSelectDest(id); }}
             onOpenJourney={(card) => setPageJourney({ id: card.id, gw: card.gw || null })}
+            onPlanTrip={onPlanSeed ? (trip, stops) => {
+              const seed = journeySeed(trip, stops, data.destinations);
+              if (seed) { setPageJourney(null); onPlanSeed(seed); }
+            } : null}
           />
         </Suspense>
       )}

@@ -52,6 +52,8 @@ export const LIKES = ['beach', 'hiking', 'lakes', 'culture', 'city', 'food', 'ni
 export const WEATHER = ['warm', 'mild', 'snow', 'any'];
 export const REACH = ['short', 'any', 'overland'];
 export const AVOID = ['crowds', 'transfers', 'car', 'heat'];
+/** How a budget binds (G12 plan rethink): a guide, a ceiling, or a friends group's band. */
+export const BUDGET_MODES = ['soft', 'cap', 'band'];
 /**
  * How the traveller gets around on the trip itself (owner, plan flow walk
  * 2026-10-30): public transport, taxis, a hire car, or whatever fits. It
@@ -119,7 +121,7 @@ export function defaultSettings() {
     when: { mode: 'exact', start: '', end: '', months: [], nights: 7 },
     from: null,
     way: '',
-    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', persona: '', personas: [], personaMost: '', size: '', quiet: '', avoid: [], budget: { kind: 'total', per: 'person', eur: 0 }, pick: [...PICKABLE] },
+    guide: { shapes: [], shape: '', likes: [], weather: '', reach: '', around: '', persona: '', personas: [], personaMost: '', size: '', quiet: '', avoid: [], budget: { kind: 'total', per: 'person', mode: 'soft', eur: 0 }, pick: [...PICKABLE] },
     rhythm: { mornings: '', pace: '', detail: '', goal: '', food: '', around: '', steps: 0, goals: [], keep: [] },
     trip: { name: '', visibility: 'private', cover: '', created: 0, buddies: [] },
     note: '',
@@ -132,6 +134,14 @@ export function defaultSettings() {
     // T859: the places the traveller named (Tell Carta's words), countries
     // and towns: [{ kind: 'country' | 'place', id, name, iso2, country }].
     places: [],
+    // G12 L12 (plan again, somewhere new): countries the traveller has been,
+    // which the finder puts after new ones, and their own logged spend on the
+    // trip they plan from: a reference line only (decision 0013), never a
+    // budget and never counted in a total.
+    avoidIso2: [],
+    spendRef: null,
+    // G12 R5: the past trip planned again from, by shape, for its row.
+    pastRef: null,
     // T857 (row T856-c): where each answer came from, by question id:
     // 'words' (Tell Carta's sentence) or 'screen'. An id with no entry was
     // given on its screen, as every answer was before T857.
@@ -150,7 +160,16 @@ export function defaultSettings() {
 
 // 'style': given by the traveller's active travel style when the trip was
 // started (lib/travelStyles.js seedTripSettings), passed over like 'words'.
-const SOURCES = ['words', 'screen', 'style'];
+// G12 plan rethink (decision §4, §6): 'explore', prefilled from Explore's
+// Settings the traveller set (When, length, Start), still asked so one tap
+// confirms it; 'seed', fixed by the page the trip was opened from (a
+// PlanSeed pin, lib/plan/seed.js), never asked again; 'trip', changed for
+// this trip only while the style is held (styleSeed.holdForTrip), the
+// traveller's own like 'screen'.
+export const ANSWER_SOURCES = ['words', 'screen', 'style', 'explore', 'seed', 'trip'];
+const SOURCES = ANSWER_SOURCES;
+/** The sources that are the traveller's own choice on a screen: the words never overwrite them. */
+const OWN_SOURCES = ['screen', 'trip'];
 const PLACE_KINDS = ['country', 'place'];
 /** A named place made safe, or null. */
 function namedPlace(p) {
@@ -181,11 +200,14 @@ function placeOf(p) {
 function budgetOfRaw(b, people) {
   const kind = b?.kind === 'total' ? 'total' : 'day';
   const per = kind === 'total' && b?.per === 'group' ? 'group' : 'person';
+  // G12 plan rethink (decision §3.4): a ceiling ('cap') or a guide ('soft',
+  // as every budget was before); 'band' is a friends group's private band.
+  const mode = BUDGET_MODES.includes(b?.mode) ? b.mode : 'soft';
   const groupEur = per === 'group' ? clampInt(b?.groupEur, 0, 100000 * 20, 0) : 0;
   if (per === 'group' && groupEur > 0) {
-    return { kind, per, groupEur, eur: Math.round(groupEur / Math.max(1, people)) };
+    return { kind, per, mode, groupEur, eur: Math.round(groupEur / Math.max(1, people)) };
   }
-  return { kind, per: 'person', eur: clampInt(b?.eur, 0, 100000, 0) };
+  return { kind, per: 'person', mode, eur: clampInt(b?.eur, 0, 100000, 0) };
 }
 
 /** Any stored object made safe: unknown keys dropped, every value checked. */
@@ -284,9 +306,28 @@ export function normalizeSettings(raw) {
     sources: raw.sources && typeof raw.sources === 'object'
       ? Object.fromEntries(Object.entries(raw.sources).filter(([k, v]) => typeof k === 'string' && SOURCES.includes(v)))
       : {},
+    avoidIso2: Array.isArray(raw.avoidIso2)
+      ? [...new Set(raw.avoidIso2.map((c) => String(c || '').toUpperCase()).filter((c) => /^[A-Z]{2}$/.test(c)))].slice(0, 60)
+      : [],
+    spendRef: spendRefRaw(raw.spendRef),
+    pastRef: raw.pastRef && ['one', 'towns'].includes(raw.pastRef.shape)
+      ? { shape: raw.pastRef.shape, label: String(raw.pastRef.label || '').slice(0, 80), year: clampInt(raw.pastRef.year, 0, 2200, 0) }
+      : null,
     door: oneOf(raw.door, TRIP_DOORS, ''),
     style: typeof raw.style === 'string' ? raw.style.slice(0, 24) : '',
     tradeoffs: tradeoffsRaw(raw.tradeoffs),
+  };
+}
+
+/** G12 L12: own logged spend as { eurPP, nights, planId, label, year }, or null. */
+function spendRefRaw(r) {
+  if (!r || typeof r !== 'object' || !(Number(r.eurPP) > 0)) return null;
+  return {
+    eurPP: Math.round(Number(r.eurPP)),
+    nights: clampInt(r.nights, 1, 60, 1),
+    planId: r.planId ? String(r.planId).slice(0, 64) : null,
+    label: String(r.label || '').slice(0, 80),
+    year: clampInt(r.year, 0, 2200, 0),
   };
 }
 
@@ -312,6 +353,9 @@ function normalizeImport(b) {
     eur: Number.isFinite(eur) && eur >= 0 ? Math.round(eur * 100) / 100 : null,
     code: String(b.code || '').slice(0, 40),
     link: /^https:\/\//.test(String(b.link || '')) ? String(b.link) : '',
+    // G12: a row the typed words made (parseTrip saidImports), replaced as
+    // the words change; a file's rows carry no mark.
+    ...(b.said ? { said: true } : {}),
   };
 }
 
@@ -361,9 +405,9 @@ export function markAnswered(s, id, from = 'screen') {
   return { ...s, answered: has ? s.answered : [...s.answered, id], sources };
 }
 
-/** The answers the traveller gave on a screen, not through the words. */
+/** The answers the traveller gave on a screen (or changed for this trip), not through the words. */
 export function screenGiven(s) {
-  return (s?.answered || []).filter((id) => (s.sources?.[id] || 'screen') === 'screen');
+  return (s?.answered || []).filter((id) => OWN_SOURCES.includes(s.sources?.[id] || 'screen'));
 }
 
 /** Apply a patch, normalize, and mark the question answered. */

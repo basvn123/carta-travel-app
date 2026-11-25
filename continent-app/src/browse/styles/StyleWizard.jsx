@@ -11,7 +11,7 @@ import { SPRING } from '../home/motionKit.jsx';
 import { styleName } from './styleBits.jsx';
 import { StaySpendFields, DraftDayFigure } from './StaySpendFields.jsx';
 import { ExploreStep, StepName, StepPriority, StepTitle, StepWay } from './StyleSteps.jsx';
-import { EXPLORE_STEPS, STAY_STEPS, STEPS, applyTemplate, draftChanged, draftToSave, stepPlace } from './studioSteps.js';
+import { EXPLORE_STEPS, STAY_STEPS, STEPS, applyTemplate, draftChanged, draftToSave, stepPlace, withAnswered } from './studioSteps.js';
 
 /**
  * View 2, the create or edit wizard (Style Studio, G12, decision.md): one
@@ -33,6 +33,9 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
   // fills only the others. An edit starts with every step answered.
   const [touched, setTouched] = React.useState(() => new Set(edit ? STEPS : []));
   const [step, setStep] = React.useState(() => (STEPS.includes(startStep) ? startStep : 'name'));
+  // G12: the steps passed with Next (or saved on), so an empty likes or
+  // avoid list saves as the traveller's "no preference" (withAnswered).
+  const seen = React.useRef(new Set());
   const [dir, setDir] = React.useState(1);
   const [asking, setAsking] = React.useState(null); // the leave waiting on "Discard changes?"
   // Whether the traveller has moved between steps: the first step arrives
@@ -51,6 +54,7 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
   const go = (to) => {
     const j = STEPS.indexOf(to);
     if (j < 0 || j === idx) return;
+    if (j > idx) seen.current.add(step);
     setMoved(true);
     setDir(j > idx ? 1 : -1);
     setStep(to);
@@ -62,7 +66,7 @@ export function StyleWizard({ ts, style, startStep, destinations, meta, escRef, 
   };
   const back = () => (idx === 0 ? leave('back') : go(STEPS[idx - 1]));
   const save = () => {
-    const out = draftToSave(draft);
+    const out = withAnswered(draftToSave(draft), new Set([...seen.current, step]));
     if (edit) {
       ts.commit(style.id, out);
       onDone(style.id, out, 'saved');

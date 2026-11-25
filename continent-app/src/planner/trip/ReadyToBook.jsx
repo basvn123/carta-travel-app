@@ -57,9 +57,12 @@ export function bookRows({
     const leg = priced?.cartaFlight?.[dir] || null;
     const ends = leg ? [leg.from, leg.to]
       : flight?.combinable ? (dir === 'out' ? [flight.origin, flight.into_anchor] : [flight.out_anchor, flight.origin]) : [];
-    if (!leg && !ends[0] && !(paid[dir] > 0)) return;
-    const date = leg?.date || (dir === 'out' ? tripStart : tripEnd);
     const isBooked = Boolean(booked?.flights);
+    // G12 browser pass 2: a booked flight of the traveller's own stays a row
+    // each way even with no airports or price known, so the head and Still
+    // to book count the same parts.
+    if (!leg && !ends[0] && !(paid[dir] > 0) && !(isBooked && ownFlight)) return;
+    const date = leg?.date || (dir === 'out' ? tripStart : tripEnd);
     const link = !isBooked && ends[0] && ends[1] ? googleFlightsLink({ fromIata: ends[0], toIata: ends[1], date, lang }) : null;
     rows.push({
       key: `flight-${dir}`,

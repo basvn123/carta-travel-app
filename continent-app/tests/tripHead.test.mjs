@@ -25,10 +25,9 @@ test("the name: the traveller's own, else the places; a bare country reads as it
   assert.equal(shownTripName("", [], "en"), "");
 });
 
-test("booked: the flight both ways counts two, each stay one, own stays and drives none", () => {
-  const stopDetails = [{ destinationId: "a", dest: {} }, { destinationId: "b", dest: {} }];
-  const priced = { cartaFlight: { out: {}, back: {} } };
-  assert.deepEqual(bookedCount({ flight: {}, priced, stopDetails, booked: null }), { n: 0, of: 4 });
-  assert.deepEqual(bookedCount({ flight: {}, priced, stopDetails, booked: { flights: true, stays: ["b"] } }), { n: 3, of: 4 });
-  assert.deepEqual(bookedCount({ flight: { driving: true }, priced, stopDetails, stayCosts: [{ ownAccom: 1 }], booked: null }), { n: 0, of: 1 });
+test("booked: the head counts the same rows Still to book lists (G12 browser pass 2)", () => {
+  const rows = [{ key: "flight-out", booked: true }, { key: "stay-0", booked: false }, { key: "flight-back", booked: true }];
+  assert.deepEqual(bookedCount(rows), { n: 2, of: 3 });
+  assert.deepEqual(bookedCount([]), { n: 0, of: 0 });
+  assert.deepEqual(bookedCount(null), { n: 0, of: 0 });
 });

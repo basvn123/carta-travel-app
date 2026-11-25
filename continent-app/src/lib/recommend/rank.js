@@ -25,13 +25,15 @@
  */
 import RECOMMEND from '../../../config/recommend.json' with { type: 'json' };
 import { chooseOption } from './slots.js';
-import { buildTrips, keepHidden, repriceTrip } from './trips.js';
+import { buildTrips, keepHidden, repriceTrip, tripId } from './trips.js';
 import { tasteFor } from './candidates.js';
 import { tripFit, reasonsFor, catchFor } from './reasons.js';
 import { MATCH } from '../match.js';
 import { flightLeverKeys } from './adapters/flight.js';
 import { personaOf, picksOf, personaReason, tripPersona, personaShapes } from './persona.js';
 import { avoidsHeat } from './prefs.js';
+import { budgetKind, budgetRulerFor } from '../budgetBasis.js';
+import { activeBudget, missingLines } from './budgetCompass.js';
 
 export const RANK = Object.freeze(RECOMMEND.rank);
 export const LEVERS = Object.freeze(RECOMMEND.levers);
@@ -57,17 +59,21 @@ export function blendOf(F, P, Q) {
 /** The badge's figure for a score in 0..1: a whole percent, never 100. */
 export const matchPct = (score) => Math.max(0, Math.min(99, Math.round(score * 100)));
 
-/** The traveller's budget for one trip, a person: the whole-trip figure, or a day figure times the nights. */
-export function budgetOf(settings, nights) {
+/**
+ * The traveller's budget a person on its own basis, { eur, kind }, or null.
+ * G12 (lane L1): a day budget stays a day figure and is held against bed and
+ * days a night (lib/budgetBasis.js), never times the nights against the
+ * whole trip with its flight.
+ */
+export function budgetOf(settings) {
   const b = settings.guide.budget;
   if (!b?.eur) return null;
-  return b.kind === 'day' ? b.eur * nights : b.eur;
+  return { eur: b.eur, kind: budgetKind(b) };
 }
 
-/** The ruler: { eur, delta } a person, delta < 0 under budget; null with no budget. */
+/** The ruler: { eur, kind, delta } a person, delta < 0 under budget, null when the spend is not known; null with no budget. */
 export function budgetRuler(trip, settings) {
-  const eur = budgetOf(settings, trip.nights);
-  return eur ? { eur, delta: trip.total.perPerson - eur } : null;
+  return budgetRulerFor(trip, budgetOf(settings));
 }
 
 /** The slots and shapes after the levers. Unknown or unset levers change nothing. */
@@ -272,10 +278,23 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
   const levered = applyLevers(trips.map((x) => ({ ...x, base: x.base || x })), levers);
   const pull = flightPull(levered, levers?.flight);
   const priority = priorityPull(levered, settings, levers);
+  // G12 L12: countries the traveller has been come after new ones (decision
+  // §3.2 S10, "countries not yet visited first"), within the fit-first order.
+  const been = new Set(settings.avoidIso2 || []);
+  const isBeen = (trip) => been.size > 0 && been.has(String(trip.iso2 || '').toUpperCase());
   const ranked = levered.map((trip) => {
     const info = fitOf(trip, t, destinations, settings);
-    const budget = budgetRuler(trip, settings);
-    const sink = budget && budget.delta > 0 ? (RECOMMEND.budget.sinkPer100 * budget.delta) / 100 : 0;
+    // G12: a day budget reads the quote's beds and days, and the copy made
+    // above drops the hidden quote, so the trip's own (or its base's) is
+    // passed; without it every trip read "Not yet" under a day budget, with
+    // no sink and no badge (found by the price floor's tests).
+    const budget = budgetRulerFor(trip, budgetOf(settings), trip.quote || trip.base?.quote);
+    // G12 judge round 3 (decision §3.4, like with like): a trip with a line
+    // still "Not yet" on the budget's basis has a spend that leaves that
+    // line out, so it gets no sink and no lift from it; it ranks after the
+    // fully priced trips instead (`unpriced`, in the sort below).
+    const unpriced = Boolean(budget) && (!Number.isFinite(budget.delta) || missingLines(trip, budget.kind).length > 0);
+    const sink = budget && !unpriced && budget.delta > 0 ? (RECOMMEND.budget.sinkPer100 * budget.delta) / 100 : 0;
     // The persona (owner, plan flow walk): P the trip's places' persona fit
     // by nights (persona.js), part of the answers in the blend; its reason
     // leads the card.
@@ -284,8 +303,9 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
     const said = personaReason(trip, persona, destinations);
     // Q only: the country match's score is on its own scale, not the 0..10
     // rating, so it is no stand-in for the places' quality.
+    const shift = priority.get(trip.id) || 0;
     const score = (blendOf(info.F, p, info.Q ?? null) ?? 0) - sink / 10 - (pull.get(trip.id) || 0) / 10
-      + tasteNudge(trip, tasteLean, destinations) + shapeNudge(trip, settings) + (priority.get(trip.id) || 0);
+      + tasteNudge(trip, tasteLean, destinations) + shapeNudge(trip, settings) + shift;
     // T1021: the shown match keeps show_min too, not only the fit behind it: a
     // budget sink could pull a fitting trip's figure under it.
     const shown = matchPct(score);
@@ -300,13 +320,164 @@ export function rankTrips(trips, { settings, taste = null, data, levers = null, 
       catch: catchFor(trip, { settings, info, budget }),
       score,
       qualified: RANK.fitFirst ? qualifies(info, settings) : true,
+      ...(isBeen(trip) ? { been: true } : {}),
     };
     Object.defineProperty(out, 'base', { value: trip.base, enumerable: false });
+    Object.defineProperty(out, 'unpriced', { value: unpriced, enumerable: false });
+    // G12 early results: the part of the score that depends on the other
+    // trips priced (priorityPull), so lib/recommend/early.js can bound it.
+    Object.defineProperty(out, 'shift', { value: shift, enumerable: false });
     // A levered trip keeps its own quote and state (T819); else the base's.
     const own = trip.quote ? trip : trip.base;
     return own ? keepHidden(own, out) : out;
   });
-  return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (b.score - a.score) || a.id.localeCompare(b.id));
+  // Under a budget a trip it cannot be judged against comes after the ones
+  // it can (G12 judge round 3); with no budget nothing is unpriced, so the
+  // order is the fit-first one as before.
+  return ranked.sort((a, b) => (Number(b.qualified) - Number(a.qualified)) || (Number(Boolean(a.unpriced)) - Number(Boolean(b.unpriced))) || (Number(Boolean(a.been)) - Number(Boolean(b.been))) || (b.score - a.score) || a.id.localeCompare(b.id));
+}
+
+/**
+ * G12 early results (owner decision 2026-11-25, "Show results early"): how
+ * far a score can still move while the other trips are priced. Only
+ * priorityPull reads the rest of the list (a centred shift of at most half
+ * of rank.priorityPull either way); the budget sink only lowers a score.
+ * A flight lever re-ranks by the whole list, so nothing is bounded then.
+ */
+export function pullRoom(settings, levers = null) {
+  if (levers?.flight) return Infinity;
+  return settings?.priority === 'price' || settings?.priority === 'comfort' ? RANK.priorityPull / 2 : 0;
+}
+
+/**
+ * G12 early results: a candidate's rank before it is priced, as bounds.
+ * Everything in the score except the budget sink and priorityPull reads the
+ * candidate's places, month and shape, which pricing does not change, so its
+ * best score is that part plus the pull room; its worst is unknown under a
+ * budget (the sink has no floor) and that part minus the room without one.
+ * Same terms as rankTrips, so the bounds hold for the trip once priced.
+ * `floor` (trips.js priceFloor, owner decision 2026-11-25 "go on") narrows
+ * the sink: see boundFrom.
+ *   -> boundFrom's shape
+ */
+export function candidateBound(candidate, { settings, taste = null, data, tasteLean = null, floor = null } = {}) {
+  const t = tasteFor(settings, taste);
+  const destinations = data?.destinations || {};
+  const info = fitOf(candidate, t, destinations, settings);
+  const p = tripPersona(candidate, personaOf(settings.guide), destinations);
+  const part = (blendOf(info.F, p, info.Q ?? null) ?? 0) + tasteNudge(candidate, tasteLean, destinations) + shapeNudge(candidate, settings);
+  const been = new Set(settings.avoidIso2 || []);
+  return boundFrom({
+    id: tripId(candidate),
+    qualified: RANK.fitFirst ? qualifies(info, settings) : true,
+    been: been.size > 0 && been.has(String(candidate.iso2 || '').toUpperCase()),
+    part,
+  }, floor, settings);
+}
+
+// A score unit a euro over the budget, as rankTrips sinks it.
+const SINK_PER_EUR = RECOMMEND.budget.sinkPer100 / 100 / 10;
+// The day spend is a sum of rounded figures.
+const CENT = 0.01;
+
+/**
+ * G12 early results: the bounds of one trip still to price, from the part
+ * of its score pricing cannot change (`part`) and its price floor (trips.js
+ * priceFloor, or null: then only the bounds from before the floor).
+ *   -> { id, qualified, been, part,
+ *        unpriced   true: it will have a "Not yet" line on the budget's basis
+ *                   (so it ranks after the fully priced trips and gets no
+ *                   sink); false: it will not; null: not known before pricing
+ *        sink       [least, most] the budget sink can take off if fully priced
+ *        out        true when a ceiling is sure to take it out of the list
+ *        price      a floor of its total a person (priorityPull's key), or null
+ *        hi, lo     the best and worst score with the pull room (pullRoom)
+ *        hiFull     the best score if it turns out fully priced }
+ * Sound by construction: the floor never passes what the quote returns, the
+ * sink only grows with the price, and a line with no sound floor counts 0.
+ */
+export function boundFrom({ id, qualified, been, part }, floor, settings) {
+  const room = pullRoom(settings);
+  const budget = budgetOf(settings);
+  let unpriced = budget ? null : false;
+  let sink = budget ? [0, Infinity] : [0, 0];
+  let out = false;
+  if (budget && floor) {
+    const sinkAt = (spend) => SINK_PER_EUR * Math.max(0, spend - budget.eur);
+    if (budget.kind === 'day') {
+      // The day basis is beds and days only, both known before pricing.
+      unpriced = !floor.stay || !floor.food || !Number.isFinite(floor.day);
+      sink = unpriced ? [0, 0] : [sinkAt(floor.day - CENT), sinkAt(floor.day + CENT)];
+    } else if (!floor.stay || !floor.food || floor.flight === false) {
+      unpriced = true;
+      sink = [0, 0];
+    } else {
+      // The flight decides whether it is fully priced; if it is, it costs
+      // at least the floor with the flight's own floor in it.
+      sink = [sinkAt(floor.full ?? floor.perPerson), Infinity];
+    }
+    // budgetSplit takes a trip out when its priced lines alone pass the
+    // ceiling by more than 0.5, "Not yet" lines or not.
+    const spend = budget.kind === 'day' ? floor.day - CENT : floor.perPerson;
+    out = activeBudget(settings.guide.budget)?.mode === 'cap' && Number.isFinite(spend) && spend - budget.eur > 0.5;
+  }
+  const hiFull = part + room - sink[0];
+  return {
+    id, qualified, been, part, unpriced, sink, out,
+    price: floor && Number.isFinite(floor.perPerson) ? floor.perPerson : null,
+    // A trip that may end with a "Not yet" line gets no sink then.
+    hi: unpriced === false ? hiFull : part + room,
+    hiFull,
+    lo: part - room - sink[1],
+  };
+}
+
+/**
+ * G12 early results: whether a price floor (trips.js priceFloor) can narrow
+ * anything for these answers: a budget's sink, or the pull with price
+ * first. The floors cost about a third of the pricing up front (they warm
+ * the day prices the pricing then reuses), so a list with neither skips them
+ * and its rank 1 still settles after the first trip.
+ */
+export const floorHelps = (settings) => Boolean(budgetOf(settings)) || settings?.priority === 'price';
+
+/**
+ * G12 early results (owner decision 2026-11-25, "go on"): with price first,
+ * how far priorityPull can still move each trip, from the totals priced so
+ * far and the floors of the trips still to price; tighter than pullRoom.
+ * A trip's pull is RANK.priorityPull x (0.5 - share), its share its place in
+ * the whole list by total a person (placeShares, ties share a place). A
+ * priced trip's place is at least the priced trips cheaper than it and at
+ * most that plus every trip still to price whose floor does not pass it; a
+ * trip still to price stands at least behind the priced trips cheaper than
+ * its floor.
+ *   priced   the ranked trips priced so far (all of them, not only the shown)
+ *   pending  boundFrom() of every trip still to price
+ *   -> Map id -> [least, most] pull, or null when only pullRoom holds
+ *      (comfort reads the flights, which nothing bounds before pricing)
+ */
+export function pullRange(priced, pending, settings, levers = null) {
+  if (settings?.priority !== 'price' || levers) return null;
+  const prices = priced.map((x) => x.total?.perPerson);
+  if (!prices.every(Number.isFinite) || !pending.every((b) => Number.isFinite(b.price))) return null;
+  const n = priced.length + pending.length;
+  const out = new Map();
+  const pull = (share) => RANK.priorityPull * (0.5 - share);
+  if (n < 2) {
+    for (const x of [...priced, ...pending]) out.set(x.id, [0, 0]);
+    return out;
+  }
+  priced.forEach((x, i) => {
+    const p = prices[i];
+    const cheaper = prices.filter((q) => q < p).length;
+    const ties = prices.filter((q) => q === p).length;
+    const maybe = pending.filter((b) => b.price <= p).length;
+    out.set(x.id, [pull((cheaper + maybe + (ties - 1) / 2) / (n - 1)), pull((cheaper + (ties - 1) / 2) / (n - 1))]);
+  });
+  for (const b of pending) {
+    out.set(b.id, [pull(1), pull(prices.filter((q) => q < b.price).length / (n - 1))]);
+  }
+  return out;
 }
 
 /**

@@ -4,7 +4,7 @@
  * the node tests hold the rules without a DOM.
  */
 
-import { STUDIO_STEPS } from '../../lib/travelStyles.js';
+import { ANSWERED_LISTS, STUDIO_STEPS } from '../../lib/travelStyles.js';
 
 /** The ten steps in order (the store's own list, so a door's step and the
  *  wizard agree): four for how you stay, six for how you explore. */
@@ -72,6 +72,19 @@ export function togglePick(list, value, max = Infinity) {
 export function draftToSave(draft) {
   if (draft.name?.trim() || draft.nameKey) return draft;
   return { ...draft, nameKey: `styles.t.${draft.who?.kind || 'couple'}` };
+}
+
+/**
+ * G12 browser pass 2 (decision §12): the draft as saved marks the list
+ * steps the traveller passed (`seen`: left with Next, or saved on), so a
+ * likes or avoid step passed with nothing picked holds as "no preference"
+ * and the trip does not ask it again. A step skipped by an early Save stays
+ * unanswered and the trip asks it. What an earlier save marked is kept.
+ */
+export function withAnswered(draft, seen) {
+  const had = draft.explore?.answered || [];
+  const answered = ANSWERED_LISTS.filter((k) => had.includes(k) || seen.has(k));
+  return { ...draft, explore: { ...draft.explore, answered } };
 }
 
 /** Whether the draft differs from where it started (the close asks first). */

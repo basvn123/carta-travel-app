@@ -36,6 +36,7 @@ import { haversineKm } from '../runtime_pricing.js';
 import { sweptNear, sweptCheapest } from '../flights/flights.js';
 import { tripTaste, normalizeTaste } from '../taste.js';
 import { quizAnswers, spendFor } from '../../planner/flow/tripSettings.js';
+import { arrivalFromImports, staysFromImports } from '../../planner/flow/importStays.js';
 import { openIn } from '../season.js';
 
 export const CANDIDATES = Object.freeze(RECOMMEND.candidates);
@@ -215,6 +216,73 @@ export function fliesThere(settings) {
 
 const transferMinutes = (d) => (d?.tier === 'airport' ? 0 : d?.transfer?.transfer_minutes_one_way ?? null);
 
+const FLIGHT_KINDS = ['flight', 'flight_out', 'flight_home'];
+const DATED_KINDS = [...FLIGHT_KINDS, 'stay'];
+
+/**
+ * G12 L10 (decision §3.5 step 2): what the traveller already booked fixes in
+ * the finder. Before this the finder priced trips on any dates and from any
+ * airport, so a booked flight to Lisbon still got trips to Sicily in June.
+ *   dates    the first booked date to the flight home (else the last stay's
+ *            check-out, else the trip's length from the first date): fixed,
+ *            never moved to a "better" month
+ *   arrival  the catalogue town the booked flight out lands in, or ''
+ *   stays    the booked stays as { id, nights }, in check-in order: each one
+ *            is a stop of every trip, with its own nights
+ *   flights  whether a flight is booked (the way there is the traveller's)
+ * Null when nothing booked fixes anything.
+ */
+export function bookedFixes(settings, destinations = {}) {
+  const s = settings || {};
+  const imports = (Array.isArray(s.imports) ? s.imports : []).filter(Boolean);
+  const flights = Boolean(s.booked?.flights) || imports.some((b) => FLIGHT_KINDS.includes(b.kind));
+  const staysBooked = Boolean(s.booked?.stays) || imports.some((b) => b.kind === 'stay');
+  if (!flights && !staysBooked) return null;
+  const w = s.when || {};
+  const dated = imports.filter((b) => DATED_KINDS.includes(b.kind) && b.date).map((b) => b.date).sort();
+  let dates = null;
+  const out = dated[0] || (w.mode === 'exact' && w.start ? w.start : '');
+  if (out) {
+    const homes = imports.filter((b) => b.kind === 'flight_home' && b.date).map((b) => b.date).sort();
+    const stays = staysFromImports(imports, destinations, { nights: w.nights });
+    const stayDates = imports.filter((b) => b.kind === 'stay' && b.date).map((b) => b.date).sort();
+    const lastOut = stayDates.length && stays.length
+      ? iso(utc(stayDates[stayDates.length - 1]) + stays[stays.length - 1].nights * DAY_MS) : '';
+    const exactEnd = w.mode === 'exact' && w.start === out ? w.end : '';
+    const back = [homes[homes.length - 1], exactEnd, lastOut, dated[dated.length - 1]].find((d) => d && d > out)
+      || iso(utc(out) + (Number(w.nights) || DATES.nights) * DAY_MS);
+    dates = { out, back, nights: nightsBetween(out, back) };
+  }
+  const stays = staysBooked
+    ? staysFromImports(imports, destinations, dates ? { end: dates.back, nights: dates.nights } : { nights: w.nights })
+      .map((r) => ({ id: r.id, nights: r.nights }))
+    : [];
+  const arrival = flights ? arrivalFromImports(imports, destinations) : '';
+  if (!dates && !stays.length && !arrival) return null;
+  return { dates, arrival, stays, flights };
+}
+
+/**
+ * G12 L10: the places within reach of a booked town (the arrival or the
+ * first booked stay), best first: the town itself when it is a place to
+ * stay, then the rated places with a photograph within the few-towns reach
+ * (config towns.maxKm), open that month. The booked flight lands there, so
+ * the trips are built around it, whatever country they are in.
+ */
+export function bookedPool(centreId, destinations, { month = null, skip = [] } = {}) {
+  const centre = destinations?.[centreId];
+  if (!centre || centre.lat == null) return [];
+  const rows = [];
+  for (const [id, d] of Object.entries(destinations)) {
+    if (!d || d.lat == null || isGateway(d) || skip.includes(id)) continue;
+    if (month && !openIn(d, month)) continue;
+    const own = id === centreId;
+    if (!own && (!d.image?.url || kmBetween(centre, d) > CANDIDATES.towns.maxKm)) continue;
+    rows.push({ id, own, q: qualityOf(d, month) ?? d.rating?.score ?? 0 });
+  }
+  return rows.sort((a, b) => Number(b.own) - Number(a.own) || b.q - a.q || a.id.localeCompare(b.id)).map((r) => r.id);
+}
+
 // The catalogue's airport rows, listed once per catalogue.
 const airportRows = new WeakMap();
 function airportsOf(destinations) {
@@ -310,7 +378,9 @@ export function buildCandidates(input) {
   const { data, countryInsights = null, layerIndexes = {}, settings, taste = null, origin = null, flights = null, getting = null, today } = input;
   const destinations = data?.destinations || {};
   const answers = answersFor(settings);
-  const fixedMonth = setupMonth(settings, today);
+  // G12 L10: booked dates are fixed; their month is the trip's month.
+  const fixes = bookedFixes(settings, destinations);
+  const fixedMonth = fixes?.dates ? Number(fixes.dates.out.slice(5, 7)) : setupMonth(settings, today);
   const matched = matchCountries({
     destinations,
     insights: countryInsights,
@@ -321,17 +391,47 @@ export function buildCandidates(input) {
     taste: tasteFor(settings, taste),
     topN: CANDIDATES.placesPerCountry,
   });
-  const countries = matched.slice(0, CANDIDATES.countries);
+  // G12 L12 (decision §3.2 S10): plan again somewhere new puts the
+  // countries been after the new ones, so the eight countries priced are
+  // new ones first; a been country still comes when too few new ones fit.
+  const avoid = new Set(settings.avoidIso2 || []);
+  const fresh = avoid.size ? [...matched.filter((c) => !avoid.has(String(c.iso2 || '').toUpperCase())), ...matched.filter((c) => avoid.has(String(c.iso2 || '').toUpperCase()))] : matched;
+  const countries = fresh.slice(0, CANDIDATES.countries);
 
   const { shapes, gaps } = shapesFor(settings);
   const flies = fliesThere(settings);
   // T861: every ticked home airport's file, the origin's first.
   const homeFiles = [flights, ...Object.values(data?.flightsBy || {})]
     .filter((f, i, all) => f && all.findIndex((g) => g?.from === f.from) === i);
+  const datesOf = (month) => (fixes?.dates ? { ...fixes.dates, fromSetup: true } : datesFor(settings, month, today));
+  // G12 L10: a booked flight lands where it lands: every trip's gateway is
+  // that town's airport, marked booked (the traveller's own fare).
+  const arrivalDest = fixes?.flights && fixes.arrival ? destinations[fixes.arrival] : null;
+  const bookedGateway = arrivalDest
+    ? { iata: destAnchor(arrivalDest) || fixes.arrival, minutes: transferMinutes(arrivalDest), mode: null, placeId: fixes.arrival, swept: false, booked: true }
+    : null;
+  const make = (c, shape, places, month, dates) => {
+    const placeIds = places.map((p) => p.id);
+    return {
+      country: c.country,
+      iso2: c.iso2,
+      shape,
+      transport: transportFor(shape, settings),
+      places,
+      gateway: flies
+        ? bookedGateway || gatewayFor(placeIds, { destinations, flights: homeFiles, getting, out: dates.out, origin: origin?.iata || null })
+        : null,
+      month,
+      dates: dates.out ? { out: dates.out, back: dates.back } : null,
+      datesFromSetup: dates.fromSetup,
+      nights: dates.nights,
+      signals: { countryScore: c.score, countryReasons: c.reasons, topType: c.topType, bestMonth: c.bestMonth, gaps, ...(fixes ? { booked: true } : {}) },
+    };
+  };
   const build = (c, shape, ids) => {
     const dests = ids.map((id) => destinations[id]);
     const month = fixedMonth ?? bestMonth(dests, settings.guide.weather, today);
-    const dates = datesFor(settings, month, today);
+    const dates = datesOf(month);
     const n = placesFor(shape, dates.nights);
     // T1202 (D18): a place shut that month (its hut, lift or only ferry
     // closed, medium or high confidence) is never suggested for it.
@@ -339,21 +439,7 @@ export function buildCandidates(input) {
     const placeIds = n == null ? null : placesNear(openIds, n, shape, destinations, personaReach(personaOf(settings.guide)));
     if (!placeIds) return null;
     const nights = splitNights(dates.nights, n);
-    return {
-      country: c.country,
-      iso2: c.iso2,
-      shape,
-      transport: transportFor(shape, settings),
-      places: placeIds.map((id, i) => ({ id, nights: nights[i] })),
-      gateway: flies
-        ? gatewayFor(placeIds, { destinations, flights: homeFiles, getting, out: dates.out, origin: origin?.iata || null })
-        : null,
-      month,
-      dates: dates.out ? { out: dates.out, back: dates.back } : null,
-      datesFromSetup: dates.fromSetup,
-      nights: dates.nights,
-      signals: { countryScore: c.score, countryReasons: c.reasons, topType: c.topType, bestMonth: c.bestMonth, gaps },
-    };
+    return make(c, shape, placeIds.map((id, i) => ({ id, nights: nights[i] })), month, dates);
   };
 
   const out = [];
@@ -365,6 +451,10 @@ export function buildCandidates(input) {
     seen.add(key);
     out.push(cand);
   };
+  if (fixes && (fixes.stays.length || arrivalDest)) {
+    bookedTrips({ fixes, destinations, month: fixedMonth, shapes, datesOf, make, build, push, today });
+    return out;
+  }
   // The persona (owner, plan flow walk): a country's places ordered by the
   // same key plus the persona's shift, from all its rated places, so a
   // small place near a hub can lead where the country match named the hub.
@@ -406,6 +496,44 @@ export function buildCandidates(input) {
     if (c.topPlaces.length > 1) push(build(c, 'one', c.topPlaces.slice(1)));
   }
   return out;
+}
+
+/** A country row for a place the country match did not rank (a booked town). */
+const countryOfPlace = (d) => ({ country: d?.country || '', iso2: String(d?.iso2 || '').toUpperCase(), score: 0, reasons: [], topType: null, bestMonth: null });
+
+/**
+ * G12 L10: the trips around what is booked, pushed through buildCandidates'
+ * own `push`.
+ *   - Booked stays are every trip's first stops with their own nights (a
+ *     booking is not Carta's to resize). Nights the stays leave open go to
+ *     one more place near the first stay, one trip per such place; with
+ *     none near, the stays alone.
+ *   - Only a flight: the trips are built from the places near the town it
+ *     lands in (bookedPool), in every asked shape, then one place each.
+ */
+function bookedTrips({ fixes, destinations, month, shapes, datesOf, make, build, push, today }) {
+  if (fixes.stays.length) {
+    const first = destinations[fixes.stays[0].id];
+    const m = month ?? bestMonth([first], null, today);
+    const dates = datesOf(m);
+    const pinned = fixes.stays.map((x) => ({ id: x.id, nights: x.nights }));
+    const left = (dates.nights || 0) - pinned.reduce((n, x) => n + x.nights, 0);
+    const c = countryOfPlace(first);
+    const shapeOf = (n) => (n > 1 ? 'towns' : 'one');
+    if (left >= 1) {
+      const near = bookedPool(fixes.stays[0].id, destinations, { month: m, skip: pinned.map((x) => x.id) })
+        .filter((id) => kmBetween(first, destinations[id]) >= CANDIDATES.towns.minKm);
+      for (const id of near.slice(0, CANDIDATES.min)) {
+        push(make(c, 'towns', [...pinned, { id, nights: left }], m, dates));
+      }
+    }
+    push(make(c, shapeOf(pinned.length), pinned, m, dates));
+    return;
+  }
+  const pool = bookedPool(fixes.arrival, destinations, { month });
+  if (!pool.length) return;
+  for (const shape of shapes) push(build(countryOfPlace(destinations[pool[0]]), shape, pool));
+  for (const id of pool.slice(0, CANDIDATES.min)) push(build(countryOfPlace(destinations[id]), 'one', [id]));
 }
 
 /**

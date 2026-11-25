@@ -369,6 +369,9 @@
 .tff-none { display: grid; justify-items: start; gap: var(--space-2); padding: var(--space-4); border-radius: var(--radius-card); background: var(--surface); }
 .tff-none p { margin: 0; color: var(--text-2); }
 
+/* G12 B7a (R7): below 820 px List and Map are two tabs under the toolbar (the 820 to 1023 px pill stays). */
+.tff-viewtabs { margin-block: var(--space-2) var(--space-3); }
+
 /* The phone's map switch (T880): one paper pill floating above the nav (house style: no dark slab). */
 .tff-fab-slot {
   position: sticky;
@@ -937,6 +940,8 @@
 .tff-tp-gal .tff-gal-cap { padding: var(--space-1) 0 0; }
 .tff-tp-cap-end { display: inline-flex; flex: none; gap: var(--space-3); min-width: 0; }
 .tff-tp-credit { color: var(--text-3); text-decoration: underline; text-underline-offset: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch; }
+/* G12 L16: a 44 px tap target on a phone without moving the caption line. */
+.tff-tp-credit { display: inline-block; padding-block: 13px; margin-block: -13px; }
 @media (min-width: 769px) {
   .tff-tp-gal .tff-gal-track { grid-auto-columns: calc((100% - 4px) / 2.2); }
   .tff-tp-gal .tff-gal-slide { height: 380px; }
@@ -1235,3 +1240,51 @@
 .tff-card .tff-total-eur:has(> .hs-formation) { font-size: var(--text-body); }
 .tff-card .tff-total-eur .hs-formation { flex-wrap: wrap; row-gap: var(--space-1); }
 .tff-card.is-feat .tff-total-eur .hs-formation-day { font-size: var(--text-title); }
+
+/* G12 lane R2: themed rows under the best pick and the diverse top five,
+   each a sideways strip of cards with "All n" (the row's sort on the full
+   list). Plain house parts; the owner polishes the look later. */
+.tff-rows { display: flex; flex-direction: column; gap: var(--space-6); margin: var(--space-6) 0 var(--space-4); }
+.tff-rows-h { margin: 0; font-size: var(--text-title); }
+.tff-row-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-3); margin-bottom: var(--space-2); }
+.tff-row-title { margin: 0; font-size: var(--text-body); font-weight: 600; }
+.tff-row-cards { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 70%); gap: var(--space-3); margin: 0; padding: 0 0 var(--space-2); list-style: none; overflow-x: auto; scroll-snap-type: x proximity; overscroll-behavior-x: contain; }
+.tff-row-cards > li { min-width: 0; scroll-snap-align: start; }
+@media (min-width: 600px) { .tff-row-cards { grid-auto-columns: minmax(240px, 40%); } }
+@media (min-width: 1024px) { .tff-row-cards { grid-auto-columns: minmax(240px, 30%); } }
+.tff-more-h { margin: var(--space-6) 0 var(--space-3); font-size: var(--text-title); }
+/* G12 L6: the place lander keeps the wizard's country compare under the found trip. */
+.tff-compare { display: flex; justify-content: center; padding: var(--space-4) 0 var(--space-6); }
+/* G12 L13, R3: the found trip's levers and its alternatives by relation. */
+.tff-levers { display: flex; flex-wrap: wrap; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.tff-lever { display: inline-flex; gap: var(--space-2); }
+.tff-lever-diff, .tff-alt-diff { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tff-alt-rel { display: flex; justify-content: space-between; gap: var(--space-2); margin: 0 0 var(--space-1); font-weight: 600; }
+/* G12 L8: "Just over" under a ceiling, apart from the list. */
+.tff-near { display: grid; gap: var(--space-2); margin-top: var(--space-6); }
+.tff-near-note { margin: 0; color: var(--text-2); font-size: var(--text-label); }
+/* G12 R4: More and Less like this, the hint and the row on top. */
+.tff-ml-note { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); color: var(--text-2); font-size: var(--text-label); }
+.tff-ml-row { margin-bottom: var(--space-5); }
+/* G12 R6: Search more (Another month, priced on request). */
+.tff-search-more { margin: var(--space-4) 0; }
+/* G12 early results: the quiet "still pricing" line, one still brown dot as
+   on the searching screen (no pulse); cards arriving after the list opened
+   fade in once, opacity only, so nothing on screen slides. */
+.tff-pricing { display: flex; align-items: center; gap: var(--space-2); margin: var(--space-3) 0; font-size: var(--text-label); color: var(--text-2); }
+.tff-pricing-dot { flex: none; width: 8px; height: 8px; border-radius: var(--radius-pill); background: var(--action); }
+.tff-toolbar.is-waiting { opacity: 0.55; }
+.tff-trips.is-arriving .tff-list > li,
+.tff-trips.is-arriving .tff-row-cards > li,
+.tff-trips.is-arriving .tff-rows,
+.tff-search-more h3,
+.tff-search-more .tff-row-cards > li { animation: tff-in var(--dur-3) var(--ease-out) both; }
+@media (prefers-reduced-motion: reduce) {
+  .tff-trips.is-arriving .tff-list > li,
+  .tff-trips.is-arriving .tff-row-cards > li,
+  .tff-trips.is-arriving .tff-rows,
+  .tff-search-more h3,
+  .tff-search-more .tff-row-cards > li { animation: none; }
+}
+/* G12 L12: own past spend, a quiet reference line under the title (decision 0013). */
+.tff-spendref { margin: 0 0 var(--space-2); font-size: var(--text-caption); color: var(--text-2); }

@@ -11,23 +11,39 @@
  * this module's memory.
  */
 const KEY = 'carta.plan.quickStart';
-let memory = false;
+let memory = '';
 
 function store() {
   try { return typeof window !== 'undefined' ? window.sessionStorage : null; } catch { return null; }
 }
 
-export function markQuickStart() {
-  memory = true;
-  try { store()?.setItem(KEY, '1'); } catch { /* memory holds it */ }
+/**
+ * G12 plan rethink (decision §12): the mark says where the planner opens.
+ * 'ask' (the default now) opens on the first help-me-choose question the
+ * style does not answer; 'trips' (the traveller pressed "Show the trips
+ * now", or an older mark '1') opens on the priced trips.
+ */
+export const QUICK_MODES = Object.freeze(['ask', 'trips']);
+
+export function markQuickStart(mode = 'trips') {
+  memory = QUICK_MODES.includes(mode) ? mode : 'trips';
+  try { store()?.setItem(KEY, memory); } catch { /* memory holds it */ }
+}
+
+/** The mark's mode, or '' with none ('1' from before G12 B3 reads as 'trips'). */
+export function peekQuickMode() {
+  if (memory) return memory;
+  try {
+    const v = store()?.getItem(KEY) || '';
+    return v === '1' ? 'trips' : (QUICK_MODES.includes(v) ? v : '');
+  } catch { return ''; }
 }
 
 export function peekQuickStart() {
-  if (memory) return true;
-  try { return store()?.getItem(KEY) === '1'; } catch { return false; }
+  return Boolean(peekQuickMode());
 }
 
 export function clearQuickStart() {
-  memory = false;
+  memory = '';
   try { store()?.removeItem(KEY); } catch { /* nothing to clear */ }
 }

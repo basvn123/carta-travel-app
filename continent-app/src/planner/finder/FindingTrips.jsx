@@ -23,14 +23,22 @@ export { default as TogetherSheet } from './TogetherSheet.jsx';
 export { dropsFor } from '../../lib/recommend/kept.js';
 // T864, T865: two doors' screens ride in this chunk with the engine they run.
 export { FlightFirstScreen, KnowBuildScreen } from './DoorScreens.jsx';
+// G12 L6: the place lander is the revived KnowBuildScreen.
+export { KnowBuildScreen as PlaceLander } from './DoorScreens.jsx';
 
 const PARTY_TITLE = { solo: 'solo', couple: 'couple', friends: 'friends', family: 'family', group: 'group' };
 
-/** The least time the search stands, from its first frame (owner, plan flow
- *  walk 2026-10-30: "at least 4 seconds ... all the requirements get
- *  placed"), and the beat "8 trips found" holds before the list. A run
- *  already done when the screen opens (back from a trip) skips both. */
-const MIN_STAND_MS = 4000;
+/** The least time the search stands, from its first frame, and the beat
+ *  "8 trips found" holds before the list. A run already done when the
+ *  screen opens (back from a trip) skips both.
+ *  G12 early results (owner decision 2026-11-25): was 4 s (plan flow walk
+ *  2026-10-30). On an emulated phone the pricing alone outlasted it, so it
+ *  never bound there; with rank 1 shown as soon as it settles, a desktop
+ *  can settle it within a few hundred ms. What is kept is only the part
+ *  that prevents a flash: the searching screen stays long enough for its
+ *  first brief lines to land and be read (about 1 s), instead of blinking
+ *  away. */
+const MIN_STAND_MS = 1000;
 const FOUND_BEAT_MS = 700;
 // The brief's lines share this span (the last lands near 3.1 s, "found"
 // after it, the list at 4 s); a short brief keeps a calm step.
@@ -232,7 +240,7 @@ function scrollerOf(el) {
  * The list shows the moment the trips are ranked: back from the planner
  * the run is memoised, so it is there at once (T867: no minimum stand).
  */
-export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, openId: arriveId = null, onBack, onWiden, onPlan, headEnd = null, refine = null }) {
+export default function TripFinderScreen({ ui, settings, guide, edits, setEdits, markedId = null, openId: arriveId = null, onBack, onWiden, onPlan, headEnd = null, refine = null, bar = null }) {
   const { lang } = useI18n();
   const finder = useTripFinder(settings);
   const [openId, setOpenId] = useState(arriveId);
@@ -242,23 +250,31 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
   const listAt = useRef(null); // { el, top }: where the list stood when a trip opened
   const keepWith = { origin: finder.origin?.iata || null, file: finder.input?.flights || null };
   const keeper = useKeepTrip({ destinations: finder.data?.destinations, lang, keepWith });
-  const all = (finder.trips || finder.early || []).map((x) => edits[x.id] || x);
-  const open = openId ? all.find((x) => x.id === openId) : null;
+  // G12 early results: the settled top cards while the rest is priced.
+  const early = !finder.trips && finder.shown?.length ? finder.shown : null;
+  const all = (finder.trips || early || finder.early || []).map((x) => edits[x.id] || x);
+  // G12 L13, R3: a lever is a trip the list does not hold; it opens from here.
+  const [extra, setExtra] = useState({});
+  const open = openId ? (all.find((x) => x.id === openId) || extra[openId] || null) : null;
   const done = Boolean(finder.trips && finder.trips.length);
-  // The search stands at least MIN_STAND_MS, then holds "8 trips found" for
-  // FOUND_BEAT_MS (owner, plan flow walk). A run already done on arrival
-  // (back from a trip, the memoised run) or a trip's own address skips it.
+  // The search stands at least MIN_STAND_MS; a whole run then holds "8 trips
+  // found" for FOUND_BEAT_MS (owner, plan flow walk), while settled cards
+  // (G12 early results) go straight to the list, which says how many are
+  // still being priced. A run already done on arrival (back from a trip,
+  // the memoised run) or a trip's own address skips it.
   const holdFrom = useRef(done || arriveId ? null : Date.now());
   const [released, setReleased] = useState(!holdFrom.current);
+  const can = done || Boolean(early);
   useEffect(() => {
-    if (released || !done) return undefined;
-    const wait = Math.max(MIN_STAND_MS - (Date.now() - holdFrom.current), FOUND_BEAT_MS);
+    if (released || !can) return undefined;
+    const wait = Math.max(MIN_STAND_MS - (Date.now() - holdFrom.current), done ? FOUND_BEAT_MS : 0);
     const id = setTimeout(() => setReleased(true), wait);
     return () => clearTimeout(id);
-  }, [done, released]);
+  }, [can, done, released]);
   // A reopened question leaves this screen, so a new answer set mounts it
   // again and stands again.
-  const ready = done && released;
+  const ready = can && released;
+  const pricing = finder.trips ? 0 : (finder.left || 0);
 
   // An address that names a trip the answers no longer give: back to the list.
   useEffect(() => {
@@ -322,8 +338,11 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
       <div hidden={Boolean(open)} className="tff-under" ref={underRef}>
         {ready ? (
           <TripsForYou
+            input={finder.input}
             settings={settings}
             trips={all}
+            pricing={pricing}
+            pinned={(finder.shown || []).map((x) => x.id)}
             destinations={finder.data?.destinations}
             originName={settings.from?.name || finder.origin?.name || ''}
             home={finder.origin}
@@ -356,9 +375,11 @@ export default function TripFinderScreen({ ui, settings, guide, edits, setEdits,
           destinations={finder.data?.destinations}
           ui={ui}
           keepWith={keepWith}
+          bar={bar}
           others={finder.trips ? all : []}
+          input={finder.input}
           onBack={closeTrip}
-          onOpen={openTrip}
+          onOpen={(x) => { if (!all.some((y) => y.id === x.id)) setExtra((e) => ({ ...e, [x.id]: x })); openTrip(x); }}
           onPlan={planTrip}
           onEdit={(next) => setEdits((e) => ({ ...e, [open.id]: next }))}
         />

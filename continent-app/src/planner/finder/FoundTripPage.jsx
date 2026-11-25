@@ -15,7 +15,9 @@ import { cityLabel } from '../../lib/placeName.js';
 import { CROWD_KEYS, crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
-import { useKeepTrip } from './finderHooks.js';
+import { useFoundMore, useKeepTrip } from './finderHooks.js';
+import { alternatives } from '../../lib/recommend/alternatives.js';
+import { receiptOfTrip } from '../../lib/price/receiptDiff.js';
 import { useTotalDelta } from '../planHooks.js';
 import { LinePicker } from './LinePicker.jsx';
 import { MatchRing, TripCard } from './TripCard.jsx';
@@ -438,8 +440,10 @@ function WhenStrip({ trip, destinations, t, lang }) {
  *   onPlan(trip)    "Plan this trip"
  *   onEdit(next)    the trip with a line swapped (a picker)
  *   onOpen(trip)    an alternative opened in its place
+ *   onSearchMore()  G12 B7a: with no list behind the page (the place lander),
+ *                   prices other trips for the alternatives on request
  */
-export function FoundTripPage({ trip, settings, destinations, ui, others = [], keepWith = null, onBack, onPlan, onEdit, onOpen }) {
+export function FoundTripPage({ trip, settings, destinations, ui, others = [], keepWith = null, onBack, onPlan, onEdit, onOpen, bar = null, input = null, onSearchMore = null }) {
   const { t, lang } = useI18n();
   const months = useMonths();
   const bcp47 = useBcp47();
@@ -473,7 +477,29 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
     }
     return out.slice(0, 8);
   }, [trip, destinations, pois, placeIds]);
-  const alts = others.filter((x) => x.id !== trip.id).slice(0, 3);
+  // G12 L13: the levers, each this trip priced again with one thing cheaper.
+  const more = useFoundMore(trip, input);
+  // G12 R3: one alternative per relation (cheaper, another month, another
+  // country, closer), replacing the list's next three.
+  // G12 B7a: the lander's own pool, priced only on Search more (L0 leaves
+  // no room for more pricing before the page shows). null = not asked.
+  const [searched, setSearched] = useState(null);
+  useEffect(() => { setSearched(null); }, [input]);
+  const pool = useMemo(() => (others.length ? others : Array.isArray(searched) ? searched : []), [others, searched]);
+  const canSearch = !others.length && Boolean(onSearchMore) && !Array.isArray(searched);
+  const searchMore = () => {
+    setSearched('busy');
+    // One frame first, so the button can say it is searching before the pricing blocks.
+    requestAnimationFrame(() => setSearched(onSearchMore() || []));
+  };
+  const alts = useMemo(
+    () => alternatives(trip, pool, { levers: more.levers, minutes: thereMinutes, windows: more.windows }),
+    [trip, pool, more.levers, more.windows],
+  );
+  const money = (d) => signedMoney(d, { locale: lang });
+  const leverLabel = (l) => (l.key === 'nearby'
+    ? t('tf.lever.nearby', { place: cityLabel(destinations?.[l.placeId]?.city || '') })
+    : l.key === 'week' ? t('tf.lever.week', { month: monthName(l.month, lang) }) : t('tf.lever.tier'));
 
   // Arriving on the page (or on another trip from Not quite right?) puts
   // the page at its top and focus on its heading.
@@ -529,6 +555,9 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
           <>
             <Gallery photos={photos} name={name} t={t}>{null}</Gallery>
             {head}
+            {/* G12 §3.3: what this price assumed, the same bar as the list. */}
+            {/* G12 L9: the bar compares this trip's price before and after a chip change. */}
+            {bar && React.isValidElement(bar) ? React.cloneElement(bar, { receipt: receiptOfTrip(trip) }) : bar}
           </>
         );
       })()}
@@ -591,12 +620,35 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
             })}
           </section>
 
-          {alts.length > 0 && (
-            <section className="tff-sec" aria-labelledby="tff-tp-alts">
+          {more.levers.length > 0 && (
+            <section className="tff-sec" aria-labelledby="tff-tp-levers" data-levers="">
+              <h2 className="tff-tp-h" id="tff-tp-levers">{t('tf.lever.title')}</h2>
+              <ul className="tff-levers">
+                {more.levers.map((l) => (
+                  <li key={l.key}>
+                    <Button variant="secondary" size="sm" className="tff-lever" onClick={() => onOpen(l.trip)}>
+                      <span>{leverLabel(l)}</span>
+                      {/* G12 B5 owner rule: with the flight Not yet, the saving is on the lines that moved, never the whole trip. */}
+                      <span className="tff-lever-diff money">{l.partial
+                        ? t('tf.lever.saveOn', { eur: formatMoney(Math.abs(l.diff), { locale: lang }), lines: l.lines.map((id) => t(`pf.delta.l.${id}`)).join(', ') })
+                        : money(l.diff)}</span>
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
+          {(alts.length > 0 || canSearch || Array.isArray(searched)) && (
+            <section className="tff-sec" aria-labelledby="tff-tp-alts" aria-live="polite">
               <h2 className="tff-tp-h" id="tff-tp-alts">{t('tf.tp.alts')}</h2>
               <ol className="tff-list tff-tp-alts">
-                {alts.map((x) => (
-                  <li key={x.id}>
+                {alts.map(({ key, trip: x, diff }) => (
+                  <li key={x.id} data-alt={key}>
+                    <p className="tff-alt-rel">
+                      <span>{t(`tf.alt.${key}`)}</span>
+                      {Number.isFinite(diff) && diff !== 0 && <span className="tff-alt-diff money">{money(diff)}</span>}
+                    </p>
                     <TripCard
                       trip={x}
                       destinations={destinations}
@@ -607,6 +659,12 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
                   </li>
                 ))}
               </ol>
+              {canSearch && (
+                <Button variant="secondary" size="sm" disabled={searched === 'busy'} onClick={searchMore}>
+                  {t(searched === 'busy' ? 'tf.more.busy' : 'tf.more.search')}
+                </Button>
+              )}
+              {Array.isArray(searched) && !alts.length && <p className="tff-spendref">{t('tf.alt.none')}</p>}
             </section>
           )}
         </div>

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
-import { Button, Chip, Segmented } from '../../components/ui/index.js';
+import { Button, Chip, ChipGroup, Segmented } from '../../components/ui/index.js';
 import { CheckIcon, ListDayIcon, PencilIcon, SparkIcon } from '../../components/Icons.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
 import { useTripSettings } from './flowHooks.js';
 import { RHYTHM, markAnswered, normalizeSettings } from './tripSettings.js';
+import { daysPrefill } from './daysPrefill.js';
+import { useHoldApp } from './StyleBar.jsx';
 
 /**
  * Plan your days (T658; T896, the owner's plan days board 2026-10-30): how
@@ -17,6 +19,12 @@ import { RHYTHM, markAnswered, normalizeSettings } from './tripSettings.js';
  * plans) are gone: how planned is a view on the day, food a goal, getting
  * around the trip's own answer.
  *
+ * G12 plan rethink (lane L7, decision §12, the question rule): mornings and
+ * pace live in the travel style, so they show as chips filled from it and
+ * are not asked again; detail, the goal (what more of) and food are not in
+ * the style, so they are asked, the goal and food opening prefilled
+ * (daysPrefill.js). How the days are planned stays the first question.
+ *
  *   onPlan(how)   'carta' | 'bot' | 'self'
  */
 const WAYS = [
@@ -24,34 +32,33 @@ const WAYS = [
   { value: 'bot', Icon: SparkIcon },
   { value: 'self', Icon: PencilIcon },
 ];
-// The trip's likes as the days' goals, so the screen opens filled in.
-const LIKE_GOAL = { beach: 'beach', islands: 'beach', hiking: 'nature', lakes: 'nature', cycling: 'nature', culture: 'sights', city: 'sights', food: 'food', nightlife: 'nightlife' };
 
 export function DaysPrompt({ onClose, onPlan }) {
   const { t } = useI18n();
   const [settings, save] = useTripSettings();
   const r = settings.rhythm;
+  const app = useHoldApp();
+  const style = (app?.travelStyles?.list || []).find((x) => x.id === settings.style) || null;
+  const [first] = useState(() => daysPrefill(settings, style));
   const [way, setWay] = useState(settings.daysHow === 'self' ? 'self' : settings.daysHow === 'bot' ? 'bot' : 'carta');
   const [view, setView] = useState('how');
-  const [goals, setGoals] = useState(() => {
-    if (r.goals.length) return r.goals;
-    const fromLikes = [...new Set(settings.guide.likes.map((k) => LIKE_GOAL[k]).filter(Boolean))].slice(0, 3);
-    return fromLikes.length ? fromLikes : ['sights', 'food'];
-  });
-  const [pace, setPace] = useState(r.pace || 'balanced');
-  const [mornings, setMornings] = useState(r.mornings || 'onthego');
+  const [goals, setGoals] = useState(first.goals);
+  const [pace, setPace] = useState(first.pace);
+  const [mornings, setMornings] = useState(first.mornings);
+  const [detail, setDetail] = useState(first.detail);
+  const [food, setFood] = useState(first.food);
   const [keep, setKeep] = useState(r.keep);
   const flip = (list, v) => (list.includes(v) ? list.filter((x) => x !== v) : [...list, v]);
 
   const finish = (how) => {
     let next = { ...settings, daysHow: how };
     if (how === 'carta') {
-      next = { ...next, rhythm: { ...settings.rhythm, goals, pace, mornings, keep } };
+      next = { ...next, rhythm: { ...settings.rhythm, goals, pace, mornings, keep, detail, food } };
       // An answer the travel style gave and left as it was stays the style's,
       // so switching the trip's style later still moves it; one the
       // traveller changed here is theirs.
       const kept = { 'r:pace': pace === settings.rhythm.pace, 'r:mornings': mornings === settings.rhythm.mornings };
-      for (const id of ['r:pace', 'r:mornings', 'r:goal']) {
+      for (const id of ['r:pace', 'r:mornings', 'r:goal', 'r:detail', 'r:food']) {
         if (kept[id] && settings.sources?.[id] === 'style') continue;
         next = markAnswered(next, id);
       }
@@ -93,16 +100,17 @@ export function DaysPrompt({ onClose, onPlan }) {
                 ))}
               </div>
             </div>
+            <OneChips id="pdh-pace" label={t('pf.dh.pace')} value={pace} onChange={setPace} styled={first.from.pace === 'style' && pace === first.pace}
+              options={['slow', 'balanced', 'packed'].map((v) => ({ value: v, label: t(`pf.dh.pace.${v}`) }))} />
+            <OneChips id="pdh-start" label={t('pf.dh.start')} value={mornings} onChange={setMornings} styled={first.from.mornings === 'style' && mornings === first.mornings}
+              options={['early', 'onthego', 'slow'].map((v) => ({ value: v, label: t(`pf.dh.start.${v}`) }))} />
             <div className="pdh-group">
-              <p className="pdh-q">{t('pf.dh.pace')}</p>
-              <Segmented block label={t('pf.dh.pace')} value={pace} onChange={setPace}
-                options={['slow', 'balanced', 'packed'].map((v) => ({ value: v, label: t(`pf.dh.pace.${v}`) }))} />
+              <p className="pdh-q">{t('pf.q.detail')}</p>
+              <Segmented block label={t('pf.q.detail')} value={detail} onChange={setDetail}
+                options={RHYTHM.detail.map((v) => ({ value: v, label: t(`pf.o.${v}`) }))} />
             </div>
-            <div className="pdh-group">
-              <p className="pdh-q">{t('pf.dh.start')}</p>
-              <Segmented block label={t('pf.dh.start')} value={mornings} onChange={setMornings}
-                options={['early', 'onthego', 'slow'].map((v) => ({ value: v, label: t(`pf.dh.start.${v}`) }))} />
-            </div>
+            <OneChips id="pdh-food" label={t('pf.q.food')} value={food} onChange={setFood} styled={first.from.food === 'style' && food === first.food}
+              options={RHYTHM.food.map((v) => ({ value: v, label: t(`pf.o.${v}`) }))} />
             <div className="pdh-group is-wide">
               <p className="pdh-q" id="pdh-keep">{t('pf.dh.keep')}</p>
               <div className="pdh-chips" role="group" aria-labelledby="pdh-keep">
@@ -119,5 +127,27 @@ export function DaysPrompt({ onClose, onPlan }) {
         </div>
       )}
     </SheetShell>
+  );
+}
+
+/**
+ * One answer as chips (G12 L7): mornings, pace and food read at a glance
+ * and change with one tap; "From your style" says the style filled it,
+ * until the traveller picks another for this trip.
+ */
+function OneChips({ id, label, value, onChange, options, styled = false }) {
+  const { t } = useI18n();
+  return (
+    <div className="pdh-group">
+      <p className="pdh-q" id={id}>
+        {label}
+        {styled && <span className="pdh-from">{t('pf.dh.fromStyle')}</span>}
+      </p>
+      <ChipGroup label={label} className="pdh-chips">
+        {options.map((o) => (
+          <Chip key={o.value} kind="choice" selected={value === o.value} onClick={() => onChange(o.value)}>{o.label}</Chip>
+        ))}
+      </ChipGroup>
+    </div>
   );
 }

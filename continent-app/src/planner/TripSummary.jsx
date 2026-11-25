@@ -189,13 +189,15 @@ export function TripSummary({
   quoteDelta = null, onDates = null, onFlights = null,
   // T887: add the hire car the advice names, and what it does to the total.
   onCar = null, carDelta = null,
+  // G12 L11: the open-jaw choice for the cost card (useTripPlanner openJaw + names, onPick).
+  openJaw = null,
 }) {
   const { t, lang } = useI18n();
   const title = shownTripName(name, stopDetails, lang) || t('itin.myTrip');
   const countdown = countdownText(t, tripStart, tripEnd);
-  const bookedNow = bookedCount({ flight, priced, ownFlight, stopDetails, stayCosts, booked });
   const airlinesAll = useAirlines();
   const rows = bookRows({ tripStart, tripEnd, stopDetails, stayCosts, stayTier, priced, flight, ownFlight, party, booked, book }, { t, lang, airlines: airlinesAll });
+  const bookedNow = bookedCount(rows);
   // The Lifestyle sets what the days cost (one .lifestyle-btn door): a chip
   // with the trip's own, opening the same sheet as everywhere else.
   const settings = useSettings();
@@ -311,7 +313,7 @@ export function TripSummary({
     <CostCard priced={priced} people={n} per={per} onPer={setPer} budget={budgetCard} mine={mine}
       aroundNote={carTip && carTip.verdict === 'yes' && !flight?.driving ? t('tp.tile.carAdvised') : ''}
       onOpen={(k) => go('costs', `tp-cost-${k}`)} onAll={() => go('costs')} onAddPaid={onAddPaid}
-      lifestyle={lifestyle} onStyleSpend={onStyleSpend} onChangeFlight={onChangeFlight} />
+      lifestyle={lifestyle} onStyleSpend={onStyleSpend} onChangeFlight={onChangeFlight} openJaw={openJaw} />
   );
 
   // House style (G1): below 1024 px the cost post leads the Overview (a

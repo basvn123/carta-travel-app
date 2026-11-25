@@ -139,7 +139,8 @@ export function catchFor(trip, { info, budget }) {
     if (conflict.key === 'heat') facts.c = Math.round(monthHigh(info, trip.month) ?? MATCH.heat_max_c);
     return { key: `tf.catch.${conflict.key}`, facts };
   }
-  if (budget && budget.delta > 0) return { key: 'tf.catch.budget', facts: { over: budget.delta, eur: budget.eur } };
+  // G12 (L1): a day budget's catch is a day's gap.
+  if (budget && budget.delta > 0) return { key: budget.kind === 'day' ? 'tf.catch.budgetDay' : 'tf.catch.budget', facts: { over: budget.delta, eur: budget.eur } };
   if (trip.gateway && Number.isFinite(trip.gateway.minutes) && trip.gateway.minutes > C.longTransferMin) {
     return { key: 'tf.catch.longDay', facts: { minutes: trip.gateway.minutes, iata: trip.gateway.iata } };
   }

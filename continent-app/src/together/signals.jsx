@@ -35,6 +35,13 @@ export function planDayTogether(destId, date) {
   window.dispatchEvent(new CustomEvent('carta:plan-day', { detail: { destId, date } }));
 }
 
+/** G12 L15: ask App to plan a group trip (openPlan with source 'friends').
+ *  group: listGroupTrips' row; place: { destId, iso2, name } the group leans to. */
+// eslint-disable-next-line react-refresh/only-export-components -- a non-component export, as planDayTogether
+export function planGroupTrip(group, place = {}) {
+  window.dispatchEvent(new CustomEvent('carta:plan-group', { detail: { group, place } }));
+}
+
 /** Plans that meet for the signed-in account, Hide applied. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function useOverlaps(s) {

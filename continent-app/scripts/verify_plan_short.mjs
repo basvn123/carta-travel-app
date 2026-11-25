@@ -1,9 +1,13 @@
-// T1103 (ROADMAP G12): how many screens and taps from the Plan home to the
-// first priced trip, walking the plan flow the shortest honest way (every
-// screen's default, the primary button, a first option only where Continue
-// waits for one). Also checks the short flow's promises when `--expect` is
-// given: no trip-kind sheet, no Create screen, no trip home on the way, the
-// refine card on the trips and its doors.
+// T1103, G12 plan rethink B3: how many screens and taps from the Plan home
+// (the door) to the first priced trip, walking the plan flow the honest way
+// (every screen's default, the primary button, a first option only where
+// Continue waits for one). With no travel style the question rule asks
+// every style question once, so the plain walk is long. `--expect` takes the
+// short way instead (Surprise me, then "Show the trips now" on the first
+// question) and checks the B3 promises: the door, the style switch and
+// Show the trips now on every question, no trip-kind sheet, Create screen
+// or trip home on the way, the assumption bar, the refine card and Save as
+// travel style on the trips, and the refine card's doors.
 //
 // Build (fast build) and serve it with the data, then
 //   node scripts/verify_plan_short.mjs <shotdir> [width] [base] [--expect]
@@ -42,12 +46,16 @@ const shot = (name) => page.screenshot({ path: `${OUT}/${W}-${name}.png` }).catc
 const title = async () => ((await page.locator('.pf-title').first().textContent({ timeout: 500 }).catch(() => '')) || '').trim();
 
 await page.goto(`${BASE}/?tab=plan`, { waitUntil: 'domcontentloaded' });
-await page.waitForSelector('.pf-open, .pfh-new', { timeout: 60000 });
+await page.waitForSelector('.pf-door', { timeout: 60000 });
 await shot('0-plan-home');
+if (EXPECT) {
+  check('the door: one line, three chips', (await page.locator('.pf-door textarea').count()) === 1 && (await page.locator('.pf-door-chips li').count()) === 3);
+}
 const t0 = Date.now();
 let taps = 0;
 const screens = ['Plan home'];
-await page.getByRole('button', { name: 'Start planning' }).first().click();
+const steps = { questions: 0, styleBar: 0, showNow: 0 };
+await page.locator('.pf-door .btn-primary').first().click();
 taps += 1;
 
 let last = '';
@@ -80,7 +88,18 @@ for (let i = 0; i < 60 && !priced; i++) {
   if (/what do you want to plan/i.test(tt)) seen.kind = true;
   // The loader is the trips arriving, not a step of the walk.
   if (/^Finding trips/i.test(tt)) { last = tt; continue; }
-  if (tt !== last) { screens.push(tt); last = tt; console.log(`[${W}] screen ${screens.length}: ${tt}`); await shot(`${screens.length - 1}-step`); }
+  if (tt !== last) {
+    screens.push(tt); last = tt; console.log(`[${W}] screen ${screens.length}: ${tt}`); await shot(`${screens.length - 1}-step`);
+    steps.questions += 1;
+    if (await page.locator('.pf-stylebar').count()) steps.styleBar += 1;
+    if (await page.locator('.pf-show-now').count()) steps.showNow += 1;
+  }
+  // --expect: the short way, past the rest of the questions.
+  if (EXPECT && (await page.locator('.pf-show-now').count())) {
+    await page.locator('.pf-show-now').first().click();
+    taps += 1;
+    continue;
+  }
   const btn = page.locator('.pf-foot .btn-primary, .guide-foot .btn-primary').first();
   if (!(await btn.count())) continue;
   if (await btn.isDisabled()) {
@@ -105,14 +124,20 @@ const ms = Date.now() - t0;
 await page.waitForTimeout(600);
 await shot('9-trips');
 check('a priced trip is reached', priced);
-const report = { width: W, screens: screens.length, taps, ms, titles: screens };
+const report = { width: W, screens: screens.length, taps, ms, titles: screens, steps };
 
 if (EXPECT) {
   check('no trip-kind sheet on the way', !seen.kind);
   check('no Create trip screen on the way', !seen.create);
   check('no trip home on the way', !seen.tripHome);
-  check('five screens or fewer before the trips', screens.length <= 5, String(screens.length));
-  const refine = page.locator('.pf-refine');
+  check('three screens or fewer before the trips (door, a question, Show the trips now)', screens.length <= 3, String(screens.length));
+  check('the style switch on every question', steps.questions > 0 && steps.styleBar === steps.questions, `${steps.styleBar}/${steps.questions}`);
+  check('Show the trips now on every question', steps.showNow === steps.questions, `${steps.showNow}/${steps.questions}`);
+  check('the assumption bar on the trips', (await page.locator('.tff-trips .pf-abar, .pf-abar').count()) >= 1);
+  const dashed = await page.locator('.pf-abar-chip.is-assumed').count();
+  check('assumed answers show dashed', dashed >= 1, String(dashed));
+  check('Save as travel style with no style', (await page.locator('.pf-savestyle').count()) === 1);
+  const refine = page.locator('.pf-refine:not(.pf-savestyle)');
   check('the refine card stands on the trips', (await refine.count()) === 1);
   const o = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   check('no sideways scroll on the trips', o <= 1, `${o}px`);

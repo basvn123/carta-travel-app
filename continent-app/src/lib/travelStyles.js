@@ -139,6 +139,8 @@ const clampInt = (v, lo, hi, d) => {
   return Number.isFinite(n) ? Math.min(hi, Math.max(lo, n)) : d;
 };
 const oneOf = (v, list, d) => (list.includes(v) ? v : d);
+/** G12: the style's list answers that may be saved empty and still hold. */
+export const ANSWERED_LISTS = ['likes', 'avoid'];
 const someOf = (v, list, max = 99) => (Array.isArray(v) ? [...new Set(v.filter((x) => list.includes(x)))].slice(0, max) : []);
 
 /** The lifestyle counts made safe (the same keys the studio's spend step keeps). */
@@ -217,6 +219,10 @@ export function normalizeStyle(raw) {
       personas,
       likes: someOf(e.likes, LIKES, 3),
       avoid: someOf(e.avoid, AVOID),
+      // G12 browser pass 2 (decision §12): the lists the traveller passed in
+      // the Style Studio, so an empty one reads "no preference" (held) and
+      // not "never asked" (the trip asks it). Old styles have none: asked.
+      answered: someOf(e.answered, ANSWERED_LISTS),
       around: oneOf(e.around, AROUND, ''),
       size: oneOf(e.size, SIZES, ''),
       quiet: oneOf(e.quiet, QUIET, ''),
@@ -554,17 +560,42 @@ export function afterChoicesChange(prev, { first = false, linked = false } = {})
   return next === a ? prev : { ...prev, travel_styles: updateStyle(st, a.id, next) };
 }
 
-/** A change made for one trip is coming: hold the style (no-op without one). */
+/** A change made for one trip is coming: hold the style (no-op without one).
+ *  A fresh hold names no other style (`style_held_for`, holdStyleChoices),
+ *  so an old trip's style never comes back on Keep. */
 export function holdChoices(prev) {
-  return prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true };
+  return prev.style_held || !activeStyle(normalizeStyles(prev.travel_styles)) ? prev : { ...prev, style_held: true, style_held_for: '' };
 }
 
-/** Keep: the held choices written into the active style, the hold lifted. */
+/**
+ * Another style for one trip (G12 plan rethink, build plan "style switch"):
+ * Plan never switches the app's style itself. The other style's stay half
+ * prices the trip, the active style is held ("Changed for now") and the
+ * hold names the style picked, so Keep makes that style the active one and
+ * Back returns to the active style's own values. The active style itself
+ * picked lifts the hold. With no active style there is nothing to hold:
+ * the picked style's stay half prices the choices and no style becomes
+ * active. An unknown id changes nothing.
+ */
+export function holdStyleChoices(prev, id) {
+  const st = normalizeStyles(prev.travel_styles);
+  const s = st.list.find((x) => x.id === id);
+  if (!s) return prev;
+  if (st.active === id) return switchChoices(prev, id);
+  if (!activeStyle(st)) return { ...prev, ...choicesFromStyle(s) };
+  return { ...prev, ...choicesFromStyle(s), style_held: true, style_held_for: id };
+}
+
+/** Keep: the held choices written into the active style, the hold lifted.
+ *  A hold for another style (holdStyleChoices) makes that style the active
+ *  one, with the trip's changes on top written into it. */
 export function keepChoices(prev) {
   const st = normalizeStyles(prev.travel_styles);
-  const a = activeStyle(st);
-  if (!a) return { ...prev, style_held: false };
-  return { ...prev, travel_styles: updateStyle(st, a.id, styleFromChoices(a, prev)), style_held: false };
+  const heldFor = prev.style_held && prev.style_held_for ? st.list.find((x) => x.id === prev.style_held_for) : null;
+  const a = heldFor || activeStyle(st);
+  if (!a) return { ...prev, style_held: false, style_held_for: '' };
+  const next = heldFor ? setActive(st, a.id) : st;
+  return { ...prev, travel_styles: updateStyle(next, a.id, styleFromChoices(a, prev)), style_held: false, style_held_for: '' };
 }
 
 /** The Style Studio's Done on a new style: `style` (styleFromDraft) added
@@ -688,8 +719,10 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
   const guide = { ...s.guide };
   if (!mine('g:shape') && e.shapes.length) guide.shapes = e.shapes;
   if (!mine('g:persona') && e.personas.length) { guide.personas = e.personas; guide.personaMost = ''; guide.persona = e.personas[0]; }
-  if (!mine('g:likes') && e.likes.length) guide.likes = e.likes;
-  if (!mine('g:avoid') && e.avoid.length) guide.avoid = e.avoid;
+  // An empty list the traveller chose ("no preference") holds as well as a full one.
+  const holds = (k) => e[k].length > 0 || e.answered.includes(k);
+  if (!mine('g:likes') && holds('likes')) guide.likes = e.likes;
+  if (!mine('g:avoid') && holds('avoid')) guide.avoid = e.avoid;
   // The place facets have no planner question; they feed the trip's own
   // personas when the traveller later changes a shape, a like or the pace.
   guide.size = e.size;
@@ -707,8 +740,8 @@ export function seedTripSettings(settings, style, { normalize, markAnswered }) {
     priority: true,
     'g:shape': e.shapes.length > 0,
     'g:persona': e.personas.length > 0,
-    'g:likes': e.likes.length > 0,
-    'g:avoid': e.avoid.length > 0,
+    'g:likes': holds('likes'),
+    'g:avoid': holds('avoid'),
     'g:around': Boolean(e.around),
     'r:mornings': Boolean(st.days.mornings),
     'r:pace': Boolean(st.days.pace),

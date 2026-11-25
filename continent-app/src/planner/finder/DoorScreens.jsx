@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { landerPool } from '../../lib/recommend/moreSearch.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button, Card } from '../../components/ui/index.js';
 import { HeroImage } from '../../components/HeroImage.jsx';
@@ -10,6 +11,54 @@ import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
 import { useDoorRun, useLoaderDone } from './finderHooks.js';
 import { answerChips, joinList, stopsText, tripName } from './finderText.js';
 import { planOf } from './planOf.js';
+import { FoundTripPage } from './FoundTripPage.jsx';
+import { CompareSheet } from '../CompareSheet.jsx';
+import { MAX_COMPARE } from '../../lib/countryCompare.js';
+import { priceDays, tripRequest } from '../../lib/price/index.js';
+import { googleFlightsExploreLink } from '../../lib/transportLinks.js';
+import { PlaneIcon } from '../../components/TransportIcons.jsx';
+
+/**
+ * Google Flights Explore from the home airport (G12 L14): the wizard's Where
+ * step was the only place it showed, so it moved here with the fold, beside
+ * the fares Carta has, for a traveller who wants to see every place cheap to
+ * reach. It needs only the airport; the month is added when the trip has one.
+ */
+function ExploreFlightsCard({ airport, month = '' }) {
+  const { t, lang } = useI18n();
+  const url = googleFlightsExploreLink({ fromIata: airport?.iata, fromCity: airport?.name, month, lang });
+  if (!url) return null;
+  return (
+    <a className="guide-explore-card" href={url} target="_blank" rel="noopener noreferrer">
+      <span className="guide-explore-icon"><PlaneIcon size={16} /></span>
+      <span className="guide-explore-text">
+        <b>{t('ff.exploreTitle')}</b>
+        <small>{t('ff.exploreCta', { airport: airport?.iata || airport?.name || '' })}</small>
+      </span>
+      <span className="ext-arrow" aria-hidden="true">&#8599;</span>
+    </a>
+  );
+}
+
+/**
+ * The wizard's country compare (T670), moved as is onto the place lander
+ * (G12 L6): the same sheet and figures, the day costs priced at the trip's
+ * own party, stay and Lifestyle.
+ */
+function CountryCompare({ names, data, input, trip, onClose }) {
+  const destinations = data?.destinations;
+  const party = input?.settings?.party || {};
+  const dayCosts = useMemo(() => priceDays(destinations || {}, tripRequest({
+    groupSize: party.adults || 2, children: party.kids || 0, babies: party.babies || 0,
+    stayTier: input?.stayTier || undefined, lifestyle: input?.lifestyle || undefined,
+  })), [destinations, party.adults, party.kids, party.babies, input?.stayTier, input?.lifestyle]);
+  const month = trip?.month || null;
+  const ym = trip?.dates?.out ? trip.dates.out.slice(0, 7) : null;
+  return (
+    <CompareSheet names={names} destinations={destinations || {}} dayCosts={dayCosts} flightFile={input?.flights || null}
+      month={month} yearMonth={ym} insights={input?.countryInsights || null} onClose={onClose} />
+  );
+}
 
 /** How many flight rows show before "Show more flights". */
 const FIRST_ROWS = 10;
@@ -97,6 +146,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
   const destinations = run.data?.destinations || {};
   const people = Math.max(1, settings.party.adults + settings.party.kids);
   const dates = when.start && when.end ? t('tf.chip.dates', { start: when.start, end: when.end }) : when.start;
+  const exploreMonth = settings.when?.mode === 'exact' ? String(settings.when.start || '').slice(0, 7) : '';
 
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, [done]);
 
@@ -130,6 +180,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
       <div className="pf-step tff-load">
         {head}
         <p className="tff-fail" role="status">{t('ff.none')}</p>
+        <ExploreFlightsCard airport={run.origin} month={exploreMonth} />
         <div className="pf-foot">
           <Button variant="primary" block onClick={onChange}>{t('ff.change')}</Button>
         </div>
@@ -178,17 +229,27 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
         </div>
       )}
       <p className="ffl-note">{t('ff.mayChange')}</p>
+      <ExploreFlightsCard airport={run.origin} month={exploreMonth} />
     </div>
   );
 }
 
 /**
- * I know where I'm going, the build (T865): the loader while Carta drafts
- * and prices the route through the named places, then straight on to the
- * trip page (onLand with the trip's plan). A route that cannot be built
- * says so in one line and goes back to the places.
+ * I know where I'm going, the build (T865), revived as the place lander
+ * (G12 lane L6, decision §3.2 S5, S6, S9): the loader while Carta drafts
+ * and prices the route through the named places (knowTrip: routed by
+ * routeOrder, the nights by allocateNights), then the priced found trip
+ * (FoundTripPage) instead of jumping to the trip page, so the traveller sees
+ * the whole-trip price before committing. "Plan this trip" lands (onLand
+ * with the trip's plan); the page's back opens every trip for the answers
+ * (onList). Two or more named countries keep the wizard's compare
+ * (CompareSheet, moved as is). With no `ui` (an older caller) it lands at
+ * once, as before. A route that cannot be built says so in one line.
+ *
+ * The found trip prices its levers (G12 L13) and alternatives (R3) on the
+ * door run's own input.
  */
-export function KnowBuildScreen({ settings, onBack, onLand }) {
+export function KnowBuildScreen({ settings, onBack, onLand, ui = null, bar = null, onList = null }) {
   const { t, lang } = useI18n();
   const titleRef = useRef(null);
   const run = useDoorRun(settings, 'know');
@@ -197,13 +258,50 @@ export function KnowBuildScreen({ settings, onBack, onLand }) {
   const { chips } = useAnswerChips(settings, settings.from?.name || run.origin?.name || '');
   const places = useMemo(() => joinList((settings.places || []).map((p) => p.name), lang), [settings.places, lang]);
   const landed = useRef(false);
+  const [edited, setEdited] = useState(null);
+  const [shown, setShown] = useState(null);
+  const [comparing, setComparing] = useState(false);
   useEffect(() => { titleRef.current?.focus({ preventScroll: true }); }, []);
   useEffect(() => {
-    if (!done || !run.result || landed.current) return;
+    if (ui || !done || !run.result || landed.current) return;
     landed.current = true;
     onLand(planOf(run.result));
   }, [done, run.result]); // eslint-disable-line react-hooks/exhaustive-deps -- lands once, on the built trip
   const failed = done && !run.result;
+  const countries = useMemo(() => (settings.places || []).filter((p) => p.kind === 'country').map((p) => p.country || p.name).filter(Boolean), [settings.places]);
+  const base = shown || run.result;
+  const trip = edited && base && edited.id === base.id ? edited : base;
+  if (ui && done && trip) {
+    const keepWith = { origin: run.origin?.iata || null, file: run.input?.flights || null };
+    return (
+      <>
+        <FoundTripPage
+          trip={trip}
+          settings={settings}
+          destinations={run.data?.destinations}
+          ui={ui}
+          keepWith={keepWith}
+          bar={bar}
+          others={[]}
+          input={run.input}
+          onSearchMore={run.input ? () => landerPool(trip, run.input) : null}
+          onBack={onList || onBack}
+          onOpen={(x) => { setEdited(null); setShown(x); }}
+          onPlan={(x) => onLand(planOf(x))}
+          onEdit={setEdited}
+        />
+        {countries.length >= 2 && (
+          <div className="tff-compare">
+            <Button variant="secondary" size="sm" onClick={() => setComparing(true)}>{t('cmp.open')}</Button>
+          </div>
+        )}
+        {comparing && (
+          <CountryCompare names={countries.slice(0, MAX_COMPARE)} data={run.data} input={run.input} trip={trip}
+            onClose={() => setComparing(false)} />
+        )}
+      </>
+    );
+  }
   return (
     <div className="pf-step tff-load">
       <SheetHead onBack={onBack} backLabel={t('pf.back')} />

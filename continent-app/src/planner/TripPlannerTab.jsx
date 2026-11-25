@@ -7,7 +7,8 @@ import { favDestIds } from '../lib/favorites.js';
 import { Button } from '../components/Button.jsx';
 import { ErrorBlock } from '../components/StateBlocks.jsx';
 import { TripMap } from '../map/TripMap.jsx';
-import { GuidedTripWizard } from './GuidedTripWizard.jsx';
+import { trackLaunch } from '../lib/launchEvents.js';
+import { trackFunnel } from '../lib/funnelCounts.js';
 import { TripFlow } from './flow/TripFlow.jsx';
 import { usePlannerStore, plannerStore } from './plannerStore.js';
 import { fromDraft } from './flow/tripSettings.js';
@@ -46,6 +47,8 @@ import { useTripSave } from './trip/useTripSave.js';
 import { useTripMap } from './trip/useTripMap.js';
 import { useTripPlannerEffects } from './trip/useTripPlannerEffects.js';
 import { useTripHistory } from './trip/useTripHistory.js';
+import { AssumptionBar } from './flow/AssumptionBar.jsx';
+import { receiptOfQuote } from '../lib/price/receiptDiff.js';
 
 // The trip page's map card and its full-size view (T819): room above each
 // pin, which is drawn about 38 px over its point (tripmap-embed gotchas).
@@ -66,7 +69,7 @@ const TRIP_TABS = ['overview', 'itinerary', 'costs', 'days', 'notes'];
 
 
 
-export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, onPlanDay, openSharedTrip, onSharedTripConsumed, tripSeed = null, onTripSeedConsumed = null, stayTier = 'home', lifestyle = null, favorites = null, onOpenDest = null, onOpenCountry = null, onOpenTrip = null, onOpenJourney = null, onPlanHome = null }) {
+export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, authConfigured, onRequestAuth, openPlanId, onOpenPlanConsumed, onPlanDay, openSharedTrip, onSharedTripConsumed, stayTier = 'home', lifestyle = null, favorites = null, onOpenJourney = null, onPlanHome = null, addStopSeed = null, onAddStopConsumed = null }) {
   const { t, lang } = useI18n();
   const paywall = usePaywall();
   const countryInsights = useCountryInsights();
@@ -85,7 +88,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const [saveError, setSaveError] = useState('');
   const [saveNotice, setSaveNotice] = useState('');
   const [selectedStop, setSelectedStop] = useState(null);
-  const [wizardOpen, setWizardOpen] = useState(false);
   // The receipt's lines open on a new key (T432).
   const [receiptKey] = useState(0);
   // The trip kept on this device without an account (T500, 2.19).
@@ -106,11 +108,15 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const handleWizardComplete = (selection) => {
     tp.loadFromWizard(selection);
     tp.setPlanned(true);
-    setWizardOpen(false);
     setSelectedStop(null);
     // T814 (owner 2026-10-29): Finish lands on the trip's summary, with no
     // sheet over it; Plan your days is one of its buttons (T658 asked here).
     setView('summary');
+    // The launch metric "priced-trip completions" (migration 048, T215-b) and
+    // the funnel step: the wizard's Finish fired them; G12 L14 moved them
+    // here, where every landing of the flow passes, when the wizard went.
+    trackLaunch('trip_priced', '', 'built');
+    trackFunnel('priced_draft');
   };
   const [askDays, setAskDays] = useState(false);
   // T814: a planned trip opens on its summary (photos, dates, the route, the
@@ -147,9 +153,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // planner's fields and the trip's own settings (dates, people, from,
   // name), so a chip, a stepper or a typed price all go back the same way.
   const app = useSettings();
-  const [, saveTripSet] = useTripSettings();
+  const [tripSettings, saveTripSet] = useTripSettings();
   const wideTrip = useMedia('(min-width: 1024px)');
-  const { hist, toast, setToast, noteRef, headCount, carTip, carDelta } = useTripHistory({ app, countryInsights, lang, saveTripSet, t, tp, tripSet, wizardOpen });
+  const { hist, toast, setToast, noteRef, headCount, carTip, carDelta } = useTripHistory({ app, countryInsights, lang, saveTripSet, t, tp, tripSet });
 
   // T845: a Costs line's "Change" goes where that line is set: a flight to
   // Change flight, food and drink to the Lifestyle, everything else to its
@@ -217,8 +223,23 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const { handleStartOver } = useTripPlannerEffects({
     destinations, hist, onOpenPlanConsumed, onSharedTripConsumed, openPlanId, openSharedTrip,
     selectedStop, setChipOpen, setDeviceTrip, setSaveError, setSelectedStop, setToast,
-    setTripTab, setView, setWizardOpen, stopRefs, t, tp, tripSeed,
+    setTripTab, setView, stopRefs, t, tp,
   });
+  // S15 (G12 B2): "Add to <trip>" from a place page while this trip is open.
+  // The town becomes a stop through the route's own Add stop; a country
+  // without a town opens that Add stop on the country to pick one. Either
+  // way the route is shown, so the change is seen.
+  useEffect(() => {
+    if (!addStopSeed) return;
+    if (addStopSeed.destId && destinations[addStopSeed.destId]) {
+      tp.addStop(addStopSeed.destId);
+    } else if (addStopSeed.iso2) {
+      const name = Object.values(destinations).find((d) => d?.iso2 === addStopSeed.iso2)?.country;
+      if (name) handlePendingCountry(name);
+    }
+    setTripTab('itinerary');
+    onAddStopConsumed?.();
+  }, [addStopSeed]); // eslint-disable-line react-hooks/exhaustive-deps -- one-shot hand-off: tp is a fresh object every render
 
   // Manual "Add stop": country first, then city within it, picking both at once
   // made the combined list noisy, and country-first mirrors how travellers
@@ -334,35 +355,16 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const { planned: isPlanned, setPlanned: setIsPlanned } = tp;
   const stopCount = tp.stops.length;
   useEffect(() => {
-    if (stopCount > 0 && !isPlanned && !wizardOpen) setIsPlanned(true);
-  }, [stopCount, isPlanned, wizardOpen, setIsPlanned]);
+    if (stopCount > 0 && !isPlanned) setIsPlanned(true);
+  }, [stopCount, isPlanned, setIsPlanned]);
   const emptyPlanner = tp.stopDetails.length === 0;
-  const renderWizard = ({ flowSteps = null, initialWhereTab = null, lockWhereTab = false, onCancel = null } = {}) => (
-    <GuidedTripWizard
-      inline
-      data={data}
-      stayTier={tp.stayTier}
-      lifestyle={lifestyle}
-      favorites={favorites}
-      onOpenDest={onOpenDest}
-      onOpenCountry={onOpenCountry}
-      onOpenTrip={onOpenTrip}
-      onCancel={onCancel || (() => setWizardOpen(false))}
-      onComplete={handleWizardComplete}
-      seed={tripSeed}
-      onSeedConsumed={onTripSeedConsumed}
-      flowSteps={flowSteps}
-      initialWhereTab={initialWhereTab}
-      lockWhereTab={lockWhereTab}
-    />
-  );
   if (emptyPlanner) {
     return (
       <div className="trip-planner-screen trip-planner-blank">
-        {/* T656: the trip's page before a route (TripFlow), which hands the
-            wizard only its planning steps. T675: a "Plan a trip here" seed
-            enters there too, on the I know where door. */}
-        <TripFlow renderEngine={renderWizard} seed={tripSeed} onOpenJourney={onOpenJourney} onLand={handleWizardComplete} />
+        {/* T656: the trip's page before a route (TripFlow). G12 L14: the
+            wizard it once handed its planning steps to is folded; every
+            door lands on a priced trip (onLand). */}
+        <TripFlow onOpenJourney={onOpenJourney} onLand={handleWizardComplete} />
         {saveNotice && <div className="trip-save-toast" role="status">{saveNotice}</div>}
         {keepChoice && (
           <KeepTripChoice
@@ -657,6 +659,9 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
       <div className="trip-planner-screen trip-planner-blank">
         <div className="pf is-trip is-trip-page">
           {saveError && <ErrorBlock className="trip-footer-error" message={saveError} />}
+          {/* G12 §3.3: the shared assumption bar; its chips open the trip
+              settings, which keep the route, dates and party in step. */}
+          <AssumptionBar settings={tripSettings} save={saveTripSet} onEdit={() => setSettingsOpen(true)} onMore={() => setSettingsOpen(true)} receipt={tp.stops.length ? receiptOfQuote(tp.priced) : null} />
           <TripPageSummary
             carDelta={carDelta} carTip={carTip} cardMap={cardMap} data={data} fullMap={fullMap}
             handleSave={handleSave} handleStartOver={handleStartOver} headCount={headCount}
@@ -671,9 +676,6 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
           />
         </div>
         {overlays}
-        {wizardOpen && (
-          <GuidedTripWizard data={data} stayTier={tp.stayTier} lifestyle={lifestyle} favorites={favorites} onOpenDest={onOpenDest} onOpenCountry={onOpenCountry} onOpenTrip={onOpenTrip} onCancel={() => setWizardOpen(false)} onComplete={handleWizardComplete} seed={tripSeed} onSeedConsumed={onTripSeedConsumed} />
-        )}
       </div>
     );
   }

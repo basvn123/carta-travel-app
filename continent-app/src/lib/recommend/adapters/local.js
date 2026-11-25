@@ -12,7 +12,7 @@
 import { quoteTrip } from '../../price/trip.js';
 
 /** Local fares the days carry (the transport line of each stop's day). */
-function localFares(quote) {
+export function localFares(quote) {
   let sum = 0;
   quote.stayCosts.forEach((sc) => {
     const l = sc?.day?.lines?.find((x) => x.key === 'transport' && x.status === 'included');
