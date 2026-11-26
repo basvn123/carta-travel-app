@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { useSettings } from '../../components/SettingsLine.jsx';
 import { Button, Chip, Field, Segmented, Switch } from '../../components/ui/index.js';
-import { ArrowRightIcon, HeartIcon, SparkIcon } from '../../components/Icons.jsx';
+import { ArrowRightIcon, FriendsIcon, HeartIcon, SparkIcon } from '../../components/Icons.jsx';
 import { partyText } from '../../lib/party.js';
 import { styleName } from '../../browse/styles/styleBits.jsx';
 
@@ -19,8 +19,12 @@ import { styleName } from '../../browse/styles/styleBits.jsx';
  *   kept                           kept trips (hearts on found trips)
  *   onOpenKept()                   My trips on them
  *   past                           the latest past trip ({ name, nights }) or null
+ *   group                          G12: the most recently active Vrienden group
+ *                                  with a place or dates in play ({ title,
+ *                                  onPlan, onAll }), or null; onAll only when
+ *                                  there are more groups
  */
-export function PlanDoor({ onStart, kept = [], onOpenKept = null, past = null }) {
+export function PlanDoor({ onStart, kept = [], onOpenKept = null, past = null, group = null }) {
   const { t } = useI18n();
   const app = useSettings();
   const ts = app?.travelStyles || null;
@@ -97,8 +101,20 @@ export function PlanDoor({ onStart, kept = [], onOpenKept = null, past = null })
           <Button variant="quiet" size="sm" onClick={() => ts.setOpen({ view: 'overview' })}>{t('pf.door.styleChoose')}</Button>
         </p>
       )}
-      {(kept.length > 0 || past) && (
+      {(kept.length > 0 || past || group) && (
         <ul className="pf-door-cards">
+          {group && (
+            <li>
+              <Button variant="secondary" size="sm" iconStart={<FriendsIcon size={16} />} onClick={group.onPlan}>
+                {t('pf.door.group', { name: group.title })}
+              </Button>
+            </li>
+          )}
+          {group?.onAll && (
+            <li>
+              <Button variant="quiet" size="sm" onClick={group.onAll}>{t('pf.door.groups')}</Button>
+            </li>
+          )}
           {kept.length > 0 && onOpenKept && (
             <li>
               <Button variant="secondary" size="sm" iconStart={<HeartIcon size={16} />} onClick={onOpenKept}>

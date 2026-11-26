@@ -8583,6 +8583,8 @@ export const it = {
   "pf.door.styleChoose": "Scegli uno stile",
   "pf.door.saved": "Dai tuoi salvati ({n})",
   "pf.door.like": "Come {name}",
+  "pf.door.group": "Pianifica con {name}",
+  "pf.door.groups": "Tutti i gruppi",
   "pf.abar.label": "Cosa presuppongono questi prezzi",
   "pf.abar.assumed": "{q}: {a}, ipotizzato da Carta. Cambia",
   "pf.abar.given": "{q}: {a}. Cambia",

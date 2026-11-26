@@ -16,10 +16,15 @@
 // Checked at every width: no sideways scroll, no empty row or lever list,
 // the style control on every step. On a phone (< 769 px): every visible tap
 // target in the flow at least 44 px tall and wide.
+// G12 follow-up, the door's Friends card: signed out there is none; with
+// --friends (a build with VITE_E2E_SEAMS=1, so ?friendsmock is the Vrienden
+// fixture) the door shows one "Plan with <group>" card, "All groups" beside
+// it (the fixture has two groups in play), the card opens the flow, and
+// ?friendsmock=empty shows no card.
 //
 // Build (fast build) and serve it with the data, then
 //   node scripts/serve_static.mjs ../.fastbuild <public> 5871
-//   node scripts/verify_plan_rethink.mjs <shotdir> <width> [base] [--sweep]
+//   node scripts/verify_plan_rethink.mjs <shotdir> <width> [base] [--sweep] [--friends]
 // Prints one JSON line and exits 1 on a failed check. Screenshots go to the
 // shot folder (the run folder), never into the repo.
 import fs from 'node:fs';
@@ -27,6 +32,7 @@ import { chromium } from 'playwright';
 
 const args = process.argv.slice(2).filter((a) => !a.startsWith('--'));
 const SWEEP = process.argv.includes('--sweep');
+const FRIENDS = process.argv.includes('--friends');
 const OUT = args[0] || 'scripts/shots/plan-rethink';
 const W = Number(args[1] || 390);
 const BASE = args[2] || 'http://localhost:5871';
@@ -102,6 +108,7 @@ check('door: one line and three chips', (await page.locator('.pf-door textarea')
 const doorStyle = (await page.locator('.pf-door .pf-stylebar, .pf-door-knows, .pf-door-style').count()) > 0;
 check('door: a style control', doorStyle);
 check('door: no sideways scroll', (await overflow()) <= 1, `${await overflow()}px`);
+check('door: signed out, no Friends card', (await page.locator('.pf-door-cards').getByText(/^Plan with /).count()) === 0);
 await tapCheck('door');
 
 // ---- The short way to the trips ----
@@ -431,6 +438,33 @@ check('booked: no typed price became a budget', !/over your budget|€\s?280 a p
 const leftLine = await said('[data-testid=tp-budget-left]');
 check('booked: the budget it fits shows the money left', /^€\s?[\d,]+ left for the group$/.test(leftLine), leftLine);
 check('booked: no sideways scroll', (await overflow()) <= 1, `${await overflow()}px`);
+
+// ---- G12 follow-up: the door's Friends card (Vrienden fixture) ----
+if (FRIENDS) {
+  await page.context().close();
+  page = await openPage();
+  await page.goto(`${BASE}/?tab=plan&friendsmock=empty`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.pf-door', { timeout: 90000 });
+  await page.waitForTimeout(800);
+  check('friends: no groups, no card', (await page.locator('.pf-door-cards').getByText(/^Plan with /).count()) === 0);
+  await page.context().close();
+  page = await openPage();
+  await page.goto(`${BASE}/?tab=plan&friendsmock`, { waitUntil: 'domcontentloaded' });
+  await page.waitForSelector('.pf-door', { timeout: 90000 });
+  const card = page.locator('.pf-door-cards button').filter({ hasText: /^Plan with / });
+  await card.first().waitFor({ timeout: 10000 }).catch(() => {});
+  await shot('11-friends-door');
+  const cardText = ((await card.first().innerText().catch(() => '')) || '').trim();
+  check('friends: one "Plan with <group>" card', (await card.count()) === 1 && /^Plan with \S/.test(cardText), cardText);
+  check('friends: All groups beside it (two groups in play)', (await page.locator('.pf-door-cards').getByText('All groups', { exact: true }).count()) === 1);
+  check('friends: no sideways scroll', (await overflow()) <= 1, `${await overflow()}px`);
+  await tapCheck('friends door');
+  await card.first().click();
+  let left = false;
+  for (let i = 0; i < 50 && !left; i++) { await page.waitForTimeout(200); left = (await page.locator('.pf-door').count()) === 0; }
+  await shot('12-friends-plan');
+  check('friends: the card opens Plan with the group', left);
+}
 
 check('no page errors', errors.length === 0, errors.slice(0, 2).join(' | '));
 console.log(JSON.stringify({ width: W, questions: steps.questions, rows: rowCount, failed: results.filter((r) => !r.ok).map((r) => `${r.name} ${r.extra}`) }));

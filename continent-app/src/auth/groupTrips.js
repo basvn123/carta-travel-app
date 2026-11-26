@@ -21,10 +21,11 @@ import { inviteCoplanner } from './coplanners.js';
 
 const MISSING = { missing: true, groups: [] };
 
+// `at` (G12): the Plan door's group card picks the most recently active group.
 function optionFromRow(r) {
   return r.kind === 'when'
-    ? { id: r.id, kind: 'when', start: r.start_date, end: r.end_date, createdBy: r.created_by }
-    : { id: r.id, kind: 'where', destId: r.destination_id, createdBy: r.created_by };
+    ? { id: r.id, kind: 'when', start: r.start_date, end: r.end_date, createdBy: r.created_by, at: r.created_at || null }
+    : { id: r.id, kind: 'where', destId: r.destination_id, createdBy: r.created_by, at: r.created_at || null };
 }
 
 /** Your group trips with everything the page draws. */
@@ -70,6 +71,7 @@ export async function listGroupTrips(userId) {
       id: g.id,
       title: g.title,
       ownerId: g.owner_id,
+      createdAt: g.created_at || null,
       bookedPlanId: g.booked_plan_id || null,
       myStatus,
       members,

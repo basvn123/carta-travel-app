@@ -8594,6 +8594,8 @@ export const nl = {
   "pf.door.styleChoose": "Kies een stijl",
   "pf.door.saved": "Uit je bewaarde ({n})",
   "pf.door.like": "Zoals {name}",
+  "pf.door.group": "Plan met {name}",
+  "pf.door.groups": "Alle groepen",
   "pf.abar.label": "Waar deze prijzen van uitgaan",
   "pf.abar.assumed": "{q}: {a}, aangenomen door Carta. Wijzig",
   "pf.abar.given": "{q}: {a}. Wijzig",

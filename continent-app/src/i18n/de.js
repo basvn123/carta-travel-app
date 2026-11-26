@@ -8583,6 +8583,8 @@ export const de = {
   "pf.door.styleChoose": "Stil wählen",
   "pf.door.saved": "Aus deinen gemerkten ({n})",
   "pf.door.like": "Wie {name}",
+  "pf.door.group": "Planen mit {name}",
+  "pf.door.groups": "Alle Gruppen",
   "pf.abar.label": "Wovon diese Preise ausgehen",
   "pf.abar.assumed": "{q}: {a}, von Carta angenommen. Ändern",
   "pf.abar.given": "{q}: {a}. Ändern",
