@@ -30,9 +30,14 @@ Read through the Management API (`GET /v1/projects/ntssxktaduxzpsmejwyv/config/a
 
 Decision (2026-11-12): stay on Free until launch. The three Pro-only rows are the reasons to upgrade at launch (ROADMAP I2). They are not failures today.
 
-## Step
+## Steps
 
-1. **MFA on the Supabase account itself (row C2, `docs/owner/secrets-rotation.md`).**
+1. **Google sign-in is down: the Google OAuth client was deleted (seen 2026-11-26, `Error 401: deleted_client`, client id starting `458486`).** The app code is fine; Supabase still points at the deleted client.
+   - First try to restore it: Google Cloud Console, the project that owned it, APIs & Services, Credentials, **Restore deleted credentials** (possible for 30 days after deletion). A restored client keeps its id and secret, so nothing else changes. Done when Google sign-in on the site works again.
+   - If it cannot be restored, make a new one on the same page: Create credentials, OAuth client ID, type **Web application**. Authorised JavaScript origins: the five site origins from the Redirect URLs row above. Authorised redirect URI: `https://ntssxktaduxzpsmejwyv.supabase.co/auth/v1/callback`. The OAuth consent screen must exist and be **In production** (in Testing only listed test users can sign in).
+   - Then Supabase dashboard, Authentication, Sign In / Providers, Google: paste the new Client ID and Client Secret, keep it enabled, save.
+   - It worked when "Sign in with Google" on `https://www.carta-europetravel.com` returns signed in, and Account, Sign-in and security can still connect Google.
+2. **MFA on the Supabase account itself (row C2, `docs/owner/secrets-rotation.md`).**
    - Go to supabase.com, Account, Security, Multi-factor authentication.
    - Add an authenticator app and save the recovery codes in the password manager.
    - It worked when signing out and back in asks for a code.

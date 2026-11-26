@@ -2,7 +2,7 @@
 
 Accounts in your name, mailboxes, affiliate programmes and store accounts: only you can create them. Each step says how to know it worked. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 7 (6 numbered, 1 in the table).
+Rows: 8 (7 numbered, 1 in the table).
 
 ## Steps
 
@@ -14,7 +14,8 @@ Rows: 7 (6 numbered, 1 in the table).
 3. **T218-d: get the outage mails.** Subscribe your address (Subscribe to updates, email) on status.supabase.com, www.cloudflarestatus.com and status.stripe.com. Stripe and Supabase mail webhook failures and usage warnings to the account e-mail: check in each account's profile that it is an inbox you read. It worked when each page sends a confirmation mail that you click.
 4. **T272-b: store developer accounts, only when you choose to build store apps.** Apple Developer Program (99 USD a year) and a Google Play developer account (business, after the T014 company exists). Building iOS from Windows needs a cloud Mac build (for example EAS Build). T247 and T248 start after these.
 5. **T475-a: two affiliate programmes.** Sign up for Flix on Awin and Trainline on Partnerize, as the Carta business. It worked when each shows "approved" and gives a tracking id; tell a session the ids and it adds the links next to Omio (roadmap 4.23).
-6. **T1060-c: claim the social handles** once the name is decided: @cartatravel on X and TikTok (looked free), and check Instagram while signed in. Use the shared owner e-mail and turn on two-step login on each at once.
+6. **T1060-c: claim the social handles for Viantra** (decision 0018, 2026-11-26). @viantra is taken on Instagram, TikTok and X; @viantratravel and @getviantra looked free on all three. Pick one and claim it on each, signed in. Use the shared owner e-mail and turn on two-step login on each at once. It worked when each profile page loads under your handle.
+7. **T1060-d: register the Viantra domains and order a clearance search** (decision 0018). Domains that were free at the registries on 2026-11-26: viantra.travel, viantra.app, getviantra.com, viantratravel.com. Buy the main one and getviantra.com at Cloudflare Registrar if it offers the extension (else another EU-friendly registrar), in your name. viantra.com is taken (owner hidden; GoDaddy Domain Broker Service if you ever want it). Before any brand spend, order a professional trademark clearance search for "Viantra" in classes 39, 9 and 42 that covers Viantro (EUIPO 018063042) and the agency "Viantra Travel" (TikTok @viantra.travel); file classes 39 and 9 only on its advice. It worked when the domains show in your registrar account and the search report is in hand.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 
