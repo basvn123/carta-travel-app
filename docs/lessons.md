@@ -7,6 +7,7 @@ Things learned in Carta that every future run should know. Claude reads this at 
 - **Keep it short.** Past about 40 lines, promote or prune. Full stories are in the old reports (`.work/INDEX.md`).
 
 ## Lessons
+- 2026-11-26 · When the owner asks what tools or plugins to use, run a multi-agent research pass with practitioner evidence from the start, not a quick web search; and know that reddit.com is blocked for WebSearch, WebFetch and the built-in browser, so get Reddit via the owner (pasted threads) and HN via `hn.algolia.com/api/v1/search` · (the owner answered a one-pass logo toolkit list with "do better, research, in depth")
 - 2026-11-21 · Brief builder and judge subagents to run checks in the foreground and to write their output file early: a subagent that ends while a background job runs loses its report, and one that reads for 40 turns writes nothing · (My trips atlas: four builders and a judge had to be resumed or re-run)
 - 2026-11-21 · Make a task worktree from origin/main (the script's default), not from a local main that may be behind · (the first My trips worktree started 17 commits behind)
 - 2026-11-18 · PowerShell here prints numbers in Dutch format: "115.447 MB" is 115 GB, not 115 MB. Read free space with `[math]::Round((Get-PSDrive C).Free/1GB,1)` before calling the disk full · (a run told the owner the disk was full while 115 GB were free)

@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How we make the Viantra logo</title>
+<style>
+  @font-face { font-family: Overpass; src: url("../../../continent-app/src/assets/fonts/Overpass-latin.woff2") format("woff2"); font-weight: 100 900; }
+  @page { size: 420mm 297mm; margin: 0; }
+  :root {
+    --ground: #eef0ea; --paper: #ffffff; --ink: #1e2421; --ink-2: #59625c; --line: rgba(30,36,33,.12);
+    --you: #c08a2e; --designer: #8c5a2b; --helper: #4f6274;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 1587px; }
+  body { background: var(--ground); color: var(--ink); font-family: Overpass, system-ui, sans-serif; }
+  .page { width: 1587px; height: 1123px; padding: 96px 72px 0; overflow: hidden; break-after: page; position: relative; }
+  .page:last-child { break-after: auto; }
+
+  header { display: flex; justify-content: space-between; align-items: flex-end; }
+  h1 { font-size: 52px; font-weight: 800; letter-spacing: -1px; }
+  .sub { margin-top: 8px; font-size: 21px; color: var(--ink-2); }
+  .legend { display: flex; gap: 18px; align-items: center; font-size: 15px; color: var(--ink-2); padding-bottom: 6px; }
+
+  .chip { display: inline-block; font-size: 15px; font-weight: 700; padding: 5px 12px; border-radius: 99px; color: #fff; white-space: nowrap; }
+  .you { background: var(--you); }
+  .claude { background: var(--ink); }
+  .designer { background: var(--designer); }
+  .helper { color: var(--helper); box-shadow: inset 0 0 0 2px var(--helper); }
+
+  .steps { margin-top: 56px; display: grid; grid-template-columns: repeat(6, 1fr); gap: 30px; }
+  .step { background: var(--paper); border-radius: 20px; padding: 24px 22px 20px; height: 470px; display: flex; flex-direction: column; position: relative; }
+  .step:not(:last-child)::after { content: ""; position: absolute; right: -24px; top: 50px; border-left: 16px solid var(--ink); border-top: 11px solid transparent; border-bottom: 11px solid transparent; }
+  .people { box-shadow: inset 0 0 0 4px var(--you); }
+  .num { width: 54px; height: 54px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 26px; font-weight: 800; display: grid; place-items: center; }
+  .step h2 { margin-top: 20px; font-size: 26px; line-height: 1.12; font-weight: 800; min-height: 88px; }
+  .step p { margin-top: 10px; font-size: 16.5px; line-height: 1.4; color: var(--ink-2); }
+  .who { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 6px; }
+  .out { margin-top: auto; padding-top: 14px; border-top: 2px solid var(--line); }
+  .out small { display: block; font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .out strong { display: block; margin-top: 3px; font-size: 19px; font-weight: 800; }
+
+  .helpers { margin-top: 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; }
+  .help { padding-top: 14px; border-top: 3px solid var(--helper); }
+  .help h3 { font-size: 19px; font-weight: 800; color: var(--helper); }
+  .help h3 span { font-weight: 600; color: var(--ink-2); font-size: 14px; margin-left: 6px; }
+  .help p { margin-top: 5px; font-size: 16px; line-height: 1.38; color: var(--ink-2); }
+
+  .notes { margin-top: 34px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; }
+  .note { background: var(--paper); border-radius: 16px; padding: 18px 22px; }
+  .note h4 { font-size: 17px; font-weight: 800; }
+  .note p { margin-top: 5px; font-size: 15.5px; line-height: 1.4; color: var(--ink-2); }
+
+  /* page 2 */
+  .p2 h1 { font-size: 44px; }
+  .p2grid { margin-top: 48px; align-items: stretch; display: grid; grid-template-columns: 1fr 470px; gap: 40px; }
+  .panel { background: var(--paper); border-radius: 20px; padding: 36px 38px; height: 800px; display: flex; flex-direction: column; }
+  .panel h2 { font-size: 30px; font-weight: 800; }
+  .panel .lead { margin-top: 8px; font-size: 19px; color: var(--ink-2); line-height: 1.4; }
+  .roles { margin-top: 26px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .role { border-radius: 14px; padding: 18px 20px; background: var(--ground); }
+  .role b { display: block; font-size: 21px; color: var(--helper); }
+  .role span { display: block; margin-top: 4px; font-size: 16.5px; color: var(--ink-2); line-height: 1.35; }
+  table { margin-top: 24px; width: 100%; border-collapse: collapse; font-size: 16px; }
+  th { text-align: left; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); padding: 0 10px 8px; }
+  td { padding: 13px 10px; border-top: 2px solid var(--line); vertical-align: top; line-height: 1.3; color: var(--ink-2); }
+  td:first-child { font-weight: 800; color: var(--ink); white-space: nowrap; }
+  td.file { white-space: nowrap; font-family: Consolas, monospace; font-size: 14px; color: var(--ink); }
+  .rules { margin-top: auto; padding-top: 22px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .rule { border-left: 4px solid var(--ink); padding: 2px 0 2px 14px; font-size: 16.5px; line-height: 1.35; color: var(--ink-2); }
+  .rule b { color: var(--ink); display: block; }
+  .des { box-shadow: inset 0 0 0 4px var(--designer); }
+  .des h2 { color: var(--designer); }
+  .blk { margin-top: 26px; }
+  .blk h3 { font-size: 14px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2); }
+  .blk ol, .blk ul { margin-top: 8px; padding-left: 22px; font-size: 18.5px; line-height: 1.5; }
+  .blk li::marker { color: var(--designer); font-weight: 800; }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div>
+      <h1>How we make the Viantra logo</h1>
+      <p class="sub">Six steps. Claude does the work, you decide.</p>
+    </div>
+    <div class="legend">
+      <span class="chip you">You</span><span class="chip claude">Claude</span><span class="chip helper">Helper</span>
+    </div>
+  </header>
+
+  <div class="steps">
+    <div class="step people">
+      <div class="num">1</div>
+      <h2>Agree what we want</h2>
+      <p>The story behind the name, the feeling it should give, and which colours stay.</p>
+      <div class="who"><span class="chip you">You</span><span class="chip claude">Claude</span></div>
+      <div class="out"><small>You get</small><strong>A one-page brief</strong></div>
+    </div>
+    <div class="step">
+      <div class="num">2</div>
+      <h2>Draw lots of ideas</h2>
+      <p>Claude sketches simple marks and lettering. Recraft draws extra ideas.</p>
+      <div class="who"><span class="chip claude">Claude</span><span class="chip helper">Recraft</span><span class="chip helper">Workbench</span></div>
+      <div class="out"><small>You get</small><strong>9 to 12 ideas</strong></div>
+    </div>
+    <div class="step">
+      <div class="num">3</div>
+      <h2>Test them tiny and in one colour</h2>
+      <p>Each idea as a browser-tab icon, in black, in white and on brown. Weak ones go.</p>
+      <div class="who"><span class="chip claude">Claude</span><span class="chip helper">Checklist</span></div>
+      <div class="out"><small>You get</small><strong>The best 3</strong></div>
+    </div>
+    <div class="step people">
+      <div class="num">4</div>
+      <h2>Pick the best one</h2>
+      <p>Before you pick, Claude checks no registered logo looks too similar.</p>
+      <div class="who"><span class="chip you">You</span></div>
+      <div class="out"><small>You get</small><strong>One logo</strong></div>
+    </div>
+    <div class="step">
+      <div class="num">5</div>
+      <h2>Finish it up close</h2>
+      <p>Letter spacing pair by pair, a pixel-sharp tiny icon. You sign it off.</p>
+      <div class="who"><span class="chip claude">Claude</span><span class="chip you">You</span></div>
+      <div class="out"><small>You get</small><strong>The final logo</strong></div>
+    </div>
+    <div class="step">
+      <div class="num">6</div>
+      <h2>Make all the files</h2>
+      <p>Browser icon, app icons, share images, colours and fonts, ready for the app.</p>
+      <div class="who"><span class="chip claude">Claude</span><span class="chip helper">Brand guide</span></div>
+      <div class="out"><small>You get</small><strong>The brand kit</strong></div>
+    </div>
+  </div>
+
+  <div class="helpers">
+    <div class="help"><h3>Recraft <span>online, paid plan</span></h3><p>Draws logo ideas when Claude asks for them.</p></div>
+    <div class="help"><h3>Workbench <span>skill</span></h3><p>Shows every idea side by side, on light and dark.</p></div>
+    <div class="help"><h3>Checklist <span>skill</span></h3><p>Says which kinds of logo to try and how to test them.</p></div>
+    <div class="help"><h3>Brand guide <span>skill</span></h3><p>Turns the logo into colours, fonts and rules for use.</p></div>
+  </div>
+
+  <div class="notes">
+    <div class="note"><h4>Before we start</h4><p>Sign in to Recraft and take a paid plan, so the drawings belong to you.</p></div>
+    <div class="note"><h4>No designer</h4><p>The logo is built from exact arcs and lines. Your choices are recorded as proof that it is yours.</p></div>
+    <div class="note"><h4>What stays separate</h4><p>The name check against Viantro. A new logo does not solve that.</p></div>
+  </div>
+</div>
+<div class="page p2">
+  <header>
+    <div>
+      <h1>Inside the work</h1>
+      <p class="sub">How the helpers pass work to each other, and how Claude finishes the logo.</p>
+    </div>
+    <div class="legend">
+      <span class="chip you">You</span><span class="chip claude">Claude</span><span class="chip helper">Helper</span>
+    </div>
+  </header>
+
+  <div class="p2grid">
+    <div class="panel">
+      <h2>How the helpers work together</h2>
+      <p class="lead">Only Claude acts. The helpers never talk to each other: they pass work through files.</p>
+      <div class="roles">
+        <div class="role"><b>Workbench</b><span>The order of work: ask, draw, show, refine, export.</span></div>
+        <div class="role"><b>Checklist</b><span>What counts as good: which logos to try, which tests to pass.</span></div>
+        <div class="role"><b>Recraft</b><span>Extra hands: draws shapes when Claude asks.</span></div>
+      </div>
+      <table>
+        <tr><th>Moment</th><th>Workbench</th><th>Checklist</th><th>Recraft</th><th>File</th></tr>
+        <tr><td>1 Brief</td><td>Asks you 4 questions</td><td>Picks the logo types to try</td><td></td><td class="file">brief</td></tr>
+        <tr><td>2 Ideas</td><td>Starts helpers side by side</td><td>Gives each one a direction</td><td>Draws symbol ideas</td><td class="file">concept-N.svg</td></tr>
+        <tr><td>3 Test</td><td>Shows all ideas on one sheet</td><td>Runs the tests, drops the weak</td><td></td><td class="file">sheet.png</td></tr>
+        <tr><td>4 Refine</td><td>Saves each change as a new file</td><td>Re-tests every change</td><td>Cleans up a shape</td><td class="file">iteration-N.svg</td></tr>
+        <tr><td>5 Finish</td><td>Exports the chosen logo</td><td>Checks spacing and sizes again</td><td></td><td class="file">final folder</td></tr>
+      </table>
+      <div class="rules">
+        <div class="rule"><b>One loop, one rulebook</b>The Workbench sets the order, the Checklist sets the bar.</div>
+        <div class="rule"><b>Look before judging</b>Claude opens the sheet before it says anything.</div>
+        <div class="rule"><b>Improve, don't restart</b>After your pick, the same file gets better step by step.</div>
+      </div>
+    </div>
+
+    <div class="panel des">
+      <h2>How Claude finishes the logo</h2>
+      <p class="lead">No designer. Claude finishes, you sign off.</p>
+      <div class="blk"><h3>Checks up close</h3>
+        <ol><li>Letter spacing, pair by pair</li><li>A pixel-sharp 16 px icon</li><li>Contrast on light and dark</li><li>One colour, black and white</li></ol></div>
+      <div class="blk"><h3>Shows it in real places</h3>
+        <ul><li>Phone header, browser tab</li><li>Home screen, share card, footer</li></ul></div>
+      <div class="blk"><h3>Keeps a record</h3>
+        <ul><li>Every choice you made, with the date</li><li>Proof the logo comes from your decisions</li></ul></div>
+      <div class="blk"><h3>You decide</h3>
+        <ul><li>Sign off the final set</li><li>Then all app files are made</li></ul></div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
