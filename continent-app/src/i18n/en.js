@@ -9176,6 +9176,8 @@ export const en = {
   "pf.door.styleChoose": "Choose a style",
   "pf.door.saved": "From your saved ({n})",
   "pf.door.like": "Like {name}",
+  "pf.door.group": "Plan with {name}",
+  "pf.door.groups": "All groups",
   "pf.abar.label": "What these prices assume",
   "pf.abar.assumed": "{q}: {a}, assumed by Carta. Change",
   "pf.abar.given": "{q}: {a}. Change",

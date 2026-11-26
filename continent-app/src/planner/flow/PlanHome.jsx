@@ -15,6 +15,11 @@ import { formatMoney } from '../../lib/money.js';
 import { loadFlightFile } from '../../lib/flights/flightData.js';
 import { PlanDoor } from './PlanDoor.jsx';
 import { pastAgainSeed } from '../../lib/plan/seedWriters.js';
+import { doorGroups } from '../../lib/plan/doorGroup.js';
+import { useTogether } from '../../together/useTogether.js';
+import { planGroupTrip } from '../../together/signals.jsx';
+import { openVrienden } from '../../together/openVrienden.js';
+import { useFirstRun } from '../../lib/firstRunContext.js';
 
 /** A plain click stays in the app; a modified click opens the address. */
 function door(go) {
@@ -397,9 +402,25 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
     }
     onStart({ seed: pastAgainSeed({ id: past.planId, name: past.name, start: past.start, nights: past.nights, stops: past.stopCount, spendPP }, { been }) });
   };
+  // G12 follow-up: the Friends card reads the Together store the header door
+  // already loads at start, so the door adds no fetch and never waits on it;
+  // signed out or before the load it is simply absent. The tap goes through
+  // Vrienden's own seam (planGroupTrip, source 'friends', the band soft).
+  const tg = useTogether();
+  const destinations = useFirstRun()?.data?.destinations || null;
+  const groupsInPlay = useMemo(
+    () => (tg.signedIn ? doorGroups({ groups: tg.groups, circles: tg.circles, destinations, today: todayISO() }) : []),
+    [tg.signedIn, tg.groups, tg.circles, destinations],
+  );
+  const topGroup = groupsInPlay[0] || null;
   const doorNode = (
     <PlanDoor onStart={onStart} kept={kept} onOpenKept={onOpenKept}
-      past={lastPast ? { name: lastPast.name, nights: lastPast.nights || null, onPlan: () => planAgain(lastPast) } : null} />
+      past={lastPast ? { name: lastPast.name, nights: lastPast.nights || null, onPlan: () => planAgain(lastPast) } : null}
+      group={topGroup ? {
+        title: topGroup.title || t('tg.groupTrips'),
+        onPlan: () => planGroupTrip(topGroup.group, topGroup.place),
+        onAll: groupsInPlay.length > 1 ? () => openVrienden('home') : null,
+      } : null} />
   );
 
   if (trips.length > 0) {

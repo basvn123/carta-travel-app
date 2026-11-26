@@ -238,7 +238,9 @@ export function pastAgainSeed(past, { been = [] } = {}) {
  * B7b: the band is a guide (soft), never a ceiling (orchestrator decision,
  * an owner call to change): budgetCompass.activeBudget reads 'band' as soft.
  * The group's leading dates (`start`, `end`), when it has them, fix the window.
- *   group: { id, title, members: [{ userId, status }], band: { top, ready } }
+ *   group: { id, title, members: [{ userId, status }], band: { top, ready }, kind }
+ * G12 door card: a kring (kind 'circle') has no band and is not a group
+ * trip, so its ref says 'circle' and it carries no groupId.
  */
 export function friendsSeed(group, { destId = null, iso2 = '', name = '', start = '', end = '' } = {}) {
   if (!group?.id) return null;
@@ -250,9 +252,9 @@ export function friendsSeed(group, { destId = null, iso2 = '', name = '', start 
   const when = iso.test(String(start)) && iso.test(String(end)) && end > start ? { mode: 'exact', start, end } : null;
   return makeSeed({
     source: 'friends',
-    ref: { kind: 'group', id: String(group.id) },
+    ref: { kind: group.kind === 'circle' ? 'circle' : 'group', id: String(group.id) },
     label: group.title || '',
-    groupId: String(group.id),
+    groupId: group.kind === 'circle' ? null : String(group.id),
     coplanners: joined,
     places,
     when,
