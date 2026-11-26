@@ -21,7 +21,7 @@
  * allows 10 ms per invocation.
  */
 import { searchDay } from '../../shared/flightSearch.mjs';
-import { flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER, FAR_WEEKS } from './plan.mjs';
+import { denseRoutes, flattenRoutes, jobsForMinute, nextPause, DORMANT_AFTER, FAR_WEEKS } from './plan.mjs';
 import { ingestFound, ingestRows, tokenOk } from './ingest.mjs';
 import { buildFile, buildIndex, logoSource, nextBatch, routeMoves, ROUTE_MOVE } from './publish.mjs';
 import { ladderOn } from '../../shared/ladder.mjs';
@@ -81,7 +81,9 @@ export async function sweepMinute(env, now = Date.now()) {
   const found = (await env.DB.prepare(FOUND_SQL).all()).results.map((r) => [r.origin, r.dest]);
   const dormant = new Set((await env.DB.prepare('SELECT origin || dest AS k FROM misses WHERE n >= ?')
     .bind(DORMANT_AFTER).all()).results.map((r) => r.k));
-  const jobs = jobsForMinute(flattenRoutes(data.routes, found), data.airports, now, dormant);
+  const list = flattenRoutes(data.routes, found);
+  // D10: every day of the next 90 for the busiest routes (_routes.json rank).
+  const jobs = jobsForMinute(list, data.airports, now, dormant, denseRoutes(list, data.rank, dormant));
 
   // T780: counted as results come in, so the first refusal stops the minute
   // (before, the count was taken after the pool and never stopped it).

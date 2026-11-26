@@ -1385,10 +1385,12 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 2. The Cloudflare Worker `flight-sweep` runs every minute (`* * * * *`) and publishes every 10 minutes (`*/10 * * * *`). It runs one search at a time (`PARALLEL` = 1) with a 300 to 900 ms gap, and starts no new search after 50 seconds.
 3. Tiers (`plan.mjs`):
    - near: days 1, 5, 9, 13 ahead, each route every 3 days (`NEAR_CYCLE` 4,320 minutes)
-   - far: weeks 3 to 26, one day a week, each route every 2 weeks (`FAR_CYCLE` 20,160)
+   - far: weeks 3 to 26, one day a week; to day 104 each route every 2 weeks (`FAR_CYCLE` 20,160), the weeks after every 4 weeks, half of them on each far turn (D10, `FAST_UNTIL`, `SLOW_CYCLE`). The weekday follows the calendar week and moves on one day every second turn, so over 14 turns a week has had every weekday
+   - dense (D10, 2026-11-26): the 400 busiest routes (`DENSE_ROUTES`, the `rank` in `_routes.json`: Eurostat passengers carried in the latest twelve months, busiest first) get every day: days 1 to 14 each near cycle and 15 to 104 each far cycle, one day a slot, so every day of the next 90 has a fare checked on that day; they skip their near and weekly far days there
+   - box near days (D10): the box spends its idle time between late minutes on days 1 to 14 every day for the next 1,000 ranked routes (`BOX_DENSE_ROUTES`), each every 3 days, at the late tier's own 4 to 9 s spacing; the late tier always goes first
    - late: weeks 27 to 45, each route every 4 weeks, run on the Hetzner box and sent in through `/ingest`
    - find: Carta airport pairs with no route, 21 days out, direct flights only, at least 150 km apart, each pair every 90 days (`FIND_CYCLE` 129,600)
-4. A route's turn is its index modulo the cycle, in half minute slots: two per minute by day, none from 22:00 to 05:00 UTC (`NIGHT_SLOTS = 0`, N6, 2026-11-17; T1043 had one, half speed). The night searches nothing; the day minutes carry the whole cycle, about 20 searches a minute.
+4. A route's turn is its index modulo the cycle, in half minute slots: two per minute by day, none from 22:00 to 05:00 UTC (`NIGHT_SLOTS = 0`, N6, 2026-11-17; T1043 had one, half speed). The night searches nothing; the day minutes carry the whole cycle, about 24 searches a minute. D10 measured on the 10,094 routes: the Worker plans 25,503 searches a day (was 25,738) and at most 41 in a day minute (was 40); the box adds about 3,290 a day to its 6,649 late ones.
 5. A route with no direct flight on 6 checks in a row is dormant (`DORMANT_AFTER`); only the find tier looks again.
 6. Guard: the first refusal from Google stops the minute and pauses the sweep for 1 hour, doubling while refusals keep coming (reset after 2 hours quiet), at most 24 hours.
 7. Publish gate (`gate.sweep`): a one way fare is dropped if it is 0 or less, or above max(250, 150 + 0.5 x km); with no distance known, above 1,500. Example: a 1,000 km route allows up to EUR 650.
@@ -1398,7 +1400,7 @@ Worked example: core 1,738, buffer 10% = 174, total 1,912. Budget 1,800: core fi
 
 **Where it lives.** `continent-app/workers/flight-sweep/src/index.mjs`, `plan.mjs`, `publish.mjs`, `ingest.mjs`, `continent-app/workers/shared/flightSearch.mjs`, `pipeline/flights/build_routes.py`. Latest reports: `T1043`, T1042, T1020.
 
-**Limits.** Google's terms do not allow automated reading; the owner accepted the risk (T518-c). Google refused the Worker every night, also at half speed (0 of 7 nights clean, three refusals a night), so since 2026-11-17 it does not search at night (N6). The late tier's first cycle is still being watched (T798-b). UK and Czech gaps were found (T915-a, T915-b).
+**Limits.** Google's terms do not allow automated reading; the owner accepted the risk (T518-c). Google refused the Worker every night, also at half speed (0 of 7 nights clean, three refusals a night), so since 2026-11-17 it does not search at night (N6). The late tier's first cycle is still being watched (T798-b). UK and Czech gaps were found (T915-a, T915-b). D10: the rank reaches the Worker with the next monthly route build (`flight_routes`); until then the dense tier has no routes and the sweep runs as before. The app keeps `flights.nearest_day_spread` at 4: the other routes still have one day a week from day 15 on, and the far weeks past day 104 are only within 4 days of a wanted day for 95% of days (measured, unchanged). Deploy and roll back: `docs/owner/flights-dense-deploy.md`.
 
 ---
 
