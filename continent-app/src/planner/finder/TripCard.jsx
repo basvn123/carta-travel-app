@@ -6,7 +6,8 @@ import { CountryFlag } from '../../components/CountryFlag.jsx';
 import { CarIcon, CheckIcon, HeartIcon, MoreIcon, PlaneIcon, ScaleIcon, SunIcon } from '../../components/Icons.jsx';
 import { formatMoney } from '../../lib/money.js';
 import { CROWD_KEYS } from '../../lib/recommend/compare.js';
-import { monthName } from '../../lib/dates.js';
+import { fmtDate, monthName } from '../../lib/dates.js';
+import { flightOffDays } from '../../lib/recommend/adapters/flight.js';
 import { budgetBadge, cardFacts, countryLabel, factText, groupHead, shortDuration, stopsText, totalLeavesOut, tripName, tripPhotos } from './finderText.js';
 
 /**
@@ -175,6 +176,9 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
   const month = monthName(trip.month, lang);
   const f = cardFacts(trip, destinations);
   const time = shortDuration(t, f.minutes);
+  // T855: dates the traveller fixed keep a flight on a nearby day; the card says which day it flies.
+  const off = flightOffDays(trip);
+  const offDays = [off.out, off.back].filter(Boolean).map((d) => fmtDate(d, true)).join(', ');
   const badge = budgetBadge(trip, { locale: lang });
   const used = trip.budget?.eur ? (trip.budget.eur + trip.budget.delta) / trip.budget.eur : null;
   // House style: the price row is the formation. The stay and food wagons
@@ -272,6 +276,9 @@ export const TripCard = forwardRef(function TripCard({ trip, destinations, marke
               {f.way === 'car' ? <CarIcon size={14} /> : <PlaneIcon size={14} />}
               <span aria-hidden="true">{time}{f.stops > 0 ? `, ${stopsText(t, f.stops)}` : ''}</span>
             </li>
+          )}
+          {offDays && (
+            <li className="is-warn"><PlaneIcon size={14} /><span>{t('tf.card.flightOn', { date: offDays })}</span></li>
           )}
           {f.crowd != null && CROWD_KEYS[f.crowd] && month && (
             <li className={f.crowd >= 3 ? 'is-warn' : ''} aria-label={t('tf.card.crowd', { month, level: t(CROWD_KEYS[f.crowd]) })}>

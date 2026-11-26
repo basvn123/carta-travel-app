@@ -31,7 +31,8 @@ const DEFAULT_BAG = rule('request.default_bag');
  * are checked every 3 days and later dates every 2 weeks, so a near fare may
  * be 5 days old and a far one 16 (were 3 and 8). T798: dates about 6 to 10
  * months out (T805: to day 314) come from the box every 4 weeks, so a late
- * one may be 32.
+ * one may be 32. D10: the far weeks past day 104 are searched every 4 weeks
+ * too, so the late age starts at day 90 (late_after_days).
  */
 const AGE = rule('flights.max_age_days');
 const DAY_MS = 86400000;
@@ -259,6 +260,46 @@ export function sweptNear(file, dir, airport, date, { spread = NEAREST_SPREAD, n
     if (best) return best;
   }
   return null;
+}
+
+const shiftDay = (iso, days) => new Date(Date.parse(`${iso}T00:00:00Z`) + days * 86400000).toISOString().slice(0, 10);
+
+/**
+ * T855: a whole trip moved onto swept flight days with its nights kept: the
+ * smallest shift (0, then 1 day either way, up to `spread`) for which the
+ * way out on outDate + shift and the way home on backDate + shift both have
+ * a fresh swept fare; of two shifts the same distance away, the cheaper
+ * pair. { shift, out, back } or null. The trip's dates then move by
+ * `shift`, so check-in is the day the flight lands and check-out the day
+ * the flight home leaves.
+ */
+export function sweptShift(file, airport, outDate, backDate, { spread = NEAREST_SPREAD, now = Date.now() } = {}) {
+  if (!outDate || !backDate) return null;
+  for (let k = 0; k <= spread; k++) {
+    let best = null;
+    for (const s of k ? [-k, k] : [0]) {
+      const out = sweptDay(file, 'out', airport, shiftDay(outDate, s), now);
+      const back = out && sweptDay(file, 'back', airport, shiftDay(backDate, s), now);
+      if (out && back && (!best || out.price + back.price < best.out.price + best.back.price)) best = { shift: s, out, back };
+    }
+    if (best) return best;
+  }
+  return null;
+}
+
+/**
+ * T855: the nearest swept flights for a trip whose dates cannot move (an
+ * exact date the traveller set, something booked): the way out nearest
+ * outDate, the way home nearest backDate but never before it, so nobody is
+ * flown home before check-out. { out, back } or null; each leg keeps its
+ * own day, which the card and the trip page name.
+ */
+export function sweptFixedDates(file, airport, outDate, backDate, { spread = NEAREST_SPREAD, now = Date.now() } = {}) {
+  const out = sweptNear(file, 'out', airport, outDate, { spread, now });
+  if (!out || !backDate) return null;
+  const dayBefore = shiftDay(backDate, -1);
+  const back = sweptNear(file, 'back', airport, backDate, { spread, now, after: out.date > dayBefore ? out.date : dayBefore });
+  return back ? { out, back } : null;
 }
 
 /**

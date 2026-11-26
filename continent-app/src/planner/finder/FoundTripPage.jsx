@@ -15,7 +15,7 @@ import { cityLabel } from '../../lib/placeName.js';
 import { CROWD_KEYS, crowdTier, dayHighs } from '../../lib/recommend/compare.js';
 import { slotTotals } from '../../lib/recommend/slots.js';
 import { useBcp47, useMonths, whenText } from '../flow/flowHooks.js';
-import { useFoundMore, useKeepTrip } from './finderHooks.js';
+import { useExactDayFlights, useFoundMore, useKeepTrip } from './finderHooks.js';
 import { alternatives } from '../../lib/recommend/alternatives.js';
 import { receiptOfTrip } from '../../lib/price/receiptDiff.js';
 import { useTotalDelta } from '../planHooks.js';
@@ -497,6 +497,8 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
     [trip, pool, more.levers, more.windows],
   );
   const money = (d) => signedMoney(d, { locale: lang });
+  // T855: the flight looked up live on the trip's exact days.
+  const exactNote = useExactDayFlights(trip, onEdit, money);
   const leverLabel = (l) => (l.key === 'nearby'
     ? t('tf.lever.nearby', { place: cityLabel(destinations?.[l.placeId]?.city || '') })
     : l.key === 'week' ? t('tf.lever.week', { month: monthName(l.month, lang) }) : t('tf.lever.tier'));
@@ -571,6 +573,7 @@ export function FoundTripPage({ trip, settings, destinations, ui, others = [], k
         </div>
 
         <aside className="tff-tp-side">
+          {exactNote && <p className="tff-tp-flightday" role="status">{t(exactNote.key, exactNote.vars)}</p>}
           <PriceCard trip={trip} t={t} lang={lang} ui={ui} name={name} keeper={keeper} onPlan={onPlan} onLine={setLine} delta={sameTrip ? delta : null} />
         </aside>
 
