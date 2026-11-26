@@ -1,4 +1,4 @@
-// T557: the pure parts of Ask Carta on device (lib/ask/onDevice.js). WebGPU
+// T557: the pure parts of Ask Viantra on device (lib/ask/onDevice.js). WebGPU
 // does not run in node, so the model itself is checked in the browser end
 // check; here: the opt-in, the support gate, the not-ready refusal, the cache
 // check and the model URLs built from the data host base.

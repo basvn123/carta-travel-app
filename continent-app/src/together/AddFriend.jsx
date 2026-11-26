@@ -128,7 +128,7 @@ export function ShareCard({ onError, className = '' }) {
   const share = async () => {
     const text = t('friends.inviteText', { handle: myHandle });
     try {
-      if (navigator.share) { await navigator.share({ title: 'Carta', text, url: link }); return; }
+      if (navigator.share) { await navigator.share({ title: 'Viantra', text, url: link }); return; }
       await navigator.clipboard.writeText(`${text} ${link}`);
       setCopied(true);
     } catch (err) {

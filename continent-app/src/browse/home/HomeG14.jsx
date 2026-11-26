@@ -136,7 +136,7 @@ function ShareCarta({ t }) {
   const share = async () => {
     try {
       if (typeof navigator !== 'undefined' && navigator.share) {
-        await navigator.share({ title: 'Carta', text: t('home.title'), url });
+        await navigator.share({ title: 'Viantra', text: t('home.title'), url });
         return;
       }
     } catch (e) {

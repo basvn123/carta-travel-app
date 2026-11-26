@@ -1,5 +1,5 @@
 /**
- * askEmbed.js: the Ask Carta query embedder (T551).
+ * askEmbed.js: the Ask Viantra query embedder (T551).
  *
  * A port of model2vec's StaticModel.encode for the pruned
  * minishlab/potion-multilingual-128M that pipeline/ask_index_layer.py ships

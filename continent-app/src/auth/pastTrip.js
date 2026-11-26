@@ -2,7 +2,7 @@
  * pastTrip.js, filing a trip that already happened.
  *
  * The Visited tab never asked anyone to file anything: a trip plan whose last
- * date has passed classifies itself as a memory. A trip taken before Carta
+ * date has passed classifies itself as a memory. A trip taken before Viantra
  * existed has the same right to be in the record, so this module writes one in
  * the same shape the classifier already reads, rather than inventing a second
  * kind of thing for the record to special-case.

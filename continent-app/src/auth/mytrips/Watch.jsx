@@ -15,7 +15,7 @@ import {
 import { alertsOn, listAlerts, saveAlert, deleteAlert, placeSpec, ALERTS_MOCK } from '../../lib/priceAlerts.js';
 
 /* Volgen on Saved (G12, Phase D): the Gevolgd rail, its cards and sheet.
-   Every chart point is a price Carta measured (lib/watchStore). */
+   Every chart point is a price Viantra measured (lib/watchStore). */
 
 const KIND_ICON = { stay: BedIcon, flight: PlaneIcon, day: SunIcon };
 const dayLabel = (iso) => {

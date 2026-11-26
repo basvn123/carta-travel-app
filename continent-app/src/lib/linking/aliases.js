@@ -2,7 +2,7 @@
  * The alias table of the place linker (T1153, ROADMAP F4).
  *
  * One row per way a person might write a catalogue place, built only from
- * data Carta already ships:
+ * data Viantra already ships:
  *
  *   name      the catalogue name (app_data destinations[].city)
  *   part      "Rome (Fiumicino)" also reads as "rome" and "fiumicino"

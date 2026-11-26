@@ -15,7 +15,7 @@ test('the length floor still holds', () => {
   assert.deepEqual(checkPasswordRules('short').find((r) => r.key === 'len'), { key: 'len', met: false });
 });
 
-test('context words: Carta, name parts and the e-mail local part, accents and case ignored', () => {
+test('context words: Viantra, name parts and the e-mail local part, accents and case ignored', () => {
   const ctx = { name: 'Émile De Vries', email: 'emile.vries+trips@example.org' };
   const words = contextWords(ctx);
   for (const w of ['carta', 'emile', 'vries', 'trips']) assert.ok(words.includes(w), w);
@@ -27,7 +27,7 @@ test('context words: Carta, name parts and the e-mail local part, accents and ca
   assert.equal(passwordMeetsRules('olive harbour lantern', ctx), true);
 });
 
-test('no context given: only Carta is refused', () => {
+test('no context given: only Viantra is refused', () => {
   assert.equal(passwordContextWord('my carta password'), 'carta');
   assert.equal(passwordContextWord('anything else at all'), null);
 });

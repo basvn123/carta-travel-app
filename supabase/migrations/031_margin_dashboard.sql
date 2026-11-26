@@ -588,7 +588,7 @@ end;
 $$;
 
 comment on function public.admin_margin(int) is
-  'One calendar month of Carta unit economics, Europe/Amsterdam: passes sold '
+  'One calendar month of Viantra unit economics, Europe/Amsterdam: passes sold '
   'by tier, VAT and Stripe modelled off the documented rates, AI units priced '
   'from site_config, infrastructure from public.infra_ledger, and contribution '
   'per purchase against the EUR 6.85 assumption in '

@@ -66,7 +66,7 @@ export function FeedbackInbox({ queue, onOpenUser, onOpenContent }) {
               {f.email && (
                 <a
                   className="adminpage-btn"
-                  href={`mailto:${f.email}?subject=${encodeURIComponent('Re: your Carta feedback')}`}
+                  href={`mailto:${f.email}?subject=${encodeURIComponent('Re: your Viantra feedback')}`}
                 >
                   {t('admin.fbReply')}
                 </a>

@@ -1,7 +1,7 @@
 /**
- * aiCitySuggest.js, the client half of the Carta bot's "ask AI" town search.
+ * aiCitySuggest.js, the client half of the Viantra bot's "ask AI" town search.
  *
- * Same shape as aiDayPlan.js: build a whitelisted candidate list from Carta's
+ * Same shape as aiDayPlan.js: build a whitelisted candidate list from Viantra's
  * own catalogue (never trust the model's memory for coordinates), invoke the
  * `suggest-city` Edge Function through Supabase (the AI key stays server
  * side), and hand back a typed result the UI can render directly. Unlike the

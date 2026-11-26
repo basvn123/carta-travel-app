@@ -63,7 +63,7 @@ test("T868: the answers line names the places first (row T859-b), then from, whe
   assert.ok(a.line.startsWith("Prague and Austria, tf.chip.from"), a.line);
   assert.ok(a.line.includes("plan.partyAdultMany"));
   assert.equal(a.rest, 2, "the weather and the budget wait under Edit answers");
-  assert.deepEqual(placeChips(s).map((c) => c.q), ["tell", "tell"], "a place reopens Tell Carta");
+  assert.deepEqual(placeChips(s).map((c) => c.q), ["tell", "tell"], "a place reopens Tell Viantra");
   assert.ok(a.chips.some((c) => c.q === "who"), "who goes can be changed too");
   assert.equal(new Set(a.chips.map((c) => c.id)).size, a.chips.length, "each answer once");
 });

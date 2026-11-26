@@ -14,7 +14,7 @@ const BASE = JSON.parse(readFileSync(new URL("../scripts/eval/ask-baseline.json"
 const pub = (p) => new URL(`../public/${p}`, import.meta.url);
 const HAVE = existsSync(pub("app_data.json")) && existsSync(pub("search/guided.json")) && existsSync(pub("search_index.json"));
 
-test("the eval set: 200 questions, 6 languages, 30 that Carta must not answer", () => {
+test("the eval set: 200 questions, 6 languages, 30 that Viantra must not answer", () => {
   const ids = new Set(SET.cases.map((c) => c.id));
   assert.equal(ids.size, SET.cases.length, "case ids are unique");
   assert.ok(SET.cases.length >= 200, `only ${SET.cases.length} cases`);

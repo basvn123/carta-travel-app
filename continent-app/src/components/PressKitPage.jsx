@@ -6,10 +6,10 @@ import { PRESS_FOUNDER_LINE, PRESS_LOGO, PRESS_SCREENSHOT } from '../lib/press.j
 import facts from '../data/pressFacts.json';
 
 /**
- * Press kit (T1131, K10): what Carta is, who it is for, the founder line
+ * Press kit (T1131, K10): what Viantra is, who it is for, the founder line
  * (placeholder until the owner fills lib/press.js), key facts with real counts
  * (src/data/pressFacts.json, built by scripts/press/build-facts.mjs from the
- * shipped data), a logo and a screenshot that are Carta's own, and the contact
+ * shipped data), a logo and a screenshot that are Viantra's own, and the contact
  * line (the T1108 SUPPORT_EMAIL). Opens at /?legal=press, like the support page.
  */
 const FACTS = [

@@ -243,7 +243,7 @@ async function stubSupabase(page, state, opts = {}) {
         id, type: 'totp', friendly_name: body.friendly_name,
         totp: {
           qr_code: '<svg xmlns="http://www.w3.org/2000/svg" width="168" height="168"><rect width="168" height="168" fill="#000"/></svg>',
-          secret: 'JBSWY3DPEHPK3PXP', uri: 'otpauth://totp/Carta:owner@example.com?secret=JBSWY3DPEHPK3PXP',
+          secret: 'JBSWY3DPEHPK3PXP', uri: 'otpauth://totp/Viantra:owner@example.com?secret=JBSWY3DPEHPK3PXP',
         },
       });
     }
@@ -1848,9 +1848,9 @@ try {
   // and security and Your data, and renamed Data sources "Where the numbers
   // come from" (it clashed with Your data): twelve doors now. T461 retired
   // that door (the credits are in the Imprint) and folded the invite banner
-  // into a Share Carta door: still twelve.
+  // into a Share Viantra door: still twelve.
   const wantDoors = ['Overview', 'Profile details', 'Sign-in and security', 'Your data', 'Friends',
-    'Send feedback', 'Common questions', 'Share Carta', 'Privacy policy', 'Terms of service', 'Imprint',
+    'Send feedback', 'Common questions', 'Share Viantra', 'Privacy policy', 'Terms of service', 'Imprint',
     'Lifestyle'];
   const missingDoors = wantDoors.filter((d) => !doors.includes(d));
   const extraDoors = doors.filter((d) => !wantDoors.includes(d));

@@ -1,4 +1,4 @@
-// Locks the shape of every deep link Carta hands a traveller, under plain node.
+// Locks the shape of every deep link Viantra hands a traveller, under plain node.
 //
 //   node scripts/verify_transport_links.mjs [--live]
 //

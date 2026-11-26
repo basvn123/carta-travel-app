@@ -1,4 +1,4 @@
--- Carta accounts: saved trips + saved settings.
+-- Viantra accounts: saved trips + saved settings.
 -- Run this once in your Supabase project's SQL Editor (Project -> SQL Editor -> New query).
 -- Auth itself (users, passwords, email confirmation, password reset) is handled
 -- entirely by Supabase's built-in `auth.users` table - nothing to create for that.

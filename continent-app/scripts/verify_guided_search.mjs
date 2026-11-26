@@ -3,7 +3,7 @@
 //   node scripts/verify_guided_search.mjs [--list]
 //
 // 1. Typed questions in four languages must read as the facets written
-//    here, and a word Carta cannot answer must be named, not applied.
+//    here, and a word Viantra cannot answer must be named, not applied.
 // 2. The golden set (pipeline/guided_search_layer.py GOLDEN, twenty
 //    questions written before any tuning, T439): how many expected places
 //    the catalogue holds land in the top ten of the app's own ranking. The
@@ -84,7 +84,7 @@ for (const [lang, q, want] of QUESTIONS) {
 }
 {
   const r = gs.completions('skiing in norway ', vocab('en'), 'en');
-  check('a word Carta cannot answer is named, not applied', r.unknown.includes('skiing')
+  check('a word Viantra cannot answer is named, not applied', r.unknown.includes('skiing')
     && r.options.length === 1 && r.options[0].parts.every((p) => p.kind !== 'vibe'));
   const p = gs.completions('rome', vocab('en'), 'en');
   check('a place alone offers its page and "near" it', p.options[0]?.open === idOf('Rome')

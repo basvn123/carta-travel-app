@@ -1,5 +1,5 @@
 /**
- * The Carta basemap style (G12, .work/2026-11-20-map-view/decision.md "Base
+ * The Viantra basemap style (G12, .work/2026-11-20-map-view/decision.md "Base
  * map"): Protomaps vector tiles from a Europe PMTiles extract on our own data
  * host, drawn in the house colours with few labels.
  *
@@ -40,7 +40,7 @@ export const MANIFEST_URL = `${MAPS_BASE}/basemap.json`;
 export const BASEMAP_FILE = 'europe-2026-11-18.pmtiles';
 export const BASEMAP_URL = `${MAPS_BASE}/${BASEMAP_FILE}`;
 export const GLYPHS_URL = `${MAPS_BASE}/fonts/{fontstack}/{range}.pbf`;
-// Hosted for layers that want Protomaps icons; the Carta style draws none, so
+// Hosted for layers that want Protomaps icons; the Viantra style draws none, so
 // it does not name a sprite and saves two requests at open.
 export const SPRITE_URL = (dark) => `${MAPS_BASE}/sprites/v4/${dark ? 'dark' : 'light'}`;
 export const BASEMAP_SOURCE = 'protomaps';
@@ -75,7 +75,7 @@ export function cartaMapStyle({ dark = false, lang = 'en' } = {}) {
   const halo = { 'text-halo-color': c.land, 'text-halo-width': 1.2, 'text-halo-blur': 0.4 };
   return {
     version: 8,
-    name: dark ? 'Carta dark' : 'Carta',
+    name: dark ? 'Viantra dark' : 'Viantra',
     metadata: { 'carta:basemap': dark ? 'dark' : 'light' },
     glyphs: GLYPHS_URL,
     sources: {

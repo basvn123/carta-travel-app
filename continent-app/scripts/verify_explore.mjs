@@ -17,7 +17,7 @@
 //
 // Explore v6 to v8 (brought up to date 2026-10-28): the tab opens as an
 // overview (a hero headed "Where to next?" with the Where search and Ask
-// Carta, the category tabs, the quick chips, the story rails). "Show all
+// Viantra, the category tabs, the quick chips, the story rails). "Show all
 // places" opens the focused list: rows are .xrow.xov (house style 2026-11:
 // photo in .xrow-media with nothing on it, the Score plate .xscore after the
 // name, the formation .xprice), the rails are the house .hs-rail-sec with
@@ -97,11 +97,11 @@ try {
   check('Explore opens on the overview, headed "Where to next?"',
     (await page.locator('h1:visible').allInnerTexts()).map((s) => s.trim()).join('|') === 'Where to next?');
   // G12 Explore top (2026-11-19): the band's one search field with its
-  // umber search button at the end, and Ask Carta beside it.
+  // umber search button at the end, and Ask Viantra beside it.
   check('the band carries the search field and its search button',
     await page.locator('.band form[role="search"] .band-input').isVisible()
     && await page.locator('.band form[role="search"] .band-go').isVisible());
-  check('Ask Carta stands beside the field',
+  check('Ask Viantra stands beside the field',
     await page.locator('.band .band-ask').isVisible()
     && /ask/i.test(await page.locator('.band .band-ask').innerText().catch(() => '')));
   const catTabs = await page.locator('.xcats-bar [role="tab"]').allInnerTexts();
@@ -567,7 +567,7 @@ try {
 // ── The search, by keyboard on a desktop. The guided search door (T442,
 // .gsearch-trigger in the header) left Explore with v6: the header slot is
 // Destinations' now, and Explore's search is the hero's Where field
-// (T622) beside the Ask Carta door. A typed place narrows the list to the
+// (T622) beside the Ask Viantra door. A typed place narrows the list to the
 // places that match and shows as a chip; clearing the chip brings the list
 // back; the Sort menu's Cheapest day orders by the day figure. ──
 try {
@@ -610,7 +610,7 @@ try {
   check('search: the price sort puts the cheapest first and lands in the URL',
     days.length >= 5 && days.every((d, i) => i === 0 || d >= days[i - 1]) && /[?&](xs|sort)=cost/.test(page.url()),
     `${days.join(' ')} ${page.url().split('?')[1] || ''}`);
-  // Back from a place returns to the list, not out of Carta.
+  // Back from a place returns to the list, not out of Viantra.
   await page.locator('.xrow-hit').first().click();
   await page.locator('.destp').waitFor({ timeout: 30000 }).catch(() => {});
   await page.waitForTimeout(800);

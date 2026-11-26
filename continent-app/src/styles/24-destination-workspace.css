@@ -1025,7 +1025,7 @@
    Trip planner v2: countries you read, trips you pick, travel you book
    elsewhere.
 
-   Three screens changed shape when Carta stopped pricing transport:
+   Three screens changed shape when Viantra stopped pricing transport:
 
      Where   the country cards lost their fare badge and their all-in line,
              and gained a brief that opens beside the grid (what to visit,
@@ -1605,7 +1605,7 @@
    and photo-forward cards two abreast. Destinations and Explore only.
    ========================================================================== */
 @media (max-width: 768px) {
-  /* ── The bar: Carta and its mark on the left, the chips on the right. ── */
+  /* ── The bar: Viantra and its mark on the left, the chips on the right. ── */
   .top-bar { background: var(--paper); }
   .app-header { align-items: center; }
   .app-header-brand {
@@ -1613,7 +1613,7 @@
     gap: 8px;
     padding: 8px 0 8px 14px;
   }
-  .app-header-brand .brand-mark { width: 32px; height: 32px; }
+  .app-header-brand .brand-mark { width: auto; height: 30px; }
   .app-header-brand .brand-name { font-size: 22px; color: var(--accent); }
 
   /* ── The bottom panel: the accent tick and the accent colour mark where

@@ -14,8 +14,8 @@
  *       printed figure matches the data and the lines add up to the total
  *
  * The image holds no photo and no map, so it needs no image credit; its
- * foot says the figures are Carta's estimate on a date, and where a flight
- * line is Google Flights' fare (owner rule: never Carta's own).
+ * foot says the figures are Viantra's estimate on a date, and where a flight
+ * line is Google Flights' fare (owner rule: never Viantra's own).
  */
 import { plannerStateFromPlan, tripFigure, nightsBetween } from '../myTrips.js';
 import { quoteTrip, tripLines } from '../tripTotal.js';

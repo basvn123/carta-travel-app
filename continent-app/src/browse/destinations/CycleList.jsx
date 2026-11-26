@@ -37,7 +37,7 @@ export function CycleList({
               >
                 <span className="cycle-famchip-ref">{f.ref}</span>
                 {/* The route's own name (T455). Its length and country
-                    count were the sum of the sections Carta holds,
+                    count were the sum of the sections Viantra holds,
                     not the route, so they are not shown. */}
                 {f.name && <span className="cycle-famchip-meta">{f.name}</span>}
               </button>

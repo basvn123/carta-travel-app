@@ -1,6 +1,6 @@
 /*
  * Adapter: the Ask the docs eval (T1168, ROADMAP B8) in the shared results format.
- * A second RAG system beside Ask Carta: BM25 over docs/, extractive answers
+ * A second RAG system beside Ask Viantra: BM25 over docs/, extractive answers
  * with [n] citations. Scores recall of the right doc, grounding and abstention
  * on scripts/eval/ask-docs/set.json. No model is called.
  */

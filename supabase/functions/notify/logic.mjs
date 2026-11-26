@@ -156,14 +156,14 @@ const W = {
     dropSubjectMany: 'Places you saved cost less now',
     dropLine: '{city}: {now} a person a day, {was} when you saved it.',
     dropOpen: 'Open your saved places',
-    whyTrip: 'You get this email because you turned on trip reminders in Carta.',
-    whyPrice: 'You get this email because you turned on price drops in Carta.',
+    whyTrip: 'You get this email because you turned on trip reminders in Viantra.',
+    whyPrice: 'You get this email because you turned on price drops in Viantra.',
     unsub: 'Unsubscribe',
     trip: 'your trip',
     pageTitle: 'Unsubscribed',
-    pageOk: 'You will get no more of these emails from Carta.',
-    pageBad: 'This link did not work. Turn emails off in Carta, under Account, Preferences.',
-    pageBack: 'Open Carta',
+    pageOk: 'You will get no more of these emails from Viantra.',
+    pageBad: 'This link did not work. Turn emails off in Viantra, under Account, Preferences.',
+    pageBack: 'Open Viantra',
   },
   nl: {
     tripSubject: '{name} begint over {n} dagen',
@@ -173,14 +173,14 @@ const W = {
     dropSubjectMany: 'Plekken die je bewaarde kosten nu minder',
     dropLine: '{city}: {now} per persoon per dag, {was} toen je het bewaarde.',
     dropOpen: 'Open je bewaarde plekken',
-    whyTrip: 'Je krijgt deze e-mail omdat je reisherinneringen aanzette in Carta.',
-    whyPrice: 'Je krijgt deze e-mail omdat je prijsdalingen aanzette in Carta.',
+    whyTrip: 'Je krijgt deze e-mail omdat je reisherinneringen aanzette in Viantra.',
+    whyPrice: 'Je krijgt deze e-mail omdat je prijsdalingen aanzette in Viantra.',
     unsub: 'Afmelden',
     trip: 'je reis',
     pageTitle: 'Afgemeld',
-    pageOk: 'Je krijgt deze e-mails van Carta niet meer.',
-    pageBad: 'Deze link werkte niet. Zet e-mails uit in Carta, bij Account, Voorkeuren.',
-    pageBack: 'Open Carta',
+    pageOk: 'Je krijgt deze e-mails van Viantra niet meer.',
+    pageBad: 'Deze link werkte niet. Zet e-mails uit in Viantra, bij Account, Voorkeuren.',
+    pageBack: 'Open Viantra',
   },
   fr: {
     tripSubject: '{name} commence dans {n} jours',
@@ -190,14 +190,14 @@ const W = {
     dropSubjectMany: 'Des lieux enregistrés coûtent moins cher',
     dropLine: '{city} : {now} par personne et par jour, {was} quand vous l’avez enregistré.',
     dropOpen: 'Ouvrir vos lieux enregistrés',
-    whyTrip: 'Vous recevez cet e-mail car vous avez activé les rappels de voyage dans Carta.',
-    whyPrice: 'Vous recevez cet e-mail car vous avez activé les baisses de prix dans Carta.',
+    whyTrip: 'Vous recevez cet e-mail car vous avez activé les rappels de voyage dans Viantra.',
+    whyPrice: 'Vous recevez cet e-mail car vous avez activé les baisses de prix dans Viantra.',
     unsub: 'Se désabonner',
     trip: 'votre voyage',
     pageTitle: 'Désabonné',
-    pageOk: 'Vous ne recevrez plus ces e-mails de Carta.',
-    pageBad: 'Ce lien n’a pas fonctionné. Désactivez les e-mails dans Carta, sous Compte, Préférences.',
-    pageBack: 'Ouvrir Carta',
+    pageOk: 'Vous ne recevrez plus ces e-mails de Viantra.',
+    pageBad: 'Ce lien n’a pas fonctionné. Désactivez les e-mails dans Viantra, sous Compte, Préférences.',
+    pageBack: 'Ouvrir Viantra',
   },
   de: {
     tripSubject: '{name} beginnt in {n} Tagen',
@@ -207,14 +207,14 @@ const W = {
     dropSubjectMany: 'Gemerkte Orte kosten jetzt weniger',
     dropLine: '{city}: {now} pro Person und Tag, {was} beim Merken.',
     dropOpen: 'Gemerkte Orte öffnen',
-    whyTrip: 'Du bekommst diese E-Mail, weil du Reiseerinnerungen in Carta eingeschaltet hast.',
-    whyPrice: 'Du bekommst diese E-Mail, weil du Preissenkungen in Carta eingeschaltet hast.',
+    whyTrip: 'Du bekommst diese E-Mail, weil du Reiseerinnerungen in Viantra eingeschaltet hast.',
+    whyPrice: 'Du bekommst diese E-Mail, weil du Preissenkungen in Viantra eingeschaltet hast.',
     unsub: 'Abmelden',
     trip: 'deine Reise',
     pageTitle: 'Abgemeldet',
-    pageOk: 'Du bekommst diese E-Mails von Carta nicht mehr.',
-    pageBad: 'Dieser Link hat nicht funktioniert. Schalte E-Mails in Carta unter Konto, Einstellungen aus.',
-    pageBack: 'Carta öffnen',
+    pageOk: 'Du bekommst diese E-Mails von Viantra nicht mehr.',
+    pageBad: 'Dieser Link hat nicht funktioniert. Schalte E-Mails in Viantra unter Konto, Einstellungen aus.',
+    pageBack: 'Viantra öffnen',
   },
   es: {
     tripSubject: '{name} empieza en {n} días',
@@ -224,14 +224,14 @@ const W = {
     dropSubjectMany: 'Lugares que guardaste cuestan menos ahora',
     dropLine: '{city}: {now} por persona y día, {was} cuando lo guardaste.',
     dropOpen: 'Abrir tus lugares guardados',
-    whyTrip: 'Recibes este correo porque activaste los recordatorios de viaje en Carta.',
-    whyPrice: 'Recibes este correo porque activaste las bajadas de precio en Carta.',
+    whyTrip: 'Recibes este correo porque activaste los recordatorios de viaje en Viantra.',
+    whyPrice: 'Recibes este correo porque activaste las bajadas de precio en Viantra.',
     unsub: 'Darse de baja',
     trip: 'tu viaje',
     pageTitle: 'Baja confirmada',
-    pageOk: 'Ya no recibirás estos correos de Carta.',
-    pageBad: 'Este enlace no ha funcionado. Desactiva los correos en Carta, en Cuenta, Preferencias.',
-    pageBack: 'Abrir Carta',
+    pageOk: 'Ya no recibirás estos correos de Viantra.',
+    pageBad: 'Este enlace no ha funcionado. Desactiva los correos en Viantra, en Cuenta, Preferencias.',
+    pageBack: 'Abrir Viantra',
   },
   it: {
     tripSubject: '{name} inizia tra {n} giorni',
@@ -241,14 +241,14 @@ const W = {
     dropSubjectMany: 'Luoghi salvati costano meno ora',
     dropLine: '{city}: {now} a persona al giorno, {was} quando l’hai salvato.',
     dropOpen: 'Apri i luoghi salvati',
-    whyTrip: 'Ricevi questa email perché hai attivato i promemoria di viaggio in Carta.',
-    whyPrice: 'Ricevi questa email perché hai attivato i cali di prezzo in Carta.',
+    whyTrip: 'Ricevi questa email perché hai attivato i promemoria di viaggio in Viantra.',
+    whyPrice: 'Ricevi questa email perché hai attivato i cali di prezzo in Viantra.',
     unsub: 'Annulla iscrizione',
     trip: 'il tuo viaggio',
     pageTitle: 'Iscrizione annullata',
-    pageOk: 'Non riceverai più queste email da Carta.',
-    pageBad: 'Questo link non ha funzionato. Disattiva le email in Carta, in Account, Preferenze.',
-    pageBack: 'Apri Carta',
+    pageOk: 'Non riceverai più queste email da Viantra.',
+    pageBad: 'Questo link non ha funzionato. Disattiva le email in Viantra, in Account, Preferenze.',
+    pageBack: 'Apri Viantra',
   },
 };
 
@@ -262,7 +262,7 @@ function listOf(names, lang) {
   try { return new Intl.ListFormat(LOCALE[langOf(lang)], { type: 'conjunction' }).format(names); } catch { return names.join(', '); }
 }
 
-// One quiet layout for every email: Carta's ink on white, one brown link
+// One quiet layout for every email: Viantra's ink on white, one brown link
 // (the hex values of --text, --text-2, --surface-page and --action in
 // continent-app/src/styles/01-tokens.css, since an email has no stylesheet),
 // system fonts (an email client loads no web font reliably).
@@ -273,7 +273,7 @@ function shell(lang, lines, cta, why, unsub) {
     + '<div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
     // The wordmark slot (house style): the blaze, then the name.
     + '<p style="margin:0 0 16px;font-size:20px;font-weight:800;color:#1e2421">'
-    + '<span style="display:inline-block;vertical-align:middle;width:16px;height:5px;margin:0 8px 3px 0;background:#8c5a2b;border:4px solid #ffffff;outline:1px solid #a5ada7"></span>Carta</p>'
+    + '<span style="display:inline-block;vertical-align:middle;width:16px;height:5px;margin:0 8px 3px 0;background:#8c5a2b;border:4px solid #ffffff;outline:1px solid #a5ada7"></span>Viantra</p>'
     + body
     + `<p style="margin:16px 0 0"><a href="${esc(cta.href)}" style="color:#744820;font-weight:700;font-size:16px">${esc(cta.label)}</a></p>`
     + '</div>'
@@ -315,7 +315,7 @@ export function unsubPage(lang, ok, appUrl) {
   return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(w.pageTitle)}</title></head>`
     + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
     + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
-    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(ok ? w.pageTitle : 'Carta')}</h1>`
+    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(ok ? w.pageTitle : 'Viantra')}</h1>`
     + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1e2421">${esc(ok ? w.pageOk : w.pageBad)}</p>`
     + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#744820;font-weight:700">${esc(w.pageBack)}</a></p>`
     + '</main></body></html>';

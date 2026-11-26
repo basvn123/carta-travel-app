@@ -99,7 +99,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Test: `continent-app/tests/gateways.test.mjs` :: "every gateway row names an existing city row that is not a gateway"
 - Test: `continent-app/tests/gateways.test.mjs` :: "#dest=CIA opens Rome (FCO); a city id opens itself"
 - Test: `continent-app/tests/gateways.test.mjs` :: "gatewayCity stops on a loop"
-- Test: `continent-app/tests/gateways.test.mjs` :: "Explore (and Ask Carta, which reads Explore's rows) drops every gateway"
+- Test: `continent-app/tests/gateways.test.mjs` :: "Explore (and Ask Viantra, which reads Explore's rows) drops every gateway"
 
 ### RATING-014 Validation gate before writing
 - Decides: whether a rating run may ship at all.

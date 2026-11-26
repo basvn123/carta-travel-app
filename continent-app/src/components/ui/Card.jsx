@@ -1,5 +1,5 @@
 /*
- * Card (T422): one anatomy for every object Carta lists (a place, a trail, a
+ * Card (T422): one anatomy for every object Viantra lists (a place, a trail, a
  * beach, a trip, a saved item).
  *
  * Layouts

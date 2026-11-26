@@ -230,7 +230,7 @@ export function accommodationPerPerson(dest, nights, departDate, model, groupSiz
 }
 
 /** The air route into this destination from the chosen origin, or null.
- *  dest.routes holds one record per origin whose last leg Carta can price
+ *  dest.routes holds one record per origin whose last leg Viantra can price
  *  (origins.js); there is no fare in it (T511: fares removed; T517 adds
  *  flights back). */
 export function pickAirRoute(dest, originPref = 'auto') {

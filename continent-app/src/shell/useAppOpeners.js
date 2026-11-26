@@ -36,7 +36,7 @@ export function useAppOpeners({
   const [pendingStyle, setPendingStyle] = useState(null);
   // T1030 (owner: "two different pages; use the one from Plan"): every door
   // to the trip library (a style tile, a country's weeks) opens Plan's
-  // Carta's own trips, with the style or the country already chosen.
+  // Viantra's own trips, with the style or the country already chosen.
   const [planOpen, setPlanOpen] = useState(null);
   // T1037: Plan past its opening shows its own page bar, not the app head.
   const [planInner, setPlanInner] = useState(false);
@@ -44,7 +44,7 @@ export function useAppOpeners({
     setPlanOpen({ screen: 'carta', style: slug || null, cc: cc ? String(cc).toUpperCase() : null, n: Date.now() });
     goToTab('planstart');
   }, [goToTab]);
-  // A trip's page closes back onto Plan's Carta's own trips (T1030): the
+  // A trip's page closes back onto Plan's Viantra's own trips (T1030): the
   // trip library has one home, so a week never lands on a second list.
   // The page closes by stepping history back, and App's own Back handling
   // restores the tab under it on that same popstate, so the move to Plan
@@ -168,7 +168,7 @@ export function useAppOpeners({
     setPendingDaySeed(date && /^\d{4}-\d{2}-\d{2}$/.test(date) ? { destId: String(id), date } : { destId: String(id) });
     goToTab('day');
   }, [goToTab, setPendingDaySeed]);
-  // The friends signals across Carta (T929: the Plan date step, the place
+  // The friends signals across Viantra (T929: the Plan date step, the place
   // page) ask for the same door with one event, so no prop runs through
   // every planner and page between here and them.
   useEffect(() => {
@@ -235,7 +235,7 @@ export function useAppOpeners({
     // A starred journey (T390-c): the week opens over the Trips category, the
     // list it belongs to, through the same door a shared link uses (T474,
     // closes row T391-a).
-    // T1030: closing the week goes back to Plan's Carta's own trips (see
+    // T1030: closing the week goes back to Plan's Viantra's own trips (see
     // onJourneyClosed); the page still sits on the Trips category, which
     // Destinations' own back handling expects.
     else if (layer === 'journey' || layer === 'journeys') {
@@ -248,7 +248,7 @@ export function useAppOpeners({
     else return;
     goToTab('places');
   }, [goToTab, setPendingBeach, setPendingCategory, setPendingCycle, setPendingLake, setPendingMountain, setPendingRegion, setPendingTrail, setPendingTrip]);
-  // One of Carta's own trips from the trip planner (T752): stable, like every
+  // One of Viantra's own trips from the trip planner (T752): stable, like every
   // callback handed to the planner tabs, which stay mounted behind display:none.
   const openJourneyPage = useCallback((id) => openFeature('journey', { id }), [openFeature]);
 

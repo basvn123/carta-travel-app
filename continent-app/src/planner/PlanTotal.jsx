@@ -28,7 +28,7 @@ import { RouteCodes } from './trip/RouteCodes.jsx';
  *                the last answer did to it
  *   inputs       dates, people and Lifestyle: the three answers that move
  *                every line, each changeable from here at any step
- *   lines        the receipt, each line marked for what it is: Carta's
+ *   lines        the receipt, each line marked for what it is: Viantra's
  *                estimate, the traveller's own figure, or a part only they can
  *                price (their fare), which is named and counted as not in
  *   readiness    how many of the trip's prices are the traveller's own
@@ -95,7 +95,7 @@ function LineValue({ line, lang, t, onAddFare }) {
       ? <Button variant="quiet" size="sm" className="plan-line-add" onClick={onAddFare}>{t('plan.addYourFare')}</Button>
       : <span className="plan-line-out">{t('plan.notIn')}</span>;
   }
-  // Google Flights' fare (T518): a measured price, not Carta's estimate, so
+  // Google Flights' fare (T518): a measured price, not Viantra's estimate, so
   // it carries no tilde; the airline's mark says whose flight it is.
   if (line.kind === 'flight') return <Money value={line.eur} precision="cents" />;
   if (line.kind === 'yours') {
@@ -332,7 +332,7 @@ export function PlanTotal({
 
 /**
  * Money a traveller paid, typed in where the thing it paid for is shown: a
- * leg, a bed, the way there. A blank field means "use Carta's estimate".
+ * leg, a bed, the way there. A blank field means "use Viantra's estimate".
  */
 const PAID_MAX = 1000000;
 

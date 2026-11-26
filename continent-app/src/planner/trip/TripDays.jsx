@@ -22,8 +22,8 @@ const SHOWN = 4;
  *
  * A day is planned as loosely or as closely as wanted (T851): a few words
  * of your own (DayNote), or place by place in the day planner ("Plan it
- * myself"); "Let Carta plan the days" at the top plans every empty day. Each
- * day has its own pace (owner D3), which the day planner and Carta's day
+ * myself"); "Let Viantra plan the days" at the top plans every empty day. Each
+ * day has its own pace (owner D3), which the day planner and Viantra's day
  * plans read for that day.
  *
  *   dayPlan    useTripPlanner's days ({ dayNum, stopIndex, dayOfStay, date, stop })

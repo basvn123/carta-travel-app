@@ -1,5 +1,5 @@
 import React from 'react';
-import { Blaze } from './ui/Blaze.jsx';
+import { BrandMark, BrandWordmark } from './BrandMarks.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
 import { SUPPORT_EMAIL } from '../lib/contact.js';
@@ -47,8 +47,8 @@ const CATS = ['trails', 'beaches', 'lakes', 'mountains', 'cycling'];
 /**
  * T910 (owner, Explore board 2026-10-30): the footer in the order travel
  * sites use. The logo with one line and the language, then four columns
- * (Explore, Plan, Carta, Legal), then one line: the year, that every price
- * is Carta's own estimate, and the legal links. On a phone the columns fold
+ * (Explore, Plan, Viantra, Legal), then one line: the year, that every price
+ * is Viantra's own estimate, and the legal links. On a phone the columns fold
  * (each its own disclosure) and the bottom line stays open.
  */
 export function SiteFooter() {
@@ -71,8 +71,8 @@ export function SiteFooter() {
         <div className="site-footer-brand">
           {/* The wordmark slot, as in the header: the blaze and the name. */}
           <div className="auth-brand site-footer-mark">
-            <Blaze size="md" />
-            <span className="auth-brand-name">Carta</span>
+            <BrandMark className="auth-brand-mark" />
+            <span className="auth-brand-name"><BrandWordmark /></span>
           </div>
           <p className="site-footer-line">{t('footer.tagline')}</p>
           {setLang && languages?.length > 1 && (

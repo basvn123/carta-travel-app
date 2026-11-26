@@ -1,15 +1,15 @@
 /**
  * What a picked search result means for the list (G12, decision.md 3):
  *
- *   place     a Carta place: that place
- *   near      a town Carta does not cover: Carta's places by distance
+ *   place     a Viantra place: that place
+ *   near      a town Viantra does not cover: Viantra's places by distance
  *   region    a region: the places inside it (its box, and its country
  *             when known, so a box over a border keeps to one side)
  *   country   the places in that country
  *   feature   only feature words: every place with them
  *
  * Feature tokens then keep the places that have every feature. Pure: the
- * caller passes Carta's places (lib/search/places.js cartaPlaces).
+ * caller passes Viantra's places (lib/search/places.js cartaPlaces).
  */
 import { hasFeatures } from './features.js';
 import { kmBetween, inBox } from './places.js';
@@ -20,7 +20,7 @@ export const NEAR_KM = 40;
 export const NEAR_MIN = 5;
 export const NEAR_MAX_KM = 150;
 
-/** Carta's places near a point, nearest first: [{ id, km }]. */
+/** Viantra's places near a point, nearest first: [{ id, km }]. */
 export function placesNear(places, lat, lon) {
   const all = [];
   for (const p of places) {
@@ -38,7 +38,7 @@ function centre(bbox) {
 }
 
 /**
- * -> ordered place ids for a result. A region with no Carta place inside
+ * -> ordered place ids for a result. A region with no Viantra place inside
  * falls back to the places nearest its middle, so a pick never lands on an
  * empty list.
  */

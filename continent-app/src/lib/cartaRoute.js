@@ -1,5 +1,5 @@
 /**
- * cartaRoute.js, the Carta algorithm: given a set of places a traveller wants
+ * cartaRoute.js, the Viantra algorithm: given a set of places a traveller wants
  * and the nights they have, it decides the ORDER they are visited in and how
  * many nights each one keeps.
  *
@@ -7,7 +7,7 @@
  *
  *   1. SEQUENCE. Which order costs the least moving about. With the start
  *      fixed (you land somewhere) and the end either fixed or free, this is an
- *      open-path travelling salesman problem. Carta used to answer it with
+ *      open-path travelling salesman problem. Viantra used to answer it with
  *      nearest neighbour alone, which is fast and often visibly wrong: it
  *      walks into a corner and then crosses the whole country to get out. The
  *      fix is the classic pair, nearest neighbour for a first guess and then

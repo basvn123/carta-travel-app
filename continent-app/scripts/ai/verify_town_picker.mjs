@@ -1,4 +1,4 @@
-// Headless verify of the Carta chat's town-picker step: the reordered
+// Headless verify of the Viantra chat's town-picker step: the reordered
 // wizard (focus/interests before town) and the four ways to land on a town
 // (nearby, catalogue/anywhere search, map, ask AI). Nominatim and the
 // suggest-city Edge Function are intercepted so the run is deterministic.
@@ -202,8 +202,8 @@ async function runTabs(label, viewport) {
   check(`${label}: map canvas renders`, (await page.locator('.chat-town-map canvas').count()) >= 1);
   await page.screenshot({ path: `${SHOTS}/tp3-${label}-map.png` });
 
-  // ---- ask Carta tab ----
-  await page.locator('.chat-town-tab').filter({ hasText: 'Ask Carta' }).click();
+  // ---- ask Viantra tab ----
+  await page.locator('.chat-town-tab').filter({ hasText: 'Ask Viantra' }).click();
   await page.waitForTimeout(200);
   await page.locator('.chat-town-ai input').fill('A quiet town with canals, not touristy');
   await page.locator('.chat-town-ai .chat-send').click();

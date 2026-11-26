@@ -24,7 +24,7 @@ export const SITE_CARD = {
   src: `${ORIGIN}/og/site.png`,
   w: 1200,
   h: 630,
-  alt: 'A Carta receipt: the bed, the food and the total for one person for one day in a European town.',
+  alt: 'A Viantra receipt: the bed, the food and the total for one person for one day in a European town.',
 };
 
 const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -55,14 +55,14 @@ export function cap(text, max) {
 const sentences = (text) => clean(text).split(/(?<!\b(?:St|Ste|Mt|Dr|Nr|ca)\.)(?<=[a-z0-9)][.!?])\s+(?=[A-Z0-9€"(])/u).map((x) => x.trim()).filter(Boolean);
 
 /**
- * The search-result title: "{name}, {headline}, {qualifier} | Carta". Over 60
- * characters the qualifier goes first and the " | Carta" second (docs/SEO.md).
+ * The search-result title: "{name}, {headline}, {qualifier} | Viantra". Over 60
+ * characters the qualifier goes first and the " | Viantra" second (docs/SEO.md).
  */
 export function fitTitle(name, headline, qualifier) {
   const parts = [name, headline, qualifier].map((p) => clean(p)).filter(Boolean);
   const tries = [
-    `${parts.join(', ')} | Carta`,
-    `${parts.slice(0, 2).join(', ')} | Carta`,
+    `${parts.join(', ')} | Viantra`,
+    `${parts.slice(0, 2).join(', ')} | Viantra`,
     parts.slice(0, 2).join(', '),
     parts[0],
   ];
@@ -167,7 +167,7 @@ const ldJson = (o) => JSON.stringify(o).replace(/</g, '\\u003c').replace(/>/g, '
 function graph(pg) {
   const url = `${ORIGIN}${pg.path}`;
   const nodes = [
-    { '@type': 'WebSite', '@id': `${ORIGIN}/#site`, url: `${ORIGIN}/`, name: 'Carta' },
+    { '@type': 'WebSite', '@id': `${ORIGIN}/#site`, url: `${ORIGIN}/`, name: 'Viantra' },
     {
       '@type': 'WebPage',
       '@id': `${url}#page`,

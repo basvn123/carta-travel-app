@@ -19,10 +19,10 @@ import { isUnknownPath } from '../lib/notFound.js';
  *   /?legal=cookies   Cookies and storage (T945)
  *   /?legal=support   Help and contact: mail, status, questions (T1108)
  *   /?legal=press     Press kit: facts, images, contact (T1131)
- *   /?legal=ai        How Carta uses AI (T1156)
+ *   /?legal=ai        How Viantra uses AI (T1156)
  *   /?legal=partner   Partner links and how they are disclosed (I15, T1172)
  *
- * Carta is a single page with query-string state, so a legal text that only
+ * Viantra is a single page with query-string state, so a legal text that only
  * opens from a button inside the Account panel has no address. Stripe
  * Checkout's consent checkbox needs one (the Terms URL is set in the Stripe
  * Dashboard and printed on the checkout page), app store review forms ask for

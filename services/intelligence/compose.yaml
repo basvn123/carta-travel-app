@@ -1,4 +1,4 @@
-# Carta Intelligence API on the build box (T1154, ROADMAP F5). Owner step: see README "Run on the box".
+# Viantra Intelligence API on the build box (T1154, ROADMAP F5). Owner step: see README "Run on the box".
 #   cd <repo> && docker compose -f services/intelligence/compose.yaml up -d --build
 # Bound to localhost only: the pipeline on the box calls it; nothing outside reaches it.
 services:

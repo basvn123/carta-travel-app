@@ -36,7 +36,7 @@ export const QUESTIONS = {
   // G12 §12: the children's ages, asked whenever children come (a style holds the count only).
   ages: { titleKey: 'pf.q.ages', custom: true },
   sleep: { titleKey: 'pf.q.sleep', custom: true },
-  // T862: where to sleep alone (Tell Carta's stay chip); it answers sleep.
+  // T862: where to sleep alone (Tell Viantra's stay chip); it answers sleep.
   stay: { titleKey: 'pf.q.stay', custom: true },
   priority: {
     titleKey: 'pf.q.priority',
@@ -136,7 +136,7 @@ export const QUESTIONS = {
     write: (s, values) => ({ guide: { ...s.guide, avoid: values.filter((v) => v !== 'none') } }),
   },
   'g:budget': { titleKey: 'pf.q.budget', custom: true, skippable: true },
-  // T796: what Carta picks for the traveller; the rows come from config/slots.json.
+  // T796: what Viantra picks for the traveller; the rows come from config/slots.json.
   'g:pick': { titleKey: 'pf.q.pick', custom: true },
   // The last help-me-choose question (owner, plan flow walk 2026-10-30, in
   // place of the four doors): the whole trip at once (the trips for you) or

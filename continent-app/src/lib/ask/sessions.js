@@ -1,5 +1,5 @@
 /*
- * Ask Carta's chats (T570): every conversation is kept on this device, so a
+ * Ask Viantra's chats (T570): every conversation is kept on this device, so a
  * traveller can come back to it and ask on; signed in, it is kept in the
  * account too (T575, src/auth/askChatCloud.js, mergeChats below). A turn keeps its question
  * and the written answer it got, so reopening a chat redraws the facts from

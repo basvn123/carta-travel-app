@@ -1,6 +1,6 @@
 // G12 plan rethink B3 (decision §1.4, §3.3): the shared assumption bar's
 // chips. Solid when the traveller (or their style, Explore or the source
-// page) gave the answer, dashed when Carta assumed it.
+// page) gave the answer, dashed when Viantra assumed it.
 // Run: npm test (continent-app/)
 import test from "node:test";
 import assert from "node:assert/strict";

@@ -1,7 +1,7 @@
 /**
  * priceDrop.js, the page's half of the price drop email (T944).
  *
- * Carta's day prices are computed here in the browser from the traveller's
+ * Viantra's day prices are computed here in the browser from the traveller's
  * own settings, so only the page can see that a saved place now costs
  * clearly less than when it was saved (lib/savedLists.js records meta.eur,
  * the day price shown at save time, the "since you saved" figure My trips

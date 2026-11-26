@@ -1,7 +1,7 @@
 /*
  * priceMonths.js (T103, spec I5): the price row under the weather row.
  *
- * The monthly money signal Carta measures is the twelve-month bed price of a
+ * The monthly money signal Viantra measures is the twelve-month bed price of a
  * destination (schema v18: dated hotel and Airbnb prices per month, from the
  * stays wire; lib/stayPrice.js seasonCurve, a ratio to the year's mean).
  * Journeys carry no monthly price of

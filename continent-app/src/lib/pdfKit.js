@@ -40,7 +40,7 @@ import plateBold from '../assets/print-fonts/SofiaSansExtraCondensed-Bold.ttf?ur
 
 /** The name in the wordmark slot. The slot takes any name (DESIGN.md
  *  "Shell"); this is the one place print spells it. */
-export const APP_NAME = 'Carta';
+export const APP_NAME = 'Viantra';
 
 export const PAGE_W = 210;
 export const PAGE_H = 297;
@@ -149,7 +149,7 @@ export const fileSlug = (s) => clean(s).toLowerCase().normalize('NFKD').replace(
 
 /**
  * A new A4 document with the kit's helpers bound to it.
- * `footerLabel` names the page in the footer ("Carta, Mount Korab").
+ * `footerLabel` names the page in the footer ("Viantra, Mount Korab").
  * `partnerNote` is the disclosure line (I15): a page that carries a partner
  * link prints it above the footer rule, so the mark is not lost in the PDF.
  */

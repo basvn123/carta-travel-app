@@ -4,7 +4,7 @@
  * Until real offers exist (roadmap 2.12) the options are the price tiers of
  * config/slots.json (hostel private room, guesthouse room, hotel), each
  * priced by the engine's own stay quote at the same stops, dates and party.
- * Carta's pick is the tier the traveller sleeps in (the Sleep answer), else
+ * Viantra's pick is the tier the traveller sleeps in (the Sleep answer), else
  * the tier their "what matters most" points at.
  *
  * G12: a travel style says whether a hostel private room is fine to save
@@ -30,7 +30,7 @@ export function hostelOk(ctx) {
   return t ? Boolean(t.hostel) : null;
 }
 
-/** The tier Carta picks: the Sleep answer, else the priority's tier (never
+/** The tier Viantra picks: the Sleep answer, else the priority's tier (never
  *  a hostel the style said no to). */
 export function stayTierFor(ctx, row) {
   if (ctx.stayTier && TIERS.has(ctx.stayTier)) return ctx.stayTier;

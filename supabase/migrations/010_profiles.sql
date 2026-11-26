@@ -7,7 +7,7 @@
 -- until this lands. Nothing here is social by itself.
 --
 -- WHY A HANDLE AND NOT AN EMAIL. Finding people by email address turns the
--- database into an oracle that answers "does this person have a Carta
+-- database into an oracle that answers "does this person have a Viantra
 -- account", for any address anybody cares to try. A handle is a name its owner
 -- chose to be findable by, which is a different thing, and it is the only
 -- lookup this migration provides. There is deliberately no prefix search and

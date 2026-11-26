@@ -70,7 +70,7 @@ export const MAP_ONLY_COLOURS = {
 };
 
 /**
- * The Carta basemap (G12, .work/2026-11-20-map-view/decision.md "Base map"):
+ * The Viantra basemap (G12, .work/2026-11-20-map-view/decision.md "Base map"):
  * the Protomaps tiles drawn by src/lib/map/cartaMapStyle.js. Map-only, like
  * the ramp above: a warm paper land so the pins read first, and a dark
  * equivalent. `label` on `land` is 7:1 light and 8:1 dark; `waterLabel` on

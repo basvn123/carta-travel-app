@@ -1,4 +1,4 @@
-// T550 + T553: Ask Carta reads a question into one Intent. The golden set
+// T550 + T553: Ask Viantra reads a question into one Intent. The golden set
 // (tests/fixtures/ask-golden.json, 6 languages, 7 question types) is the
 // gate: the question type must be right for at least 92% of cases and the
 // named slots for at least 90%, over at least 140 cases (a gate on an empty

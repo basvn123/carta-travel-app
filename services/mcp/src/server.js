@@ -1,4 +1,4 @@
-// Carta MCP server (ROADMAP F7). Four read-only tools; no write tool, no
+// Viantra MCP server (ROADMAP F7). Four read-only tools; no write tool, no
 // resources that write, no secrets, no network, no Claude API.
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
@@ -25,7 +25,7 @@ export function createServer(data = openData()) {
 
   server.registerTool('search_places', {
     title: 'Search places',
-    description: 'Find places in the Carta catalogue by text, country (ISO2 or name), category and tier (airport or gem). Best rated first.' + NOTE,
+    description: 'Find places in the Viantra catalogue by text, country (ISO2 or name), category and tier (airport or gem). Best rated first.' + NOTE,
     inputSchema: {
       query: z.string().max(80).optional(),
       country: z.string().max(60).optional(),

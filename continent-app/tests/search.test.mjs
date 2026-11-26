@@ -59,7 +59,7 @@ test("a prefix fetches only the shards it spans", () => {
   assert.deepEqual(shardsFor(index, ""), []);
 });
 
-test("Carta places: gateways left out, parenthesised names searchable", () => {
+test("Viantra places: gateways left out, parenthesised names searchable", () => {
   assert.equal(places.some((p) => p.id === "OPO2"), false);
   assert.equal(places.find((p) => p.id === "gem:tasch").city, "Täsch");
   const r = suggest("gordes", { places });
@@ -71,7 +71,7 @@ test("accents fold both ways", () => {
   assert.equal(suggest("Nazare", { places }).items[0].id, "gem:nazare");
 });
 
-test("a town that is a Carta place opens that place, in any language", () => {
+test("a town that is a Viantra place opens that place, in any language", () => {
   const r = suggest("keul", { places, towns: TOWNS });
   assert.equal(r.items[0].type, "place");
   assert.equal(r.items[0].id, "CGN");
@@ -79,7 +79,7 @@ test("a town that is a Carta place opens that place, in any language", () => {
   assert.equal(cartaTwin(TOWNS[0], places).id, "CGN");
 });
 
-test("a town Carta does not cover becomes Near it, with Carta's places by distance", () => {
+test("a town Viantra does not cover becomes Near it, with Viantra's places by distance", () => {
   const r = suggest("zerm", { places, towns: TOWNS });
   const near = r.items.find((x) => x.type === "near" && x.name === "Zermatt");
   assert.ok(near);
@@ -91,7 +91,7 @@ test("a town Carta does not cover becomes Near it, with Carta's places by distan
   assert.deepEqual(km, [...km].sort((a, b) => a - b));
 });
 
-test("rank: Carta places, then towns by population, then regions, then countries", () => {
+test("rank: Viantra places, then towns by population, then regions, then countries", () => {
   const towns = prepareTowns([
     [1, ["Valbig"], 46.2, 7.5, "CH", "VS", 9000],
     [2, ["Valsmall"], 46.3, 7.6, "CH", "VS", 900],
@@ -126,12 +126,12 @@ test("feature tokens narrow an area; tokens alone list every place with them", (
   assert.deepEqual(resolveIds(only.items[0], places), ["PDL"]);
 });
 
-test("a region with no Carta place inside falls back to the places near its middle", () => {
+test("a region with no Viantra place inside falls back to the places near its middle", () => {
   const empty = { type: "region", bbox: [7.5, 45.95, 7.6, 46.0], cc: "CH", tokens: [] };
   assert.ok(resolveIds(empty, places).length > 0);
 });
 
-test("Carta's own region boxes are suggested by any of their keys", () => {
+test("Viantra's own region boxes are suggested by any of their keys", () => {
   const regions = cartaRegionsFrom({ regions: { tuscany: { bbox: [7, 45, 8, 46], label: "Tuscany" }, toscana: { bbox: [7, 45, 8, 46], label: "Tuscany" } } });
   assert.equal(regions.length, 1);
   const it = suggest("toscana", { places, cartaRegions: regions }).items[0];
@@ -228,7 +228,7 @@ test("the start town's names in every UI language come from the gazetteer", () =
   assert.equal(startTown({ originKind: "place", fromPlace: { name: "Gent", lat: 51, lon: 3.7 } }, data).name, "Gent");
 });
 
-test('a Carta place speaks the UI language when its gazetteer town has a name in it (fixes r1)', async () => {
+test('a Viantra place speaks the UI language when its gazetteer town has a name in it (fixes r1)', async () => {
   const { localPlaceName } = await import('../src/lib/search/suggest.js');
   const p = { id: 'BRU', city: 'Brussels', folds: ['brussels'], lat: 50.85, lon: 4.35 };
   const towns = [{ folds: ['brussels', 'bruxelles', 'brussel'], l: { fr: 'Bruxelles', nl: 'Brussel' }, lat: 50.85, lon: 4.35 }];
@@ -256,7 +256,7 @@ test('Near bends before a vowel in French and before an a in Italian (judge 1 fi
   assert.equal(fr['search.nearElided'], "Près d'{place}");
 });
 
-test('a picked Carta place keeps its picked name for the list row (judge 1 fix 3)', async () => {
+test('a picked Viantra place keeps its picked name for the list row (judge 1 fix 3)', async () => {
   const { rememberLocalName, localNameOf, resetLocalNames } = await import('../src/lib/search/localNames.js');
   resetLocalNames();
   rememberLocalName('FLR', 'de', 'Florenz');

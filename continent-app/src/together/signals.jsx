@@ -23,8 +23,8 @@ function FriendFaceLink({ id, name, emoji }) {
 
 /**
  * Friends where decisions happen (T929): one line each, and only with data.
- * Every figure here is either Carta's own price model or a friend's own
- * Carta's own price model; what a friend's trip cost is never shown (owner,
+ * Every figure here is either Viantra's own price model or a friend's own
+ * Viantra's own price model; what a friend's trip cost is never shown (owner,
  * T937). A tip or a save shows only where that friend switched it on (056,
  * list_friend_shares), and a place no friend touched shows nothing at all.
  */

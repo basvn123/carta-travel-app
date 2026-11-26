@@ -49,7 +49,7 @@ function useDocumentMeta(title, description) {
     const prevTitle = document.title;
     const meta = document.querySelector('meta[name="description"]');
     const prevDesc = meta?.getAttribute('content');
-    document.title = `${title} | Carta`;
+    document.title = `${title} | Viantra`;
     if (meta) meta.setAttribute('content', description);
     return () => {
       document.title = prevTitle;

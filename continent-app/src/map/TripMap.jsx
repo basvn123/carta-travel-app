@@ -444,7 +444,7 @@ export function TripMap({ stops = [], padBottom = 320, onSelectStop, selectedInd
           'line-opacity': 0.9,
         },
       });
-      // A leg Carta could not walk (no footpath, a detour round water, or a
+      // A leg Viantra could not walk (no footpath, a detour round water, or a
       // hop past walking range, T433) is a ride: a thin grey dash, never the
       // brown walk line, so the map never tells anybody to walk it.
       map.addSource('trip-ride', {

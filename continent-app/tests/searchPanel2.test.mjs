@@ -9,14 +9,14 @@ const read = (p) => fs.readFileSync(new URL(`../${p}`, import.meta.url), 'utf8')
 const LANGS = ['en', 'nl', 'de', 'fr', 'es', 'it'];
 const has = (lang, key) => new RegExp(`["']${key.replace(/\./g, '\\.')}["']:`).test(read(`src/i18n/${lang}.js`));
 
-test('suggestions say a name and its place: no counts, no "in Carta", no "not covered" (O4, O5)', () => {
+test('suggestions say a name and its place: no counts, no "in Viantra", no "not covered" (O4, O5)', () => {
   const panel = read('src/browse/search/SearchPanel.jsx');
   for (const k of ['search.subPlace', 'search.subNear', 'search.nPlaces', 'search.onePlace', 'search.youSearchAs']) {
     assert.doesNotMatch(panel, new RegExp(`'${k.replace('.', '\\.')}'`), k);
     for (const l of LANGS) assert.equal(has(l, k), false, `${l} ${k}`);
   }
   assert.match(panel, /if \(it\.type === 'place' \|\| it\.type === 'near'\) return country;/);
-  for (const l of LANGS) assert.doesNotMatch(read(`src/i18n/${l}.js`), /Carta does not cover yet/);
+  for (const l of LANGS) assert.doesNotMatch(read(`src/i18n/${l}.js`), /Viantra does not cover yet/);
 });
 
 test('Browse, Recent and Places; on a phone Filters and Ask are their own group (O3)', () => {
@@ -28,7 +28,7 @@ test('Browse, Recent and Places; on a phone Filters and Ask are their own group 
   assert.match(actions, /className="sp-actions" role="group"/);
   assert.doesNotMatch(actions, /role="option"/);
   assert.match(panel, /<\/div>\s*\{actions\}/);
-  // A desktop still ends a typed list with "Ask Carta about ...", a phone never in the list.
+  // A desktop still ends a typed list with "Ask Viantra about ...", a phone never in the list.
   assert.match(panel, /const askItem = typing && isDesktop \?/);
   for (const l of LANGS) for (const k of ['search.browse', 'search.moreWays', 'band.filters', 'band.filtersOn']) assert.ok(has(l, k), `${l} ${k}`);
 });

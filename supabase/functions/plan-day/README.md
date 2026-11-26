@@ -1,6 +1,6 @@
 # plan-day, the AI day-planner function
 
-Sequences a day from Carta's own POI catalogue with Gemini, then re-validates
+Sequences a day from Viantra's own POI catalogue with Gemini, then re-validates
 and re-times everything server-side (`logic.mjs`). The client never sees the
 AI key; guests never spend quota; identical requests answer from cache.
 

@@ -1,5 +1,5 @@
 /**
- * flight-sweep: Carta's flight price sweep (T514).
+ * flight-sweep: Viantra's flight price sweep (T514).
  *
  * Every minute (cron "* * * * *") it runs that minute's share of searches
  * (plan.mjs), one Google Flights page each (workers/shared/flightSearch.mjs),

@@ -32,7 +32,7 @@ export async function downloadTripPdf(trip, ctx = {}) {
   const loc = lang === 'en' ? 'en-GB' : lang;
   const dateLong = new Intl.DateTimeFormat(loc, { dateStyle: 'long' }).format(new Date());
   const kit = await createPdf({
-    footerLabel: `Carta, ${name}. ${T('pdf.pricesOn', { date: dateLong })}`,
+    footerLabel: `Viantra, ${name}. ${T('pdf.pricesOn', { date: dateLong })}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
     partnerNote: t('partner.pdfNote'),
   });

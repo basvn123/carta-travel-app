@@ -1,6 +1,6 @@
 /**
  * Swap city (T841, owner board panel 7: "let them choose, pick it
- * themselves or let Carta guide, with question logic that makes sense"):
+ * themselves or let Viantra guide, with question logic that makes sense"):
  * the places that could take a stop's place, keeping its dates and nights.
  * Pure, so the node tests hold it.
  *
@@ -57,7 +57,7 @@ export function swapCandidates({ destinations, from, exclude = [], query = '', m
 }
 
 /**
- * Carta's picks for a stop: the places within `reach` of it, ranked by the
+ * Viantra's picks for a stop: the places within `reach` of it, ranked by the
  * traveller's answers ({ likes[], size }) for the month of the stay.
  * Returns up to `limit` of [{ dest, km }].
  */

@@ -7,11 +7,11 @@
 .dayc-here { font-size: var(--text-label); font-weight: 700; color: var(--text); }
 
 /* T896: Plan your days. How first: three ways as cards (a row of three from
-   769 px), then, for Carta plans, one screen of chips and two switches. */
+   769 px), then, for Viantra plans, one screen of chips and two switches. */
 
-/* T899: the Carta bot, a chat beside the day. A column left of the day from
+/* T899: the Viantra bot, a chat beside the day. A column left of the day from
    1280 px; over the map from 1024 px; a full-screen sheet on a phone (Ask
-   Carta's pattern). The field sits at the foot; the answers are a sentence
+   Viantra's pattern). The field sits at the foot; the answers are a sentence
    and the day as a card. */
 .dbot.is-sheet { position: fixed; inset: 0; z-index: var(--z-modal); padding: env(safe-area-inset-top, 0px) env(safe-area-inset-right, 0px) env(safe-area-inset-bottom, 0px) env(safe-area-inset-left, 0px); }
 .day-ws.is-desk.has-bot > .dbot { grid-row: 1; grid-column: 2; position: relative; z-index: var(--z-float); border-left: 1px solid var(--border-soft); box-shadow: var(--elev-2); }

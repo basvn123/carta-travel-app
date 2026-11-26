@@ -23,10 +23,10 @@ import { AskTripCard } from './AskTripCard.jsx';
 import { CornerArrow } from './marks.jsx';
 
 /**
- * One question and its answer in an Ask Carta chat (T571; T583 "short
+ * One question and its answer in an Ask Viantra chat (T571; T583 "short
  * answer, then ask"). The stages are useAsk's (T558), run for this turn
  * alone: the Intent, the hybrid search, the facts, the facts in words, the
- * written answer checked sentence by sentence. While they run, Carta shows
+ * written answer checked sentence by sentence. While they run, Viantra shows
  * a typing bubble (the real steps once the wait passes SLOW_MS); then the
  * answer arrives word by word.
  *
@@ -188,7 +188,7 @@ function Steps({ t, stage, origin }) {
   );
 }
 
-/** Three dots while Carta writes; the words for a screen reader. */
+/** Three dots while Viantra writes; the words for a screen reader. */
 function Typing({ t }) {
   return (
     <div className="ac-typing" role="status">

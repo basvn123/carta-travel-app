@@ -14,7 +14,7 @@
  *   {
  *     "weekly": <the jsonb that public.admin_ai_calls_weekly(8) returns (migration 071):
  *               { since, weeks: [{ week, features: [{ feature, calls, costUsd, ... }] }], costByDay }>,
- *     "mau": <monthly active users from K12 (one number for Carta)>,
+ *     "mau": <monthly active users from K12 (one number for Viantra)>,
  *     "groundedSearchesPerMonth": <optional: grounded Gemini prompts in the last 30 days>
  *   }
  * Get "weekly" from the admin AI calls panel (AiCalls.jsx reads the same

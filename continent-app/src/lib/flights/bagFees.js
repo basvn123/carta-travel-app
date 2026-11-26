@@ -5,7 +5,7 @@
  * cabin trolley and the checked bag apart, so a trip total that should hold
  * up at the airport adds them. The figures are typical prices when booked
  * online with the flight, not the gate price; airlines move them with the
- * route and the season, so Carta always shows them as estimates (`~€25
+ * route and the season, so Viantra always shows them as estimates (`~€25
  * est.`). Full-service airlines keep a cabin bag in their lightest economy
  * fare; their checked bag is the extra. Each row names the page it was read
  * from and when. An airline not listed adds nothing and the line reads
@@ -38,7 +38,7 @@ export function bagTier(key) {
 
 /**
  * The typical extra for `bagKey` on `airline`, per person per direction:
- * { eur, known } where known is false when Carta has no figure for the
+ * { eur, known } where known is false when Viantra has no figure for the
  * airline (eur is then 0 and the screen says bags may cost extra).
  */
 export function bagFee(airline, bagKey) {

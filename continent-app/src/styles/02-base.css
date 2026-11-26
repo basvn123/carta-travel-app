@@ -115,7 +115,7 @@ input, select {
 
 /* The focus floor (T190). Every control that takes keyboard focus shows the
    house ring, even where no component rule names it: the browser's own ring
-   is a blue double line that is not Carta's and disappears on dark fills.
+   is a blue double line that is not Viantra's and disappears on dark fills.
    :where() keeps this at zero specificity, so any component's own
    :focus-visible rule (an inset ring, an ink ring on an accent fill, an
    input's accent border) still wins. */

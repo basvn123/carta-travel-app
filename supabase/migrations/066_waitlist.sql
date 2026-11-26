@@ -1,7 +1,7 @@
 -- 066_waitlist.sql
 --
 -- Waitlist and newsletter capture with double opt-in (T1110, ROADMAP K3).
--- A visitor leaves an e-mail address; Carta mails a confirmation link; only
+-- A visitor leaves an e-mail address; Viantra mails a confirmation link; only
 -- the click makes the address usable. Every mail carries an unsubscribe link.
 --
 -- WHAT IT ADDS

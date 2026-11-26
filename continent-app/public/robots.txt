@@ -1,4 +1,4 @@
-# Carta — Europe travel
+# Viantra — Europe travel
 # Content lives at real paths (see sitemap). The filter/state query strings
 # are infinite permutations of the same page: keep them out of the crawl.
 

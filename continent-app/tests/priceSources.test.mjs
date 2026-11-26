@@ -1,4 +1,4 @@
-// T662 (F2): invariant V2 of plan "Carta prijslogica Explore": no price is
+// T662 (F2): invariant V2 of plan "Viantra prijslogica Explore": no price is
 // worked out outside the engine (lib/price/). The scan finds every call of a
 // price kernel function in src/ and scripts/ (comments stripped) and fails on
 // a file that is not in ALLOWED. Since F6 (T702) ALLOWED is the kernel itself.

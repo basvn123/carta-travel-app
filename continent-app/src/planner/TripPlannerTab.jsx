@@ -102,7 +102,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   const migrating = useRef(false);
   const stopRefs = useRef({});
 
-  // The wizard hands over a trip Carta already arranged (routed from the
+  // The wizard hands over a trip Viantra already arranged (routed from the
   // fly-in, days filled from the interests), show it planned right away, with
   // the route on the map. Edit / Replan / Start over stay one tap away.
   const handleWizardComplete = (selection) => {
@@ -421,7 +421,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   );
 
   // The list: the planned trip, or the stop editor (T500: the same place).
-  // Adding a stop (T837): your own wishes first, then Carta's suggestions,
+  // Adding a stop (T837): your own wishes first, then Viantra's suggestions,
   // then any town by country. The same block in the first-stops editor and
   // on the trip page's route.
   const addStopBlock = (
@@ -547,7 +547,7 @@ export const TripPlannerTab = React.memo(function TripPlannerTab({ data, user, a
   // did, with the next move where there is one: From prices the flights from
   // the new place; booked flights or stays ask for what was paid; a When
   // that is not two dates keeps the trip's dates; the help-me-choose answers
-  // steer Carta's suggestions and leave the stops alone.
+  // steer Viantra's suggestions and leave the stops alone.
   const goToTripPart = (id) => {
     setSettingsOpen(false);
     window.requestAnimationFrame(() => {

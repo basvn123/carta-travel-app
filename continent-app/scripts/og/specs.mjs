@@ -220,7 +220,7 @@ export function trailSpec(t) {
 export function siteSpec(_counts, sample) {
   const spec = {
     type: 'site',
-    kind: 'Carta',
+    kind: 'Viantra',
     title: 'What a day costs, place by place',
     // No catalogue counts and no method line on the card (owner, 2026-10-13, T438).
     // House style 2026-11: the unit is said once, on the example's plate,
@@ -228,7 +228,7 @@ export function siteSpec(_counts, sample) {
     subtitle: 'Priced town by town across Europe.',
     panel: null,
     strip: null,
-    alt: 'Carta prices the ground for every place in Europe it covers: a bed plus food and drink, per person per day.',
+    alt: 'Viantra prices the ground for every place in Europe it covers: a bed plus food and drink, per person per day.',
   };
   if (sample) spec.panel = { ...sample.panel, head: `Example, ${sample.title}` };
   return spec;

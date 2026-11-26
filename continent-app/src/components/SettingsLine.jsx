@@ -37,7 +37,7 @@ export function useSettings() {
 
 /**
  * The traveller's month (1 to 12), read from their own dates or the month
- * they picked, or null while the dates are Carta's or any time: a month fact
+ * they picked, or null while the dates are Viantra's or any time: a month fact
  * is shown only when the traveller has a month (carta-design "Month").
  */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
@@ -99,7 +99,7 @@ function nextMonths(today = new Date()) {
  *  on a phone's one sentence, which has no room for them).
  *
  *  T667 (owner, 2026-10-24): the value says what the prices are for, from
- *  the one price request (lib/price/). Carta's own suggested dates are not
+ *  the one price request (lib/price/). Viantra's own suggested dates are not
  *  the traveller's, so the prices are the year's average and the value reads
  *  "Any time"; the Explore month filter, while on, names its month. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
@@ -123,7 +123,7 @@ export function whenValue(t, s, shortDate, { nightsToo = true } = {}) {
  * A month moves the dates into it (the first day it can, the length kept),
  * so every screen that needs a pair still has one; Explore prices the
  * month's cheapest flight and the month's beds, and any time the cheapest
- * flight Carta has and the year's beds.
+ * flight Viantra has and the year's beds.
  */
 export function DatesControl({ s, pickEnd, setPickEnd, pickDate, shortDate }) {
   const { t } = useI18n();

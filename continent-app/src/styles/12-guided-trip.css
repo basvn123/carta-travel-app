@@ -93,7 +93,7 @@
    "I fly with another airline" branch of the wizard's arrival step. Reuses
    .guide-when-dates so the two fields sit side by side and wrap on phones. */
 
-/* Stay step: Carta-designs-it CTA, map/list switch, tier chips + legend. */
+/* Stay step: Viantra-designs-it CTA, map/list switch, tier chips + legend. */
 .guide-design-btn small { font-weight: 400; font-size: var(--text-micro); opacity: 0.85; }
 /* Neutral chip, coloured glyph - the icon reads the tier, not a colour block. */
 .guide-tier-top svg { color: var(--action); }
@@ -221,7 +221,7 @@
   cursor: default;
 }
 
-/* ───────── Guided trip: "Carta plan this?" popup ───────── */
+/* ───────── Guided trip: "Viantra plan this?" popup ───────── */
 .trip-plan-prompt-overlay {
   position: fixed;
   inset: 0;
@@ -366,7 +366,7 @@
 
 /* Step 5 - arrange thumbnail */
 
-/* Carta-plan prompt: a strip of the trip's city photos */
+/* Viantra-plan prompt: a strip of the trip's city photos */
 .trip-plan-prompt-strip { display: flex; gap: 6px; justify-content: center; margin-bottom: 16px; }
 .trip-plan-prompt-thumb {
   width: 52px; height: 52px;

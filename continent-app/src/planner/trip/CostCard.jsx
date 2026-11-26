@@ -110,12 +110,12 @@ function CostTrain({ tiles, mine = false }) {
 
 /**
  * What the trip costs (T1003, owner 2026-11-02: "fully redesign it: too busy,
- * no white card, another visual than the two line bars, Carta colours,
+ * no white card, another visual than the two line bars, Viantra colours,
  * modern; the breakdown's icons are generic; Stay and Food reach the
  * Lifestyle and show the figure change; Flights shows the airline and can
  * be changed"). Replaces T886's white card.
  *
- * One umber card, the Carta door's ground. The total stands inside a half
+ * One umber card, the Viantra door's ground. The total stands inside a half
  * arc, and the arc is the breakdown: Flights, Getting around, Stay and Food
  * as four lengths in the card's own four colours, drawn in once and moving
  * to their new lengths whenever a figure changes, so a Lifestyle change is

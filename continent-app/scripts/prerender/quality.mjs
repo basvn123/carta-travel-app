@@ -77,7 +77,7 @@ export function placeBar(page, dos) {
     intro: introWords(dos) >= PLACE_MIN_WORDS,
     price: hasFact('Bed, a night') && hasFact('Food, a day'),
     climate: hasYearOfClimate(dos),
-    rating: hasFact('Carta score'),
+    rating: hasFact('Viantra score'),
     links: internalLinks(page) >= PLACE_MIN_LINKS,
   };
   return { ...f, ok: Object.values(f).every(Boolean) };
@@ -117,7 +117,7 @@ const LAYER_SEASON_FACT = { beach: ['Bathing water'], lake: ['Swim season', 'Swi
  * { photo, prose, season, place, rating, links, ok } for a beach, lake or
  * mountain page (T1113, K2): a licensed photo, 60 words of page prose, the
  * layer's seasonal or measured fact, a parent place (the nearest town, which
- * links to a destination page), a Carta score and three internal links.
+ * links to a destination page), a Viantra score and three internal links.
  */
 export function layerBar(page) {
   const labels = factLabels(page);
@@ -126,7 +126,7 @@ export function layerBar(page) {
     prose: pageProse(page) >= LAYER_MIN_WORDS,
     season: (LAYER_SEASON_FACT[page.kind] || []).some((l) => labels.has(l)),
     place: labels.has('Nearest town'),
-    rating: labels.has('Carta score'),
+    rating: labels.has('Viantra score'),
     links: internalLinks(page) >= LAYER_MIN_LINKS,
   };
   return { ...f, ok: Object.values(f).every(Boolean) };
@@ -144,7 +144,7 @@ export function cycleBar(page, row) {
     prose: pageProse(page) >= CYCLE_MIN_WORDS,
     length: labels.has('Distance'),
     climb: labels.has('Climb'),
-    rating: labels.has('Carta score'),
+    rating: labels.has('Viantra score'),
     links: internalLinks(page) >= LAYER_MIN_LINKS,
   };
   return { ...f, ok: Object.values(f).every(Boolean) };

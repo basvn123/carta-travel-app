@@ -221,7 +221,7 @@
 .day-guide-badge.heritage { background: var(--paper-dim); color: var(--ink-soft); border: 1px solid var(--rule); }.day-guide-rec-add.on { background: var(--good-ink); border-color: var(--good-ink); color: var(--on-fill); }.day-explore-wrap .dem-map { flex: none; width: 100%; height: clamp(480px, 68vh, 760px); border-radius: 14px; overflow: hidden; border: 1px solid var(--rule); box-shadow: 0 8px 24px -18px rgba(26, 26, 26, 0.5); }/* Ultrawide: a taller map and a slightly roomier rail beside it. */
 @media (min-width: 1800px) {
   .day-explore-wrap .dem-map { height: clamp(560px, 74vh, 980px); }}
-/* The place-detail card and the Carta guide panel each become the right-hand
+/* The place-detail card and the Viantra guide panel each become the right-hand
    rail beside the big map: both fill its height and scroll inside themselves,
    so the map is never pushed off-screen. (Descendant selectors: the guide sits
    in a display:contents wrapper that keeps it mounted while a briefing shows.) */
@@ -514,7 +514,7 @@
 .day-nested .day-collapse-title { font-size: 13.5px; }
 .day-nested .day-collapse-body { padding: 12px 13px 13px; background: var(--paper); }
 
-/* "How Carta routed this": the route explanation lives behind an info icon
+/* "How Viantra routed this": the route explanation lives behind an info icon
    instead of a mono-uppercase banner over the timeline. */
 .day-route-info-btn {
   display: inline-flex;
@@ -698,7 +698,7 @@
    .trip-planner-screen: below the app header, above the bottom nav, no
    backdrop and no shadow. Same shell, different frame. */
 /* No modal header on the opening question: the header strip only repeated
-   "Let Carta guide you" under the app's own header. The question is the
+   "Let Viantra guide you" under the app's own header. The question is the
    title of the page. */
 
 /* ── Step 0: the question owns the page ──────────────────────────────────
@@ -786,7 +786,7 @@
 }
 .guide-explore-text b { font-size: var(--text-label); font-weight: 600; }
 .guide-explore-text small { font-size: var(--text-caption); color: var(--ink-soft); }
-/* The outbound arrow, wherever a link leaves Carta. */
+/* The outbound arrow, wherever a link leaves Viantra. */
 /* The panel that tunes the spending behind these presets, one tap from the
    preset that stands in for it. */
 /* Below the width that fits three, an even stack beats a 2 + 1 orphan. */
@@ -1112,7 +1112,7 @@
 /* An answered question, folded: still visible, still changeable, no longer
    competing with the map every time the step re-renders. */
 .guide-answered-value svg { color: var(--accent); }
-/* The quiet variant of the "let Carta decide" CTA: an offer, not the headline. */
+/* The quiet variant of the "let Viantra decide" CTA: an offer, not the headline. */
 /* The escape hatch on the country step, sized to its own words. Full width
    and dashed, it was the loudest thing under the title and read as a drop
    zone; picking countries is the job of that screen and this is the offer to
@@ -1134,7 +1134,7 @@
 /* Step 3: what changing the departure airport actually buys, in the space the
    picker used to leave blank. */
 
-/* Carta's suggested length vs the nights actually booked: two answers to one
+/* Viantra's suggested length vs the nights actually booked: two answers to one
    question, so they can never again share a label. */
 
 /* ── Map pin density ─────────────────────────────────────────────────────

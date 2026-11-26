@@ -249,7 +249,7 @@
 
 /* Own-flight (another airline) editable fields in the Trip total block: the
    traveller names the airline and enters the total fare so the estimate can
-   include a flight Carta doesn't price itself. */
+   include a flight Viantra doesn't price itself. */
 .trip-ownflight-input {
   flex: 1 1 auto;
   min-width: 0;

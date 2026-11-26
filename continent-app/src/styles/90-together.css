@@ -1,6 +1,6 @@
 /* Together (T928 to T932, owner-approved spec v2): the friends page behind
    the header's people door, its sub-screens, and the one-line friend
-   signals across Carta. Class prefix .tg-. Loaded by src/together/parts.jsx.
+   signals across Viantra. Class prefix .tg-. Loaded by src/together/parts.jsx.
 
    House style (account lane, 2026-11): no dark slab outside the plates and
    no second accent, so
@@ -589,7 +589,7 @@
   .tg-bi > .btn { grid-column: 1 / -1; justify-self: start; }
 }
 
-/* ── The one-line signals across Carta ───────────────────────────────── */
+/* ── The one-line signals across Viantra ───────────────────────────────── */
 
 .tg-sig {
   display: flex;

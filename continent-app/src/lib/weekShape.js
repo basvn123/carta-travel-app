@@ -13,7 +13,7 @@
      weatherPlan(trip)  a named fallback per day, and for winter and water
                         trips the days grouped by the conditions they need
 
-   The thresholds below are Carta's own reading of a day's numbers, not a
+   The thresholds below are Viantra's own reading of a day's numbers, not a
    source fact. They are written down here so a reviewer can argue with one
    number rather than with a feeling. */
 

@@ -126,7 +126,7 @@ export function DestinationsTab({
 }) {
   const { t, lang } = useI18n();
   // The traveller's own month from the settings line, or null while the
-  // dates are Carta's pair (T381): lake cards say one month fact only then.
+  // dates are Viantra's pair (T381): lake cards say one month fact only then.
   const travelMonth = useTravelMonth();
   const scrollRef = useRef(null);
   const sentinelRef = useRef(null);
@@ -427,7 +427,7 @@ export function DestinationsTab({
   }, [openJourney]);
 
   // T1030: a trip's page that closes, by its own back control or the
-  // browser's, hands back to Plan's Carta's own trips (the one trip list).
+  // browser's, hands back to Plan's Viantra's own trips (the one trip list).
   const hadJourney = useRef(false);
   const journeyClosed = useRef(onJourneyClosed);
   journeyClosed.current = onJourneyClosed;
@@ -772,7 +772,7 @@ export function DestinationsTab({
     );
   };
 
-  // The honest stubs of the walks list (T124): famous walks Carta cannot
+  // The honest stubs of the walks list (T124): famous walks Viantra cannot
   // build, loaded for the country the list is answering for.
   const [stubs, setStubs] = useState([]);
   const [stubsAll, setStubsAll] = useState(false);
@@ -780,7 +780,7 @@ export function DestinationsTab({
   // Back steps out of the tab's own layers (T451, the navigation rule T381
   // set and T444 gave Explore): a style's list, then a page over it, each
   // push one history entry, so Back and a phone's swipe back close the top
-  // layer onto the one beneath instead of leaving Carta. The trip page
+  // layer onto the one beneath instead of leaving Viantra. The trip page
   // (JourneyPage) and the destination page (#dest=) push their own.
   const placesLevel = (journeyView ? 1 : 0)
     + ((pageCard || pageItin || pageBeach || pageLake || pageMountain || pageCycle || pageStub) ? 1 : 0);
@@ -1520,7 +1520,7 @@ export function DestinationsTab({
   const suggList = (suggOpen && (suggestions.length > 0 || canGeo) && (
     <div className="places-sugg" role="listbox">
       {/* Two groups, headed only once the second one exists: the
-          places Carta prices, then anywhere else on the map. */}
+          places Viantra prices, then anywhere else on the map. */}
       {suggestions.length > 0 && geoHits && geoHits.length > 0 && (
         <p className="places-sugg-head">{t('places.suggCatalogue')}</p>
       )}
@@ -1574,7 +1574,7 @@ export function DestinationsTab({
   // ── The What and Where bar and the quick filter row (T593) ──────────────
   // What sets one facet group to a single choice (or none); Where is the
   // tab's search text, live as before. Search applies What and, when the
-  // text is exactly a town Carta knows, measures the list from that town.
+  // text is exactly a town Viantra knows, measures the list from that town.
   const whatGroup = outdoorCat ? facetGroups.find((g) => g.key === WHAT_GROUP[cat]) : null;
   const whatOpts = whatGroup ? whatGroup.options.filter((o) => o.key !== 'loop') : [];
   const whatOn = whatOpts.filter((o) => o.on);

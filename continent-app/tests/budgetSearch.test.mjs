@@ -95,7 +95,7 @@ test("the search prices beds and food with quoteTrip, nothing of its own", () =>
     assert.equal(p.days, Math.round(planned.parts.days), `${d.id} food and drink`);
     const own = quoteTrip(budgetTripState(d.id, q), { data: { destinations: { [d.id]: d } } });
     assert.equal(own.parts.travel + own.parts.transfers + own.parts.drive + own.parts.car, 0,
-      "no getting-there figure of Carta's enters the total");
+      "no getting-there figure of Viantra's enters the total");
   }
 });
 

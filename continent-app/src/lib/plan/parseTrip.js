@@ -2,14 +2,14 @@
  * parseTrip.js, one sentence about a trip read into the planner's answers
  * (T857, plan flow v3 Batch B).
  *
- * The planner opens with one free field, Tell Carta. What the traveller types
+ * The planner opens with one free field, Tell Viantra. What the traveller types
  * there is read here, on the device, with no model and no network: the
  * places (countries and towns, from the app's own catalogue), the month or
  * the dates, the nights, who goes (adults, children, babies), what they like,
  * where they leave from, the budget (a person or for the group, for the trip
  * or a day), what is already booked, the stay type and the way of travel.
  *
- * It is built from the two readers the app had: Ask Carta's parseIntent
+ * It is built from the two readers the app had: Ask Viantra's parseIntent
  * (lib/ask/intent.js: the catalogue vocabulary, money with its cues, head
  * counts, months and seasons) and the planner's word lists (flow/prefill.js,
  * T654, now a thin wrapper over this file). It reads only what is clearly
@@ -328,7 +328,7 @@ function bareVocab(lang) {
 }
 
 /**
- * Ask Carta's vocabulary over the planner's catalogue: every town (not a
+ * Ask Viantra's vocabulary over the planner's catalogue: every town (not a
  * gateway row) by name, the search index's aliases ("Roma"), every country
  * in the six languages, and the reviewed lexicon's exonyms when loaded.
  */

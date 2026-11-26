@@ -3,7 +3,7 @@
  * widened by T367; docs/ONBOARDING_AND_EMPTY_STATES.md "The coverage module",
  * destinations spec 1.6).
  *
- * Two jobs. First, say WHY a list is empty when Carta knows. Second, find the
+ * Two jobs. First, say WHY a list is empty when Viantra knows. Second, find the
  * three nearest published rows across the border (or around a searched place),
  * from the same layer wire the list would have read.
  *

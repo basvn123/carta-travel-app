@@ -4,7 +4,7 @@
  * Renders from the SAME dossier contract the full-screen page reads
  * (public/dossier/{id}.json), so the PDF cannot drift from the app: one
  * contract, two renderers. Since T914 it is drawn with the kit every other
- * Carta PDF uses (pdfKit.js): Overpass with tabular figures, the role colours,
+ * Viantra PDF uses (pdfKit.js): Overpass with tabular figures, the role colours,
  * photographs with the credit under them, vector drawings, one footer. The
  * trip booklet (tripPdf.js) opens with the same cover.
  *
@@ -93,7 +93,7 @@ export async function downloadDestinationPdf({
   const best = d.when?.best || [];
 
   const kit = await createPdf({
-    footerLabel: `Carta, ${city}. ${T('pdf.pricesOn', { date: dateLong })}`,
+    footerLabel: `Viantra, ${city}. ${T('pdf.pricesOn', { date: dateLong })}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
     partnerNote: t('partner.pdfNote'),
   });

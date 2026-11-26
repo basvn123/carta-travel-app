@@ -1,5 +1,5 @@
-// T570 + T571: Ask Carta's chats on this device, and the place outside
-// Carta's Europe that a question names. Run: npm test (continent-app/).
+// T570 + T571: Ask Viantra's chats on this device, and the place outside
+// Viantra's Europe that a question names. Run: npm test (continent-app/).
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
@@ -51,7 +51,7 @@ test("chats group into today, the last 7 days and older", () => {
   assert.deepEqual([g.today.map((c) => c.id), g.week.map((c) => c.id), g.older.map((c) => c.id)], [["t"], ["w"], ["o"]]);
 });
 
-test("a destination outside Carta's Europe is named, a European one is not", () => {
+test("a destination outside Viantra's Europe is named, a European one is not", () => {
   const dubai = { type: "plan", places: [], facets: { month: 11 }, unknown: ["dubai", "way", "possible"] };
   assert.equal(outsidePlace("I want to plan a trip to dubai in november, the cheapest way possible", dubai), "Dubai");
   assert.equal(outsidePlace("Een week naar Marrakech in maart", { places: [], facets: {}, unknown: ["marrakech"] }), "Marrakech");

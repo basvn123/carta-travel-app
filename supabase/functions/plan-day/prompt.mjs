@@ -60,7 +60,7 @@ export function buildPrompt(p) {
     // The named stops are exempt, or two rules would contradict each other:
     // a traveller who named three places we do not hold would otherwise be
     // asking for a day the 80 percent rule forbids.
-    // T433: catalogue places only. A place Carta has not checked has no
+    // T433: catalogue places only. A place Viantra has not checked has no
     // position it can route to safely, so the app never puts one on a walk.
     f('catalogueOnly'),
     f('sequence'),

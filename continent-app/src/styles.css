@@ -1,4 +1,4 @@
-/* Carta stylesheet entry (T191). The rules live in src/styles/, one file per
+/* Viantra stylesheet entry (T191). The rules live in src/styles/, one file per
    domain, imported here in the original source order. Vite inlines the imports
    into one stylesheet, so the cascade is exactly what the single file had. Add
    new rules to the file that owns the domain; never reorder these lines, and

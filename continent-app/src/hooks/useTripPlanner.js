@@ -30,7 +30,7 @@ const NO_DESTINATIONS = Object.freeze({});
  *  Arrival/departure dates chain automatically from the trip start, so there's
  *  no per-stop date juggling: bumping a stop's nights just shifts everything
  *  after it. The flight route comes from each destination's stored routes
- *  (combineTripLegs: fly into the first stop, out of the last), but Carta does
+ *  (combineTripLegs: fly into the first stop, out of the last), but Viantra does
  *  not price flights (T273): the route carries no fare, and the only flight
  *  figure in a total is the one the traveller typed (ownFlight). Overland legs
  *  between consecutive stops are estimated (interCityGroundEstimate).
@@ -55,7 +55,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     if (c != null) setChildren(Math.max(0, Math.min(MAX_PARTY, c)));
     if (b != null) setBabies(Math.max(0, Math.min(MAX_PARTY, b)));
   }, []);
-  // How the traveller wants to get between stops: 'auto' lets Carta pick the
+  // How the traveller wants to get between stops: 'auto' lets Viantra pick the
   // best mode per leg, 'car' assumes one rental for the whole trip, 'owncar'
   // means they DRIVE from home in their own car (no flight, no rental - fuel
   // and tolls only), 'public' sticks to trains/buses. Individual legs can
@@ -63,7 +63,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   const [transportPref, setTransportPref] = useState(draft?.transportPref || 'auto');
   const [legModes, setLegModes] = useState(draft?.legModes || {}); // { [legIndex]: 'train'|'bus'|'car' }
   // Hops the traveller booked themselves: a flight between two stops, a ferry
-  // out to an island. Carta holds no fares for either, so instead of inventing
+  // out to an island. Viantra holds no fares for either, so instead of inventing
   // one it carries the price they typed, keyed the same way as legModes:
   // { [legIndex]: { mode: 'fly'|'ferry', eur } } where eur is the party total.
   const [ownLegs, setOwnLegs] = useState(draft?.ownLegs || {});
@@ -72,7 +72,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   // ranking's. Keyed by day: a moved trip no longer reads a stale pick.
   const [flightPicks, setFlightPicks] = useState(draft?.flightPicks || null);
   // The trip's flight preferences (T840): only direct flights, leaving
-  // between two hours. Kept on the trip; Carta prices the cheapest flight
+  // between two hours. Kept on the trip; Viantra prices the cheapest flight
   // that fits them, each way.
   const [flightPrefs, setFlightPrefsRaw] = useState(draft?.flightPrefs || NO_FLIGHT_PREFS);
   // New preferences drop a picked flight that no longer fits them, so the
@@ -86,7 +86,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
       return keep.out || keep.back ? keep : null;
     });
   }, []);
-  // One flight picked on Change flight (T840), or null for Carta's pick.
+  // One flight picked on Change flight (T840), or null for Viantra's pick.
   const setFlightPick = useCallback((dir, f) => {
     setFlightPicks((prev) => {
       const next = { out: prev?.out || null, back: prev?.back || null, [dir]: f || null };
@@ -94,7 +94,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     });
   }, []);
   // How the traveller gets from the plane to where they sleep, one choice per
-  // DIRECTION ({ in, out }): 'auto' lets Carta pick (the rental car they
+  // DIRECTION ({ in, out }): 'auto' lets Viantra pick (the rental car they
   // collect at the airport if the trip has one, else public transport),
   // 'public' = airport train/bus/shuttle, 'taxi' = taxi/rideshare, 'rental' =
   // drive the rental. Priced per mode so the total reflects the real choice.
@@ -309,7 +309,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   }, []);
 
   // Reorder the stops into an efficient nearest-neighbour route from the first
-  // stop (the "let Carta plan this" payoff). Keeps stop 1 as the entry point.
+  // stop (the "let Viantra plan this" payoff). Keeps stop 1 as the entry point.
   const optimizeRoute = useCallback(() => {
     setStops((prev) => {
       if (prev.length < 3) return prev;
@@ -391,7 +391,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setCarHome(wizardCarHome || null);
     // The "everything is booked" path asks how each hop is travelled, so the
     // wizard can hand over per-leg choices; every other path leaves them to
-    // Carta and hands over nothing.
+    // Viantra and hands over nothing.
     setLegModes(wizardLegModes || {});
     setOwnLegs(wizardOwnLegs || {});
     setOwnStays(wizardOwnStays || {});
@@ -511,7 +511,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
   }, []);
 
   // A bed the traveller booked themselves, as the whole stay's price for the
-  // party; a blank or zero clears it back to Carta's estimate.
+  // party; a blank or zero clears it back to Viantra's estimate.
   const setOwnStay = useCallback((destinationId, eurTotal) => {
     setOwnStays((prev) => {
       const next = { ...prev };
@@ -524,7 +524,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
 
   // "Take this trip cheaper": a cheaper stop ORDER when reordering
   // meaningfully shortens the overland route. The cheaper-start-dates sweep
-  // is gone (T273): it ranked dates by frozen flight fares, and Carta does
+  // is gone (T273): it ranked dates by frozen flight fares, and Viantra does
   // not price flights.
   const cheaperOrder = useMemo(
     () => reorderSavings(stops, destinations, groupSize, {
@@ -606,7 +606,7 @@ export function useTripPlanner(data, countryInsights = null, preferredStayTier =
     setTransferModeRaw(normalizeTransferMode(sorted[0]?.choices?.transferMode));
     setPace(sorted[0]?.choices?.pace || 'balanced');
     // Per-leg choices are answers, not derivations: a reopened trip that
-    // silently reverted to Carta's pick threw away the flight the traveller
+    // silently reverted to Viantra's pick threw away the flight the traveller
     // told us about and repriced the hop as a coach.
     setLegModes(sorted[0]?.choices?.legModes || {});
     setOwnLegs(sorted[0]?.choices?.ownLegs || {});

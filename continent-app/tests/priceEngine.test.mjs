@@ -1,5 +1,5 @@
 // T662 (F2): the price engine, lib/price/. Invariants V3, V6 (bed) and V7
-// of plan "Carta prijslogica Explore" section 8; V1 and V2 live in
+// of plan "Viantra prijslogica Explore" section 8; V1 and V2 live in
 // priceGolden.test.mjs and priceSources.test.mjs, V8 was in liveStays.test.mjs (removed, T1074).
 // Run: npm test (continent-app/)
 import test from "node:test";
@@ -171,7 +171,7 @@ test("V7: a month or any time never reads an exact date, for the bed or the flig
   const exact = priceRequest(dates);
   assert.deepEqual(flightWindow(exact), { kind: "exact", from: "2026-11-21", to: "2026-11-28" });
   assert.equal(costChoices(exact).start, "2026-11-21");
-  // Carta's own dates are not the traveller's: they read as any time (B5).
+  // Viantra's own dates are not the traveller's: they read as any time (B5).
   assert.equal(priceRequest({ departDate: "2026-11-21", returnDate: "2026-11-28", ownDates: false }).when.kind, "any");
 });
 

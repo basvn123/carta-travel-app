@@ -44,8 +44,8 @@ test("question 7's answer is the slot's owner", () => {
   const row = (id) => SLOT_ROWS.find((r) => r.id === id);
   assert.equal(ownerOf(row("stay"), ["flight"]), "you");
   assert.equal(ownerOf(row("stay"), ["flight", "stay"]), "carta");
-  assert.equal(ownerOf(row("food"), []), "carta", "food is not offered, so it stays Carta's");
-  assert.equal(ownerOf(row("activities"), ["activities"]), "you", "a notYet slot cannot be Carta's pick");
+  assert.equal(ownerOf(row("food"), []), "carta", "food is not offered, so it stays Viantra's");
+  assert.equal(ownerOf(row("activities"), ["activities"]), "you", "a notYet slot cannot be Viantra's pick");
 });
 
 test("every trip has every slot; things to do is NotYet and out of the sum", { skip }, () => {

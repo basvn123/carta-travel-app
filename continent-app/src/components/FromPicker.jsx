@@ -7,7 +7,7 @@ import { ArrowLeftIcon, CheckIcon, ChevronRightIcon, CrosshairIcon, MapPinIcon, 
 
 /**
  * Where the trip starts (T577, the owner 2026-10-22): a town, not an airport.
- * Carta prices a plane, a train, a bus and a car from here, so the picker
+ * Viantra prices a plane, a train, a bus and a car from here, so the picker
  * speaks of places only: no airport codes and no "airport" in a label.
  *
  *   - one search field (no placeholder; it is named for screen readers)
@@ -21,7 +21,7 @@ import { ArrowLeftIcon, CheckIcon, ChevronRightIcon, CrosshairIcon, MapPinIcon, 
  * airport for the flight (lib/origins.js nearestOrigin).
  */
 
-/** The towns Carta has fares from, grouped by country, with flags. */
+/** The towns Viantra has fares from, grouped by country, with flags. */
 function townsByCountry(data) {
   const origins = data?.meta?.origins || {};
   const isoOf = new Map();

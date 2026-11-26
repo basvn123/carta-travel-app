@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * push-maps.mjs, upload the Carta basemap to R2 under data/maps/ (G12).
+ * push-maps.mjs, upload the Viantra basemap to R2 under data/maps/ (G12).
  *
  * The Explore map draws a Protomaps basemap from a Europe PMTiles extract on
  * our own data host (decision: .work/2026-11-20-map-view/decision.md "Base
@@ -39,7 +39,7 @@ function arg(name, fallback) {
 }
 
 export const MAPS_PREFIX = 'data/maps';
-// Only the stacks the Carta style names; the Devanagari stack is 7 MB the
+// Only the stacks the Viantra style names; the Devanagari stack is 7 MB the
 // map never asks for.
 export const FONT_STACKS = Object.freeze(['Noto Sans Regular', 'Noto Sans Medium', 'Noto Sans Italic']);
 export const SPRITE_THEMES = Object.freeze(['light', 'dark']);

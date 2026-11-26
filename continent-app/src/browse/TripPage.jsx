@@ -72,7 +72,7 @@ import { quoteStay, seatsOf } from '../lib/price/index.js';
  * photograph with a caption band under it and never text on it, the days run
  * in the shared day track (DayTrack.jsx), and the cost fold is a receipt
  * whose estimated lines carry the tilde and "est." in words. Since T518 the
- * receipt adds Carta's flight from the home airport to the trip's start and
+ * receipt adds Viantra's flight from the home airport to the trip's start and
  * home from its end (Google Flights' fares, never estimated), when the sweep
  * has one near the app's dates; without one no line is a flight.
  *
@@ -189,13 +189,13 @@ function Sight({ poi, t }) {
    A leg's fare is an estimate from per-country fare levels, never a ticket
    price, so wherever it prints it carries the tilde and "est." in words, set
    the same way in the route, in a day and in the receipt. A flight leg prints
-   a figure only when it is Carta's own flight from or to the home airport
+   a figure only when it is Viantra's own flight from or to the home airport
    (T518, `carta` set by cartaLegs below), at the party's fare plus bags; any
    other flight leg prints none and never reaches a total. */
 
 const FLIGHT_MODES = new Set(['fly', 'flight', 'plane', 'air']);
 const isFlightLeg = (leg) => FLIGHT_MODES.has(String(leg?.mode || '').toLowerCase());
-/** A flight leg with no figure of its own (not Carta's home flight). */
+/** A flight leg with no figure of its own (not Viantra's home flight). */
 const isUnpricedFlight = (leg) => isFlightLeg(leg) && !leg?.carta;
 
 const IATA = /^[A-Z]{3}$/;
@@ -221,7 +221,7 @@ function tripAirports(detail, destinations) {
   };
 }
 
-/** The detail with Carta's figure on the flight legs that are its home
+/** The detail with Viantra's figure on the flight legs that are its home
  *  flight: home to the start, or the end to home. */
 function cartaLegs(detail, carta, home, ends) {
   if (!detail || !carta || !home) return detail;
@@ -322,7 +322,7 @@ function tripReceipt(detail, t, flight = null, stays = null) {
   const group = stays ? stays.seats : tripGroup(detail);
   const anyEst = cost.est !== false;
   const lines = [];
-  // Carta's flight first, there and home, each with its airline (T518).
+  // Viantra's flight first, there and home, each with its airline (T518).
   if (flight) {
     lines.push({
       k: 'flight-out',
@@ -517,7 +517,7 @@ export function TripPage({
   const pageRef = useRef(null);
   const backRef = useRef(null);
   const [rawDetail, setDetail] = useState(null);
-  // Carta's flight (T518): home airport to the trip's start, its end to
+  // Viantra's flight (T518): home airport to the trip's start, its end to
   // home, near the app's leaving day and the trip's nights after it, for
   // the party the receipt prices. Null without a flight near those days.
   const ctx = useFirstRun();
@@ -853,7 +853,7 @@ export function TripPage({
                         {/* The fare is an estimate, so it carries the tilde
                             and "est." in words, set as the receipt sets it.
                             A flight leg prints a figure only when it is
-                            Carta's home flight (T518). */}
+                            Viantra's home flight (T518). */}
                         {!isUnpricedFlight(detail.legs[i]) && Number.isFinite(detail.legs[i].eur) ? (
                           <span className="itin-est itin-leg-fig mono">
                             {costFig(detail.legs[i].eur, detail.legs[i].est !== false, t)}
@@ -957,7 +957,7 @@ export function TripPage({
               cost with the figure right aligned in mono, a 2px ink rule above
               the total, and the day figure under it named for what it is (the
               total over the days, for the whole party). Every estimated line
-              says so in words with the tilde. Carta's flight, when there is
+              says so in words with the tilde. Viantra's flight, when there is
               one, is its own two lines with the airline's mark (T518). */}
           {detail && (
             <Fold level={2}

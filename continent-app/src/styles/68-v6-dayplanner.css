@@ -76,7 +76,7 @@
 /* The pin filters live in the same overlay column, so they can never land on
    top of the two bars above them. */
 
-/* ---- The Carta bot ----
+/* ---- The Viantra bot ----
    T389: the floating bot and its menu went (rule N3, carta-design "Day list");
    its prompts are in the plan toolbar's Add menu. */
 
@@ -90,7 +90,7 @@
    The stop count is NOT repeated here, it is already in the header strip and
    on the tab itself, and a number printed three times stops being read. */
 /* Deep slate, not action-brown. On this screen the accent is spoken for: the
-   Carta button floats over the map in it, and a second filled action-brown
+   Viantra button floats over the map in it, and a second filled action-brown
    circle a thumb away would make neither of them the answer. */
 .dayp-menu-item svg { flex: none; margin-top: 2px; color: var(--ink-mute); }
 .dayp-menu-item b { display: block; font-size: 13.5px; font-weight: 600; }
@@ -362,7 +362,7 @@
 .credit-chip svg { color: var(--text-2); }
 .credit-chip.is-out { color: var(--select-ink); background: var(--select-bg); }
 
-/* ── Carta's questions ────────────────────────────────────────────────── */
+/* ── Viantra's questions ────────────────────────────────────────────────── */
 .daychat-dots > span { width: 16px; height: 4px; border-radius: var(--radius-sm); background: var(--border); }
 .daychat-tile-text small { font-size: var(--text-caption); font-weight: 400; color: var(--text-2); }
 /* On a phone the footer is one row: the cost sits on the summary, not in it. */

@@ -323,7 +323,7 @@
   },
   {
    "id": "d33",
-   "q": "What does the Ask Carta model card say about known limits?",
+   "q": "What does the Ask Viantra model card say about known limits?",
    "lang": "en",
    "answerable": true,
    "gold": {
@@ -393,7 +393,7 @@
   },
   {
    "id": "d40",
-   "q": "What is ASVS and which level does Carta target?",
+   "q": "What is ASVS and which level does Viantra target?",
    "lang": "en",
    "answerable": true,
    "gold": {
@@ -519,13 +519,13 @@
   },
   {
    "id": "u07",
-   "q": "How do I configure Kubernetes ingress for Carta?",
+   "q": "How do I configure Kubernetes ingress for Viantra?",
    "lang": "en",
    "answerable": false
   },
   {
    "id": "u08",
-   "q": "What is the salary of the CEO of Carta?",
+   "q": "What is the salary of the CEO of Viantra?",
    "lang": "en",
    "answerable": false
   }

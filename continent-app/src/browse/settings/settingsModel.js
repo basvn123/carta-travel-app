@@ -60,7 +60,7 @@ export function useSettingsModel() {
     else s?.setFrom?.(p);
   }, [s, set]);
 
-  /** "Use my current location": the nearest town in Carta's data, when one
+  /** "Use my current location": the nearest town in Viantra's data, when one
    *  is near. Returns the town, or null (the step shows its plain line). */
   const setHere = useCallback((pt) => {
     const town = nearestTown(data, pt);

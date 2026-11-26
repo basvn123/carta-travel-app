@@ -66,8 +66,8 @@ export async function linkUrl(base, secret, action, email, nowMs = Date.now()) {
 
 const W = {
   en: {
-    confirmSubject: 'Confirm your place on the Carta list',
-    confirmBody: 'Thanks for joining the Carta list. Tap the button to confirm this address. Until you do, we send you nothing else and do not use it.',
+    confirmSubject: 'Confirm your place on the Viantra list',
+    confirmBody: 'Thanks for joining the Viantra list. Tap the button to confirm this address. Until you do, we send you nothing else and do not use it.',
     confirmButton: 'Confirm my address',
     confirmIgnore: 'If this was not you, ignore this mail: the address is not used and is removed after a month.',
     unsub: 'Unsubscribe',
@@ -75,12 +75,12 @@ const W = {
     pageConfirmedBody: 'Thanks, the address is confirmed. Every mail from us has an unsubscribe link.',
     pageUnsub: 'You are unsubscribed',
     pageUnsubBody: 'Done. We will not mail this address again.',
-    pageBad: 'This link does not work. It may have expired: sign up again from the Carta home page.',
-    pageBack: 'Back to Carta',
+    pageBad: 'This link does not work. It may have expired: sign up again from the Viantra home page.',
+    pageBack: 'Back to Viantra',
   },
   nl: {
-    confirmSubject: 'Bevestig je plek op de Carta-lijst',
-    confirmBody: 'Bedankt voor je aanmelding voor de Carta-lijst. Tik op de knop om dit adres te bevestigen. Zolang je dat niet doet, sturen we niets anders en gebruiken we het adres niet.',
+    confirmSubject: 'Bevestig je plek op de Viantra-lijst',
+    confirmBody: 'Bedankt voor je aanmelding voor de Viantra-lijst. Tik op de knop om dit adres te bevestigen. Zolang je dat niet doet, sturen we niets anders en gebruiken we het adres niet.',
     confirmButton: 'Bevestig mijn adres',
     confirmIgnore: 'Was jij dit niet? Negeer deze mail: het adres wordt niet gebruikt en na een maand verwijderd.',
     unsub: 'Uitschrijven',
@@ -88,8 +88,8 @@ const W = {
     pageConfirmedBody: 'Bedankt, het adres is bevestigd. Elke mail van ons heeft een uitschrijflink.',
     pageUnsub: 'Je bent uitgeschreven',
     pageUnsubBody: 'Klaar. We mailen dit adres niet meer.',
-    pageBad: 'Deze link werkt niet. Hij kan verlopen zijn: meld je opnieuw aan via de startpagina van Carta.',
-    pageBack: 'Terug naar Carta',
+    pageBad: 'Deze link werkt niet. Hij kan verlopen zijn: meld je opnieuw aan via de startpagina van Viantra.',
+    pageBack: 'Terug naar Viantra',
   },
 };
 export const words = (lang) => W[lang] || W.en;
@@ -114,7 +114,7 @@ export function confirmEmail({ lang, confirm, unsub }) {
 export function resultPage(lang, kind, appUrl) {
   const w = words(lang);
   const [title, body] = kind === 'confirm' ? [w.pageConfirmed, w.pageConfirmedBody]
-    : kind === 'unsub' ? [w.pageUnsub, w.pageUnsubBody] : ['Carta', w.pageBad];
+    : kind === 'unsub' ? [w.pageUnsub, w.pageUnsubBody] : ['Viantra', w.pageBad];
   return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)}</title></head>`
     + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
     + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'

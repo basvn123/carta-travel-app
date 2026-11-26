@@ -29,7 +29,7 @@ import {
  * reads as a summary of the trip once it is filled.
  *
  * Cities come from the catalogue first, which is what gives a logged trip real
- * coordinates, a country and a photograph. A place Carta has never held is
+ * coordinates, a country and a photograph. A place Viantra has never held is
  * geocoded on request and kept with its own coordinates, so a week in a
  * village still pins on the record's map.
  *

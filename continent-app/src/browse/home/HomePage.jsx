@@ -23,7 +23,7 @@ const HomeStory = React.lazy(() => import('./HomeStory.jsx'));
  * It says one thing, "A cheap flight is not a cheap trip", and then shows it:
  *
  *   Hero    the film of real places from edge to edge under the app header
- *           (T621), the slogan, one line and Ask Carta's field on it (T620);
+ *           (T621), the slogan, one line and Ask Viantra's field on it (T620);
  *           on a phone the mark and Log in stand on its top edge
  *   Week    the point in figures: a real flight, then the week it leads to
  *   Voices  six travellers, each asking in their own words, each answered
@@ -46,7 +46,7 @@ const HomeStory = React.lazy(() => import('./HomeStory.jsx'));
  *   pageOver      a page or panel stands over the home page (no h1 then)
  *   onNavigate    goToTab(key)
  *   onSearch      ({ question } | { facets } | { open: true }) hands a search
- *                 to Explore; a question is answered there by Ask Carta
+ *                 to Explore; a question is answered there by Ask Viantra
  *   onCategory    opens Explore on one category
  *   onOpenDest    opens a destination page by id
  *   onOpenTrips   opens My trips

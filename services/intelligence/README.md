@@ -1,11 +1,11 @@
-# Carta Intelligence API (ROADMAP F5, T1154)
+# Viantra Intelligence API (ROADMAP F5, T1154)
 
-One internal HTTP API over Carta's intelligence code: the travel taxonomy and tagger (F1),
+One internal HTTP API over Viantra's intelligence code: the travel taxonomy and tagger (F1),
 the place linker (F4), similar items, and the taste profile (F3). Built on that code, not a
 copy of it: the Python tagger and taxonomy are imported from `pipeline/taxonomy/`, the
 JavaScript linker and taste profile run in one long-lived Node process (`bridge/bridge.mjs`)
 that imports `continent-app/src/lib/linking` and `continent-app/src/lib/taste`.
-Handbook: `docs/HANDBOOK.md`, "Carta Intelligence API". Threat model: section 14.
+Handbook: `docs/HANDBOOK.md`, "Viantra Intelligence API". Threat model: section 14.
 OpenAPI: `openapi.json`, rendered in `docs/reference/openapi.md`.
 
 | Endpoint | Does | Engine |

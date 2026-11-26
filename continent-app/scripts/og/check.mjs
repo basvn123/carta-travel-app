@@ -71,7 +71,7 @@ async function cards() {
       assert(r.report.titleLines <= 2, `${name} title in two lines or fewer`);
       const strings = [r.spec.kind, r.spec.title, r.spec.subtitle, r.spec.alt, r.spec.strip?.label, r.spec.strip?.note,
         r.spec.panel?.head, ...(r.spec.panel?.rows || []).flatMap((x) => [x.label, x.value, x.note]), r.spec.panel?.total?.label];
-      // names come from the data, so only the words Carta wrote are checked for banned words
+      // names come from the data, so only the words Viantra wrote are checked for banned words
       for (const str of strings.filter(Boolean)) for (const p of copyProblems(`${name} "${str}"`, str)) fail(p);
     }
   }
@@ -137,7 +137,7 @@ function head() {
   const meta = (attr, name) => (html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`)) || [])[1];
   const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1] || '';
   for (const p of copyProblems('index.html title', title)) fail(p);
-  assert(/ \| Carta$/.test(title), 'title follows the "{title} | Carta" pattern');
+  assert(/ \| Viantra$/.test(title), 'title follows the "{title} | Viantra" pattern');
   for (const name of ['og:title', 'og:description', 'twitter:title', 'twitter:description']) {
     const v = meta(name.startsWith('og') ? 'property' : 'name', name) || '';
     assert(v && copyProblems(name, v).length === 0, `${name} present and clean`);

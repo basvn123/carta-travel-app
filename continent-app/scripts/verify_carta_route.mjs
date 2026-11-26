@@ -1,4 +1,4 @@
-// Checks the Carta algorithm against the shipped catalogue, under plain node.
+// Checks the Viantra algorithm against the shipped catalogue, under plain node.
 //
 //   node scripts/verify_carta_route.mjs
 //

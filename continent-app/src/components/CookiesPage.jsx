@@ -3,7 +3,7 @@ import { LegalDoc } from './LegalDoc.jsx';
 import { useI18n } from '../i18n/index.jsx';
 
 /**
- * Cookies and storage (T945): what Carta keeps in the browser and why, in
+ * Cookies and storage (T945): what Viantra keeps in the browser and why, in
  * six languages. No banner, because nothing here needs consent: verified in
  * the code on 2026-10-31.
  *
@@ -34,9 +34,9 @@ import { useI18n } from '../i18n/index.jsx';
  *                 Google sign-in). No cookie.
  *   IndexedDB     carta-files (files added to a day plan).
  *   Cache Storage the service worker's app shell (carta-v7); webllm/* when
- *                 the on-device Ask Carta model is turned on.
+ *                 the on-device Ask Viantra model is turned on.
  *   Stripe        a redirect to Stripe Checkout (lib/checkout.js); Stripe's
- *                 cookies live on Stripe's domain, not Carta's.
+ *                 cookies live on Stripe's domain, not Viantra's.
  */
 const SECTIONS = [
   ['ac2.ckDeviceH', 'ac2.ckDeviceP'],

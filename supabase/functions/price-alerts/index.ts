@@ -1,5 +1,5 @@
 /**
- * price-alerts, Carta's price alert emails (T1205, ROADMAP I17). Migration
+ * price-alerts, Viantra's price alert emails (T1205, ROADMAP I17). Migration
  * 073 holds the tables; pipeline/price_alerts.py on the box prices the
  * alerts after each data refresh and calls this function.
  *
@@ -25,7 +25,7 @@
  * The flag: nothing at all happens until PRICE_ALERTS_ENABLED is "1" and the
  * secrets are set; every door then answers {"code":"off"}.
  *
- * Secrets: RESEND_API_KEY (the I6 Resend key), PRICE_ALERTS_FROM ("Carta
+ * Secrets: RESEND_API_KEY (the I6 Resend key), PRICE_ALERTS_FROM ("Viantra
  * <alerts@carta-europetravel.com>"), PRICE_ALERTS_LINK_SECRET (signs the
  * links), PRICE_ALERTS_BOX_SECRET (the box's header; the box never holds the
  * service role key), PRICE_ALERTS_ENABLED, APP_URL (optional). SUPABASE_URL,

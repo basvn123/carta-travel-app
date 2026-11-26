@@ -1,4 +1,4 @@
-// Ask Carta live eval (T563): the golden questions' packs, written by a real
+// Ask Viantra live eval (T563): the golden questions' packs, written by a real
 // model through /api/ask/answer, checked by verify.js. Not part of npm test:
 // it calls a model (Workers AI on the owner's account, about 15 Neurons a
 // question). Run against a local `wrangler pages dev` (see the T563 report)

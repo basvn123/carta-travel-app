@@ -16,7 +16,7 @@ const fmt = (metric, v) => (v == null ? 'n/a' : isRank(metric) ? v.toFixed(3) : 
 const height = (metric, v) => (isRank(metric) ? (v + 1) / 2 : v);
 
 const LABEL = {
-  coverage: 'coverage (references Carta has)',
+  coverage: 'coverage (references Viantra has)',
   in_top: 'share in the top band',
   fact_share: 'share of matching facts',
   agreement_tau: 'rank agreement (Kendall tau-b)',
@@ -65,7 +65,7 @@ export function Validation({ data }) {
     <section data-validation="card">
       <h2 className="adminpage-h2">External validation</h2>
       <p className="adminpage-muted">
-        Each layer checked against outside references (D23): how many Carta has, how well its ranks agree and
+        Each layer checked against outside references (D23): how many Viantra has, how well its ranks agree and
         how many facts match. A hard check that drops below its baseline fails the quality run.
       </p>
       <p className={v.ok ? 'adminpage-ok' : 'adminpage-err'} data-vgate={v.ok ? 'pass' : 'fail'}>

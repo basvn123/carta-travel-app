@@ -5,7 +5,7 @@
 // tests walk a matrix of budget shapes through it and check the rules that
 // used to break: an own figure replaces its estimate and never adds to it, a
 // train trip takes no airport transfer, an own car typed one way keeps
-// Carta's figure for the other, and the receipt lines sum to the total.
+// Viantra's figure for the other, and the receipt lines sum to the total.
 // Run: npm test (continent-app/). Uses public/app_data.json; skips without it.
 import test from "node:test";
 import assert from "node:assert/strict";
@@ -107,11 +107,11 @@ test("a fare the traveller typed is in the total once, as theirs", { skip }, () 
   assert.equal(tripLines(oneWay).find((l) => l.key === "back").kind, "missing", "the way home stays open, never covered by the way out");
 });
 
-test("an own price for a leg replaces Carta's estimate, never adds to it", { skip }, () => {
+test("an own price for a leg replaces Viantra's estimate, never adds to it", { skip }, () => {
   const trip = [byCity("Berat", "AL"), byCity("Gjirokastër", "AL")];
   const est = price(handOver(trip));
   const leg = est.legs[0];
-  assert.ok(leg && leg.ground_total > 0, "Carta prices the hop");
+  assert.ok(leg && leg.ground_total > 0, "Viantra prices the hop");
   const own = price(handOver(trip, { ownLegs: { 0: { mode: leg.mode, eur: 25 } } }));
   close(own.parts.between, 25, "the hop is the typed figure");
   close(own.grandTotal - est.grandTotal, 25 - leg.ground_total, "the total moves by the difference");
@@ -124,7 +124,7 @@ test("an own price for a bed replaces the bed estimate and keeps the days", { sk
   const est = price(handOver(trip));
   const own = price(handOver(trip, { ownStays: { [berat]: 99 } }));
   close(own.stayCosts[0].accomTotal, 99, "the bed is the typed figure");
-  close(own.stayCosts[0].groundTotal, est.stayCosts[0].groundTotal, "the days stay Carta's");
+  close(own.stayCosts[0].groundTotal, est.stayCosts[0].groundTotal, "the days stay Viantra's");
   close(own.grandTotal - est.grandTotal, 99 - est.stayCosts[0].accomTotal, "the total moves by the difference");
   assert.equal(tripReadiness(own).yours, 1);
 });
@@ -138,15 +138,15 @@ test("a train or a bus there takes no airport transfer", { skip }, () => {
   }
 });
 
-test("an own car typed one way keeps Carta's drive estimate for the other", { skip }, () => {
+test("an own car typed one way keeps Viantra's drive estimate for the other", { skip }, () => {
   const trip = [byCity("Berat", "AL"), byCity("Gjirokastër", "AL")];
   const est = price(handOver(trip, { mode: "car", transport: "owncar" }));
-  assert.ok(est.driveLegs?.out && est.driveLegs?.home, "Carta prices both drives");
+  assert.ok(est.driveLegs?.out && est.driveLegs?.home, "Viantra prices both drives");
   const half = price(handOver(trip, { mode: "car", transport: "owncar", out: 150 }));
   close(half.parts.travel, 150, "the typed way out");
-  close(half.parts.drive, est.driveLegs.home.ground_total, "the way home stays Carta's");
+  close(half.parts.drive, est.driveLegs.home.ground_total, "the way home stays Viantra's");
   const both = price(handOver(trip, { mode: "car", transport: "owncar", out: 150, back: 140 }));
-  close(both.parts.drive, 0, "nothing of Carta's when both are typed");
+  close(both.parts.drive, 0, "nothing of Viantra's when both are typed");
 });
 
 test("the party and the Lifestyle move the figures they price, and only those", { skip }, () => {

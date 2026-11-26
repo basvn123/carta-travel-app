@@ -1,5 +1,5 @@
 /**
- * askTerms.js: the one set of MiniSearch options for the Ask Carta BM25
+ * askTerms.js: the one set of MiniSearch options for the Ask Viantra BM25
  * index (T551). scripts/build-ask-bm25.mjs builds public/search/ask/bm25.json
  * with them, and whoever loads it must pass the same ones:
  *

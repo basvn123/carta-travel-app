@@ -5,7 +5,7 @@
 // Headless check for the account hub (2026-08-13 redesign).
 //
 // The panel is now a hub with spokes: the hub holds the profile card, the
-// plan card (T461: "Your plan") and a help menu (FAQ / feedback / Share Carta
+// plan card (T461: "Your plan") and a help menu (FAQ / feedback / Share Viantra
 // / privacy);
 // profile details, the FAQ and the feedback form are subviews behind a back
 // button. This harness fakes a signed-in traveller: a session is written
@@ -237,9 +237,9 @@ try {
   if (!cardText.includes(USER.email)) fail(`profile card does not carry the email: ${cardText}`);
   const mono = await page.locator('.account-hub-avatar').first().innerText();
   if (mono.trim() !== 'SO') fail(`monogram for Sam Okonkwo is "${mono}", expected SO`);
-  // T461: the invite banner became one "Share Carta" row in Help.
+  // T461: the invite banner became one "Share Viantra" row in Help.
   if (await page.locator('.account-invite').count()) fail('the invite banner is back on the hub');
-  // Help rows: feedback, FAQ, Share Carta, privacy. Friends is NOT among
+  // Help rows: feedback, FAQ, Share Viantra, privacy. Friends is NOT among
   // them; it has its own door in the header (see verify_friends.mjs), because
   // seeing who you travel with is a place you go, not a setting you change.
   // Counted by label rather than by row total: Lifestyle joined the hub as a
@@ -252,7 +252,7 @@ try {
   // T503 (roadmap 1.3e) brought the label back as a different thing: a link
   // out to the method page, /about/numbers. So the row must be that link,
   // never an in-panel spoke that lists credits again.
-  for (const label of ['Send feedback', 'Common questions', 'Share Carta', 'Privacy']) {
+  for (const label of ['Send feedback', 'Common questions', 'Share Viantra', 'Privacy']) {
     if (!menuLabels.some((l) => l.includes(label))) fail(`the panel has no "${label}" row`);
   }
   const numbersRow = page.locator('a.account-nav:visible', { hasText: 'Where the numbers come from' });
@@ -286,10 +286,10 @@ try {
   ok(`hub: profile card (SO), Share row, ${menuRows} menu rows at ${Math.round(rowBox.height)}px`);
 
   // The share row falls back to the clipboard in headless chromium.
-  const shareRow = page.locator('.account-nav:visible', { hasText: 'Share Carta' }).first();
+  const shareRow = page.locator('.account-nav:visible', { hasText: 'Share Viantra' }).first();
   await shareRow.click();
   await page.waitForTimeout(400);
-  const inviteLabel = await page.locator('.account-nav:visible', { hasText: /Link copied|Share Carta/ }).first().innerText();
+  const inviteLabel = await page.locator('.account-nav:visible', { hasText: /Link copied|Share Viantra/ }).first().innerText();
   const clip = await page.evaluate(() => navigator.clipboard.readText()).catch(() => '');
   if (!/copied|gekopieerd/i.test(inviteLabel) && !clip.includes('carta-europetravel.com')) {
     fail(`sharing neither confirmed nor copied: label "${inviteLabel}", clipboard "${clip.slice(0, 60)}"`);
@@ -659,7 +659,7 @@ try {
   // Refunds go to the role address, never a personal inbox (T461).
   if (!/hello@carta-europetravel\.com/.test(allA)) fail('the refund answer does not name the contact address');
   if (/gmail\.com/i.test(allA)) fail('a personal address is printed in the FAQ');
-  // Carta stopped pricing flights; an answer that still sells fares is a lie
+  // Viantra stopped pricing flights; an answer that still sells fares is a lie
   // about the product, which is the failure this FAQ exists to avoid.
   const allQ = (await page.locator('.account-faq-q').allInnerTexts()).join(' ');
   for (const stale of ['Ryanair', 'Wizz', 'on the map']) {

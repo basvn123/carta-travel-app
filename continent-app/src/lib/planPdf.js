@@ -14,7 +14,7 @@
  *   route      the line through the stops, then every stop with its nights
  *              and bed, and every hop with its way and figure
  *   days       one line a day: where, which date, what is planned
- *   before     the tips Carta researched for these countries and this month
+ *   before     the tips Viantra researched for these countries and this month
  *   credits    the photographs and the date
  */
 import { createPdf, fileSlug, clean } from './pdfKit.js';
@@ -60,7 +60,7 @@ export async function downloadPlanPdf({
   const last = stops[stops.length - 1];
   const name = clean(label || stops.map((s) => s.dest.city).slice(0, 3).join(', '));
   const kit = await createPdf({
-    footerLabel: `Carta, ${name}`,
+    footerLabel: `Viantra, ${name}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
     partnerNote: t('partner.pdfNote'),
   });
@@ -70,7 +70,7 @@ export async function downloadPlanPdf({
     ? t('plan.dateRange', { a: longDate(first.arriveDate, lang), b: longDate(last.departDate, lang) })
     : '';
   const photos = [];
-  // Carta's flight each way (T518) and the airline names to write it with.
+  // Viantra's flight each way (T518) and the airline names to write it with.
   const cartaFlight = priced.cartaFlight || null;
   const airlines = cartaFlight?.out || cartaFlight?.back ? await loadAirlines().catch(() => ({})) : {};
 
@@ -118,7 +118,7 @@ export async function downloadPlanPdf({
       kit.para(how, { size: 9.5, color: C.text2, after: 2 });
       return;
     }
-    // The flight Carta priced (T518): airline, flight number, times, the day.
+    // The flight Viantra priced (T518): airline, flight number, times, the day.
     const who = [airlines?.[leg.airline]?.name || leg.airline, leg.flightNo].filter(Boolean).join(' ');
     kit.para(
       [who, t('flight.times', { dep: leg.dep, arr: leg.arr }), longDate(leg.date, lang)].filter(Boolean).join(', '),

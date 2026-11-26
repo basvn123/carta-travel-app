@@ -1,5 +1,5 @@
 // Headless verify of the guided Day-planner landing: stay -> when -> how,
-// then the Carta chat planner all the way to importing a route onto the map.
+// then the Viantra chat planner all the way to importing a route onto the map.
 //
 // Both external calls are intercepted so the run is deterministic and costs
 // nothing: Nominatim (address search) and the plan-day Edge Function.
@@ -147,14 +147,14 @@ async function run(label, viewport) {
   // ---- step 1: stay ----
   check(`${label}: step 1 asks one question`, (await page.locator('.day-flow-q').count()) === 1);
   check(`${label}: intro copy is not on screen`,
-    (await page.getByText(/Carta pins it on the map/i).count()) === 0);
+    (await page.getByText(/Viantra pins it on the map/i).count()) === 0);
   check(`${label}: date field not shown yet`, (await page.locator('.day-flow-date').count()) === 0);
   await page.screenshot({ path: `${SHOTS}/g1-${label}-stay.png` });
   // Help button reveals the explanation that used to sit on the page.
   await page.locator('.day-flow-help').click();
   await page.waitForTimeout(400);
   check(`${label}: help button reveals the intro copy`,
-    (await page.getByText(/Carta pins it on the map/i).count()) >= 1);
+    (await page.getByText(/Viantra pins it on the map/i).count()) >= 1);
   await page.screenshot({ path: `${SHOTS}/g2-${label}-help.png` });
   await page.locator('.day-flow-help-close').click();
   await page.waitForTimeout(300);

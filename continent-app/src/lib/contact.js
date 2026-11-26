@@ -1,5 +1,5 @@
 /**
- * contact.js, the one public address for Carta (owner decision 2026-10-16,
+ * contact.js, the one public address for Viantra (owner decision 2026-10-16,
  * T461). The privacy policy names it as the controller's contact, the terms
  * and the imprint as the business address for questions and refunds.
  * Feedback inside the app never shows it: the form sends to the database.

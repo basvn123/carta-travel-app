@@ -13,7 +13,7 @@ const value = (lang, key) => {
   return m ? m[2] : null;
 };
 
-test('the band field names itself; Ask Carta stands outside it (round 2)', () => {
+test('the band field names itself; Ask Viantra stands outside it (round 2)', () => {
   const band = read('src/browse/band/ExploreBand.jsx');
   // The long hint only while it fits the field, else the short one, never
   // cut (judgement-5 follow-up); the name stays whole. Judgement-6: a

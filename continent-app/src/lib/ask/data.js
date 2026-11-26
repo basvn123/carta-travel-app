@@ -1,5 +1,5 @@
 /*
- * Ask Carta's own wires, loaded once on first use and cached for the
+ * Ask Viantra's own wires, loaded once on first use and cached for the
  * session: the lexicon (T552, public/search/ask/lexicon.json, a few KB) and,
  * when the ask index layer has shipped (T551), its manifest and BM25 index.
  * Everything that reads these works without them: no lexicon means the

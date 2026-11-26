@@ -302,6 +302,7 @@ All values in hex in one `:root` block (several readers parse hex only). Ratios 
 | `--umber-200` = `--on-plate-2` | `#e7d3bc` | Beige 2: the second line on a dark plate | 11.4 on the plate |
 | `--umber-100` = `--select-bg`, `--action-tint`, `--wagon-food` | `#f6e7d3` | Beige: the selected wash, the food wagon, tags | |
 | `--umber-50` = `--select-row` | `#faf6f1` | A selected row in a list | |
+| `--brand-mark` | `#b5532c` | The Viantra logo's terracotta arch only (K1, decision 0018); never a UI fill until the palette step | 4.3 on stone (a mark) |
 
 The umber stays by owner rule (2026-11-13). Never invent a second accent: umber is the only paint.
 

@@ -8,10 +8,10 @@
  *
  *   home      a first visit with no link opens the home page
  *   h1        exactly one visible h1, the slogan
- *   primary   exactly one visible primary button, "Ask Carta"
+ *   primary   exactly one visible primary button, "Ask Viantra"
  *   hscroll   nothing scrolls sideways
  *   hero      the film fills the page box and the window edge to edge
- *             (T620, T621), the slogan, the line and Ask Carta stand on it
+ *             (T620, T621), the slogan, the line and Ask Viantra stand on it
  *             under one tint, and nothing else sits on it or under it (no
  *             pill, no bars, no pause, no credit line)
  *   header    the app header is white on a see-through ink bar on the film
@@ -129,7 +129,7 @@ async function run(browser, vp) {
   check(k, 'hscroll', !floor.wide, floor.wide ? 'sideways scroll' : '');
 
   // The hero (T620): the film fills the page's visible box from edge to edge
-  // (a hair inside on a wider screen), the slogan, Ask Carta and the primary
+  // (a hair inside on a wider screen), the slogan, Ask Viantra and the primary
   // stand on it, and nothing sits on the film but those words.
   const hero = await page.evaluate(() => {
     const box = document.querySelector('.hv-page').getBoundingClientRect();
@@ -306,7 +306,7 @@ async function run(browser, vp) {
   }, BANNED);
   check(k, 'copy', copy.length === 0, copy.join(', '));
 
-  // Ask Carta from the hero (T621): the chat opens on Explore already asking,
+  // Ask Viantra from the hero (T621): the chat opens on Explore already asking,
   // and the question is asked once.
   await page.evaluate(() => document.querySelector('.hv-page').scrollTo(0, 0));
   await page.waitForTimeout(400);

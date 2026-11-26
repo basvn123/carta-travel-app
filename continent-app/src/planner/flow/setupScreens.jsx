@@ -218,7 +218,7 @@ export function SleepScreen({ settings, commit, doneLabel }) {
 }
 
 /** Where to sleep alone (T862, row T858-b): the stay types, from Tell
- *  Carta's stay chip. It answers the same question as the whole Lifestyle. */
+ *  Viantra's stay chip. It answers the same question as the whole Lifestyle. */
 export function StayScreen({ settings, commit, doneLabel }) {
   return (
     <>
@@ -688,9 +688,9 @@ export function BudgetScreen({ settings, commit, doneLabel }) {
   );
 }
 
-// ---- What should Carta pick (question 7, T796) ----
+// ---- What should Viantra pick (question 7, T796) ----
 
-/** A row the traveller cannot change: where to go (always Carta's) or a
+/** A row the traveller cannot change: where to go (always Viantra's) or a
  *  price line that is not measured yet. Drawn as a ChoiceRows row. */
 function FixedPickRow({ icon, label, sub, tag, on }) {
   const Glyph = icon ? AllIcons[icon] : null;
@@ -708,10 +708,10 @@ function FixedPickRow({ icon, label, sub, tag, on }) {
 }
 
 /**
- * Which price lines Carta picks (T796). Every trip is priced in full either
+ * Which price lines Viantra picks (T796). Every trip is priced in full either
  * way: a line left to the traveller still counts at its typical price. The
  * rows are config/slots.json's pickable slots; a slot not measured yet shows
- * "Not yet" and cannot be ticked, and where to go is always Carta's.
+ * "Not yet" and cannot be ticked, and where to go is always Viantra's.
  */
 export function PickScreen({ settings, commit, doneLabel }) {
   const { t } = useI18n();

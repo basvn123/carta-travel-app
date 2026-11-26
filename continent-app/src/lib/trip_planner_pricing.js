@@ -85,7 +85,7 @@ export function combineTripLegs(destA, arriveDate, destB, departDate, groupSize 
 }
 
 /** The airport side of a flight the traveller booked themselves (T278).
- *  Carta does not price their seat, but the trip still lands somewhere and
+ *  Viantra does not price their seat, but the trip still lands somewhere and
  *  ends somewhere: `inDest` is the airport they fly into (the wizard's
  *  arrival, else the routed flight's), `outDest` the one they fly home from.
  *  The ids let the planner price the airport-to-stop legs (anchorLegs); the
@@ -339,7 +339,7 @@ export function suggestNextStops(fromDest, allDests, arriveDate, {
 }
 
 /**
- * The mode Carta picks for a stop-to-stop leg nobody has chosen yet, shared by
+ * The mode Viantra picks for a stop-to-stop leg nobody has chosen yet, shared by
  * the wizard's estimate and the planner (T388): the car when the trip drives,
  * trains and buses when the traveller asked for public transport, and the leg
  * engine's own recommendation otherwise. `opts` is legTransportOptions' row.

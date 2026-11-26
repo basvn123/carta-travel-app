@@ -1,6 +1,6 @@
 // Headless check of "Add a past trip" in the Saved-trips panel: a trip that
 // already happened is typed in and must come back as an ordinary record card,
-// with the map, the ledger and the flags it would have had if Carta had
+// with the map, the ledger and the flags it would have had if Viantra had
 // planned it.
 //   1. Guest device: the record is empty, the form fills in, the saved trip
 //      appears as a visited card with its dates, and the ledger counts it.

@@ -2,7 +2,7 @@
  * The Start step's lists, without React (G12 Settings): every country a
  * traveller in Europe may start from, A to Z in the reader's language with
  * theirs on top, and a search over those countries and the towns in
- * Carta's data. The nearest town to "here" is the engine's
+ * Viantra's data. The nearest town to "here" is the engine's
  * (lib/settings/start.js nearestTown).
  */
 import { foldName, nameRank } from '../../lib/placeSearch.js';
@@ -28,7 +28,7 @@ export function orderedCountries(nameOf, home = '', locale = 'en') {
   return rows;
 }
 
-/** The towns in Carta's data as start rows, one a name and country. */
+/** The towns in Viantra's data as start rows, one a name and country. */
 export function townRows(destinations) {
   const out = [];
   const seen = new Set();

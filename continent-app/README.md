@@ -1,4 +1,4 @@
-# Carta, Europe Travel App
+# Viantra, Europe Travel App
 
 Reads `public/app_data.json` and renders an interactive map of European
 destinations priced two ways for the dates and lifestyle you pick:
@@ -68,7 +68,7 @@ the rust accent ("deal"). Click any pill to open the detail panel.
 - **Verify the flight price**, opens Aviasales and Skyscanner for the chosen
   origin, destination, and dates so you can compare against other carriers. Two
   sites rather than one because they cover different slices of the market. A
-  flight Carta shows links to Google Flights, whose price it is. For gems, the panel notes the anchor airport you fly
+  flight Viantra shows links to Google Flights, whose price it is. For gems, the panel notes the anchor airport you fly
   into and the ground transfer time.
 
 ## How it works under the hood

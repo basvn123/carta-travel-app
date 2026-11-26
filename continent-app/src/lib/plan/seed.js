@@ -6,7 +6,7 @@
  * so nothing arrives as a bare country again:
  *
  *   { v: 1, source, ref: { kind, id } | null, label,
- *     places: [{ kind, id, iso2, name }],           a wish: Carta orders and sizes it
+ *     places: [{ kind, id, iso2, name }],           a wish: Viantra orders and sizes it
  *     stops: [{ dest, nights, dayActivities }],     a fixed route
  *     legModes: {}, transport: 'public'|'car'|null,
  *     when: { mode: 'exact'|'months'|'any', start, end, months, nights } | null,

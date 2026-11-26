@@ -1,5 +1,5 @@
-// G12 plan rethink, lane R6 (B7a): the "Van Carta" row behind Search more.
-// Carta's own journeys join the list only once their route is placed on
+// G12 plan rethink, lane R6 (B7a): the "Van Viantra" row behind Search more.
+// Viantra's own journeys join the list only once their route is placed on
 // catalogue towns and priced by the same engine; a journey with no base
 // towns is skipped (never invented towns); a ceiling holds; fewer than two
 // trips and no row is drawn. Run: npm test (continent-app/). Pure, made-up catalogue.

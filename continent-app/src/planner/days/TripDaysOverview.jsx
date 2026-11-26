@@ -23,7 +23,7 @@ const DAY_SHADES = ['--action', '--cost-travel', '--cost-around', '--cost-stay',
  * Your days (T672), the trip's days at a glance and what they can be made of:
  * the trip's money after TravelSpend's tiles (the total, a person a day, the
  * split), every day as a card that opens it, then for the chosen stop the
- * ideas Carta has for it in sections after GetYourGuide's rails (can't miss,
+ * ideas Viantra has for it in sections after GetYourGuide's rails (can't miss,
  * top sights, adventures, walks, cycling, the outdoors, food, what is on),
  * each one kept with a tap and put on a day with one more. Kept ideas wait in
  * their own row until they have a day. Sections the data cannot fill yet keep

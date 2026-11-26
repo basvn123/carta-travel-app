@@ -4,7 +4,7 @@
 -- author's email and its view count, for the Guides tab of the admin page.
 --
 -- WHY. Since 019 a traveller can publish a trip plan as a public guide, which
--- makes Carta a host of user content in the EU. Until now the admin had no way
+-- makes Viantra a host of user content in the EU. Until now the admin had no way
 -- to see what had been published: the public gallery (list_public_guides)
 -- shows only what a visitor sees, and nothing in the admin surface read
 -- trip_plans by visibility at all. Everything else in Phase 2 of the back end

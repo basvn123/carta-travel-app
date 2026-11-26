@@ -1,5 +1,5 @@
 /**
- * The traveller's taste profile (Carta rating v5, Layer 3): who usually
+ * The traveller's taste profile (Viantra rating v5, Layer 3): who usually
  * comes, what they go for, where they like to stay and how they travel. It
  * lives in `choices.taste`, so it rides the local storage of lib/urlState.js
  * and, signed in, `user_settings.settings` (hooks/useAccountSync.js).
@@ -66,7 +66,7 @@ export function tripLikesDiffer(saved, tripLikes) {
   return b.length > 0 && (a.length !== b.length || a.some((k, i) => k !== b[i]));
 }
 
-/** True when nothing is answered at all (the chip asks "Tell Carta what you like"). */
+/** True when nothing is answered at all (the chip asks "Tell Viantra what you like"). */
 export function isEmptyTaste(raw) {
   const t = normalizeTaste(raw);
   return !t.party && !t.likes.length && !t.size && !t.quiet && !t.lifestyle && !t.noCar;

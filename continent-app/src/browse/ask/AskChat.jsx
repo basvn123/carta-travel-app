@@ -26,7 +26,7 @@ import '../../styles/75-ask.css';
 import '../../styles/76-ask-chat.css';
 
 /**
- * Ask Carta as a chat (T570): one panel that opens from the Ask Carta button
+ * Ask Viantra as a chat (T570): one panel that opens from the Ask Viantra button
  * and closes again, holding conversations kept on this device. Desktop: a
  * column docked on the right under the header, beside the list it answers
  * about (not modal; Escape closes it). Phone: a full-screen sheet with its
@@ -187,7 +187,7 @@ export default function AskChat(props) {
   const [text, setText] = React.useState('');
   // T573: Explore's filters are offered, never assumed: a question asked
   // with "Keep" answers within them and says so; "Ignore" (the default)
-  // asks all of Carta. The turn keeps which it was.
+  // asks all of Viantra. The turn keeps which it was.
   const filterLabels = filters?.labels || [];
   const filterText = filterLabels.length
     ? new Intl.ListFormat(lang, { type: 'conjunction' }).format(filterLabels) : '';

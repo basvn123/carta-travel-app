@@ -20,7 +20,7 @@ test("the page carries every credit, every layer, the count and no script", asyn
   for (const a of f.credits) assert.ok(html.includes(a.source.replace(/&/g, "&amp;")), `credit ${a.source}`);
   for (const l of f.layers) assert.ok(html.includes(l.label), l.label);
   assert.ok(html.includes(f.destinations.toLocaleString("en-GB")));
-  assert.ok(html.includes(`The ${f.credits.length} sources Carta credits`));
+  assert.ok(html.includes(`The ${f.credits.length} sources Viantra credits`));
   assert.ok(!/<script/i.test(html));
   assert.ok(!html.includes("{n}") && !html.includes("{pct}"), "no unfilled template slot");
 });

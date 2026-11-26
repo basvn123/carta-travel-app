@@ -89,10 +89,10 @@ export function showPassMoment({ on, priced, paid, later = { until: 0, count: 0 
  * Each line is true of the product today (HANDBOOK, The Pass): planning,
  * prices, share links and planning together are free (T488-b); free keeps
  * one saved trip (useTripSave) and every GPX file (pass.subExport); the free
- * Carta bot plans are TIERS.free.aiPlans, once for the account.
+ * Viantra bot plans are TIERS.free.aiPlans, once for the account.
  */
 /**
- * The Carta bot line of the free list (T1171-d). A signed in traveller whose
+ * The Viantra bot line of the free list (T1171-d). A signed in traveller whose
  * balance is known sees the plans left; a guest, or a failed read, sees the
  * starting number from pricing.js.
  */

@@ -38,7 +38,7 @@ import { useAuth } from '../../auth/AuthContext.jsx';
  *   onNavigate(view)   'trip' | 'day' | 'trips'  (App's goTo)
  *   onCreated()        the trip exists: open it in the trip planner
  *   onAddPast()        My trips' past-trip form (T659)
- *   onOpenJourney(id)  one of Carta's own trips, its whole week (T752)
+ *   onOpenJourney(id)  one of Viantra's own trips, its whole week (T752)
  *   onOpenPlan(id)     an account trip, through App's open-saved-trip path
  *   destinations       the catalogue by id, for a trip's first photo and towns
  *   openAt             a door's request: { screen: 'carta', ... } or, G12 B2,
@@ -69,7 +69,7 @@ export function PlanFlow({
   const stepRef = useRef(null);
   useStepIn(stepRef, screen);
   usePickTick(stepRef);
-  // T1030: Explore's doors and a closed trip page open Carta's own trips
+  // T1030: Explore's doors and a closed trip page open Viantra's own trips
   // here (openAt: { screen: 'carta', style, cc, n }), the one trip library.
   const [cartaStart, setCartaStart] = useState(null);
   useEffect(() => {
@@ -135,7 +135,7 @@ export function PlanFlow({
     rememberPlace('opening', tripsStore.getActiveId(), null);
     if (onCreated) onCreated();
   };
-  /** G12 B2 (lane L4, S7): a trip with bookings Carta can place lands on
+  /** G12 B2 (lane L4, S7): a trip with bookings Viantra can place lands on
    *  the trip page they make (doors.js bookedTrip), the booked flight and
    *  stays the traveller's own, the rest priced; false when they place nothing. */
   const landBooked = (s) => {
@@ -250,7 +250,7 @@ export function PlanFlow({
     );
   }
 
-  // Carta's own trips (T752): a full page of its own, like the opening.
+  // Viantra's own trips (T752): a full page of its own, like the opening.
   if (screen === 'carta') {
     return (
       <div className="pf is-carta" ref={sheetRef}>
@@ -469,9 +469,9 @@ function useHomeTrips(destinations) {
 }
 
 /**
- * I'm on a trip now (T659): plan a day of a trip already in Carta, add the
+ * I'm on a trip now (T659): plan a day of a trip already in Viantra, add the
  * trip as it stands (what is booked, where you are, until when) so it stays
- * up to date even if Carta was not used before leaving, or plan today right
+ * up to date even if Viantra was not used before leaving, or plan today right
  * where you are. The first and last open the day planner, whose start offers
  * the saved trips and "Use my location"; the middle runs the setup questions.
  */

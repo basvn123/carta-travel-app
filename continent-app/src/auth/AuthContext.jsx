@@ -97,7 +97,7 @@ export function AuthProvider({ children }) {
     };
   }, []);
 
-  // T1104 (ROADMAP I5): kept trips, bookmarked Carta trips, trips in
+  // T1104 (ROADMAP I5): kept trips, bookmarked Viantra trips, trips in
   // progress and the device trip follow the signed-in account
   // (auth/accountSync.js, migration 065). Loaded only once somebody is
   // signed in, so a guest's first paint carries none of it.
@@ -318,7 +318,7 @@ export function AuthProvider({ children }) {
     // other table with the traveller's rows, so the two reads below are only
     // for a project that has not pasted 069 yet.
     if ((Number(data?.schema) || 0) >= 4) return { ...data, account };
-    // T575: Ask Carta's chats in the account, read under their own RLS (054).
+    // T575: Ask Viantra's chats in the account, read under their own RLS (054).
     // A project without the table has none to give; any other failure stops
     // the export rather than hand over a file that leaves something out.
     let askChats = [];

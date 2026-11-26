@@ -7,7 +7,7 @@ import { fmtDate } from './parts.jsx';
 
 /**
  * Plan (T935, the owner-approved spec): the plan held, its price and when it
- * ends, the allowances Carta counts, Change plan, and the plans from the real
+ * ends, the allowances Viantra counts, Change plan, and the plans from the real
  * catalogue (lib/pricing.js TIERS, the client mirror of plan_tiers).
  *
  * Both passes are one payment that runs to its end date and never renews

@@ -1,5 +1,5 @@
 /*
- * Ask Carta's reply, kept short (T583, owner 2026-10-22: "more simple, more
+ * Ask Viantra's reply, kept short (T583, owner 2026-10-22: "more simple, more
  * clean, less scroll", "Short answer, then ask"). Pure helpers for the chat
  * turn: the written answer cut to its first few sentences, one plain line
  * when no written answer came, the pace of the word-by-word reveal, and the

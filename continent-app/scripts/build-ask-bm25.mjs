@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * build-ask-bm25.mjs: the BM25 half of the Ask Carta index (T551).
+ * build-ask-bm25.mjs: the BM25 half of the Ask Viantra index (T551).
  *
  * Reads public/search/ask/manifest.json and the passages-<src>.json files
  * pipeline/ask_index_layer.py wrote, builds one MiniSearch index over them

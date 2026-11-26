@@ -18,7 +18,7 @@ import { dayReceiptFigures } from '../lib/dayTickets.js';
  *   DayStrip        the phone drawer's 72 px strip: the day's name and facts,
  *                   and the figure, a tap away from the receipt
  *   DayReceiptSheet the compact receipt: bed, food and drink, the tickets
- *                   Carta knows, the total for the party, the figure a person
+ *                   Viantra knows, the total for the party, the figure a person
  *
  * The day's figure is the cost index's bed plus food a person a day at the
  * traveller's Lifestyle (the figure Explore prints for the town), plus the

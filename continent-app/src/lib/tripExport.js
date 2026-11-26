@@ -36,7 +36,7 @@ const MODE_WORD = {
 };
 const modeWord = (mode) => MODE_WORD[mode] || mode;
 
-/** "Vueling VY1234, 21:55 to 23:59, Fri 16 Oct 2026": the flight Carta priced
+/** "Vueling VY1234, 21:55 to 23:59, Fri 16 Oct 2026": the flight Viantra priced
  *  for one way (T518), from priced.cartaFlight, or '' when there is none. */
 function cartaLegText(leg, airlines) {
   if (!leg?.cost) return '';
@@ -52,7 +52,7 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
   const last = stopDetails[stopDetails.length - 1];
   if (first?.arriveDate) lines.push(`${fmtLong(first.arriveDate)} to ${fmtLong(last?.departDate)}`);
   lines.push('');
-  // The flight Carta priced each way (T518): Google Flights' fare, airline
+  // The flight Viantra priced each way (T518): Google Flights' fare, airline
   // and times. Without one, the route alone, as before.
   const cfOut = cartaFlight?.out?.cost ? cartaFlight.out : null;
   const cfBack = cartaFlight?.back?.cost ? cartaFlight.back : null;
@@ -70,13 +70,13 @@ export function tripSummaryText({ label, stopDetails, flight, anchorLegs, driveL
   else if (flight?.combinable) lines.push(`Fly home ${flight.out_anchor} to ${flight.origin}`);
   if (flight?.driving && driveLegs?.home) lines.push(`Drive home from ${last?.dest?.city} (${driveLegs.home.road_km} km)`);
   if (flight && !flight.combinable && !flight.own && !flight.driving && !tripHasCar && !cfOut && !cfBack) lines.push(`Flights: ${flightReasonLabel(flight.reason)}`);
-  if (cfOut || cfBack) lines.push('Flight prices are Google Flights fares when Carta checked them; they may have changed.');
+  if (cfOut || cfBack) lines.push('Flight prices are Google Flights fares when Viantra checked them; they may have changed.');
   if (grandTotal != null) {
     lines.push('');
     lines.push(`Estimated total for ${groupSize} ${groupSize === 1 ? 'person' : 'people'}: ${eurExact(grandTotal)}`);
   }
   lines.push('');
-  lines.push('Planned with Carta.');
+  lines.push('Planned with Viantra.');
   return lines.join('\n');
 }
 
@@ -139,7 +139,7 @@ export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flight
   const first = stopDetails[0];
   const last = stopDetails[stopDetails.length - 1];
   const rows = [];
-  // The flight Carta priced each way (T518), Google Flights' fare.
+  // The flight Viantra priced each way (T518), Google Flights' fare.
   const cfOut = cartaFlight?.out?.cost ? cartaFlight.out : null;
   const cfBack = cartaFlight?.back?.cost ? cartaFlight.back : null;
   const cfRow = (word, leg) => `<tr><td>${word}: ${esc(leg.from)} &rarr; ${esc(leg.to)}, ${esc(cartaLegText(leg, airlines))}</td><td>${esc(eurExact(leg.cost.total))}</td></tr>`;
@@ -148,7 +148,7 @@ export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flight
   if (cfOut) {
     rows.push(cfRow('Flight out', cfOut));
   } else if (flight?.combinable) {
-    // Carta does not price flights (T273): the route, and no figure.
+    // Viantra does not price flights (T273): the route, and no figure.
     rows.push(`<tr><td>Flight out: ${esc(flight.origin)} &rarr; ${esc(flight.into_anchor)}</td><td class="note">not priced</td></tr>`);
   } else if (flight?.own) {
     const when = flight.out_date ? `, ${esc(fmtLong(flight.out_date))}${flight.ret_date ? ` &rarr; ${esc(fmtLong(flight.ret_date))}` : ''}` : '';
@@ -172,7 +172,7 @@ export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flight
     const l = legs[i];
     if (i < stopDetails.length - 1 && l && l.ground_total) {
       // A hop the traveller booked themselves carries their own fare, so it
-      // must not go out on the receipt labelled as one of Carta's estimates.
+      // must not go out on the receipt labelled as one of Viantra's estimates.
       const qual = l.modes?.[l.mode]?.own ? 'booked' : 'estimate';
       rows.push(`<tr><td>${esc(s.dest?.city)} &rarr; ${esc(stopDetails[i + 1]?.dest?.city)} (${esc(modeWord(l.mode))}, ${qual})</td><td>${esc(eurExact(l.ground_total))}</td></tr>`);
     }
@@ -269,8 +269,8 @@ export function tripPrintHtml({ label, stopDetails, dayPlan = [], flight, flight
   ${packHtml}
 
   <p class="foot">${cfOut || cfBack
-    ? 'Planned with Carta. Flight prices are Google Flights fares when Carta checked them; they may have changed, so confirm on Google Flights. Ground and stay costs are estimates.'
-    : 'Planned with Carta. Carta does not price flights, so a flight is in the total only when you entered what you paid. Ground and stay costs are estimates.'}</p>
+    ? 'Planned with Viantra. Flight prices are Google Flights fares when Viantra checked them; they may have changed, so confirm on Google Flights. Ground and stay costs are estimates.'
+    : 'Planned with Viantra. Viantra does not price flights, so a flight is in the total only when you entered what you paid. Ground and stay costs are estimates.'}</p>
 </body></html>`;
 }
 

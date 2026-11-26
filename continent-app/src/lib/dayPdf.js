@@ -46,7 +46,7 @@ export async function downloadDayPdf({
   if (!stops.length) return;
   const name = clean(label || stops.map((s) => cityLabel(s.dest?.city || '')).filter(Boolean).join(', '));
   const kit = await createPdf({
-    footerLabel: `Carta, ${name}`,
+    footerLabel: `Viantra, ${name}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
     partnerNote: t('partner.pdfNote'),
   });

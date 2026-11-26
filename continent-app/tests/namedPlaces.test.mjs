@@ -1,4 +1,4 @@
-// T859: the places Tell Carta's words name carry through. They are the trip
+// T859: the places Tell Viantra's words name carry through. They are the trip
 // finder's only places (lib/recommend/candidates.js namedPool), they skip
 // Help me choose's where questions (flowGraph guideScreens), two or more are
 // a shortlist the trips come from. (The wizard's hand-over test, draftFor,

@@ -16,7 +16,7 @@
  *
  * Pages are plain static files (no Function, no app shell): a complete HTML
  * document that carries the design tokens from src/styles/01-tokens.css inline,
- * so it looks like Carta and needs nothing else. Drafts never reach the feed or
+ * so it looks like Viantra and needs nothing else. Drafts never reach the feed or
  * the sitemap, and their pages say noindex. Publishing is the owner's: a post
  * goes live when its `status:` is changed from draft to published in a pull
  * request, after scripts/blog/check_draft.py passes.
@@ -141,7 +141,7 @@ const doc = ({ title, description, canonical, noindex, graph, body, card = SITE_
 <meta name="description" content="${esc(description)}">
 <link rel="canonical" href="${esc(canonical)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-${noindex ? '<meta name="robots" content="noindex,follow">\n' : ''}<link rel="alternate" type="application/rss+xml" title="Carta blog" href="${ORIGIN}/blog/rss.xml">
+${noindex ? '<meta name="robots" content="noindex,follow">\n' : ''}<link rel="alternate" type="application/rss+xml" title="Viantra blog" href="${ORIGIN}/blog/rss.xml">
 <meta property="og:type" content="${type}">
 <meta property="og:url" content="${esc(canonical)}">
 <meta property="og:title" content="${esc(title)}">
@@ -161,7 +161,7 @@ ${body}
 `;
 
 const dateText = (d) => new Date(`${d}T12:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
-const top = () => `<div class="bl-top"><a class="bl-brand" href="/"><span class="bl-blaze" aria-hidden="true"></span>Carta</a><span class="bl-nav"><a href="/blog/">${esc(t('blog.title'))}</a><a href="/blog/rss.xml">${esc(t('blog.rss'))}</a></span></div>`;
+const top = () => `<div class="bl-top"><a class="bl-brand" href="/"><span class="bl-blaze" aria-hidden="true"></span>Viantra</a><span class="bl-nav"><a href="/blog/">${esc(t('blog.title'))}</a><a href="/blog/rss.xml">${esc(t('blog.rss'))}</a></span></div>`;
 
 export function postPage(p, { draft }) {
   const html = renderMarkdown(p.body, { data: p.data, resolveSrc: (s) => (/^https:\/\//.test(s) ? s : `/blog/${p.slug}/${s.replace(/^\.?\//, '')}`) });
@@ -179,7 +179,7 @@ ${html}
 <p class="bl-foot"><a href="/blog/">${esc(t('blog.all'))}</a></p>
 </main>`;
   return doc({
-    title: `${clean(p.title)} | Carta`.length <= 70 ? `${clean(p.title)} | Carta` : clean(p.title),
+    title: `${clean(p.title)} | Viantra`.length <= 70 ? `${clean(p.title)} | Viantra` : clean(p.title),
     description: fitDescription([p.description]),
     canonical: `${ORIGIN}${postPath(p.slug)}`,
     noindex: draft,
@@ -200,7 +200,7 @@ ${top()}
 ${list.length ? `<ul class="bl-list">${items}</ul>` : `<p>${esc(t('blog.empty'))}</p>`}
 </main>`;
   return doc({
-    title: `${t('blog.title')} | Carta`,
+    title: `${t('blog.title')} | Viantra`,
     description: t('blog.lead'),
     canonical: `${ORIGIN}/blog/`,
     noindex: !list.some((p) => p.status === 'published'),
@@ -233,7 +233,7 @@ export function build({ content, out, drafts = false }) {
     fs.copyFileSync(path.join(APP, 'src', 'assets', 'fonts', f), path.join(out, 'blog', 'fonts', f));
   }
   const feedPosts = published.map((p) => ({ slug: p.slug, title: stripDashes(p.title), description: stripDashes(p.description), date: p.date }));
-  write(path.join(out, 'blog', 'rss.xml'), rssFeed(feedPosts, { title: 'Carta blog', description: t('blog.lead') }));
+  write(path.join(out, 'blog', 'rss.xml'), rssFeed(feedPosts, { title: 'Viantra blog', description: t('blog.lead') }));
   if (published.length) write(path.join(out, 'sitemap-blog-en.xml'), blogSitemap(feedPosts));
   const report = { posts: all.length, shown: shown.length, published: published.length, drafts: shown.length - published.length, sitemap: published.length > 0 };
   write(path.join(out, '_blog.json'), `${JSON.stringify(report, null, 2)}\n`);

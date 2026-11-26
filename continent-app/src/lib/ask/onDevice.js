@@ -1,5 +1,5 @@
 /*
- * Ask Carta, on device (T557): an open model in the traveller's own browser.
+ * Ask Viantra, on device (T557): an open model in the traveller's own browser.
  *
  * The written answer (generate.js) asks this module first. When the
  * traveller switched it on and the model is loaded in this tab, the answer
@@ -14,7 +14,7 @@
  *   - WebLLM (@mlc-ai/web-llm, Apache-2.0) is never in the main bundle. It
  *     loads by dynamic import and in its own Web Worker, the first time
  *     install() or ensureLoaded() runs.
- *   - The model files come from Carta's own data host (the CSP allows no
+ *   - The model files come from Viantra's own data host (the CSP allows no
  *     other), under VITE_ASK_MODEL_BASE. VITE_ASK_MODEL_BASE=hf points a dev
  *     server at Hugging Face and the MLC GitHub libraries instead.
  *

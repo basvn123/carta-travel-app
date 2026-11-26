@@ -1,5 +1,5 @@
 /**
- * Carta's own hand-drawn region boxes (pipeline/search_index_layer.py:
+ * Viantra's own hand-drawn region boxes (pipeline/search_index_layer.py:
  * Provence, the Cyclades, the Dolomites...) from search_index.json, one
  * entry per region with every key it answers to. GeoNames' admin1 regions
  * miss most of these, which are the ones travellers type.

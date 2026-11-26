@@ -25,7 +25,7 @@ const RETRIEVE = makeRetriever();
 const ON_DEVICE = import.meta.env?.VITE_ASK_ON_DEVICE === '1';
 
 /**
- * Ask Carta, the whole panel (T558; loaded on first use by AskSearch.jsx): one box where a traveller types any question ("1,500 for
+ * Ask Viantra, the whole panel (T558; loaded on first use by AskSearch.jsx): one box where a traveller types any question ("1,500 for
  * two, 5 days in November, by train, somewhere with good food") and gets a
  * full answer. It replaces the guided search trigger and the budget card on
  * Explore and keeps both inside it: the five slots and the trip's party,
@@ -34,7 +34,7 @@ const ON_DEVICE = import.meta.env?.VITE_ASK_ON_DEVICE === '1';
  *
  * The answer, top to bottom: the question read back with its count, the
  * written answer (an open model, checked sentence by sentence against
- * Carta's own figures; its absence is said in one line), the places as
+ * Viantra's own figures; its absence is said in one line), the places as
  * Explore's own rows, the month or comparison table, the honesty lines,
  * Refine, and one primary that hands the question to Explore (or to Plan).
  *

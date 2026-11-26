@@ -161,7 +161,7 @@ const DATA = new URL("../public/app_data.json", import.meta.url);
 const raw = existsSync(DATA) ? JSON.parse(readFileSync(DATA, "utf8")) : null;
 const skip = raw ? false : "public/app_data.json is not on this machine";
 
-test("a trip's total carries Carta's flight there and home, and a typed fare replaces it", { skip }, () => {
+test("a trip's total carries Viantra's flight there and home, and a typed fare replaces it", { skip }, () => {
   const data = withOriginRoutes(raw, "BRU");
   const bcn = Object.values(data.destinations).find((d) => destAnchor(d) === "BCN" && d.iata === "BCN");
   assert.ok(bcn, "Barcelona is in the catalogue");

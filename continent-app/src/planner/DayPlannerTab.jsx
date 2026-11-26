@@ -85,7 +85,7 @@ import { SAVED_MOCK } from './days/dayPlannerData.js';
 import { DayPlannerStart } from './days/DayPlannerStart.jsx';
 import { DayBody } from './days/DayBody.jsx';
 
-// How the explore search & "Let Carta guide you" name each pin category.
+// How the explore search & "Let Viantra guide you" name each pin category.
 // i18n keys, resolved with t() at render time.
 const EXPLORE_CAT_KEY = { town: 'day.catTown', beach: 'day.catBeach', sight: 'day.catSight', active: 'day.catActive' };
 
@@ -133,7 +133,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   sharedDayRaw = null, onSharedDayConsumed = null,
 }) {
   const { t, lang } = useI18n();
-  // Towns the traveller asked Carta to research (discoveredStore.js). They are
+  // Towns the traveller asked Viantra to research (discoveredStore.js). They are
   // real destinations from here on: pins, POI lists, search hits and plan
   // stops all read them out of the same map as the catalogue.
   const [discovered, setDiscovered] = useState(loadDiscovered);
@@ -178,20 +178,20 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const [stopIdx, setStopIdx] = useState(0);
   const [dayIdx, setDayIdx] = useState(0);
   const [assignments, setAssignments] = useState({}); // { [stopIdx]: { [dayIdx]: [activityIdx,...] } }
-  // Carta-plan answers (null until asked) + whether the inline plan panel
+  // Viantra-plan answers (null until asked) + whether the inline plan panel
   // (the "Shape day N" questions in the rail) is open.
   const [prefs, setPrefs] = useState(null);
   // The AI day-planner dialog (plan-day Edge Function). Applied AI schedules
   // live in prefs.aiPlans keyed "stopIdx:dayIdx", so they survive reloads and
   // ride the same per-plan cloud sync as every other answer.
   const [aiOpen, setAiOpen] = useState(false);
-  // T823: "Let Carta plan them" plans the whole trip: { phase: init | run |
+  // T823: "Let Viantra plan them" plans the whole trip: { phase: init | run |
   // done | stopped | fail, list: [[stop, day]], i, planned, code, preset }.
   const [autoQueue, setAutoQueue] = useState(null);
   const autoBusy = useRef(false);
   // T672: the trip's days overview instead of one day.
   const [overview, setOverview] = useState(false);
-  // Carta keeps the walking order optimal on every add ('auto'); manual
+  // Viantra keeps the walking order optimal on every add ('auto'); manual
   // reordering switches to 'manual' until "Best route" is tapped again.
   const [routeMode, setRouteMode] = useState('auto');
   const [shareState, setShareState] = useState('idle'); // idle | copied
@@ -267,7 +267,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const [newStayPoint, setNewStayPoint] = useState(null);
   // The landing is a guided flow, one decision per screen, so nothing is on
   // show before it is needed: stay -> when -> how, then either the manual
-  // explore map or the Carta chat planner.
+  // explore map or the Viantra chat planner.
   const [landingStep, setLandingStep] = useState('stay');
   // Step 3's answer: places the traveller already knows they want. Both
   // planning modes read it, so it lives here rather than inside the step.
@@ -434,8 +434,8 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
           setPrefs(merged);
           persistPrefs(planKey, merged);
           if (rhythm.detail) setDetailState(rhythm.detail);
-          // "Let Carta plan the days": the first day opens with Carta at work.
-          // T823 (owner 2026-10-29): Carta plans every day, one by one; the
+          // "Let Viantra plan the days": the first day opens with Viantra at work.
+          // T823 (owner 2026-10-29): Viantra plans every day, one by one; the
           // queue below walks the trip's days. A guest sees the bot's form,
           // which says it needs an account.
           if (autoFill && ((user && authConfigured) || AI_PLAN_MOCK != null)) {
@@ -444,9 +444,9 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
             setBotPreset({ ...dayAiPreset(tripSettings), autoRun: true });
             setAiOpen(true);
           }
-          // T896: Plan with the Carta bot opens the first day with the bot.
+          // T896: Plan with the Viantra bot opens the first day with the bot.
           if (wantBot) { setBotPreset({ ...dayAiPreset(tripSettings), autoRun: false }); setAiOpen(true); }
-          // An empty day opens on its places, unless Carta is about to fill it.
+          // An empty day opens on its places, unless Viantra is about to fill it.
           setAdding(onDay.length || wantOverview || autoFill || wantBot ? null : 'end');
           setDrawer('half');
         }
@@ -719,7 +719,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
    */
   // T828: a town whose shard is already on its way is waited for, not
   // answered with what is here. The day planner asks for the town as soon as
-  // it opens; Carta's first day asked again a moment later and got the short
+  // it opens; Viantra's first day asked again a moment later and got the short
   // placeholder list (8 places, no candidates), so a day right after a
   // reload said "too few places" in a town of 52.
   const poiPendingRef = useRef(new Map());
@@ -897,7 +897,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     mapView, poiQuery, showSel, stop, stopIdx, t,
   });
 
-  // Carta's own deterministic draft for THIS city, never the whole plan. It
+  // Viantra's own deterministic draft for THIS city, never the whole plan. It
   // is the fallback behind the AI planner: same answers, no network, no
   // quota, so the planner button always ends in a planned day. scope 'day'
   // drafts only the selected day (places already laid into the city's other
@@ -1055,7 +1055,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   const { intel, stayAnchor, dayTripFrom, rideMinutes, dayTripView } = useDayTrip({ activities, countryInsights, data, destinations, plan, stop });
 
-  // The traveller's chosen way there (persisted per city); Carta's
+  // The traveller's chosen way there (persisted per city); Viantra's
   // recommendation until they tap a different mode in the compare panel.
   const tripMode = useMemo(() => {
     const saved = prefs?.tripModes?.[stopIdx];
@@ -1101,7 +1101,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // Adding a stop never reorders the day behind the traveller's back (owner
   // T492-e): it goes to the end of the part of the day it was added from
   // (the "Add" on that part), or to the end of the day. "Best route" is the
-  // one way Carta reorders, and it asks first. Removing drops it in place.
+  // one way Viantra reorders, and it asks first. Removing drops it in place.
   const toggleActivity = (itemIdx) => {
     const current = assignments[stopIdx]?.[dayIdx] || [];
     if (current.includes(itemIdx)) {
@@ -1154,7 +1154,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   // A tap move (no drag): inside a part it swaps with the neighbour, at the
   // edge of a part it crosses into the next. A deliberate order switches the
-  // route to manual so Carta stops offering to rearrange it unasked.
+  // route to manual so Viantra stops offering to rearrange it unasked.
   const moveAssigned = (pos, dir) => {
     const current = assignments[stopIdx]?.[dayIdx] || [];
     const r = moveStopInDay({ order: current, pins: dayPins, i: pos, dir, bandsFor: bandsForOrder });
@@ -1382,7 +1382,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   // on the same card move the map again.
   const [flyPoi, setFlyPoi] = useState(null); // { idx, lat, lon, k }
   useEffect(() => { setFlyPoi(null); }, [stopIdx, dayIdx, plan?.id]);
-  // A predefined ask handed to the Carta bot, so a one-tap question does not
+  // A predefined ask handed to the Viantra bot, so a one-tap question does not
   // land the traveller in a blank questionnaire.
   const [botPreset, setBotPreset] = useState(null);
   // Turning a one-city day plan into a multi-city one, from the day bar where
@@ -1556,7 +1556,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
   const SAME_TOWN_KM = 3;
 
   /**
-   * "Carta doesn't have this town, go and get it." Harvests the place from
+   * "Viantra doesn't have this town, go and get it." Harvests the place from
    * open data (see lib/cityResearch.js), stores it on this device and returns
    * the destination id, which from here on is an ordinary id: the wizard, the
    * map, the POI picker and saved plans all take it without knowing it was
@@ -1801,7 +1801,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
 
   // Landing (T433): the trip planner's own wizard frame, five steps. Start,
   // Days, Ideas and How are questions; the fifth is where the flow hands
-  // over, to Carta's questions or to the places to pick from. Back is in the
+  // over, to Viantra's questions or to the places to pick from. Back is in the
   // footer on every step, the done steps are tappable on the rail, and the
   // day plans already on this device sit under the first question.
   if (!plan) {
@@ -1996,7 +1996,7 @@ export const DayPlannerTab = React.memo(function DayPlannerTab({
     />
   );
 
-  // T899: the Carta bot, a chat beside the day (DayBotChat), in place of
+  // T899: the Viantra bot, a chat beside the day (DayBotChat), in place of
   // the AiDayPlanModal form.
   const botOn = aiOpen && Boolean(stop);
   const botChat = botOn ? (

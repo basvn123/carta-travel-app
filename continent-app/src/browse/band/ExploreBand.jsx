@@ -53,7 +53,7 @@ function usePresence(open, token = '--dur-1') {
  *             search button at the right end (Enter does the same); no
  *             magnifier on the left. In a searched list a back arrow sits
  *             at its left end and the query stays in it.
- *   Ask       Ask Carta beside the field on every width ("Ask" on a phone):
+ *   Ask       Ask Viantra beside the field on every width ("Ask" on a phone):
  *             a side panel on a desktop, a sheet on a phone; lit while open,
  *             never opened on its own.
  *   desktop   row 1 field, Ask and Settings (Places), all 48 tall; row 2
@@ -192,7 +192,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
     setEdited(false);
     setQ('');
   }, []);
-  // Enter and the search button search. A question is offered to Ask Carta
+  // Enter and the search button search. A question is offered to Ask Viantra
   // in the panel; it is never sent there on its own (decision.md 1).
   const submit = (e) => {
     e?.preventDefault?.();
@@ -361,7 +361,7 @@ export function ExploreBand({ head = null, places, onSearch, onPickCategory }) {
               </form>
               {panel}
             </div>
-            {/* Ask Carta stands beside the field: it opens a panel, so it
+            {/* Ask Viantra stands beside the field: it opens a panel, so it
                 says so (aria-haspopup) and stays lit while that is open. */}
             <Pressable className={`band-ask${ask.open ? ' is-on' : ''}`} aria-label={t('dock.ask')}
               aria-haspopup="dialog" aria-expanded={ask.open} onClick={toggleAsk}>

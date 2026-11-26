@@ -6,7 +6,7 @@
 // Tracker: Sentry EU (de.sentry.io) or a self-hosted GlitchTip. Both accept
 // the same envelope, so the DSN decides, not the code. We do not ship the
 // Sentry SDK: its defaults (IP capture, breadcrumbs, request headers, replay)
-// are the opposite of what Carta wants, and it costs about 25 KB gzipped.
+// are the opposite of what Viantra wants, and it costs about 25 KB gzipped.
 // What an event may carry: error type, a scrubbed message, a stack of
 // scrubbed frames, release, environment, the boundary name. What it never
 // carries: user, IP, cookies, headers, query strings, breadcrumbs, request

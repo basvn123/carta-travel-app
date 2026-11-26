@@ -96,7 +96,7 @@ export function nextMonth(today = new Date()) {
 /**
  * Every input of a search, filled in and clamped. Only the budget has no
  * default; a query without one is not run.
- *   budget   whole euros for the whole group, everything Carta prices
+ *   budget   whole euros for the whole group, everything Viantra prices
  *   adults   12 and over; children 3 to 11 count half for beds and food
  *   days     trip days; nights = days - 1 (5 days is 4 nights)
  *   month    1 to 12
@@ -201,7 +201,7 @@ export function priceForBudget(dest, q, opts = {}) {
     days,
     there,
     // The flight behind `there`, for the receipt: the legs (airline, day,
-    // checked) and what the bags add, Carta's estimate.
+    // checked) and what the bags add, Viantra's estimate.
     flight: flight ? {
       out: flight.out, back: flight.back, total: Math.round(flight.total),
       bags: flight.bags, bagsKnown: flight.bagsKnown, transfers,
@@ -269,7 +269,7 @@ export function budgetSearch(dests, query, opts = {}, today = new Date()) {
 
 /**
  * The receipt of one result, in its fixed order: the priced lines, the
- * buffer, the total, then the lines Carta does not price yet. Every screen
+ * buffer, the total, then the lines Viantra does not price yet. Every screen
  * that shows a search total renders these lines and adds none of its own.
  */
 export function budgetReceipt(result, q) {

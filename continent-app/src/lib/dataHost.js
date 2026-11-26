@@ -58,7 +58,7 @@ export const R2_TIER = Object.freeze([
 const TIER_SET = new Set(R2_TIER);
 
 // Paths under an R2_TIER entry that stay on the app host anyway (T565, row
-// T551-b): Ask Carta's index is read by its own Pages Function from the
+// T551-b): Ask Viantra's index is read by its own Pages Function from the
 // deploy's assets (functions/api/ask.js), so the browser fetches it there
 // too and the R2 upload never carries it. stage-data.mjs moves it back.
 export const PAGES_KEEP = ['search/ask'];

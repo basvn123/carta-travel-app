@@ -3,7 +3,7 @@
  * 2026-11-12: "create some different trip settings, and then dependent on
  * who you travel with, choose one", "maybe blend those in").
  *
- * A travel style is one named bundle of the two halves Carta asks about:
+ * A travel style is one named bundle of the two halves Viantra asks about:
  *
  *   How you stay   who comes, where you sleep, how you eat and drink, how you
  *                  get there and what matters most. These are the app-wide
@@ -699,7 +699,7 @@ export const STYLE_ANSWERS = ['who', 'sleep', 'priority', 'g:persona', 'g:shape'
  * A trip's settings seeded from a style: the party, what matters most, the
  * guide answers and the day rhythm, each marked as given by the style
  * (sources[id] = 'style'), so the planner passes over them as it passes over
- * what Tell Carta's sentence answered, and the trip settings sheet shows
+ * what Tell Viantra's sentence answered, and the trip settings sheet shows
  * where they came from. An answer the traveller gave on its own screen or in
  * words is never overwritten. `normalize` and `markAnswered` are
  * tripSettings.js's own (passed in, so this module stays free of the

@@ -28,7 +28,7 @@ export {
 
 /**
  * The trip's receipt lines in one fixed order, each marked for what it is:
- * 'est' a Carta estimate, 'yours' a figure the traveller typed, 'flight'
+ * 'est' a Viantra estimate, 'yours' a figure the traveller typed, 'flight'
  * Google Flights' price with its airline and check time (`leg`), 'missing'
  * a way there or home nobody has priced yet (no flight found, or not flown).
  * Every screen and the PDF render these lines; none adds its own.

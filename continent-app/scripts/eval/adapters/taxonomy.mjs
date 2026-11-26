@@ -6,7 +6,7 @@
  * the 15-item seed set, seed-gold.csv, which the T1149 session labelled to
  * prove the eval runs; its numbers say nothing about quality.
  * Predictions: --predictions <file> (the T1150 tagger's output, format below),
- * or by default the "today's tags" baseline: every tag Carta already holds,
+ * or by default the "today's tags" baseline: every tag Viantra already holds,
  * mapped through pipeline/taxonomy/mapping.yaml (pipeline/taxonomy/taxonomy.py).
  *
  *   predictions file: { "name": "...", "threshold": 0.5 | null, "cost_eur_per_1000": 0.12 | null,

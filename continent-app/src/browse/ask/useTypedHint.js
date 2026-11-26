@@ -1,8 +1,8 @@
 /*
- * The typed hint of Ask Carta's empty field (T569, moved here by T570):
+ * The typed hint of Ask Viantra's empty field (T569, moved here by T570):
  * questions typed out and erased in turn while `on`. A hidden tab or the box
  * out of view pauses it; reduced motion never starts it (carta-design, the
- * Ask Carta exception). Returns the text to draw, '' when off.
+ * Ask Viantra exception). Returns the text to draw, '' when off.
  */
 import React from 'react';
 import { prefersReducedMotion } from '../../lib/motion.js';

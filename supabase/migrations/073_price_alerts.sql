@@ -7,7 +7,7 @@
 --
 -- Price alerts: a signed-in traveller saves an alert on a place or a trip
 -- and gets ONE email when its total falls by the share they chose (5, 10 or
--- 20 percent). The total is Carta's estimate from the stays wire and the
+-- 20 percent). The total is Viantra's estimate from the stays wire and the
 -- flight files, computed on the box after each data refresh
 -- (pipeline/price_alerts.py) with one formula for the baseline and for every
 -- later check, so the email compares like with like. The box holds only the

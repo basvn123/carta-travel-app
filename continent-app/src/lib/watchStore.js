@@ -1,7 +1,7 @@
 /**
  * Volgen: prices the traveller follows (G12, decision 6 of the My trips
  * redesign). A stay, a flight or a place's own day, each with the prices
- * Carta measured since the traveller started following it.
+ * Viantra measured since the traveller started following it.
  *
  * On the device under carta.watch.v1:
  *   { v: 1, owner: userId | null, items: { [id]: item }, removed: { [id]: ms } }
@@ -14,7 +14,7 @@
  * accountSync.js, so a project without 076 (the kind check answers 23514)
  * turns only this off and the trips keep syncing.
  *
- * A point is added only when Carta measures a price that differs from the
+ * A point is added only when Viantra measures a price that differs from the
  * last point or falls on a new day; a price that did not move on the same
  * day is the same observation.
  */
@@ -37,7 +37,7 @@ export const watchId = (kind, ref) => `${kind}:${ref}`;
 
 /* ---- the rules (pure) ---- */
 
-/** The item with Carta's new measurement { at, eur } appended, or the same
+/** The item with Viantra's new measurement { at, eur } appended, or the same
  *  item when it adds nothing. */
 export function appendPoint(item, point) {
   const eur = Number(point?.eur);
@@ -121,7 +121,7 @@ export function unwatch(id, { storage = browserStorage(), now = Date.now() } = {
   writeWatchState(storage, st);
 }
 
-/** Carta measured a price for a followed thing (the place re-priced, the
+/** Viantra measured a price for a followed thing (the place re-priced, the
  *  stay price or the flight sweep changed). True when a point was added. */
 export function recordPrice(id, point, { storage = browserStorage() } = {}) {
   const st = readWatchState(storage);
@@ -172,7 +172,7 @@ const mergePts = (a = [], b = []) => {
 
 /** Merge the device's items with the account's rows. The newer `at` wins
  *  an item's fields and a removal; the points of both copies are kept, as
- *  each is a price Carta really measured. Returns { state, rows }. */
+ *  each is a price Viantra really measured. Returns { state, rows }. */
 export function mergeWatch(local, remoteRows, userId) {
   const st = local.owner && local.owner !== userId
     ? { v: 1, owner: userId, items: {}, removed: {} }

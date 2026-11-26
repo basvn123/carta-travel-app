@@ -207,7 +207,7 @@ export function encodeState({
   // when it is not the default: the price span (ps=t, the whole trip), the
   // When mode (wm: d dates, m month, a any time, c cheapest), its month
   // (wy, 'YYYY-MM') and the trip length (wn), the Start kind (sk: h here,
-  // c country), its country (sc) and the Carta town 'here' resolved to (sh).
+  // c country), its country (sc) and the Viantra town 'here' resolved to (sh).
   if (choices?.price_span === 'trip') q.set('ps', 't');
   else if (choices?.price_span === 'day' && choices?.price_view === 'total') q.set('ps', 'd');
   const WM = { dates: 'd', month: 'm', any: 'a', cheapest: 'c' };

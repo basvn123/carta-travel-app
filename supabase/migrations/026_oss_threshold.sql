@@ -1,14 +1,14 @@
 -- Cross-border VAT: record where the buyer was, and count the distance to the
 -- EUR 10,000 one-stop-shop threshold.
 --
--- WHY THIS EXISTS. Carta sells an electronically supplied service to
+-- WHY THIS EXISTS. Viantra sells an electronically supplied service to
 -- consumers. For that kind of supply the place of supply is normally the
 -- customer's member state, which would mean registering for VAT in every
 -- country a traveller buys from. Article 59c of the VAT Directive gives a
 -- small supplier an exemption from that: while total cross-border B2C supplies
 -- of telecommunications, broadcasting and electronic services to OTHER member
 -- states stay at or below EUR 10,000, the place of supply stays in the
--- supplier's own member state, which for Carta is Belgium.
+-- supplier's own member state, which for Viantra is Belgium.
 --
 -- Crossing that figure changes the place of supply on the very transaction
 -- that crosses it, and from then on the rate follows the buyer. The practical
@@ -22,7 +22,7 @@
 -- Three things do NOT count towards it, and the function is written to exclude
 -- them: sales to buyers in Belgium (domestic, never cross-border), sales to
 -- buyers outside the EU (a different regime entirely), and B2B sales (reverse
--- charge). Carta is a consumer product and collects no VAT number, so every
+-- charge). Viantra is a consumer product and collects no VAT number, so every
 -- sale is treated as B2C, which is the conservative direction: counting a
 -- business sale as B2C makes the figure too high and warns too early rather
 -- than too late.
@@ -98,12 +98,12 @@ create index if not exists pass_grants_buyer_country_idx
 -- RLS, a policy, a seed and a migration of its own to correct. Belgium is
 -- deliberately IN the list: it is a member state, and the caller excludes it
 -- separately, so the list stays a plain statement of fact about the EU rather
--- than a statement about where Carta happens to be established. GB is absent,
+-- than a statement about where Viantra happens to be established. GB is absent,
 -- which is the point of keeping this written down: the United Kingdom left,
 -- and a sale to a British buyer is a non-EU sale that does not count towards
 -- the threshold. Note also that XI (Northern Ireland) is not here; Northern
 -- Ireland follows EU VAT rules for goods, not for electronically supplied
--- services, so it is correctly outside this list for Carta's purposes.
+-- services, so it is correctly outside this list for Viantra's purposes.
 -- ---------------------------------------------------------------------------
 create or replace function public.eu_member_states()
 returns text[]

@@ -1,6 +1,6 @@
 -- 054_ask_chats.sql
 --
--- Ask Carta's chats in the account (T575, owner 2026-10-22: "chats on
+-- Ask Viantra's chats in the account (T575, owner 2026-10-22: "chats on
 -- account"). Until now a chat lived in one browser (localStorage,
 -- src/lib/ask/sessions.js). With this table a signed-in traveller's chats
 -- follow them to a second device, the way Kayak's "Vraag AI" history does.

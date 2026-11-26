@@ -11,7 +11,7 @@
 //   { kind: 'month', month, months }  a month picked (dateFlex 'month' or xm)
 //   { kind: 'any',   month: null, months: [] }  no month: the yearly pattern
 //
-// Carta's own default dates are not the traveller's choice: they read as 'any'
+// Viantra's own default dates are not the traveller's choice: they read as 'any'
 // (carta-design "Month": a month is shown only when the traveller has one).
 
 const monthOfIso = (iso) => {

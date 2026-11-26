@@ -1,5 +1,5 @@
 /**
- * The traveller rating (Carta rating v5, Roadmap/2.10b-rating-v5.md). This is
+ * The traveller rating (Viantra rating v5, Roadmap/2.10b-rating-v5.md). This is
  * the only module that turns a score into words: every screen asks it for the
  * band, the word, the class rank line, the confidence and the POI label, so
  * one place reads the same on a card, a page, a PDF and the planner.

@@ -201,7 +201,7 @@ export function TripsForYou({ input = null, settings, trips: found, pricing = 0,
     const run = ++moreRun.current;
     setMore({ month: [], library: [], left: null });
     const ref = found[0] || null;
-    // G12 B7a (R6): Carta's own journeys that fit the window, loaded only
+    // G12 B7a (R6): Viantra's own journeys that fit the window, loaded only
     // now (a few small files), placed on catalogue towns and priced by the
     // same engine as the list; the journey library loads in its own chunk.
     // They load while the other months are priced.
@@ -335,7 +335,7 @@ export function TripsForYou({ input = null, settings, trips: found, pricing = 0,
   const tagged = cheapestId && !pinned.includes(cheapestId) ? cheapestId : null;
   // G12 L12 (decision §3.4, 0013): the past trip's own logged spend a day, as
   // a reference line only. It is the traveller's figure, not like for like
-  // with Carta's totals, so it never sets a budget, sorts, or is compared.
+  // with Viantra's totals, so it never sets a budget, sorts, or is compared.
   const band = bandFit(trips, settings.guide?.budget);
   const ref = settings.spendRef;
   const spendLine = ref?.eurPP > 0 && ref.nights > 0

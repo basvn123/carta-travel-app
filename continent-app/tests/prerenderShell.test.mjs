@@ -88,10 +88,10 @@ const SHELL = `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>What a day in Europe costs, place by place | Carta</title>
+    <title>What a day in Europe costs, place by place | Viantra</title>
     <meta name="description" content="shell" />
     <link rel="canonical" href="https://www.carta-europetravel.com/" />
-    <meta property="og:site_name" content="Carta" />
+    <meta property="og:site_name" content="Viantra" />
     <meta property="og:title" content="shell" />
     <meta property="og:image:alt" content="shell" />
     <meta name="twitter:title" content="shell" />
@@ -101,12 +101,12 @@ const SHELL = `<!doctype html>
     <div id="root"></div>
   </body>
 </html>`;
-const PAGE = `<!doctype html><html lang="en"><head>${HEAD_OPEN}<title>Attersee | Carta</title><meta name="description" content="A lake for $1 and $&amp;.">${HEAD_CLOSE}</head><body>${BODY_OPEN}<main class="pr"><h1>Attersee $&</h1></main>${BODY_CLOSE}</body></html>`;
+const PAGE = `<!doctype html><html lang="en"><head>${HEAD_OPEN}<title>Attersee | Viantra</title><meta name="description" content="A lake for $1 and $&amp;.">${HEAD_CLOSE}</head><body>${BODY_OPEN}<main class="pr"><h1>Attersee $&</h1></main>${BODY_CLOSE}</body></html>`;
 
 test("a page is laid into the shell: its tags replace the shell's, the app script stays", () => {
   const out = spliceShell(SHELL, PAGE);
   assert.equal((out.match(/<title>/g) || []).length, 1);
-  assert.ok(out.includes("<title>Attersee | Carta</title>"));
+  assert.ok(out.includes("<title>Attersee | Viantra</title>"));
   assert.ok(!out.includes('content="shell"'));
   assert.ok(out.includes('og:site_name'));
   assert.ok(out.includes('<script type="module" crossorigin src="/assets/index-abc.js"></script>'));

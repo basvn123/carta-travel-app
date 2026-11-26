@@ -4,7 +4,7 @@
 -- admin_list_content_reports().
 --
 -- WHY. Since 019 a traveller can publish a trip plan as a public guide, so
--- Carta hosts content that anyone can read. Article 16 of the Digital
+-- Viantra hosts content that anyone can read. Article 16 of the Digital
 -- Services Act requires every hosting service offered in the EU, whatever
 -- its size, to give anyone an electronic, easy to reach way to report
 -- content they consider illegal. Before this file there was none: the only

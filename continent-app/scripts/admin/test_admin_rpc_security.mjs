@@ -29,7 +29,7 @@
  *   CALLABLE. Granted to `authenticated`, so PostgREST exposes them as RPCs.
  *   These must not throw and must not do the work: they call admin_guard()
  *   first, and it returns the string 'forbidden' for anyone not in
- *   admin_users. The Carta convention is that the function then RETURNS
+ *   admin_users. The Viantra convention is that the function then RETURNS
  *   {"error": "forbidden"} rather than raising. So the assertion is on the
  *   returned payload, not on an exception. The task prompt asks for "throws a
  *   forbidden exception"; the schema does not work that way, and a test

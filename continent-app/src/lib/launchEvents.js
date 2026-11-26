@@ -71,7 +71,7 @@ export function trackAiCall(fn) {
 
 /**
  * Which partner and surface a link belongs to, or null when it is not one of
- * Carta's decorated links. Each module recognises only the decoration it adds
+ * Viantra's decorated links. Each module recognises only the decoration it adds
  * itself, so an unmarked link (no partner id configured in this build) is
  * never counted as a click that could earn.
  */

@@ -11,7 +11,7 @@
  * carries a second control of its own (T474, row T435-c). The party
  * multiplies a person's total; a fare the traveller typed in for getting to
  * the start (lib/firstRun.js own fares, keyed journey:<id>) is added once, as
- * theirs. Carta never adds a flight of its own.
+ * theirs. Viantra never adds a flight of its own.
  *
  * Pure functions only, so the node tests import them.
  */
@@ -66,7 +66,7 @@ export function lifestyleShares(lifestyle, stayTier) {
  * party, fare, carta, total, est }. perPerson is the sum of the lines when
  * every line has a figure, else the authored total at the spend share. total
  * is perPerson times the party plus the flight: the traveller's own fare, or
- * else Carta's return flight for the party (`carta`, roundTripNear(), T517).
+ * else Viantra's return flight for the party (`carta`, roundTripNear(), T517).
  */
 export function tripPrice(budget, { sleepShare = 0.5, spendShare = 0.5, days = 7, party = 1, fare = 0, carta = null } = {}) {
   if (!budget?.totalEur) return null;

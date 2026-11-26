@@ -14,7 +14,7 @@
 -- WHY A FIRST-PARTY RPC AND NOT SENTRY. Sentry (or any third-party error or
 -- analytics SDK) stores or reads identifiers in the browser and sends device,
 -- page and IP data to a processor outside this project. That is the point at
--- which Carta would need a consent banner (ePrivacy Art 5(3)) and a new
+-- which Viantra would need a consent banner (ePrivacy Art 5(3)) and a new
 -- processor in the privacy policy. This file needs neither: the client calls
 -- one RPC with the session it already holds, nothing is stored on the device,
 -- and the row carries no IP, no user agent, no page, no URL and no document

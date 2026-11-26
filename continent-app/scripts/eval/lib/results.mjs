@@ -1,5 +1,5 @@
 /*
- * The one results format for every Carta eval (T1148, ROADMAP F6).
+ * The one results format for every Viantra eval (T1148, ROADMAP F6).
  *
  * Every adapter in scripts/eval/adapters/ returns a result of this shape,
  * and scripts/eval/run.mjs writes it. Schema "carta-eval/1":

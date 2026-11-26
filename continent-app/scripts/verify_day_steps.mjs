@@ -1,5 +1,5 @@
 /**
- * verify_day_steps.mjs, the D5 gate: the Carta bot's reworked questions.
+ * verify_day_steps.mjs, the D5 gate: the Viantra bot's reworked questions.
  *
  * What this asserts, and why each one is here rather than left to review:
  *
@@ -97,7 +97,7 @@ await page.locator('.guide-next').click();                 // Days -> Ideas
 await page.waitForTimeout(600);
 await page.locator('.guide-next').click();                 // Ideas -> How (Skip)
 await page.locator('.dayw-fork-card').first().waitFor({ timeout: 30000 });
-await page.locator('.dayw-fork-card .card-open').first().click();   // Let Carta plan it
+await page.locator('.dayw-fork-card .card-open').first().click();   // Let Viantra plan it
 await page.locator('.daychat').waitFor({ timeout: 30000 });
 
 const q = () => page.locator('.wiz-q-h').first().innerText().catch(() => '');

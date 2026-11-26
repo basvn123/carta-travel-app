@@ -1,11 +1,11 @@
 /*
- * Ask Carta, stage 5: the written answer (T556). One door, two open-model
+ * Ask Viantra, stage 5: the written answer (T556). One door, two open-model
  * back ends, taken in this order:
  *
  *   1. on device   the traveller's own browser (WebGPU, lib/ask/onDevice.js,
  *                  T557), once they switched it on and the model is ready:
  *                  private, no quota, works offline
- *   2. Workers AI  /api/ask/answer, an open model on Carta's Cloudflare
+ *   2. Workers AI  /api/ask/answer, an open model on Viantra's Cloudflare
  *                  account inside the free daily Neurons
  *
  * Either way the text streams through verify.js: a sentence shows only once

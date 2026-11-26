@@ -1,4 +1,4 @@
-// T702-T711 (F6): the trip price from the engine, plan "Carta prijslogica
+// T702-T711 (F6): the trip price from the engine, plan "Viantra prijslogica
 // Explore" invariants V1 (trip), V6 (car) and the saved trip's own request.
 // Run: npm test (continent-app/)
 import test from "node:test";

@@ -137,7 +137,7 @@
 #     at the data host while this line lacks it.
 #   - https://data.carta-europetravel.com added to img-src (T516): the
 #     airline logos the flight sweep copies to R2 data/airlines/{code}.png.
-#   - 'wasm-unsafe-eval' added to script-src (T557): Ask Carta's on-device
+#   - 'wasm-unsafe-eval' added to script-src (T557): Ask Viantra's on-device
 #     model (WebLLM in a worker) compiles its WebAssembly with
 #     WebAssembly.instantiate, which a CSP without it refuses. It allows
 #     WebAssembly compilation only, not eval() or new Function(). The model

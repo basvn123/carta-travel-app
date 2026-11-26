@@ -1,7 +1,7 @@
 /**
- * transportLinks.js, where Carta hands the traveller over.
+ * transportLinks.js, where Viantra hands the traveller over.
  *
- * Carta no longer decides how anyone gets to Europe or across it. It knows
+ * Viantra no longer decides how anyone gets to Europe or across it. It knows
  * where the trip goes, on which days, and in what order; the fares, the seats
  * and the tickets live with the people who sell them. So every leg of a plan
  * carries a set of deep links that arrive at the other site with the route and
@@ -40,7 +40,7 @@ import { buildAviasalesLink } from './affiliate.js';
 const SKY_PARTNER = (import.meta.env?.VITE_SKYSCANNER_PARTNER_ID || '').trim();
 
 /** A city as a URL slug: lowercase ASCII with hyphens, one rule for every
- *  route URL Carta builds. It is lib/omio.js's slug because the two want the
+ *  route URL Viantra builds. It is lib/omio.js's slug because the two want the
  *  same thing and two fold tables would drift apart on the first odd letter
  *  (an l-stroke, an o-slash) that NFD leaves standing. */
 export const citySlug = omioSlug;
@@ -105,9 +105,9 @@ export function skyscannerLink({
    The sentence is English whatever the UI language, because it is Google's
    parser reading it and not the traveller; `hl` is what makes the PAGE come
    back in their language, and `curr` is what makes the prices read in euros
-   like every other price in Carta.
+   like every other price in Viantra.
 
-   Both are deliberately searches and not prices. Carta holds no live fares
+   Both are deliberately searches and not prices. Viantra holds no live fares
    for these routes, so it hands the question to somewhere that does rather
    than printing a number of its own (see the note at the top of
    lib/countryBrief.js). ──────────────────────────────────────────────────── */
@@ -129,7 +129,7 @@ export function googleFlightsLink({
   const from = String(fromIata || '').toUpperCase();
   if (!IATA.test(from)) return null;
   // An airport code is what Google resolves unambiguously; a city name is the
-  // fallback for the places Carta prices but no airport serves directly, and
+  // fallback for the places Viantra prices but no airport serves directly, and
   // it is good enough because the search box does the same disambiguation a
   // person typing would get.
   const to = IATA.test(toIata || '') ? String(toIata).toUpperCase() : String(toCity || '').trim();
@@ -154,7 +154,7 @@ export function googleFlightsLink({
  * Google Flights Explore: everywhere you can fly from one airport, by price.
  *
  * This is the link for a traveller who has not chosen a destination yet, which
- * is a question Carta's own catalogue answers from the other end (what a place
+ * is a question Viantra's own catalogue answers from the other end (what a place
  * costs to stay in) and Google answers from this one (what it costs to reach).
  * They are complementary, so this sits BESIDE the catalogue rather than in
  * place of it.
@@ -318,7 +318,7 @@ export function ownTravelWord(flight) {
    destination page has neither an origin nor dates, so these two are searches
    rather than deep links, and they say so on the page. They exist because the
    question a good destination page ends on is "so how do I actually go", and
-   the answer Carta gives everywhere else is to hand the traveller over rather
+   the answer Viantra gives everywhere else is to hand the traveller over rather
    than to pretend it sells anything.
 
    No partner id and no affiliate wrapper on either: an unattributed public

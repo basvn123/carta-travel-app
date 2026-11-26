@@ -1,5 +1,5 @@
 /**
- * metForecast.js, MET Norway Locationforecast turned into Carta's daily rows
+ * metForecast.js, MET Norway Locationforecast turned into Viantra's daily rows
  * (T483, roadmap 1.10). Shared by the Pages Function that proxies MET
  * (functions/api/forecast.js), the Vite dev server and the unit test, so the
  * row shape is defined once.

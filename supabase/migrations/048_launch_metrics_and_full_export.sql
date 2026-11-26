@@ -1,7 +1,7 @@
 -- 048_launch_metrics_and_full_export.sql
 --
 -- Three launch numbers that nothing recorded, and the GDPR export widened to
--- everything Carta holds on a traveller. Written by T315 (register rows
+-- everything Viantra holds on a traveller. Written by T315 (register rows
 -- T215-b, T215-c, T215-d and T300-i). Nothing here changes a row that exists
 -- today.
 --

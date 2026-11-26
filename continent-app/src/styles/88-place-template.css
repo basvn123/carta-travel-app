@@ -1,6 +1,6 @@
 /* The place and trip page template (T912, T913; the owner's approved spec
    of 2026-10-30, "one long page, one price, one button"). Shared by the
-   destination page (.destp-v5) and Carta's trip page (.jpage-v2): the
+   destination page (.destp-v5) and Viantra's trip page (.jpage-v2): the
    photographs, the head, the facts row, the sticky jump bar, the section
    heading, the price card shell and the phone's foot bar. Class prefix .pt-.
    Breakpoints: 700 px (the mosaic, two columns inside sections) and 1024 px

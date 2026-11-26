@@ -1,5 +1,5 @@
 /*
- * Ask Carta, stage 6: the check every written sentence passes before it
+ * Ask Viantra, stage 6: the check every written sentence passes before it
  * shows (T556). A small model can be fluent and wrong; this is what keeps
  * the written answer to the notes it was given:
  *

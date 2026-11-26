@@ -1,9 +1,9 @@
 /**
  * Where a trip starts, for the three Start kinds (G12, D10):
  *
- *   here     the browser's position, snapped to the nearest town in Carta's
+ *   here     the browser's position, snapped to the nearest town in Viantra's
  *            catalogue (nearestTown), so every way there starts from a
- *            place Carta can name
+ *            place Viantra can name
  *   place    a town the traveller picked (App's setFrom, as before)
  *   country  ground ways from the country's start town (countryStartTown);
  *            flights from every airport in the country the sweep covers
@@ -53,7 +53,7 @@ function isoByName(data) {
 }
 
 /**
- * The town in Carta's catalogue nearest a point (the town's own centre,
+ * The town in Viantra's catalogue nearest a point (the town's own centre,
  * city_lat/lon, where it has one). Returns { id, name, lat, lon, iso2,
  * country, km } or null.
  */
@@ -91,7 +91,7 @@ const median = (xs) => {
 };
 
 /**
- * Where ground ways start for a country (fixes-r1 E6): the town in Carta's
+ * Where ground ways start for a country (fixes-r1 E6): the town in Viantra's
  * catalogue nearest the capital, at the town's own centre (city_lat/lon),
  * not an airport's point. A country with no catalogue town falls back to
  * its airport town nearest the capital (no capital listed: nearest the

@@ -1,17 +1,17 @@
 /*
- * A place Carta does not cover (T571). The parser drops a name it does not
+ * A place Viantra does not cover (T571). The parser drops a name it does not
  * know into Intent.unknown, and a question like "a trip to Dubai in
  * November" then reads as "a trip in November", so the answer plans a week
  * in the Balkans. This finds the name a traveller meant as the destination
  * (an unknown word right after "to", "naar", "nach", "à", "a" or "in") so
- * the answer can say plainly that Carta covers Europe and that place is not
+ * the answer can say plainly that Viantra covers Europe and that place is not
  * in it, instead of answering a different question.
  *
  * T1206 (T1136-b, T1136-c) widened it three ways:
  *   - an article between "in" and the name is skipped, and an article is
  *     never itself the name ("wandern in den Alpen" is not a trip to "Den",
  *     "diving in the Maldives" is a trip to the Maldives);
- *   - an unknown word in front of a place Carta does know makes a different
+ *   - an unknown word in front of a place Viantra does know makes a different
  *     place ("a week in New York" is not York, England);
  *   - the name of a country outside Europe, in any of the six languages,
  *     anywhere in the question ("the capital of australia");
@@ -52,8 +52,8 @@ const VERBS = new Set([
   'mangiare', 'andare', 'fare', 'vedere', 'visitare', 'restare', 'alloggiare',
 ].map(fold));
 
-// Europe as Carta reads it, wider than the catalogue so that a European
-// country Carta has no places in yet is never called "outside Europe".
+// Europe as Viantra reads it, wider than the catalogue so that a European
+// country Viantra has no places in yet is never called "outside Europe".
 const EUROPE = new Set(('AD AL AM AT AX AZ BA BE BG BY CH CY CZ DE DK EE ES FI FO FR GB GE GG GI GL GR HR HU IE IM IS IT JE '
   + 'LI LT LU LV MC MD ME MK MT NL NO PL PT RO RS RU SE SI SJ SK SM TR UA VA XK').split(' '));
 // Codes Intl names that are not a country somewhere else (EU, UN, ...).

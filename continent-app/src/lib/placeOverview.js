@@ -103,7 +103,7 @@ export function regionLine(p, region, t) {
 /**
  * The dates line on a place card (T590, owner decision 5): the traveller's
  * own dates ("21 to 28 Nov"), the month they picked ("November"), or null
- * while the dates are Carta's or any time (a card never shows dates the
+ * while the dates are Viantra's or any time (a card never shows dates the
  * traveller did not set). `s` is the settings context (useSettings), `bcp47`
  * the reader's locale.
  */

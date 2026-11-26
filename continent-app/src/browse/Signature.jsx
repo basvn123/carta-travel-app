@@ -32,7 +32,7 @@ import {
  *
  * Where the data does not hold a reading for a row the instrument always
  * carries (the lake's water, the mountain's height), the row says so in an
- * EmptyTrack. A whole track Carta has never measured is not drawn at all
+ * EmptyTrack. A whole track Viantra has never measured is not drawn at all
  * (T386, carta-design "A signature panel draws only measured tracks"): the
  * page names it once in its sources instead.
  */
@@ -215,7 +215,7 @@ export function CompassRosette({ deg, label }) {
 const WATER_LEVEL = { Poor: 1, Sufficient: 2, Good: 3, Excellent: 4 };
 
 /**
- * The beach: what Carta measures, and nothing it does not (T386, carta-design
+ * The beach: what Viantra measures, and nothing it does not (T386, carta-design
  * "A signature panel draws only measured tracks").
  *
  * The figure is the official bathing water class on the EU's own four-step

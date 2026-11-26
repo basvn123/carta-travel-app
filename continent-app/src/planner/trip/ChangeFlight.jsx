@@ -16,7 +16,7 @@ const hh = (h) => `${String(h).padStart(2, '0')}:00`;
 /**
  * Change flight (T840, owner board panel 6): one sheet for both ways. The
  * trip's flight preferences on top (only direct, leave between two hours)
- * steer which flight Carta prices and narrow the list; under them every
+ * steer which flight Viantra prices and narrow the list; under them every
  * flight of that day the live search found, cheapest first, each with its
  * airline mark, times, stops, duration, what the party pays and what that
  * does to the total. Picking one prices the trip on it; "Add your own fare"

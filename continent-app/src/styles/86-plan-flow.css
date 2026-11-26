@@ -25,7 +25,7 @@
    there is no trip yet (with trips, T809, "Your trips" follows and the page
    scrolls).
    The headline and the two actions that matter, large; under them, down at
-   the bottom (from 1024 px: beside them), Carta's own recommended trips: a
+   the bottom (from 1024 px: beside them), Viantra's own recommended trips: a
    fan of trip-style photographs, the mark, a title and one button.
    The headline is Figtree, as on every tab. White cards carry the only
    shadows; nothing has a border; text never sits on a photograph. */
@@ -200,7 +200,7 @@
   .pf-trip-item:hover { background: var(--surface-hover); }
 }
 
-/* The stage: Carta's own trips, down at the bottom on a phone. */
+/* The stage: Viantra's own trips, down at the bottom on a phone. */
 .pf-open-stage {
   display: flex;
   flex: none;
@@ -209,7 +209,7 @@
   min-height: 0;
 }
 
-/* Carta's own recommended trips (T747): a fan of trip-style photographs,
+/* Viantra's own recommended trips (T747): a fan of trip-style photographs,
    the mark, one title and one button, one link. Every photograph is --pw of
    the fan's width and steps --step of its own width from the next, so the
    fan always fits the card whatever its width. */
@@ -500,7 +500,7 @@
 
 .pf-ccard-info.icon-btn { border-radius: var(--radius-pill); }
 
-/* ---- Carta's own trips (T752, T824) ----
+/* ---- Viantra's own trips (T752, T824) ----
    Laid out like Explore (owner 2026-10-29): the title and one line of what
    every trip holds, no mark; one row with the Filters button and the
    filters that are on, the count at its end; the weeks in season as a band
@@ -572,7 +572,7 @@
   .pf-carta-rail { grid-auto-columns: minmax(260px, calc((100% - 3 * var(--space-4)) / 4)); margin: 0; padding: var(--space-1) 0 var(--space-2); scroll-padding-inline: 0; }
 }
 
-/* ---- One of Carta's trips as Explore's card (T824) ----
+/* ---- One of Viantra's trips as Explore's card (T824) ----
    The same measures as .xov--card (79-place-card.css): 3:2 photo in the
    card radius, one solid pill on it top left, the bookmark top right, the
    words straight on the ground, lifted 4 px on hover. */
@@ -665,7 +665,7 @@
 
 .pf-past { align-self: center; margin-top: var(--space-4); color: var(--text-2); }
 
-/* ---- Tell Carta about your trip (after Layla's prompt box) ---- */ /* the box's brown edge is the focus mark */
+/* ---- Tell Viantra about your trip (after Layla's prompt box) ---- */ /* the box's brown edge is the focus mark */
 
 /* ---- Setup questions with their own controls (T655) ---- */
 .pf-chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
@@ -919,9 +919,9 @@
 
 /* Wanderlog's day head: the two whole-day moves as links (T673). */
 
-/* Question 7, what Carta picks (T796): the ChoiceRows rows plus two kinds
+/* Question 7, what Viantra picks (T796): the ChoiceRows rows plus two kinds
    the traveller cannot change, drawn as the same rows: where to go
-   (always Carta's, selected) and a price line not measured yet. */
+   (always Viantra's, selected) and a price line not measured yet. */
 .pf-pick { display: flex; flex-direction: column; gap: var(--space-2); }
 .ui-crow.pf-pick-fixed { cursor: default; }
 .ui-crow.pf-pick-fixed:hover { background: var(--surface); }
@@ -930,7 +930,7 @@
 .ui-crow.pf-pick-fixed:not(.is-on) .ui-crow-icon { color: var(--text-3); }
 .pf-pick-tag { margin-left: auto; flex: none; }
 
-/* Tell Carta's chips (T858): what the words said, under the field. Each
+/* Tell Viantra's chips (T858): what the words said, under the field. Each
    answer is the one selected state (the kit chip's tint and tick); each
    question still open is a dashed chip with a plus, quieter than an answer.
    A chip arrives once, in --dur-2, as the words that name it are typed. */
@@ -1014,7 +1014,7 @@
 .pf-stay-tiles .ui-tile-label { text-align: center; overflow-wrap: normal; }
 .pf-stay-name { font-size: var(--text-body); font-weight: 600; line-height: var(--leading-tight); }
 
-/* ---- T863: how much Carta plans, four doors (TripFlow). Kit Tiles made
+/* ---- T863: how much Viantra plans, four doors (TripFlow). Kit Tiles made
    large: the line icon over one title, left aligned, the tick in the corner
    (the one selected state). Two across on every width. ---- */
 
@@ -1233,7 +1233,7 @@
 @media (prefers-reduced-motion: reduce) { .pf-fit-place { animation: none; } }
 
 /* T1103 (G12): the refine card on the trips after the short setup. One
-   band on mist (the Carta card's foot strip), the sentence on the left,
+   band on mist (the Viantra card's foot strip), the sentence on the left,
    the two doors on the right; stacked on a phone. */
 .pf-refine {
   display: grid;
@@ -1385,7 +1385,7 @@
 /* ── Desktop layouts (polish lane, final judges: "a phone layout given more
    ground") ─────────────────────────────────────────────────────────────── */
 /* Plan home from 1024 px: two columns that fill the first view. Left, the
-   tab's job and its two actions stacked as a column; right, Carta's own
+   tab's job and its two actions stacked as a column; right, Viantra's own
    trips as a mosaic of their photographs (three over two), so the page
    is filled by trips, not by bare ground. One link, as before. */
 @media (min-width: 1024px) {
@@ -1454,7 +1454,7 @@
 }
 .pf-step .party:not(.is-compact) > .party-row + .party-row { border-top: var(--stroke-hair) solid var(--border-soft); }
 
-/* Carta's own trips on Plan home lie on the ground, not in a white panel
+/* Viantra's own trips on Plan home lie on the ground, not in a white panel
    (polish lane, round 2): the photographs keep their rounded corners and
    the title with its door sits under them on a ruled foot. Still one link. */
 .pf-open .pf-coll,
@@ -1474,7 +1474,7 @@
 
 /* G12 plan rethink B3: the style switch on every step, "Show the trips
    now", and the shared assumption bar (Who, From, When, Style, More).
-   Solid = the traveller gave it; dashed = Carta assumed it. Plain house
+   Solid = the traveller gave it; dashed = Viantra assumed it. Plain house
    parts; the owner polishes the look later. */
 .pf-stylebar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); margin: 0 0 var(--space-3); }
 .pf-stylebar-btn.is-none { border-style: dashed; }

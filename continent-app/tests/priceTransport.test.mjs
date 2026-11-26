@@ -1,5 +1,5 @@
 // T714 (F8, owner B11): local transport in the day price once a place has a
-// fare, never a zero without one. Plan "Carta prijslogica Explore" F8, V3,
+// fare, never a zero without one. Plan "Viantra prijslogica Explore" F8, V3,
 // V9 and rule 8.
 // Run: npm test (continent-app/)
 import test from "node:test";

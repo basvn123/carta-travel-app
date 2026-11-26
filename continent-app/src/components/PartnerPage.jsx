@@ -4,7 +4,7 @@ import { useI18n } from '../i18n/index.jsx';
 
 /**
  * Partner links (I15, T1172): the disclosure page, at /?legal=partner. Says in
- * plain words which links can earn, what Carta promises about them and what it
+ * plain words which links can earn, what Viantra promises about them and what it
  * does not do (no cookie, no partner script). The note above every group of
  * partner links points here. Six languages, keys partner.*.
  */

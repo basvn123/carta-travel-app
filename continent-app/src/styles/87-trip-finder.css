@@ -86,7 +86,7 @@
 }
 
 /* Searching: the working stage has one still brown dot because it is live;
-   done stages take an ink tick. No pulse: a loop belongs to Ask Carta and
+   done stages take an ink tick. No pulse: a loop belongs to Ask Viantra and
    the home page only. Each stage fades in once. */
 .tff-check.is-working .tff-check-mark::after {
   content: "";

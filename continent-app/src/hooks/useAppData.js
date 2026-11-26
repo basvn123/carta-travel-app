@@ -200,10 +200,10 @@ export function useAppData(init, setChoices, departDate, setDepartDate, returnDa
 
   const defaultNights = data?.meta?.defaults?.trip_length_days ?? 7;
 
-  // The dates Carta picks for a visitor who has picked none (T099, from the
+  // The dates Viantra picks for a visitor who has picked none (T099, from the
   // design approved in T362): the first Saturday at least four weeks out, for
   // the default trip length. `defaultDates` is how the first-run receipt
-  // tells Carta's dates from the visitor's.
+  // tells Viantra's dates from the visitor's.
   const defaultDates = useMemo(() => calendarDefaultWindow(todayISO(), defaultNights), [defaultNights]);
 
   // Default depart/return when data first loads. A restored URL/stored date

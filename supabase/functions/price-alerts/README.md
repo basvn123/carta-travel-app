@@ -18,7 +18,7 @@ and the `List-Unsubscribe` and `List-Unsubscribe-Post` headers (RFC 8058).
 3. Secrets:
 
    ```
-   supabase secrets set PRICE_ALERTS_FROM="Carta <alerts@carta-europetravel.com>"
+   supabase secrets set PRICE_ALERTS_FROM="Viantra <alerts@carta-europetravel.com>"
    supabase secrets set PRICE_ALERTS_LINK_SECRET=<openssl rand -hex 32>
    supabase secrets set PRICE_ALERTS_BOX_SECRET=<openssl rand -hex 32, a different one>
    # RESEND_API_KEY is the I6 key, already set for notify

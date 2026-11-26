@@ -1,10 +1,10 @@
-// Headless DOM check for the "How Carta uses AI" page (T1156, ROADMAP F8).
+// Headless DOM check for the "How Viantra uses AI" page (T1156, ROADMAP F8).
 //
 //   node scripts/verify_ai_page.mjs [url]
 //
 // With no URL it starts the Vite dev server on $CARTA_PORT (default 4196) and
 // stops it afterwards. Opens /?legal=ai at phone (390) and desktop (1280)
-// width and checks: the page is a dialog titled "How Carta uses AI"; the four
+// width and checks: the page is a dialog titled "How Viantra uses AI"; the four
 // AI features and the AI Act, fairness and "wrong answer" sections are there;
 // the Ask and plan-day figures match the task reports; the report link is a
 // mailto with a subject; no em or en dash anywhere in the text; no horizontal
@@ -68,8 +68,8 @@ try {
       };
     });
     const tag = (s) => `${name}: ${s}`;
-    check(tag('dialog titled "How Carta uses AI"'), info.title === 'How Carta uses AI' && info.labelled === 'legal-ai-title', info.title);
-    for (const h of ['Ask Carta', 'Let Carta plan (day plans)', 'Town suggestions', 'Magic import of bookings', 'When an answer is wrong', 'EU AI Act', 'Fairness and coverage', 'Model cards', 'What is sent where', 'What is not AI']) {
+    check(tag('dialog titled "How Viantra uses AI"'), info.title === 'How Viantra uses AI' && info.labelled === 'legal-ai-title', info.title);
+    for (const h of ['Ask Viantra', 'Let Viantra plan (day plans)', 'Town suggestions', 'Magic import of bookings', 'When an answer is wrong', 'EU AI Act', 'Fairness and coverage', 'Model cards', 'What is sent where', 'What is not AI']) {
       check(tag(`section "${h}"`), info.heads.includes(h));
     }
     check(tag('Ask figures from T1141 (93 percent, 99.6 percent of 689, 25 of 30)'), /93 percent/.test(info.text) && /99\.6 percent of 689/.test(info.text) && /25 are refused/.test(info.text));

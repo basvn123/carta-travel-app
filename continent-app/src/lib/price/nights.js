@@ -19,7 +19,7 @@
  *   nights    whole nights, at least 1
  *   people    the party, at least 1
  *   fare      the fare the traveller typed for the whole party, or null
- *   carta     Carta's return flight for the party near the dates, from
+ *   carta     Viantra's return flight for the party near the dates, from
  *             flights/flights.js roundTripNear(), or null (T517); a typed
  *             fare wins over it
  *
@@ -41,7 +41,7 @@ const round2 = (v) => Math.round(v * 100) / 100;
  * `way` (T1026): the way there the traveller picked on the place page when it
  * is not the plane, { mode: 'train' | 'bus' | 'car', total } for the party,
  * return (browse/placeWays.js). It stands where the flight would, so the
- * total is the trip by that way; without it the flight (typed or Carta's) is
+ * total is the trip by that way; without it the flight (typed or Viantra's) is
  * the way there, as before.
  */
 const bedOf = (row) => (row?.lines || []).find((l) => l.key === 'bed');

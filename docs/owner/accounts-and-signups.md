@@ -2,7 +2,7 @@
 
 Accounts in your name, mailboxes, affiliate programmes and store accounts: only you can create them. Each step says how to know it worked. When a step is done, delete it here (docs/decisions/0003-open-items-owner-steps-and-roadmap.md).
 
-Rows: 8 (7 numbered, 1 in the table).
+Rows: 9 (8 numbered, 1 in the table).
 
 ## Steps
 
@@ -16,6 +16,7 @@ Rows: 8 (7 numbered, 1 in the table).
 5. **T475-a: two affiliate programmes.** Sign up for Flix on Awin and Trainline on Partnerize, as the Carta business. It worked when each shows "approved" and gives a tracking id; tell a session the ids and it adds the links next to Omio (roadmap 4.23).
 6. **T1060-c: claim the social handles for Viantra** (decision 0018, 2026-11-26). @viantra is taken on Instagram, TikTok and X; @viantratravel and @getviantra looked free on all three. Pick one and claim it on each, signed in. Use the shared owner e-mail and turn on two-step login on each at once. It worked when each profile page loads under your handle.
 7. **T1060-d: register the Viantra domains and order a clearance search** (decision 0018). Domains that were free at the registries on 2026-11-26: viantra.travel, viantra.app, getviantra.com, viantratravel.com. Buy the main one and getviantra.com at Cloudflare Registrar if it offers the extension (else another EU-friendly registrar), in your name. viantra.com is taken (owner hidden; GoDaddy Domain Broker Service if you ever want it). Before any brand spend, order a professional trademark clearance search for "Viantra" in classes 39, 9 and 42 that covers Viantro (EUIPO 018063042) and the agency "Viantra Travel" (TikTok @viantra.travel); file classes 39 and 9 only on its advice. It worked when the domains show in your registrar account and the search report is in hand.
+8. **K1-a: move the app to the Viantra domain, after T1060-d.** The rename (2026-11-26) kept `carta-europetravel.com` everywhere it is a live address: `CONTACT` and `SUPPORT_EMAIL` in `continent-app/src/lib/contact.js` (the footer shows `hello@carta-europetravel.com`), `og:url` and `og:image` in `continent-app/index.html`, `DOMAIN` on the share cards (`continent-app/scripts/og/cards.mjs`), the sitemap and prerender base URL, Supabase Auth's site URL and redirect list, Resend's sending domain (step 1) and the Cloudflare Pages custom domain. When the new domain is bought and attached to the Pages project, tell a session "K1-a: domain is <name>": it changes those in one commit and adds a 301 from the old domain. It worked when the new domain serves the app over HTTPS and the old one redirects to it.
 
 ## Moved from unsorted.md (owner sweep 2026-11-12)
 

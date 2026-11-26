@@ -4,7 +4,7 @@
 
    One thing said and then shown: "A cheap flight is not a cheap trip".
    The film of real places fills the first screen with the slogan, one line,
-   Ask Carta (the page's one primary) and the boarding pass on it; under it
+   Ask Viantra (the page's one primary) and the boarding pass on it; under it
    the week's cost on the page's one umber band, the flight's share, the
    tour, try it, the plans, the question again, the waitlist, the footer.
 
@@ -186,7 +186,7 @@
   animation: hv-rise var(--dur-reveal) var(--ease-out) var(--dur-1) both;
 }
 
-/* Ask Carta's field: a paper field with the house's control radius, its
+/* Ask Viantra's field: a paper field with the house's control radius, its
    button the page's one primary with the boxed AI tag. */
 .hv-ask {
   display: flex;
@@ -222,11 +222,11 @@
 .hv-ask-input:focus-visible { outline-color: transparent; } /* the form draws the ring */
 .hv-ask-input::placeholder { color: var(--text-3); }
 .hv-ask-go { min-height: var(--tap); }
-/* The hero's field: one tall field, "Ask Carta" its primary (T621). */
+/* The hero's field: one tall field, "Ask Viantra" its primary (T621). */
 .hv-hero .hv-ask { min-height: 64px; padding: var(--space-2) var(--space-2) var(--space-2) var(--space-4); }
 .hv-ask-go-main { flex: none; min-height: var(--tap-main); padding-inline: var(--space-5); font-size: var(--text-lead); }
 /* On a phone the field takes the whole width, so "A place, a month or a
-   budget" is never cut, and "Ask Carta" stands under it at full width
+   budget" is never cut, and "Ask Viantra" stands under it at full width
    (T623, register T621-b). */
 @media (max-width: 768px) {
   .hv-hero .hv-ask {

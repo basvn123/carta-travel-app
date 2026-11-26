@@ -1,7 +1,7 @@
 /**
  * Omio affiliate deeplinks (Impact network).
  *
- * Carta prices every overland leg itself (transport.js estimates); Omio is
+ * Viantra prices every overland leg itself (transport.js estimates); Omio is
  * where the traveller goes to see live fares and actually buy the ticket,
  * covering 2,300+ rail, coach and ferry operators in one checkout. The
  * affiliate program runs on impact.com: the ONLY thing that earns is the

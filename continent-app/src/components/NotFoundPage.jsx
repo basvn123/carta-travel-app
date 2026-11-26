@@ -4,6 +4,7 @@ import { useI18n } from '../i18n/index.jsx';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
 import { langFromPath, langRoot } from '../lib/langPath.js';
 import { Blaze, Button } from './ui/index.js';
+import { BrandMark, BrandWordmark } from './BrandMarks.jsx';
 import '../styles/brand-pages.css';
 
 /**
@@ -39,7 +40,7 @@ export function NotFoundPage({ onClose }) {
   return (
     <div className={`hs-nf${exit.leaving ? ' is-leaving' : ''}`} ref={ref} role="dialog" aria-modal="true" aria-labelledby="hs-nf-title">
       {/* The wordmark slot, as in the header: the blaze and the name. */}
-      <div className="hs-nf-mark"><Blaze size="md" /><span className="hs-nf-name">Carta</span></div>
+      <div className="hs-nf-mark"><BrandMark className="auth-brand-mark" /><span className="hs-nf-name"><BrandWordmark /></span></div>
       <div className="hs-nf-body">
         <Blaze size="xl" state="blank" className="hs-nf-blaze" />
         <h1 className="hs-nf-title" id="hs-nf-title" ref={headRef} tabIndex={-1}>{t('nf.title')}</h1>

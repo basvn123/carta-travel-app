@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { useNavMarker } from '../lib/motion.js';
-import { Blaze } from './ui/Blaze.jsx';
+import { BrandMark, BrandWordmark } from './BrandMarks.jsx';
 import { HouseIcon } from './HouseIcons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { tabHref } from '../lib/urlState.js';
@@ -97,7 +97,7 @@ function AccountLink({ user, current, onNavigate, onSignIn = null }) {
   const { t } = useI18n();
   // G12 (decision.md step 10): signed out, a "Sign in" pill opens the
   // sign-in dialog at once (one requestAuth path in App.jsx), and the person
-  // icon beside it still opens Account: a guest's language and "How Carta
+  // icon beside it still opens Account: a guest's language and "How Viantra
   // works" live there, and a redesign removes no feature (orchestrator,
   // fixes round 1). Signed in, the avatar alone, a link to Account.
   const name = user ? (user.user_metadata?.full_name?.trim() || user.email) : t('header.accountTitle');
@@ -193,8 +193,8 @@ export function AppHeader({
       >
         {/* The wordmark slot (house style): a blaze and the name in the
             plate face. It takes any name; nothing else depends on it. */}
-        <Blaze size="md" className="brand-mark" />
-        <span className="brand-name">Carta</span>
+        <BrandMark className="brand-mark" />
+        <span className="brand-name"><BrandWordmark /></span>
       </SectionLink>
 
       <nav className="header-nav" ref={navRef} aria-label={t('nav.sectionsLabel')}>

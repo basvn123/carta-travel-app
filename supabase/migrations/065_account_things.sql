@@ -2,7 +2,7 @@
 --
 -- Accounts that keep your work (T1104, ROADMAP I5). Until now four things a
 -- traveller makes stayed in one browser: the trips kept from the trip finder
--- (carta.keptTrips.v1), Carta's own trips they bookmarked
+-- (carta.keptTrips.v1), Viantra's own trips they bookmarked
 -- (carta.savedJourneys.v1), the trips in progress on the Plan home
 -- (carta.trips.v1) and the one trip kept without an account
 -- (carta.deviceTrip.v1). Settings, the shortlist, saved lists and visited

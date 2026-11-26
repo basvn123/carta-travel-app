@@ -1,4 +1,4 @@
-// T1156 (F8): the "How Carta uses AI" page is wired (route, footer), every key
+// T1156 (F8): the "How Viantra uses AI" page is wired (route, footer), every key
 // it reads exists under aiPage.*, its text has no em or en dash, and its Ask and
 // plan-day figures still match the blessed baseline and the model cards.
 import test from 'node:test';

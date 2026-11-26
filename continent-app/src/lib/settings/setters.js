@@ -34,7 +34,7 @@ export function makeSettingsSetters(deps = {}) {
   };
 
   return {
-    /** Use my current location: the nearest Carta town to `pos` ({ lat, lon }).
+    /** Use my current location: the nearest Viantra town to `pos` ({ lat, lon }).
      *  Returns the town, or null when the catalogue has none (the UI then
      *  shows its plain message and the list). */
     setStartHere(pos) {
@@ -53,7 +53,7 @@ export function makeSettingsSetters(deps = {}) {
     },
     /** A whole country (ISO2): ground ways from its start town, flights from
      *  every airport in it the sweep covers. Returns { town, airports } or
-     *  null when Carta has no airport town there. */
+     *  null when Viantra has no airport town there. */
     setStartCountry(iso2) {
       const code = String(iso2 || '').toUpperCase();
       const town = countryStartTown(data, code);

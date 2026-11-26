@@ -93,7 +93,7 @@
    "out_per_m": null,
    "currency": "EUR",
    "extra_out_tokens": 0,
-   "residency": "EU (Carta's own Hetzner box)"
+   "residency": "EU (Viantra's own Hetzner box)"
   },
   "on-device-qwen2.5-1.5b": {
    "label": "On device, WebLLM Qwen 2.5 1.5B",

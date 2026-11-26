@@ -1,5 +1,5 @@
 /**
- * POST /api/ask/answer : the written Ask Carta answer, from an open model on
+ * POST /api/ask/answer : the written Ask Viantra answer, from an open model on
  * Cloudflare Workers AI (T556). Never the Claude API and no paid key: the
  * models are open-weight ones Workers AI runs on this account, inside the
  * free daily Neurons.

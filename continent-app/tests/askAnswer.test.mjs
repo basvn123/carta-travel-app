@@ -1,4 +1,4 @@
-// T555: Ask Carta turns an Intent into answer facts and the facts-only
+// T555: Ask Viantra turns an Intent into answer facts and the facts-only
 // answer. On the real catalogue, for every golden question: a find answer
 // is never empty when a looser one exists, every pick passes the filters it
 // claims, a budget pick's total is inside the budget, a plan is routed, a
@@ -82,7 +82,7 @@ test("golden questions: answer facts and the facts-only answer", { skip: !HAVE &
   assert.deepEqual(problems, []);
 });
 
-// T558: the suggested questions under the empty box are questions Carta
+// T558: the suggested questions under the empty box are questions Viantra
 // answers well, in every language: each reads as its intended question type
 // and returns enough places (a when answer one, a compare two).
 const EXPECT = { hike: "find", budget: "budget", warm: "find", nocar: "near", lake: "find", compare: "compare", when: "when", plan: "plan" };

@@ -8,7 +8,7 @@
 -- the Hetzner infra code but the pipeline itself has not moved; see Execution/
 -- P3). On a laptop a failed or skipped run is loud: the console sits there.
 -- Once the pipeline runs unattended on a box nobody is watching, the same
--- failure is silent. The plan (Carta BackEnd.md, Phase 4) asks admin_health
+-- failure is silent. The plan (Viantra BackEnd.md, Phase 4) asks admin_health
 -- to carry the last successful run, the row counts per layer and the
 -- drift-gate result, so staleness shows up on a screen someone actually
 -- opens.

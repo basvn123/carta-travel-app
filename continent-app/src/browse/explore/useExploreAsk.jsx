@@ -38,7 +38,7 @@ export function useExploreAsk({
     onSeedConsumed?.();
     // eslint-disable-next-line react-hooks/exhaustive-deps -- once per hand-over: each seed is a new object
   }, [seed]);
-  // Ask Carta (T558) takes the guided search's place and the budget card's:
+  // Ask Viantra (T558) takes the guided search's place and the budget card's:
   // one box for any question, its answer priced on the same inputs as the
   // list (the Lifestyle, the bed, the home airport's flights), and the five
   // slots kept inside it, so "Show all" is still applyGuided().
@@ -49,7 +49,7 @@ export function useExploreAsk({
     dests: data?.destinations || null,
     origin: settingsLine?.origin || null,
   }), [settingsLine?.lifestyle, settingsLine?.stayTier, settingsLine?.origin, data?.flights, data?.destinations]);
-  // T570: Ask Carta is a chat behind one small button (the header on
+  // T570: Ask Viantra is a chat behind one small button (the header on
   // desktop, beside Filters on a phone), its trip card priced from the same
   // home airport, dates and party as the list.
   // T622 (owner 2026-10-23): the chat names the town only, never the

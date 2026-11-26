@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Blaze } from '../components/ui/Blaze.jsx';
+import { BrandMark, BrandWordmark } from '../components/BrandMarks.jsx';
 import { CountryFlag } from '../components/CountryFlag.jsx';
 import { MapPinIcon, CalendarIcon } from '../components/Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
@@ -74,8 +74,8 @@ export function SharedTripView({ token, onDismiss, destinations }) {
       <div className="stview" ref={viewRef} role="dialog" aria-modal="true" aria-label={t('share.viewTitle')}>
         {/* The wordmark slot (blaze and name), as sign in and the footer. */}
         <div className="auth-brand stview-brand">
-          <Blaze size="md" />
-          <span className="auth-brand-name">Carta</span>
+          <BrandMark className="auth-brand-mark" />
+          <span className="auth-brand-name"><BrandWordmark /></span>
         </div>
 
         {state.loading ? (

@@ -10,7 +10,7 @@ import {
 } from './bookingImport.js';
 
 /**
- * MagicImportZone, the one dropzone behind every "Carta reads it for you"
+ * MagicImportZone, the one dropzone behind every "Viantra reads it for you"
  * surface: the trip overview's bookings block and the day planner's import
  * drawer. Files (drag, browse), pasted text, or a link; the parse-booking
  * Edge Function does the reading, the PARENT decides what the answer means
@@ -55,7 +55,7 @@ export function MagicImportZone({ onResult, importContext, leadKey = 'extras.imp
 
   const handleFiles = async (fileList) => {
     if (!fileList || !fileList.length || state.phase === 'busy') return;
-    // The pass is asked for the moment a file lands (T488-h), before Carta
+    // The pass is asked for the moment a file lands (T488-h), before Viantra
     // reads a byte of it, not after the files were prepared.
     if (!paywall.require('import')) {
       const files = Array.from(fileList);

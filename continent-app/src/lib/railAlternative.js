@@ -1,7 +1,7 @@
 /**
  * railAlternative.js: the "by train instead" line on a journey's budget.
  *
- * Carta does not price flights, so this is not a comparison against a flight.
+ * Viantra does not price flights, so this is not a comparison against a flight.
  * It answers a narrower question: can the traveller reach this trip by rail
  * from where they start, and roughly what does that cost and take. The figure
  * comes from the one ground resolver (legTransportOptions, which calls

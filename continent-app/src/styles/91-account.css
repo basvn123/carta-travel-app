@@ -1,5 +1,5 @@
 /* Account (T933 to T936, owner-approved spec "Account: who you are, what you
-   pay, what Carta knows"): one page in the family of My trips and Together.
+   pay, what Viantra knows"): one page in the family of My trips and Together.
    From 900 px a sticky left rail and one pane; on a phone the Overview is
    the page and each section opens with a back link. Class prefix .ac-.
    Loaded by src/auth/AccountPanel.jsx.
@@ -350,7 +350,7 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
 .ac-pc .btn { justify-self: start; margin-top: var(--space-1); }
 @media (prefers-reduced-motion: reduce) { .ac-meter-bar > span { transition: none; } }
 
-/* Your data (T936): what Carta keeps, as figures. */
+/* Your data (T936): what Viantra keeps, as figures. */
 .ac-know {
   margin: 0;
   display: grid;
@@ -399,7 +399,7 @@ a.ac-row:focus-visible, .ac-row.btn:focus-visible { outline: 2px solid var(--foc
   .ac-rail-a, .ac-row-chev { transition: none; }
 }
 
-/* T1118: what Carta keeps, and for how long (the plain Article 30 lines). */
+/* T1118: what Viantra keeps, and for how long (the plain Article 30 lines). */
 .ac-keep-list { margin: 0; padding-left: 1.1em; display: grid; gap: var(--space-1); }
 
 /* ── The older forms in the house style (account lane, 2026-11) ──────────

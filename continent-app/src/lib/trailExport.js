@@ -15,7 +15,7 @@
  *             trails.js. Nothing is uploaded: the link is the trail.
  *
  * The wire is ODbL route data, so every file carries its own attribution. Do
- * not strip it, and do not add a Carta copyright over OpenStreetMap's.
+ * not strip it, and do not add a Viantra copyright over OpenStreetMap's.
  */
 import { buildKml } from './kmlExport.js';
 import { stopNameFromRef } from './trailCards.js';
@@ -97,11 +97,11 @@ export function trailGpx(tr, detail = null, { link = null, stopNames = [] } = {}
     return `<trkseg>${pts}</trkseg>`;
   }).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Carta" xmlns="http://www.topografix.com/GPX/1/1">
+<gpx version="1.1" creator="Viantra" xmlns="http://www.topografix.com/GPX/1/1">
   <metadata>
     <name>${xmlEsc(tr.name)}</name>
     ${desc ? `<desc>${xmlEsc(desc)}</desc>` : ''}
-    ${link ? `<link href="${xmlEsc(link)}"><text>Carta</text></link>` : ''}
+    ${link ? `<link href="${xmlEsc(link)}"><text>Viantra</text></link>` : ''}
     <copyright author="OpenStreetMap contributors"><license>https://opendatacommons.org/licenses/odbl/1-0/</license></copyright>
     ${Array.isArray(bbox) && bbox.length === 4 ? `<bounds minlon="${bbox[0]}" minlat="${bbox[1]}" maxlon="${bbox[2]}" maxlat="${bbox[3]}"/>` : ''}
   </metadata>
@@ -174,11 +174,11 @@ ${segs}
   </trk>`;
     });
   return `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="Carta" xmlns="http://www.topografix.com/GPX/1/1">
+<gpx version="1.1" creator="Viantra" xmlns="http://www.topografix.com/GPX/1/1">
   <metadata>
     <name>${xmlEsc(name)}</name>
     ${credit.author ? `<desc>${xmlEsc(credit.author)}</desc>` : ''}
-    ${link ? `<link href="${xmlEsc(link)}"><text>Carta</text></link>` : ''}
+    ${link ? `<link href="${xmlEsc(link)}"><text>Viantra</text></link>` : ''}
     <copyright author="${xmlEsc(credit.author || 'OpenStreetMap contributors')}">${credit.licenseUrl ? `<license>${xmlEsc(credit.licenseUrl)}</license>` : ''}</copyright>
   </metadata>
 ${trks.join('\n')}
@@ -235,7 +235,7 @@ export function trailKml(tr, detail = null, { link = null, stopNames = [], factL
   const html = [
     factLine ? `<b>${xmlEsc(factLine)}</b><br/>` : '',
     stopNames.length ? `${stopNames.map((n, i) => `${i + 1}. ${xmlEsc(n)}`).join('<br/>')}<br/>` : '',
-    link ? `<a href="${xmlEsc(link)}">Open in Carta</a>` : '',
+    link ? `<a href="${xmlEsc(link)}">Open in Viantra</a>` : '',
   ].filter(Boolean).join('\n');
   const placemarks = [];
   if (segs.length) {

@@ -100,7 +100,7 @@ const IATA = /^[A-Z]{3}$/;
  * parity test prices the very same state with the app's own function.
  *   flights.out_eur / back_eur   fares the caller already has, whole party,
  *                                each way (the app's typed fare, ownFlight)
- *   flights.from                 a home airport: Carta's swept fare from
+ *   flights.from                 a home airport: Viantra's swept fare from
  *                                <data>/flights/<IATA>.json for a direction
  *                                with no typed fare (needs `start`)
  */
@@ -121,7 +121,7 @@ export function tripStateFor(input, flightFile = null) {
     const out = Number(flights.out_eur) || 0;
     const back = Number(flights.back_eur) || 0;
     if (out > 0 || back > 0) {
-      // A direction left blank is still Carta's to price (quoteTrip ownOut/ownBack).
+      // A direction left blank is still Viantra's to price (quoteTrip ownOut/ownBack).
       state.ownFlight = { mode: 'fly', costOut: out, costBack: back, costTotal: out + back };
     }
     if (flights.from) {
@@ -151,7 +151,7 @@ const flightSide = (s) => (s ? {
  * lib/price/trip.js), so a figure here is the planner's figure for the same
  * question. Always: beds and days at each stop (at the stop's own dates when
  * `start` is given, else the year average) and the legs between stops. With a
- * `flights` input also the way there and home: typed fares, Carta's swept
+ * `flights` input also the way there and home: typed fares, Viantra's swept
  * fare from a home airport, and the transfers the engine adds for them.
  */
 export function priceTrip(data, input) {
@@ -213,7 +213,7 @@ export function priceTrip(data, input) {
     total_eur: total,
     per_person_eur: r2(total / Math.max(1, q.groupSize)),
     includes: withFlights
-      ? 'beds and days at each stop, the legs between stops, and the way there and home (typed fares, Carta flights from the home airport, transfers), for the whole party'
+      ? 'beds and days at each stop, the legs between stops, and the way there and home (typed fares, Viantra flights from the home airport, transfers), for the whole party'
       : 'beds and days at each stop and the legs between stops, for the whole party',
     excludes: withFlights
       ? 'activities and tickets; a flight direction listed in unpriced_flights'

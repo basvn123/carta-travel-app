@@ -10,7 +10,7 @@
 --    users in the European Economic Area, Switzerland, or the United
 --    Kingdom."
 --
--- Carta's users are European by definition, so the key MUST sit on a project
+-- Viantra's users are European by definition, so the key MUST sit on a project
 -- with an active Cloud Billing account. "Paid Services" is defined by the
 -- billing account existing, not by money actually being charged: the same
 -- terms state that Gemini API access counts as a Paid Service when it is

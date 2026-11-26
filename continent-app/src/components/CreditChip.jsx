@@ -7,7 +7,7 @@ import { AiTag } from './AiTag.jsx';
 /**
  * What an AI action costs, said before the tap (T433).
  *
- * Every control that spends a Carta bot plan carries this beside its label,
+ * Every control that spends a Viantra bot plan carries this beside its label,
  * so the traveller knows the price of the click and how many they have left
  * and can choose to build the day themselves instead. The balance is the
  * ai_status() read PaywallProvider already holds: the same resolver the Edge

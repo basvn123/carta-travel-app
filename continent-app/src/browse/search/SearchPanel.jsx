@@ -48,8 +48,8 @@ function setFieldValue(field, value) {
  *   Places   suggestions as you type: a name and its place (the country,
  *            a region and its country, "Country"), no counts (owner O4, O5)
  *   desktop  Places (or Recent) on the left, Browse on the right; a typed
- *            text ends the list with "Ask Carta about ..."
- *   phone    Browse, then Recent or Places; Filters and Ask Carta stand
+ *            text ends the list with "Ask Viantra about ..."
+ *   phone    Browse, then Recent or Places; Filters and Ask Viantra stand
  *            apart under a rule as two buttons, never rows in the list (O3)
  *
  * The field is the combobox (the band's); this panel holds its listbox and
@@ -126,7 +126,7 @@ export function SearchPanel({ query = '', kind = 'places', id, filters = null, o
     return it.type === 'near' ? nearLabel(t, lang, it.name, fx) : t('search.featuresIn', { features: fx, place: it.name });
   };
   // The second line says where a suggestion is, nothing else: no counts, no
-  // "in Carta", no "not covered yet" (owner O4, O5).
+  // "in Viantra", no "not covered yet" (owner O4, O5).
   const subOf = (it) => {
     const country = it.cc ? countryName(it.cc, '', lang) : '';
     if (it.type === 'place' || it.type === 'near') return country;
@@ -317,7 +317,7 @@ export function SearchPanel({ query = '', kind = 'places', id, filters = null, o
   const left = placesGroup || askGroup;
 
   const filterCount = filters?.count || 0;
-  // O3: on a phone Filters and Ask Carta are a group of their own, apart
+  // O3: on a phone Filters and Ask Viantra are a group of their own, apart
   // from the suggestions, as buttons.
   const actions = !isDesktop && (
     <div className="sp-actions" role="group" aria-label={t('search.moreWays')}>

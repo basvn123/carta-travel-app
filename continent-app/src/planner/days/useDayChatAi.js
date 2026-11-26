@@ -191,7 +191,7 @@ export function useDayChatAi({
     const info = await chatDest(destId);
     if (!info) return;
     // Only catalogue places become stops (T433, route safety): a place the
-    // model named that Carta does not hold has no checked position, so it is
+    // model named that Viantra does not hold has no checked position, so it is
     // never put on a walking route. The day is never left empty for it: the
     // strongest places that fit the answers fill in.
     const { orderedIdx } = splitAiPlan(result, info.items);
@@ -219,7 +219,7 @@ export function useDayChatAi({
         minutes: dwellMinutes(poiKind(it)), must: orderedIdx.includes(idx),
       } : null;
     }).filter(Boolean);
-    // One day keeps Carta's own order (indoor stops in the hot hours, the
+    // One day keeps Viantra's own order (indoor stops in the hot hours, the
     // viewpoint at sunset); several are cut by neighbourhood.
     const built = days === 1 && orderedIdx.length
       ? { stops: [{ destinationId: destId, days: 1 }], assign: { 0: { 0: chosen } } }

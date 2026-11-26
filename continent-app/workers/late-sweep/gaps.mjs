@@ -51,7 +51,7 @@ export function airportCountries(csv) {
 }
 
 /**
- * The pairs to look at: both airports Carta's, in Europe, both in a country
+ * The pairs to look at: both airports Viantra's, in Europe, both in a country
  * that does not report to Eurostat, at least FIND_MIN_KM apart, and no route either way
  * in `list` (flattenRoutes output, found routes included). Each pair once,
  * [a, b] with a < b, sorted.

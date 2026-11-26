@@ -15,7 +15,7 @@ import { planGroupTrip } from './signals.jsx';
 /**
  * Group trips (T931, migration 055): a few accepted friends decide one trip.
  * When and Where are two polls, one vote each, every option priced by
- * Carta's own price model (lib/price/, the traveller's settings) as a TRIP
+ * Viantra's own price model (lib/price/, the traveller's settings) as a TRIP
  * TOTAL a person: the day price at the leading place or dates times that
  * window's nights (T938, the owner: "focus on the total trip budget"). It is
  * the bed and the food and drink; getting there is left out because every

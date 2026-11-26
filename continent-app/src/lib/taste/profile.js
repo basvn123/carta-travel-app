@@ -3,7 +3,7 @@
  * profile with validation").
  *
  * From the traveller's own saves, trips and filters, which interests in the
- * Carta travel taxonomy (T1149, five facets) they keep coming back to, each
+ * Viantra travel taxonomy (T1149, five facets) they keep coming back to, each
  * with the evidence behind it, so the traveller can say yes or no to it.
  * Pure: every input is an argument, so the node test runs it on fixtures.
  *

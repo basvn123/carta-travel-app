@@ -5,7 +5,7 @@ import '../styles/98-trip-art.css';
  * TripArt (T990): what stands where a trip has no photograph yet, and on the
  * empty My trips tabs and the signed-out Together page. Not a picture: map
  * geometry. Contour lines, a dashed route with its start and end, on one of
- * three Carta grounds (umber, lagoon, ink) picked from the seed, so a list of
+ * three Viantra grounds (umber, lagoon, ink) picked from the seed, so a list of
  * new trips is not one brown wall. An icon, when given, sits on a light disc
  * in the middle. Purely decorative: the words beside it carry the meaning.
  *

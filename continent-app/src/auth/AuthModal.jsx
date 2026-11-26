@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useFocusTrap } from '../hooks/useFocusTrap.js';
-import { Blaze } from '../components/ui/Blaze.jsx';
+import { BrandMark, BrandWordmark } from '../components/BrandMarks.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { IconButton } from '../components/ui/IconButton.jsx';
 import { Segmented } from '../components/ui/Segmented.jsx';
@@ -118,8 +118,8 @@ export function AuthModal({ onClose, initialMode = 'signin' }) {
         {/* The wordmark slot, as in the header: a blaze and the name in the
             plate face (house style; the old compass logo is retired). */}
         <div className="auth-brand">
-          <Blaze size="md" />
-          <span className="auth-brand-name">Carta</span>
+          <BrandMark className="auth-brand-mark" />
+          <span className="auth-brand-name"><BrandWordmark /></span>
         </div>
 
         {mode !== 'forgot' && (

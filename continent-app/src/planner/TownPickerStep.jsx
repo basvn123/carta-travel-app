@@ -10,18 +10,18 @@ import { DayExploreMap } from '../map/DayExploreMap.jsx';
 import { geocodeAddress } from '../lib/geocode.js';
 
 /**
- * TownPickerStep, the Carta chat's "where do you want to spend the day?"
+ * TownPickerStep, the Viantra chat's "where do you want to spend the day?"
  * answer, four ways to land on the same thing: a real destination id.
  *
  *   Nearby  the ranked short list the chat already offered
- *   Search  type any city; matches Carta's own catalogue first, and falls
+ *   Search  type any city; matches Viantra's own catalogue first, and falls
  *           back to a real-world geocode (Nominatim) for anywhere else
  *   Map     the stay-centred explore map, pins only, tap to pick
- *   Ask     free-text wish to Carta's AI, which reads the local catalogue
+ *   Ask     free-text wish to Viantra's AI, which reads the local catalogue
  *           and (optionally) the web, and proposes a short list
  *
  * Search and Ask both may land on a place outside the catalogue. When that
- * happens the traveller is offered the town they actually asked for: Carta
+ * happens the traveller is offered the town they actually asked for: Viantra
  * researches it live (`onResearchCity`, see lib/cityResearch.js), which mints
  * a real destination id with a real POI list. Snapping to the nearest
  * catalogued city via `resolveNearest` is still there, but as the fallback it
@@ -51,7 +51,7 @@ export function TownPickerStep({
   const [note, setNote] = useState('');
   // A geocode hit or an AI web discovery isn't a catalogue id: it waits here,
   // disclosed, until the traveller says what to do with it (research the town
-  // itself, or settle for the nearest one Carta already holds). Never an
+  // itself, or settle for the nearest one Viantra already holds). Never an
   // instant, unreadable swap under their tap.
   const [pendingPick, setPendingPick] = useState(null);
   const [research, setResearch] = useState(null); // { stage, vars } while harvesting
@@ -76,7 +76,7 @@ export function TownPickerStep({
   }, [query, cityOptions]);
 
   // Land on a place with no catalogue id of its own (a geocode hit or an AI
-  // web discovery). Nothing is picked yet: the traveller is shown what Carta
+  // web discovery). Nothing is picked yet: the traveller is shown what Viantra
   // knows about that place (usually nothing) and offered the two real answers,
   // research it or use a neighbour.
   const pickResolved = (lat, lon, queryLabel, country = '') => {
@@ -135,7 +135,7 @@ export function TownPickerStep({
     setAiBusy(false);
   };
 
-  // The off-catalogue card: what was asked for, what Carta holds, and the two
+  // The off-catalogue card: what was asked for, what Viantra holds, and the two
   // ways forward. Research leads, because it answers the question that was
   // actually asked.
   const pendingPickCard = pendingPick && (

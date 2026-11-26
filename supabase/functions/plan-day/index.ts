@@ -2,7 +2,7 @@
  * plan-day, the AI day-planner Edge Function.
  *
  * The client sends the traveller's answers plus a candidate list drawn from
- * Carta's OWN researched catalogue; Gemini only sequences and annotates that
+ * Viantra's OWN researched catalogue; Gemini only sequences and annotates that
  * list (plus at most a few flagged "discoveries" from the free-text wish).
  * Everything the model returns is re-validated and re-timed server-side in
  * logic.mjs before it reaches the app, so coordinates, order and clock times
@@ -16,7 +16,7 @@
  *    users in the European Economic Area, Switzerland, or the United
  *    Kingdom."
  *
- * Carta's travellers are European, so the old unbilled-key posture is not
+ * Viantra's travellers are European, so the old unbilled-key posture is not
  * available to us. "Paid Services" is defined by the billing account existing
  * rather than by money being charged: the terms say Gemini API access is a
  * Paid Service when it is reached through a Cloud Project with an active

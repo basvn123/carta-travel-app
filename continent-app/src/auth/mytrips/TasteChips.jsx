@@ -14,7 +14,7 @@ import '../../styles/71-taste.css';
 
 /**
  * Your taste (T1152, ROADMAP F3) on My trips, Your Europe tab: the interests
- * Carta reads from the traveller's own saves, trips and filters, each chip
+ * Viantra reads from the traveller's own saves, trips and filters, each chip
  * with the evidence behind it and a Yes and a No. Yes keeps the chip;
  * No hides it (listed under Hidden, with Show again) and counts against it.
  * The profile is lib/taste/profile.js; verdicts lib/taste/store.js, synced

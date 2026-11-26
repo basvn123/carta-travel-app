@@ -5,7 +5,7 @@
 --
 -- WHY UNPUBLISH AND NEVER DELETE. A public guide is a trip plan its owner
 -- chose to show. Taking it off the gallery is a moderation decision about
--- what Carta hosts in public. Deleting the row would be a different act:
+-- what Viantra hosts in public. Deleting the row would be a different act:
 -- destroying somebody's itinerary, their stops and their dates, which they
 -- still own and are entitled to keep and to export (024). Conflating the two
 -- is wrong, and under the GDPR it is also an erasure nobody asked for. So

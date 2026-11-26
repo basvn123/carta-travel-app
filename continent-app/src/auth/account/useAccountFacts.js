@@ -10,7 +10,7 @@ import { IS_ACCOUNT_MOCK, MOCK_FACTS } from './accountMock.js';
 
 /**
  * What the Account page counts (T933, T936): the three figures under the
- * identity and the counts in Your data, each read from where Carta keeps it.
+ * identity and the counts in Your data, each read from where Viantra keeps it.
  *
  *   trips      the account's trip plans (trip_plans)
  *   countries  the visited record My trips draws: finished trips, memories
@@ -19,7 +19,7 @@ import { IS_ACCOUNT_MOCK, MOCK_FACTS } from './accountMock.js';
  *   saves      the shortlist, as App holds it
  *   photos     photos kept in trip memories on this device
  *   dayPlans   day plans in the account (day_plans, tombstones left out)
- *   chats      Ask Carta chats in the account (ask_chats, tombstones left out)
+ *   chats      Ask Viantra chats in the account (ask_chats, tombstones left out)
  *   nextTripDest  the first place of the next dated trip, for Your travel
  *
  * A figure whose read failed is null, and the page leaves it out: a part

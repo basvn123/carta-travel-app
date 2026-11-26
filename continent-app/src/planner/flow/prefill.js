@@ -1,6 +1,6 @@
 /**
  * prefill.js, what a sentence already answers (T654), now a thin wrapper over
- * the one trip parser, lib/plan/parseTrip.js (T857). Tell Carta reads the
+ * the one trip parser, lib/plan/parseTrip.js (T857). Tell Viantra reads the
  * parser directly; this keeps the older call shape for its callers and tests.
  *
  * prefillFromText(text, { countries, vocab, lang, destinations, origins, today })

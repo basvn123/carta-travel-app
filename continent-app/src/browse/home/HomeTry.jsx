@@ -10,7 +10,7 @@ import { MaskedText, Reveal, SPRING } from './motionKit.jsx';
 
 /**
  * Try it (T953; a price ruler since T958, owner 2026-10-31: "more clean and
- * Carta alike"; house style 2026-11: the ruler is a short route, each place
+ * Viantra alike"; house style 2026-11: the ruler is a short route, each place
  * a stop on it, the thumb the traveller's own painted mark; the budget
  * figure rolls under their drag and a tick lands when they let go). The visitor's own first search, in the proof's card: a
  * budget a person a day set large, a ruler under it where each of the film's

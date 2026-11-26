@@ -6,8 +6,8 @@ import '../styles/80-story-rail.css';
 
 /**
  * StoryRail (T587, owner decisions 1 to 3 of 2026-10-22): every browse rail
- * in Carta as one moving strip, after the Komoot rail the owner pointed at,
- * in Carta's colours.
+ * in Viantra as one moving strip, after the Komoot rail the owner pointed at,
+ * in Viantra's colours.
  *
  *   lead card   the rail's own card, first in the strip: a warm sunken box,
  *               tilted a little at rest, that holds the rail's heading, a

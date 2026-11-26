@@ -1,4 +1,4 @@
-// T699-T701 (F5): the price in the right place, plan "Carta prijslogica
+// T699-T701 (F5): the price in the right place, plan "Viantra prijslogica
 // Explore" section 5, invariants V11 and V12.
 //   V11: nowhere "EUR 0" as a price; "Free" only in a category where paying
 //        also occurs.

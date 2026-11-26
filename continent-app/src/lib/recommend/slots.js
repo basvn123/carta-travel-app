@@ -15,7 +15,7 @@
  *             planner's); null = not measured (drawn as NotYet, out of
  *             every sum, never 0)
  *   eurGroup  the same for the whole party (the foot's group total)
- *   owner     'carta' when question 7 left it to Carta, 'you' when the
+ *   owner     'carta' when question 7 left it to Viantra, 'you' when the
  *             traveller chooses it; a 'you' slot still counts at its
  *             typical price, so the total stays honest
  *   quality   live | measured | modelled | missing: stored, never drawn
@@ -56,8 +56,8 @@ export function defaultPick(rows = SLOT_ROWS) {
   return rows.filter((r) => r.pickable && r.status === 'live').map((r) => r.id);
 }
 
-/** Whose pick a slot is: Carta's, or the traveller's (question 7). A slot the
- *  question does not offer stays Carta's; a notYet slot is nobody's pick. */
+/** Whose pick a slot is: Viantra's, or the traveller's (question 7). A slot the
+ *  question does not offer stays Viantra's; a notYet slot is nobody's pick. */
 export function ownerOf(row, pick = defaultPick()) {
   if (row.status === 'notYet') return 'you';
   if (!row.pickable) return 'carta';
@@ -100,7 +100,7 @@ function toSlot(row, out, head, owner) {
 /**
  * Let each adapter set the planner setting it owns before the trip is
  * quoted (the stay tier, the Lifestyle), so the one quoteTrip call prices
- * Carta's picks.
+ * Viantra's picks.
  */
 export function prepareState(state, ctx = {}, { rows = SLOT_ROWS, adapters = ADAPTERS } = {}) {
   return rows.reduce((s, row) => adapters[row.adapter]?.prepare?.(s, ctx, row) || s, state);

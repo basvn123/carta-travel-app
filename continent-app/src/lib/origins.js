@@ -6,7 +6,7 @@
  * ground_transport_one_way_eur, ground_transport_minutes }`): the airport the
  * trip lands at and the origin-independent last leg from it into town. A
  * destination gets a route when it has an anchor airport (its own, or the one
- * it is reached through) and Carta can price that last leg.
+ * it is reached through) and Viantra can price that last leg.
  *
  * There is no fare in a route. The old per-origin fare files and their
  * readers went in T511; the flight module (T517) adds flights back.
@@ -95,7 +95,7 @@ export function originHome(data, code) {
 }
 
 /** The priced origin airport nearest a point (T577: the From picker takes any
- *  town, the flight leaves from the closest airport Carta has fares for). */
+ *  town, the flight leaves from the closest airport Viantra has fares for). */
 export function nearestOrigin(data, pt) {
   const origins = data?.meta?.origins || {};
   if (!pt || !Number.isFinite(pt.lat) || !Number.isFinite(pt.lon)) return null;

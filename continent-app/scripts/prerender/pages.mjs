@@ -13,7 +13,7 @@
  * at build time, never typed.
  *
  * The rules the models follow are docs/SEO.md's: the title pattern
- * "{name}, {headline number}, {qualifier} | Carta", a description of at most
+ * "{name}, {headline number}, {qualifier} | Viantra", a description of at most
  * 155 characters that does not repeat the title, one JSON-LD graph per page
  * with no AggregateRating and no Offer, the breadcrumb as a real link chain,
  * canonicals from urlScheme.js canonicalFor().
@@ -53,11 +53,11 @@ const monthOf = (code) => MONTH[typeof code === 'number' ? code - 1 : MON3.index
 const monthLang = (lang, code) => (lang === 'en' ? monthOf(code)
   : monthIn(lang, typeof code === 'number' ? code : MON3.indexOf(String(code).slice(0, 3).toLowerCase()) + 1));
 const sentence = (s) => { const c = clean(s); return c && !/[.!?]$/.test(c) ? `${c}.` : c; };
-// The Carta score fact in rating v5's words ("8.9 Exceptional", T763), from
+// The Viantra score fact in rating v5's words ("8.9 Exceptional", T763), from
 // lib/rating.js; none for an item listed without a v5 score.
 const scoreFact = (rating) => {
   const w = ratingWords(rating, t);
-  return w ? { label: 'Carta score', value: w.text, num: true } : null;
+  return w ? { label: 'Viantra score', value: w.text, num: true } : null;
 };
 const upFirst = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
 /** 'a' or 'an' before a figure as it is read aloud: an 8 km, an 11 km, an 18 km, a 12 km. */
@@ -87,7 +87,7 @@ const plural = (n, one, many = `${one}s`) => `${n0(n)} ${n === 1 ? one : many}`;
 const MANY = { beach: 'beaches', 'cycling route': 'cycling routes', walk: 'walks' };
 
 /** Breadcrumb roots, shared by every page in a country. */
-const home = { name: 'Carta', path: '/' };
+const home = { name: 'Viantra', path: '/' };
 const countryCrumb = (cc) => ({ name: countryName(cc), path: paths.country(cc) });
 const sectionCrumb = (cc, s) => ({ name: SECTION_LABEL[s], path: paths.section(cc, s) });
 
@@ -119,8 +119,8 @@ const linkRows = (rows, max) => rows.filter((r) => r && r.path).slice(0, max);
 function coverageLine(kind, rated, listed, cc) {
   const many = MANY[kind] || `${kind}s`;
   const where = countryName(cc);
-  if (!rated && !listed) return `Carta has no ${many} in ${where} in its catalogue yet.`;
-  const head = `Carta publishes ${n0(rated)} rated ${rated === 1 ? kind : many} in ${where}`;
+  if (!rated && !listed) return `Viantra has no ${many} in ${where} in its catalogue yet.`;
+  const head = `Viantra publishes ${n0(rated)} rated ${rated === 1 ? kind : many} in ${where}`;
   return listed
     ? `${head} and lists ${n0(listed)} more that do not have enough measured facts to be rated yet.`
     : `${head}.`;
@@ -148,12 +148,12 @@ export function trailAbout(tr, { name, region, climb, season, paved, places }) {
   const b = [];
   if (isNum(tr.duration_min)) b.push(`Allow about ${fmtHours(tr.duration_min / 60)} on foot, an estimate from distance and climb.`);
   const g = T.gradeLabelKey(tr);
-  if (g) b.push(`Carta grades it ${t(g).toLowerCase()}.`);
+  if (g) b.push(`Viantra grades it ${t(g).toLowerCase()}.`);
   if (tr.ele?.max) b.push(`The highest point is ${n0(tr.ele.max)} m.`);
   if (paved != null) b.push(`${paved}% of the way is paved.`);
   if (season) b.push(`The season runs ${season}${tr.f?.se?.est ? ' (an estimate)' : ''}.`);
   if (tr.f?.ref) b.push(`Follow the signs marked ${clean(tr.f.ref)}.`);
-  if (places?.length) b.push(`The nearest ${places.length === 1 ? 'town' : 'towns'} Carta covers: ${places.map((x) => `${x.name}${x.km != null ? ` (${d1(x.km)} km)` : ''}`).join(', ')}.`);
+  if (places?.length) b.push(`The nearest ${places.length === 1 ? 'town' : 'towns'} Viantra covers: ${places.map((x) => `${x.name}${x.km != null ? ` (${d1(x.km)} km)` : ''}`).join(', ')}.`);
   if (b.length) out.push(`${first} ${b.join(' ')}`);
   return out;
 }
@@ -533,7 +533,7 @@ export function destPage(dos, ctx) {
       day ? { label: measured ? 'A day for one person' : 'A day for one person, estimated', value: day, num: true } : null,
       cost?.stayEur != null ? { label: 'Bed, a night', value: `€${n0(cost.stayEur)}`, num: true } : null,
       cost?.foodEur != null ? { label: 'Food, a day', value: `€${n0(cost.foodEur)}`, num: true } : null,
-      isNum(v.score) ? { label: 'Carta score', value: `${d1(v.score)} of 10`, num: true } : null,
+      isNum(v.score) ? { label: 'Viantra score', value: `${d1(v.score)} of 10`, num: true } : null,
       isNum(pl.visit_h) ? { label: 'Time to see it', value: fmtHours(pl.visit_h), num: true } : null,
       best.length ? { label: 'Best months', value: best.join(', ') } : null,
       dos.water?.rating ? { label: 'Bathing water nearby', value: dos.water.rating } : null,
@@ -584,7 +584,7 @@ export function destPage(dos, ctx) {
 // Two families, both built from the computeCosts row the destination page
 // leads with (costIndex.js, no choices: the default Lifestyle), so a day, a
 // week and four days of the same town come from one set of figures. Ground
-// costs only: Carta does not price flights (owner decision T272), and every
+// costs only: Viantra does not price flights (owner decision T272), and every
 // page says so. Every figure carries the provenance words of T098.
 
 export const WEEK = 7;
@@ -670,7 +670,7 @@ export function costPage(dos, ctx) {
 
   const hook = `A week in ${name} costs about ${eur0(week.total)} for one person on the ground: seven nights in a bed and seven days of eating and drinking out.`;
   const shareLine = shared ? `The bed is one person's share of a whole place that sleeps ${n0(sleeps)}.` : null;
-  const noFlights = 'Flights are not in this figure: Carta does not price them.';
+  const noFlights = 'Flights are not in this figure: Viantra does not price them.';
   const middle = median != null && peers.length >= 5
     ? `The middle week across ${n0(peers.length)} priced places in ${where} costs ${eur0(median)}.` : null;
   // The receipt foot shows what one changed input does to the total: the
@@ -772,7 +772,7 @@ export function daysPage(cc, n, band, ctx) {
   const lead1 = band
     ? `${n0(rows.length)} of the ${n0(all.length)} priced places in ${where} cost one person under €${band} a day on the ground, so ${w} days there come to less than ${eur0(band * n)}.`
     : `${upFirst(w)} days in ${where} cost one person from about ${eur0(tot(first))} in ${first.name} to about ${eur0(tot(last))} in ${last.name} on the ground, across ${n0(rows.length)} priced places.`;
-  const lead2 = `${upFirst(w)} days means ${w} nights in a bed and ${w} days of eating and drinking out. Flights are not included: Carta does not price them.`;
+  const lead2 = `${upFirst(w)} days means ${w} nights in a bed and ${w} days of eating and drinking out. Flights are not included: Viantra does not price them.`;
   // The plain length page lists the best rated places first and a budget page
   // the cheapest first: they answer "where should I go for four days" and
   // "where can I afford four days", and with a cap of 100 a cheapest-first
@@ -842,7 +842,7 @@ export function daysPage(cc, n, band, ctx) {
 // time and carries the provenance words of T098; nothing is typed. It exists
 // to join three page families that otherwise only meet through the country
 // page: the destinations (each stop), the trip it prices and the country.
-// Carta does not price flights (T272), so there is no flight line; the legs
+// Viantra does not price flights (T272), so there is no flight line; the legs
 // line is the catalogue's own estimate of ground transport between the stops,
 // printed with a tilde as every estimate is.
 
@@ -904,7 +904,7 @@ export function receiptPage(plan, ctx) {
   const bed = r2(stops.reduce((a, s) => a + s.bed, 0));
   const food = r2(stops.reduce((a, s) => a + s.food, 0));
   const hook = `A week in ${names} costs about ${eur0(total)} for one person on the ground, itemised below: ${trip.nights} nights in beds and ${trip.days} days of eating and drinking out.`;
-  const noFlights = 'Flights are not in this figure: Carta does not price them.';
+  const noFlights = 'Flights are not in this figure: Viantra does not price them.';
   const staying = stops.filter((s) => s.d.hasCost).map((s) => ({ name: `${s.d.name}, a week there`, path: paths.cost(s.d.slug), meta: `${s.d.measured ? '' : '~'}${eur0(s.d.week)}`, metaNum: true }));
   const cheapest = [...stops].sort((x, y) => x.cost.dayEur - y.cost.dayEur)[0];
   const foot = cheapest.d.week != null
@@ -948,7 +948,7 @@ export function receiptPage(plan, ctx) {
       others.length ? { h2: `More weeks priced in ${where}`, links: others.map(receiptLink) } : null,
     ],
     coverage: stops.some((s) => s.d.hasCost && !s.d.measured) ? 'A price with a tilde is an estimate.' : null,
-    credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled", 'trip composed by Carta from its own destination catalogue'],
+    credits: [BED_CREDIT, 'food prices from Numbeo', "Eurostat's price level index where a figure is scaled", 'trip composed by Viantra from its own destination catalogue'],
     crumbs: [home, countryCrumb(cc), sectionCrumb(cc, 'trips'), { name: names, path: paths.trip(trip.id) }],
     boot: null,
     noindex: !plan.measured,
@@ -1041,7 +1041,7 @@ export function tripPage(trip, ctx) {
       { h2: `More trips in ${countryName(cc)}`, links: ctx.topTrips(cc, trip.id, 6).map((x) => ({ name: joinNames((x.cities || []).map((c) => clean(c.city))), path: paths.trip(x.id), meta: `${x.days} days`, metaNum: true })) },
     ],
     coverage: 'Costs on this page are estimates: beds from the catalogue’s stay prices and the ground transport between the stops, with no flights.',
-    credits: ['Composed by Carta from its own destination catalogue'],
+    credits: ['Composed by Viantra from its own destination catalogue'],
     crumbs: [home, countryCrumb(cc), sectionCrumb(cc, 'trips')],
     boot: null,
     subject: {
@@ -1123,7 +1123,7 @@ export function journeyPage(j, ctx) {
       others.length ? { h2: `More ${clean(j.tripType || 'journeys').toLowerCase()}`, links: others.map((o) => ({ name: clean(o.title), path: paths.journey(o.id), meta: `${o.durationDays} days`, metaNum: true })) } : null,
     ],
     coverage: j.dataVintage ? `The prices and opening details on this page were last checked in ${j.dataVintage}.` : null,
-    credits: ['Written and checked by Carta'],
+    credits: ['Written and checked by Viantra'],
     crumbs: cc && paths.country(cc) ? [home, countryCrumb(cc)] : [home],
     subject: {
       '@type': 'TouristTrip', name, ...(j.tripType ? { touristType: clean(j.tripType) } : {}),
@@ -1152,7 +1152,7 @@ export function regionPage(reg, ctx) {
   if (neighbours.length) sections.push({ h2: 'Regions next door', links: neighbours });
   const listed = (reg.listed || []).length;
   const counts = Object.entries(byLayer).map(([l, list]) => `${list.length} ${(LABEL[l] || l).toLowerCase()}`);
-  const lead = sentence(`${name} is a region of ${countryName(cc)}${counts.length ? ` where Carta rates ${joinNames(counts)}` : ''}`);
+  const lead = sentence(`${name} is a region of ${countryName(cc)}${counts.length ? ` where Viantra rates ${joinNames(counts)}` : ''}`);
   return {
     kind: 'region',
     path: paths.region(cc, r.id, name),
@@ -1162,7 +1162,7 @@ export function regionPage(reg, ctx) {
     lead: [lead],
     facts: [],
     sections,
-    coverage: listed ? `Carta also lists ${n0(listed)} more places in ${name} that do not have enough measured facts to be rated yet.` : null,
+    coverage: listed ? `Viantra also lists ${n0(listed)} more places in ${name} that do not have enough measured facts to be rated yet.` : null,
     credits: ['Region boundaries from Eurostat NUTS 2021', 'places from OpenStreetMap, Wikidata and the European Environment Agency'],
     crumbs: [home, countryCrumb(cc), sectionCrumb(cc, 'regions')],
     subject: {
@@ -1182,14 +1182,14 @@ export function sectionPage(cc, section, rows, page, ctx) {
   const where = countryName(cc);
   const label = SECTION_LABEL[section];
   const h1 = `${upFirst(plural(rows.length, SECTION_ONE[section], MANY[SECTION_ONE[section]]))} in ${where}${page > 1 ? `, page ${page}` : ''}`;
-  const lead = sentence(section === 'regions' ? `The NUTS 2 regions of ${where}, each with the places Carta rates in it` : `Every ${SECTION_ONE[section]} Carta rates in ${where}, best rated first`);
+  const lead = sentence(section === 'regions' ? `The NUTS 2 regions of ${where}, each with the places Viantra rates in it` : `Every ${SECTION_ONE[section]} Viantra rates in ${where}, best rated first`);
   const pager = pages > 1 ? Array.from({ length: pages }, (_, i) => i + 1).filter((p) => p !== page)
     .map((p) => ({ name: `Page ${p}`, path: paths.section(cc, section, p) })) : null;
   return {
     kind: 'section',
     path: paths.section(cc, section, page),
     title: fitTitle(`${label} in ${where}`, `${n0(rows.length)} rated`, page > 1 ? `page ${page}` : null),
-    description: fitDescription([lead, ctx.coverage(section, cc), `Every figure on Carta says where it came from.`]),
+    description: fitDescription([lead, ctx.coverage(section, cc), `Every figure on Viantra says where it came from.`]),
     h1,
     lead: [lead],
     facts: [],
@@ -1217,7 +1217,7 @@ export function countryPage(cc, ctx) {
   const lead = sentence(`What a day costs in ${plural(priced.length, 'place')} in ${where}${median != null ? `, with a middle figure of €${n0(median)} for one person's bed and food` : ''}`);
   const honest = priced.length
     ? `${n0(measured)} of the ${n0(priced.length)} day costs are measured from stays in the town; the rest borrow national or nearby figures and are marked as estimates.`
-    : `Carta has no priced places in ${where} yet.`;
+    : `Viantra has no priced places in ${where} yet.`;
   return {
     kind: 'country',
     path: paths.country(cc),

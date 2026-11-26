@@ -48,7 +48,7 @@ export default function WaitlistForm({ source = 'home' }) {
             aria-invalid={bad || undefined} aria-describedby={bad ? 'wl-msg' : 'wl-fine'}
             onChange={(e) => { setEmail(e.target.value); if (state !== 'busy') setState('idle'); }}
           />
-          {/* Secondary: the page's one primary is Ask Carta (house style). */}
+          {/* Secondary: the page's one primary is Ask Viantra (house style). */}
           <Button type="submit" variant="secondary" disabled={state === 'busy'} loading={state === 'busy'}>{t('waitlist.button')}</Button>
           {bad && <p id="wl-msg" className="wl-msg" role="alert">{t(state === 'email' ? 'waitlist.badEmail' : 'waitlist.unavailable')}</p>}
         </form>

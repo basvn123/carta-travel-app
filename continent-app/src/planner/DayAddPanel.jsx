@@ -111,7 +111,7 @@ function PlaceCard({ item, idx, added, focused, note, onToggle, onFocus, t }) {
  * Add places: everything you could still add to today.
  *
  * T433: the "Ready-made" half ("Whole days for {city}, already in walking
- * order") is gone, at the owner's call: whole days are what Carta's questions
+ * order") is gone, at the owner's call: whole days are what Viantra's questions
  * and the builder make now. What stays is search anything (the catalogue is a
  * head start, not a gate: a place it has never heard of still becomes a stop),
  * then browse by pick. Tapping any card moves the map to it, so how far it sits from
@@ -135,7 +135,7 @@ export function DayAddPanel({
   const [shown, setShown] = useState(PAGE);
 
   // The suggestions block sits above the deck and is drawn FROM the deck, so
-  // without this a place Carta is actively recommending is also listed twice
+  // without this a place Viantra is actively recommending is also listed twice
   // on the same screen.
   const suggShown = pick === 'all' && suggestions.length > 0;
   const suggIdx = useMemo(() => new Set(suggestions.map((x) => x.idx)), [suggestions]);

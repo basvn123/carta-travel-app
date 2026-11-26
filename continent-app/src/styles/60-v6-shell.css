@@ -952,7 +952,6 @@ html.kbd-open .settings-done { display: none; }
   }
   .app-header .header-nav,
   .app-header .header-search-slot { display: none; }
-  .app-header .app-header-brand .brand-mark { width: 28px; height: 28px; }
   .app-header .app-header-brand .brand-name { font-size: var(--text-title); }
   .app-header .app-header-account { height: auto; min-height: 0; margin-left: auto; }
 }
@@ -960,7 +959,7 @@ html.kbd-open .settings-done { display: none; }
 /* ==========================================================================
    The house shell (G1, house style 2026-11, DESIGN.md "Shell and the three
    angles"). The chrome lies on the stone ground with one hairline; the
-   wordmark slot is a blaze and the name in the plate face; the place you
+   wordmark slot is the Viantra arch and outlined wordmark (K1); the place you
    are in is marked by the umber paint bar under it (desktop and tablet) or
    a blaze over its icon (phone), both gliding on the nav marker. Each angle
    is its own layout:
@@ -973,7 +972,13 @@ html.kbd-open .settings-done { display: none; }
    ========================================================================== */
 .top-bar { background: var(--surface-page); border-bottom: var(--stroke-hair) solid var(--border); }
 .app-header .app-header-brand { gap: 10px; text-decoration: none; }
-.app-header .app-header-brand .hs-blaze.brand-mark { width: var(--bw); height: var(--bh); }
+/* K1: the Viantra arch is 5:6, so it is sized by height and keeps its shape.
+   It takes the name's font-size token and stands 1.15em tall, the lockup's
+   ratio of arch to capitals, so it follows the name at every angle. */
+.app-header .app-header-brand .brand-mark { width: auto; font-size: var(--text-headline); height: 1.15em; }
+@media (min-width: 769px) and (max-width: 1279px) {
+  .app-header .app-header-brand .brand-mark { font-size: var(--text-title); }
+}
 .app-header-brand .brand-name {
   font-family: var(--plate-face);
   font-size: var(--text-headline);

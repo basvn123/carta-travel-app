@@ -30,7 +30,7 @@ test('the reach keeps the picks close to the stop', () => {
   assert.ok(!near.some((x) => x.dest.id === 'vie'));
 });
 
-test('Carta\'s picks rank the places in reach by what the traveller wants there', () => {
+test('Viantra\'s picks rank the places in reach by what the traveller wants there', () => {
   const hiking = swapPicks({ destinations, from: destinations.hal, exclude: ['hal', 'szg'], likes: ['hiking'], reach: 'near' });
   assert.ok(hiking.length > 0);
   assert.ok(hiking.every((x) => x.km <= 60));

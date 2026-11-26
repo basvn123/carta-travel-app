@@ -34,7 +34,7 @@ import { LegalDoc } from './LegalDoc.jsx';
  *    showed when checked, labelled as such and not an offer (wording
  *    self-reviewed against Directive 2005/29/EC Art 6 and 7, T519-a,
  *    2026-11-12).
- *  - That Carta is not a travel agent and sells no travel.
+ *  - That Viantra is not a travel agent and sells no travel.
  *  - Liability limits that stay inside what Belgian consumer law allows.
  *  - Belgian law, Belgian courts, the Belgian consumer mediation service.
  *
@@ -65,57 +65,57 @@ export function TermsOfService({ onClose }) {
   // Tab stays inside, Escape closes it and focus goes back to the opener.
   return (
     <LegalDoc id="legal-terms" title="Terms of service" updated={UPDATED} onClose={onClose}>
-          <h3>Who provides Carta</h3>
+          <h3>Who provides Viantra</h3>
           <p>
-            Carta is operated from Belgium by the person or company named in
+            Viantra is operated from Belgium by the person or company named in
             the Imprint, which you can open from the Account panel. That page
             carries the legal name, address, enterprise number and contact
-            details. In these terms "Carta", "we" and "us" mean that provider,
+            details. In these terms "Viantra", "we" and "us" mean that provider,
             and "you" means the person using the app.
           </p>
           <p>
-            These terms apply to every use of Carta, with or without an
+            These terms apply to every use of Viantra, with or without an
             account, and to every pass bought through it. The privacy policy,
             also in the Account panel, explains what happens to your data and
             is part of the agreement between us.
           </p>
 
-          <h3>What Carta is, and what it is not</h3>
+          <h3>What Viantra is, and what it is not</h3>
           <p>
-            Carta is a planning tool. It estimates what a trip in Europe is
+            Viantra is a planning tool. It estimates what a trip in Europe is
             likely to cost, helps you choose a destination, and helps you plan
             your days there. It shows you figures, places and routes so you can
             decide for yourself.
           </p>
           <p>
-            Carta is not a travel agent, a tour operator or a ticket seller. We
+            Viantra is not a travel agent, a tour operator or a ticket seller. We
             do not sell flights, trains, buses, ferries, rooms, tours or any
             other travel service, and we never take a booking on your behalf.
             When you press a link to an airline, a rail operator, a booking
-            site or a map, you leave Carta and deal with that company under its
+            site or a map, you leave Viantra and deal with that company under its
             own terms and prices. Some of those links are affiliate links: if
             you book, the company may pay us a commission. That never changes
-            the price you pay, and it never changes which figure Carta shows
+            the price you pay, and it never changes which figure Viantra shows
             you as cheapest.
           </p>
           <p>
-            Because Carta sells no travel service, the rules on package travel
+            Because Viantra sells no travel service, the rules on package travel
             and linked travel arrangements do not apply to it, and the
             protections that come with a package (financial insolvency cover,
-            liability for the performance of the trip) are not something Carta
+            liability for the performance of the trip) are not something Viantra
             provides. Those protections come from whoever you actually book
             with.
           </p>
 
           <h3>Every figure is an estimate</h3>
           <p>
-            Carta publishes modelled and measured estimates with their
+            Viantra publishes modelled and measured estimates with their
             provenance. The one exception is flights, below.
           </p>
           <p>
-            A flight price on Carta is the price Google Flights showed for that
+            A flight price on Viantra is the price Google Flights showed for that
             flight when we checked it, with the airline, the times and the time
-            of that check beside it. It is not an offer: Carta sells no tickets,
+            of that check beside it. It is not an offer: Viantra sells no tickets,
             the price can change or the seat can sell out before you book, and
             the booking site's price is the one that counts. A bag fee added to
             a flight is our estimate of what that airline usually charges. A
@@ -136,10 +136,10 @@ export function TermsOfService({ onClose }) {
           <p>
             An estimate is not a quote. The only price that counts is the one
             the operator shows you when you book, and it will differ from
-            Carta's figure, sometimes by a lot, because fares move by the hour,
+            Viantra's figure, sometimes by a lot, because fares move by the hour,
             because operators add fees, and because a model cannot see a sale
             that starts tomorrow. Check the figure at the operator before you
-            commit money, and treat Carta's totals as a budget to plan around,
+            commit money, and treat Viantra's totals as a budget to plan around,
             not a promise. A total leaves your flights out unless you entered
             your own fare.
           </p>
@@ -149,12 +149,12 @@ export function TermsOfService({ onClose }) {
             times and place descriptions come from public and open data
             sources, are combined and rewritten by us, and can be out of date
             or wrong. The data credits in the Imprint name the open sources
-            Carta is built on. Nothing in Carta replaces checking with the
+            Viantra is built on. Nothing in Viantra replaces checking with the
             place itself, and nothing in it is advice about whether a trip,
             a route, a swim or a climb is safe for you.
           </p>
 
-          <h3>The Carta bot and other AI features</h3>
+          <h3>The Viantra bot and other AI features</h3>
           <p>
             Day plans, booking imports and live search are produced with the
             help of a large language model. Its output can be confidently
@@ -171,7 +171,7 @@ export function TermsOfService({ onClose }) {
           <p>
             You can use the map, the destination pages and one trip without an
             account. Saving more than one trip, syncing across devices, the
-            Carta bot and every pass need an account, because a pass is granted
+            Viantra bot and every pass need an account, because a pass is granted
             to an account. Keep your sign-in details to yourself and tell us if
             you think somebody else is using them. You must be at least 18 to
             buy a pass; younger travellers may use the free features and may
@@ -180,7 +180,7 @@ export function TermsOfService({ onClose }) {
 
           <h3>What a pass buys</h3>
           <p>
-            There are two passes for Carta's paid features, and both are
+            There are two passes for Viantra's paid features, and both are
             bought once. The Trip Pass runs for a fixed number of days and the
             Year Pass for twelve months. Each starts the moment your payment
             completes and ends on its own on its last day: neither renews, and
@@ -190,7 +190,7 @@ export function TermsOfService({ onClose }) {
             only the paid actions stop until you buy again.
           </p>
           <p>
-            The paid features, at the date above, are: Carta bot day plans up
+            The paid features, at the date above, are: Viantra bot day plans up
             to a fair-use ceiling, live web search for events and opening
             hours up to a separate ceiling, exporting plans as PDF, calendar
             and map files, importing booking confirmations, saving more than
@@ -205,7 +205,7 @@ export function TermsOfService({ onClose }) {
           <p>
             A pass is personal to one account and cannot be transferred, sold
             or shared. It is a licence to use the features above for its term;
-            it does not give you any right in Carta's data, models or software
+            it does not give you any right in Viantra's data, models or software
             beyond that use.
           </p>
 
@@ -213,7 +213,7 @@ export function TermsOfService({ onClose }) {
           <p>
             A pass does not buy travel, tickets, rooms or any booking. It does
             not buy a guarantee that any estimate will match a real price, that
-            the Carta bot will be right, that any place will be open, or that
+            the Viantra bot will be right, that any place will be open, or that
             the app will be available every minute of its term. It does not buy
             priority support. And it does not buy features that we describe as
             coming soon; only what is listed and working on the day you pay.
@@ -287,7 +287,7 @@ export function TermsOfService({ onClose }) {
           <h3>Refunds</h3>
           <p>
             Beyond your right to withdraw we refund in three cases. First, if
-            you ask within 14 days of buying and you have used no Carta bot
+            you ask within 14 days of buying and you have used no Viantra bot
             plan, no live search and no export on that pass, we refund the
             whole amount, not only the unused share. Second, if the paid
             features are
@@ -307,7 +307,7 @@ export function TermsOfService({ onClose }) {
             Code of Economic Law).
           </p>
 
-          <h3>Your content and how you may use Carta</h3>
+          <h3>Your content and how you may use Viantra</h3>
           <p>
             Your trips, plans, notes and imported bookings are yours. You give
             us the right to store, process and display them so the app can
@@ -316,7 +316,7 @@ export function TermsOfService({ onClose }) {
             you invite see what you shared.
           </p>
           <p>
-            Do not use Carta to harvest its data at scale, resell access, run
+            Do not use Viantra to harvest its data at scale, resell access, run
             automated clients against the paid features, share an account,
             attack the service, or break the law. The fair-use ceilings are a
             cost control and not an invitation to script against them. If we
@@ -325,7 +325,7 @@ export function TermsOfService({ onClose }) {
             we do not.
           </p>
           <p>
-            Parts of what Carta shows you come from open data under licences
+            Parts of what Viantra shows you come from open data under licences
             that ask for credit, above all OpenStreetMap contributors and the
             photographers who publish on Wikimedia Commons and Geograph. Those
             credits travel with the files you export. Keep them if you pass an
@@ -388,7 +388,7 @@ export function TermsOfService({ onClose }) {
 
           <h3>Availability and changes</h3>
           <p>
-            We aim to keep Carta up and improving, and we do not guarantee it
+            We aim to keep Viantra up and improving, and we do not guarantee it
             will be. Data refreshes, deployments and third-party outages can
             interrupt it. We may add, change or retire features and data layers;
             if a change takes away something a running pass paid for, the
@@ -416,41 +416,41 @@ export function TermsOfService({ onClose }) {
               UPLOAD_TERMS_VERSION in community/uploads.js too. */}
           <h3>Photos and tracks you share</h3>
           <p>
-            You may send Carta a photo or a GPS track of a place in the app.
+            You may send Viantra a photo or a GPS track of a place in the app.
             A person checks every upload before it appears. If we decline or
             later remove an upload because we believe it is illegal or breaks
             these terms, we tell you why and how to ask us to look again.
           </p>
           <p>
             You keep the copyright in what you share. By sending it you give
-            Carta a worldwide, non-exclusive, royalty-free licence to store,
+            Viantra a worldwide, non-exclusive, royalty-free licence to store,
             copy, adapt (crop, resize, re-encode), publish and display it, in
-            the app and wherever Carta appears. Carta may pass this licence on
+            the app and wherever Viantra appears. Viantra may pass this licence on
             to others (sublicense it), and may transfer it, for example to
-            whoever takes Carta over. The licence lasts as long as the upload
-            is on Carta. When you ask us to remove an upload, or delete your
-            account, we take it off Carta and the licence ends; what was
+            whoever takes Viantra over. The licence lasts as long as the upload
+            is on Viantra. When you ask us to remove an upload, or delete your
+            account, we take it off Viantra and the licence ends; what was
             lawfully done under it before then stays lawful, such as a copy
             someone made under a Creative Commons licence you chose, or a
             track you allowed us to give to OpenStreetMap.
           </p>
           <p>
             We credit you, by the name you give with the upload, wherever
-            Carta shows it, and anyone we pass it on to must credit you the
+            Viantra shows it, and anyone we pass it on to must credit you the
             same way. Where the law of your country gives you moral rights, such
             as the right to be named and to object to a distortion of your
             work, nothing in these terms asks you to give them up.
           </p>
           <p>
-            With each upload you also choose who else may reuse it: Carta
+            With each upload you also choose who else may reuse it: Viantra
             only, Creative Commons Attribution 4.0 (CC BY 4.0), or Creative
             Commons Attribution-ShareAlike 4.0 (CC BY-SA 4.0). A Creative
             Commons licence is one you grant to everyone, and it cannot be
             withdrawn for copies made while it applied. It comes on top of the
-            licence to Carta above and does not replace it.
+            licence to Viantra above and does not replace it.
           </p>
           <p>
-            For a track there is a separate box. Ticking it allows Carta to
+            For a track there is a separate box. Ticking it allows Viantra to
             give the track to OpenStreetMap, whose foundation (the
             OpenStreetMap Foundation) may then use it under the OpenStreetMap
             Contributor Terms. Those terms let it use the track for any
@@ -459,7 +459,7 @@ export function TermsOfService({ onClose }) {
             Database License. Neither Creative Commons licence allows that by
             itself. Leave the box unticked and we do not offer your track to
             OpenStreetMap. Once a track has been given to OpenStreetMap,
-            removing it from Carta does not remove it there.
+            removing it from Viantra does not remove it there.
           </p>
           <p>
             You promise that the upload is your own work or that you have the
@@ -479,13 +479,13 @@ export function TermsOfService({ onClose }) {
 
           <h3>Liability</h3>
           <p>
-            Carta is a planning aid and its figures are estimates. To the
+            Viantra is a planning aid and its figures are estimates. To the
             extent the law allows, we are not liable for money you spend, or
             lose, in reliance on an estimate, a route, an AI plan or any other
             fact in the app: a fare that turned out higher, a place that was
             closed, a connection that was missed, a trip that cost more than
             the budget. Where we are liable, our total liability to you for
-            everything arising out of Carta in any twelve-month period is
+            everything arising out of Viantra in any twelve-month period is
             limited to the amount you paid us for passes in that period.
           </p>
           <p>
@@ -499,11 +499,11 @@ export function TermsOfService({ onClose }) {
 
           <h3>Ending the agreement</h3>
           <p>
-            You can stop using Carta at any time, and you can delete your
+            You can stop using Viantra at any time, and you can delete your
             account and everything stored with it from the Account panel.
             Deleting an account ends any pass on it; the unused share is
             refunded only in the cases listed under Refunds. We may close an
-            account for the abuse described above, or if Carta itself closes,
+            account for the abuse described above, or if Viantra itself closes,
             in which case running passes are refunded for their unused share.
           </p>
 

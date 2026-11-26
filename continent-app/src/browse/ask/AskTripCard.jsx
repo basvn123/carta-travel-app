@@ -11,7 +11,7 @@ import { RouteArrow } from './marks.jsx';
 /**
  * The trip around an answer's first place (T571): the flight there and back
  * from the home airport, where to stay and what it costs, what to do, and
- * the ways on into Carta (open the place, plan the trip). Every figure is
+ * the ways on into Viantra (open the place, plan the trip). Every figure is
  * one the rest of the app shows: the flight is Google Flights' swept price
  * (airline, times, when checked, the link out), the bed and the day are the
  * row's own cost at the traveller's Lifestyle.

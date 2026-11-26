@@ -1,7 +1,7 @@
 // T862: where to sleep, the space and the four stay types (src/lib/sleepGroups.js
 // STAY_TYPES), each with a typical night (src/lib/price/stay.js typicalNight),
 // the book links by type (src/lib/transportLinks.js stayBookLinks) and the
-// words of Tell Carta read into the same types. Run: npm test (continent-app/).
+// words of Tell Viantra read into the same types. Run: npm test (continent-app/).
 import test from "node:test";
 import assert from "node:assert/strict";
 import { existsSync, readFileSync } from "node:fs";
@@ -74,7 +74,7 @@ test("book links by type: Booking.com apartments and Airbnb, Airbnb rooms, Hoste
   assert.deepEqual(stayBookLinks({ tier: "home" }), []);
 });
 
-test("Tell Carta's stay words land on the four types", () => {
+test("Tell Viantra's stay words land on the four types", () => {
   const read = (s) => parseTrip(s, { lang: "en", today: "2026-10-30" }).fields.stay?.value;
   const typeOf = (s) => stayTypeOf(read(s));
   assert.equal(typeOf("a week in Lisbon in a flat"), "apartment");

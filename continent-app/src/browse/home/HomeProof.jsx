@@ -10,7 +10,7 @@ import { accented, STORY_NIGHTS } from './HomeCost.jsx';
 /**
  * The proof (T951; one card since T955; house style 2026-11, home lane). Two
  * bars on one scale: what a flight site shows (the flight alone, the rest of
- * the week an empty dashed track) and what Carta shows (the flight, the bed
+ * the week an empty dashed track) and what Viantra shows (the flight, the bed
  * and the days, in the formation's colours: getting there outlined, the bed
  * solid umber, food and drink beige). Under them each cost's share and what
  * moves it; the foot holds the one line and the door. Every figure is

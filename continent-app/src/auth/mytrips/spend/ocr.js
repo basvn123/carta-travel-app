@@ -5,7 +5,7 @@
  * scans a receipt: this module is imported with import() from the scan
  * sheet, so neither Tesseract nor its 4 MB core is in the main chunk.
  *
- * Every file is served from Carta's own origins, as the CSP asks
+ * Every file is served from Viantra's own origins, as the CSP asks
  * (script-src 'self' 'wasm-unsafe-eval', worker-src 'self' blob:):
  *   the worker    built by Vite from tesseract.js (?worker&url)
  *   the core      tesseract.js-core's WebAssembly build (?url, an asset)

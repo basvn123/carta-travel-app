@@ -1,7 +1,7 @@
-/* ---- Plan home and Carta's own trips (T901 to T904, the owner's Plan home
+/* ---- Plan home and Viantra's own trips (T901 to T904, the owner's Plan home
    board 2026-10-30) ---- */
 
-/* T901: one of Carta's trips, the card of Trips for you. The photo carries
+/* T901: one of Viantra's trips, the card of Trips for you. The photo carries
    the badge, the bookmark and, on an ink fade, the countries and the name
    (two lines at most); under it the flag with places and nights, then one
    price line, so cards in a row end level. */
@@ -34,7 +34,7 @@
   .ctc-hit:hover .ctc-img { transform: scale(1.04); }
 }
 
-/* T902: Carta's own trips. The breadcrumb, the title alone, the styles as
+/* T902: Viantra's own trips. The breadcrumb, the title alone, the styles as
    Explore's category row, quick filters, then rows of two cards on a phone
    (whole cards inside the gutter, the next pair a swipe away) and four
    from 769 px, then the grid: two on a phone, three, then four. */
@@ -51,7 +51,7 @@
 .pf-carta-grid .pf-carta-ghost { height: auto; aspect-ratio: 4 / 6; }
 
 /* T903, T988, T989: the Plan home with trips. No visible title (owner,
-   T989): the page opens on two equal tiles, New trip and Carta's own trips
+   T989): the page opens on two equal tiles, New trip and Viantra's own trips
    (an umber door with a small deck, Explore's folder, T964); then Up next as
    the page's photograph; then Upcoming, Planning and Past as tabs, only those
    with trips (dated trips as Explore's rail cards, drafts as rows). */
@@ -157,7 +157,7 @@
   .pfh-clear-card { animation: none; }
 }
 
-/* ---- T1030: Carta's own trips, one page (owner 2026-11-02) ----
+/* ---- T1030: Viantra's own trips, one page (owner 2026-11-02) ----
    The breadcrumb names the page, so the styles come straight under it; no
    big title and no count. Rows sit closer on a phone. The card's name on
    the photo is never cut; under it what the week is, how hard and how long,

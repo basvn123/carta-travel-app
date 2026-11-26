@@ -1,12 +1,12 @@
 /**
- * suggest-city, the Carta bot's "ask AI where to go" Edge Function.
+ * suggest-city, the Viantra bot's "ask AI where to go" Edge Function.
  *
  * The client sends the traveller's stay point, mood (focus/interests) and a
  * free-text wish, plus a candidate list of real destinations drawn from
- * Carta's own catalogue within reach. Unlike plan-day, this endpoint is
+ * Viantra's own catalogue within reach. Unlike plan-day, this endpoint is
  * explicitly allowed to look beyond that list: Google Search grounding is on
  * by default, since the whole point of "ask AI" is surfacing a real place
- * Carta hasn't researched yet. Every returned suggestion is still
+ * Viantra hasn't researched yet. Every returned suggestion is still
  * re-validated server-side in logic.mjs: a catalogue pick must reference a
  * real candidate id, a web discovery needs real, in-area coordinates.
  *
@@ -18,11 +18,11 @@
  * Billing posture: identical to plan-day (see its header). The short version
  * is that the old unbilled-key guarantee is GONE, because Google's Gemini API
  * Additional Terms (2026-03-23) require Paid Services for any API client
- * serving users in the EEA, Switzerland or the UK, which is Carta's whole
+ * serving users in the EEA, Switzerland or the UK, which is Viantra's whole
  * market. Grounding matters more here than anywhere else: this endpoint is
  * grounded by default and Gemini 3 bills per search query the model runs, so
  * grounded suggestions are a PAID-tier feature and spend the 'ground'
- * allowance. Free users still get an answer, drawn from Carta's own catalogue
+ * allowance. Free users still get an answer, drawn from Viantra's own catalogue
  * rather than live search. See README.md for the deploy steps.
  *
  * Secrets (set via `supabase secrets set`): GEMINI_API_KEY, and optionally
@@ -128,7 +128,7 @@ Deno.serve(withCors(async (req) => {
     && supportsSearch(access.cfg);
   const status = await resolveTier(service, user.id);
   let useGrounding = enabled && (status?.groundLeft ?? 0) > 0;
-  // A free user still gets an answer here, just one drawn purely from Carta's
+  // A free user still gets an answer here, just one drawn purely from Viantra's
   // own catalogue rather than from live search. That is a genuinely weaker
   // product, which is the point: it is the difference the Trip Pass sells.
   let groundingSkipped = enabled && !useGrounding

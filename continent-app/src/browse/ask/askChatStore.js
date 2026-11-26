@@ -1,5 +1,5 @@
 /*
- * One Ask Carta chat for the whole app (T574). Explore hosts the panel (it
+ * One Ask Viantra chat for the whole app (T574). Explore hosts the panel (it
  * holds the catalogue the answers read, and it is mounted from the start),
  * and any number of doors open it from anywhere: the header on every place
  * on desktop, the Filters row on Explore and the Plan page on a phone. The

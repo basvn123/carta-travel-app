@@ -9,7 +9,7 @@
  *   far    weeks 3 to 26, one day per week, each route every 2 weeks
  *   late   weeks 27 to 45, the same, each route every 4 weeks; on the
  *          Hetzner box (T798, workers/late-sweep), sent in through /ingest
- *   find   every pair of Carta airports that no route covers yet, one day
+ *   find   every pair of Viantra airports that no route covers yet, one day
  *          21 days out, direct flights only, each pair once a month
  *
  * A route's slot is its index in the sorted list modulo the tier's cycle

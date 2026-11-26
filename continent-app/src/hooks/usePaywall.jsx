@@ -15,7 +15,7 @@
  * in the browser, so the browser is the only place they can be gated. Someone
  * determined can bypass this with devtools, and that is fine: the gate exists
  * to ask people who would happily pay, not to defeat people who would not.
- * The surfaces that cost real money (Carta bot plans, grounded search) are
+ * The surfaces that cost real money (Viantra bot plans, grounded search) are
  * still enforced server-side by ai_consume, which this file never touches.
  *
  * HARD versus SOFT. A hard gate always opens, every time, because a button
