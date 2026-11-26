@@ -135,6 +135,44 @@ Docs: `docs/HANDBOOK.md` (Plan section and Travel styles 15b to 15u), `ROADMAP.m
 
 Not a change: `scripts/vite.fast.mjs.timestamp-1795534893716-57dd761d562198.mjs` is a temporary bundle Vite writes during a fast build and deletes afterwards. It is not in the repo.
 
+### Follow-ups after the ship (2026-11-26)
+The follow-ups were merged to main as `314a6dffaf`:
+- `p15-plan-followups`: Plan with <group> on the door.
+- `p15-flights-dense`: exact-day flights (T855) and the denser sweep (D10).
+
+Their files are listed in those branches' commits.
+
+Deploy steps, per `docs/owner/flights-dense-deploy.md`:
+- `python run_pipeline.py --only flight_routes` uploaded the ranked `_routes.json` to R2.
+- The flight-sweep Worker was deployed.
+- The site was shipped.
+- On the box, the late-sweep code was updated and its service restarted.
+
+The pipeline run touched these tracked files as a side effect. All were restored with `git checkout --` before the ship, so none is changed in the repo:
+
+| File | What changed | Why |
+|---|---|---|
+| `continent-app/src/admin/pipelineOverrides.json` | run timestamp | the pipeline runner records each run; restored |
+| `data/derived/freshness_report.json` | freshness timestamps | post-run freshness check; restored |
+| `data/flights/_airports.json` | `built` timestamp only | `build_routes.py` rewrote it; restored (R2 has the new copy) |
+| `data/flights/_routes.json` | `built` timestamp only | `build_routes.py` rewrote it; the ranked copy is on R2 and the committed file already has `rank`; restored |
+| `data/reports/evals/history.jsonl` | one appended eval line | the runner's post-run evals; restored |
+| `data/reports/evals/latest/ask-docs.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/ask.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/data-quality.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/injection.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/linking.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/parse-booking.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/plan-day.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/suggest-city.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/taxonomy.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/trail-summaries.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/trails-external.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/trips-golden.json` | eval result of this run | post-run evals; restored |
+| `data/reports/evals/latest/truth.json` | eval result of this run | post-run evals; restored |
+| `docs/reference/evals.md` | the eval dashboard | post-run evals; restored |
+| `docs/owner/auth-settings.md` | not changed by this run: an uncommitted edit (8 lines added, 3 removed) appeared in the shared checkout on 2026-11-26 from another session | left untouched for its owner; not part of G12, T855 or D10 |
+
 ## Undo
 - Not merged: delete the branch.
 - After a merge: `git revert -m 1 <merge commit>`.
