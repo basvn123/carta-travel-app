@@ -107,7 +107,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
     return r ? ` Booking ref ${r}.` : '';
   };
   const events = [];
-  // The flight Carta priced each way (T518): a timed event at its own hours,
+  // The flight Viantra priced each way (T518): a timed event at its own hours,
   // with the airline, flight number and Google Flights' fare in the notes.
   const cartaEvent = (leg, key, refKey) => {
     const who = [airlines?.[leg.airline]?.name || leg.airline, leg.flightNo].filter(Boolean).join(' ');
@@ -116,7 +116,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       date: leg.date,
       time: leg.dep ? `${leg.dep}/${leg.arr || ''}` : null,
       summary: `Flight ${leg.from} to ${leg.to}`,
-      description: `${who}, ${leg.dep} to ${leg.arr}. ${eurExact(leg.cost.total)} for ${people} on Google Flights when Carta checked; prices may have changed.${refFor(refKey)} Planned with Carta.`,
+      description: `${who}, ${leg.dep} to ${leg.arr}. ${eurExact(leg.cost.total)} for ${people} on Google Flights when Viantra checked; prices may have changed.${refFor(refKey)} Planned with Viantra.`,
     });
   };
   const cfOut = cartaFlight?.out?.cost ? cartaFlight.out : null;
@@ -132,7 +132,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       // so the event is all-day until the traveller's own booking says more.
       time: null,
       summary: `Flight ${flight.origin} to ${flight.into_anchor}`,
-      description: `${people}.${refFor('flight-out')} Planned with Carta.`,
+      description: `${people}.${refFor('flight-out')} Planned with Viantra.`,
     }));
   } else if (flight?.own) {
     events.push(flightEvent({
@@ -140,7 +140,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       date: first.arriveDate,
       time: null,
       summary: `Getting there: ${ownTravelWord(flight)}`,
-      description: `${people}.${refFor('flight')} Planned with Carta.`,
+      description: `${people}.${refFor('flight')} Planned with Viantra.`,
     }));
   }
 
@@ -152,7 +152,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       endDate: s.departDate,
       summary: `Stay in ${s.dest.city}`,
       location: [s.dest.city, s.dest.country].filter(Boolean).join(', '),
-      description: `${s.nights} ${s.nights === 1 ? 'night' : 'nights'}, ${people}.${refFor(`stay-${idx}`)} Planned with Carta.`,
+      description: `${s.nights} ${s.nights === 1 ? 'night' : 'nights'}, ${people}.${refFor(`stay-${idx}`)} Planned with Viantra.`,
     }));
   });
 
@@ -164,7 +164,7 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       date: last.departDate,
       time: null,
       summary: `Flight ${flight.out_anchor} to ${flight.origin}`,
-      description: `${people}.${refFor('flight-home')} Planned with Carta.`,
+      description: `${people}.${refFor('flight-home')} Planned with Viantra.`,
     }));
   } else if (flight?.own) {
     events.push(flightEvent({
@@ -172,14 +172,14 @@ export function tripIcs({ label, stopDetails = [], flight = null, groupSize = 1,
       date: last.departDate,
       time: null,
       summary: `Getting home: ${ownTravelWord(flight)}`,
-      description: `${people}.${refFor('flight')} Planned with Carta.`,
+      description: `${people}.${refFor('flight')} Planned with Viantra.`,
     }));
   }
 
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Carta//Trip Planner//EN',
+    'PRODID:-//Viantra//Trip Planner//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${esc(label || 'My trip')}`,

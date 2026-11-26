@@ -1,11 +1,11 @@
 /*
- * Ask Carta: the question as the BM25 index reads it (T1141, ROADMAP E2).
+ * Ask Viantra: the question as the BM25 index reads it (T1141, ROADMAP E2).
  *
  * The passages are English (pipeline/ask_index_layer.py writes them from
  * the catalogue), and a question in Dutch or Italian found almost nothing
  * there: on the E1 set the sparse list scored 0 recall@10 on most non
  * English questions. This turns a question into English search words, with
- * nothing but vocabularies Carta already holds:
+ * nothing but vocabularies Viantra already holds:
  *
  *   1. the typed words, folded, less the stop words of all six languages
  *      and the month names (the facets carry the month; passages rarely
@@ -71,7 +71,7 @@ const englishOf = (vibe) => (VIBE_WORDS[vibe] || []).slice(0, 2);
 
 /**
  * The BM25 query of a question: a space separated string of folded words,
- * English first where Carta knows the English.
+ * English first where Viantra knows the English.
  */
 export const QUERY_PARTS = { vibe: true, foreign: true, country: true, area: true };
 

@@ -1,7 +1,7 @@
-// Headless verify that Carta shows no flight price of its own (T273), and
-// that a fare the traveller typed still counts. Carta does not price flights
+// Headless verify that Viantra shows no flight price of its own (T273), and
+// that a fare the traveller typed still counts. Viantra does not price flights
 // (owner decision, 2026-10-02): the planner keeps the route it flies, but no
-// receipt row, tag or total carries a Carta flight figure. Rewritten in T273;
+// receipt row, tag or total carries a Viantra flight figure. Rewritten in T273;
 // T266 wrote it to check the "~" and "est." tag T256 put on those rows. T511
 // removed the old fare data and its pricing harness, so this still holds.
 //
@@ -113,7 +113,7 @@ try {
       const flightCards = page.locator('.tpg-route .jr-card.is-flight');
       const routeText = await page.locator('.tpg-route').innerText();
 
-      // Carta never prices a flight: no est. tag anywhere on the trip page.
+      // Viantra never prices a flight: no est. tag anywhere on the trip page.
       if (await page.locator('.fare-prov-est').count()) fail(`${where} a flight row carries an est. tag`);
 
       if (c.name === 'unpriced') {

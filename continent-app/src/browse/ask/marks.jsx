@@ -1,6 +1,6 @@
 import React from 'react';
 
-/** Ask Carta's own small marks (T570), drawn in the icon set's 1.5 stroke. */
+/** Ask Viantra's own small marks (T570), drawn in the icon set's 1.5 stroke. */
 
 /** A question to ask: the turn-down arrow before a suggestion. */
 export function CornerArrow() {

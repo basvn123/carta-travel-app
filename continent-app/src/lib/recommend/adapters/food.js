@@ -5,7 +5,7 @@
  *
  * The options are three Lifestyle presets of config/pricing.json (cook
  * some, a mix, eat out), each priced by the engine's own stay quote with
- * that Lifestyle. Carta's pick is the Lifestyle the traveller has set.
+ * that Lifestyle. Viantra's pick is the Lifestyle the traveller has set.
  */
 import { quoteStay } from '../../price/stay.js';
 import { PROFILES } from '../../lifestyleProfiles.js';

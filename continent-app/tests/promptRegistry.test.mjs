@@ -31,12 +31,17 @@ const ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)));
 const read = (p) => readFileSync(join(ROOT, p), 'utf8');
 const golden = JSON.parse(read('prompts/_golden/js.json'));
 const sha = (s) => createHash('sha256').update(s).digest('hex');
+// K1 (decision 0018, 2026-11-26): the product is Viantra now. The runtime
+// prompts (security-rules v2, ask v2, plan-day v2, suggest-city v3,
+// parse-booking v2) changed that one word and nothing else, so each golden
+// output is the old code's text with the name swapped.
+const k1 = (s) => s.replace(/\bCarta\b/g, 'Viantra');
 
 /* ---- 1. byte-identical ---- */
 
 test('plan-day: the registry prompt equals the old code on every case', () => {
   assert.ok(golden['plan-day'].length >= 50);
-  for (const [i, c] of golden['plan-day'].entries()) assert.equal(planDay.buildPrompt(c.input), c.output, `plan-day case ${i}`);
+  for (const [i, c] of golden['plan-day'].entries()) assert.equal(planDay.buildPrompt(c.input), k1(c.output), `plan-day case ${i}`);
   assert.equal(JSON.stringify(planDay.RESPONSE_SCHEMA), golden['plan-day.schema']);
 });
 
@@ -46,7 +51,7 @@ test('suggest-city and parse-booking: the registry prompts equal the old code (s
   for (const [i, c] of golden['suggest-city'].entries()) {
     const nonce = 'n0nce7q';
     const v1Wish = `- Their own wish, treat as the main brief: "${c.input.freeText}".`;
-    const want = c.output
+    const want = k1(c.output)
       .split('\n')
       .map((line) => (line === JSON.stringify(c.input.candidates) ? guard.dataBlock('CANDIDATES', line, nonce) : line))
       .map((line) => (c.input.freeText && line === v1Wish
@@ -59,15 +64,15 @@ test('suggest-city and parse-booking: the registry prompts equal the old code (s
     if (c.input.freeText) assert.ok(got.includes(`<<<DATA ${nonce} WISH>>>`), `suggest-city case ${i}: wish not fenced`);
   }
   assert.equal(JSON.stringify(suggestCity.RESPONSE_SCHEMA), golden['suggest-city.schema']);
-  for (const [i, c] of golden['parse-booking'].entries()) assert.equal(parseBooking.buildPrompt(c.input), c.output, `parse-booking case ${i}`);
+  for (const [i, c] of golden['parse-booking'].entries()) assert.equal(parseBooking.buildPrompt(c.input), k1(c.output), `parse-booking case ${i}`);
   assert.equal(JSON.stringify(parseBooking.RESPONSE_SCHEMA), golden['parse-booking.schema']);
 });
 
 test('security rules and Ask: the registry prompts equal the old code', () => {
-  for (const c of golden['security-rules']) assert.equal(guard.systemRules(c.input.nonce), c.output);
-  for (const c of golden['ask.user']) assert.equal(guard.askUserPrompt(c.input, 'n0nce7q'), c.output);
-  for (const c of golden['ask.system']) assert.equal(systemPrompt(c.input.lang), c.output, c.input.lang);
-  for (const c of golden['ask.device']) assert.equal(userPrompt(c.input), c.output);
+  for (const c of golden['security-rules']) assert.equal(guard.systemRules(c.input.nonce), k1(c.output));
+  for (const c of golden['ask.user']) assert.equal(guard.askUserPrompt(c.input, 'n0nce7q'), k1(c.output));
+  for (const c of golden['ask.system']) assert.equal(systemPrompt(c.input.lang), k1(c.output), c.input.lang);
+  for (const c of golden['ask.device']) assert.equal(userPrompt(c.input), k1(c.output));
 });
 
 test('the eval judge: same rubric hash and the same 40 prompts', () => {
@@ -218,5 +223,6 @@ test('registry.mjs check --seed-edit fails (the CI self-test)', () => {
   const r = spawnSync(process.execPath, [join(ROOT, 'scripts/prompts/registry.mjs'), 'check', '--seed-edit'], { encoding: 'utf8' });
   assert.equal(r.status, 1, r.stdout + r.stderr);
   assert.match(r.stdout, /prompt registry: FAIL/);
-  assert.match(r.stdout, /plan-day: the text of prompts\/plan-day\/v1\.md changed without a version bump/);
+  // The seed edits plan-day's current version (v2 since K1), whichever it is.
+  assert.match(r.stdout, /plan-day: the text of prompts\/plan-day\/v\d+\.md changed without a version bump/);
 });

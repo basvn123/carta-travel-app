@@ -7,7 +7,7 @@ import { fmtClockLoose } from '../daySchedule.js';
 /**
  * Start your day (T898, the owner's plan days board 2026-10-30): what a
  * traveller needs before they leave, on top of the day (TripIt's "Go now",
- * Gemini planning around travel times). Only facts Carta has: when to
+ * Gemini planning around travel times). Only facts Viantra has: when to
  * leave the bed, the first stop and when it is reached, the town's usual
  * high that month, the tickets the day holds, what the day costs a person
  * and the bed it ends at. An empty day says so and offers the two ways to

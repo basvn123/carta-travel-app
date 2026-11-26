@@ -49,7 +49,7 @@ export function useMfa() {
         }
       }
       const { data, error } = await supabase.auth.mfa.enroll({
-        factorType: 'totp', friendlyName: 'Carta admin',
+        factorType: 'totp', friendlyName: 'Viantra admin',
       });
       if (error) throw error;
       setEnrolment({ factorId: data.id, qr: qrSrc(data.totp.qr_code), secret: data.totp.secret });

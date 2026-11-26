@@ -83,7 +83,7 @@ export function useTripPlannerEffects({
         anchorOrigin: d.anchorOrigin,
         returnAnchorId: d.returnAnchorId,
         // G12 B2: a booked flight with no airline or price printed (a typed
-        // sentence) is still the traveller's, never Carta's fare.
+        // sentence) is still the traveller's, never Viantra's fare.
         ownFlight: d.ownFlight?.airline || d.ownFlight?.costTotal || d.ownFlight?.booked ? d.ownFlight : null,
         legModes: d.legModes,
         ownLegs: d.ownLegs,

@@ -21,7 +21,7 @@
  * THE RADIUS is PRIVACY_RADIUS_M plus a random extra of up to
  * PRIVACY_JITTER_M, drawn once per upload. A fixed radius lets anybody find
  * the centre from the shape of the gap across several uploads; a radius that
- * differs each time does not give that away. Both figures are Carta's choice
+ * differs each time does not give that away. Both figures are Viantra's choice
  * for this task, not a published standard: 500 metres is about six minutes'
  * walk, and the extra keeps the true radius unknown to a reader.
  */
@@ -100,7 +100,7 @@ const fx = (v, d) => Number(v.toFixed(d)).toString();
 export function writeGpx(segs) {
   const lines = [
     '<?xml version="1.0" encoding="UTF-8"?>',
-    '<gpx version="1.1" creator="Carta" xmlns="http://www.topografix.com/GPX/1/1">',
+    '<gpx version="1.1" creator="Viantra" xmlns="http://www.topografix.com/GPX/1/1">',
     '  <trk>',
   ];
   for (const seg of segs) {

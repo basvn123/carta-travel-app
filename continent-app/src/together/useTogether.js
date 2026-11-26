@@ -4,7 +4,7 @@
  *
  * The header door needs the count of things waiting on you, the page needs
  * the people, their shown plans and the group trips, and the signals across
- * Carta (Explore cards, the place page, the Plan date step, My trips) need
+ * Viantra (Explore cards, the place page, the Plan date step, My trips) need
  * the plans and what each friend shares. One store answers all of them, so a
  * place page opened ten times does not ask ten times. Every read settles to
  * an empty answer on failure: a surface about somebody else's plans says

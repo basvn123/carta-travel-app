@@ -50,7 +50,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Decides: whether "a trip to Dubai" gets "Carta does not cover Dubai" instead of a Balkan week.
 - Rule: with no known place, near or country, an unknown word right after "to/in/naar/nach/à/a/para/per/verso" (not a verb such as "stay") is the destination; following capitalised unknown words join it ("New York"). Skipped when the turn points back to a previous place.
 - Constant: `BEFORE`, `VERBS` in `continent-app/src/lib/ask/outside.js:14` and `:20`
-- Test: `continent-app/tests/askChat.test.mjs` :: "a destination outside Carta's Europe is named, a European one is not"
+- Test: `continent-app/tests/askChat.test.mjs` :: "a destination outside Viantra's Europe is named, a European one is not"
 
 ### ASK-008 Which sources are searched per question type
 - Decides: whether passages about sights, trails and highlights can back an answer.

@@ -71,7 +71,7 @@ test("flight-first words choose the door in six languages, and only those words"
   const { patch, answered } = applyTrip(normalizeSettings({}), parseTrip("just a cheap flight", { lang: "en" }));
   assert.equal(patch.door, "flight");
   assert.ok(answered.includes("doors"));
-  // Through Tell Carta's chips the door is the words', and leaves with them.
+  // Through Tell Viantra's chips the door is the words', and leaves with them.
   const a = tellSettings(normalizeSettings({}), parseTrip("just a cheap flight", { lang: "en" }));
   assert.equal(a.settings.door, "flight");
   const b = tellSettings(a.settings, parseTrip("a week away", { lang: "en" }));
@@ -166,7 +166,7 @@ test("I've booked part of it: the bookings anchor the trip, the booked parts the
   assert.equal(made.selection.anchorId, "LIS");
   assert.deepEqual(made.booked, { flights: true, stays: ["LIS", "OPO"] });
 
-  // Only a flight: the town it lands in is the one base for the nights; Carta fills the rest.
+  // Only a flight: the town it lands in is the one base for the nights; Viantra fills the rest.
   const f = bookedTrip(fromImports(answers({ answered: [] }), [{ kind: "flight_out", city: "Prague", date: "2026-11-21", eur: null }]), destinations);
   assert.deepEqual(f.selection.stops.map((x) => x.destinationId), ["PRG"]);
   assert.equal(f.selection.ownFlight.booked, true);
@@ -178,7 +178,7 @@ test("I've booked part of it: the bookings anchor the trip, the booked parts the
   const q = quoteTrip(state, { data: { ...data, flights: sweep(), meta: { ...data.meta, selected_origin: "BRU" } } });
   assert.equal(q.cartaFlight, null);
   const free = quoteTrip({ ...state, ownFlight: null }, { data: { ...data, flights: sweep(), meta: { ...data.meta, selected_origin: "BRU" } } });
-  assert.ok(free.cartaFlight, "without the booking Carta prices the flight");
+  assert.ok(free.cartaFlight, "without the booking Viantra prices the flight");
 
   assert.equal(bookedTrip(fromImports(answers(), [{ kind: "stay", city: "Atlantis", date: "2027-05-08" }]), destinations), null);
 });

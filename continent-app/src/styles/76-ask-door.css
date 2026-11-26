@@ -1,5 +1,5 @@
 /*
- * Ask Carta's doors (T570, T574): loaded with the door, not with the chat,
+ * Ask Viantra's doors (T570, T574): loaded with the door, not with the chat,
  * so a door looks right before the chat's own sheet has ever loaded.
  */
 .btn.ac-door { flex: none; }
@@ -7,7 +7,7 @@
 .btn.ac-door[aria-expanded='true'] { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
 .btn.ac-door[aria-expanded='true'] .btn-icon { color: var(--select-ink); }
 .header-search-slot .btn.ac-door { min-height: 40px; margin-left: auto; }
-/* Phone: Ask Carta and Filters share the row in two equal halves. */
+/* Phone: Ask Viantra and Filters share the row in two equal halves. */
 
 /* The Plan start page: the door under the title, the column's width. */
 .btn.ac-door.ac-in-plan { width: 100%; min-height: 56px; justify-content: flex-start; margin: 0 0 var(--space-5); }

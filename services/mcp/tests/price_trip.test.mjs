@@ -76,7 +76,7 @@ test('legs: the chosen mode prices the hop; a hire car adds the car', () => {
   assert.ok(near(bus.total_eur - auto.total_eur, bus.parts.between - auto.parts.between));
 });
 
-test('flights: typed fares are added as given, one way left to Carta', () => {
+test('flights: typed fares are added as given, one way left to Viantra', () => {
   const base = { stops: [{ id: 'gem:bruges', nights: 3 }, { id: 'gem:ghent', nights: 2 }], adults: 2, stay: 'hotel3', start: '2027-05-10' };
   const none = priceTrip(data, base);
   const typed = priceTrip(data, { ...base, flights: { out_eur: 180, back_eur: 210 } });

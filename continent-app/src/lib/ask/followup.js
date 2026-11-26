@@ -1,5 +1,5 @@
 /*
- * A follow-up in an Ask Carta chat (T572). "Where to stay there?" after an
+ * A follow-up in an Ask Viantra chat (T572). "Where to stay there?" after an
  * answer about Porto names no place, so the parser reads it as a question
  * about all of Europe. This binds such a question to the place the last
  * answer was about: a question that names no place and either points back

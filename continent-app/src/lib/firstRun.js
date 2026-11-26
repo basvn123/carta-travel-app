@@ -12,7 +12,7 @@
  *   ground  eating and drinking, through groundSpendPerPerson, the function
  *           the Explore cards and the planner use, so a card, a receipt and
  *           a plan cannot disagree about what dinner costs.
- *   flight  only when the traveller typed what they paid. Carta prices no
+ *   flight  only when the traveller typed what they paid. Viantra prices no
  *           flight (owner decision 2026-10-02, T272, T273), so no fare table
  *           is read here at all.
  *
@@ -35,7 +35,7 @@ export const DEFAULT_LEAD_DAYS = 28;
 const SATURDAY = 6;
 
 /**
- * The dates Carta picks when the visitor has picked none: the first Saturday
+ * The dates Viantra picks when the visitor has picked none: the first Saturday
  * at least four weeks after `todayIso`, for `nights` nights. Calendar only;
  * the frozen fare window no longer decides it (T211, approved by the owner on
  * 2026-10-07 in T362).
@@ -50,7 +50,7 @@ export function calendarDefaultWindow(todayIso, nights = 7) {
 }
 
 /**
- * Carta's default window moved into a month (T392, register row T387-c): a
+ * Viantra's default window moved into a month (T392, register row T387-c): a
  * trip page that knows the trip's good month asks the first-run receipt to
  * price that month while the visitor has not chosen dates. The arrival is the
  * first Saturday on or after the 1st of the next occurrence of `month` (1 to
@@ -178,7 +178,7 @@ export function priceReceipt(dest, opts = {}) {
 /**
  * The footer: what one changed input would do to the total.
  *
- * While the dates are Carta's, the primary button is already asking for them,
+ * While the dates are Viantra's, the primary button is already asking for them,
  * so the footer names the stay instead: the measured tier here whose total is
  * furthest below this one (or, when none is cheaper, the nearest one above).
  * Once the dates are the visitor's own, or no other tier is measured here,

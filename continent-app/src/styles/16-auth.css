@@ -76,13 +76,23 @@
   right: var(--space-2);
 }
 
-/* The wordmark slot, as in the header: a blaze and the name in the plate face. */
+/* The wordmark slot, as in the header: the Viantra arch and the outlined
+   wordmark (K1, decision 0018). The arch is 5:6, so it is sized by height:
+   1.15em of the name's own size token, the lockup's arch to capitals. */
 .auth-brand {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   margin-bottom: var(--space-5);
 }
+.auth-brand-mark {
+  display: block;
+  flex-shrink: 0;
+  width: auto;
+  font-size: var(--text-plate);
+  height: 1.15em;
+}
+.auth-gate .auth-brand-mark { font-size: var(--text-headline); }
 .auth-brand-name {
   font-family: var(--plate-face);
   font-weight: 700;

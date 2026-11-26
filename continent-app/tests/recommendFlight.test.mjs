@@ -61,7 +61,7 @@ test("the card figure is Google Flights' swept fare for the trip's days, bags in
   assert.equal(f.quality, "measured");
   const p = f.pick.facts;
   assert.equal(p.source, "swept");
-  assert.equal(p.attribution, SOURCE, "the figure is Google Flights', never Carta's");
+  assert.equal(p.attribution, SOURCE, "the figure is Google Flights', never Viantra's");
   assert.equal(p.out.date, "2026-11-21");
   assert.equal(p.back.date, "2026-11-28");
   for (const leg of [p.out, p.back]) {

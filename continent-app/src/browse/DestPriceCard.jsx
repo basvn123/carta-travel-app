@@ -137,7 +137,7 @@ export function DestPriceCard({
   const request = ctx?.priceRequest || null;
   const nights = request?.nights || (from && to && to > from ? Math.max(1, tripDaysBetween(from, to)) : 7);
   const people = Math.max(1, Math.min(MAX_PARTY, Math.round(choices?.group_size || 2)));
-  // Carta's return flight (T518), from the home airport's sweep, on the
+  // Viantra's return flight (T518), from the home airport's sweep, on the
   // bed's date mode (T663, V7): near the exact dates, the month's cheapest,
   // or the year's cheapest. A fare the traveller typed wins over it, and with
   // neither the card prices the stay alone, as before.
@@ -251,7 +251,7 @@ export function DestPriceCard({
   const home = flightFile?.from || null;
   const cartaLine = price.lines.find((l) => l.key === 'flight' && l.carta) || null;
   // fixes-r1 E3: the head names the Settings When (a month, any time,
-  // cheapest dates), not Carta's default pair; dates show as dates.
+  // cheapest dates), not Viantra's default pair; dates show as dates.
   const dateMode = request?.dateMode;
   const datesText = dateMode && dateMode !== 'dates'
     ? whenText({ dateMode, month: request?.when?.ym || null, tripNights: request?.nights || nights, dates: null }, t, lang)

@@ -4,7 +4,7 @@
  *
  * A remote trail rarely has a good Commons photo and some walks have no open
  * track at all. The people who walked them have both. This module turns what
- * they pick on their device into something Carta may hold, under a licence it
+ * they pick on their device into something Viantra may hold, under a licence it
  * can rely on, without the private details a phone writes into a file.
  *
  * THE LEGAL SHAPE, and where each piece lives:
@@ -21,7 +21,7 @@
  *   the form asks how the uploader wants to be credited.
  *
  *   The public licence. On top of the platform grant the uploader picks one
- *   of three: Carta only, CC BY 4.0 or CC BY-SA 4.0 (LICENCES).
+ *   of three: Viantra only, CC BY 4.0 or CC BY-SA 4.0 (LICENCES).
  *
  *   OpenStreetMap. Neither CC licence lets a track flow into OSM by itself
  *   (CC BY 4.0 needs the OSMF waiver, CC BY-SA is incompatible), so a track

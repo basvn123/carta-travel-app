@@ -100,7 +100,7 @@ export function ExploreTab({
   // T462: a search handed over from the home page, once: { facets } applies
   // a guided question, { open: true } opens the search panel on arrival.
   seed = null, onSeedConsumed = null,
-  // T558: Ask Carta hands a route to the trip planner (App's openTripInPlanner).
+  // T558: Ask Viantra hands a route to the trip planner (App's openTripInPlanner).
   onPlanTrip = null,
   // T574: the chat, asked from another place, shows its places on Explore.
   onShowExplore = null,
@@ -164,7 +164,7 @@ export function ExploreTab({
   // traveller's own month first, then the dates on show, then today.
   // G12, D10 (round 6): before the app has written its default dates (they
   // reach Explore with the first settled prices, often with the full
-  // catalogue), the month of the dates Carta will pick (lib/firstRun.js),
+  // catalogue), the month of the dates Viantra will pick (lib/firstRun.js),
   // not today's: the rails said November, then all turned to December at
   // the late swap and were worked out again in one 0.7 s task at 4x CPU.
   const shownDepart = useSettings()?.departDate || calendarDefaultWindow(todayISO())?.start;
@@ -356,7 +356,7 @@ export function ExploreTab({
     setUnescoOnly, setVisible, setXf, showFavOnly, t, travelMonth, tripKinds, unescoOnly, xf,
   });
 
-  // Desktop chrome: the controls stand in the left panel. Ask Carta's one
+  // Desktop chrome: the controls stand in the left panel. Ask Viantra's one
   // door is the overview's own field (T595, owner 2026-10-22: only on
   // Explore, not in the header and not on other tabs).
   const isDesktop = useIsDesktop();
@@ -507,7 +507,7 @@ export function ExploreTab({
   };
   if (isActive) setDockHandlers({ onShare: shareView });
   // T585: the start dialog, once per device on a wide screen (T595: on the
-  // first visit only; Ask Carta's field took over its door). On a phone a
+  // first visit only; Ask Viantra's field took over its door). On a phone a
   // first visit with no travel style opens the Style Studio's create flow
   // instead (Style Studio, G12): the style is what every price follows.
   const travelStyles = useSettings()?.travelStyles;

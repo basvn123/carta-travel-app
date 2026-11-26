@@ -35,7 +35,7 @@ import { cityLabel } from '../lib/placeName.js';
  * a different question ("what is the one thing here", "where can I swim",
  * "what is on today"), and the map becomes a view you can switch to rather
  * than the only thing on screen. Every card is addable in one tap, the tray
- * keeps a running count and a step estimate, and Carta is one button away at
+ * keeps a running count and a step estimate, and Viantra is one button away at
  * every point, including with an empty tray.
  *
  * The rails load lazily as they scroll into view, because the beach, lake and

@@ -106,7 +106,7 @@ export function fmtMonths(nums) {
  *  Both planners used to cap their calendars at meta.end_date, the day the
  *  harvested fares run out, which in September puts May of next year out of
  *  reach. The planners stopped pricing fares themselves (transport is booked
- *  outside Carta), so the fare window no longer bounds what can be PLANNED;
+ *  outside Viantra), so the fare window no longer bounds what can be PLANNED;
  *  it only bounds the fare hints, which already say nothing past it. */
 export function planningHorizon(fareEndIso, todayIso) {
   const base = todayIso || todayISO();

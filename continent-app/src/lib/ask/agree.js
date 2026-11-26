@@ -1,5 +1,5 @@
 /*
- * Ask Carta, stage 6b: the written answer and the cards agree (T1101, E6).
+ * Ask Viantra, stage 6b: the written answer and the cards agree (T1101, E6).
  * Live failure (audit P-35): "quiet lake with good walks in June under 120 a
  * day" wrote Castel di Tora and showed Esztergom. verify.js keeps a sentence
  * to the notes; this keeps it to the cards the traveller sees:

@@ -23,7 +23,7 @@ function paint(map, id, prop, value) {
 export function applyHouseBasemap(map) {
   const style = map?.getStyle?.();
   if (!style?.layers) return;
-  // G12: the Carta basemap is drawn in the house palette already; repainting
+  // G12: the Viantra basemap is drawn in the house palette already; repainting
   // its background would turn the sea into land.
   if (isCartaBasemap(style)) return;
   const land = tokenColour('--map-land');

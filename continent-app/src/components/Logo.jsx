@@ -17,7 +17,7 @@ export default function Logo({ size = 28, className = '' }) {
       fill="none"
       className={className}
       role="img"
-      aria-label="Carta"
+      aria-label="Viantra"
     >
       <rect x="4" y="9" width="24" height="14" rx="1" fill="var(--surface)" stroke="var(--edge)" strokeWidth="0.6" />
       <rect x="7.36" y="11.8" width="17.28" height="5.04" fill="var(--action)" />

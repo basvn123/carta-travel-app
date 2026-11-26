@@ -37,7 +37,7 @@
 --   3. Paste this file again (or run the cron.schedule line printed below).
 -- Without them the block below schedules nothing and says so.
 --
--- PRICE DROPS. Carta's day prices are computed in the browser from the
+-- PRICE DROPS. Viantra's day prices are computed in the browser from the
 -- traveller's own settings (lib/price, the figure the cards show), so the
 -- server cannot price a saved place by itself. The page notices a clear
 -- drop against the price recorded at save time (lib/savedLists.js meta.eur)

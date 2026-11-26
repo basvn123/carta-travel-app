@@ -31,7 +31,7 @@ import { rule } from '../lib/price/config.js';
  *                app's party, a stepper) and the stay level (the one
  *                Lifestyle panel, carta-design T474)
  *   the ranges   accommodation, food, transport and visits, each its range
- *   the total    Carta's return flight from the home airport to the week's
+ *   the total    Viantra's return flight from the home airport to the week's
  *                cheapest gateway (T518, cartaFlight.js) or the traveller's
  *                own fare, which wins; then "Total for N" as a range
  *   actions      ONE primary (Plan this trip), Save and PDF as secondaries,
@@ -99,7 +99,7 @@ export function TripPriceCard({
     ctx?.setChoices?.((prev) => ({ ...prev, group_size: Math.min(MAX_PARTY, Math.max(1, Math.round(n))) }));
   };
 
-  // Carta's flight (T518): out on the app's leaving day, home after the
+  // Viantra's flight (T518): out on the app's leaving day, home after the
   // week's own nights, into whichever gateway is cheapest. A typed fare wins.
   const fl = homeFlightSetup(ctx);
   const codes = useMemo(() => journeyAirports(trip), [trip]);

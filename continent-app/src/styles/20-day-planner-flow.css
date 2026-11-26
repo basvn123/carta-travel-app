@@ -68,7 +68,7 @@
 
 /* The one instruction on the screen, given its own line and its own weight. */
 
-/* ───────── "Shape day N" - the inline Carta-plan panel in the rail ───────── */
+/* ───────── "Shape day N" - the inline Viantra-plan panel in the rail ───────── */
 
 .carta-plan-panel {
   border: 1px solid var(--rule);
@@ -250,7 +250,7 @@
 .ai-plan-busy p { font-size: var(--text-label); color: var(--ink-soft); margin-top: 12px; }
 
 /* The proposed schedule (modal) + the applied schedule card (day rail). */
-/* The Carta bot's day lands as a cascade rather than all at once, so the
+/* The Viantra bot's day lands as a cascade rather than all at once, so the
    schedule reads as something being written for you. Staggered by row, capped
    at eight so a long day never feels slow to arrive. */
 @keyframes ai-sched-in {
@@ -309,7 +309,7 @@ button.ai-sched-main:focus-visible {
 
 /* Applied-schedule card in the day rail */
 
-/* Bot finds that live outside Carta's catalogue. They can't become timeline
+/* Bot finds that live outside Viantra's catalogue. They can't become timeline
    rows (there is nothing to add), so they are listed once, here. */
 
 /* The empty-day CTA pair: AI first, route picker under it. */
@@ -323,7 +323,7 @@ button.ai-sched-main:focus-visible {
 /* ───────── AI planner round 2: hero CTA, facts, refine loop, events ───────── */
 
 /* The one big call to action on an empty day. */
-/* The Carta bot's call to action wears the same clothes as the planning-method
+/* The Viantra bot's call to action wears the same clothes as the planning-method
    card that introduces it (.day-flow-card.primary): a soft branded container,
    not a slab of saturated rust. One assistant, one look, wherever you meet it. */
 
@@ -525,7 +525,7 @@ button.ai-sched-main:focus-visible {
    blocks side by side made the screen shout twice and said neither was the
    answer. The second is an outline of the same size, so it is unmistakably a
    button and unmistakably the quieter one. */
-/* A picture of the difference, above the words for it. Carta's route is a
+/* A picture of the difference, above the words for it. Viantra's route is a
    line that visits places; building it yourself is the places themselves. The
    two previews are the same height and the same width, so what changes
    between the cards is the SHAPE of the answer and nothing else. */

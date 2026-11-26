@@ -279,7 +279,7 @@ def _despace(s):
 
 _W = r"[^.!?\n]{0,40}"
 INJECTION_RULES = [
-    ("override", re.compile(rf"\b(ignore|disregard|forget|override|bypass|skip|drop)\b{_W}\b(previous|prior|above|earlier|preceding|all|any|your|these|those|system|original|carta'?s?)\b{_W}\b(instructions?|rules?|prompts?|directions?|guidelines?|constraints?|guardrails?)\b")),
+    ("override", re.compile(rf"\b(ignore|disregard|forget|override|bypass|skip|drop)\b{_W}\b(previous|prior|above|earlier|preceding|all|any|your|these|those|system|original|carta'?s?|viantra'?s?)\b{_W}\b(instructions?|rules?|prompts?|directions?|guidelines?|constraints?|guardrails?)\b")),
     ("override_nl", re.compile(rf"\b(negeer|vergeet|omzeil)\b{_W}\b(instructies|regels|opdrachten|richtlijnen)\b")),
     ("override_de", re.compile(rf"\b(ignorier\w*|vergiss\w*|missachte\w*)\b{_W}\b(anweisungen|regeln|vorgaben|instruktionen)\b")),
     ("override_fr", re.compile(rf"\b(ignore[rz]?|oublie[rz]?)\b{_W}\b(instructions|regles|consignes)\b")),

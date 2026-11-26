@@ -1,5 +1,5 @@
 /**
- * The Carta URL scheme (T223). The written version is docs/SEO.md; this file is
+ * The Viantra URL scheme (T223). The written version is docs/SEO.md; this file is
  * the one place the rules live in code, so the app, the prerender (T221) and the
  * sitemap build (T222) cannot disagree about a path.
  *
@@ -136,7 +136,7 @@ const SEC_KIND = { beaches: 'beach', lakes: 'lake', mountains: 'mountain' };
 
 /**
  * Reads a pathname back into what it names. Returns null for anything that is
- * not a Carta content path (the app shell at `/`, assets, unknown words).
+ * not a Viantra content path (the app shell at `/`, assets, unknown words).
  * Never throws.
  */
 export function parsePath(pathname) {

@@ -94,7 +94,7 @@ export async function drawYearCard({ model, geo, exampleLabel = '' }) {
   ctx.textBaseline = 'top';
   ctx.fillStyle = T.fg;
   let y = 14;
-  // The Carta mark: a small plate with one stripe, then the name.
+  // The Viantra mark: a small plate with one stripe, then the name.
   roundRect(ctx, 16, y + 1, 13, 9, 2);
   ctx.fill();
   ctx.fillStyle = T.bg;
@@ -102,7 +102,7 @@ export async function drawYearCard({ model, geo, exampleLabel = '' }) {
   ctx.fillStyle = T.fg;
   ctx.globalAlpha = 0.9;
   ctx.font = `800 11px ${font}`;
-  ctx.fillText('Carta', 34, y);
+  ctx.fillText('Viantra', 34, y);
   ctx.globalAlpha = 1;
   if (exampleLabel) {
     ctx.font = `800 10px ${font}`;
@@ -227,7 +227,7 @@ export async function exportYearCard({ model, geo, share = false, exampleLabel =
  * The recap as a PNG, drawn on a canvas in the browser (T926): no external
  * service sees it. The traveller's own photo (a data URL from a memory) or
  * the deep umber ground, the year's figures as large type, the lines under
- * them, Carta's name small at the foot.
+ * them, Viantra's name small at the foot.
  */
 async function drawRecap({ title, cells, lines, photo, foot }) {
   const canvas = document.createElement('canvas');
@@ -305,7 +305,7 @@ export async function shareRecap({ recap, t, on = null }) {
   const all = on || { countries: true, nights: true, cost: Number.isFinite(recap.avgDay), great: !!recap.cheapestGreat, best: !!recap.best, photo: !!recap.photo };
   const { title, cells, lines } = recapParts(recap, all, t);
   try {
-    const blob = await drawRecap({ title, cells, lines, photo: all.photo ? recap.photo : null, foot: 'Carta' });
+    const blob = await drawRecap({ title, cells, lines, photo: all.photo ? recap.photo : null, foot: 'Viantra' });
     if (!blob) throw new Error('canvas');
     const file = new File([blob], `carta-${recap.year}.png`, { type: 'image/png' });
     if (navigator.canShare?.({ files: [file] })) {
@@ -372,7 +372,7 @@ export function YearRecap({ recap, onBack }) {
               ))}
             </dl>
             {lines.map((l) => <p key={l} className="mt-story-line">{l}</p>)}
-            <p className="mt-story-foot">Carta</p>
+            <p className="mt-story-foot">Viantra</p>
           </div>
         </figure>
         <div className="mt-recap-side">

@@ -1,5 +1,5 @@
 /**
- * styleForAi.js, the active travel style as Ask Carta and the plan-day Edge
+ * styleForAi.js, the active travel style as Ask Viantra and the plan-day Edge
  * Function receive it (G12, decision.md "AI"). Enum values and head counts
  * only: no name, no free text, nothing the traveller typed, so the request
  * carries no personal words and the server can check every value against

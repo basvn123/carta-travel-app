@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/index.js';
 
 /**
  * The Account page's own pieces (T933, the owner-approved spec "Account:
- * who you are, what you pay, what Carta knows"). Every row is a label, its
+ * who you are, what you pay, what Viantra knows"). Every row is a label, its
  * current value and one action; no captions under rows.
  * Styles: src/styles/91-account.css (class prefix .ac-), imported by
  * AccountPanel.jsx.

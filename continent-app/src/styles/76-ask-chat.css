@@ -1,8 +1,8 @@
 /*
- * Ask Carta as a chat (T570, T571, T583; carta-design, with the Ask Carta
+ * Ask Viantra as a chat (T570, T571, T583; carta-design, with the Ask Viantra
  * motion exception). T583: the conversation sits on the warm page ground,
- * Carta's turns as surface bubbles, the traveller's as a select-tinted
- * bubble on the right; a typing bubble while Carta writes. Roles and scales only. Desktop: a column docked on the right
+ * Viantra's turns as surface bubbles, the traveller's as a select-tinted
+ * bubble on the right; a typing bubble while Viantra writes. Roles and scales only. Desktop: a column docked on the right
  * under the settings line, one hairline to the page it sits beside, no
  * shadow; the page makes room. Phone: a full-screen sheet. Brown only for
  * what acts or is live: the send button once there is a question, the
@@ -101,9 +101,9 @@
   color: var(--text);
 }
 .ac-title svg { flex: none; color: var(--text-2); }
-/* House style: the boxed AI tag stands for Carta's AI, never a sparkle. */
+/* House style: the boxed AI tag stands for Viantra's AI, never a sparkle. */
 .ac-title .ai-tag { flex: none; color: var(--action-hover); }
-/* A trip card inside Carta's answer is a section of the bubble, not a card
+/* A trip card inside Viantra's answer is a section of the bubble, not a card
    in a card: a hairline above it, the bubble's own paper. */
 .ac-bubble .ac-trip { border: 0; border-top: 1px solid var(--border-soft); border-radius: 0; background: none; }
 /* The title takes focus only from code (tabindex -1: opening the chat on a
@@ -204,7 +204,7 @@
 }
 .ac-a { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-2); min-width: 0; }
 .ac-a > * { max-width: 100%; }
-/* Carta's turn: a surface bubble on the page ground (T583). */
+/* Viantra's turn: a surface bubble on the page ground (T583). */
 .ac-bubble {
   display: flex;
   flex-direction: column;
@@ -263,7 +263,7 @@
 .ac-replies li:nth-child(n+4) { animation-delay: 120ms; }
 .btn.ac-reply { border-radius: var(--radius-pill); }
 
-/* Carta is writing: three dots in a bubble, pulsing in turn. */
+/* Viantra is writing: three dots in a bubble, pulsing in turn. */
 .ac-typing {
   display: inline-flex;
   align-items: center;
@@ -314,7 +314,7 @@
 }
 @keyframes ac-pulse { 50% { opacity: 0.3; transform: scale(0.75); } }
 
-/* A place Carta does not cover: the way out to the flights. */
+/* A place Viantra does not cover: the way out to the flights. */
 .ac-out-link {
   display: inline-flex;
   align-items: center;

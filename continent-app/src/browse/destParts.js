@@ -13,7 +13,7 @@ import { eur } from '../lib/format.js';
 export const baseCity = (name) => (name || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
 
 /** The arrive month (1 to 12) of the dates the page prices: the traveller's
- *  own once they set them, Carta's default pair until then. */
+ *  own once they set them, Viantra's default pair until then. */
 export function monthOf(iso) {
   const m = /^\d{4}-(\d{2})/.exec(iso || '');
   const n = m ? Number(m[1]) : NaN;

@@ -24,6 +24,8 @@ import { normalizeStyle, TEMPLATES } from '../src/lib/travelStyles.js';
 
 const read = (p) => readFileSync(new URL(p, import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 const golden = JSON.parse(read('../../prompts/_golden/js.json'));
+// K1: the runtime prompts now say Viantra where the golden code said Carta.
+const k1 = (s) => s.replace(/\bCarta\b/g, 'Viantra');
 
 const FULL = {
   party: { adults: 2, kids: 1, babies: 0 },
@@ -122,7 +124,7 @@ test('Ask: the pack carries the checked style, the wire sends it and the server 
 });
 
 test('Ask: the system prompt gains the lines before its closing directive, and is unchanged without a style', () => {
-  for (const c of golden['ask.system']) assert.equal(systemPrompt(c.input.lang), c.output);
+  for (const c of golden['ask.system']) assert.equal(systemPrompt(c.input.lang), k1(c.output));
   const base = systemPrompt('en');
   const withStyle = systemPrompt('en', FULL);
   assert.ok(withStyle.endsWith('\n/no_think'), 'the directive stays last');
@@ -132,7 +134,7 @@ test('Ask: the system prompt gains the lines before its closing directive, and i
 
 test('plan-day: the style lines follow the profile, and a request without one is the golden prompt', () => {
   const c = golden['plan-day'].find((x) => x.input.profile) || golden['plan-day'][0];
-  assert.equal(buildPrompt(c.input), c.output);
+  assert.equal(buildPrompt(c.input), k1(c.output));
   const out = buildPrompt({ ...c.input, style: { ...FULL, name: 'Zebra week seven' } });
   const lines = aiStyleLines(FULL, 'plan');
   assert.ok(out.includes(lines.join('\n')));

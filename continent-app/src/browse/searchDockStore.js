@@ -1,7 +1,7 @@
 /*
  * The search dock's shared state (T961, T962). The dock lives in the top
  * bar (App), the views it searches live in their tabs; this tiny store is
- * the line between them, the way askChatStore is for Ask Carta.
+ * the line between them, the way askChatStore is for Ask Viantra.
  *
  *   kind       the activity on screen ('places', 'trails', 'beaches',
  *              'lakes', 'mountains', 'cycling'); a tab writes it while active
@@ -59,7 +59,7 @@ export function useSearchDock() {
   );
 }
 
-/** A question for Ask Carta rather than a place's name (T906, moved here
+/** A question for Ask Viantra rather than a place's name (T906, moved here
  *  for the dock): it asks, or it is longer than a name, or it carries a
  *  figure. */
 export function isQuestion(q) {

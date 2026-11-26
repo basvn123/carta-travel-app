@@ -12,8 +12,8 @@ const FAIL_KEY = {
 const RETRYABLE = new Set(['ai_busy', 'ai_timeout', 'ai_error', 'network', 'ai_bad_output']);
 
 /**
- * "Let Carta plan them" at work (T823, owner 2026-10-29: every day, one by
- * one). One bar over the day planner: which day Carta is on, a way to stop,
+ * "Let Viantra plan them" at work (T823, owner 2026-10-29: every day, one by
+ * one). One bar over the day planner: which day Viantra is on, a way to stop,
  * and at the end how many days it planned. A failure says how far it got,
  * why, and offers the rest again (a passing hiccup) or the Trip Pass (the
  * traveller's allowance is spent). aria-live so the progress is heard.

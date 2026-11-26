@@ -324,7 +324,7 @@ const DATA = {
   } },
 };
 
-test("here: the nearest town in Carta's data", () => {
+test("here: the nearest town in Viantra's data", () => {
   const town = nearestTown(DATA, { lat: 51.05, lon: 3.72 }); // Ghent
   assert.deepEqual([town.id, town.name, town.iso2], ["gem:bruges", "Bruges", "BE"]);
   assert.equal(nearestTown(DATA, { lat: NaN, lon: 1 }), null);

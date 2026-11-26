@@ -14,7 +14,7 @@ import {
 
 /**
  * The guided search (T442): the owner asked for a search people would use,
- * free, that only lets a traveller ask what Carta can answer.
+ * free, that only lets a traveller ask what Viantra can answer.
  *
  * Closed, a field-shaped button that reads back the question ("Hiking base,
  * Alps, July") with a clear control beside it; on a desktop it sits in the
@@ -22,8 +22,8 @@ import {
  * the field on a desktop, a sheet on a phone) with:
  *
  *   - one field that reads a typed question and offers only answerable
- *     completions, across all five slots (a combobox); a word Carta cannot
- *     place is named ("Carta can't search for "skiing" yet") and never
+ *     completions, across all five slots (a combobox); a word Viantra cannot
+ *     place is named ("Viantra can't search for "skiing" yet") and never
  *     applied
  *   - "Try one": example questions that return places today
  *   - five slots, label over value, never a built sentence (so the grammar
@@ -271,7 +271,7 @@ export function GuidedSearch({
 /**
  * The five slots of a question (What, Where, When, Budget, Extras) as tabs
  * over their panels, label over value. Shared by the guided search and
- * Ask Carta's Refine (T558), so both edit Explore's facets the same way.
+ * Ask Viantra's Refine (T558), so both edit Explore's facets the same way.
  */
 export function GuidedSlots({ t, lang, guided, countries, facets, labels, budgetSteps, onApply, nearName, idPrefix = 'gs' }) {
   const [slot, setSlot] = React.useState('what');

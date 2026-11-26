@@ -33,7 +33,7 @@ const FIRST_COUNTRIES = 16;
 
 /**
  * Start (G12 Settings, APPROVED): "Use my current location" first, then a
- * search over the countries and the towns in Carta's data, then every
+ * search over the countries and the towns in Viantra's data, then every
  * country A to Z with its flag, the traveller's own on top. No airports
  * anywhere: the engine picks the airport that suits a flight, quietly.
  */
@@ -71,7 +71,7 @@ export function StartStep({ model, onChange }) {
 
   const pickCountry = (iso2) => {
     setLocNote('');
-    // A country with no town Carta can start from says so, and the list stays.
+    // A country with no town Viantra can start from says so, and the list stays.
     if (start.setCountry(iso2)) onChange();
     else setLocNote(t('settings.sheet.countryNone', { country: countryName(iso2) }));
   };

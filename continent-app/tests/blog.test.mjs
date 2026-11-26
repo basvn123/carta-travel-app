@@ -45,7 +45,7 @@ const posts = [
 
 test('the feed lists newest first and escapes; the sitemap lists the index and each post', () => {
   assert.deepEqual(byNewest(posts).map((p) => p.slug), ['b', 'a']);
-  const rss = rssFeed(posts, { title: 'Carta blog', description: 'd' });
+  const rss = rssFeed(posts, { title: 'Viantra blog', description: 'd' });
   assert.match(rss, /<rss version="2.0"/);
   assert.ok(rss.indexOf('/blog/b') < rss.indexOf('/blog/a'));
   assert.match(rss, /A &amp; B/);
@@ -56,10 +56,10 @@ test('the feed lists newest first and escapes; the sitemap lists the index and e
 });
 
 test('BlogPosting structured data has author, dates and breadcrumb', () => {
-  const g = postGraph({ ...posts[0], author: 'Carta' })['@graph'];
+  const g = postGraph({ ...posts[0], author: 'Viantra' })['@graph'];
   const bp = g.find((n) => n['@type'] === 'BlogPosting');
   assert.equal(bp.datePublished, '2026-11-01');
-  assert.equal(bp.author.name, 'Carta');
+  assert.equal(bp.author.name, 'Viantra');
   assert.equal(bp.url, 'https://www.carta-europetravel.com/blog/a');
   assert.equal(g.find((n) => n['@type'] === 'BreadcrumbList').itemListElement.length, 3);
 });
@@ -68,7 +68,7 @@ function fixture(status) {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'blog-'));
   fs.mkdirSync(path.join(dir, 'data'));
   fs.writeFileSync(path.join(dir, 'data', 'x.json'), JSON.stringify({ chart: { title: 'T', unit: 'EUR', bars: [{ label: 'A', value: 5 }] }, images: [] }));
-  fs.writeFileSync(path.join(dir, 'x.md'), `---\ntitle: Where to go\nslug: x\ntype: where-to-go\nquestion: q\ndescription: A test post.\nstatus: ${status}\ndate: 2026-11-07\ndata: data/x.json\nsnapshot: 2026-06-07T00:00:00+00:00\nauthor: Carta\n---\n\n# Where\n\nBody **text**.\n\n{{chart}}\n`);
+  fs.writeFileSync(path.join(dir, 'x.md'), `---\ntitle: Where to go\nslug: x\ntype: where-to-go\nquestion: q\ndescription: A test post.\nstatus: ${status}\ndate: 2026-11-07\ndata: data/x.json\nsnapshot: 2026-06-07T00:00:00+00:00\nauthor: Viantra\n---\n\n# Where\n\nBody **text**.\n\n{{chart}}\n`);
   return dir;
 }
 

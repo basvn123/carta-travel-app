@@ -13,7 +13,7 @@
  *    users in the European Economic Area, Switzerland, or the United
  *    Kingdom."
  *
- * Carta serves European travellers, so GEMINI_API_KEY must belong to a Google
+ * Viantra serves European travellers, so GEMINI_API_KEY must belong to a Google
  * Cloud project WITH an active billing account. Note what "Paid Services"
  * means: the terms define it by the billing account existing, not by money
  * changing hands. The same page makes the test explicit, that Gemini API
@@ -179,8 +179,8 @@ export function checkoutModeFor(tier) {
  * days used (decision 0010).
  */
 export function waiverText(tier, termsUrl) {
-  const terms = `Carta's [terms of service](${termsUrl}) say what a pass buys and how refunds work.`;
-  return 'I ask Carta to start my pass as soon as this payment completes. I understand that if I '
+  const terms = `Viantra's [terms of service](${termsUrl}) say what a pass buys and how refunds work.`;
+  return 'I ask Viantra to start my pass as soon as this payment completes. I understand that if I '
     + 'withdraw within 14 days I pay for the days my pass has run until then, and that my right to '
     + `withdraw ends once the pass has been fully supplied. ${terms}`;
 }

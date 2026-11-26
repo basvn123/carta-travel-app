@@ -803,7 +803,7 @@ export function ExploreMap({
   const fitRef = useRef(null);
   useEffect(() => {
     if (mapRef.current) return undefined;
-    // G12: the Carta basemap from our own PMTiles; CARTO only if it fails.
+    // G12: the Viantra basemap from our own PMTiles; CARTO only if it fails.
     registerPmtiles(maplibregl);
     const map = new maplibregl.Map({
       container: containerRef.current,

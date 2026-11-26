@@ -1,5 +1,5 @@
 /**
- * Carta's own places in the shape search reads (G12). Built from
+ * Viantra's own places in the shape search reads (G12). Built from
  * `data.destinations` (lite records carry city, country, categories and the
  * town's position, lib/bootIndex.js RANK_FIELDS), so search needs no list
  * of its own. A multi-airport city's other airports are left out, as

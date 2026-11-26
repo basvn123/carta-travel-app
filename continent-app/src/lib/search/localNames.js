@@ -1,8 +1,8 @@
 /**
- * Carta's place names in the UI language (G12, judge 1 fix 3).
+ * Viantra's place names in the UI language (G12, judge 1 fix 3).
  *
  * The catalogue names a place in English ("Florence"). Search already shows
- * Carta's rows in the UI language from the gazetteer (suggest.js
+ * Viantra's rows in the UI language from the gazetteer (suggest.js
  * localPlaceName), so a German traveller picks "Florenz"; the row that pick
  * opens should say the same. A pick records its name here and the list row
  * reads it back, with no fetch: the gazetteer is 20 shards of about 300 KB,
@@ -17,7 +17,7 @@ import { townNames } from './startNames.js';
 
 const names = new Map();
 
-/** Remember the name a picked Carta place showed in `lang`. */
+/** Remember the name a picked Viantra place showed in `lang`. */
 export function rememberLocalName(id, lang, name) {
   if (!id || !lang || lang === 'en' || !name) return;
   names.set(`${lang}|${id}`, name);

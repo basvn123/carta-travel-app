@@ -49,7 +49,7 @@
 -- show_tips is on. The memory's story stays private: it is never read here,
 -- nor are photos, the ledger or the crew.
 --
--- AGE. Carta has no age signal today, so nothing here can switch friends
+-- AGE. Viantra has no age signal today, so nothing here can switch friends
 -- off for an account under 16 (GDPR Article 8). Raised for the owner.
 --
 -- THE APP WITHOUT THIS FILE. src/auth/friendVisibility.js answers the

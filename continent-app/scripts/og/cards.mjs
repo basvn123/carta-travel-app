@@ -15,16 +15,19 @@
  *     for a place, or the measured facts for a beach, a lake, a mountain or
  *     a walk, each figure said once;
  *   - the months as umber wagons where a record has months;
- *   - the blaze in the wordmark slot along the foot, with the domain.
+ *   - the Viantra arch and name in the wordmark slot along the foot, with
+ *     the domain (K1, decision 0018).
  *
  * Stone ground, flat fills, hairlines, no gradient and no shadow. Text that
  * must fit carries data attributes; render.mjs measures it in a real browser
  * with the real fonts and shrinks or wraps it there.
  */
-import { C, stack } from './tokens.mjs';
+import fs from 'node:fs';
+import path from 'node:path';
+import { C, stack, APP_ROOT } from './tokens.mjs';
 
 /** The name in the wordmark slot; the slot takes any name. */
-export const APP_NAME = 'Carta';
+export const APP_NAME = 'Viantra';
 export const DOMAIN = 'carta-europetravel.com';
 
 export const FORMATS = {
@@ -49,7 +52,19 @@ export function blazeShapes({ paint = C.accent, heel = C.ink, edge = C.blazeEdge
   ].join('');
 }
 
-const blaze = (x, y, w) => `<g transform="translate(${x} ${y}) scale(${w / 24})">${blazeShapes()}</g>`;
+/**
+ * The Viantra lockup (K1, signed off 2026-11-26): the terracotta arch whose
+ * opening is a V and the outlined Fraunces wordmark, read from the kit's
+ * brand/viantra/svg/viantra-lockup.svg so the card never drifts from it.
+ * In its 1054 x 294 box the arch runs from y 24 to 209 (185 tall) and starts
+ * at x 24. Drawn with the arch `archH` tall, its foot on `baseline`, at `x`.
+ */
+const LOCKUP = fs.readFileSync(path.join(APP_ROOT, 'brand', 'viantra', 'svg', 'viantra-lockup.svg'), 'utf8')
+  .replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+function lockup(x, baseline, archH) {
+  const k = archH / 185;
+  return `<svg x="${(x - 24 * k).toFixed(1)}" y="${(baseline - 209 * k).toFixed(1)}" width="${(1054 * k).toFixed(1)}" height="${(294 * k).toFixed(1)}" viewBox="0 0 1054 294">${LOCKUP}</svg>`;
+}
 
 function text(x, y, str, { font = 'ui', size = 24, weight = 400, fill = C.ink, anchor = 'start', fit = null, extra = '' } = {}) {
   const fitAttr = fit ? ` data-fit="1" data-maxw="${fit.maxW}" data-min="${fit.min || Math.round(size * 0.6)}"` : '';
@@ -330,8 +345,8 @@ export function drawCard(spec, format = 'og') {
   const placed = block(Math.round(top));
 
   const out = [`<rect width="${w}" height="${h}" fill="${C.paper}"/>`, placed.svg];
-  out.push(blaze(M, footTop, bw));
-  out.push(text(M + bw + 14, fy, APP_NAME, { font: 'plate', size: sq ? 46 : 40, weight: 700, fill: C.ink }));
+  // The lockup stands on the foot's baseline (APP_NAME is in its outlines).
+  out.push(lockup(M, fy, Math.round(bw * 0.9)));
   out.push(text(w - M, fy - 2, DOMAIN, { size: sq ? 28 : 24, weight: 700, fill: C.inkSoft, anchor: 'end' }));
 
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${out.join('')}</svg>`;

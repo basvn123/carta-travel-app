@@ -309,7 +309,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Rule: "120,50" and "120.50" read as 120.5; blank, zero, negative or not a number reads as 0 (not typed); capped at EUR 99,999 and rounded to cents. An own price for a hop between stops (fly, ferry, train, bus, car) replaces Carta's estimate for that mode and keeps the other modes priced.
 - Constant: `paidEur` in `continent-app/src/lib/price/trip.js:59`; `OWN_LEG_MODES` in `continent-app/src/lib/price/trip.js`
 - Test: `continent-app/tests/tripTotal.test.mjs` :: "money typed with a comma or as text reads as euros, blanks as nothing"
-- Test: `continent-app/tests/tripTotal.test.mjs` :: "an own price for a leg replaces Carta's estimate, never adds to it"
+- Test: `continent-app/tests/tripTotal.test.mjs` :: "an own price for a leg replaces Viantra's estimate, never adds to it"
 
 ### PRICE-037 Carta's flight in a trip
 - Decides: which flight and which home airport the planner prices, and when Carta's fare stays out.
@@ -326,7 +326,7 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 - Constant: `halfFor` in `continent-app/src/lib/price/trip.js:152`; `kmOf` at `:430` (42 km/h and 0.15 EUR/km inline); day trips at `:391`; vignettes at `:531`
 - Test: `continent-app/tests/stayPerStop.test.mjs` :: "a day trip from a base is priced there and back in Getting around"
 - Test: `continent-app/tests/tripTotal.test.mjs` :: "a train or a bus there takes no airport transfer"
-- Test: `continent-app/tests/tripTotal.test.mjs` :: "an own car typed one way keeps Carta's drive estimate for the other"
+- Test: `continent-app/tests/tripTotal.test.mjs` :: "an own car typed one way keeps Viantra's drive estimate for the other"
 
 ### PRICE-039 The four cost tiles
 - Decides: the trip's cost in four tiles that always add up to the total.

@@ -1,9 +1,9 @@
 /**
- * moreSearch.js, the "Van Carta" row behind "Search more" (G12 plan rethink,
+ * moreSearch.js, the "Van Viantra" row behind "Search more" (G12 plan rethink,
  * lane R6, explore-recommendations.md Part 3 "Rows": a library trip that
  * fits the style and window, priced by quoteTrip through the S8 path).
  *
- * Carta's own journeys carry price ranges from the dataset, not a whole
+ * Viantra's own journeys carry price ranges from the dataset, not a whole
  * trip for this party, from this home, in this window. So a journey only
  * joins the list once its route is placed on catalogue towns (the S8
  * writer, seedWriters.js journeySeed) and priced by the same engine as

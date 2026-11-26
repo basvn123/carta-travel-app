@@ -1,10 +1,10 @@
-# suggest-city, the Carta bot's "ask AI" town search
+# suggest-city, the Viantra bot's "ask AI" town search
 
-The Carta chat's town-picker step lets a traveller describe what they want
+The Viantra chat's town-picker step lets a traveller describe what they want
 ("a quiet coastal town, not touristy") and get a short list of suggested
 towns back. Unlike `plan-day`, this function is explicitly allowed to look
-beyond Carta's own catalogue: Google Search grounding is **on by default**,
-since surfacing a real place Carta hasn't researched yet is the whole point.
+beyond Viantra's own catalogue: Google Search grounding is **on by default**,
+since surfacing a real place Viantra hasn't researched yet is the whole point.
 Every suggestion is still re-validated server-side (`logic.mjs`): a
 catalogue pick must reference a real candidate id, a web discovery needs
 real, in-area coordinates.
@@ -66,8 +66,8 @@ models now answer 404 "no longer available to new users", so that allowance
 is unreachable on a key created recently.
 
 On a zero-billing deployment this must therefore be `false`, and the function
-suggests only from Carta's own catalogue. That is a real capability loss (no
-surfacing of towns Carta has not researched yet) and the only way back is
+suggests only from Viantra's own catalogue. That is a real capability loss (no
+surfacing of towns Viantra has not researched yet) and the only way back is
 attaching billing, which is exactly what the posture exists to avoid. Left
 on, every call fails and the traveller sees a generic error.
 

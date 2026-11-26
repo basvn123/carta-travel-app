@@ -7,7 +7,7 @@ import { CONTACT } from '../../lib/contact.js';
 
 /**
  * Common questions (T461), written from what a traveller asks rather than
- * what Carta measures: no catalogue counts, no method paragraphs. Four groups,
+ * what Viantra measures: no catalogue counts, no method paragraphs. Four groups,
  * a search that filters as you type, and native disclosure rows, so every
  * question opens with the keyboard and a screen reader for free. Figures in
  * the answers come from lib/pricing.js, never typed into a string.

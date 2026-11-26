@@ -1,8 +1,8 @@
-/* Carta chat planner, passes modal, password fields, pass card, danger zone.
+/* Viantra chat planner, passes modal, password fields, pass card, danger zone.
    Part of the modular stylesheet (T191). Load order is set by styles.css and
    must not change: the cascade depends on it. */
 
-/* ───────── Carta chat planner ───────── */
+/* ───────── Viantra chat planner ───────── */
 
 /* The conversation sits on its own card, same treatment as the guided steps
    before it, so the bot reads as a contained thing rather than loose bubbles
@@ -20,7 +20,7 @@
   font-size: var(--text-body);
   line-height: 1.5;
 }
-/* Still the right shape for the town picker's short "ask Carta" wait, which
+/* Still the right shape for the town picker's short "ask Viantra" wait, which
    is one question to one answer. The ROUTE build, which is long and has real
    stages, gets .rbs below instead. */
 .chat-typing span {
@@ -117,7 +117,7 @@
 @media (hover: hover) {
   .chat-town-tab:disabled:hover { border-color: var(--rule); color: var(--ink-soft); }
 }
-/* Researching a town Carta has never held is the answer to what was asked, so
+/* Researching a town Viantra has never held is the answer to what was asked, so
    it leads the card; snapping to a neighbour sits under it as the fallback. */
 .chat-town-resolve .chat-opt-lead b { color: var(--ink); }
 

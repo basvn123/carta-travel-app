@@ -119,7 +119,7 @@ const rightEdge = async (page, sel) => {
   const rowOf = (name) => page.locator('.ac-row:visible', { hasText: name }).first();
   check('account overview carries the language row', await rowOf('Language').isVisible());
   check('account carries the currency row', await rowOf('Currency').isVisible());
-  check('account has a How Carta works row to Home',
+  check('account has a How Viantra works row to Home',
     /tab=home/.test(await page.locator('a.ac-row[href*="tab=home"]').first().getAttribute('href').catch(() => '') || ''));
   await rowOf('Language').click();
   await page.waitForTimeout(1500);

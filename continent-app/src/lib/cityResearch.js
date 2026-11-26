@@ -1,5 +1,5 @@
 /**
- * cityResearch.js, adding a town Carta has never catalogued.
+ * cityResearch.js, adding a town Viantra has never catalogued.
  *
  * The catalogue holds 1,570 destinations, so a traveller staying in Ghent who
  * asks for Lokeren is asking for a town that genuinely isn't in the data. The
@@ -198,7 +198,7 @@ export async function lookupPlace(name, { country = '', hint = null } = {}) {
 
   // No hit means no such place, and the caller's own coordinates are NOT a
   // fallback: harvesting around them would build a town out of whatever its
-  // neighbour has, under a name nobody can find on a map. A suggestion Carta
+  // neighbour has, under a name nobody can find on a map. A suggestion Viantra
   // cannot geocode is a suggestion it declines.
   const best = scored[0];
   if (!best) return null;
@@ -582,7 +582,7 @@ function mergePois(lists) {
 /** The costs and transport profile a discovered town inherits. Both are
  *  modelled per COUNTRY upstream, so borrowing them from a neighbour states
  *  what the data already says. Accommodation is deliberately not inherited:
- *  Carta only ever quotes nightly rates it measured in the town itself. */
+ *  Viantra only ever quotes nightly rates it measured in the town itself. */
 function inheritedModels(nearest) {
   const out = {};
   if (nearest?.costs) {

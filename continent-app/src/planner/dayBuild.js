@@ -1,6 +1,6 @@
 /**
  * Picks to days (T433): the one function that turns what a traveller chose
- * (in the builder, or what Carta chose for them) into a plan's towns and days.
+ * (in the builder, or what Viantra chose for them) into a plan's towns and days.
  *
  * The builder's tray previews exactly what this returns, and "Open my days"
  * hands exactly this to the planner, so the preview can never disagree with
@@ -28,7 +28,7 @@ const RIDE_KMH = 35;
 // A day holds about five hours of visits before a second day is opened for
 // the same town (T459: two places in Ghent over two days used to land one a
 // day, and a pick elsewhere then moved them between days). The days asked
-// for and not needed yet stay free, in order, for more picks or for Carta.
+// for and not needed yet stay free, in order, for more picks or for Viantra.
 const DAY_FILL_MIN = 300;
 
 /**

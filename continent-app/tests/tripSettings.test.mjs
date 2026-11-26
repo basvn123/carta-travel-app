@@ -207,9 +207,9 @@ test("the engine's date and head count edits reach the settings", async () => {
   assert.equal(withEngineEdits(s, { dateMode: "exact", startDate: "2027-08-02", endDate: "", nights: 0, adults: 2, kids: 2, babies: 0 }), s);
 });
 
-// T796: question 7, what Carta picks. Its rows are config/slots.json's
+// T796: question 7, what Viantra picks. Its rows are config/slots.json's
 // pickable live slots; the default is every one of them.
-test("question 7: Carta picks every pickable slot by default; unknown ids drop out", () => {
+test("question 7: Viantra picks every pickable slot by default; unknown ids drop out", () => {
   assert.deepEqual(PICKABLE, ["flight", "stay", "local"]);
   assert.deepEqual(defaultSettings().guide.pick, PICKABLE);
   assert.deepEqual(normalizeSettings({}).guide.pick, PICKABLE);

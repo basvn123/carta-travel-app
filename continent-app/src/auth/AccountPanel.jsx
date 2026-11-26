@@ -127,7 +127,7 @@ function FieldLabel({ htmlFor, children, mark }) {
  *
  * Two readings of the same secret, kept side by side on purpose. The checklist
  * is the floor the form enforces and it is learnable: two rules (length, and
- * no word from the account or Carta's name; T1164-f), each either
+ * no word from the account or Viantra's name; T1164-f), each either
  * met or not. The meter underneath is the honest measurement, and it is what
  * tells somebody that a four-word phrase clearing every rule is far better
  * than an eight-character mangle that also clears them. Neither is enough on
@@ -173,7 +173,7 @@ function PasswordChecklist({ password, context }) {
 
 /**
  * Account (T933 to T936, the owner-approved spec "Account: who you are, what
- * you pay, what Carta knows"). One page in the family of My trips and
+ * you pay, what Viantra knows"). One page in the family of My trips and
  * Together: from 900 px a sticky left rail (Overview, the seven sections,
  * Sign out) and one pane; on a phone the Overview is the page, grouped rows
  * that open each section with a back link, one level deep. Every row is a
@@ -282,7 +282,7 @@ export function AccountPanel({
   // downloading your own data is not dangerous and filing it under a red
   // heading would make a right look like a threat.
   const [exportArmed, setExportArmed] = useState(false);
-  // T1118: what Carta keeps and for how long, opened in place under its row.
+  // T1118: what Viantra keeps and for how long, opened in place under its row.
   const [keepOpen, setKeepOpen] = useState(false);
   const [exportPassword, setExportPassword] = useState('');
   const [exportEmail, setExportEmail] = useState('');
@@ -624,7 +624,7 @@ export function AccountPanel({
     const text = t('account.shareText');
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'Carta', text, url: SHARE_URL });
+        await navigator.share({ title: 'Viantra', text, url: SHARE_URL });
         return;
       } catch (err) {
         if (err?.name === 'AbortError') return;

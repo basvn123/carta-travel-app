@@ -136,8 +136,8 @@ export function plannerStateFromPlan(plan, { stayTier = 'home', lifestyle = null
 /**
  * What a saved trip costs the whole party now: { total, perPerson, party,
  * est } or null when the catalogue cannot price any of it. `est` is true
- * when any part is Carta's estimate rather than the traveller's own figure,
- * which is every trip with a bed or a day Carta priced.
+ * when any part is Viantra's estimate rather than the traveller's own figure,
+ * which is every trip with a bed or a day Viantra priced.
  */
 export function tripFigure(plan, { data, stayTier, lifestyle } = {}) {
   const state = plannerStateFromPlan(plan, { stayTier, lifestyle });
@@ -165,7 +165,7 @@ export function tripFigure(plan, { data, stayTier, lifestyle } = {}) {
     foodDayPP: Number.isFinite(p.days) && p.days > 0 ? p.days / nights / head : null,
     // T943: each stop's bed a person a night at its own dates, as the plan
     // price is stored (planBedOf), or null where the traveller typed their
-    // own stay or Carta has no bed price.
+    // own stay or Viantra has no bed price.
     bedNights: (priced.stayCosts || []).map(bedNightOf),
   };
 }
@@ -521,7 +521,7 @@ export function europeMilestones({ beenIso = [], nextIso = [], trips = [], point
 /**
  * The record's money (T926), from the spend logged on past trips only:
  *   avgDay         what a day cost a person on the trips with spend and nights
- *   vsEstimate     that figure minus Carta's estimate for the same trips, only
+ *   vsEstimate     that figure minus Viantra's estimate for the same trips, only
  *                  when every trip counted has both
  *   cheapestGreat  the lowest day a person on a trip whose place scores in
  *                  the Excellent band or above: { eur, title, score, when }

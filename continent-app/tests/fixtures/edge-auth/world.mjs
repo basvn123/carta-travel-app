@@ -20,7 +20,7 @@ export const ENV = {
   STRIPE_PRICE_WEEK: 'price_week', STRIPE_PRICE_MONTH: 'price_month', STRIPE_PRICE_YEAR: 'price_year',
   GEMINI_API_KEY: 'gemini-stub',
   NOTIFY_SECRET: 'notify-secret-stub-0123456789',
-  RESEND_API_KEY: 're_stub', NOTIFY_FROM: 'Carta <hello@example.test>',
+  RESEND_API_KEY: 're_stub', NOTIFY_FROM: 'Viantra <hello@example.test>',
   UPLOADS_SCAN_SECRET: 'uploads-secret-stub-0123456789',
 };
 

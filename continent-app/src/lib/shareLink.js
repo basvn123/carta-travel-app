@@ -94,7 +94,7 @@ const oneOf = (v, opts, dflt) => (opts.includes(v) ? v : dflt);
 const safeId = (v) => (typeof v === 'string' && v && !(v in Object.prototype) && v !== 'prototype' ? v.slice(0, 40) : '');
 
 const LEG_MODES = new Set(['train', 'bus', 'car']);
-// Hops the sender booked themselves; they travel with a price because Carta
+// Hops the sender booked themselves; they travel with a price because Viantra
 // cannot re-derive one at the other end.
 const OWN_LEG_MODES = new Set(['fly', 'ferry', 'train', 'bus', 'car']);
 
@@ -145,7 +145,7 @@ function sanitizeShared(d) {
         ? Math.max(0, Math.min(99999, Number(d.ownFlight.costTotal)))
         : null,
       // The way there and home apart (T432), so a shared own car keeps
-      // Carta's estimate for the direction nobody typed.
+      // Viantra's estimate for the direction nobody typed.
       ...(Number.isFinite(Number(d.ownFlight.costOut)) ? { costOut: Math.max(0, Math.min(99999, Number(d.ownFlight.costOut))) } : {}),
       ...(Number.isFinite(Number(d.ownFlight.costBack)) ? { costBack: Math.max(0, Math.min(99999, Number(d.ownFlight.costBack))) } : {}),
     }

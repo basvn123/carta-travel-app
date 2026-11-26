@@ -3,7 +3,7 @@
 -- Invite someone to plan a trip with a link (T434). Until now a co-planner
 -- had to be an accepted friend first (020, 046): the owner sent a friend
 -- request, waited, then invited from a list. Wanderlog, the planner people
--- compare Carta with, adds tripmates by link in one step. This file adds the
+-- compare Viantra with, adds tripmates by link in one step. This file adds the
 -- same: the owner makes a link, the person who opens it while signed in
 -- joins the trip as a co-planner and becomes a friend of the owner, which is
 -- what every co-planner already is under 020's rule.

@@ -1,5 +1,5 @@
 // T690 to T692 (F3): the one price configuration, continent-app/config/
-// pricing.json, and invariant V13 of plan "Carta prijslogica Explore": no
+// pricing.json, and invariant V13 of plan "Viantra prijslogica Explore": no
 // number that moves a price lives outside it, and every rule says what it
 // is, where it comes from and when to look at it again.
 // Run: npm test (continent-app/)

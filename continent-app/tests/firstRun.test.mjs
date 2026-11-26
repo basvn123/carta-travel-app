@@ -39,7 +39,7 @@ test("a window fits only inside its bounds", () => {
   assert.equal(windowFits(w, null), true);
 });
 
-test("the receipt sums its lines to the cent, in trip order, with no flight of Carta's", () => {
+test("the receipt sums its lines to the cent, in trip order, with no flight of Viantra's", () => {
   const r = priceReceipt(dest, opts);
   assert.deepEqual(r.lines.map((l) => l.key), ["stay", "ground"]);
   const sum = Math.round(r.lines.reduce((s, l) => s + l.eur, 0) * 100) / 100;
@@ -94,7 +94,7 @@ test("a place the scrape did not reach borrows no bed (T1021)", () => {
   assert.ok(!(s?.eur > 0), "no borrowed bed price");
 });
 
-test("the footer names a measured cheaper tier while the dates are Carta's", () => {
+test("the footer names a measured cheaper tier while the dates are Viantra's", () => {
   const r = priceReceipt(dest, opts);
   const meta = { stays: { tiers: ["dorm", "private"] } };
   const f = receiptFooter(dest, r, opts, { datesOwn: false, meta });

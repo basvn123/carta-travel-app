@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /*
- * The one eval runner (T1148, ROADMAP F6). Every Carta eval runs through it
+ * The one eval runner (T1148, ROADMAP F6). Every Viantra eval runs through it
  * and writes the shared results format (scripts/eval/lib/results.mjs).
  *
  *   node scripts/eval/run.mjs [ask] [trail-summaries] [data-quality] [plan-day] [taxonomy] [trails-external] [truth] [linking]

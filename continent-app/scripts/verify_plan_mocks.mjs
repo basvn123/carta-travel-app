@@ -104,7 +104,7 @@ if (ONLY.includes('U')) try {
   const page = await fresh();
   await page.goto(`${BASE}/?tab=plan&paymock`, { waitUntil: 'domcontentloaded' });
   await page.waitForSelector('.pf-open', { timeout: 30000 });
-  // T1103 (G12): Start planning opens on Tell Carta (no trip under way, so
+  // T1103 (G12): Start planning opens on Tell Viantra (no trip under way, so
   // no "new trip or the one you are on" question first).
   await page.getByRole('button', { name: 'Start planning' }).click();
   await page.waitForSelector('#pf-tell');

@@ -1,6 +1,6 @@
 // Supabase reads and writes for the things a signed-in traveller's work
 // syncs through (T1104, ROADMAP I5; table account_things, migration 065):
-// kept trips, bookmarked Carta trips, trips in progress and the trip kept
+// kept trips, bookmarked Viantra trips, trips in progress and the trip kept
 // without an account, one row per thing, deleted_at a tombstone.
 //
 // accountSync.js takes this object as its `cloud`, so the node test hands it

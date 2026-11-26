@@ -24,7 +24,7 @@ import { useFocusTrap } from '../hooks/useFocusTrap.js';
 
 // Month and weekday names come from Intl in the active language, so the
 // calendar speaks the language of the rest of the app (T401), and the week
-// starts on Monday as it does everywhere Carta's travellers live. 4 January
+// starts on Monday as it does everywhere Viantra's travellers live. 4 January
 // 2021 was a Monday.
 function calendarNames(bcp47) {
   const long = new Intl.DateTimeFormat(bcp47, { month: 'long' });

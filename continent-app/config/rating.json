@@ -1,5 +1,5 @@
 {
-  "_about": "The one configuration of every number that moves a rating (Carta rating v5, Roadmap/2.10b-rating-v5.md; batch R1, T754). The pipeline reads it through pipeline/rating_config.py; the app will read it in T776. What was measured on the reference catalogue (zlog spread, breakpoints, class scales, curves, fallback coefficients) lives in the frozen reference named below, never here. Changing a number here is a model change: bump version, then rebuild the reference with apply_rating_layer.py --recalibrate --version <new>.",
+  "_about": "The one configuration of every number that moves a rating (Viantra rating v5, Roadmap/2.10b-rating-v5.md; batch R1, T754). The pipeline reads it through pipeline/rating_config.py; the app will read it in T776. What was measured on the reference catalogue (zlog spread, breakpoints, class scales, curves, fallback coefficients) lives in the frozen reference named below, never here. Changing a number here is a model change: bump version, then rebuild the reference with apply_rating_layer.py --recalibrate --version <new>.",
   "version": "v5.0-r3",
   "reference": "reports/rating_reference_v5.json",
   "reference_versions": {
@@ -15,7 +15,7 @@
   "formula_about": "v5 (T759): Q = weights_v5 over appeal A (hand score, else rubric score, both through the per-class appeal_scale), beauty B (v2), depth D and recognition R, for every place. A place with neither a hand nor a rubric score takes the frozen fallback estimate, confidence estimated, capped at estimated.cap. v4 keeps the weights below, highlights and the modelled/provisional confidence: set formula to v4 (and depth.live, beauty.live to false) to roll back.",
 
   "weights_v5": {
-    "_about": "Carta rating v5 (Roadmap/2.10b-rating-v5.md, Layer 1): Q = 0.60 A + 0.15 B + 0.15 D + 0.10 R, each part on 0 to 10.",
+    "_about": "Viantra rating v5 (Roadmap/2.10b-rating-v5.md, Layer 1): Q = 0.60 A + 0.15 B + 0.15 D + 0.10 R, each part on 0 to 10.",
     "appeal": 0.60,
     "beauty": 0.15,
     "depth": 0.15,

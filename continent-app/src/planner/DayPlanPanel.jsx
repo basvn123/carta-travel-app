@@ -208,7 +208,7 @@ function StopMenu({ canEarlier, canLater, onMoveUp, onMoveDown, onRemove, name, 
   );
 }
 
-/** The ticket line on a stop (T501, owner T492-d): a price Carta knows, or
+/** The ticket line on a stop (T501, owner T492-d): a price Viantra knows, or
  *  the plain fact that there is one without a price. Nothing for no fee. */
 function TicketLine({ ticket, t, lang }) {
   if (!ticket || (ticket.kind !== 'known' && ticket.kind !== 'unknown')) return null;
@@ -400,7 +400,7 @@ export function DayPlanPanel({
   useEffect(() => { setAsking(false); }, [dayNumber]);
 
   // T673: Wanderlog's day head, the two moves on a whole day as links beside
-  // the title: fill it (Carta plans it from the trip's rhythm) and put it in
+  // the title: fill it (Viantra plans it from the trip's rhythm) and put it in
   // the best order (asked first, as before).
   const head = (
     <div className="dayp-head">

@@ -1,16 +1,16 @@
 /**
  * Search suggestions (G12): what the panel lists while the traveller types.
- * Pure: the caller hands in Carta's places, the towns of the loaded shards,
- * the areas and Carta's own region boxes, and gets an ordered list back.
+ * Pure: the caller hands in Viantra's places, the towns of the loaded shards,
+ * the areas and Viantra's own region boxes, and gets an ordered list back.
  *
  * Order (decision.md 3, contract Lane 4):
- *   1. Carta's places (exact name, then name start, then a word start)
- *   2. towns Carta does not cover, biggest first, as "Near {town}"
+ *   1. Viantra's places (exact name, then name start, then a word start)
+ *   2. towns Viantra does not cover, biggest first, as "Near {town}"
  *   3. regions, then countries
  * An area whose whole name was typed moves up: a country to the top
- * ("Slovenia"), a region just under Carta's places ("Tuscany").
+ * ("Slovenia"), a region just under Viantra's places ("Tuscany").
  *
- * A town that IS a Carta place (one of its names is the place's name, and
+ * A town that IS a Viantra place (one of its names is the place's name, and
  * it lies within 20 km) is shown as that place, so "Keulen" finds Cologne
  * and never offers "Near Cologne" beside Cologne itself.
  */
@@ -45,7 +45,7 @@ function cartaMatches(places, q) {
   return out;
 }
 
-/** The Carta place a gazetteer town stands for, or null. */
+/** The Viantra place a gazetteer town stands for, or null. */
 export function cartaTwin(town, places) {
   let best = null;
   for (const p of places) {
@@ -56,7 +56,7 @@ export function cartaTwin(town, places) {
   return best?.p || null;
 }
 
-/** A Carta place's name in the UI language, from its gazetteer town among
+/** A Viantra place's name in the UI language, from its gazetteer town among
  *  the loaded shard (French "Bruxelles" for Brussels); null when the shard
  *  has no such town or no name in that language. */
 export function localPlaceName(p, towns, lang) {
@@ -83,7 +83,7 @@ const JOINERS = /^(in der|in den|in the|cerca de|vicino a|pres de|near|in|im|bij
 /**
  * Which feature words to lift, and what is left to match (fixes-r1 Q4).
  * A word stays part of a name when the whole text is a place ("Lake
- * District"), or the rest is exactly one of Carta's places ("Lake Bled",
+ * District"), or the rest is exactly one of Viantra's places ("Lake Bled",
  * "Lake Como" find Bled and Como, with no token).
  */
 export function readQuery(query, ctx = {}) {
@@ -101,7 +101,7 @@ export function readQuery(query, ctx = {}) {
   return { tokens: raw.tokens, rest };
 }
 
-/** Two Carta rows for one town (an airport-tier record and a place in the
+/** Two Viantra rows for one town (an airport-tier record and a place in the
  *  town, "Cologne-Bonn" and "Köln"): keep the town (fixes-r1 Q5). */
 function dropTwinRows(items) {
   return items.filter((it, i) => !(it.airport && items.some((o, j) => j !== i && !o.airport
@@ -114,7 +114,7 @@ function dropTwinRows(items) {
  *   places        cartaPlaces(data)
  *   towns         loadTownsFor (the rest and the whole text; may lag a keystroke)
  *   areas         loadAreas() result { countries, regions }
- *   cartaRegions  [{ label, bbox, keys }] Carta's own region boxes (search_index)
+ *   cartaRegions  [{ label, bbox, keys }] Viantra's own region boxes (search_index)
  *   dropped       feature tokens the traveller removed
  *   lang          the UI language: names are shown in it, matched in any
  *   noTokens      a question: no feature words are lifted (it goes to Ask)
@@ -143,9 +143,9 @@ export function suggest(query, ctx = {}) {
   // Regions and countries. Any language's name matches when typed in full
   // ("Lissabon"); a prefix matches only the names shown in this language,
   // so "porto" does not offer Portugal through the Italian "Portogallo".
-  // Carta's own boxes come first, so a GeoNames region of the same name
+  // Viantra's own boxes come first, so a GeoNames region of the same name
   // ("Tuscany") is not offered twice; the list filter has always used them.
-  // A Carta box speaks the reader's language through its GeoNames twin
+  // A Viantra box speaks the reader's language through its GeoNames twin
   // ("Toskana", "Toscane"), so the twin is not offered as a second row in
   // English (flow-search F2).
   const geoRegions = ctx.areas?.regions || [];
@@ -174,14 +174,14 @@ export function suggest(query, ctx = {}) {
     const item = {
       type: a.kind, key: `a:${a.code}`, code: a.code, name: shown, match: shown, cc: a.cc, bbox: a.bbox, tokens, nameKey: key,
     };
-    // A Carta box has no country of its own: it gets the one its places all
+    // A Viantra box has no country of its own: it gets the one its places all
     // share, so its second line says "Region, Italy". A box over several
     // countries (the Alps) keeps none and still lists every place in it.
     if (a.carta) {
       const ccs = new Set(places.filter((p) => inBox(p, a.bbox)).map((p) => p.iso2).filter(Boolean));
       if (ccs.size === 1) item.cc = [...ccs][0];
     }
-    // A region with no Carta place inside lists the places near its middle
+    // A region with no Viantra place inside lists the places near its middle
     // (resolve.js), so its count is what a pick shows; none at all: left out.
     item.count = resolveIds(item, places).length;
     if (item.count > 0) areaHits.push({ item, s, pop: a.pop, kind: a.kind });
@@ -209,7 +209,7 @@ export function suggest(query, ctx = {}) {
       // A town named like a region it gives its name to (Kobarid): one row.
       if (areaKeys.has(`${town.cc}:${foldName(shown)}`)) continue;
       const list = placesNear(keep, town.lat, town.lon);
-      if (!list.length) continue; // nothing of Carta's within reach: no empty "Near"
+      if (!list.length) continue; // nothing of Viantra's within reach: no empty "Near"
       near.push({
         type: 'near', key: `t:${town.gid}`, gid: town.gid, name: shown, match: town.names[i],
         cc: town.cc, lat: town.lat, lon: town.lon, tokens, count: list.length, km: Math.round(list[0].km),
@@ -217,12 +217,12 @@ export function suggest(query, ctx = {}) {
     }
   }
 
-  // A named country leads ("Slovenia"); a named region follows Carta's own
+  // A named country leads ("Slovenia"); a named region follows Viantra's own
   // places, so "Porto" opens the city before the district of Porto; then
   // countries and regions by prefix, above villages ("Ital" is Italy before
   // Itala). With feature words the areas lead: "beach portugal" is about
   // Portugal.
-  // Carta's rows speak the UI language too (fixes r1: French showed
+  // Viantra's rows speak the UI language too (fixes r1: French showed
   // "Brussels"); the place keeps its own name where the shard has none.
   const byId = new Map(places.map((p) => [p.id, p]));
   for (const it of carta) {

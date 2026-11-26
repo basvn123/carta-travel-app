@@ -819,7 +819,7 @@ export function SettingsIcon({ size = 15, className = '', labelled = false }) {
   );
 }
 
-/* T899: copy an answer of the Carta bot: two sheets, one over the other. */
+/* T899: copy an answer of the Viantra bot: two sheets, one over the other. */
 export function CopyIcon({ size = 15, className = '', labelled = false }) {
   return (
     <Glyph size={size} className={className} labelled={labelled} label="Copy">

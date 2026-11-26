@@ -110,7 +110,7 @@ const duration = (min) => {
 };
 
 const ROUTE_LABEL = Object.fromEntries(ROUTE_TYPES.map(({ key, labelKey }) => [key, labelKey]));
-/** Carta's grade where no mapper tagged an SAC scale: its T step, estimated. */
+/** Viantra's grade where no mapper tagged an SAC scale: its T step, estimated. */
 const GRADE_STEP = { easy: 1, moderate: 2, hard: 3, very_hard: 4, alpine: 5 };
 const MONTH_CODES = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const TRANSIT_ICON = { bus: BusIcon, train: TrainIcon, tram: TrainIcon, ferry: FerryIcon };
@@ -612,12 +612,12 @@ export function TrailPage({ card, onClose, onSelectDest, onOpenNeighbour, dests,
   const named = plainName(tr.name, tr.f?.ref || detail?.waymark_ref || null);
 
   // The grade as a T step: the mapper's SAC tag when the route carries one,
-  // Carta's own grade otherwise (then marked as estimated).
+  // Viantra's own grade otherwise (then marked as estimated).
   const sacTag = SAC_STEP[src.sac_scale] || SAC_STEP[tr.sac_scale] || 0;
   const gradeStep = isCityDay ? 0 : (sacTag || GRADE_STEP[grade] || 0);
   const gradeEst = !sacTag && (derivedGrade || !grade);
   // T1092 (D7): a multi-day walk on easy ground reads "Long, 14 days"
-  // where Carta's own grade would stand. A mapper's SAC tag still wins.
+  // where Viantra's own grade would stand. A mapper's SAC tag still wins.
   const longDays = !isCityDay && !sacTag && (isLongWalk(src) || isLongWalk(tr))
     ? (trailDays(src) || trailDays(tr)) : null;
   const gradeWord = longDays ? t('trails.gradeLongDays', { n: longDays })

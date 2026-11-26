@@ -141,7 +141,7 @@ async function boot(width, height, url = '?tab=map&xw=map', lang = 'en', styleSe
   });
   // --cors-maps: the data host refuses localhost (CORS), so the map falls
   // back to CARTO; this answers the basemap's requests through Playwright
-  // with the header added, to measure the Carta (Protomaps) style itself.
+  // with the header added, to measure the Viantra (Protomaps) style itself.
   if (flag('cors-maps')) {
     await ctx.route(/data\.carta-europetravel\.com\/data\/maps\//, async (r) => {
       try {

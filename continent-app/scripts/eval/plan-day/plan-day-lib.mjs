@@ -2,7 +2,7 @@
  * Plan-day eval (T1148, ROADMAP F6): cases, a reference planner, the rule
  * checks, the calibration sample and the judge prompt.
  *
- * A case is one "Let Carta plan" request: a city, the traveller's answers
+ * A case is one "Let Viantra plan" request: a city, the traveller's answers
  * and a candidate deck of 12 real places (the city's dossier highlights,
  * passed through the Edge Function's own sanitizeCandidates). A plan is
  * what plan-day's model returns: { summary, stops: [{ id, name, dwellMin,

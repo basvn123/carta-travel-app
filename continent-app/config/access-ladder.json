@@ -1,5 +1,5 @@
 {
-  "_about": "The data access ladder (ROADMAP I16, T1213). One entry per commercial data source: where Carta stands today, the legal route, the number that unlocks the next step and the flag that would switch the code path on. Thresholds are edited here, not in code. Every flag is off until the owner sets its environment variable to 1; nothing in this file switches anything live. docs/data/access-ladder.md holds the dated terms check and the owner steps.",
+  "_about": "The data access ladder (ROADMAP I16, T1213). One entry per commercial data source: where Viantra stands today, the legal route, the number that unlocks the next step and the flag that would switch the code path on. Thresholds are edited here, not in code. Every flag is off until the owner sets its environment variable to 1; nothing in this file switches anything live. docs/data/access-ladder.md holds the dated terms check and the owner steps.",
   "version": 1,
   "terms_checked": "2026-11-07",
   "metrics": {

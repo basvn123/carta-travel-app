@@ -1,5 +1,5 @@
 /**
- * savedLists.js, the traveller's own lists of saved things and what Carta
+ * savedLists.js, the traveller's own lists of saved things and what Viantra
  * knew about each save when it was made (T925).
  *
  * A save itself is still a favourite key (lib/favorites.js, `kind:id`); this
@@ -9,8 +9,8 @@
  *          may sit in several lists; "All saved" is every favourite and is
  *          not stored.
  *   meta   { [favKey]: { at, eur, basis, note, gone } }: when it was saved (ms),
- *          the day price Carta showed at that moment (whole euros a person
- *          a day, only where Carta prices that kind), the basis it stood on
+ *          the day price Viantra showed at that moment (whole euros a person
+ *          a day, only where Viantra prices that kind), the basis it stood on
  *          (priceView.basisOf: month, stay style, lifestyle), the traveller's own
  *          note, and when it was last unsaved (so an Undo keeps the price it
  *          was saved at instead of taking today's).
@@ -75,8 +75,8 @@ export function loadSavedLists() { return read(); }
 export function savedListsForSync() { return read(); }
 
 /**
- * Something was just saved. `eur` is the day price Carta shows for it now,
- * or null where Carta prices nothing for that kind. An unsave undone within
+ * Something was just saved. `eur` is the day price Viantra shows for it now,
+ * or null where Viantra prices nothing for that kind. An unsave undone within
  * REVIVE_MS keeps its first price, so Undo never resets the "since you saved
  * it" figure.
  */

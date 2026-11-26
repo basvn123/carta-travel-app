@@ -268,7 +268,7 @@
 .hm-note.at-1 { top: 46%; left: calc(50% + 104px); }
 .hm-note.at-2 { top: 72%; right: calc(50% + 104px); }
 
-/* Also in Carta: one quiet line, no chips. */
+/* Also in Viantra: one quiet line, no chips. */
 .hm-also { display: flex; flex-wrap: wrap; align-items: baseline; gap: var(--space-2) var(--space-4); margin-top: var(--space-7); padding-top: var(--space-4); border-top: var(--stroke-hair) solid var(--border); }
 .hm-also b { font-size: var(--text-label); }
 .hm-also span { color: var(--text-2); font-size: var(--text-label); }

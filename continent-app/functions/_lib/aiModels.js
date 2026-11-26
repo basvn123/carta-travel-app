@@ -1,5 +1,5 @@
 /**
- * aiModels: the one model-access module for Carta's AI calls (T1137, ROADMAP
+ * aiModels: the one model-access module for Viantra's AI calls (T1137, ROADMAP
  * E3). Every call to a language model from an Edge Function (plan-day,
  * suggest-city, parse-booking) or from Ask's Pages Function goes through
  * callModel here; nothing else in the code base may name a provider endpoint

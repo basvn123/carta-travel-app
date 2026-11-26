@@ -1,4 +1,4 @@
-// The slice of fli-js Carta uses: one-way searches and booking links.
+// The slice of fli-js Viantra uses: one-way searches and booking links.
 export {
   Airport,
   Client,

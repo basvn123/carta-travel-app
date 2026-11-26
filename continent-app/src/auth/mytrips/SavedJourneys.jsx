@@ -12,8 +12,8 @@ import { toggleSavedJourney, useSavedJourneys } from '../../lib/journeySaves.js'
 import { DayFrom } from '../../browse/JourneyCards.jsx';
 
 /**
- * Carta's own trips the traveller saved (T831, row T824-a): the bookmark on
- * Carta's trips page lands here too, under Kept trips, in the same rows
+ * Viantra's own trips the traveller saved (T831, row T824-a): the bookmark on
+ * Viantra's trips page lands here too, under Kept trips, in the same rows
  * (photo, the week's name, where, from a person a day). Open shows the
  * whole week; Remove takes the bookmark off. Newest saved first; a saved id
  * the library no longer has is left out quietly.

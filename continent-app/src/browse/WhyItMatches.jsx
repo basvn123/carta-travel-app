@@ -8,7 +8,7 @@ import { Button } from '../components/ui/index.js';
 import { CheckIcon } from '../components/Icons.jsx';
 
 /**
- * The personal match on the screens (Carta rating v5, Layer 3, T765).
+ * The personal match on the screens (Viantra rating v5, Layer 3, T765).
  *
  * The match is read from lib/match.js and never merged into the score: a
  * card reads "8.9 Exceptional" from the ScoreChip and, beside it, "86%

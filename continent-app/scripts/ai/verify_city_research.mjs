@@ -1,8 +1,8 @@
-// Headless verify of "Carta doesn't have this town, go and get it".
+// Headless verify of "Viantra doesn't have this town, go and get it".
 //
 // The bug this covers: asking the chat for Lokeren (a real Belgian town, not
 // in the 1,570-destination catalogue) silently relocated the day to Ghent,
-// 20 km away. Now the traveller is offered the town they asked for, Carta
+// 20 km away. Now the traveller is offered the town they asked for, Viantra
 // researches it from open data, and it becomes a real destination.
 //
 // Every outside source is intercepted (Nominatim, both Wikipedias, Overpass,
@@ -239,8 +239,8 @@ async function run(label, viewport) {
   // below. A fresh page context already starts with empty storage.
   await reachTownStep(page);
 
-  // ---- ask Carta for a town it doesn't have ----
-  await page.locator('.chat-town-tab').filter({ hasText: 'Ask Carta' }).click();
+  // ---- ask Viantra for a town it doesn't have ----
+  await page.locator('.chat-town-tab').filter({ hasText: 'Ask Viantra' }).click();
   await page.locator('.chat-town-ai input').fill('somewhere quiet near the Durme');
   await page.locator('.chat-town-ai .chat-send').click();
   await page.waitForTimeout(800);

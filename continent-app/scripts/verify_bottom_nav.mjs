@@ -83,13 +83,13 @@ await page.screenshot({ path: 'shots/bottom-nav-saved.png' });
 // Account is the header door: it opens the account page and the bar marks nothing.
 // G12 (explore polish, step 10): signed out a Sign in pill stands beside
 // the account icon; the icon still opens Account (a guest's language and
-// "How Carta works" live there).
+// "How Viantra works" live there).
 check('Signed out, Sign in sits beside the account icon', (await page.locator('.signin-pill:visible').count()) === 1);
 await page.locator('.account-door[aria-label^="Account"]').click();
 await page.waitForTimeout(1200);
 check('Account opens the account page', await page.locator('.ac-panel').isVisible());
 check('Account has an address', /[?&]tab=account/.test(page.url()), page.url());
-check('Account carries "How Carta works"', /how carta works/i.test(await page.locator('.ac-panel').innerText().catch(() => '')));
+check('Account carries "How Viantra works"', /how carta works/i.test(await page.locator('.ac-panel').innerText().catch(() => '')));
 await page.screenshot({ path: 'shots/bottom-nav-account.png' });
 
 // Back closes Account (each page is a step in the history).

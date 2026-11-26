@@ -3,7 +3,7 @@
  * decision §1.4 and §3.3): Who, From, When and length, then Style and More
  * in the component. Solid = the traveller gave it (on a screen, in words,
  * on Explore, from the page the trip came from, for this trip, or through
- * their style); dashed = Carta assumed it (a default). Pure, so node tests
+ * their style); dashed = Viantra assumed it (a default). Pure, so node tests
  * hold it; the words come from the caller's `t`.
  */
 import { partyText } from '../../lib/party.js';
@@ -22,7 +22,7 @@ export function pricedFromName(data) {
 
 export const ASSUMPTION_IDS = Object.freeze(['who', 'from', 'when']);
 
-/** Whether Carta assumed this answer (nobody gave it). */
+/** Whether Viantra assumed this answer (nobody gave it). */
 export function assumed(settings, id) {
   return !(settings?.answered || []).includes(id);
 }

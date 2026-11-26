@@ -1,6 +1,6 @@
 /**
- * Carta's own trips a traveller saved (T824): the bookmark on each card of
- * Carta's trips page. Ids only, kept on this device with a change event so
+ * Viantra's own trips a traveller saved (T824): the bookmark on each card of
+ * Viantra's trips page. Ids only, kept on this device with a change event so
  * every card and the Saved filter move together. Light on purpose: no
  * engine, no flight files.
  */

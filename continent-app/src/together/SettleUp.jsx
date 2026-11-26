@@ -12,7 +12,7 @@ import { IS_FRIENDS_MOCK } from './friendsMock.js';
 /**
  * Settle up (T940, migration 058): the members of a group trip log what
  * they paid for the group and see who pays whom in the fewest transfers
- * (src/together/settle.js). Money moves outside Carta, through the payee's
+ * (src/together/settle.js). Money moves outside Viantra, through the payee's
  * own payment link when they set one; "Mark as paid" then writes the
  * transfer, which either of its two people may do. Amounts are in cents,
  * as on every ledger.

@@ -7,7 +7,7 @@
  *   route, estimate the saving in ground cost.
  *
  * The WHEN lever (cheapestStartDates, a sweep of start dates ranked by stored
- * flight fares) was removed in T273: Carta does not price flights (owner
+ * flight fares) was removed in T273: Viantra does not price flights (owner
  * decision, 2026-10-02) and the fares it ranked by are frozen snapshots.
  */
 import { interCityGroundEstimate } from './trip_planner_pricing.js';

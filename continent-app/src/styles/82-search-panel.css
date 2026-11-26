@@ -1,6 +1,6 @@
 /* The search panel under Explore's search field (G12 round 2,
    browse/search/SearchPanel.jsx). Phone: Browse, then Recent or Places,
-   then Filters and Ask Carta as a group of buttons under a rule (owner O3).
+   then Filters and Ask Viantra as a group of buttons under a rule (owner O3).
    Desktop: Places (or Recent) on the left, Browse on the right, as wide as
    the field. The Studio pattern: brown and saffron only, icon and word, no
    separators. */
@@ -152,7 +152,7 @@
    every chip shows; no chip is cut at the edge (owner shot 15). */
 .sp.is-phone .sp-chips { padding-block: var(--space-1); }
 
-/* Phone, O3: Filters and Ask Carta, a group of their own under a rule, as
+/* Phone, O3: Filters and Ask Viantra, a group of their own under a rule, as
    buttons, never rows of the list. */
 .sp-actions {
   display: flex;

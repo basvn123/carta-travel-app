@@ -26,7 +26,7 @@ function diffWord(t, n) {
 const DIFF_TONE = { 1: 'is-easy', 2: 'is-easy', 3: 'is-mid', 4: 'is-hard', 5: 'is-hard' };
 
 /**
- * One of Carta's trips (T824, T901; T1030, owner: "the words on the image
+ * One of Viantra's trips (T824, T901; T1030, owner: "the words on the image
  * are cut off; under it '4 places, 6 nights' adds nothing").
  *
  * The photograph carries the In season badge, the bookmark and, on an ink

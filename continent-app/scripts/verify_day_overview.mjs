@@ -5,7 +5,7 @@
 //   1. The map filters live in ONE container, the active pill is deep slate
 //      (not the alert-red terracotta), and quality filters are a collapsible
 //      group rather than a second row mixed with the "my picks" view state.
-//   2. Importing a Carta bot plan renders the day ONCE. Before this, the bot's
+//   2. Importing a Viantra bot plan renders the day ONCE. Before this, the bot's
 //      schedule card and the manual timeline both listed every stop.
 //   3. The timeline speaks in macro phases and visit estimates, never in
 //      per-stop arrival clocks, and never truncates a place name.
@@ -74,7 +74,7 @@ try {
     localStorage.setItem(`carta.dayplan.${planId}`, JSON.stringify({
       0: { 0: stops.map((s) => s.idx) },
     }));
-    // An imported Carta bot plan for the same day: this is the state that used
+    // An imported Viantra bot plan for the same day: this is the state that used
     // to render the itinerary twice.
     localStorage.setItem(`carta.dayprefs.${planId}`, JSON.stringify({
       routeMode: 'manual',
@@ -86,7 +86,7 @@ try {
               id: String(s.idx),
               name: s.name,
               arrive: ['09:30', '10:14', '11:40', '14:20'][i],
-              why: `Reason ${i + 1} from the Carta bot for visiting ${s.name}.`,
+              why: `Reason ${i + 1} from the Viantra bot for visiting ${s.name}.`,
             })),
             {
               external: true,

@@ -17,7 +17,7 @@
  *      until their tries are done (the pricing line counts them), then show
  *      together, sorted once, and never move after. The journeys below
  *      still arrive a trip at a time.
- *   2. Van Carta: the shortlisted journeys (moreSearch.js libraryTrip), each
+ *   2. Van Viantra: the shortlisted journeys (moreSearch.js libraryTrip), each
  *      ranked alone, so its match and figures are final when it shows (a
  *      ranking over the row would move with each new trip; priorityPull is
  *      relative). The row shows from ROW_MIN trips (never a row of one),

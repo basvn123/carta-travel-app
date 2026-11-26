@@ -53,7 +53,7 @@ export function postGraph(p) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebSite', '@id': `${ORIGIN}/#site`, url: `${ORIGIN}/`, name: 'Carta' },
+      { '@type': 'WebSite', '@id': `${ORIGIN}/#site`, url: `${ORIGIN}/`, name: 'Viantra' },
       {
         '@type': 'BlogPosting',
         '@id': `${url}#post`,
@@ -64,15 +64,15 @@ export function postGraph(p) {
         datePublished: p.date,
         dateModified: p.modified || p.date,
         inLanguage: 'en',
-        author: { '@type': 'Organization', name: p.author || 'Carta', url: `${ORIGIN}/` },
-        publisher: { '@type': 'Organization', name: 'Carta', url: `${ORIGIN}/` },
+        author: { '@type': 'Organization', name: p.author || 'Viantra', url: `${ORIGIN}/` },
+        publisher: { '@type': 'Organization', name: 'Viantra', url: `${ORIGIN}/` },
         isPartOf: { '@id': `${ORIGIN}/blog/#blog` },
         ...(p.image ? { image: [p.image.src] } : {}),
       },
       {
         '@type': 'BreadcrumbList',
         itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Carta', item: `${ORIGIN}/` },
+          { '@type': 'ListItem', position: 1, name: 'Viantra', item: `${ORIGIN}/` },
           { '@type': 'ListItem', position: 2, name: 'Blog', item: `${ORIGIN}/blog/` },
           { '@type': 'ListItem', position: 3, name: p.title, item: url },
         ],
@@ -85,9 +85,9 @@ export function indexGraph(posts) {
   return {
     '@context': 'https://schema.org',
     '@graph': [
-      { '@type': 'WebSite', '@id': `${ORIGIN}/#site`, url: `${ORIGIN}/`, name: 'Carta' },
+      { '@type': 'WebSite', '@id': `${ORIGIN}/#site`, url: `${ORIGIN}/`, name: 'Viantra' },
       {
-        '@type': 'Blog', '@id': `${ORIGIN}/blog/#blog`, url: `${ORIGIN}/blog/`, name: 'Carta blog', inLanguage: 'en',
+        '@type': 'Blog', '@id': `${ORIGIN}/blog/#blog`, url: `${ORIGIN}/blog/`, name: 'Viantra blog', inLanguage: 'en',
         blogPost: byNewest(posts).map((p) => ({ '@type': 'BlogPosting', headline: p.title.slice(0, 110), url: `${ORIGIN}${postPath(p.slug)}`, datePublished: p.date })),
       },
     ],

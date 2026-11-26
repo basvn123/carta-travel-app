@@ -12,7 +12,7 @@
  * that fire are shown.
  *
  * A place that trips no rule still gets one line, the fallback below. It is
- * true of everything Carta shows (a page describes the usual picture, never
+ * true of everything Viantra shows (a page describes the usual picture, never
  * today's conditions), which is why it is allowed to stand in. A block that
  * silently vanished would read as "nothing to warn about", which is a claim
  * this app cannot make.

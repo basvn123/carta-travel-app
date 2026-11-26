@@ -3,7 +3,7 @@
 // iOS shows an apple-touch-startup-image while an installed web app starts
 // cold; without one the traveller sees a blank white screen first. Android
 // builds its own splash from the manifest (name, icon, background_color), so
-// this is for iOS only. One portrait PNG per current iPhone screen: the Carta
+// this is for iOS only. One portrait PNG per current iPhone screen: the Viantra
 // mark centred on the stone page ground (--neutral-50, the manifest's
 // background_color), no words, as Apple's launch screen guidance asks.
 //

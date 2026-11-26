@@ -1,5 +1,5 @@
 /**
- * waitlist, Carta's waitlist and newsletter sign-up with double opt-in
+ * waitlist, Viantra's waitlist and newsletter sign-up with double opt-in
  * (T1110, ROADMAP K3). Migration 066 holds the table.
  *
  *   POST {"email","locale","source"}   from the form on the Home page. Stores
@@ -13,7 +13,7 @@
  *   GET or POST ?a=unsub&e=&x=0&t=   the unsubscribe link in every mail (and
  *        its List-Unsubscribe-Post form, RFC 8058).
  *
- * Secrets: RESEND_API_KEY, WAITLIST_FROM ("Carta <hello@carta-europetravel.com>"),
+ * Secrets: RESEND_API_KEY, WAITLIST_FROM ("Viantra <hello@carta-europetravel.com>"),
  * WAITLIST_SECRET (any long random string), APP_URL (optional). SUPABASE_URL
  * and SUPABASE_SERVICE_ROLE_KEY are set by the platform. Without
  * RESEND_API_KEY, WAITLIST_FROM and WAITLIST_SECRET nothing is stored or sent

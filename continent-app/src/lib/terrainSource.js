@@ -2,7 +2,7 @@
  * Where the 3D terrain (raster-dem) tiles come from (T233).
  *
  * Mapterhorn publishes no SLA, rate limit or fair-use policy, so the plan is to
- * mirror its European terrain into Carta's own R2 bucket and read it from
+ * mirror its European terrain into Viantra's own R2 bucket and read it from
  * there. This module is the one place the app decides which host to use, so
  * the switch is a single config value and no map code changes when it flips.
  *

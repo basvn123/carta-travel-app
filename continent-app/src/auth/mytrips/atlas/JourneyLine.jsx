@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { journeyModel } from './journeyLine.js';
 
 /**
- * The journey line (G12, My trips atlas): Carta's planner motif, one umber
+ * The journey line (G12, My trips atlas): Viantra's planner motif, one umber
  * pill per stop as long as its nights on a 2 px ink line, with a bead per
  * day. Done days are filled, today is the one saffron bead with an umber
  * ring (the ring carries the contrast on stone), days to come are outlined:

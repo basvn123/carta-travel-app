@@ -39,10 +39,10 @@ export function tripForDate(plans, iso) {
 
 /**
  * Add a booking (T927): drop or choose a confirmation (PDF or image) or take
- * a photo of it; Carta's booking reader (the parse-booking Edge Function,
+ * a photo of it; Viantra's booking reader (the parse-booking Edge Function,
  * Gemini, behind the pass like every booking import) reads it; what it read
  * shows as fields to correct, the unsure ones flagged; a stay shows what it
- * cost a person a night beside Carta's estimate for that town; the booking
+ * cost a person a night beside Viantra's estimate for that town; the booking
  * is attached to the trip whose dates match, or another the traveller picks,
  * and the trip's Ready for the trip updates. Type it in opens the trip,
  * where every booking row can be filled by hand. Nothing is kept of the file.
@@ -124,7 +124,7 @@ export function AddBookingSheet({ plans = [], planId = '', costs = null, onClose
     return k && k.startsWith('stay-') ? Number(k.slice(5)) : -1;
   };
 
-  // A stay against Carta's estimate for a bed in that town, a person a night.
+  // A stay against Viantra's estimate for a bed in that town, a person a night.
   const compare = useMemo(() => {
     if (!plan) return [];
     return rows.filter((b) => b.kind === 'stay' && Number(b.eur) > 0).map((b) => {

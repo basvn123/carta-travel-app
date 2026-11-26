@@ -19,7 +19,7 @@
  * The home tour (T952) adds four chapters; until they are recorded the
  * page plays the older clip named after each (HomeTour.jsx):
  *
- *   ask       the home page's Ask Carta field, "A week by the sea in
+ *   ask       the home page's Ask Viantra field, "A week by the sea in
  *             September" typed in the clip's language and asked, then the
  *             answer (down it when it is longer than the sheet)
  *   explore   Lake Bled's page, down past what a day costs to what to see,
@@ -90,7 +90,7 @@ const QUIET_CSS = `
   .maplibregl-ctrl-attrib-inner { visibility: hidden !important; }
   *, *::before, *::after { caret-color: transparent !important; }
 `;
-// Ask Carta's question, typed in the clip's own language. No budget in it:
+// Ask Viantra's question, typed in the clip's own language. No budget in it:
 // the answer ranks places by fit and states each one's own day cost, so a
 // typed "under €80 a day" sat over €126 to €166 answers (G14).
 const ASK_QUESTION = {

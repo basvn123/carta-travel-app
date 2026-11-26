@@ -391,7 +391,7 @@ export function useDayStartData({
   };
 
   /**
-   * "Let Carta plan the rest": hand the builder's tray to the chat planner.
+   * "Let Viantra plan the rest": hand the builder's tray to the chat planner.
    *
    * Everything picked so far becomes a must-include, so the generated day
    * keeps every one of them rather than proposing its own shortlist over the

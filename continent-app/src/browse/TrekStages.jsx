@@ -11,7 +11,7 @@ import { Button } from '../components/ui/index.js';
  * which stage this is, and on the trek's own published parent row.
  *
  * The record is pipeline/trails/treks.py's: `stages` are only the stages
- * Carta publishes, so the count is "published stages", never a claim about
+ * Viantra publishes, so the count is "published stages", never a claim about
  * the whole path, and a gap in the numbering is said out loud.
  *
  * Renders through the shared Stages list (RouteParts.jsx), so it reads as

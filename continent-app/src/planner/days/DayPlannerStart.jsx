@@ -106,7 +106,7 @@ export function DayPlannerStart({
   })();
   const homeDest = homeTownId ? destinations[homeTownId] : null;
 
-  // What Carta is planning around (T459): the trip planner's recap, every
+  // What Viantra is planning around (T459): the trip planner's recap, every
   // answer given so far as a chip that goes back to its question. It
   // replaces the T433 start pill, whose one Change button went to step 1
   // whatever was being changed.

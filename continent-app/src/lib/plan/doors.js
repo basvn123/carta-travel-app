@@ -1,5 +1,5 @@
 /**
- * doors.js, how much Carta plans (T863 to T866, plan flow v3 Batch D).
+ * doors.js, how much Viantra plans (T863 to T866, plan flow v3 Batch D).
  *
  * After the setup the traveller picks one of four doors:
  *
@@ -23,7 +23,7 @@ import { arrivalFromImports, staysFromImports } from '../../planner/flow/importS
 
 /** The four doors, in their order on the screen (the trip settings' TRIP_DOORS; tests/doors pins them equal). */
 export const DOORS = ['guide', 'flight', 'know', 'booked'];
-/** The doors whose trip page offers "Plan the rest": Carta did not plan all of it. */
+/** The doors whose trip page offers "Plan the rest": Viantra did not plan all of it. */
 export const PARTIAL_DOORS = ['flight', 'booked'];
 
 const DAY_MS = 86400000;
@@ -88,11 +88,11 @@ const paidOf = (list) => {
  * The trip the bookings make (T866), or null when they hold nothing the
  * catalogue can place. The booked stays are the stops, each with its nights
  * and what it cost; with only a flight booked, the town it lands in is the
- * one base for the trip's nights and Carta fills the stay, the food and the
+ * one base for the trip's nights and Viantra fills the stay, the food and the
  * getting around. A booked flight is the traveller's own fare each way
  * (labelled theirs on the trip page) and the trip lands where it lands; a
  * booked stay is the traveller's own price for that stop. Whatever is not
- * booked (the flight with stays booked, the bed with a flight booked) Carta
+ * booked (the flight with stays booked, the bed with a flight booked) Viantra
  * prices as for any trip.
  *
  *   -> { selection (loadFromWizard's hand-over), booked: { flights, stays: [destinationId] } } | null
@@ -162,7 +162,7 @@ export function bookedTrip(s, destinations, { label = '' } = {}) {
  * bookings place nothing. Rows from a file (parse-booking, behind the Pass)
  * are the trip's `imports`; a typed sentence ("flight to Lisbon booked,
  * 3 to 10 May") is read on the device for free and stands as one flight row
- * with no price printed, so it stays the traveller's (never Carta's fare)
+ * with no price printed, so it stays the traveller's (never Viantra's fare)
  * and the receipt names it "Not yet" instead of inventing a figure.
  */
 export function bookedLanding(s, destinations, { label = '' } = {}) {

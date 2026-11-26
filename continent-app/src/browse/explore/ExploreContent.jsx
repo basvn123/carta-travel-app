@@ -217,7 +217,7 @@ export function ExploreContent({
         </div>
       )}
       <div className="xcontent-main">
-        {/* T1030 (owner): Carta's own trips is Plan's page only; Explore
+        {/* T1030 (owner): Viantra's own trips is Plan's page only; Explore
             no longer carries its own block or list. */}
         {/* The rails' doors, Show all places and the map toggle moved to
             the head block (T595); the rails draw no doors of their own. */}

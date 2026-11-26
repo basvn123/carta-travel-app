@@ -374,7 +374,7 @@ function TravelApp() {
 
   // My trips and Account are places with an address (T496, roadmap 1.15):
   // opening one writes one history step, so Back, and a phone's swipe back,
-  // close it onto the view under it instead of leaving Carta. A second press
+  // close it onto the view under it instead of leaving Viantra. A second press
   // on the door no longer closes it: a place is left by going to another
   // place or by Back, the way every section is.
   const pushOverlay = (key, opts) => {
@@ -466,7 +466,7 @@ function TravelApp() {
   //
   // A section change also writes one history entry (T381, the navigation
   // rule), so the browser's and the phone's Back return to the previous
-  // section instead of leaving Carta. `replace` is for the doors that open a
+  // section instead of leaving Viantra. `replace` is for the doors that open a
   // section at boot from a shared link: they must not add an entry the
   // traveller never asked for.
   const activeTabRef = useRef(null);
@@ -597,7 +597,7 @@ function TravelApp() {
   }, [goToTab]);
 
   // The one door for a place or a view, whatever pressed it: the header, the
-  // bottom nav, the logo, Account's "How Carta works" and the home page.
+  // bottom nav, the logo, Account's "How Viantra works" and the home page.
   // A view key (map, places, trip, day) passes straight to goToTab.
   const goTo = (key) => {
     if (key === 'trips') { openSaved(); return; }
@@ -924,7 +924,7 @@ function TravelApp() {
   // `cc` is required for the layers published one file per country (a trail,
   // a beach, a lake, a mountain, a cycle route); without it favKey refuses to
   // write a key it could never resolve again, and the star would do nothing.
-  // T925: a save records the day price Carta shows at that moment, so My
+  // T925: a save records the day price Viantra shows at that moment, so My
   // trips can say how it moved since (lib/savedLists.js); an unsave keeps
   // the record a minute for an Undo.
   const favoritesRef = useRef(favorites);
@@ -1037,7 +1037,7 @@ function TravelApp() {
 
   // Opening a place is one step in the history (T444, the Explore check):
   // Back, and a phone's swipe back, close the page onto the list it came
-  // from instead of leaving Carta, and the address names the place (#dest=,
+  // from instead of leaving Viantra, and the address names the place (#dest=,
   // the deep link readDestFromUrl reads at boot), so it can be shared or
   // reopened. Stable, so every Explore card's memo survives parent renders.
   const openDetail = useCallback((id) => {
@@ -1379,7 +1379,7 @@ function TravelApp() {
   // T534: the bed prices night by night for the traveller's own dates (a
   // week across July and August pays both months); repriced when a
   // country's stays arrive. T663: every price on every screen comes from one
-  // price request (lib/price/), so Carta's suggested week reads as any time,
+  // price request (lib/price/), so Viantra's suggested week reads as any time,
   // a month as that month, and the Explore month filter wins (B5, B7, V7).
   const staysVersion = useStaysVersion();
   useEffect(() => {
@@ -1491,7 +1491,7 @@ function TravelApp() {
   // The settings line's values (T381, components/SettingsLine.jsx): every
   // global input a price depends on, given once so any surface can show or
   // read them. The dates count as the traveller's own only when they differ
-  // from the pair Carta picked, which is also when there is a travel month.
+  // from the pair Viantra picked, which is also when there is a travel month.
   const setParty = useCallback((n) => {
     setChoices((prev) => ({ ...prev, group_size: Math.max(1, Math.round(n)) }));
   }, []);
@@ -1565,7 +1565,7 @@ function TravelApp() {
   // reads these, so neither shows a line. Hidden under My trips and Account,
   // which are pages of their own.
   // T961: on a phone, Explore and its five layers search from the dock (one
-  // pill and Ask Carta) in place of the line's four buttons. A search moves
+  // pill and Ask Viantra) in place of the line's four buttons. A search moves
   // to the kind's view with the Where text; Places with none opens every
   // place, as its overview's empty Search did.
   const dockSearch = useCallback(({ kind, q }) => {
@@ -1656,7 +1656,7 @@ function TravelApp() {
     return (
       <div className="loading-screen">
         <Logo size={56} />
-        <div className="name">Carta</div>
+        <div className="name">Viantra</div>
         <div className="sub">{t('shell.loadErrorHelp')}</div>
         <Button variant="primary" style={{ marginTop: 18 }} onClick={() => window.location.reload()}>
           {t('shell.retry')}
@@ -1848,7 +1848,7 @@ function TravelApp() {
       <PriceSheet data={data} onPlan={planFromReceipt} />
 
       {/* The home page (T462, which replaced the T209 landing receipt): what
-          Carta does, a live demo of it, and a door to each part. Not kept
+          Viantra does, a live demo of it, and a door to each part. Not kept
           alive like the tabs: it holds nothing worth keeping. */}
       {activeTab === 'home' && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>

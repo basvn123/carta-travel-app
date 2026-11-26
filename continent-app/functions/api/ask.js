@@ -1,5 +1,5 @@
 /**
- * GET /api/ask : Ask Carta's dense retrieval (T554). The question is
+ * GET /api/ask : Ask Viantra's dense retrieval (T554). The question is
  * embedded with the open model the ask index layer pruned (T551,
  * potion-multilingual-128M, static, 256 dims, about 0.2 ms) and scored
  * against the passages of the sources asked for, filtered on their payload

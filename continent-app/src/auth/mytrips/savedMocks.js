@@ -3,7 +3,7 @@
  * 2026-11-21-my-trips-tab, Phase A). Dev and E2E builds only: the panel
  * reads them behind E2E_SEAMS. Every id is a real catalogue id, so the
  * engine prices the trips itself; no figure here is drawn on screen except
- * the watched prices, which stand in for what Carta measured.
+ * the watched prices, which stand in for what Viantra measured.
  *
  *   guest      signed out, nothing kept
  *   empty      signed in, nothing at all
@@ -96,11 +96,11 @@ export const LOTS_FAV_KEYS = [
 
 const day = (iso) => `${iso}T08:00:00.000Z`;
 const hist = (pairs) => pairs.map(([off, eur]) => ({ at: day(addDaysIso(off)), eur }));
-// The four watched items of `lots`, each with the points Carta "measured".
+// The four watched items of `lots`, each with the points Viantra "measured".
 export const LOTS_WATCH = [
   { id: 'stay:gem:hallstatt:zauner', kind: 'stay', ref: 'gem:hallstatt:zauner', label: 'Gasthof Zauner, Hallstatt', placeKey: 'dest:gem:hallstatt', unitNote: 'night', source: 'Booking.com, 2 people, 3 nights in July', alert: true, pts: hist([[-51, 146], [-44, 142], [-37, 139], [-30, 139], [-23, 131], [-16, 126], [0, 118]]) },
   { id: 'flight:BRU-OPO', kind: 'flight', ref: 'BRU-OPO', label: 'Brussels to Porto, September', placeKey: 'dest:OPO', unitNote: 'return', source: 'Google Flights, lowest return in September', alert: false, pts: hist([[-58, 134], [-44, 129], [-30, 141], [-16, 118], [-9, 112], [0, 97]]) },
-  { id: 'day:gem:bled', kind: 'day', ref: 'gem:bled', label: 'Bled', placeKey: 'dest:gem:bled', unitNote: 'day, each', source: 'Carta, bed and food in September', alert: false, pts: hist([[-79, 101], [-51, 99], [-37, 99], [-23, 97], [-9, 96], [0, 94]]) },
+  { id: 'day:gem:bled', kind: 'day', ref: 'gem:bled', label: 'Bled', placeKey: 'dest:gem:bled', unitNote: 'day, each', source: 'Viantra, bed and food in September', alert: false, pts: hist([[-79, 101], [-51, 99], [-37, 99], [-23, 97], [-9, 96], [0, 94]]) },
   { id: 'stay:LJU:celica', kind: 'stay', ref: 'LJU:celica', label: 'Hostel Celica, Ljubljana', placeKey: 'dest:LJU', unitNote: 'night', source: 'Hostelworld, 1 bed in a dorm', alert: false, pts: hist([[-37, 38], [-30, 38], [-23, 41], [-9, 44], [0, 44]]) },
 ];
 

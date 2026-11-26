@@ -31,7 +31,7 @@ import { AirlineMark, FlightLink } from '../components/flights/Flights.jsx';
  * one the trip is priced on picked; picking another prices the trip on it
  * (onPickFlight). "I'll book my own" opens the fare field, whose figure wins
  * everywhere (lib/tripTotal.js paidEur). The booking links wait behind
- * "Find tickets". Any other mode shows Carta's figure for the party and the
+ * "Find tickets". Any other mode shows Viantra's figure for the party and the
  * same field.
  */
 
@@ -123,7 +123,7 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
   const paid = paidEur(value?.eur);
   const dir = leg.kind === 'out' || leg.kind === 'back' ? leg.kind : null;
   const cf = flight?.cartaFlight;
-  // A way out or home nobody has answered flies when Carta found the trip a
+  // A way out or home nobody has answered flies when Viantra found the trip a
   // flight (the total is priced on it); a hop between stops shows the mode
   // the trip is priced with.
   const mode = value?.mode || (dir ? (cf ? 'fly' : '') : (pricedMode || ''));
@@ -316,7 +316,7 @@ function LegCard({ leg, value, onChange, adults, estimate, pricedMode, t, lang, 
 export function TravelLegsSection({
   legs, values, onChange, adults = 1, startDate, endDate = '', onSetStart, dateMin, dateMax,
   openJawHint = '', estimates = {}, pricedModes = {}, party = 1,
-  // Carta's flight there and home (T518) and, since T812, the day's live
+  // Viantra's flight there and home (T518) and, since T812, the day's live
   // answers (a Map keyed like useLiveFlights), the party a flight is priced
   // for ({ paying, babies, bagKey }), which ways still wait, and the pick.
   cartaFlight = null, liveAnswers = null, flightParty = null, flightWaiting = null, onPickFlight = null,

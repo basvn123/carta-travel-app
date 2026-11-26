@@ -24,7 +24,7 @@ export async function downloadItemPdf(kind, item, ctx = {}) {
   const m = ctx.model || {};
   const name = clean(m.name || item?.name || ctx.title || '');
   const kit = await createPdf({
-    footerLabel: `Carta, ${name}`,
+    footerLabel: `Viantra, ${name}`,
     pageLabel: (n, of) => t('pdf.page', { n, of }),
     partnerNote: t('partner.pdfNote'),
   });

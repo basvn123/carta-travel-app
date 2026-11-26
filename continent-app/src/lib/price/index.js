@@ -1,4 +1,4 @@
-// The price engine (T662, plan "Carta prijslogica Explore"): one request,
+// The price engine (T662, plan "Viantra prijslogica Explore"): one request,
 // one function per kind of price. F2 builds the day price; F6 adds quoteTrip
 // and F9 the do-prices on the same request. T712: the trip quote
 // (./trip.js) and the composed trip (./compose.js) are imported from their

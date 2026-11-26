@@ -1,5 +1,5 @@
 /**
- * tellChips.js, Tell Carta's chips as data (T858, plan flow v3 Batch B).
+ * tellChips.js, Tell Viantra's chips as data (T858, plan flow v3 Batch B).
  *
  * The sentence is read as it is typed (lib/plan/parseTrip.js) and shown
  * under the field as chips: every answer the words or an earlier screen gave

@@ -1,4 +1,4 @@
-# Self-hosted Langfuse for Carta's eval and LLM traces (T1148, ROADMAP F6).
+# Self-hosted Langfuse for Viantra's eval and LLM traces (T1148, ROADMAP F6).
 # PREPARED, NOT INSTALLED: the install on the build box is an owner step
 # (see README.md next to this file and register row T1148-b).
 #
@@ -49,9 +49,9 @@ services:
       # Headless first start: one organisation, one project, one user, and
       # the project keys the eval runner and the Edge Functions will use.
       LANGFUSE_INIT_ORG_ID: carta
-      LANGFUSE_INIT_ORG_NAME: Carta
+      LANGFUSE_INIT_ORG_NAME: Viantra
       LANGFUSE_INIT_PROJECT_ID: carta-evals
-      LANGFUSE_INIT_PROJECT_NAME: Carta evals
+      LANGFUSE_INIT_PROJECT_NAME: Viantra evals
       LANGFUSE_INIT_PROJECT_PUBLIC_KEY: ${LANGFUSE_PUBLIC_KEY}
       LANGFUSE_INIT_PROJECT_SECRET_KEY: ${LANGFUSE_SECRET_KEY}
       LANGFUSE_INIT_USER_EMAIL: ${LANGFUSE_INIT_USER_EMAIL}

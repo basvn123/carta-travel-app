@@ -57,7 +57,7 @@ export function landingOf(settings) {
 // Plan your days moods (tripSettings aroundOf, goalOfGoals): neither is a
 // days question of its own any more.
 export const RHYTHM_SCREENS = ['r:mornings', 'r:pace', 'r:detail', 'r:food'];
-/** T863: the four doors (how much Carta plans), the trip settings' TRIP_DOORS. */
+/** T863: the four doors (how much Viantra plans), the trip settings' TRIP_DOORS. */
 export const DOORS = ['guide', 'flight', 'know', 'booked'];
 
 /** The setup questions this trip is asked, in order. */
@@ -74,7 +74,7 @@ export function setupScreens(s) {
 /**
  * T1103 (ROADMAP G12, audit P-33): the questions a new trip asks before its
  * first priced trips. Who, when and from are what the prices hang on (the
- * party, the dates, the airport); Tell Carta can answer all three in one
+ * party, the dates, the airport); Tell Viantra can answer all three in one
  * sentence. What is booked, where they sleep, what matters most, the way
  * there and the airports keep their defaults and refine the trips from the
  * trips screen and the trip settings. A trip under way keeps its own run.
@@ -208,7 +208,7 @@ export function guideScreens(s) {
     // to fly would ask it twice (and could contradict it).
     if (id === 'g:reach' && OVERLAND_WAYS.includes(s.way || '')) return false;
     if (places.length && WHERE_QUESTIONS.includes(id)) return false;
-    // G12 §12: the shape is not asked once the place is known (Carta
+    // G12 §12: the shape is not asked once the place is known (Viantra
     // orders and sizes the named places, decision §3.2 S5/S6).
     if (places.length && id === 'g:shape') return false;
     if (town && id === 'g:likes') return false;
@@ -229,7 +229,7 @@ export function planScreens(s, door = 'know') {
 }
 
 /** The days run: the question, the rhythm (answered ones skipped unless
- *  `all`), and the choice between Carta planning and planning yourself. */
+ *  `all`), and the choice between Viantra planning and planning yourself. */
 export function dayScreens(s, { all = false } = {}) {
   const rhythm = RHYTHM_SCREENS.filter((id) => all || !s.answered.includes(id));
   return ['daysAsk', ...rhythm, 'daysHow'];
@@ -271,7 +271,7 @@ export function givenBy(s, id, from) {
 
 /**
  * The help-me-choose walk passes over what the traveller's travel style
- * answered (lib/travelStyles.js) as well as Tell Carta's words: the style is
+ * answered (lib/travelStyles.js) as well as Tell Viantra's words: the style is
  * their own earlier answer, shown on the trip's settings and one tap from
  * changing there. The Who screen of the setup is not passed over: it is
  * where the style is chosen for this trip.

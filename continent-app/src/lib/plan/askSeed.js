@@ -1,5 +1,5 @@
 /**
- * askSeed.js, Ask Carta's PlanSeed (G12 plan rethink, lane L3, S12). Apart
+ * askSeed.js, Ask Viantra's PlanSeed (G12 plan rethink, lane L3, S12). Apart
  * from seedWriters.js because it carries the trip parser, which only the
  * Ask panel (already its own chunk) needs. Node tests: tests/planSeedWriters.test.mjs.
  */
@@ -7,7 +7,7 @@ import { makeSeed } from './seed.js';
 import { parseTrip } from './parseTrip.js';
 
 /**
- * Ask Carta's "Plan this": the route Ask found plus what the question said,
+ * Ask Viantra's "Plan this": the route Ask found plus what the question said,
  * read by the planner's own parser (parseTrip), so there is one reader of a
  * sentence: the dates or month, the party and the budget reach the trip.
  *   route: { stops: [{ dest, nights }], transport }

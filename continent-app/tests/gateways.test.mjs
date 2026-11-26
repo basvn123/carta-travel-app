@@ -37,7 +37,7 @@ test("gatewayCity stops on a loop", () => {
   assert.ok(["A", "B"].includes(gatewayCity("A", loop)));
 });
 
-test("Explore (and Ask Carta, which reads Explore's rows) drops every gateway", { skip: !HAVE }, () => {
+test("Explore (and Ask Viantra, which reads Explore's rows) drops every gateway", { skip: !HAVE }, () => {
   const rows = Object.entries(dests).map(([id, d]) => ({ id, ...d }));
   const out = dedupeGateways(rows);
   const ids = new Set(out.map((p) => p.id));

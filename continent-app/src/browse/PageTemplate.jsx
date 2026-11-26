@@ -7,7 +7,7 @@ import '../styles/88-place-template.css';
  * The place and trip page template (T912, T913; the owner's approved spec of
  * 2026-10-30, "Place and trip pages: one long page, one price, one button").
  *
- * Both the destination page and Carta's trip page are one long page: photos,
+ * Both the destination page and Viantra's trip page are one long page: photos,
  * the head, a facts row, then a sticky jump bar over the sections, with the
  * price card in a sticky right column from 1024 px and, below that, inline in
  * the page plus a fixed bar at the foot that carries the price and the one

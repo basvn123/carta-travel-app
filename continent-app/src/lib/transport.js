@@ -365,7 +365,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   // The car's fuel-split price only exists if there IS a car: unless the trip
   // says so (hasCar: a rental or the traveller's own car), recommending it
   // sells a mode the traveller would first have to go and arrange, so it
-  // carries an arrangement friction. It stays offered - just not Carta's pick.
+  // carries an arrangement friction. It stays offered - just not Viantra's pick.
   const score = (m, key) => m.eur_pp + m.hours * VALUE_OF_TIME_EUR_H
     + (key === 'train' ? (RAIL_SCORE_BONUS[railQuality] || 0) : 0)
     + (key === 'car' && !hasCar ? 8 : 0);
@@ -394,7 +394,7 @@ export function legTransportOptions(destA, destB, groupSize = 1, { carModel = nu
   };
 }
 
-/** Of a leg's public modes, the one Carta would pick (the trip planner's
+/** Of a leg's public modes, the one Viantra would pick (the trip planner's
  *  "Train & bus" preference): the recommended mode when it's already public,
  *  else the better-scoring of train and bus. */
 export function preferredPublicMode(opts) {
@@ -488,7 +488,7 @@ export function transferModesFromKm(roadKm, groupSize = 1, {
     };
   }
 
-  // Carta's default: the car you already rented if you have one, otherwise the
+  // Viantra's default: the car you already rented if you have one, otherwise the
   // cheapest sensible public option, falling back to a taxi where there's no
   // public transport at all.
   const recommended = modes.rental ? 'rental' : (modes.public ? 'public' : 'taxi');

@@ -28,7 +28,7 @@ test('the drop rule matches price_alert_record in 073: at or below the baseline 
   assert.equal(isDue(999, 949, 0.05), true);   // floor(949.05)
   assert.equal(isDue(999, 950, 0.05), false);
   assert.equal(isDue(500, 400, 0.2), true);
-  assert.equal(isDue(500, 400, 0.15), false);  // not a share Carta offers
+  assert.equal(isDue(500, 400, 0.15), false);  // not a share Viantra offers
   assert.equal(isDue(null, 400, 0.2), false);
   assert.deepEqual(APP_SHARES, SHARES);
 });
@@ -77,7 +77,7 @@ test('the drop email names both totals, the first check date and the estimate no
     open: openUrl('https://www.carta-europetravel.com/'), unsub: 'https://x.test/u?t=9',
   });
   assert.equal(m.subject, 'Lisbon <3 is 10% cheaper');
-  assert.match(m.text, /Lisbon <3: Carta now estimates €810, against €900 when we first checked on 1 October\./);
+  assert.match(m.text, /Lisbon <3: Viantra now estimates €810, against €900 when we first checked on 1 October\./);
   assert.match(m.text, /not a booking quote/);
   assert.ok(m.text.includes('https://www.carta-europetravel.com/?tab=trips'));
   assert.ok(m.text.includes('https://x.test/u?t=9'));

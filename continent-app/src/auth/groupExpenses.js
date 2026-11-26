@@ -2,7 +2,7 @@
  * groupExpenses.js, Settle up on a group trip (T940, migration 058).
  *
  * Members log what they paid for the group; src/together/settle.js works
- * out who owes whom in the fewest transfers. Money moves OUTSIDE Carta,
+ * out who owes whom in the fewest transfers. Money moves OUTSIDE Viantra,
  * through each person's own payment link (Tikkie, bunq.me, Revolut), and a
  * transfer is then marked as paid here. Every rule is in SQL: only the
  * group's joined members read or write a ledger, and a payment link is read

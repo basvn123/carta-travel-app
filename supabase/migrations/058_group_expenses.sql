@@ -10,8 +10,8 @@
 -- Settle up (T940, the Together page): the members of a group trip log
 -- what they paid for the group, see who owes whom in the fewest transfers
 -- (worked out in the browser by src/together/settle.js), pay each other
--- OUTSIDE Carta (Tikkie, bunq.me, a Revolut link) and mark a transfer as
--- paid. Carta never moves money and never holds a card.
+-- OUTSIDE Viantra (Tikkie, bunq.me, a Revolut link) and mark a transfer as
+-- paid. Viantra never moves money and never holds a card.
 --
 -- WHAT IT ADDS
 --

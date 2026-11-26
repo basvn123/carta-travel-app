@@ -4,7 +4,7 @@
  *
  * Four things a traveller makes live in this browser first, so they work
  * signed out: the trips kept from the trip finder (carta.keptTrips.v1),
- * Carta's trips they bookmarked (carta.savedJourneys.v1), the trips in
+ * Viantra's trips they bookmarked (carta.savedJourneys.v1), the trips in
  * progress on the Plan home (carta.trips.v1) and the one trip kept without an
  * account (carta.deviceTrip.v1). Signed in, this module mirrors them into the
  * account (table account_things, migration 065), so a second device gets

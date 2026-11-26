@@ -1,4 +1,4 @@
-// T689 (F4): what a price says on screen, plan "Carta prijslogica Explore"
+// T689 (F4): what a price says on screen, plan "Viantra prijslogica Explore"
 // rule 2 and invariant V4: one amount and its unit, no tilde, no "about",
 // no "live", no estimate dot, no assumption line. Whether a price is
 // measured, live or estimated stays in the engine's lines (lib/price/) and

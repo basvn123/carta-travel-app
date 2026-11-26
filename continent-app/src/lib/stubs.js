@@ -1,5 +1,5 @@
 /**
- * stubs.js, the honest stub of a famous walk Carta cannot build (T124,
+ * stubs.js, the honest stub of a famous walk Viantra cannot build (T124,
  * destinations spec 6.5).
  *
  * pipeline/trails/export_stubs.py writes /trails/stubs/{CC}.json: registry

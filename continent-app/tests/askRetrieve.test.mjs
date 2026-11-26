@@ -1,4 +1,4 @@
-// T554: Ask Carta's hybrid retrieval. Reciprocal rank fusion, lexicon slots,
+// T554: Ask Viantra's hybrid retrieval. Reciprocal rank fusion, lexicon slots,
 // the /api/ask Function on this tree's own built files (no network), and the
 // measured gain: recall@10 of the expected places on the guided search's
 // GOLDEN set (pipeline/guided_search_layer.py, 20 questions, typed as a

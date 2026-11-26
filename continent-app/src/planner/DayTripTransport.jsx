@@ -20,7 +20,7 @@ export const MODE_META = {
  * Trip planner prices with: train / bus / car, honest distance-based
  * estimates, national-operator booking links, and a day-return framing.
  *
- * The three modes are BUTTONS: the traveller can overrule Carta's pick, and
+ * The three modes are BUTTONS: the traveller can overrule Viantra's pick, and
  * the chosen mode is what the day's timeline and Google Maps handoff use,  * one decision, spoken everywhere.
  *
  *   opts        legTransportOptions result (parent computes it once), or

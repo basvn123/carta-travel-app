@@ -1,4 +1,4 @@
-// T556: the written Ask Carta answer. The checker keeps a sentence only when
+// T556: the written Ask Viantra answer. The checker keeps a sentence only when
 // it cites real notes, uses figures the notes carry and names no place the
 // notes do not; the Workers AI Function never calls a model without its
 // Neurons counter, stops at the cap, serves a repeat from the cache and

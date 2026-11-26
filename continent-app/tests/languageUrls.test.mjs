@@ -141,7 +141,7 @@ test("localizePath moves only kinds that have a language page", () => {
 test("a language variant moves its path, canonical, crumbs and links", () => {
   const v = langVariant({
     kind: "trip", path: "/trips/a", canonical: "/trips/b",
-    crumbs: [{ name: "Carta", path: "/" }, { name: "Spanje", path: "/spain" }],
+    crumbs: [{ name: "Viantra", path: "/" }, { name: "Spanje", path: "/spain" }],
     sections: [{ h2: "x", links: [{ name: "M", path: "/spain/malaga" }, { name: "T", path: "/spain/trails/1-x" }] }, null],
     image: { src: "s", credit: "Photo: Ana, CC BY 4.0" },
   }, "nl");
@@ -171,8 +171,8 @@ test("the hreflang set is reciprocal: English, the languages, x-default on Engli
 });
 
 const PAGE = {
-  kind: "dest", path: "/nl/spain/malaga", lang: "nl", title: "Malaga | Carta", description: "d", h1: "Malaga",
-  lead: ["l"], facts: [], sections: [], crumbs: [{ name: "Carta", path: "/nl/" }], credits: ["OSM"],
+  kind: "dest", path: "/nl/spain/malaga", lang: "nl", title: "Malaga | Viantra", description: "d", h1: "Malaga",
+  lead: ["l"], facts: [], sections: [], crumbs: [{ name: "Viantra", path: "/nl/" }], credits: ["OSM"],
 };
 
 test("a language page renders its language, locale, labels and hreflang", () => {

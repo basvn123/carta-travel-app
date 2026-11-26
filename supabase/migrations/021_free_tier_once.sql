@@ -1,7 +1,7 @@
 -- ---------------------------------------------------------------------------
 -- 021: the free allowance stops being a monthly salary.
 --
--- WHY. Three Carta bot plans a month is thirty-six a year, which is more than
+-- WHY. Three Viantra bot plans a month is thirty-six a year, which is more than
 -- a whole trip's worth of planning for anyone willing to wait a fortnight
 -- between days. In a category where people travel once or twice a year, a
 -- monthly reset does not sample the product, it hands it over. The free tier

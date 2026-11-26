@@ -13,7 +13,7 @@ const goodDos = () => ({ intro: { short: w(30, "s"), body: w(130) }, when: { nor
 const goodPlace = () => ({
   kind: "dest", path: "/spain/malaga",
   image: { src: "https://x/p.jpg", licence: "CC BY-SA 4.0" },
-  facts: [{ label: "Bed, a night" }, { label: "Food, a day" }, { label: "Carta score" }],
+  facts: [{ label: "Bed, a night" }, { label: "Food, a day" }, { label: "Viantra score" }],
   sections: [links(4)], crumbs: [{ name: "Home", path: "/" }, { name: "Spain", path: "/spain" }],
 });
 
@@ -27,7 +27,7 @@ for (const [name, mutate, test_] of [
   ["no photo at all", (p) => { p.image = null; }, "photo"],
   ["no bed price", (p) => { p.facts = p.facts.filter((f) => f.label !== "Bed, a night"); }, "price"],
   ["no food price", (p) => { p.facts = p.facts.filter((f) => f.label !== "Food, a day"); }, "price"],
-  ["no rating", (p) => { p.facts = p.facts.filter((f) => f.label !== "Carta score"); }, "rating"],
+  ["no rating", (p) => { p.facts = p.facts.filter((f) => f.label !== "Viantra score"); }, "rating"],
   ["four links only", (p) => { p.sections = [links(1)]; }, "links"],
 ]) {
   test(`place bar: ${name} fails the ${test_} test`, () => {
@@ -144,7 +144,7 @@ const goodLayer = (kind = "beach") => ({
   lead: [w(30)], sections: [{ h2: "Why go", paras: [w(40)] }, { h2: "Where to stay", links: [{ path: "/spain/malaga" }] },
     { h2: "More", links: [{ path: "/spain/beaches/2-y" }] }],
   crumbs: [{ path: "/" }, { path: "/spain" }],
-  facts: [{ label: "Carta score" }, { label: "Nearest town" }, { label: { beach: "Bathing water", lake: "Swim season", mountain: "Snow free" }[kind] }],
+  facts: [{ label: "Viantra score" }, { label: "Nearest town" }, { label: { beach: "Bathing water", lake: "Swim season", mountain: "Snow free" }[kind] }],
 });
 
 test("layer bar: a complete beach, lake and mountain pass", () => {
@@ -156,7 +156,7 @@ for (const [name, mutate, t_] of [
   ["thin prose", (p) => { p.lead = [w(10)]; p.sections[0].paras = [w(10)]; }, "prose"],
   ["no seasonal fact", (p) => { p.facts = p.facts.filter((f) => f.label !== "Bathing water"); }, "season"],
   ["no parent place", (p) => { p.facts = p.facts.filter((f) => f.label !== "Nearest town"); }, "place"],
-  ["no score", (p) => { p.facts = p.facts.filter((f) => f.label !== "Carta score"); }, "rating"],
+  ["no score", (p) => { p.facts = p.facts.filter((f) => f.label !== "Viantra score"); }, "rating"],
 ]) {
   test(`layer bar: ${name} fails the ${t_} test`, () => {
     const p = goodLayer(); mutate(p);
@@ -167,7 +167,7 @@ for (const [name, mutate, t_] of [
 
 test("cycle bar: needs a licensed wire photo and 60 words", () => {
   const page = { kind: "cycle", path: "/a/cycling/1-x", lead: [w(70)], sections: [{ links: [{ path: "/a/b" }, { path: "/a/c" }, { path: "/a/d" }] }],
-    facts: [{ label: "Distance" }, { label: "Climb" }, { label: "Carta score" }] };
+    facts: [{ label: "Distance" }, { label: "Climb" }, { label: "Viantra score" }] };
   assert.equal(cycleBar(page, { img: { u: "x", lic: "CC0" } }).ok, true);
   assert.equal(cycleBar(page, { img: { u: "x" } }).photo, false);
   assert.equal(cycleBar({ ...page, lead: [w(5)] }, { img: { u: "x", lic: "CC0" } }).prose, false);

@@ -11,7 +11,7 @@ const ICON = { day: SunIcon, stay: BedIcon, flight: PlaneIcon };
  * the stay and the flight, where the card has them. Following saves the
  * place too, so it shows on Saved's Gevolgd rail.
  *
- * Here is also where Carta re-prices them: each render with a figure for a
+ * Here is also where Viantra re-prices them: each render with a figure for a
  * followed thing offers it to the store, which appends only a changed price
  * or a new day's (lib/watchStore appendPoint).
  *

@@ -3,10 +3,10 @@
   "about": "The prompt registry (T1140, ROADMAP E5). One entry per prompt: its current version and file, the hash of its text, where it runs (bundle: the generated module for the Edge Functions, Pages Functions and the app; node: read from the file by a Node script; python: read from the file by pipeline/prompt_registry.py), the run.mjs eval that guards it and its last score, or the other guard when no run.mjs eval exists. Format, rules and commands: prompts/README.md.",
   "prompts": {
     "security-rules": {
-      "version": 1,
-      "file": "prompts/security-rules/v1.md",
+      "version": 2,
+      "file": "prompts/security-rules/v2.md",
       "format": "registry",
-      "sha256": "5bfe68273fb940d6a583c9d4260aaae17d870db76b3bc8410a048b99c7c3c195",
+      "sha256": "8c05cf3b2f99ee189442cee14ea0ae069eaf0673bfb09b05b38bbbb66fbad9b2",
       "runtime": "bundle",
       "eval": "injection",
       "guard": null,
@@ -15,19 +15,19 @@
         "continent-app/functions/_lib/aiGuard.js"
       ],
       "lastScore": {
-        "version": 1,
+        "version": 2,
         "eval": "injection",
         "status": "pass",
         "key": "blocked_share",
         "value": 1,
-        "at": "2026-11-07T12:18:00.406Z"
+        "at": "2026-11-26T15:09:20.015Z"
       }
     },
     "ask": {
-      "version": 1,
-      "file": "prompts/ask/v1.md",
+      "version": 2,
+      "file": "prompts/ask/v2.md",
       "format": "registry",
-      "sha256": "3a5076fd487b063ad85b20b1e224f7ebb4105c13907973bcbb365364acaea011",
+      "sha256": "27988633a53fa1a3b603fe0b3a6529e3f3d768c20e47360b62824f84cc47d50a",
       "runtime": "bundle",
       "eval": "ask",
       "guard": null,
@@ -37,19 +37,19 @@
         "continent-app/functions/_lib/aiGuard.js"
       ],
       "lastScore": {
-        "version": 1,
+        "version": 2,
         "eval": "ask",
         "status": "pass",
         "key": "rules.ndcg@10",
-        "value": 0.6003,
-        "at": "2026-11-06T17:24:21.508Z"
+        "value": 0.6026,
+        "at": "2026-11-26T15:28:47.596Z"
       }
     },
     "plan-day": {
-      "version": 1,
-      "file": "prompts/plan-day/v1.md",
+      "version": 2,
+      "file": "prompts/plan-day/v2.md",
       "format": "registry",
-      "sha256": "93f2d664a6f0f66a5ece864c73f0909001b9cba711d7555ad5cdc1ad57c9a47f",
+      "sha256": "29d4779e733a51b40118071e77267da6b4108a43943de9297e86e1ae383fcd11",
       "runtime": "bundle",
       "eval": "plan-day",
       "guard": null,
@@ -57,12 +57,12 @@
         "supabase/functions/plan-day/prompt.mjs"
       ],
       "lastScore": {
-        "version": 1,
+        "version": 2,
         "eval": "plan-day",
         "status": "pass",
         "key": "rules_pass",
         "value": 1,
-        "at": "2026-11-06T17:24:21.707Z"
+        "at": "2026-11-26T15:02:32.594Z"
       }
     },
     "travel-style": {
@@ -87,10 +87,10 @@
       }
     },
     "suggest-city": {
-      "version": 2,
-      "file": "prompts/suggest-city/v2.md",
+      "version": 3,
+      "file": "prompts/suggest-city/v3.md",
       "format": "registry",
-      "sha256": "c8733978d2c877ab6706dce55016141d33e9592eadddef5a25eeec63fcb85151",
+      "sha256": "048e96bb9e587bb851743c449116337ee55b5b59646bf777bf9db97af6a57344",
       "runtime": "bundle",
       "eval": "suggest-city",
       "guard": null,
@@ -98,19 +98,19 @@
         "supabase/functions/suggest-city/prompt.mjs"
       ],
       "lastScore": {
-        "version": 2,
+        "version": 3,
         "eval": "suggest-city",
         "status": "pass",
         "key": "rules_pass",
         "value": 1,
-        "at": "2026-11-07T12:18:00.618Z"
+        "at": "2026-11-26T15:02:33.499Z"
       }
     },
     "parse-booking": {
-      "version": 1,
-      "file": "prompts/parse-booking/v1.md",
+      "version": 2,
+      "file": "prompts/parse-booking/v2.md",
       "format": "registry",
-      "sha256": "1a9b1fc3dcd1fad88a8891410c1b48f76f54af2d788e6a011fe3d1ea4040a64f",
+      "sha256": "1615dc523201588b2345417eaca7fb551a305d677e43cebe33ecae69b2a0ef6a",
       "runtime": "bundle",
       "eval": "parse-booking",
       "guard": null,
@@ -118,12 +118,12 @@
         "supabase/functions/parse-booking/prompt.mjs"
       ],
       "lastScore": {
-        "version": 1,
+        "version": 2,
         "eval": "parse-booking",
         "status": "pass",
         "key": "field_accuracy",
         "value": 1,
-        "at": "2026-11-07T12:18:00.523Z"
+        "at": "2026-11-26T15:02:34.311Z"
       }
     },
     "eval-judge": {

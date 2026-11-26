@@ -12,7 +12,7 @@
  * carries the bag on the trip's baggage choice (T691) and the babies' lap
  * fee (T713).
  *
- * The figure is Google Flights', never Carta's: the pick's facts carry the
+ * The figure is Google Flights', never Viantra's: the pick's facts carry the
  * airline (for the airline mark), the times, the check time and the search
  * link, so a screen can name the source and say prices may have changed.
  *

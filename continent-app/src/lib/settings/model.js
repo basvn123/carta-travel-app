@@ -3,7 +3,7 @@
  * the five things Explore's prices answer to, read in ONE place.
  *
  *   Start        origin_kind 'here' | 'place' | 'country', origin_country
- *                (ISO2) and here_town (the Carta town 'here' resolved to),
+ *                (ISO2) and here_town (the Viantra town 'here' resolved to),
  *                beside the existing drive_home / origin / origins
  *   When         date_mode 'dates' | 'month' | 'any' | 'cheapest'; the dates
  *                are App's departDate and returnDate, the month is

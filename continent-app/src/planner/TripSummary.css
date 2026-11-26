@@ -1567,7 +1567,7 @@ span.tbp-seg { cursor: default; }
 .tpg .itin-export-chip.is-umber .itin-export-chip-ic { background: var(--umber-100); color: var(--umber-700); }
 
 /* The Costs receipt: every line's words and figure on one centre line, the
-   figures right-aligned in one column, Carta's umber for the totals and the
+   figures right-aligned in one column, Viantra's umber for the totals and the
    Change pills. */
 .tpg.is-costs .plan-lines .costrow { align-items: center; min-height: 52px; padding: var(--space-2) 0; }
 .tpg.is-costs .plan-lines .costrow dt { align-items: center; }

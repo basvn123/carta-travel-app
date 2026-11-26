@@ -1,7 +1,7 @@
 /**
  * profiles.js, the name another account can address you by.
  *
- * Carta had no such thing until now. auth.users is not readable from the
+ * Viantra had no such thing until now. auth.users is not readable from the
  * client and user_metadata.full_name is visible only to its owner, so one
  * account could not learn another account's name at all. Friends cannot exist
  * until they can.
@@ -12,7 +12,7 @@
  *
  * Lookup is by exact handle only. There is no prefix search, no listing, and
  * no lookup by email, because finding people by email turns the database into
- * an oracle answering "does this address have a Carta account" for any address
+ * an oracle answering "does this address have a Viantra account" for any address
  * anybody cares to try. See supabase/migrations/010_profiles.sql, which holds
  * the reasoning and the enforcement.
  */

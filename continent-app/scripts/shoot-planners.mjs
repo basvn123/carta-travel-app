@@ -373,7 +373,7 @@ const addIdea = async (page, q) => {
   await page.locator('.day-ideas-results .day-ideas-row').first().click();
   await page.waitForTimeout(400);
 };
-// Carta's questions: answer each with its first tile, Next, until the
+// Viantra's questions: answer each with its first tile, Next, until the
 // summary (stopAt: the question number to stop on), or until it builds.
 const walkBot = async (page, stopAt) => {
   for (let q = 1; q < 14; q += 1) {
@@ -440,7 +440,7 @@ async function dayFlow(browser, vp) {
     await page.locator('.dayw-fork-card').first().waitFor({ timeout: 30000 });
     await shot('05-how');
 
-    // Carta's questions, the third, the summary, then the planned days
+    // Viantra's questions, the third, the summary, then the planned days
     await click(page, '.dayw-fork-card .card-open', 1000);
     await walkBot(page, 3);
     await shot('06-bot-q3');

@@ -22,7 +22,7 @@
 
 /**
  * The rows a start may show. G12 B6 (R5): Something new and Like <past
- * trip> for plan again (S10), Like your saved under a budget (S4). Van Carta
+ * trip> for plan again (S10), Like your saved under a budget (S4). Van Viantra
  * and Other month add pricing, so they are not rows of the priced pool: they
  * run behind "Search more" (lib/recommend/moreSearch.js).
  */

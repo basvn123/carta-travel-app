@@ -36,7 +36,7 @@ import { SuitcaseIcon, BootIcon, BeachIcon, LakeIcon, MountainIcon, BikeIcon } f
  *
  * The search box answers two questions with one field. Typing filters the
  * catalogue as you go (local, instant) and offers the matching cities as
- * suggestions. Anything else, a village Carta does not price, a postcode, a
+ * suggestions. Anything else, a village Viantra does not price, a postcode, a
  * street and house number, is a location rather than a destination: Enter (or
  * the "search anywhere" row) geocodes it through Nominatim and the tab
  * switches to near-mode, listing the closest places and trips to that point

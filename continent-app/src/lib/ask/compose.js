@@ -1,9 +1,9 @@
 /*
- * Ask Carta, stage 4b: the facts of an answer in words (T555). This is the
+ * Ask Viantra, stage 4b: the facts of an answer in words (T555). This is the
  * answer that shows at once and the one that stays whenever the written
  * answer (stage 5) is off, capped or fails its check. Every sentence is an
  * i18n key filled from rank.js facts, so the grammar holds in six languages
- * and no figure is one Carta cannot back. Estimates read "~€87 est.".
+ * and no figure is one Viantra cannot back. Estimates read "~€87 est.".
  *
  *   composeAnswer(facts, intent, { t, lang, labels }) -> {
  *     lead      one sentence that reads the question back with the count
@@ -192,7 +192,7 @@ function finish(out, facts, { t }) {
   return out;
 }
 
-/** "Carta can't search for X yet", for the words nothing could place. */
+/** "Viantra can't search for X yet", for the words nothing could place. */
 export function unknownNote(intent, t) {
   const words = (intent.unknown || []).filter((w) => w.length > 2);
   return words.length ? clean(t('gs.cant', { word: words.slice(0, 3).join(' ') })) : null;

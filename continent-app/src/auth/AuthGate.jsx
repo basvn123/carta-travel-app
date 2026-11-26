@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Blaze } from '../components/ui/Blaze.jsx';
+import { BrandMark, BrandWordmark } from '../components/BrandMarks.jsx';
 import { Button } from '../components/ui/Button.jsx';
 import { GoogleButton } from './GoogleButton.jsx';
 import { PrivacyPolicy } from '../components/PrivacyPolicy.jsx';
@@ -22,8 +22,8 @@ export function AuthGate({ onSignIn, onSignUp, onGuest }) {
     <div className="auth-overlay auth-overlay-solid">
       <div className="auth-modal auth-gate hs-dialog-in">
         <div className="auth-brand auth-brand-center">
-          <Blaze size="lg" />
-          <span className="auth-brand-name">Carta</span>
+          <BrandMark className="auth-brand-mark" />
+          <span className="auth-brand-name"><BrandWordmark /></span>
         </div>
 
         <h2 className="auth-title auth-gate-title">{t('gate.title')}</h2>

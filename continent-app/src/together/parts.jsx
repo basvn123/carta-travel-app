@@ -57,7 +57,7 @@ export function Block({ id, title, action = null, children, className = '' }) {
   );
 }
 
-/** The person's name as Carta shows it: what they chose, else the handle. */
+/** The person's name as Viantra shows it: what they chose, else the handle. */
 // eslint-disable-next-line react-refresh/only-export-components -- T1163 baseline: a non-component export kept here
 export function nameOf(p) {
   if (!p) return '';

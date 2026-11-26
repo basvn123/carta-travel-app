@@ -178,14 +178,14 @@ footer{margin-top:var(--space-8);padding-top:var(--space-4);border-top:1px solid
 /** Builds the page. Pure: facts in, HTML out. */
 export function renderNumbersPage(f) {
   const { en } = f;
-  const sentence = `Stop stitching trips together from five apps. Carta plans the whole trip in one place, with what each day costs: a bed plus food and drink, per person, in ${fmt(f.destinations)} places across ${f.countries} countries, with every figure labelled for where it came from.`;
+  const sentence = `Stop stitching trips together from five apps. Viantra plans the whole trip in one place, with what each day costs: a bed plus food and drink, per person, in ${fmt(f.destinations)} places across ${f.countries} countries, with every figure labelled for where it came from.`;
   const li = (keys) => keys.map((k) => `<li>${esc(en[k])}</li>`).join('');
   const rows = f.layers.map((l) => `<tr><td>${esc(l.label)}</td><td class="n">${fmt(l.published)}</td><td class="n">${fmt(l.listed)}</td><td class="n">${fmt(l.ok)}</td><td class="n">${fmt(l.thin)}</td><td class="n">${fmt(l.empty)}</td></tr>`).join('');
   const accuracy = fill(en['cost.accuracyMethod'], f.accuracy.vars);
   const accuracyHead = fill(en['cost.accuracy'], f.accuracy.vars).replace(/ How we measured it\.$/, '');
   const credits = f.credits.map((a) => `<li><b>${esc(a.source)}</b>, ${esc(a.license)}. ${esc(a.credit)}</li>`).join('');
-  const title = 'Where the numbers come from | Carta';
-  const desc = `How Carta prices a day in ${fmt(f.destinations)} places, how accurate the food figure is, where coverage is thin, and the ${f.credits.length} sources it credits.`;
+  const title = 'Where the numbers come from | Viantra';
+  const desc = `How Viantra prices a day in ${fmt(f.destinations)} places, how accurate the food figure is, where coverage is thin, and the ${f.credits.length} sources it credits.`;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -194,7 +194,7 @@ export function renderNumbersPage(f) {
 <title>${esc(title)}</title>
 <meta name="description" content="${esc(desc)}">
 <link rel="canonical" href="https://www.carta-europetravel.com${NUMBERS_PATH}">
-<meta property="og:site_name" content="Carta">
+<meta property="og:site_name" content="Viantra">
 <meta property="og:type" content="article">
 <meta property="og:title" content="${esc(title)}">
 <meta property="og:description" content="${esc(desc)}">
@@ -207,13 +207,13 @@ export function renderNumbersPage(f) {
 </head>
 <body>
 <main>
-<div class="top"><a href="/">Carta</a><a href="/">Open the app</a></div>
+<div class="top"><a href="/">Viantra</a><a href="/">Open the app</a></div>
 <h1>Where the numbers come from</h1>
 <p class="lede">${esc(sentence)}</p>
 <p>This page is built from the same files the app reads. Nothing on it is typed by hand, and it needs no account.</p>
 
 <h2>What a day price is made of</h2>
-<p>Carta prices the ground: a bed plus food and drink, per person per day. Local transport and tickets are not in that figure. It does not price flights and it takes no bookings. A traveller who has a fare types in what they paid, and only then does a trip total include the flight, as their own figure.</p>
+<p>Viantra prices the ground: a bed plus food and drink, per person per day. Local transport and tickets are not in that figure. It does not price flights and it takes no bookings. A traveller who has a fare types in what they paid, and only then does a trip total include the flight, as their own figure.</p>
 <p>Under every day price the receipt says which kind of figure it is. For the bed, one of these:</p>
 <ul class="rules">${li(BED_KEYS)}</ul>
 <p style="margin-top:var(--space-4)">For food, one of these:</p>
@@ -224,13 +224,13 @@ export function renderNumbersPage(f) {
 <p>${esc(accuracy)}</p>
 
 <h2>Where coverage is thin</h2>
-<p>Every region has a status for each of five layers. A thin or empty region says so on its page instead of showing a blank grid. Published rows are the ones Carta rates and shows. Listed rows are known to exist and are shown without a rating. Region counts are statuses across ${fmt(f.regions)} regions; a layer that does not apply to a region, such as beaches inland, is left out.</p>
+<p>Every region has a status for each of five layers. A thin or empty region says so on its page instead of showing a blank grid. Published rows are the ones Viantra rates and shows. Listed rows are known to exist and are shown without a rating. Region counts are statuses across ${fmt(f.regions)} regions; a layer that does not apply to a region, such as beaches inland, is left out.</p>
 <div class="tablewrap"><table>
 <thead><tr><th scope="col">Layer</th><th scope="col">Published</th><th scope="col">Listed</th><th scope="col">Regions ok</th><th scope="col">Thin</th><th scope="col">Empty</th></tr></thead>
 <tbody>${rows}</tbody></table></div>
 <p class="meta" style="margin-top:var(--space-3)">Counts as of ${esc(dateOf(f.coverageDate))}, the date of the coverage file.</p>
 
-<h2>The ${f.credits.length} sources Carta credits</h2>
+<h2>The ${f.credits.length} sources Viantra credits</h2>
 <p>Every source whose licence asks for a visible credit. The same list is in the app under Account, then Imprint. Not every credit is open data: the basemap is under its provider's own terms.</p>
 <ul class="rules credits">${credits}</ul>
 

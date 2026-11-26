@@ -1,7 +1,7 @@
 /**
  * Spread a set of places over several days, by neighbourhood (T433).
  *
- * A traveller with three nights in Lisbon picks a dozen places, or Carta picks
+ * A traveller with three nights in Lisbon picks a dozen places, or Viantra picks
  * them, and the days have to be cut out of that set. Research on how people
  * actually walk a city (and the planners that do this well) agrees on the
  * rule: one area a day, the big sight early, nothing crossing the city twice.

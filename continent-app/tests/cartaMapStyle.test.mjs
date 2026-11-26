@@ -1,4 +1,4 @@
-// G12: the Carta basemap style (src/lib/map/cartaMapStyle.js), its CARTO
+// G12: the Viantra basemap style (src/lib/map/cartaMapStyle.js), its CARTO
 // fallback merge (src/lib/map/pmtilesProtocol.js) and the map upload plan
 // (scripts/r2/push-maps.mjs).
 // Run: npm test (continent-app/)

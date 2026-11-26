@@ -1,5 +1,5 @@
 ﻿// Headless verify for the Destinations search box: one field that finds both
-// a catalogue city and any location on earth (a village Carta does not price,
+// a catalogue city and any location on earth (a village Viantra does not price,
 // a postcode, a home address), then ranks the catalogue by distance from it.
 //
 //   node scripts/verify_places_search.mjs [url]   (default http://localhost:$CARTA_PORT or 4173)
@@ -15,7 +15,7 @@ import { chromium } from 'playwright';
 
 const URL = process.argv[2] || `http://localhost:${process.env.CARTA_PORT || 4173}/`;
 
-// A street address Carta has no destination for, halfway between two it does.
+// A street address Viantra has no destination for, halfway between two it does.
 // Both records are shaped exactly like the live service answers this query: a
 // house has no `name` and opens its label with a bare number, a village has a
 // name and repeats it as the label's first part.
@@ -137,7 +137,7 @@ check('cards carry a distance from the city', cityKm.length > 5, `${cityKm.lengt
 check('nearest first', cityKm.slice(0, 12).every((v, i, a) => i === 0 || a[i - 1] <= v), cityKm.slice(0, 6).join(', '));
 await page.screenshot({ path: 'shots/places-search-city.png' });
 
-// ── 2. An address Carta has no destination for ──
+// ── 2. An address Viantra has no destination for ──
 await page.locator('.places-nearclear').click();
 await page.waitForTimeout(400);
 await input.fill(ADDRESS);

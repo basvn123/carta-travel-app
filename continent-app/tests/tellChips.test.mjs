@@ -1,4 +1,4 @@
-// T858: Tell Carta's chips as data (src/planner/flow/tellChips.js): the
+// T858: Tell Viantra's chips as data (src/planner/flow/tellChips.js): the
 // settings the field stands for as it is typed, and the chips under it.
 // Run: npm test (continent-app/).
 import test from "node:test";

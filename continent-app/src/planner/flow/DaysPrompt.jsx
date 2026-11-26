@@ -12,7 +12,7 @@ import { useHoldApp } from './StyleBar.jsx';
  * Plan your days (T658; T896, the owner's plan days board 2026-10-30): how
  * the days are planned comes first, because two of the three ways need
  * nothing more (Iyengar: the easy, path-setting choice first keeps people
- * in). Carta plans every day asks once more, on one screen already filled
+ * in). Viantra plans every day asks once more, on one screen already filled
  * from the trip: what the days should hold more of, the pace, when the
  * days start and what to keep in mind. The seven rhythm screens before it
  * (mornings, pace, how planned, the goal, food, getting around, then who

@@ -6,7 +6,7 @@ Gate 7 asks whether the "For you" top 10 makes sense for real kinds of traveller
 - Input: `wt/persona_top10.lambda2.json`.
 - Date: 2026-10-28. Run unattended; borderline rows were called conservatively and the reason is written in the row.
 - Method: every one of the 58 distinct places was judged against a page opened with WebFetch (Wikivoyage first; Wikipedia en where Wikivoyage had no page or a disambiguation page). One page per place, reused across personas; a second page was opened only where the first was silent on the persona's main wish (Bled, Altaussee, Lednice-Valtice, St. Moritz, Kitzbuhel). No search snippets were used as sources.
-- "Sensible" = a traveller of that kind told "Carta picked this for you" would agree it meets at least their main wishes and nothing on the page makes it clearly wrong for them in that month.
+- "Sensible" = a traveller of that kind told "Viantra picked this for you" would agree it meets at least their main wishes and nothing on the page makes it clearly wrong for them in that month.
 
 ## Rerun after T786 (food rule) and T787 (2026-10-28)
 

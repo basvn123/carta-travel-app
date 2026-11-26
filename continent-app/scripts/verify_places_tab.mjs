@@ -5,7 +5,7 @@
 //
 //   node scripts/verify_places_tab.mjs [url]      (default http://localhost:$CARTA_PORT or 4173)
 //
-// T1089: refreshed. The Trips category (now Plan's Carta's own trips, see
+// T1089: refreshed. The Trips category (now Plan's Viantra's own trips, see
 // verify_journeys), the phone's own search field (the dock owns it), the side
 // panel's country fold and the Lifestyle checks left the tab; the tab now
 // opens from Explore's .xcats row. The elevation-profile page is covered by

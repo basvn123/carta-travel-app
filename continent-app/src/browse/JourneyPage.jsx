@@ -47,7 +47,7 @@ import {
 import { PlaneIcon } from '../components/TransportIcons.jsx';
 
 /**
- * Carta's trip page, v2 (T913, on the place and trip template of the owner's
+ * Viantra's trip page, v2 (T913, on the place and trip template of the owner's
  * approved spec of 2026-10-30; v1 was T431 on the item pages' system).
  *
  * The same family as the place page (DestinationPage.jsx): the photographs

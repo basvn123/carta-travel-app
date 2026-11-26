@@ -1,5 +1,5 @@
 /* ─────────────────────────────────────────────────────────────────────────
-   Carta service worker: makes the app installable and usable offline.
+   Viantra service worker: makes the app installable and usable offline.
 
    Strategy (GET on this origin or the data host; anything else passes through):
      • navigations      → network-first, fall back to the cached app shell

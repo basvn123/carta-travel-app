@@ -108,7 +108,7 @@ export function spendSummary(memory) {
   return { total, byCat, currency, foreign: currency !== 'EUR', any: total > 0 };
 }
 
-/** What the trip cost per traveller, which is the number Carta quotes
+/** What the trip cost per traveller, which is the number Viantra quotes
  *  everywhere else. Null when nothing was entered. */
 export function spendPerPerson(memory) {
   const { total, any } = spendSummary(memory);
@@ -178,7 +178,7 @@ export function clearMemory(planId) {
   persistTripExtras(planId, next);
 }
 
-/** Places with real coordinates, for the record's map. A town Carta has never
+/** Places with real coordinates, for the record's map. A town Viantra has never
  *  catalogued still pins, because the form geocoded it when it was typed. */
 export function memoryPoints(memory) {
   return (memory?.places || [])

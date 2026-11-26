@@ -2,10 +2,10 @@
 -- The down migration is 074_ai_reports_down.sql. Apply by pasting in the
 -- SQL editor after 073. Never applied live by the session that wrote it.
 --
--- WHY. The "How Carta uses AI" page (T1156) tells a traveller to mail a
+-- WHY. The "How Viantra uses AI" page (T1156) tells a traveller to mail a
 -- wrong answer. A mail is slow to write and lands nowhere the eval sets can
 -- read. This adds the in-app button's intake: one row per report on an Ask
--- Carta answer or a day plan, which the team turns into eval cases (the
+-- Viantra answer or a day plan, which the team turns into eval cases (the
 -- 200-question Ask set, the 20-town plan-day set).
 --
 -- WHAT IT ADDS.

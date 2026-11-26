@@ -29,7 +29,7 @@ export function YearCard({ model, geo, width = 210, example = '' }) {
     <span className="atlas-ycbox" style={{ width, height: Math.round(h * sc) }}>
       <span className="atlas-yc3" style={{ ...style, width: BASE, height: h, transform: `scale(${sc})` }}>
         <span className="atlas-yc3-h">
-          <span className="atlas-yc3-mk"><i aria-hidden="true" />Carta{example && <em>{example}</em>}</span>
+          <span className="atlas-yc3-mk"><i aria-hidden="true" />Viantra{example && <em>{example}</em>}</span>
           <b>{model.title}</b>
           {model.insight && <span className="atlas-yc3-ins">{model.insight}</span>}
         </span>

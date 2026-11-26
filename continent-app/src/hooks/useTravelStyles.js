@@ -41,7 +41,7 @@ export function loadStoredStyles() {
  *     whole app or a head count on the settings line is written into
  *     the active style, so there is no "save to style" step for them.
  *     Except while the style is held (`choices.style_held`): a change made
- *     for one trip (the planner's Who, Tell Carta's words, the way there of
+ *     for one trip (the planner's Who, Tell Viantra's words, the way there of
  *     a trip, the trip page's party) holds the style instead, so the trip's
  *     party never becomes the style's. The header then says "changed" and
  *     the sheet offers Keep (write the changes into the style) and Back

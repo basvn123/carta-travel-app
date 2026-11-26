@@ -1,5 +1,5 @@
 /**
- * The personal match (Carta rating v5, Layer 3): how well a place fits the
+ * The personal match (Viantra rating v5, Layer 3): how well a place fits the
  * traveller's taste (lib/taste.js), read from the place's taste profile on
  * the wire (`dest.taste`, schema v19). Pure; every number comes from
  * config/rating.json `match`.

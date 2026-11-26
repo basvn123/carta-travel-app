@@ -22,7 +22,7 @@ function balanceOf(paywall) {
 /**
  * The Pass moment (T1171, ROADMAP I14): where the paywall meets the journey.
  *
- * One Carta card under the trip's route, once the trip is priced. Two bands:
+ * One Viantra card under the trip's route, once the trip is priced. Two bands:
  * what stays free (lagoon, "fits") and what a Trip Pass adds (umber, with its
  * price and days from pricing.js), then a foot strip with the one primary,
  * "See the Trip Pass" (the pass sheet, which closes back to the trip), and a

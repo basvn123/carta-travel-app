@@ -19,7 +19,7 @@ const GOLDEN = new URL("golden.json", DIR);
 setStayRecords(FX.stays);
 const ALL = FX.destinations;
 
-// Carta's own week, as useAppData picks it on 2026-10-24 (the baseline day).
+// Viantra's own week, as useAppData picks it on 2026-10-24 (the baseline day).
 const DEFAULT_DATES = calendarDefaultWindow("2026-10-24", 7);
 const base = {
   group_size: 2, children: 0, babies: 0, stay_tier: "home",
@@ -32,12 +32,12 @@ const req = (over) => ({
 
 // The four requests of the PB1 prompt.
 export const REQUESTS = {
-  // Nothing chosen: two people, an entire place, Easygoing, Carta's week.
+  // Nothing chosen: two people, an entire place, Easygoing, Viantra's week.
   default: req({}),
   // Seven people, a 3-star hotel, Nightlife, their own dates 21 to 28 November.
   group7: req({
     choices: { ...base, group_size: 7, stay_tier: "hotel3", lifestyle: { ...PROFILES.Nightlife } },
-    // Carta's own week on the baseline day is also 21 to 28 November, so the
+    // Viantra's own week on the baseline day is also 21 to 28 November, so the
     // app could not tell these apart by the dates alone (T663-c): the
     // request says they are the traveller's own.
     departDate: "2026-11-21", returnDate: "2026-11-28", ownDates: true,

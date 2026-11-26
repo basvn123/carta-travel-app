@@ -1,4 +1,4 @@
-// T661 (F1): every day-price screen of doc "Carta prijslogica Explore: plan"
+// T661 (F1): every day-price screen of doc "Viantra prijslogica Explore: plan"
 // section 4.3, as the call that screen makes today. One adapter per screen
 // path, so tests/priceGolden.test.mjs can price the same request on each and
 // show where they disagree. When a screen's code changes, its adapter here

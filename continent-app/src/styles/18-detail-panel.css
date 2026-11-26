@@ -482,7 +482,7 @@
     align-items: flex-end;
   }
   .guide-modal { border-radius: 18px; max-height: 88vh; }
-  /* The footer's action buttons ("Next", "Let Carta arrange it") take the
+  /* The footer's action buttons ("Next", "Let Viantra arrange it") take the
      full row on phones instead of squeezing into a tall skinny pill. */
   .guide-foot-actions .guide-next { flex: 1; }
   /* T8.2: 10px of padding around 13.5px type is a 39px button, and the whole
@@ -536,7 +536,7 @@
 /* "Known for" reads like every other fact row - same body font, just ink-dark
    so it still leads the card without the cramped serif wrapping. */
 
-/* Wizard: "Let Carta pick my cities" questionnaire */
+/* Wizard: "Let Viantra pick my cities" questionnaire */
 .guide-quiz-q .trip-field-label { display: block; margin-bottom: 7px; }/* Keep the step label ("1 Where are you staying?") on a single line - the
    step-number chip + text would otherwise wrap on a narrow field column. */
 .day-build-field .trip-field-label {
@@ -633,7 +633,7 @@
   .day-changeplaces-btn:hover { border-color: var(--accent); color: var(--accent); }
 }
 .day-changeplaces-btn svg { color: var(--accent); }
-/* Two ways back to the map: adjust by hand, or with Carta's guide open. */
+/* Two ways back to the map: adjust by hand, or with Viantra's guide open. */
 .day-stay-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .day-stay-actions .day-changeplaces-btn { margin-top: 10px; }
 /* Re-enter the shape-your-day questions after a day is already planned. */
@@ -651,7 +651,7 @@
 /* A leg that demands over an hour on foot gets an honest warning. */
 .day-timeline-longwalk { color: var(--warn-ink); font-size: var(--text-micro); }
 
-/* "Let Carta plan this city" (replaces the ambiguous Shape-my-day chip) */
+/* "Let Viantra plan this city" (replaces the ambiguous Shape-my-day chip) */
 .day-carta-btn {
   display: inline-flex;
   align-items: center;

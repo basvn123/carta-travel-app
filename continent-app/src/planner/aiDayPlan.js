@@ -2,7 +2,7 @@
  * aiDayPlan.js, the client half of the AI day planner.
  *
  * Builds the candidate deck the Edge Function is allowed to sequence (always
- * from Carta's own catalogue, never the model's memory), invokes the
+ * from Viantra's own catalogue, never the model's memory), invokes the
  * `plan-day` function through Supabase (so the AI key stays server-side),
  * and maps the validated response back into the day planner's own language:
  * assignment indices for catalogue stops, "discovery" extras for the rest.
@@ -79,7 +79,7 @@ export function buildAiCandidates({ items, walkable, excludeIdx, interests, limi
  * network.
  */
 /* The verify seam (T823), same precedent as ?savedmock and ?coplanmock:
- * ?aiplanmock answers plan-day from the day's own candidates, so "Let Carta
+ * ?aiplanmock answers plan-day from the day's own candidates, so "Let Viantra
  * plan them" can be walked headlessly without an account or a model call.
  * ?aiplanmock=busy3 fails the third call with ai_busy. Compiled out of any
  * build without VITE_E2E_SEAMS. */

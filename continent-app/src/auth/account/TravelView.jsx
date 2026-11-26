@@ -146,7 +146,7 @@ function EmailsGroup({ userId }) {
 /**
  * Preferences (T934): Language and Currency as rows. Language opens a
  * compact list in place (it replaced six large tiles); the euro is the one
- * currency Carta prices in, so Currency states it and opens nothing.
+ * currency Viantra prices in, so Currency states it and opens nothing.
  * T944: Emails follows for a signed-in account.
  */
 export function PrefsView({ head, userId = null }) {

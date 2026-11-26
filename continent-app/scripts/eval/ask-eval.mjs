@@ -6,7 +6,7 @@
  * on the shipped catalogue, and is scored: recall@5 and @10, MRR and
  * nDCG@10 of the cards against the labelled places, the same for the
  * retriever's own list, the grounding checks (scripts/eval/ask-eval-lib.mjs)
- * and whether Carta says it does not know when it should.
+ * and whether Viantra says it does not know when it should.
  *
  * Deterministic and free: no model writes anything, no key, no network.
  * Retrievers:
@@ -275,7 +275,7 @@ function printSummary(s) {
     console.log(`${main} recall@10 by language: ${Object.entries(byLang).map(([l, v]) => `${l} ${pct(v['recall@10']).trim()} (${v.cases})`).join(', ')}`);
   }
   const a = s.abstain;
-  console.log(`abstain: ${a.caught}/${a.cases} out-of-scope questions answered "Carta does not know", ${a.falseAlarm} in-scope questions wrongly refused, correct ${pct(a.correct)}%`);
+  console.log(`abstain: ${a.caught}/${a.cases} out-of-scope questions answered "Viantra does not know", ${a.falseAlarm} in-scope questions wrongly refused, correct ${pct(a.correct)}%`);
 }
 
 async function main() {

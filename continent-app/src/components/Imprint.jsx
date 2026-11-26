@@ -47,7 +47,7 @@ export function Imprint({ onClose }) {
           )}
           {!known(ENTITY.legalName) && (
             <p>
-              Carta's business registration is in progress. The legal name,
+              Viantra's business registration is in progress. The legal name,
               address and enterprise number will be published on this page as
               soon as it is complete. Until then, write to the address below.
             </p>
@@ -83,7 +83,7 @@ export function Imprint({ onClose }) {
             This imprint is provided in accordance with EU e-Commerce Directive
             Art 5 and the Belgian Code of Economic Law. Once published, the
             information above identifies the natural or legal person
-            responsible for the content and operation of the Carta platform.
+            responsible for the content and operation of the Viantra platform.
           </p>
 
           {/* Every source whose licence asks for a visible credit, from
@@ -93,7 +93,7 @@ export function Imprint({ onClose }) {
               findable, and the imprint is where a reader looks for who stands
               behind a site and what it is built on. */}
           <h3>Data credits</h3>
-          <p>Carta is built on open data. These sources ask to be credited:</p>
+          <p>Viantra is built on open data. These sources ask to be credited:</p>
           <ul className="legal-credits">
             {ATTRIBUTIONS.map((a) => <li key={a.source}>{a.credit}</li>)}
           </ul>

@@ -163,7 +163,7 @@ const MOCK_PLANS = [
   // T923: two drafts, no dates yet, for Being planned.
   { id: 'mp7', label: 'Alps hut tour', cities: ['Innsbruck'], countries: ['Austria'], start_date: null, end_date: null, destination_ids: ['INN'], stops: [{ destination_id: 'INN', nights: 6 }] },
   { id: 'mp8', label: 'Lake weekend', cities: ['Ljubljana'], countries: ['Slovenia'], start_date: null, end_date: null, destination_ids: ['LJU'] },
-  // T926: past trips with stops (so Carta's estimate exists for them), one
+  // T926: past trips with stops (so Viantra's estimate exists for them), one
   // completing Benelux with Bruges, one in Spain so Portugal completes Iberia.
   { id: 'mp9', label: 'Amsterdam and Luxembourg', cities: ['Amsterdam', 'Luxembourg'], countries: ['Netherlands', 'Luxembourg'], start_date: addDaysIso(-200), end_date: addDaysIso(-195), destination_ids: ['AMS', 'LUX'], stops: mockStops([['AMS', -200, -197], ['LUX', -197, -195]]), choices: { groupSize: 2 } },
   { id: 'mp10', label: null, cities: ['Seville'], countries: ['Spain'], start_date: addDaysIso(-430), end_date: addDaysIso(-424), destination_ids: ['SVQ'], stops: mockStops([['SVQ', -430, -424]]), choices: { groupSize: 2 } },
@@ -674,7 +674,7 @@ export function SavedTripsPanel({
   }, [datedPlans, priceFor]);
 
   // The price nudge (T923): the beds for the trip's own dates, priced by
-  // Carta's model today, against the same beds the first time My trips
+  // Viantra's model today, against the same beds the first time My trips
   // priced the trip. Only a fall is news, and only before the beds are booked.
   const [bedBase, setBedBase] = useState(readBedBase);
   useEffect(() => {
@@ -1082,7 +1082,7 @@ export function SavedTripsPanel({
   };
 
   // The record's parts (T926): countries as ISO codes, the past trips with
-  // their spend, Carta's estimate and the place's Score where each exists.
+  // their spend, Viantra's estimate and the place's Score where each exists.
   const isoOf = (c) => COUNTRY_ISO2[c] || (/^[A-Z]{2}$/.test(c || '') ? c : '');
   const beenIso = useMemo(() => new Set(fullRecord.countries.map(isoOf).filter(Boolean)), [fullRecord]);
   // T972: the map marks by ISO code; the hand-marked list keeps country

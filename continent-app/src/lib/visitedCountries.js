@@ -1,6 +1,6 @@
 /**
  * visitedCountries.js, the countries a traveller marks as visited by hand
- * (T434, Polarsteps' "scratch map"): a trip taken before Carta, or one not
+ * (T434, Polarsteps' "scratch map"): a trip taken before Viantra, or one not
  * worth writing up, still belongs on the record.
  *
  * Local first, in this browser's storage, and carried to the account inside

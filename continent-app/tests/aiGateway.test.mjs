@@ -407,6 +407,9 @@ test('pipeline/ai_gateway.py scans the attack set exactly as aiGuard does', (t) 
     'import sys, json',
     `sys.path.insert(0, ${JSON.stringify(rel('pipeline'))})`,
     'import ai_gateway as g',
+    // -I ignores PYTHONUTF8, so on Windows stdin would be the locale codepage
+    // and a zero-width space would arrive as three letters (K1 run, 2026-11-26).
+    'sys.stdin.reconfigure(encoding="utf-8")',
     'items = json.load(sys.stdin)',
     'print(json.dumps([[sorted(g.scan_injection(s)["rules"]), sorted(g.scan_output_severe(s))] for s in items]))',
   ].join('\n')], { input: JSON.stringify(strings(SET)), encoding: 'utf8' });

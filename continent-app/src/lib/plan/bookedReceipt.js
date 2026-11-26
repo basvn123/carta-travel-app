@@ -1,7 +1,7 @@
 /**
  * bookedReceipt.js, "Betaald €x, nog te plannen €y" (G12 plan rethink,
  * lane L4, decision §3.5 and N2): a trip with booked parts splits its
- * total into what the traveller already paid and what Carta still prices.
+ * total into what the traveller already paid and what Viantra still prices.
  *
  *   bookedSplit(priced) -> { paid, toPlan, notYet: [tileKey], unpriced: [part] } | null
  *
@@ -26,7 +26,7 @@ export function bookedSplit(priced) {
   const p = priced.parts;
   const flightOwn = Boolean(priced.flight?.own && !priced.flight?.driving);
   // A booked stay with no price printed is not in ownStays (doors.js
-  // bookedTrip), so Carta's estimate prices it; only priced ones are paid.
+  // bookedTrip), so Viantra's estimate prices it; only priced ones are paid.
   const stays = (priced.stayCosts || []).filter((s) => s?.ownAccom);
   if (!flightOwn && !stays.length) return null;
   const travelPaid = flightOwn ? (p.travel || 0) : 0;

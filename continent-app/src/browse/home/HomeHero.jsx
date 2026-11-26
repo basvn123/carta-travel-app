@@ -23,9 +23,9 @@ import AiTag from '../../components/AiTag.jsx';
  * control; the film still stops off screen, in a hidden tab and under reduced
  * motion, where the first shot's poster stands still (register T620-a).
  *
- * On the film: the slogan, one line of what Carta does, and Ask Carta's
- * field alone (T621), its "Ask Carta" the page's one primary. What is asked
- * opens Carta's chat on Explore at once, already asking (T566); the chat's
+ * On the film: the slogan, one line of what Viantra does, and Ask Viantra's
+ * field alone (T621), its "Ask Viantra" the page's one primary. What is asked
+ * opens Viantra's chat on Explore at once, already asking (T566); the chat's
  * code is fetched the moment the field is pointed at, so it opens without a
  * wait. The clips' credits stay in homeDemo.js (the Pexels License asks for
  * none on the page; owner, T621).
@@ -103,10 +103,10 @@ function HomePass({ flight, price, from, to }) {
   );
 }
 
-/** Ask Carta's field: what is typed goes to Explore as the question; Ask
+/** Ask Viantra's field: what is typed goes to Explore as the question; Ask
  *  with nothing typed opens the chat there. Explore's vocabulary and the
  *  chat's own code are fetched the moment the field is pointed at or
- *  touched. `primary` makes its button the page's one primary, "Ask Carta"
+ *  touched. `primary` makes its button the page's one primary, "Ask Viantra"
  *  with the spark (the hero); otherwise it is a quiet "Ask". The glyph and
  *  the field share a box (T623): on a phone the hero puts the primary under
  *  it at full width, so the whole placeholder shows in every language. */

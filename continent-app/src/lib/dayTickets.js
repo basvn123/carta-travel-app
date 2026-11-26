@@ -3,10 +3,10 @@
  *
  * A place carries a ticket only when the map data says so: OpenStreetMap's
  * `fee` (yes or no) and `charge` ("12 EUR", "EUR 12", or the euro sign and a
- * figure). A charge Carta can read in euros counts toward the day, per
+ * figure). A charge Viantra can read in euros counts toward the day, per
  * person; a fee without a
  * readable euro charge is "Ticket, price not known" and counts for nothing.
- * Carta never makes a ticket price up. The catalogue does not carry these
+ * Viantra never makes a ticket price up. The catalogue does not carry these
  * tags yet (register T378-c), so today every place reads as no ticket and the
  * day's price is the bed and the food, exactly as before.
  *
@@ -64,7 +64,7 @@ export function ticketOf(poi) {
 }
 
 /**
- * The day's tickets: the euros a person pays for the tickets Carta knows,
+ * The day's tickets: the euros a person pays for the tickets Viantra knows,
  * how many stops have a known ticket, and how many have a fee with no price.
  */
 export function dayTicketTotals(items) {

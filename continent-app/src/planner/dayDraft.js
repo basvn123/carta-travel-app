@@ -634,7 +634,7 @@ export const VISIT_PACES = [
 ];
 
 /** "How much do you want to do that day?", the traveller sets the ambition,
- *  Carta acts on it: it shifts how many stops a drafted day may hold. */
+ *  Viantra acts on it: it shifts how many stops a drafted day may hold. */
 export const FILL_LEVELS = [
   { key: 'light', label: 'Keep it light', desc: 'A few highlights with plenty of breathing room', stopsDelta: -2 },
   { key: 'balanced', label: 'A good balance', desc: 'The essentials at a comfortable rhythm', stopsDelta: 0 },
@@ -791,7 +791,7 @@ export function walkableIdxSet(items, cityDest) {
 export const AREA_KM = 3.5;
 
 /**
- * "Where should Carta focus this day?", the guidance step for LARGE cities,
+ * "Where should Viantra focus this day?", the guidance step for LARGE cities,
  * whose 20 km walkable radius spans far more than a day can cover. Without it
  * an auto-draft can legally anchor a day in the outskirts (technically the
  * highest-scoring cluster) when the traveller obviously meant the centre.
@@ -860,7 +860,7 @@ export function cityAreaOptions(items, cityDest, stayPoint, eligibleIdx) {
   options.push({
     key: 'all',
     label: 'Anywhere in reach',
-    sub: 'Let Carta roam the whole area',
+    sub: 'Let Viantra roam the whole area',
     count: all.size,
     idx: all,
   });
@@ -906,13 +906,13 @@ export const DAY_STYLES = [
   {
     key: 'mix',
     label: 'Surprise mix',
-    desc: 'A bit of everything: Carta leads with the true must-sees.',
+    desc: 'A bit of everything: Viantra leads with the true must-sees.',
     interests: [],
   },
 ];
 
 /**
- * Ranked candidate deck for the guided picker: the stops Carta would stand
+ * Ranked candidate deck for the guided picker: the stops Viantra would stand
  * behind for this style, best first. Only worthwhile places make the deck,  * rate-2+ sights, heritage sites, and (for active styles) matching outdoor
  * kinds, so the traveller is never asked to judge filler.
  */
@@ -1071,7 +1071,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
 
   // Rank: interest-matching actives join the sights; direct interest matches
   // get a boost so a beach person's draft actually contains the beach. Genuine
-  // must-sees get their own bonus, so Carta's drafts always lead with the most
+  // must-sees get their own bonus, so Viantra's drafts always lead with the most
   // beautiful, highest-rated places. If the interest filter can't fill the
   // asked-for days, relax it to everything, the score boost still leads with
   // what they love, topped up with the city's best of the rest.
@@ -1147,7 +1147,7 @@ export function draftDays({ items, numDays, interests, paceKey, dwellFn, stopsMa
 }
 
 // ---- Ready-made day routes -------------------------------------------------
-// Instead of one invisible "Carta drafts something" button, the planner offers
+// Instead of one invisible "Viantra drafts something" button, the planner offers
 // a handful of PREDEFINED routes, each built from the same research/rating
 // signal (poiScore: importance + heritage + Wikipedia fame) but through a
 // different lens. The traveller's answers rank them, they pick one, and the

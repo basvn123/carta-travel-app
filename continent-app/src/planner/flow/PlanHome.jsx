@@ -50,7 +50,7 @@ function loadFan(month) {
 }
 
 /**
- * Carta's own recommended trips: a fan of trip-style photographs, Carta's
+ * Viantra's own recommended trips: a fan of trip-style photographs, Viantra's
  * mark, one title and one button, all one link to the planned trips. The fan
  * opens once when the page arrives and spreads a little on hover.
  */
@@ -79,7 +79,7 @@ function TripCollection({ fan, onOpen }) {
 }
 
 /**
- * Carta's own trips as a door (T988, after Explore's folder, T964): the
+ * Viantra's own trips as a door (T988, after Explore's folder, T964): the
  * umber band, the name, then three trip-style photographs fanned at its
  * end (T1044: the same order at every width, no arrow; the deck is the
  * sign). The deck opens a little further on hover.
@@ -336,8 +336,8 @@ function ClearEmpty({ trips, onDelete }) {
 /**
  * PlanHome (T743 to T747, T809), the Plan place's first page, every time
  * the Plan door is pressed from another place. The headline and the two
- * actions that matter, Start planning and Carta's own trips; under them
- * (from 1024 px: beside them) Carta's own recommended trips as a fan of
+ * actions that matter, Start planning and Viantra's own trips; under them
+ * (from 1024 px: beside them) Viantra's own recommended trips as a fan of
  * photographs with one button. With trips on this device (or in the
  * account) "Your trips" lists them: rows under the actions on a phone, a
  * grid of cards under the whole opening from 1024 px, and the page then
@@ -348,7 +348,7 @@ function ClearEmpty({ trips, onDelete }) {
  *   onStart()            a new trip: the trip-kind sheet
  *   onOpenTrip(trip)     that trip, in the trip planner
  *   onDeleteTrip(trip)   a device trip, after its confirm
- *   onOpenTrips()        Carta's own trips (T752)
+ *   onOpenTrips()        Viantra's own trips (T752)
  *   onOpenKept()         My trips on the kept trips (T807)
  *
  * A trip kept from the trip finder whose flight got cheaper since (T807)
@@ -370,7 +370,7 @@ export function PlanHome({ titleTag = 'h1', trips = [], onStart, onOpenTrip, onD
 
   // T903 (owner, Plan home board 2026-10-30): with trips, the page is where
   // you come back to: your trips first, the slogan and the fan only greet a
-  // first visit. T988: no in-season rail; Carta's trips are the door under
+  // first visit. T988: no in-season rail; Viantra's trips are the door under
   // the head, its deck from the same fan.
   const byState = useMemo(() => {
     const today = todayISO();

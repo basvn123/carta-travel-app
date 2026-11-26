@@ -1,6 +1,6 @@
 {
 "version": 1,
-"about": "T1136 (ROADMAP E1): the Ask eval set. 140 questions from tests/fixtures/ask-golden.json, 30 written from the multilingual MULTI set of pipeline/ask_index_layer.py, 30 that Carta must answer with \"Carta does not know\". places: groups of catalogue ids a knowledgeable traveller expects in the top ten (a group is one place, any id counts). facts: what the answer must carry (type, cc of every card, month read, budget kept, named places present, notes: words the notes the model gets must hold). The held-out set (tests/fixtures/ask-heldout.json) stays out on purpose. Grow it by appending cases with new ids, then bless (scripts/eval/ask-eval.mjs --bless).",
+"about": "T1136 (ROADMAP E1): the Ask eval set. 140 questions from tests/fixtures/ask-golden.json, 30 written from the multilingual MULTI set of pipeline/ask_index_layer.py, 30 that Viantra must answer with \"Viantra does not know\". places: groups of catalogue ids a knowledgeable traveller expects in the top ten (a group is one place, any id counts). facts: what the answer must carry (type, cc of every card, month read, budget kept, named places present, notes: words the notes the model gets must hold). The held-out set (tests/fixtures/ask-heldout.json) stays out on purpose. Grow it by appending cases with new ids, then bless (scripts/eval/ask-eval.mjs --bless).",
 "now": "2026-10-22",
 "cases": [
 {

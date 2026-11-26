@@ -136,7 +136,7 @@ export function MonthsChart({ months }) {
 /**
  * Wat je reizen kostten: what the traveller logged per person, a day or a
  * trip. Only the logged figure is drawn: the memory's spend holds every
- * category (flights too) while Carta's estimate is a bed and a day, so a
+ * category (flights too) while Viantra's estimate is a bed and a day, so a
  * tick beside it would not be like for like (build spec, honest numbers).
  */
 export function CostChart({ trips, per, onPer, missing = 0, onFill }) {
@@ -207,7 +207,7 @@ export function Extremes({ ex }) {
 /** The traveller's own grade (owner review): "8" and a small "/10" on one
  *  baseline, a blaze-style meter under it painted to the grade; the best
  *  trip's number in umber 700 and its meter in umber 800. No pill, so it
- *  reads as Carta's mark and not a stock badge. */
+ *  reads as Viantra's mark and not a stock badge. */
 export function GradeBadge({ n, top = false, stamp = '' }) {
   const { t } = useI18n();
   // In a past row the grade is an ink stamp (G12 atlas): a stable tilt from the trip's id, a 10 filled.
@@ -288,7 +288,7 @@ export function YearCardSection({ model, geo, onEdit, onShare, busy = false, exa
  *  "{n} nachten, {month}", the grade as ten cells (the best trip in umber
  *  800), or dashed empty cells and "Geef een cijfer", which opens the ten taps
  *  across the grid under the card. A tap opens its memory there, with the
- *  move against Carta's estimate in ink above it. */
+ *  move against Viantra's estimate in ink above it. */
 export function PastRow({ x, top = false, withYear = false, rating = false, onRateOpen, onRate, onLift = null, geo = null, trip = null }) {
   const { t } = useI18n();
   const month = monthShort(x.start);
@@ -332,7 +332,7 @@ export function PastRow({ x, top = false, withYear = false, rating = false, onRa
       {rating && x.grade == null && onRate && (
         <div className="mt-pgrid-open atlas-ratebox"><RateTrip title={x.title} onRate={onRate} /></div>
       )}
-      {/* Open, the trip shows its move against Carta's estimate above its memory
+      {/* Open, the trip shows its move against Viantra's estimate above its memory
           (on the card it repeated on almost every trip). */}
       {(x.below || (x.open && moved)) && (
         <div className="mt-pgrid-open">
@@ -354,7 +354,7 @@ const monthShort = (iso) => {
 
 /**
  * The country sheet (tap a country on the plate): the years and the nights
- * there, what is saved in it, a day as the traveller logged it and as Carta
+ * there, what is saved in it, a day as the traveller logged it and as Viantra
  * prices it now, with Show saved and Plan a trip. A hand mark is set or
  * taken off here too, unless a trip put the country on the map.
  *   info { cc, name, years, trips, nights, hand, saved, dayYou, dayNow, canToggle, been }

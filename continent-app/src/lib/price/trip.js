@@ -1,5 +1,5 @@
 /**
- * The trip price (T702, plan "Carta prijslogica Explore" F6): what a whole
+ * The trip price (T702, plan "Viantra prijslogica Explore" F6): what a whole
  * planned trip costs, from the engine. Moved here from lib/tripTotal.js
  * (T432, where the wizard and the planner were made to price one trip with
  * one function); tripTotal.js keeps the receipt lines and re-exports this.
@@ -82,7 +82,7 @@ export function tripStopDetails(stops, destinations, tripStart) {
 }
 
 // A stop with an air route of its own: its own anchor airport, with a last
-// leg Carta can price (origins.js). No fare is involved since T511.
+// leg Viantra can price (origins.js). No fare is involved since T511.
 const hasRoutes = (d) => d && Object.keys(d.routes || {}).length > 0;
 
 /**
@@ -132,7 +132,7 @@ function heldAsLeg(h) {
  * children 3 to 11 take a seat, a bed and a child's share of meals and
  * public fares (config party.shares, the same shares the day price reads);
  * babies 0 to 2 sit on a lap. Cars are priced per car and need a seat for
- * everyone. `groupSize` (the seats Carta prices beds and legs for) is
+ * everyone. `groupSize` (the seats Viantra prices beds and legs for) is
  * adults plus children. Exported for the finder's price floor (G12).
  */
 export function tripParty(state) {
@@ -198,7 +198,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const returnDest = returnAnchorId ? destinations[returnAnchorId] : null;
   const tripHasCar = transportPref === 'car' || transportPref === 'owncar';
   // A typed figure for driving there in their own car (fuel, tolls, the lot)
-  // replaces Carta's drive estimate rather than vanishing beside it.
+  // replaces Viantra's drive estimate rather than vanishing beside it.
   const ownCarCost = transportPref === 'owncar' && ownFlight?.costTotal > 0
     ? round2(ownFlight.costTotal) : 0;
   // Which direction the typed figure covers. A hand-over names both halves
@@ -268,7 +268,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
     }
   }
 
-  // ---- Carta's flight there and home (T517) ------------------------------
+  // ---- Viantra's flight there and home (T517) ------------------------------
   // Google Flights' price for the flight the trip routes through, each way:
   // live for the exact day when the planner asked for it, else the sweep's
   // cheapest that day. A fare the traveller typed for a direction wins; a
@@ -277,7 +277,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const cartaFlight = (() => {
     // An older record holds one typed total for both ways: it covers both.
     const typedPair = ownFlight && !split && ownFlight.costTotal > 0;
-    // T866: a flight the traveller booked is theirs, priced or not: Carta
+    // T866: a flight the traveller booked is theirs, priced or not: Viantra
     // does not put Google Flights' fare in its place.
     const flies = transportPref !== 'owncar' && !typedPair && !ownFlight?.booked && (!ownFlight || (ownFlight.mode || 'fly') === 'fly');
     const routed = routedFlight;
@@ -582,8 +582,8 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   // ---- Beds and days, stop by stop ---------------------------------------
   // Each stop is the day price at the stop's own dates (T702): the same
   // engine row Explore and the destination page show, times the seats and
-  // the nights. A bed the traveller has booked and typed in replaces Carta's
-  // estimate for that stay; the days there stay Carta's (stayCostsOf).
+  // the nights. A bed the traveller has booked and typed in replaces Viantra's
+  // estimate for that stay; the days there stay Viantra's (stayCostsOf).
   const request = tripRequest(state);
   const stayCosts = stayCostsOf(stopDetails, state, destinations);
 
@@ -591,7 +591,7 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
   const parts = {
     // What they typed for getting there and home (a fare, a ticket, the car).
     travel: round2(flight?.own || flight?.driving ? (flight.cost_total || 0) : 0),
-    // Carta's flight for each way they did not type, bags included (T517).
+    // Viantra's flight for each way they did not type, bags included (T517).
     flights: round2((cartaFlight?.out?.cost?.total || 0) + (cartaFlight?.back?.cost?.total || 0)),
     // T861: home to the airport and back (the drive and parking, or the
     // train), once the traveller has said which airports are in reach.

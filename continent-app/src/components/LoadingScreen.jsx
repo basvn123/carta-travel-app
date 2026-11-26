@@ -35,7 +35,7 @@ export default function LoadingScreen() {
     <div className="boot-splash no-intro" data-state="held" aria-busy="true">
       <div className="boot-stack">
         <span className="boot-blaze" aria-hidden="true"><i className="boot-paint" /><i className="boot-heel" /></span>
-        <div className="boot-name">Carta</div>
+        <div className="boot-name">Viantra</div>
         <div className="boot-tag">{tagline}</div>
         <span className="hs-wait" aria-hidden="true">
           <span className="hs-blaze blaze-sm" /><span className="hs-blaze blaze-sm" /><span className="hs-blaze blaze-sm" />

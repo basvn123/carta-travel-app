@@ -83,7 +83,7 @@ export function openDayPlanIcs(ctx) {
   const lines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
-    'PRODID:-//Carta//Day Planner//EN',
+    'PRODID:-//Viantra//Day Planner//EN',
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     `X-WR-CALNAME:${esc(label)}`,

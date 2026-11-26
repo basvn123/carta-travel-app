@@ -1,5 +1,5 @@
 /**
- * discoveredStore.js, the towns Carta researched on request.
+ * discoveredStore.js, the towns Viantra researched on request.
  *
  * When a traveller asks for a place the catalogue doesn't hold, cityResearch.js
  * builds a destination record for it (see that file for the sources). The

@@ -1,5 +1,5 @@
 /**
- * aiGuard: the one AI security guard for Carta's model calls (T1117, ROADMAP
+ * aiGuard: the one AI security guard for Viantra's model calls (T1117, ROADMAP
  * C8 with E3). Used by the Gemini-backed Edge Functions plan-day,
  * suggest-city (since T1137) and parse-booking, and (as a byte-identical copy in
  * continent-app/functions/_lib/aiGuard.js, kept equal by
@@ -97,7 +97,7 @@ const despace = (s) => s.replace(/\b(?:[a-z][ .\-_*]){3,}[a-z]\b/g, (m) => m.rep
 const W = '[^.!?\\n]{0,40}';
 /** Each rule names one attack family; the id is what the tests and logs record. */
 export const INJECTION_RULES = [
-  ['override', new RegExp(`\\b(ignore|disregard|forget|override|bypass|skip|drop)\\b${W}\\b(previous|prior|above|earlier|preceding|all|any|your|these|those|system|original|carta'?s?)\\b${W}\\b(instructions?|rules?|prompts?|directions?|guidelines?|constraints?|guardrails?)\\b`)],
+  ['override', new RegExp(`\\b(ignore|disregard|forget|override|bypass|skip|drop)\\b${W}\\b(previous|prior|above|earlier|preceding|all|any|your|these|those|system|original|carta'?s?|viantra'?s?)\\b${W}\\b(instructions?|rules?|prompts?|directions?|guidelines?|constraints?|guardrails?)\\b`)],
   ['override_nl', new RegExp(`\\b(negeer|vergeet|omzeil)\\b${W}\\b(instructies|regels|opdrachten|richtlijnen)\\b`)],
   ['override_de', new RegExp(`\\b(ignorier\\w*|vergiss\\w*|missachte\\w*)\\b${W}\\b(anweisungen|regeln|vorgaben|instruktionen)\\b`)],
   ['override_fr', new RegExp(`\\b(ignore[rz]?|oublie[rz]?)\\b${W}\\b(instructions|regles|consignes)\\b`)],
@@ -208,7 +208,7 @@ export function neutralizeData(text) {
     .replace(/`{3,}/g, '');
 }
 
-/** One fenced data block. The label is Carta's word, never data. */
+/** One fenced data block. The label is Viantra's word, never data. */
 export function dataBlock(label, text, nonce) {
   const tag = String(label).toUpperCase().replace(/[^A-Z_]/g, '');
   return `<<<DATA ${nonce} ${tag}>>>\n${neutralizeData(text)}\n<<<END ${nonce}>>>`;

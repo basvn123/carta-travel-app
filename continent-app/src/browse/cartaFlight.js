@@ -1,5 +1,5 @@
 /*
- * Carta's flight for the browse pages (T518 part C): the destination page,
+ * Viantra's flight for the browse pages (T518 part C): the destination page,
  * the curated weeks, the trip tiles and the published trips all price their
  * flight the same way, from the home airport's swept file (data.flights) at
  * the app's dates, through flights/flights.js. A page that has no flight near

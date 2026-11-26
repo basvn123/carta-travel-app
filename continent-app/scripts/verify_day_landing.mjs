@@ -378,8 +378,8 @@ try {
     });
     if (trayFit?.clipped) fail(`${size.name}: tray label is cut off: "${trayFit.text}"`);
     else ok('tray label fits');
-    if (!tray.carta) fail(`${size.name}: no "Let Carta plan the rest" button in the tray`);
-    else ok(`tray offers Carta: "${tray.carta}"`);
+    if (!tray.carta) fail(`${size.name}: no "Let Viantra plan the rest" button in the tray`);
+    else ok(`tray offers Viantra: "${tray.carta}"`);
     if (tray.openDisabled !== false) fail(`${size.name}: "Open my day" still disabled with a pick in the tray`);
     // The map beside the list has to actually draw. A MapLibre canvas built
     // inside a display:none column comes up 0x0 and never recovers, which is

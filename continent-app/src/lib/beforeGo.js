@@ -13,7 +13,7 @@
  * Rows come from two places the page already holds: the hazard codes of a
  * lake or a summit (safety rows), and the not-for lines of lib/notFor.js
  * (fit rows). A fit row that restates a hazard already shown is dropped, as
- * notFor.js does. The catch-all "Carta shows the usual picture" line is not
+ * notFor.js does. The catch-all "Viantra shows the usual picture" line is not
  * a row: it said nothing about the place (owner, 2026-10-15).
  *
  * Pure: returns { key, icon, titleKey, subKey, params, safety } objects for

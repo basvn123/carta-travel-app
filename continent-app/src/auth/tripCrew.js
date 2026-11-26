@@ -1,7 +1,7 @@
 /**
  * tripCrew.js, the people on a trip.
  *
- * Carta kept two lists of the same humans. `extras.people` is the positional
+ * Viantra kept two lists of the same humans. `extras.people` is the positional
  * roster the expense ledger splits a bill by, and `memory.companions` is the
  * list a past trip records under "who came". pastTripMemory.saveMemory copied
  * the second into the first, which was always the tell that they are one
@@ -144,7 +144,7 @@ export function crewLabel(crew, lang = 'en', max = 4) {
   let line;
   try {
     // Bare 'en' resolves to US English, which sets the Oxford comma. The rest
-    // of Carta's copy is British ("traveller", "colour"), so the list should
+    // of Viantra's copy is British ("traveller", "colour"), so the list should
     // read the same way.
     const loc = lang === 'en' ? 'en-GB' : lang;
     line = new Intl.ListFormat(loc, { style: 'long', type: 'conjunction' }).format(shown);

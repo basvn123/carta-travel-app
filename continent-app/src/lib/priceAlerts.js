@@ -5,7 +5,7 @@
  * price card) with the share it must fall by. The alert carries what the box
  * needs to price it (pipeline/price_alerts.py): the stops, the month or the
  * dates, the nights, the party, the bed tier and, when the card priced a
- * Carta flight, the airports and days. The box sets the baseline at its first
+ * Viantra flight, the airports and days. The box sets the baseline at its first
  * check and prices every later check with the same formula, so the one email
  * compares like with like. The page never sets a baseline, a consent or a
  * fired time: it saves through price_alert_save (migration 073).
@@ -60,7 +60,7 @@ export function alertsOn() {
  *   start    the first night (YYYY-MM-DD) when the traveller chose dates
  *   month    1 to 12 when they did not
  *   nights, adults, bed
- *   fly      { from, to, out, back } when the card priced a Carta flight
+ *   fly      { from, to, out, back } when the card priced a Viantra flight
  */
 export function placeSpec({ dest, start = null, month = null, nights, adults, bed, fly = null }) {
   const id = String(dest?.id || '');

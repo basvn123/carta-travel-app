@@ -17,7 +17,7 @@ const REACHES = ['near', 'mid', 'far'];
  * place and keeps its dates and nights. Two doors on one sheet:
  *   "I know where"   search any place by name; empty, the nearest ones
  *   "Help me choose" what you want there (up to three), how big a place
- *                    and how far from the stop; Carta's picks update as the
+ *                    and how far from the stop; Viantra's picks update as the
  *                    answers change, ranked like Explore's For you
  * Each place says how far it is and what it does to the trip's total. A
  * pick swaps at once; the page's Undo brings the old stop back.

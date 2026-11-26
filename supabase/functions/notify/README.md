@@ -1,4 +1,4 @@
-# notify, Carta's opt-in emails
+# notify, Viantra's opt-in emails
 
 Two emails, both off until the traveller turns them on in Account,
 Preferences, Emails:
@@ -7,7 +7,7 @@ Preferences, Emails:
   naming the places and the date. Sent by a daily pg_cron run (migration 060).
 - **Price drops on saved places.** When a saved place's day price falls
   clearly (at least 5 euros and at least 10 percent below the price recorded
-  when it was saved). Carta's day prices are computed in the browser from the
+  when it was saved). Viantra's day prices are computed in the browser from the
   traveller's own settings, so the page notices the drop and asks this
   function to send it; the function checks the switch and rate limits: one
   price email a day, one place at most once a week, five places an email.
@@ -29,7 +29,7 @@ The email provider is Resend (HTTP API). No Anthropic service is involved.
 
    ```
    supabase secrets set RESEND_API_KEY=re_...
-   supabase secrets set NOTIFY_FROM="Carta <trips@carta-europetravel.com>"
+   supabase secrets set NOTIFY_FROM="Viantra <trips@carta-europetravel.com>"
    supabase secrets set NOTIFY_SECRET=<a long random string, e.g. openssl rand -hex 32>
    # optional, where the email links go
    supabase secrets set APP_URL=https://www.carta-europetravel.com
@@ -56,7 +56,7 @@ Until `RESEND_API_KEY` and `NOTIFY_FROM` are set the function answers
 | Secret | Required | Meaning |
 | --- | --- | --- |
 | `RESEND_API_KEY` | yes | Resend API key with send access. |
-| `NOTIFY_FROM` | yes | The sender, e.g. `Carta <trips@carta-europetravel.com>`, on a domain verified in Resend. |
+| `NOTIFY_FROM` | yes | The sender, e.g. `Viantra <trips@carta-europetravel.com>`, on a domain verified in Resend. |
 | `NOTIFY_SECRET` | yes | Signs the unsubscribe links (HMAC-SHA256) and authorises the cron call (header `x-notify-secret`). Changing it voids the links in emails already sent. |
 | `APP_URL` | no | Where the email links open. Default `https://www.carta-europetravel.com`. |
 

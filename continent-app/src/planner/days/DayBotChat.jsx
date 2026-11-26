@@ -7,10 +7,10 @@ import { AiMark } from '../../components/AiMark.jsx';
 import { planAnswerText } from '../../lib/aiReport.js';
 
 /**
- * The Carta bot as a chat (T899, the owner's plan days board 2026-10-30),
+ * The Viantra bot as a chat (T899, the owner's plan days board 2026-10-30),
  * in place of the form it was (AiDayPlanModal). It sits beside the day it
  * plans: a column left of the day from 1280 px, over the map from 1024 px,
- * a full-screen sheet on a phone (Ask Carta's own pattern on Explore).
+ * a full-screen sheet on a phone (Ask Viantra's own pattern on Explore).
  *
  * Empty, it greets with the day's facts and three asks that fit this day;
  * they leave once anything is written (ChatGPT, Gemini and Claude keep
@@ -25,7 +25,7 @@ import { planAnswerText } from '../../lib/aiReport.js';
  *   preset                      the trip's rhythm (tripSettings dayAiPreset)
  *   onRun(answers)              { ok, plan } | { ok:false, code }
  *   onApply(plan)               the plan onto the day
- *   onFallback(answers)         Carta's built-in planner
+ *   onFallback(answers)         Viantra's built-in planner
  *   onClose, onOpenPass, entitlement
  *   docked                      beside the day (no focus trap) or a sheet
  */
@@ -86,7 +86,7 @@ export function DayBotChat({
       setMsgs((m) => [...m, { role: 'bot', fail: res.code || 'ai_error', ask: said, answers }]);
     }
   };
-  // "Fill this day" and Carta plans every day arrive as a whole ask: the
+  // "Fill this day" and Viantra plans every day arrive as a whole ask: the
   // chat starts on it at once, said as the traveller's own first line.
   const autoRan = useRef(false);
   useEffect(() => {

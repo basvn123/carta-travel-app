@@ -126,7 +126,7 @@ function townOf(stop, byName, points) {
 }
 
 /**
- * One of Carta's journeys (JourneyPage "Plan this trip"): its route stops
+ * One of Viantra's journeys (JourneyPage "Plan this trip"): its route stops
  * (JourneyRoute routeStops: { name, lat, lon, days }) placed on the
  * catalogue, each with a night for every day there and the last day the
  * day home. Before, this door handed over only the country. A journey whose

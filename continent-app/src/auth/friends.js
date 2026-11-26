@@ -169,7 +169,7 @@ export async function getFriendTrip(planId) {
 const INVITE_PARAM = 'friend';
 
 /**
- * A link that opens Carta on the friends page with your handle already looked
+ * A link that opens Viantra on the friends page with your handle already looked
  * up. Sending "@bas_v" and hoping somebody types it correctly is a worse
  * version of the same act, and typing is where handles get lost.
  *

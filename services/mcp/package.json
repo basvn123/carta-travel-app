@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Carta MCP server (ROADMAP F7): read-only tools over the shipped wire data.",
+  "description": "Viantra MCP server (ROADMAP F7): read-only tools over the shipped wire data.",
   "bin": {
     "carta-mcp": "src/stdio.js"
   },

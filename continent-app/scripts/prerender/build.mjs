@@ -270,8 +270,8 @@ const ctx = {
     const many = { walk: 'walks', beach: 'beaches', lake: 'lakes', mountain: 'mountains', 'cycling route': 'cycling routes' }[ONE[section]];
     const where = P.countryName(cc);
     const r = w.rated.length;
-    if (!r && !w.listed) return `Carta has no ${many} in ${where} in its catalogue yet.`;
-    const head = `Carta publishes ${r.toLocaleString('en-GB')} rated ${r === 1 ? ONE[section] : many} in ${where}`;
+    if (!r && !w.listed) return `Viantra has no ${many} in ${where} in its catalogue yet.`;
+    const head = `Viantra publishes ${r.toLocaleString('en-GB')} rated ${r === 1 ? ONE[section] : many} in ${where}`;
     return w.listed ? `${head} and lists ${w.listed.toLocaleString('en-GB')} more that do not have enough measured facts to be rated yet.` : `${head}.`;
   },
   generatedAt: (section, cc) => W[SECTION_SRC[section]]?.[cc]?.gen || null,

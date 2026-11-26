@@ -9,7 +9,7 @@ import { stripDashes } from '../lib/format.js';
 
 /**
  * The honest stub (T124, destinations spec 6.5): the page for a famous walk
- * Carta knows of and cannot build from open data.
+ * Viantra knows of and cannot build from open data.
  *
  * It says what the walk is (name, region, how well known), what is known
  * about it (only what the registry holds, so a missing length is simply not

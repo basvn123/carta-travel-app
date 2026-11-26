@@ -60,7 +60,7 @@ const headOf = (chip) => chip.id.split(':')[0];
 
 /**
  * Searching (T797, T867; rebuilt on the owner's plan flow walk): the
- * traveller's own answers assemble into the trip's brief, Carta's receipt
+ * traveller's own answers assemble into the trip's brief, Viantra's receipt
  * grammar: each answer lands as a line with its icon, one after another,
  * and takes a tick once the stage of real work that applies it is done
  * (flights for from and when, the stays for who and the budget, the

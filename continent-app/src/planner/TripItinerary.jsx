@@ -35,7 +35,7 @@ import { nightsOptions, applyNights } from '../lib/tripBalance.js';
 import { Balance } from './trip/Balance.jsx';
 import { RouteCodes } from './trip/RouteCodes.jsx';
 
-// How the traveller told us they get there and home. Carta prices none of it,
+// How the traveller told us they get there and home. Viantra prices none of it,
 // so these two helpers exist to say what THEY said rather than assume a plane:
 // the wizard has asked for the mode since it stopped picking flights, and a
 // trip saved before that carries no mode, which is what 'fly' means here.
@@ -86,7 +86,7 @@ function useFlightWaiting(queries) {
 }
 
 /**
- * Carta's flight for one way (T518): the flight row with its hours filter,
+ * Viantra's flight for one way (T518): the flight row with its hours filter,
  * and the door to the traveller's own fare under it. `leg` undefined while a
  * live answer may come reads as checking; null or no fit reads as none.
  */
@@ -365,7 +365,7 @@ function ItinLeg({ leg, onMode }) {
         </button>
         <span className="itin-leg-meta">
           {chosen?.own
-            // Their own booking: Carta has no km or duration for it, only
+            // Their own booking: Viantra has no km or duration for it, only
             // the fare they told us, so it must not pretend to an estimate.
             ? t('trip.legBooked')
             : [`~${fmtHours(chosen?.hours ?? leg.hours)}`, leg.road_km ? `${Math.round(leg.road_km)} km` : ''].filter(Boolean).join(', ')}
@@ -551,7 +551,7 @@ export function TripItinerary({
   // The total bar opens the receipt (T500): a new receiptOpenKey opens its
   // lines, and receiptId lets the bar scroll to it.
   receiptId = undefined, receiptOpenKey = 0,
-  // Carta's flight there and home (T518): the hours wanted each way and the
+  // Viantra's flight there and home (T518): the hours wanted each way and the
   // trip's bag, both from useTripPlanner.
   flightHours = null, onFlightHours = null, baggage = 'cabin',
   // The trip page's tabs (T821) each show a part: 'receipt', 'route',
@@ -597,7 +597,7 @@ export function TripItinerary({
 
   // The trip's bookable elements, each with our estimate so a real booked
   // price can be judged against it at a glance. A flight has no estimate:
-  // Carta does not price flights (T273).
+  // Viantra does not price flights (T273).
   const bookingRows = [];
   if (flight?.combinable) {
     bookingRows.push({ key: 'flight-out', label: `${t('extras.flightOut')}: ${t('itin.fromTo', { a: flight.origin, b: flight.into_anchor })}`, estimate: null });
@@ -629,14 +629,14 @@ export function TripItinerary({
   if (carRental) bookingRows.push({ key: 'car', label: t('extras.car'), estimate: carRental.eur_total ?? null });
 
   // Everything the share text / printable PDF needs, in one bag.
-  // Carta's flight each way (T518): shown where no fare of their own is typed.
+  // Viantra's flight each way (T518): shown where no fare of their own is typed.
   const cartaFlight = priced?.cartaFlight || null;
   const airlines = useAirlines();
   const flightWaiting = useFlightWaiting(cartaFlight?.queries);
   const exportPayload = {
     label, stopDetails, dayPlan, flight, flightTransfer, legs, anchorLegs, stayCosts, carRental, carLocal, vignettes,
     tripHasCar, driveLegs, grandTotal, groupSize,
-    // Carta's flight each way and the airline names it is written with (T518).
+    // Viantra's flight each way and the airline names it is written with (T518).
     cartaFlight: priced?.cartaFlight || null, airlines,
     extras, bookingRows,
   };
@@ -655,7 +655,7 @@ export function TripItinerary({
   const openTool = tools.find((x) => x.key === toolOpen) || null;
 
   // Files need a pass; links do not. Sharing a trip is how somebody else
-  // first hears about Carta, so gating it would tax the only marketing this
+  // first hears about Viantra, so gating it would tax the only marketing this
   // product has. See hooks/usePaywall.jsx.
   const paywall = usePaywall();
 
@@ -752,7 +752,7 @@ export function TripItinerary({
   const flyIn = inIata ? t('plan.howTo', { how: ownTravelHow(flight, t), place: inIata }) : '';
   const flyOut = outIata ? t('plan.howFrom', { how: ownTravelHow(flight, t), place: outIata }) : '';
   // The airports each way (owner board panel 8: the route names the flight,
-  // BRU to SZG, everywhere): Carta's own flight, else the planned route.
+  // BRU to SZG, everywhere): Viantra's own flight, else the planned route.
   const codes = (dir) => {
     const leg = showFlight(dir) ? cartaFlight?.[dir] : null;
     if (leg?.from && leg?.to) return [leg.from, leg.to];
@@ -780,7 +780,7 @@ export function TripItinerary({
     : '';
   const partyText = groupSize === 1 ? t('receipt.onePerson') : t('receipt.nPeople', { n: groupSize });
   // The traveller's own fare each way: the override, always one tap away,
-  // beside Carta's flight when there is one (T518).
+  // beside Viantra's flight when there is one (T518).
   const outFare = (
     <PaidField
       id="paid-out"
@@ -1331,7 +1331,7 @@ export function TripItinerary({
 
 
           {/* T889: the trip page's Notes tab, the extras inline: the bookings
-              with Carta's booking reader, the inbox, the notes and the packing
+              with Viantra's booking reader, the inbox, the notes and the packing
               list (its basics a tap away). */}
           {/* T1015: the Notes tab is the trip's notes and its documents
               (TripNotes); the bookings and the packing list are the

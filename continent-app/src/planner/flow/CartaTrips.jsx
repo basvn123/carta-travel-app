@@ -46,7 +46,7 @@ function readKept() {
 }
 
 /**
- * Carta's own trips (T752, T824): every written week of the journeys library
+ * Viantra's own trips (T752, T824): every written week of the journeys library
  * on one page, laid out like Explore (owner 2026-10-29): the title and one
  * line of what every trip holds, one row with the Filters button and the
  * filters that are on, the weeks in season as a band while nothing is

@@ -1,9 +1,9 @@
 /*
  * Flights (T518): the airline mark, a flight row, a card's flight chip and
- * the hours filter. Every flight Carta shows is Google Flights' price, so it
+ * the hours filter. Every flight Viantra shows is Google Flights' price, so it
  * always carries its airline, its times and when it was checked, and links
  * out to Google Flights with the "prices may have changed" note. Bags are
- * Carta's estimate (flights/bagFees.js) and carry the tilde and "est.".
+ * Viantra's estimate (flights/bagFees.js) and carry the tilde and "est.".
  *
  *   <FlightRow leg={leg} cost={leg.cost} dir="out" people={2} />
  *   <FlightChip perSeat={134} airline="FR" />
@@ -86,7 +86,7 @@ export function PassEnds({ leg }) {
 
 /**
  * The way out to the flight itself on Google Flights: a link with the icon
- * that says it leaves Carta, and the note that the price may have moved
+ * that says it leaves Viantra, and the note that the price may have moved
  * since it was checked (carta-design: every external booking link says so,
  * in words, not only in a tooltip). `back` makes it the return search, so a
  * pair of flights gets one link, not two one-way ones.

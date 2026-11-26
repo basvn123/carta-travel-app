@@ -40,7 +40,7 @@ export function blockReason(status, url, body) {
   return null;
 }
 
-/** fli's FlightResult to Carta's compact flight. */
+/** fli's FlightResult to Viantra's compact flight. */
 export function toFlight(f) {
   const legs = f.legs || [];
   const first = legs[0];

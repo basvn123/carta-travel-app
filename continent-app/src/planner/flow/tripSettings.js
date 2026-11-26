@@ -77,10 +77,10 @@ export function personasOfRaw(g = {}) {
 }
 /** T860: how they want to get there (the app's transport modes the question offers). */
 export const WAYS = ['any', 'plane', 'train', 'car'];
-/** T863: how much Carta plans, the four doors: the whole trip, the flight
+/** T863: how much Viantra plans, the four doors: the whole trip, the flight
  *  first, a place the traveller knows, or around what they booked. */
 export const TRIP_DOORS = ['guide', 'flight', 'know', 'booked'];
-/** Question 7 (T796): the price lines Carta may pick, from config/slots.json
+/** Question 7 (T796): the price lines Viantra may pick, from config/slots.json
  *  (every pickable slot that is live). The default is all of them. */
 export const PICKABLE = SLOTS.slots.filter((r) => r.pickable && r.status === 'live').map((r) => r.id);
 /** The day rhythm, asked after the trip is planned. */
@@ -131,7 +131,7 @@ export function defaultSettings() {
     // traveller is and until when, instead of When and Where from.
     kind: 'new',
     now: null,
-    // T859: the places the traveller named (Tell Carta's words), countries
+    // T859: the places the traveller named (Tell Viantra's words), countries
     // and towns: [{ kind: 'country' | 'place', id, name, iso2, country }].
     places: [],
     // G12 L12 (plan again, somewhere new): countries the traveller has been,
@@ -143,7 +143,7 @@ export function defaultSettings() {
     // G12 R5: the past trip planned again from, by shape, for its row.
     pastRef: null,
     // T857 (row T856-c): where each answer came from, by question id:
-    // 'words' (Tell Carta's sentence) or 'screen'. An id with no entry was
+    // 'words' (Tell Viantra's sentence) or 'screen'. An id with no entry was
     // given on its screen, as every answer was before T857.
     sources: {},
     // T863: the door this trip was planned through ('' until one is chosen).
@@ -271,7 +271,7 @@ export function normalizeSettings(raw) {
       size: oneOf(g.size, SIZES, ''),
       quiet: oneOf(g.quiet, QUIET, ''),
       budget: budgetOfRaw(g.budget, adults + kids),
-      // T796: what Carta picks; a slot left out is the traveller's to choose.
+      // T796: what Viantra picks; a slot left out is the traveller's to choose.
       pick: Array.isArray(g.pick) ? someOf(g.pick, PICKABLE) : [...PICKABLE],
       // T868: the T803 levers are gone; a saved settings.guide.levers is dropped here.
     },
@@ -394,7 +394,7 @@ export const partySize = (s) => s.party.adults + s.party.kids;
 /**
  * Mark a question as answered (returns a new settings object), and where the
  * answer came from: 'screen' (its own screen, the default) or 'words' (Tell
- * Carta's sentence, T857). Returns `s` itself when nothing changes.
+ * Viantra's sentence, T857). Returns `s` itself when nothing changes.
  */
 export function markAnswered(s, id, from = 'screen') {
   const has = s.answered.includes(id);

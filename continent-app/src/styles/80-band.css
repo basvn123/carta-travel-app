@@ -1,6 +1,6 @@
 /* --- G12, Explore top: the band (round 2, decision.md APPROVED 2026-11-19)
    The search field (words, Filters on a desktop, the umber search button at
-   the right end), Ask Carta beside it, Settings (desktop, Places), the
+   the right end), Ask Viantra beside it, Settings (desktop, Places), the
    settings in one line and on a phone the six tabs, in the top bar, so it
    never scrolls away. Studio look: umber family for every selection,
    saffron only for the held dot, no teal; icon plus word, no separators.
@@ -155,7 +155,7 @@
 .band-go:active .hs-icon { transform: scale(var(--press-scale-sm)); }
 .band-go:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 
-/* Ask Carta and Settings: outlined 48 (44 on a phone) buttons beside the
+/* Ask Viantra and Settings: outlined 48 (44 on a phone) buttons beside the
    field. Ask's edge is the umber itself (it opens a panel of its own); lit
    while that panel is open. */
 .band-ask,

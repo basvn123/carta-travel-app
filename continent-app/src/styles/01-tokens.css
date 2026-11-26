@@ -112,6 +112,10 @@
   --action-text:     var(--neutral-0);    /* label on an --action fill */
   --action-tint:     var(--umber-100);    /* --action as text on it 4.80 */
 
+  /* K1 (decision 0018): the Viantra arch's terracotta, the logo only. A mark,
+     4.3 on stone; never a fill for UI. The palette move is a later step. */
+  --brand-mark:      #b5532c;
+
   /* The one selected state (DESIGN.md "Selected"): the beige wash, brown
      text, a brown edge, plus a mark (the blaze, a tick, the paint bar).
      Never a dark slab, never colour alone. */

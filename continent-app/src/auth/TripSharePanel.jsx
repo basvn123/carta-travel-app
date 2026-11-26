@@ -18,7 +18,7 @@ import {
  * Three questions, in the order a traveller asks them (T434):
  *   1. Who plans this with me: co-planners, invited by link or from friends.
  *   2. A view-only link for anyone, with no account needed.
- *   3. Who sees the trip inside Carta: only me, my friends, or the guides.
+ *   3. Who sees the trip inside Viantra: only me, my friends, or the guides.
  *
  * What a link never carries (the expense ledger, booking references, notes)
  * is said once, because whether their money is in it is the one question
@@ -298,7 +298,7 @@ export function TripSharePanel({
 
   const make = async () => {
     // Every share link is free (T488-b): it is how the next traveller hears
-    // about Carta, and planning together is planning.
+    // about Viantra, and planning together is planning.
     setBusy(true);
     setError('');
     try {

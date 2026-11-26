@@ -21,7 +21,7 @@ import { PlaneIcon } from '../../components/TransportIcons.jsx';
 /**
  * Google Flights Explore from the home airport (G12 L14): the wizard's Where
  * step was the only place it showed, so it moved here with the fold, beside
- * the fares Carta has, for a traveller who wants to see every place cheap to
+ * the fares Viantra has, for a traveller who wants to see every place cheap to
  * reach. It needs only the airport; the month is added when the trip has one.
  */
 function ExploreFlightsCard({ airport, month = '' }) {
@@ -141,7 +141,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
   const [shown, setShown] = useState(FIRST_ROWS);
   const homes = new Set((rows || []).map((r) => r.flight.facts.out.from));
   const originName = run.origin?.name || '';
-  // The answers name the traveller's own town (Ghent), as Tell Carta did.
+  // The answers name the traveller's own town (Ghent), as Tell Viantra did.
   const { when, chips } = useAnswerChips(settings, settings.from?.name || originName);
   const destinations = run.data?.destinations || {};
   const people = Math.max(1, settings.party.adults + settings.party.kids);
@@ -236,7 +236,7 @@ export function FlightFirstScreen({ ui, settings, onBack, onPick, onChange, head
 
 /**
  * I know where I'm going, the build (T865), revived as the place lander
- * (G12 lane L6, decision §3.2 S5, S6, S9): the loader while Carta drafts
+ * (G12 lane L6, decision §3.2 S5, S6, S9): the loader while Viantra drafts
  * and prices the route through the named places (knowTrip: routed by
  * routeOrder, the nights by allocateNights), then the priced found trip
  * (FoundTripPage) instead of jumping to the trip page, so the traveller sees

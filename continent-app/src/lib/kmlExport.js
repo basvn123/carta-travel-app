@@ -137,7 +137,7 @@ export function tripKml({ label, stopDetails = [], dayPlan = [], fmtDate = (d) =
   }] : [];
   return buildKml({
     name,
-    description: 'Planned with Carta. Import at mymaps.google.com to see every stop with dates, nights and day plans.',
+    description: 'Planned with Viantra. Import at mymaps.google.com to see every stop with dates, nights and day plans.',
     styles: [{ id: 'trip', color: dayColor(0) }],
     folders: [{ name: 'Trip stops', placemarks, paths }],
   });

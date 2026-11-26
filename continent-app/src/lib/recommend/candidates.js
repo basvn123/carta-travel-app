@@ -17,7 +17,7 @@
  *                  in the best month of the trip's places for the weather
  *                  answer
  *   5. named       T859: the places the traveller named (settings.places,
- *                  Tell Carta's words) are the only places it builds from:
+ *                  Tell Viantra's words) are the only places it builds from:
  *                  each named town starts a trip of its own, a named country
  *                  gives its best places, so two or more names are a
  *                  shortlist the trips are chosen from
@@ -505,7 +505,7 @@ const countryOfPlace = (d) => ({ country: d?.country || '', iso2: String(d?.iso2
  * G12 L10: the trips around what is booked, pushed through buildCandidates'
  * own `push`.
  *   - Booked stays are every trip's first stops with their own nights (a
- *     booking is not Carta's to resize). Nights the stays leave open go to
+ *     booking is not Viantra's to resize). Nights the stays leave open go to
  *     one more place near the first stay, one trip per such place; with
  *     none near, the stays alone.
  *   - Only a flight: the trips are built from the places near the town it

@@ -20,7 +20,7 @@
  * (affiliateClickOf), so a link built here is counted without a script of its
  * own. No partner widget, no partner script, no cookie.
  *
- * Rules the call sites keep (PRODUCT.md, I15): Carta's own figure is shown
+ * Rules the call sites keep (PRODUCT.md, I15): Viantra's own figure is shown
  * before the link; one door per cost line; links are never sorted by what they
  * pay. The helper cannot enforce order, so partnerLinkProps never reorders
  * and partnerLinks() keeps the caller's order.

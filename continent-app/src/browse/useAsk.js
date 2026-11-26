@@ -1,5 +1,5 @@
 /*
- * Ask Carta's state for one panel (T558): the vocabulary, the question, its
+ * Ask Viantra's state for one panel (T558): the vocabulary, the question, its
  * Intent, the facts and the facts-only answer, and the written answer as it
  * streams. The stages are the pure modules in lib/ask/; this hook only
  * loads their data, holds the question and keeps the written answer to the
@@ -16,7 +16,7 @@ import { buildPack } from '../lib/ask/context.js';
 import { writeAnswer } from '../lib/ask/generate.js';
 import { useAiStyle } from '../hooks/useAiStyle.js';
 
-/** The suggested questions, each a question type Carta answers well. */
+/** The suggested questions, each a question type Viantra answers well. */
 export const EXAMPLE_KEYS = ['ask.ex.hike', 'ask.ex.budget', 'ask.ex.warm', 'ask.ex.nocar',
   'ask.ex.lake', 'ask.ex.compare', 'ask.ex.when', 'ask.ex.plan'];
 

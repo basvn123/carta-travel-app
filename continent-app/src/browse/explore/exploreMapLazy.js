@@ -22,7 +22,7 @@ export const DRAWER_MAX = 60;
 // Map switch, unless the reader saves data or sits on a slow line. The
 // basemap's host is warmed at the same moment (here, not in index.html, so a
 // visit that never reaches Explore opens no connection to it). G12: the
-// Carta basemap's tiles, glyphs and style live on the data host
+// Viantra basemap's tiles, glyphs and style live on the data host
 // (src/lib/map/cartaMapStyle.js); CARTO is only the fallback, so it is not
 // warmed.
 const MAP_HOSTS = ['https://data.carta-europetravel.com'];

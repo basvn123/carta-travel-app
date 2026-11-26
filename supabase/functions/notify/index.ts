@@ -1,5 +1,5 @@
 /**
- * notify, Carta's opt-in emails (T944): trip reminders and price drops on
+ * notify, Viantra's opt-in emails (T944): trip reminders and price drops on
  * saved places, sent through Resend's HTTP API, only to accounts that turned
  * the switch on (public.email_prefs, migration 060).
  *
@@ -21,7 +21,7 @@
  * (unique on user, kind, ref); a failed send removes the claim, so the next
  * run tries again and a success is never repeated.
  *
- * Secrets: RESEND_API_KEY, NOTIFY_FROM ("Carta <trips@carta-europetravel.com>"),
+ * Secrets: RESEND_API_KEY, NOTIFY_FROM ("Viantra <trips@carta-europetravel.com>"),
  * NOTIFY_SECRET (any long random string, also the vault secret
  * notify_secret), APP_URL (optional, default https://www.carta-europetravel.com).
  * SUPABASE_URL, SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY are set by the

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "about": "T550: the Ask Carta golden set. Each case is a question a traveller types and the Intent it must parse to. Only the keys a case names are checked (a subset match), so a case says what matters and nothing else. Dates resolve against now = 2026-10-22. expectAny: for retrieval recall, at least one of these ids must be in the top ten.",
+  "about": "T550: the Ask Viantra golden set. Each case is a question a traveller types and the Intent it must parse to. Only the keys a case names are checked (a subset match), so a case says what matters and nothing else. Dates resolve against now = 2026-10-22. expectAny: for retrieval recall, at least one of these ids must be in the top ten.",
   "now": "2026-10-22",
   "cases": [
     { "q": "hiking base in the alps in july", "lang": "en", "type": "find", "facets": { "vibe": "hiking", "area": "alps", "month": 7 }, "expectAny": ["gem:chamonix", "gem:zermatt", "gem:interlaken", "INN"] },

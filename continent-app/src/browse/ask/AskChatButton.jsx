@@ -6,9 +6,9 @@ import { durationMs } from '../../lib/motion.js';
 import '../../styles/76-ask-door.css';
 
 /**
- * Ask Carta's doors and its one host (T570, made app-wide by T574).
+ * Ask Viantra's doors and its one host (T570, made app-wide by T574).
  *
- * AskChatDoor: a small "Ask Carta" button that opens (or closes) the one
+ * AskChatDoor: a small "Ask Viantra" button that opens (or closes) the one
  * chat, wherever it stands; its selected state follows the chat.
  *
  * AskChatHost: the chat itself, loaded on the first open (AskChat.jsx),

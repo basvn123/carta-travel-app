@@ -17,6 +17,6 @@ export function dayIncludesText(t, parts = DAY_PARTS) {
   const joined = words.join(` ${t('dest.dayPartJoin')} `);
   const text = t('dest.dayIncludes', { parts: joined });
   // The parts are written mid-sentence (lower case); the sentence opens with
-  // a capital in every language Carta speaks.
+  // a capital in every language Viantra speaks.
   return text.charAt(0).toLocaleUpperCase() + text.slice(1);
 }

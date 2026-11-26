@@ -3,7 +3,7 @@
 //     tripsStore.startNew every time): an open draft too empty to be listed
 //     (answers, no trip made) is cleared, so its old `answered` cannot
 //     block the new plan's words; a draft with a trip in it stays listed.
-//   - Tell Carta's words never overwrite a screen's answer, but words typed
+//   - Tell Viantra's words never overwrite a screen's answer, but words typed
 //     again replace what the earlier words answered (screenAnswered).
 //   - The way of travel (choices.transport_mode) seeds every leg's mode in
 //     Getting there, and a trip-finder trip priced on a flight flies there

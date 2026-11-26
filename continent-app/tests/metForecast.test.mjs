@@ -1,4 +1,4 @@
-// T483: MET Norway's time series as Carta's daily forecast rows.
+// T483: MET Norway's time series as Viantra's daily forecast rows.
 // Run: npm test (continent-app/). A hand-made payload: no network.
 import test from "node:test";
 import assert from "node:assert/strict";

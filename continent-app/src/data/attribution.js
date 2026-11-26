@@ -2,7 +2,7 @@
  * User-facing data credits, derived from docs/tos/data_licenses.md.
  *
  * One entry per external source whose license requires a visible credit for
- * the data Carta actually shows (CC BY, CC BY-SA, ODbL, NLOD, portal terms).
+ * the data Viantra actually shows (CC BY, CC BY-SA, ODbL, NLOD, portal terms).
  * Sources with no credit requirement (CC0 Wikidata, OVapi, Trafiklab; the
  * directly harvested carrier fares) are deliberately absent; the ledger is
  * the full record.
@@ -71,7 +71,7 @@ export const ATTRIBUTIONS = [
     // Not a new source: our own stored copies of the two above (T051,
     // data_licenses.md section 14). Listed so the Data sources screen says
     // plainly that the files are copies we serve, under each file's licence.
-    source: 'Carta image copies',
+    source: 'Viantra image copies',
     license: 'Per-file, as the original',
     credit: 'Photographs served from cdn.carta-europetravel.com are resized '
       + 'copies of Wikimedia Commons and Geograph files, each credited to '

@@ -126,5 +126,12 @@ export async function buildIcons() {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  // K1 (decision 0018, 2026-11-26): the icons are the Viantra arch from the
+  // signed-off kit in brand/viantra/. This script draws the old blaze, so a
+  // plain run would put the old mark back next to the new name.
+  if (!process.argv.includes('--legacy-blaze')) {
+    console.error('icons.mjs draws the retired blaze. The icons come from brand/viantra/ (see its README). Pass --legacy-blaze to run it anyway.');
+    process.exit(1);
+  }
   buildIcons().then((m) => { console.log(m.join('\n')); }).finally(closeBrowser);
 }

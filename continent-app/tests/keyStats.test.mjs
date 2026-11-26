@@ -37,7 +37,7 @@ test('when: a month, the Explore month filter and any time', () => {
   assert.deepEqual(resolveWhen({ dateFlex: 'month', departDate: '2026-11-03' }), { kind: 'month', month: 11, months: [11] });
   assert.equal(resolveWhen({ dateFlex: 'month', departDate: '2026-11-03', xm: 2 }).month, 2);
   assert.equal(resolveWhen({ dateFlex: 'any', departDate: '2026-11-03', ownDates: true }).kind, 'any');
-  // Carta's own default dates are not a choice.
+  // Viantra's own default dates are not a choice.
   assert.equal(resolveWhen({ departDate: '2026-11-03', returnDate: '2026-11-10', ownDates: false }).kind, 'any');
   assert.equal(whenMonth(resolveWhen({})), null);
 });

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Blaze } from '../components/ui/Blaze.jsx';
+import { BrandMark, BrandWordmark } from '../components/BrandMarks.jsx';
 import { useAuth } from './AuthContext.jsx';
 import { authErrorText } from './authErrors.js';
 import { MIN_PASSWORD_LENGTH, passwordContextWord } from '../lib/passwordStrength.js';
@@ -45,8 +45,8 @@ export function ResetPasswordScreen() {
     <div className="auth-overlay auth-overlay-solid">
       <div className="auth-modal">
         <div className="auth-brand">
-          <Blaze size="md" />
-          <span className="auth-brand-name">Carta</span>
+          <BrandMark className="auth-brand-mark" />
+          <span className="auth-brand-name"><BrandWordmark /></span>
         </div>
 
         {done ? (

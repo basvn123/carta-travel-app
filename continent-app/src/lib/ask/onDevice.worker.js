@@ -1,5 +1,5 @@
 /*
- * Ask Carta, on device (T557): the Web Worker that runs the open model.
+ * Ask Viantra, on device (T557): the Web Worker that runs the open model.
  *
  * WebLLM (@mlc-ai/web-llm, Apache-2.0) does the WebGPU work here, off the
  * main thread, so the map and the panel stay smooth while the model loads

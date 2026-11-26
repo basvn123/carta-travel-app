@@ -265,7 +265,7 @@ export function checkedText(t, checked, lang = 'en', now = Date.now()) {
 /** A flight's stops in words: "Direct", "1 stop", "2 stops". */
 export const stopsText = (t, n) => (n == null ? '' : n === 0 ? t('flight.direct') : n === 1 ? t('flight.stop1') : t('flight.stops', { n }));
 
-/** Carta's pick on a receipt row, in a few words. */
+/** Viantra's pick on a receipt row, in a few words. */
 export function pickLine(slot, { t, airline = (c) => c }) {
   if (slot.owner === 'you') return t('tf.rc.yours');
   const p = slot.pick;
@@ -310,7 +310,7 @@ export function airportTowns(data, origin = null) {
   return [...new Set(towns)];
 }
 
-/** The places the traveller named (T859), as chips that reopen Tell Carta. */
+/** The places the traveller named (T859), as chips that reopen Tell Viantra. */
 export function placeChips(settings) {
   return (settings.places || [])
     .map((p) => ({ id: `place:${p.kind}:${p.id}`, q: 'tell', label: p.kind === 'place' ? cityLabel(p.name) : p.name }))

@@ -109,7 +109,7 @@ for (const f of files) {
     called.add(m[1]);
   }
   // useCredit's openPasses(reason) is paywall.require(reason) one hop away:
-  // the Carta bot's `credit.openPasses('plans')` and, since ROADMAP H14,
+  // the Viantra bot's `credit.openPasses('plans')` and, since ROADMAP H14,
   // `credit.openPasses('ground')` under its events switch.
   for (const m of src.matchAll(/\.openPasses\('([^']+)'\)/g)) {
     called.add(m[1]);

@@ -151,7 +151,7 @@ export function mountainHeadline(mountain, t, countryName) {
   // The range if it has one, the country otherwise. Deliberately NOT the
   // nearest priced town: that field exists to say where you would sleep, and
   // "Teide is a volcano in Tenerife South" reads as a mistake because the
-  // nearest thing Carta prices is an airport.
+  // nearest thing Viantra prices is an airport.
   const place = mountain.range || countryName || '';
   if (!place) return t('mtn.headKind', { name: mountain.name, kind });
   return t('mtn.headKindPlace', { name: mountain.name, kind, place });

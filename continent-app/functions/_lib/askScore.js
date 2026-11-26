@@ -1,5 +1,5 @@
 /**
- * askScore.js: dense scoring for Ask Carta (T551).
+ * askScore.js: dense scoring for Ask Viantra (T551).
  *
  * Two stages over one source's vectors (public/search/ask/vectors-<src>.*):
  *   1. Hamming distance between the query's sign bits and each row's .b1

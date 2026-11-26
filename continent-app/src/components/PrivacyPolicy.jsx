@@ -26,20 +26,20 @@ export function PrivacyPolicy({ onClose }) {
             The controller of your personal data is the person or company
             named in the Imprint, which gives the name and address. Write to
             {' '}<a href={`mailto:${CONTACT}`}>{CONTACT}</a> about anything in
-            this policy. Carta has no data protection officer, because the law
+            this policy. Viantra has no data protection officer, because the law
             does not require one for a service of this size and kind.
           </p>
 
-          <h3>What Carta collects</h3>
+          <h3>What Viantra collects</h3>
           <p>
             Without an account, your trips, day plans and preferences stay on
             your device, in your browser's local storage.
           </p>
           <p>
-            With an account, Carta stores your email address, the name and
+            With an account, Viantra stores your email address, the name and
             profile you enter, the trips and day plans you save, the people
             you share them with or plan them with, your friends, any pass you
-            buy, how many AI requests you have used, your Ask Carta questions
+            buy, how many AI requests you have used, your Ask Viantra questions
             and answers, the photos and tracks you upload, your email choices
             and price alerts, and any feedback or guide report you send. No
             advertising identifiers, no tracking pixels, no sale of data to
@@ -47,7 +47,7 @@ export function PrivacyPolicy({ onClose }) {
             the destination pages and one trip work without one.
           </p>
           <p>
-            Signed in, your Ask Carta conversations are kept in your account
+            Signed in, your Ask Viantra conversations are kept in your account
             so you can return to them on another device. They are part of the
             file you can download under "Your rights", and they are deleted
             with your account.
@@ -60,30 +60,30 @@ export function PrivacyPolicy({ onClose }) {
             and each file your browser asks for.
             Accounts and saved trips are hosted on Supabase (EU-hosted Postgres).
             Signing in with Google shares your Google account's name and email
-            with Carta and nothing else. Walking and driving routes are computed
+            with Viantra and nothing else. Walking and driving routes are computed
             by the public OSRM/FOSSGIS routing service and address search by
             OpenStreetMap Nominatim; both receive only the coordinates or the
             address text you searched, never your identity. If you ask the
             Destinations tab to use your location, the browser asks you first,
             and the coordinate it returns goes to Nominatim to be named and
             nowhere else. It is not stored and it does not leave the session.
-            Live research on a town Carta has not covered sends the town's
+            Live research on a town Viantra has not covered sends the town's
             area to OpenStreetMap's Overpass service. Your browser also fetches
             files straight from other servers: map tiles from CARTO and
             OpenStreetMap, photos and place descriptions from Wikimedia and
             Geograph, flags from flagcdn.com and webcam views from
             foto-webcam.eu. Each of them sees your IP address
             for that request, as with any web page, and receives nothing else
-            from Carta. Opening a booking or
+            from Viantra. Opening a booking or
             Google Maps link takes you to that provider under its own policy.
           </p>
           <p>
-            Passes are paid on Stripe's own checkout page. Carta gives Stripe
+            Passes are paid on Stripe's own checkout page. Viantra gives Stripe
             your account email and an account reference; your card details go
-            to Stripe and never reach Carta. Stripe reports back what you
+            to Stripe and never reach Viantra. Stripe reports back what you
             bought, what you paid, the country of your billing address and its
-            own fee, and Carta keeps that with your pass. Stripe handles the
-            payment for Carta and also acts as a controller in its own right
+            own fee, and Viantra keeps that with your pass. Stripe handles the
+            payment for Viantra and also acts as a controller in its own right
             for fraud prevention and its legal duties, under its own privacy
             policy.
           </p>
@@ -108,11 +108,11 @@ export function PrivacyPolicy({ onClose }) {
             Google does not use what you send to train its models.
           </p>
           <p>
-            Ask Carta answers in two steps. Code first builds an answer from
-            Carta's own data. A model may then write a few sentences: your
-            question and up to 14 short notes from Carta's data are sent to
+            Ask Viantra answers in two steps. Code first builds an answer from
+            Viantra's own data. A model may then write a few sentences: your
+            question and up to 14 short notes from Viantra's data are sent to
             Cloudflare Workers AI, which runs the open models named on the
-            "How Carta uses AI" page on Cloudflare's network. Carta does not
+            "How Viantra uses AI" page on Cloudflare's network. Viantra does not
             add your account or email address to that request. Cloudflare may
             process it outside the European Economic Area, under its Data
             Processing Addendum with the EU-US Data Privacy Framework and
@@ -123,7 +123,7 @@ export function PrivacyPolicy({ onClose }) {
             device.
           </p>
           <p>
-            When an AI request fails, Carta keeps a record of it so outages can
+            When an AI request fails, Viantra keeps a record of it so outages can
             be found and fixed: the function that failed, the error code, the
             HTTP status and your account, for 90 days. A screen that crashes is
             recorded the same way, as a crash with your account and nothing
@@ -134,7 +134,7 @@ export function PrivacyPolicy({ onClose }) {
             6(1)(f)).
           </p>
           <p>
-            When you open someone else's public guide, Carta counts the view
+            When you open someone else's public guide, Viantra counts the view
             once a day. To tell readers apart it stores a hash of your account,
             or of your IP address when you are signed out, mixed with a secret
             value and the date, so the same reader hashes differently every
@@ -143,16 +143,16 @@ export function PrivacyPolicy({ onClose }) {
             authors how often their guides are read (Article 6(1)(f)).
           </p>
           <p>
-            Carta also counts, per day, how many trips were finished in the trip
+            Viantra also counts, per day, how many trips were finished in the trip
             wizard, how many partner links were pressed and how many AI requests
             were sent. These are daily totals with no account, address or device
             attached, so they are not personal data.
           </p>
 
           <p>
-            Emails from Carta are sent through Resend, an email delivery
-            service that sends them on Carta's behalf from the United States.
-            Carta emails you only in these cases: the confirmation link when
+            Emails from Viantra are sent through Resend, an email delivery
+            service that sends them on Viantra's behalf from the United States.
+            Viantra emails you only in these cases: the confirmation link when
             you join the waitlist or the newsletter, the newsletter once you
             have confirmed, the trip reminders and price-drop emails you
             switch on in your account, and a price alert you saved and
@@ -185,7 +185,7 @@ export function PrivacyPolicy({ onClose }) {
 
           <h3>Legal basis for processing</h3>
           <p>
-            Carta processes your personal data under the following legal grounds
+            Viantra processes your personal data under the following legal grounds
             under Article 6 of the GDPR:
           </p>
           <table className="privacy-table">
@@ -228,7 +228,7 @@ export function PrivacyPolicy({ onClose }) {
                 <td>Consent (Article 6(1)(a))</td>
               </tr>
               <tr>
-                <td>Your Ask Carta questions and saved chats</td>
+                <td>Your Ask Viantra questions and saved chats</td>
                 <td>Answering your question; keeping your chats in your account</td>
                 <td>Contract (Article 6(1)(b))</td>
               </tr>
@@ -264,7 +264,7 @@ export function PrivacyPolicy({ onClose }) {
           </p>
           <p>
             The one such log is the pass offer log. When the pass offer
-            opens, closes or sends you to checkout, Carta writes down which of
+            opens, closes or sends you to checkout, Viantra writes down which of
             the three happened, why the offer appeared and which pass you held,
             with your account if you are signed in. These events are kept for
             180 days and then deleted.

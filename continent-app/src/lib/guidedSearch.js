@@ -1,8 +1,8 @@
 /*
  * The guided search (T442), the logic half. The owner asked for a search
- * people would use, free, that only lets a traveller ask what Carta can
+ * people would use, free, that only lets a traveller ask what Viantra can
  * answer (2026-10-13). No model runs here and nothing is sent anywhere:
- * the question is parsed against a closed vocabulary built from Carta's own
+ * the question is parsed against a closed vocabulary built from Viantra's own
  * data (the twenty vibes and forty areas of public/search/guided.json, the
  * catalogue's places and countries, the months, the budget steps and five
  * extras), and the answer is Explore's own list under those filters.
@@ -291,7 +291,7 @@ export const VIBE_WORDS_I18N = {
     views: ['panorama', 'vista'], city: ['citta'], oldtown: ['centro storico', 'storico'], adventure: ['avventura'],
   },
 };
-// "Cheap" in a budget app is a question Carta can answer: the cheapest
+// "Cheap" in a budget app is a question Viantra can answer: the cheapest
 // first (T444; the check found "cheap beach in greece" refused).
 export const CHEAP_WORDS = {
   en: ['cheap', 'cheapest', 'budget', 'affordable', 'inexpensive', 'low cost', 'on a budget', 'cheapest first'],
@@ -316,7 +316,7 @@ const KIND_RANK = { vibe: 0, area: 1, country: 2, month: 3, sort: 4, extra: 5, p
 export const words = (s) => foldName(s).split(/[\s,;/.!?]+/).filter(Boolean);
 
 /**
- * The closed vocabulary for one language: every phrase Carta can answer,
+ * The closed vocabulary for one language: every phrase Viantra can answer,
  * folded, mapped to the facet it sets. Built once per language and data.
  *
  *   ctx: { t, lang, guided, rows, countries: [[iso2, name]], index }
@@ -518,7 +518,7 @@ function mergeParts(base, part) {
 
 /**
  * What the listbox offers for the text typed so far. Every option is a
- * question Carta can answer:
+ * question Viantra can answer:
  *
  *   { key, parts }          apply these facets
  *   { key, open: id }       open this place's page

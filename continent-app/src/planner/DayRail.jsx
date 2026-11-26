@@ -27,7 +27,7 @@ import { fmtKm } from './dayFormat.js';
  *   rows       [{ key, label, value }] the answers that shape the day
  *   days       the builder's preview ([{ no, date, town, destId, clock }]), or null
  *   onTownDay  (destId) shows that town's places, for a day with none yet
- *   footer     the card's last word (the Carta hand-off on Places)
+ *   footer     the card's last word (the Viantra hand-off on Places)
  *   empty      nothing answered yet: the card says what it will hold
  */
 export function DayRail({ figure = null, rows = [], days = null, onTownDay = null, footer = null, empty = false }) {

@@ -8,10 +8,10 @@ import '../styles/95-ai-mark.css';
 
 /**
  * The "written by AI" line (T1215, rows T1156-c and T1156-d, ROADMAP F8).
- * One small line under every text a model wrote: Ask Carta's written
+ * One small line under every text a model wrote: Ask Viantra's written
  * sentences, a day plan's summary and its stops' reasons, and the town
  * suggestions. The EU AI Act transparency duty (Article 50) is that a
- * traveller knows the text was written by a model; the "How Carta uses AI"
+ * traveller knows the text was written by a model; the "How Viantra uses AI"
  * page (/?legal=ai, a new tab so the chat or plan is kept) says which model
  * and how it is checked.
  *

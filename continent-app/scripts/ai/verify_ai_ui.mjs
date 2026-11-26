@@ -1,7 +1,7 @@
 // Headless verify for the AI day planner UI against a running
 // `vite preview` (default http://localhost:$CARTA_PORT or 4173). The old
 // scenario A drove AiDayPlanModal, which was deleted with T1163-b (it had not
-// been mounted since the Carta bot replaced it):
+// been mounted since the Viantra bot replaced it):
 //
 //   B. applied AI schedule (injected into localStorage the way applyAiResult
 //      writes it): the schedule card renders in the rail and the external
@@ -110,27 +110,27 @@ const browser = await chromium.launch();
   check('B: bot stops laid into the route list', (await page.locator('.dayr-row').count()) >= 3);
   check('B: discovery pin on map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
   check('B: numbered route pins on map', (await page.locator('.trip-pin').count()) >= 3);
-  check('B: the Carta bot is reachable from the map', await page.locator('.dayws-bot-fab').first().isVisible().catch(() => false));
+  check('B: the Viantra bot is reachable from the map', await page.locator('.dayws-bot-fab').first().isVisible().catch(() => false));
   await page.screenshot({ path: `${SHOTS}/b1-applied-desktop.png` });
   await page.close();
 }
 
-/* ---- C: mobile (390x844): applied state + the Carta bot ---- */
+/* ---- C: mobile (390x844): applied state + the Viantra bot ---- */
 {
   const page = await boot(browser, { viewport: { width: 390, height: 844 }, withAiState: true });
   check('C: mobile discovery pin on map', (await page.locator('.dem-pin.ai-disc').count()) >= 1);
   await page.waitForTimeout(800);
   await page.screenshot({ path: `${SHOTS}/c1-applied-mobile.png` });
-  // Re-planning is the Carta bot's first predefined ask, reachable from
+  // Re-planning is the Viantra bot's first predefined ask, reachable from
   // the map on every tab rather than from one button inside the plan.
   const fab = page.locator('.dayws-bot-fab').first();
   if (await fab.isVisible().catch(() => false)) {
     await fab.click();
     await page.waitForTimeout(600);
-    check('C: mobile Carta bot opens', (await page.locator('.dayws-bot-item').count()) >= 1);
+    check('C: mobile Viantra bot opens', (await page.locator('.dayws-bot-item').count()) >= 1);
     await page.screenshot({ path: `${SHOTS}/c2-bot-mobile.png` });
   } else {
-    check('C: mobile Carta bot reachable', false);
+    check('C: mobile Viantra bot reachable', false);
   }
   await page.close();
 }

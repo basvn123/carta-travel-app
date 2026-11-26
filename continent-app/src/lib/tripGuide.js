@@ -1,7 +1,7 @@
 /**
  * tripGuide.js, helpers for the guided ("Let us guide you") trip builder:
  * country/flag grouping, short human "insight" lines for cities, worth-a-visit
- * tiers, city pairings, and Carta's own stay designer.
+ * tiers, city pairings, and Viantra's own stay designer.
  */
 import { bandOf } from './rating.js';
 import { gemScore } from './trip_planner_pricing.js';
@@ -199,12 +199,12 @@ export function cityCompanions(id, dest, destinations, { maxKm = 170, limit = 2 
 }
 
 /**
- * Carta designs the stays itself: picks the strongest cities in the chosen
+ * Viantra designs the stays itself: picks the strongest cities in the chosen
  * countries for THIS traveller (gemScore + interest fit), chains them into a
  * geographically sensible route from the arrival anchor, and splits the
  * available nights (cities get 2-3, small gems 1-2).
  *
- * `transport` = 'car' means the traveller is driving the whole trip, so Carta
+ * `transport` = 'car' means the traveller is driving the whole trip, so Viantra
  * won't auto-suggest islands with no fixed road link to the mainland (you can't
  * drive there without a ferry) unless nothing else is available.
  *
@@ -217,7 +217,7 @@ export function designStays({ destinations, countries, interests, anchorDest, an
     .map(([id, d]) => ({ id, dest: d, score: gemScore(d) + interestFitScore(d, interests) * 2.5 }));
   if (!pool.length) return [];
 
-  // On a car trip, drop islands Carta can't route to overland (road_connected
+  // On a car trip, drop islands Viantra can't route to overland (road_connected
   // === false = a sea crossing, same signal legTransportOptions uses). Keep the
   // full pool if that leaves nothing, so a deliberately all-island region (e.g.
   // only Sicily selected) is still designed rather than coming back empty.
@@ -248,7 +248,7 @@ export function designStays({ destinations, countries, interests, anchorDest, an
   }
 
   // Cities the traveller insists on come next, nearest-to-cursor first, before
-  // Carta spends nights on its own suggestions.
+  // Viantra spends nights on its own suggestions.
   const must = (mustIncludeIds || []).filter((id) => id !== anchorId);
   while (remaining > 0 && must.length && picks.length < maxStops) {
     must.sort((a, b) => {

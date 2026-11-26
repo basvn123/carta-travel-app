@@ -129,9 +129,9 @@ export function TripOverlays({
           onClose={() => setAskDays(false)}
           onPlan={(how) => {
             setAskDays(false);
-            // T674: Carta plans: the first day opens with the plan at work;
+            // T674: Viantra plans: the first day opens with the plan at work;
             // planning yourself: the days overview with the ideas. T896: the
-            // Carta bot: the first day with the bot open beside it.
+            // Viantra bot: the first day with the bot open beside it.
             onPlanDay(how === 'carta'
               ? { planId: tp.planId, stopIndex: 0, dayIndex: 0, autoFill: true }
               : how === 'bot'

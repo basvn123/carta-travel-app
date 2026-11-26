@@ -154,7 +154,7 @@ export function ContentReports({ queue, onOpenUser, unpublish, complaints, decis
                   {r.contactEmail && (
                     <a
                       className="adminpage-btn"
-                      href={`mailto:${r.contactEmail}?subject=${encodeURIComponent('Your report about a Carta guide')}`}
+                      href={`mailto:${r.contactEmail}?subject=${encodeURIComponent('Your report about a Viantra guide')}`}
                     >
                       {t('admin.reportsReply')}
                     </a>

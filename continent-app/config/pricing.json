@@ -1,5 +1,5 @@
 {
-  "_about": "The one configuration of every rule that moves a price (plan \"Carta prijslogica Explore\" section 6.1, phase F3, T690). App and pipeline read this file; a number that moves a price and is not here is a bug (invariant V13, tests/priceConfig.test.mjs). Each rule: value, unit, kind (measured, sourced, estimate), source, date (when the value was set), review (when to check it again) and the test that pins it.",
+  "_about": "The one configuration of every rule that moves a price (plan \"Viantra prijslogica Explore\" section 6.1, phase F3, T690). App and pipeline read this file; a number that moves a price and is not here is a bug (invariant V13, tests/priceConfig.test.mjs). Each rule: value, unit, kind (measured, sourced, estimate), source, date (when the value was set), review (when to check it again) and the test that pins it.",
   "version": 1,
   "rules": {
     "stay.fees": {
@@ -11,7 +11,7 @@
       },
       "unit": "percent / fraction of a night / nights",
       "kind": "estimate",
-      "source": "Carta estimate of Airbnb guest fees (T534); the stays wire ships the same table as meta.stays.fees",
+      "source": "Viantra estimate of Airbnb guest fees (T534); the stays wire ships the same table as meta.stays.fees",
       "date": "2026-10-21",
       "review": "2027-04-24",
       "test": "tests/stayPrice.test.mjs"
@@ -34,7 +34,7 @@
       "value": 2,
       "unit": "people",
       "kind": "estimate",
-      "source": "Carta rule: a double room sleeps two (T534)",
+      "source": "Viantra rule: a double room sleeps two (T534)",
       "date": "2026-10-21",
       "review": "2027-04-24",
       "test": "tests/stayPrice.test.mjs"
@@ -43,7 +43,7 @@
       "value": 0.5,
       "unit": "beds per child",
       "kind": "estimate",
-      "source": "Carta rule: two children share a dorm bed (T534)",
+      "source": "Viantra rule: two children share a dorm bed (T534)",
       "date": "2026-10-21",
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"
@@ -52,7 +52,7 @@
       "value": 2,
       "unit": "observations",
       "kind": "estimate",
-      "source": "Carta rule: a bed tier priced from this many scraped properties or fewer is shown as thinly measured (ROADMAP D10, T1075)",
+      "source": "Viantra rule: a bed tier priced from this many scraped properties or fewer is shown as thinly measured (ROADMAP D10, T1075)",
       "date": "2026-11-05",
       "review": "2027-05-05",
       "test": "tests/priceThin.test.mjs"
@@ -86,7 +86,7 @@
       },
       "unit": "month-day windows; days around Easter Sunday",
       "kind": "estimate",
-      "source": "Carta windows for the measured peak factors (T534); the pipeline measures single days (row T690-c)",
+      "source": "Viantra windows for the measured peak factors (T534); the pipeline measures single days (row T690-c)",
       "date": "2026-10-21",
       "review": "2027-04-24",
       "test": "tests/stayPrice.test.mjs"
@@ -196,7 +196,7 @@
       ],
       "unit": "ratio",
       "kind": "estimate",
-      "source": "Carta clamp on the lifestyle band scale (costIndex.js)",
+      "source": "Viantra clamp on the lifestyle band scale (costIndex.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -255,7 +255,7 @@
       },
       "unit": "per week (coffees per day)",
       "kind": "estimate",
-      "source": "Carta Easygoing preset (T474); coffees 0 to 1 by owner decision B8, 2026-10-24",
+      "source": "Viantra Easygoing preset (T474); coffees 0 to 1 by owner decision B8, 2026-10-24",
       "date": "2026-10-24",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -325,7 +325,7 @@
       },
       "unit": "per week (coffees per day)",
       "kind": "estimate",
-      "source": "Carta presets (T474); coffees by owner decision B8, 2026-10-24: one a day, none for Backpacker",
+      "source": "Viantra presets (T474); coffees by owner decision B8, 2026-10-24: one a day, none for Backpacker",
       "date": "2026-10-24",
       "review": "2027-04-24",
       "test": "tests/lifestyleSlider.test.mjs"
@@ -334,7 +334,7 @@
       "value": 3,
       "unit": "cocktails",
       "kind": "estimate",
-      "source": "Carta estimate (runtime_pricing.js)",
+      "source": "Viantra estimate (runtime_pricing.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -347,7 +347,7 @@
       },
       "unit": "share of an adult",
       "kind": "estimate",
-      "source": "Carta estimate (T579)",
+      "source": "Viantra estimate (T579)",
       "date": "2026-10-22",
       "review": "2027-04-24",
       "test": "tests/priceEngine.test.mjs"
@@ -356,7 +356,7 @@
       "value": 30,
       "unit": "EUR per baby per flight leg",
       "kind": "estimate",
-      "source": "Carta estimate of a low-cost lap-infant fee (T579)",
+      "source": "Viantra estimate of a low-cost lap-infant fee (T579)",
       "date": "2026-10-22",
       "review": "2027-01-24",
       "test": "tests/priceGolden.test.mjs"
@@ -384,7 +384,7 @@
       },
       "unit": "rides a person a day, by place class",
       "kind": "estimate",
-      "source": "Carta estimate (T714, price plan F8): a metro day is three hops, a city day two, a town or a village a return trip into the centre counted as one day ticket or one ride each way at most; a day pass caps it",
+      "source": "Viantra estimate (T714, price plan F8): a metro day is three hops, a city day two, a town or a village a return trip into the centre counted as one day ticket or one ride each way at most; a day pass caps it",
       "date": "2026-10-24",
       "review": "2027-04-24",
       "test": "tests/priceTransport.test.mjs"
@@ -444,7 +444,7 @@
       "value": 30,
       "unit": "km",
       "kind": "estimate",
-      "source": "Carta rule (T716, price plan F10): the toll layer's corridors are measured from the pipeline's start (meta.home); a drive that begins within this distance of it uses them, any other drive the flat car.model toll allowance",
+      "source": "Viantra rule (T716, price plan F10): the toll layer's corridors are measured from the pipeline's start (meta.home); a drive that begins within this distance of it uses them, any other drive the flat car.model toll allowance",
       "date": "2026-10-24",
       "review": "2027-04-24",
       "test": "tests/priceTransport.test.mjs"
@@ -462,7 +462,7 @@
       },
       "unit": "EUR per car per night by place class; km per car per day",
       "kind": "estimate",
-      "source": "Carta estimate (R4), kept at the low end on purpose: overnight parking is the cheaper of a hotel's car park and a public garage or resident-visitor zone; big-city centre garages run EUR 25-45 a 24 h (Paris, Amsterdam, Rome, Barcelona operator price lists 2026), mid-size cities EUR 10-20, towns EUR 5-10, villages and rural areas mostly free. 40 km a day is a short drive out and back from a base; fuel is that distance at car.model consumption and car.fuel_by_country",
+      "source": "Viantra estimate (R4), kept at the low end on purpose: overnight parking is the cheaper of a hotel's car park and a public garage or resident-visitor zone; big-city centre garages run EUR 25-45 a 24 h (Paris, Amsterdam, Rome, Barcelona operator price lists 2026), mid-size cities EUR 10-20, towns EUR 5-10, villages and rural areas mostly free. 40 km a day is a short drive out and back from a base; fuel is that distance at car.model consumption and car.fuel_by_country",
       "date": "2026-11-12",
       "review": "2027-05-12",
       "test": "tests/priceLifestyleFixes.test.mjs"
@@ -477,7 +477,7 @@
       },
       "unit": "EUR per person one way, km/h",
       "kind": "estimate",
-      "source": "Carta airport-transfer band (T051); one copy for runtime_pricing.js, groundFares.js and apply_airport_anchors.py (T691)",
+      "source": "Viantra airport-transfer band (T051); one copy for runtime_pricing.js, groundFares.js and apply_airport_anchors.py (T691)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -491,7 +491,7 @@
       },
       "unit": "EUR, km",
       "kind": "estimate",
-      "source": "Carta fare floors (groundFares.js)",
+      "source": "Viantra fare floors (groundFares.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -525,7 +525,7 @@
       },
       "unit": "EUR per km, EUR",
       "kind": "estimate",
-      "source": "Eurostar advance band, Rail & Sail through-ticket, LeShuttle and Irish Sea deck prices as Carta read them (groundFares.js)",
+      "source": "Eurostar advance band, Rail & Sail through-ticket, LeShuttle and Irish Sea deck prices as Viantra read them (groundFares.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -960,7 +960,7 @@
       },
       "unit": "EUR per km, km/h, hours",
       "kind": "estimate",
-      "source": "Carta curated national network profiles, 2026 (countryTransport.js)",
+      "source": "Viantra curated national network profiles, 2026 (countryTransport.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -975,7 +975,7 @@
       },
       "unit": "score points",
       "kind": "estimate",
-      "source": "Carta mode ranking (countryTransport.js)",
+      "source": "Viantra mode ranking (countryTransport.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"
@@ -1063,7 +1063,7 @@
       "value": 200,
       "unit": "km",
       "kind": "estimate",
-      "source": "Carta radius for airport-anchored places (runtime_pricing.js)",
+      "source": "Viantra radius for airport-anchored places (runtime_pricing.js)",
       "date": "2026-09-14",
       "review": "2027-04-24",
       "test": "tests/priceGolden.test.mjs"

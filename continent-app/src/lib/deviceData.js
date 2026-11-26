@@ -2,7 +2,7 @@
  * This device's copy of a traveller's own things, and how to remove it (T1054,
  * ROADMAP N5, audit P-09).
  *
- * Carta keeps trips, plans, bookings, lists and companions in local storage so
+ * Viantra keeps trips, plans, bookings, lists and companions in local storage so
  * they work signed out. Signing out does not touch them, which is right on the
  * traveller's own phone and wrong on a shared one: the next person would see
  * the bookings and the crew. They are not all in the account either (device

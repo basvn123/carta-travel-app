@@ -21,7 +21,7 @@ export function useDayTrip({ activities, countryInsights, data, destinations, pl
 
   // The stay address, entered ONCE (landing screen or in-plan), anchors the
   // whole day when it's actually in/near this city: the walking route starts
-  // at the traveller's door, Carta orders stops from there, and the Google
+  // at the traveller's door, Viantra orders stops from there, and the Google
   // Maps handoff includes it, it never has to be typed again.
   const stayAnchor = useMemo(() => {
     const p = plan?.stayPoint;

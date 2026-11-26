@@ -9,7 +9,7 @@ import { useMedia, useReveal } from './useHome.js';
 
 /**
  * The plans (T606, owner D9: they stay on the home page; the owner's Linear
- * pricing reference, in Carta's light colours). The three plans as columns
+ * pricing reference, in Viantra's light colours). The three plans as columns
  * split by hairlines, no boxes (the free sentence left the home page, owner
  * 2026-10-31, T959): name, price, what it is for, and
  * what it holds as a short tick list. One secondary door opens the prices;

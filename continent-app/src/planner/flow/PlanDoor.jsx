@@ -10,7 +10,7 @@ import { styleName } from '../../browse/styles/styleBits.jsx';
  * The door on Plan home (G12 plan rethink lane L5, decision §3.1): one line
  * ("Where do you start?", read on the device by Tell's parser once a trip
  * starts), Surprise me (or Show trips with text), three chips (a place, a
- * budget, something booked), what Carta knows from the style, and context
+ * budget, something booked), what Viantra knows from the style, and context
  * cards only when something stands behind them. No chat, no replies.
  *
  *   onStart({ text, seed, tell })  a new trip; `seed` a PlanSeed (the budget

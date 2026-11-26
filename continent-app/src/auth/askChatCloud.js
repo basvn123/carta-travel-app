@@ -1,4 +1,4 @@
-// Supabase reads and writes for Ask Carta's chats (T575; table ask_chats,
+// Supabase reads and writes for Ask Viantra's chats (T575; table ask_chats,
 // one row per chat per user, the turns as jsonb, deleted_at a tombstone).
 // See supabase/migrations/054_ask_chats.sql. Callers handle errors: a
 // project that has not run the migration yet degrades to the device only.

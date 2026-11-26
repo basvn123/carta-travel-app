@@ -156,7 +156,7 @@ export function pickIcons(layer, rows) {
  * the traveller wants rather than by the facet's name.
  *
  * Two titles from the spec are not here, on purpose (T183 report):
- * "Under two hours from an airport we price" (Carta does not price flights,
+ * "Under two hours from an airport we price" (Viantra does not price flights,
  * T272, and no row carries a distance to an airport) and "Quiet in August"
  * (no layer row carries crowding by month). "Traffic-free the whole way" is
  * worded as "Mostly away from traffic", because the carfree chip it saves is

@@ -142,7 +142,7 @@ export function RecordMapDialog({ title, onClose, children }) {
 /**
  * A trip's price for its party, the figure the trip planner prints when the
  * trip is opened: the estimate, the figure and the party. Whole euros on a list, the estimate
- * mark whenever Carta priced any of it.
+ * mark whenever Viantra priced any of it.
  */
 export function TripPrice({ figure, className = '', showUnit = false, unitValue = null }) {
   const { t } = useI18n();

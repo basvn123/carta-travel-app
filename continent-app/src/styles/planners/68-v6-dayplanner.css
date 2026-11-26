@@ -982,7 +982,7 @@
 .day-ws .dayt.is-untimed > li { grid-template-columns: 48px minmax(0, 1fr) auto; }
 .day-ws.is-page .dayt.is-untimed > li { grid-template-columns: 44px minmax(0, 1fr) auto; }
 
-/* A ticket on a stop: a price Carta knows, or that there is one. */
+/* A ticket on a stop: a price Viantra knows, or that there is one. */
 
 /* An empty day: the parts (or one line) and one primary. */
 

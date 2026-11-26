@@ -3,7 +3,7 @@
  * shared results format, as a data eval. It runs
  * scripts/validation/trails_external.py's run() in memory against the
  * committed reference list and baseline, so nothing is written. The gate:
- * the share of reference trails Carta publishes (coverage) and the share in
+ * the share of reference trails Viantra publishes (coverage) and the share in
  * its top band (v5 exceptional or excellent) must not fall below the
  * baseline in data/reports/validation/trails_external_baseline.json.
  */
@@ -49,7 +49,7 @@ print(json.dumps({"summary": p["summary"], "gate": p["gate"], "reference": p["re
     kind: 'data',
     status: g.ok ? 'pass' : 'fail',
     gated: true,
-    headline: { key: 'coverage', value: s.coverage, label: 'reference trails Carta publishes', higher_is_better: true },
+    headline: { key: 'coverage', value: s.coverage, label: 'reference trails Viantra publishes', higher_is_better: true },
     metrics,
     gate: {
       ok: g.ok,

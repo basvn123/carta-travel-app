@@ -22,7 +22,7 @@
 //               this day", not mounted while closed, and back when opened.
 //   cost        (T387) the cost fold is a receipt: every estimated figure
 //               carries the tilde and "est.", no line is a flight except
-//               Carta's own home flight (T518: its lines carry the airline
+//               Viantra's own home flight (T518: its lines carry the airline
 //               mark and Google Flights' fare, not an estimate), and the
 //               fact row's day figure is the receipt's day line.
 //   photos      each day carries a photo strip, every picture of it loaded,
@@ -222,7 +222,7 @@ for (const [label, sel] of [
 // The receipt (T387, brief row C10): every figure that is an estimate says so
 // with the tilde and "est." in words, no line is a flight, and the fact row's
 // day figure is the receipt's own day line (one day figure per page).
-// T518: Carta's home flight lines (an airline mark in the label) print
+// T518: Viantra's home flight lines (an airline mark in the label) print
 // Google Flights' fare to the cent and are not estimates, so they are left
 // out of the estimate check and out of the no-flight check.
 const receiptFigs = await page.locator('#sec-cost .itin-cost li:not(:has(.flt-mark)) b').allInnerTexts();

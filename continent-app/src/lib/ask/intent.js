@@ -1,5 +1,5 @@
 /*
- * Ask Carta, stage 1: a typed question becomes one Intent (T553). No model
+ * Ask Viantra, stage 1: a typed question becomes one Intent (T553). No model
  * and no network: this reads the question against the guided search's
  * closed vocabulary (lib/guidedSearch.js, T442) and adds what that one
  * cannot hold, the trip around the place: who goes, for how long, with how
@@ -506,7 +506,7 @@ export function parseIntent(text, ctx) {
   };
 }
 
-/** True when the Intent holds anything Carta can answer. */
+/** True when the Intent holds anything Viantra can answer. */
 export function intentIsEmpty(intent) {
   return !intent || (intent.type === 'find' && !Object.keys(intent.facets).length
     && !intent.monthRange && !Object.keys(intent.budget).length);

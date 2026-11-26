@@ -1,11 +1,11 @@
 /*
- * Ask Carta, stage 2: hybrid retrieval (T554). Two searches over the
+ * Ask Viantra, stage 2: hybrid retrieval (T554). Two searches over the
  * passages the ask index layer built (T551), fused by reciprocal rank:
  *
  *   sparse  BM25 in the browser (MiniSearch, public/search/ask/bm25.json,
  *           place names, blurbs, tags and the lexicon: exact names and
  *           words are never lost to a vector)
- *   dense   /api/ask, the open static model on Carta's own Function: the
+ *   dense   /api/ask, the open static model on Viantra's own Function: the
  *           question's meaning against destinations and their highlights,
  *           sights and trails, filtered on country or place first
  *

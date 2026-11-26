@@ -110,7 +110,7 @@ async function prerenderedHtml(shell) {
   const { spliceShell } = await import(pathToFileURL(path.join(appRoot, 'src/lib/prerenderShell.js')).href);
   const page = renderPage({
     path: '/spain/trails/176172-estels-del-sud',
-    title: 'Estels del Sud, a walk in Catalonia | Carta',
+    title: 'Estels del Sud, a walk in Catalonia | Viantra',
     description: 'A fixture page for the CSP check.',
     h1: 'Estels del Sud',
     crumbs: [{ name: 'Spain', path: '/spain' }, { name: 'Walks', path: '/spain/trails' }],

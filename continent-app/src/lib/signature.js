@@ -169,7 +169,7 @@ export function monthCells(values, { threshold = null, scale = TEMP_SCALE_C } = 
 
 /**
  * The altitude ruler: 0 to 5,000 m, a round figure just above Mont Blanc
- * (4,806 m in the mountain wire, the highest summit Carta publishes), so the
+ * (4,806 m in the mountain wire, the highest summit Viantra publishes), so the
  * Alps' top fills the bar and a 900 m hill is a fifth of it.
  */
 export const ALT_SCALE_M = 5000;

@@ -87,7 +87,7 @@ export function QuestionBody({ id, settings, commit, doneLabel, showHelp = true 
 }
 
 /**
- * "Tell Carta about your trip": one free field and a way to add a booking
+ * "Tell Viantra about your trip": one free field and a way to add a booking
  * (after Layla's prompt box). T858: the words are read as they are typed
  * (lib/plan/parseTrip.js, a beat after the last key) and shown under the
  * field as chips, every answer a selected chip and every setup question

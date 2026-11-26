@@ -112,7 +112,7 @@ create policy "trip_shares_delete_own" on public.trip_shares
 --
 -- WHAT SCOPE 'memory' ADDS: the story, the highlights, the rating, the
 -- photographs, and memory.spend. That last one is the owner's own summary of
--- what the trip cost them, which is Carta's whole subject and theirs to
+-- what the trip cost them, which is Viantra's whole subject and theirs to
 -- share. It is not the ledger, which stays behind regardless.
 create or replace function public.project_trip_payload(
   payload jsonb,

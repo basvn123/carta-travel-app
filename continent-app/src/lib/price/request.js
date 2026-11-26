@@ -1,5 +1,5 @@
 /**
- * The price request (T662, plan "Carta prijslogica Explore" section 3 and
+ * The price request (T662, plan "Viantra prijslogica Explore" section 3 and
  * 4.2): one object holding every choice that can move a price. Every screen
  * asks the engine the same question with it; a choice that is not in here
  * must not move a price anywhere.

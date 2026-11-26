@@ -1,7 +1,7 @@
 /**
  * Every walk on a day plan, checked before it is drawn (T433).
  *
- * The owner's rule: Carta must never send somebody down a route they get
+ * The owner's rule: Viantra must never send somebody down a route they get
  * stuck on. Language models are measurably bad at this (an audit of AI
  * itineraries found an error in nine of ten, a quarter with impossible
  * routing), so no model draws a route here. The order of a day comes from

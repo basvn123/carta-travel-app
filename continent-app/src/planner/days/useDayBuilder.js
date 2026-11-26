@@ -72,7 +72,7 @@ export function useDayBuilder({
 
   const startExplorePlanning = () => openBuiltPlan(builderDays, '');
 
-  /* ---- Carta chat planner (landing): answers -> AI day -> new plan ---- */
+  /* ---- Viantra chat planner (landing): answers -> AI day -> new plan ---- */
 
   // The chat's chosen town, resolved to its destination record and full POI
   // list. Everything the chat does hangs off this one lookup.
