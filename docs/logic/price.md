@@ -213,11 +213,11 @@ IDs are catalogue IDs only for now: the `// LOGIC: <ID>` / `# LOGIC: <ID>` tags 
 
 ### PRICE-025 Fare freshness
 - Decides: a stale fare is never shown as current.
-- Rule: a swept fare is ignored when older than: 5 days for a date up to 14 days ahead, 16 days for later dates, 32 days for dates more than 181 days ahead.
-- Constant: `flights.max_age_days` in `continent-app/config/pricing.json:1038` = { near: 5, far: 16, far_after_days: 14, late: 32, late_after_days: 181 }
+- Rule: a swept fare is ignored when older than: 5 days for a date up to 14 days ahead, 16 days for later dates, 32 days for dates more than 90 days ahead (D10: the far weeks past day 104 are searched every 4 weeks).
+- Constant: `flights.max_age_days` in `continent-app/config/pricing.json:1038` = { near: 5, far: 16, far_after_days: 14, late: 32, late_after_days: 90 }
 - Constant: `maxAgeMs` in `continent-app/src/lib/flights/flights.js:39`
 - Test: `continent-app/tests/flights.test.mjs` :: "a price older than its sweep cycle is never shown: 5 days near, 16 days far (T692, T780)"
-- Test: `continent-app/tests/flights.test.mjs` :: "a late date (past day 181, from the box every 4 weeks) may be 32 days old (T798)"
+- Test: `continent-app/tests/flights.test.mjs` :: "a late date (past day 90: the slow far weeks and the box, every 4 weeks) may be 32 days old (T798, D10)"
 - Test: `continent-app/tests/flights.test.mjs` :: "a fare at day 300, from the late tier's last weeks, is kept and found near its day (T805)"
 
 ### PRICE-026 The swept day nearest a wanted day

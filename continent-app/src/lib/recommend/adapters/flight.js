@@ -20,10 +20,11 @@
  * answer useLiveFlights reads), grouped cheapest, quickest and best times.
  * It is async and separate, so a card never waits for it.
  */
-import { sweptNear, legCost, rankFlights, googleFlightsLink } from '../../flights/flights.js';
+import { sweptNear, sweptShift, sweptFixedDates, legCost, rankFlights, googleFlightsLink } from '../../flights/flights.js';
 import { BABY_LAP_FEE_LEG } from '../../party.js';
 import { rule } from '../../price/config.js';
 import { accessCost, homeCandidates } from '../../airportReach.js';
+import { movedOnto } from '../flightDays.js';
 
 export const SOURCE = 'google_flights';
 const DEFAULT_BAG = rule('request.default_bag');
@@ -67,6 +68,12 @@ function pickFacts(id, out, back, lang = 'en', access = null) {
  * The swept legs nearest the trip's days, when the quote found none for the
  * exact days. T861: from every ticked home airport with a file, the
  * cheapest door to door (the fares plus the way to the airport and back).
+ * T855: a trip whose dates may move takes a pair on the same shift
+ * (sweptShift), else the nearest legs, and `moveTo` names their days, so
+ * priceCandidate moves the trip onto them (the nights kept when the shift
+ * is shared); one with fixed dates (trip.datesFixed: an exact date the
+ * traveller set, something booked) keeps them and takes the nearest legs,
+ * the way home never before check-out (sweptFixedDates).
  */
 function nearLegs(trip, state, ctx, home) {
   const iata = trip?.gateway?.iata;
@@ -79,15 +86,25 @@ function nearLegs(trip, state, ctx, home) {
   let best = null;
   for (const h of files) {
     if (!h.file || h.file.from !== h.iata) continue;
-    const out = sweptNear(h.file, 'out', iata, trip.dates.out);
-    const back = sweptNear(h.file, 'back', iata, trip.dates.back);
-    if (!out || !back) continue;
+    const pair = trip.datesFixed
+      ? sweptFixedDates(h.file, iata, trip.dates.out, trip.dates.back)
+      : sweptShift(h.file, iata, trip.dates.out, trip.dates.back) || movableNear(h.file, iata, trip)
+        || sweptFixedDates(h.file, iata, trip.dates.out, trip.dates.back);
+    if (!pair) continue;
+    const { out, back } = pair;
     const access = ticked && h.row ? accessCost(h.row, { adults: trip.party.adults, children: trip.party.children, babies: trip.party.babies, nights: trip.nights }) : null;
-    const o = { out: { ...out, cost: legFor(out, party) }, back: { ...back, cost: legFor(back, party) }, iata, home: h.iata, access };
+    const o = { out: { ...out, cost: legFor(out, party) }, back: { ...back, cost: legFor(back, party) }, iata, home: h.iata, access, moveTo: trip.datesFixed || !movedOnto(trip, { out: pair.out.date, back: pair.back.date }) ? null : { out: pair.out.date, back: pair.back.date } };
     o.total = o.out.cost.total + o.back.cost.total + (access?.eur || 0);
     if (!best || o.total < best.total) best = o;
   }
   return best;
+}
+
+/** The nearest legs each way, home after out, when the trip can move onto them (flightDays.js). */
+function movableNear(file, iata, trip) {
+  const out = sweptNear(file, 'out', iata, trip.dates.out);
+  const back = out && sweptNear(file, 'back', iata, trip.dates.back, { after: out.date });
+  return out && back && movedOnto(trip, { out: out.date, back: back.date }) ? { out, back } : null;
 }
 
 /** Whether the traveller answered the reach (the finder then flies from any ticked airport). */
@@ -133,9 +150,26 @@ export const flight = {
     if (!near) return null;
     const out = legFacts(near.out, near.home, near.iata, near.out.cost);
     const back = legFacts(near.back, near.iata, near.home, near.back.cost);
-    return mk('swept', out, back, near.total, 'measured', near.access);
+    const res = mk('swept', out, back, near.total, 'measured', near.access);
+    // T855: the flight days the trip moves onto (priceCandidate moves the dates).
+    if (near.moveTo && (near.moveTo.out !== trip.dates.out || near.moveTo.back !== trip.dates.back)) res.pick.facts.moveTo = near.moveTo;
+    return res;
   },
 };
+
+/**
+ * T855: the legs of a trip's flight that fly on another day than the
+ * trip's (only a trip whose dates cannot move keeps such a flight):
+ * { out, back }, each the leg's own day or null when it is the trip's.
+ */
+export function flightOffDays(trip) {
+  const f = trip?.slots?.find((s) => s.id === 'flight')?.pick?.facts;
+  if (!f || !trip.dates) return { out: null, back: null };
+  return {
+    out: f.out?.date && f.out.date !== trip.dates.out ? f.out.date : null,
+    back: f.back?.date && f.back.date !== trip.dates.back ? f.back.date : null,
+  };
+}
 
 /** The live day list, the answer /api/flights gives ({ checked, link, flights }), or null. */
 export function fetchLiveDay(o, d, date) {

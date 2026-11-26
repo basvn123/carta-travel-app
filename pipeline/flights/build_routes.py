@@ -25,11 +25,17 @@ Rules
 Output
   _routes.json    {"built": ISO, "through": "YYYY-MM", "reporters": [...],
                    "routes": {"BRU": {"BCN": 4095, ...}, ...},
-                   "airports": {IATA: [lat, lon]}}
+                   "airports": {IATA: [lat, lon]},
+                   "rank": ["BRUBCN", ...]}
   _airports.json  {IATA: {"name", "city", "country", "lat", "lon"}} for every
                   airport with a route
   The number per route is a bitmask of active calendar months (bit 0 =
   January), which the sweep uses to skip a route in its off season.
+  `rank` (D10, T855) is the RANK_TOP busiest routes, most flights in the
+  latest twelve months first: the sweep's dense tier searches every day of
+  the next 90 for the head of it (plan.mjs), so the days travellers pick
+  most are checked on their exact day. Optional: a file without it still
+  works, the dense tier then has no routes.
 
 Usage
   python -I pipeline/flights/build_routes.py              download and build
@@ -68,6 +74,8 @@ EUROPE = set(("AL AT BA BE BG CH CY CZ DE DK EE EL ES FI FO FR GI HR HU IE IS IT
               "LV MD ME MK MT NL NO PL PT RO RS SE SI SK TR UA UK XK").split())
 MIN_FLIGHTS = 4
 MIN_MONTHS = 2
+# D10: enough for any dense tier size the sweep can afford (it takes the head).
+RANK_TOP = 2000
 R2_KEY = "carta/data/flights/_routes.json"
 SIZE_RANK = {"large_airport": 0, "medium_airport": 1, "small_airport": 2}
 
@@ -124,21 +132,30 @@ def ourairports(offline):
 
 
 def read_reporter(body):
-    """Yield (from_icao, to_icao, {YYYY-MM: flights}) and the latest month."""
-    rows, latest = [], None
+    """Yield (from_icao, to_icao, {YYYY-MM: flights}), the latest month and
+    {(from_icao, to_icao): {YYYY-MM: passengers}} (D10: the route rank)."""
+    rows, latest, pax = [], None, {}
     with gzip.open(io.BytesIO(body), "rt", encoding="utf-8") as f:
         head = f.readline().rstrip("\n").split("\t")
         cols = [(i, h.strip()) for i, h in enumerate(head) if MONTH.match(h.strip())]
         if not cols:
-            return rows, None
+            return rows, None, pax
         latest = max(h for _, h in cols)
         for line in f:
             parts = line.rstrip("\n").split("\t")
             key = parts[0].split(",")
-            if key[:3] != ["M", "FLIGHT", "CAF_PAS_DEP"]:
+            if key[:3] not in (["M", "FLIGHT", "CAF_PAS_DEP"], ["M", "PAS", "PAS_CRD_DEP"]):
                 continue
             pair = key[3].split("_")
             if len(pair) != 4 or pair[1] == pair[3] or pair[2] not in EUROPE:
+                continue
+            if key[1] == "PAS":
+                seats = {}
+                for i, h in cols:
+                    m = NUM.match(parts[i]) if i < len(parts) else None
+                    if m:
+                        seats[h] = float(m.group(1))
+                pax[(pair[1], pair[3])] = seats
                 continue
             months = {}
             for i, h in cols:
@@ -147,7 +164,7 @@ def read_reporter(body):
                     months[h] = float(m.group(1))
             if months:
                 rows.append((pair[1], pair[3], months))
-    return rows, latest
+    return rows, latest, pax
 
 
 def last_twelve(end):
@@ -199,6 +216,20 @@ def route_gate(prev, new):
     return fails
 
 
+def route_rank(volume, routes, top=RANK_TOP):
+    """The `top` busiest routes as 'BRUBCN' keys, most passengers first (D10).
+
+    volume: {(from, to): passengers in the latest twelve months}. A route counts
+    the busier of its two directions, because the way back is filled in from
+    the way out when only one side reports. Ties go alphabetically, so the
+    order is stable from one build to the next."""
+    def seats(a, b):
+        return max(volume.get((a, b), 0), volume.get((b, a), 0))
+    keys = [(a, b) for a in routes for b in routes[a]]
+    keys.sort(key=lambda k: (-seats(*k), k))
+    return [a + b for a, b in keys[:top] if seats(a, b) > 0]
+
+
 def main(argv):
     offline = "--offline" in argv
     RAW.mkdir(parents=True, exist_ok=True)
@@ -206,22 +237,25 @@ def main(argv):
     anchors = anchor_airports()
     log(f"{len(iata)} ICAO codes with IATA, {len(anchors)} destination airports")
 
-    per_reporter, latest = {}, {}
+    per_reporter, latest, pax = {}, {}, {}
     for cc in REPORTERS:
         body = fetch(EUROSTAT.format(cc=cc), RAW / f"{cc}.tsv.gz", offline)
         try:
-            rows, end = read_reporter(body)
+            rows, end, seats = read_reporter(body)
         except (OSError, EOFError):
             log(f"{cc}: unreadable, skipped")
             continue
         if end:
-            per_reporter[cc], latest[cc] = rows, end
+            per_reporter[cc], latest[cc], pax[cc] = rows, end, seats
     through = sorted(latest.values())[len(latest) // 2]
     floor = f"{int(through[:4]) - 1}{through[4:]}"
     stale = sorted(cc for cc, end in latest.items() if end < floor)
     log(f"data through {through}; reporters ignored as stale: {stale}")
 
     months = defaultdict(int)  # (from_iata, to_iata) -> bitmask
+    # D10: passengers a pair carried in the window. Two reporters may both list a
+    # pair (each side's country), so the larger count is kept, not the sum.
+    volume = defaultdict(float)
     for cc, rows in per_reporter.items():
         if cc in stale:
             continue
@@ -236,6 +270,9 @@ def main(argv):
                     mask |= 1 << (int(ym[5:]) - 1)
             if bin(mask).count("1") >= MIN_MONTHS:
                 months[(fa, fb)] |= mask
+                carried = pax[cc].get((a, b), {})
+                seen = sum(v for ym, v in carried.items() if ym in window)
+                volume[(fa, fb)] = max(volume[(fa, fb)], seen)
     for (a, b), mask in list(months.items()):
         months[(b, a)] |= mask  # the way back
 
@@ -255,6 +292,7 @@ def main(argv):
         # pass can look for routes Eurostat does not know yet (UK, Czechia).
         "airports": {c: [round(about[c]["lat"], 3), round(about[c]["lon"], 3)]
                      for c in sorted(served | anchors) if c in about},
+        "rank": route_rank(volume, routes),
     }
     prev = json.loads(OUT.read_text(encoding="utf-8")).get("routes") if OUT.exists() else None
     fails = route_gate(prev, out["routes"])

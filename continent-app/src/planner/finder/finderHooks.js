@@ -38,7 +38,10 @@ import { bookedTrip } from '../../lib/plan/doors.js';
 import { checkedWindows, levers } from '../../lib/recommend/alternatives.js';
 import { candidateBound, floorHelps, pullRange, pullRoom, rankTrips } from '../../lib/recommend/rank.js';
 import { pinTop, pricingOrder } from '../../lib/recommend/early.js';
-import { priceFloor, quoteData } from '../../lib/recommend/trips.js';
+import { priceFloor, quoteData, repriceTrip } from '../../lib/recommend/trips.js';
+import { useLiveDay } from '../../lib/flights/useLiveFlights.js';
+import { exactDayLive, exactDayNote, exactDayQueries } from '../../lib/flights/exactDay.js';
+import { receiptDiff, receiptOfTrip } from '../../lib/price/receiptDiff.js';
 import { budgetSplit } from '../../lib/recommend/budgetCompass.js';
 import { readSkips } from '../../lib/recommend/keptStore.js';
 import { useTasteVerdicts, verdictsKey } from '../../lib/taste/store.js';
@@ -404,3 +407,42 @@ export function useLoaderDone(ready, minMs = 1200) {
   }, [minMs]);
   return { done: ready && (aged || skipped), skip: () => { if (ready) setSkipped(true); } };
 }
+
+/**
+ * T855: the found trip's flight looked up live on its exact days
+ * (lib/flights/exactDay.js). At most the two searches of the trip on view,
+ * asked 400 ms after it opens (a trip skipped past at once spends none of
+ * the 20 uncached searches a minute an address gets); answers are held for
+ * the session by useLiveFlights. When they come in, the trip is priced
+ * again through quoteTrip and handed to onEdit; returns the line to show.
+ */
+export function useExactDayFlights(trip, onEdit, money) {
+  const queries = exactDayQueries(trip);
+  const facts = trip?.slots?.find((s) => s.id === 'flight')?.pick?.facts || null;
+  const [armed, setArmed] = useState(null);
+  useEffect(() => {
+    const id = setTimeout(() => setArmed(trip?.id || null), 400);
+    return () => clearTimeout(id);
+  }, [trip?.id]);
+  const asked = armed === trip?.id ? queries : null;
+  const out = useLiveDay(asked?.[0] || null);
+  const back = useLiveDay(asked?.[1] || null);
+  const done = useRef({ id: null, diff: null, facts: null });
+  const [, bump] = useState(0);
+  const loading = Boolean(asked) && (out.status === 'loading' || back.status === 'loading');
+  useEffect(() => {
+    if (!asked || loading) return;
+    const live = exactDayLive(asked, [out.answer, back.answer]);
+    if (!live.length || done.current.id === trip.id) return;
+    const next = repriceTrip(trip, live);
+    done.current = { id: trip.id, diff: receiptDiff(receiptOfTrip(trip), receiptOfTrip(next)), facts };
+    onEdit(next);
+    bump((n) => n + 1);
+  }, [asked, loading, out.answer, back.answer]); // eslint-disable-line react-hooks/exhaustive-deps -- once per trip, on its answers
+  if (done.current.id === trip?.id && done.current.diff) {
+    return exactDayNote({ facts: done.current.facts, statuses: [], diff: done.current.diff, money });
+  }
+  if (!asked) return queries ? exactDayNote({ facts, statuses: ['loading'], diff: null, money }) : null;
+  return exactDayNote({ facts, statuses: [out.status, back.status], diff: null, money });
+}
+

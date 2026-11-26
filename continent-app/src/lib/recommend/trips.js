@@ -25,6 +25,7 @@ import { foodOf } from './adapters/food.js';
 import { localFares } from './adapters/local.js';
 import { round2 } from '../math.js';
 import { destAnchor } from '../origins.js';
+import { movedOnto } from './flightDays.js';
 
 /** A short stable hash (FNV-1a, base 36) of a string. */
 export function stableHash(s) {
@@ -220,6 +221,10 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
     origin: quote.cartaFlight?.home || input.origin?.iata || null,
     month: c.month,
     dates: c.dates,
+    // T855: dates the traveller fixed (an exact date, something booked) or
+    // already moved onto the flight's days do not move again.
+    datesFixed: Boolean(c.datesFromSetup || c.movedOntoFlight),
+    ...(c.shiftedBy ? { shiftedBy: c.shiftedBy } : {}),
     nights: c.nights,
     party: { adults: s.party.adults, children: s.party.kids, babies: s.party.babies, head: partySize(s) },
     shape: c.shape,
@@ -234,6 +239,12 @@ export function priceCandidate(c, input, qdata = quoteData(input), registry = {}
     signals: c.signals,
   };
   trip.slots = buildSlots({ trip, quote, state, ctx }, reg);
+  // T855: the fare sat on nearby days: the trip moves onto the flight's
+  // days and is priced again, so check-in is the day the flight lands and
+  // check-out the day the flight home leaves. The same shift both ways keeps
+  // the nights; otherwise the last place gains or loses the difference.
+  const moved = c.movedOntoFlight ? null : movedOnto(c, trip.slots.find((s) => s.id === 'flight')?.pick?.facts?.moveTo);
+  if (moved) return priceCandidate(moved, input, qdata, registry);
   // T861: the flight slot may fly from another ticked airport (the nearest
   // swept days were cheaper from there): the trip flies from where it does.
   const flownFrom = trip.slots.find((s) => s.id === 'flight')?.pick?.facts?.home;
@@ -264,14 +275,16 @@ export function keepHidden(from, to) {
  * that one quote, so the slots, the total and Finish agree to the cent:
  * pricing a swap one slot at a time missed how the lines move together.
  * A trip without its pricing context comes back with its sum only.
+ * T855: `liveDays` ([key, answer] pairs, keyed like useLiveFlights) adds
+ * the exact-day live answers the found trip looked up.
  */
-export function repriceTrip(trip) {
+export function repriceTrip(trip, liveDays = null) {
   const base = trip.base || trip;
   const ctx = trip.ctx || base.ctx;
   const st = finderState(trip);
   if (!ctx || !st) return keepHidden(trip, { ...trip, total: slotTotals(trip.slots) });
   const plan = planOf(trip);
-  const live = new Map([...(st.liveFlights || []), ...plan.liveFlights]);
+  const live = new Map([...(st.liveFlights || []), ...plan.liveFlights, ...(liveDays || [])]);
   const state = {
     ...st,
     stayTier: plan.stayTier || st.stayTier,

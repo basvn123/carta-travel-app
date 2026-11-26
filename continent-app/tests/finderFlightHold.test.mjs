@@ -86,8 +86,10 @@ function plannedTrip(state, q) {
 const near = (a, b) => Math.abs(a - b) <= 0.01;
 
 test("T855: a fare on the nearest swept day reaches Review and the planned trip, card total to the cent", { skip }, () => {
-  // 5 to 12 December: the sweep has no fare for the exact days of most trips.
-  const top = trips(answers("2026-12-05", "2026-12-12")).slice(0, 10);
+  // 14 to 21 November: the sweep has no fare on the 14th; the dates are
+  // the traveller's, so the way out keeps its own day (T855: the way home
+  // is never before check-out, so 5 to 12 December now has no pair).
+  const top = trips(answers("2026-11-14", "2026-11-21")).slice(0, 10);
   let nearest = 0;
   for (const t of top) {
     const facts = t.slots.find((s) => s.id === "flight")?.pick?.facts;

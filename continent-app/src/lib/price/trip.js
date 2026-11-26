@@ -310,12 +310,19 @@ export function quoteTrip(state, { data = null, countryInsights = null } = {}) {
       const side = (dir, from, to, date) => {
         const held = dir === 'out' ? heldOut : heldBack;
         const fits = held && fitsHours(held.dep, hours[dir] || 'any') && fitsPrefs(held, state?.flightPrefs || null);
-        const leg = fits ? heldAsLeg(held) : pickLeg({
+        const pick = () => pickLeg({
           file, live: live?.get?.(`${from}-${to}-${date}`) || null, dir,
           airport: dir === 'out' ? to : from, date, hours: hours[dir] || 'any',
           rank: state?.flightRank || 'price',
           prefs: state?.flightPrefs || null,
         });
+        // T855: a held flight on a nearby day (flightDate) is an estimate
+        // until the trip's own day is looked up live; a live flight on the
+        // exact day then wins, so the flight home is on the day of
+        // check-out. With no answer yet (loading, 502, rate limit) or no
+        // flight that day, the held fare stays and names its own day.
+        const exact = fits && held.flightDate && held.flightDate !== date && live?.get?.(`${from}-${to}-${date}`) ? pick() : null;
+        const leg = exact || (fits ? heldAsLeg(held) : pick());
         // T713: babies fly on a lap for a fee a leg (party.baby_lap_fee_leg),
         // the same fee Explore's way there adds (party.js flightPerSeat).
         const cost = leg ? legCost(leg, { paying, bagKey }) : null;

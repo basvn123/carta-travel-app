@@ -6,6 +6,8 @@ import { readFileSync } from "node:fs";
 import {
   flattenRoutes, jobsForMinute, nextPause, routesInMinute, routesForMinute, slotsAt, SLOTS_PER_DAY, NIGHT_UTC, NEAR_CYCLE, FAR_CYCLE, FIND_CYCLE, NEAR_DAYS, FAR_WEEKS, km,
   PAUSE_BASE_MS, PAUSE_MAX_MS, lateJobsForMinute, lateJobsForRoute, lateFillOrder, LATE_CYCLE, LATE_WEEKS, farJobsInWindow,
+  denseRoutes, farDays, farTurn, boxRoutes, boxJobsForMinute, DENSE_ROUTES, DENSE_NEAR, DENSE_UNTIL, FAST_UNTIL, SLOW_AFTER,
+  SLOW_CYCLE, BOX_DENSE_ROUTES,
 } from "../workers/flight-sweep/src/plan.mjs";
 import { buildFile, buildIndex, nextBatch, priceOk, routeMoves } from "../workers/flight-sweep/src/publish.mjs";
 import { ingestFound, ingestRows, tokenOk, MAX_ROWS } from "../workers/flight-sweep/src/ingest.mjs";
@@ -40,15 +42,29 @@ test("over a near cycle every route gets its near days once (T780)", () => {
   assert.equal(near.get("BRUFAO"), undefined);
 });
 
-test("over a far cycle every route gets 24 far days, in weeks 3 to 26", () => {
+test("over two far cycles every route gets its far weeks to day 104 twice and the weeks after once (D10)", () => {
   const list = flattenRoutes(routes);
+  const DAY = 86400000;
+  const near = [];
+  const slow = [];
+  for (let m = 0; m < SLOW_CYCLE; m++) {
+    const at = NOW + m * 60000;
+    for (const j of jobsForMinute(list, {}, at)) {
+      if (j.tier !== "far" || j.o + j.d !== "BRUBCN") continue;
+      const ahead = (Date.parse(j.date) - Math.floor(at / DAY) * DAY) / DAY;
+      (ahead <= FAST_UNTIL ? near : slow).push(ahead);
+    }
+  }
+  // Weeks 3 to 26: about 13 weeks to day 104 on both turns, the other 11 once.
+  assert.equal(near.length + 2 * slow.length, 2 * FAR_WEEKS);
+  assert.ok(slow.length >= 10 && slow.length <= 12, `${slow.length} slow weeks`);
+  assert.ok([...near, ...slow].every((k) => k >= 14 && k < 14 + 7 * FAR_WEEKS));
   const days = [];
   for (let m = 0; m < FAR_CYCLE; m++) {
     for (const j of jobsForMinute(list, {}, NOW + m * 60000)) {
       if (j.tier === "far" && j.o + j.d === "BRUBCN") days.push(j.date);
     }
   }
-  assert.equal(days.length, FAR_WEEKS);
   assert.ok(days.every((d) => d >= "2026-11-04" && d <= "2027-04-30"));
   // FAO's far days fall only in its April to July season.
   const fao = [];
@@ -226,7 +242,7 @@ test("the far and late tiers cover every week to day 300 and past, under the boo
   for (let m = 0; m < LATE_CYCLE; m++) {
     const at = start + m * 60000;
     const jobs = lateJobsForMinute(list, at);
-    if (m < FAR_CYCLE) jobs.push(...jobsForMinute(list, airports, at).filter((j) => j.tier === "far"));
+    if (m < SLOW_CYCLE) jobs.push(...jobsForMinute(list, airports, at).filter((j) => j.tier === "far"));
     for (const j of jobs) {
       if (j.o + j.d !== "BRUBCN") continue;
       const ahead = (Date.parse(j.date) - Math.floor(at / DAY) * DAY) / DAY;
@@ -243,11 +259,15 @@ test("the far and late tiers cover every week to day 300 and past, under the boo
   assert.ok(last > "2027-08-31", `last date ${last}`);
 });
 
-test("the late cycle stays inside the app's late fare age, which starts where the far tier ends (T798)", () => {
+test("the late and slow cycles stay inside the app's late fare age, which starts where the slow far weeks come down to (T798, D10)", () => {
   const age = JSON.parse(readFileSync(new URL("../config/pricing.json", import.meta.url)))
     .rules["flights.max_age_days"].value;
   assert.ok(LATE_CYCLE * 60000 < age.late * 86400000);
-  assert.equal(age.late_after_days, 14 + 7 * FAR_WEEKS - 1);
+  assert.ok(SLOW_CYCLE * 60000 < age.late * 86400000);
+  assert.equal(age.late_after_days, SLOW_AFTER);
+  // A slow week searched past day 104 is under day 90 only after the 2-week
+  // far cycle, which searches to day 104, has had its turn at it.
+  assert.ok(FAST_UNTIL - SLOW_AFTER >= FAR_CYCLE / 1440);
 });
 
 test("ingest keeps fares that look like fares and drops the rest (T798)", () => {
@@ -323,8 +343,11 @@ test("the far fill asks a route for the far tier's own days inside its window (T
     while (!routesForMinute(m, FAR_CYCLE, list.length).includes(r)) m++;
     const want = jobsForMinute(list, airports, m * 60000)
       .filter((j) => j.tier === "far" && j.o === list[r][0] && j.d === list[r][1] && j.date >= from && j.date <= to);
-    const day0 = Math.floor((m * 60000) / 86400000) * 86400000;
-    assert.deepEqual(farJobsInWindow(list, r, day0, from, to).map((j) => j.date), want.map((j) => j.date), `route ${r}`);
+    const got = farJobsInWindow(list, r, m * 60000, from, to).map((j) => j.date);
+    // D10: the fill takes the Worker's days on this turn and the slow weeks
+    // it leaves to the next turn, on the same weekdays.
+    assert.ok(want.every((j) => got.includes(j.date)), `route ${r}`);
+    assert.equal(new Set(got).size, got.length, `route ${r}: one day a week`);
   }
   const fao = list.findIndex(([o, d]) => o === "BRU" && d === "FAO");
   assert.deepEqual(farJobsInWindow(list, fao, NOW, from, to), [], "FAO flies April to July only");
@@ -377,4 +400,114 @@ test("over each cycle every route has its turn exactly once, and a night hour se
   assert.equal(hour(2), 0, "02:00 searches nothing");
   assert.equal(hour(23), 0, "23:00 searches nothing");
   assert.ok(hour(14) > 0, "14:00 searches");
+});
+
+// D10: the denser sweep. The numbers of the plan before (2026-11-26, the
+// committed data/flights/_routes.json, 10,094 routes): 24,256 searches a day
+// besides the find tier, a day minute 40 at most and 23.8 on average.
+const BEFORE = { perDay: 24256, minuteMax: 40, minuteMean: 23.8 };
+const realRoutes = JSON.parse(readFileSync(new URL("../../data/flights/_routes.json", import.meta.url), "utf8"));
+
+test("the dense tier takes the busiest routes in rank order, skipping dormant and unknown ones, none without a rank (D10)", () => {
+  const list = flattenRoutes(routes);
+  const at = (k) => list.findIndex(([o, d]) => o + d === k);
+  assert.deepEqual([...denseRoutes(list, ["LISBRU", "XXXYYY", "BRUBCN", "BCNBRU"], new Set(["BRUBCN"]), 2)], [at("LISBRU"), at("BCNBRU")]);
+  assert.equal(denseRoutes(list, undefined).size, 0);
+  assert.equal(realRoutes.rank.length, 2000);
+  assert.ok(realRoutes.rank.every((k) => realRoutes.routes[k.slice(0, 3)]?.[k.slice(3)] !== undefined), "every ranked route is a route");
+});
+
+test("a dense route has every day 1 to 14 each near cycle and 15 to 104 each far cycle, and no weekly days there (D10)", () => {
+  const list = flattenRoutes(routes);
+  const dense = denseRoutes(list, ["BRUBCN"]);
+  const DAY = 86400000;
+  const seen = { dense: [], near: 0, farLow: 0 };
+  for (let m = 0; m < FAR_CYCLE; m++) {
+    const at = NOW + m * 60000;
+    for (const j of jobsForMinute(list, {}, at, new Set(), dense)) {
+      if (j.o + j.d !== "BRUBCN") continue;
+      const ahead = (Date.parse(j.date) - Math.floor(at / DAY) * DAY) / DAY;
+      if (j.tier === "dense") seen.dense.push([m < NEAR_CYCLE, ahead]);
+      if (j.tier === "near") seen.near++;
+      if (j.tier === "far" && ahead <= DENSE_UNTIL) seen.farLow++;
+    }
+  }
+  const nearDays = seen.dense.filter(([first, k]) => first && k <= DENSE_NEAR).map(([, k]) => k).sort((a, b) => a - b);
+  assert.deepEqual(nearDays, Array.from({ length: DENSE_NEAR }, (_, k) => k + 1));
+  const farDaysSeen = seen.dense.filter(([, k]) => k > DENSE_NEAR).map(([, k]) => k).sort((a, b) => a - b);
+  assert.deepEqual(farDaysSeen, Array.from({ length: DENSE_UNTIL - DENSE_NEAR }, (_, k) => k + DENSE_NEAR + 1));
+  assert.equal(seen.near, 0);
+  assert.equal(seen.farLow, 0);
+});
+
+test("the denser plan searches no more a day than before and a day minute about as many (D10)", () => {
+  const list = flattenRoutes(realRoutes.routes);
+  const dense = denseRoutes(list, realRoutes.rank);
+  assert.equal(dense.size, DENSE_ROUTES);
+  const start = Date.UTC(2026, 10, 26) / 60000;
+  let total = 0;
+  let most = 0;
+  let dayMinutes = 0;
+  let dayJobs = 0;
+  for (let m = start; m < start + 2 * 1440; m++) {
+    const n = jobsForMinute(list, {}, m * 60000, new Set(), dense).length;
+    total += n;
+    const h = Math.floor((m % 1440) / 60);
+    if (h >= 5 && h < 22) { most = Math.max(most, n); dayMinutes++; dayJobs += n; }
+    else assert.equal(n, 0, "no search at night");
+  }
+  assert.ok(total / 2 <= BEFORE.perDay, `${total / 2} a day, was ${BEFORE.perDay}`);
+  assert.ok(dayJobs / dayMinutes <= BEFORE.minuteMean, `${(dayJobs / dayMinutes).toFixed(1)} a minute, was ${BEFORE.minuteMean}`);
+  // A minute past the Worker's 50 s budget only leaves jobs for the next
+  // turn; Google never sees more than one search at a time either way.
+  assert.ok(most <= BEFORE.minuteMax + 1, `${most} in the busiest minute, was ${BEFORE.minuteMax}`);
+});
+
+test("a far week offset takes every weekday over 14 far turns, and the slow weeks alternate between turns (D10)", () => {
+  for (const r of [0, 3, 6]) {
+    for (const w of [0, 12, 23]) {
+      const days = new Set(Array.from({ length: 14 }, (_, t) => farDays(r, t)[w] % 7));
+      assert.equal(days.size, 7, `route ${r}, week ${w}`);
+    }
+  }
+  // The same calendar week: w on turn t is w - 2 on turn t + 1.
+  const list = flattenRoutes(routes);
+  const r = list.findIndex(([o, d]) => o + d === "BRUBCN");
+  let m = Math.floor(NOW / 60000);
+  while (!routesForMinute(m, FAR_CYCLE, list.length).includes(r)) m++;
+  const t = farTurn(m);
+  // Weeks counted from the first turn's day: w on that turn.
+  const day0 = Math.floor((m * 60000) / 86400000) * 86400000;
+  const calendar = (minute) => new Set(jobsForMinute(list, {}, minute * 60000)
+    .filter((j) => j.tier === "far" && j.o + j.d === "BRUBCN")
+    .map((j) => Math.floor(((Date.parse(j.date) - day0) / 86400000 - 14) / 7)));
+  const a = calendar(m);
+  let m2 = m + 1;
+  while (!(routesForMinute(m2, FAR_CYCLE, list.length).includes(r) && farTurn(m2) === t + 1)) m2++;
+  const b = calendar(m2);
+  assert.equal((Math.floor((m2 * 60000) / 86400000) * 86400000 - day0) / 86400000, 14, "the next turn is two weeks on");
+  // A week past day 104 on both turns is searched on exactly one of them.
+  for (let w = Math.ceil(FAST_UNTIL / 7); w < FAR_WEEKS; w++) assert.equal(Number(a.has(w)) + Number(b.has(w)), 1, `week ${w}`);
+});
+
+test("the box takes the routes ranked after the Worker's dense ones, the near days the near tier leaves out, each every 3 days (D10)", () => {
+  const list = flattenRoutes(realRoutes.routes);
+  const box = boxRoutes(list, realRoutes.rank);
+  assert.equal(box.length, BOX_DENSE_ROUTES);
+  const dense = denseRoutes(list, realRoutes.rank);
+  assert.ok(box.every((r) => !dense.has(r)));
+  const DAY = 86400000;
+  const per = new Map();
+  const start = Math.floor(NOW / 60000);
+  for (let m = start; m < start + NEAR_CYCLE; m++) {
+    for (const j of boxJobsForMinute(list, box, m * 60000)) {
+      const ahead = (Date.parse(j.date) - Math.floor((m * 60000) / DAY) * DAY) / DAY;
+      assert.ok(ahead >= 1 && ahead <= DENSE_NEAR && !NEAR_DAYS.includes(ahead), `day ${ahead}`);
+      per.set(j.o + j.d, (per.get(j.o + j.d) || 0) + 1);
+    }
+  }
+  const [o, d] = list[box[0]];
+  assert.equal(per.get(o + d), DENSE_NEAR - NEAR_DAYS.length);
+  // A few seasonal routes have no near day in season.
+  assert.ok(per.size <= box.length && per.size >= box.length - 10, `${per.size} routes`);
 });

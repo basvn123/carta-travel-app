@@ -17,6 +17,12 @@
  * T915: the route list is the Worker's own, found routes included in the same
  * order (GET /extra), and dormant routes are skipped, as the Worker does.
  *
+ * D10: once caught up, the wait for the next late minute goes to near days:
+ * days 1 to 14 every day for the BOX_DENSE_ROUTES routes ranked after the
+ * Worker's dense tier (plan.mjs boxJobsForMinute), at the same 4 to 9 s
+ * spacing, each route every 3 days. The late tier always comes first, and a
+ * refusal pauses both as before. Place kept in the state file as `box`.
+ *
  * Runs as carta-late-sweep.service (infra/hetzner/cron). Environment:
  *   CARTA_SWEEP_INGEST_TOKEN   the Worker's INGEST_TOKEN secret (required)
  *   CARTA_SWEEP_INGEST_URL     default the workers.dev /ingest
@@ -52,8 +58,8 @@ import { dirname } from 'node:path';
 import { homedir } from 'node:os';
 import { searchDay } from '../shared/flightSearch.mjs';
 import {
-  farJobsInWindow, flattenRoutes, lateFillOrder, lateJobsForMinute, lateJobsForRoute, nextPause,
-  slotsAt, FAR_CYCLE, LATE_CYCLE, SLOTS_PER_DAY,
+  boxJobsForMinute, boxRoutes, farJobsInWindow, flattenRoutes, lateFillOrder, lateJobsForMinute, lateJobsForRoute, nextPause,
+  slotsAt, FAR_CYCLE, LATE_CYCLE, NEAR_CYCLE, SLOTS_PER_DAY,
 } from '../flight-sweep/src/plan.mjs';
 import { airportCountries, gapPairs, AIRPORTS_CSV } from './gaps.mjs';
 import { ladderOn } from '../shared/ladder.mjs';
@@ -191,6 +197,10 @@ async function main() {
     const now = Math.floor(Date.now() / 60000);
     for (let m = now; m < now + LATE_CYCLE; m++) n += lateJobsForMinute(list, m * 60000).length;
     console.log(`${list.length} routes, ${n} searches a 4-week cycle, about ${Math.round(n / 672)} an hour`);
+    const box = boxRoutes(list, (await routeData()).json.rank);
+    let b = 0;
+    for (let m = now; m < now + NEAR_CYCLE; m++) b += boxJobsForMinute(list, box, m * 60000).length;
+    console.log(`D10 near days: ${box.length} routes, about ${Math.round(b / 72)} an hour when the box is idle`);
     return;
   }
   // T1213-d (ROADMAP I16): the same stop switch as the sweep Worker. With
@@ -212,7 +222,13 @@ async function main() {
     const nowMin = Math.floor(now / 60000);
     // First start, or off for more than a cycle: begin at now, nothing to catch up.
     if (!Number.isInteger(s.minute) || nowMin - s.minute > LATE_CYCLE) s.minute = nowMin - 1;
-    if (s.minute >= nowMin) { await sleep(60000 - (now % 60000) + 500); continue; }
+    if (s.minute >= nowMin) {
+      // D10: caught up, so the time to the next late minute goes to the
+      // box's near days, at the same spacing; the late tier always comes first.
+      if (await boxNearMinute(s, nowMin)) continue;
+      await sleep(60000 - (now % 60000) + 500);
+      continue;
+    }
     const minute = s.minute + 1;
     let out;
     try {
@@ -230,6 +246,33 @@ async function main() {
     else if (!out.stopped) s.minute = minute;
     writeState(s);
   }
+}
+
+/**
+ * One minute of the box's near-day cycle (D10, plan.mjs boxJobsForMinute):
+ * true when it ran or tried, false when it has nothing due. Its place is
+ * s.box; off for more than a cycle, it starts again at now. Fares go in
+ * through /ingest like the late tier's.
+ */
+async function boxNearMinute(s, nowMin) {
+  if (!Number.isInteger(s.box) || nowMin - s.box > NEAR_CYCLE) s.box = nowMin - 1;
+  if (s.box >= nowMin) return false;
+  const minute = s.box + 1;
+  let out;
+  try {
+    const { json, list, dormant } = await routeData();
+    const jobs = boxJobsForMinute(list, boxRoutes(list, json.rank, dormant), minute * 60000);
+    out = await runJobs(jobs, GAP_MS);
+  } catch (e) {
+    log(`box-near: minute ${minute} failed (${e.message}); again in 5 minutes`);
+    await sleep(RETRY_MS);
+    return true;
+  }
+  if (out.counts.jobs) log(`box-near ${minute}: ${JSON.stringify(out.counts)}${out.blocked ? ` refused (${out.blocked})` : ''}`);
+  if (out.blocked) pauseAfterRefusal('box-near', out.blocked);
+  else if (!out.stopped) s.box = minute;
+  writeState(s);
+  return true;
 }
 
 /** The fills in order (T915, T917, T819); each skips itself once done. */
