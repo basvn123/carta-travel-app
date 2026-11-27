@@ -55,6 +55,8 @@ Finding the place that fits, then reading what it costs. The traveller narrows E
 
 Every ground cost (bed, food, local transport, airport transfer) follows one chain: a harvested figure, then a cached third-party figure, then a model estimate, never a blank. The price engine (`continent-app/src/lib/price/`) stores each step for what it is, with source and date. The traveller sees one amount and its unit: no tilde, no "live", no assumption line. A tap on the amount lists what is in it, with a switch each. An estimate is never dressed up as a bookable price; every booking link warns that prices may have changed.
 
+**Coverage first:** measured sources (the Google Flights sweep, Airbnb, hostels, food prices) cover as many places as possible, and model estimates stay as few as possible (ROADMAP D10).
+
 - **A missing figure is "Not yet"**, never invented, and stays out of every sum.
 - **A total is the engine's total**, never a sum of rounded lines; a "Rounding" line closes any gap.
 - **Every euro goes through `formatMoney()`** (`continent-app/src/lib/money.js`), in the reader's locale, with tabular figures.

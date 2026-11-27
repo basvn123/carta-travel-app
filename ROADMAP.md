@@ -671,6 +671,7 @@ docs/
 - Round 2 (2026-11-12, from docs/owner): T1096-c: `place_gallery` has never run on the box. Run it, then `place_gallery.py --report` and `build_dossier.py --all`; look at one GB, RO, FR and IT gallery at 375 and 1440 px.
 
 **D10. Prices completed**
+- Goal (owner, 2026-11-27): measured sources cover as many places as possible (the Google Flights sweep, Airbnb, hostels, food prices) and model estimates are kept to a minimum. Each layer reports its share of measured, cached and modelled figures in the admin Prices view, and every D10 change says how it moved that share.
 - Local transport: a curated single-ticket and day-pass table per city (source decided: the operators' own fare pages, I-c), 127 metros and 614 cities first.
 - Beds: re-scrape the 515 missing places (FR 94, IT 77, GB 56, GR 40) once D5's parser fix lands; places with 2 or fewer observations flagged.
 - Follow-up (T099-c, decided 2026-11-12): hut-to-hut weeks: hut nights leave the bed total and the trip receipt says in one line that hut nights are not priced; a hut price tier only once hut prices have a licensed source.
