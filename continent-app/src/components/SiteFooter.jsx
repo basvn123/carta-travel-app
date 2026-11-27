@@ -6,6 +6,7 @@ import { SUPPORT_EMAIL } from '../lib/contact.js';
 import { useIsDesktop } from '../hooks/useIsDesktop.js';
 import { ChevronDownIcon, BordersIcon } from './Icons.jsx';
 import '../styles/82-site-footer.css';
+import { PASSES_ON } from '../lib/pricing.js';
 
 /**
  * The site footer (T594): the link columns every tab ends with. Every link is
@@ -101,7 +102,7 @@ export function SiteFooter() {
           ])}
           {col('carta', t('footer.carta'), [
             <FooterLink to="home" href={() => tabHref('home')}>{t('footer.how')}</FooterLink>,
-            <FooterLink to="pricing" href={() => tabHref('pricing')}>{t('footer.pricing')}</FooterLink>,
+            ...(PASSES_ON ? [<FooterLink to="pricing" href={() => tabHref('pricing')}>{t('footer.pricing')}</FooterLink>] : []),
             <FooterLink to="faq" href={() => tabHref('account', undefined, { view: 'faq' })}>{t('footer.faq')}</FooterLink>,
             <FooterLink href={() => '?legal=support'}>{t('footer.support')}</FooterLink>,
             <a className="site-footer-link" href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>,

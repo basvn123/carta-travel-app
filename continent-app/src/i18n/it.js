@@ -1281,6 +1281,7 @@ export const it = {
   "ai.generating": "Sto componendo la tua giornata a {city}...",
   "ai.signIn": "Il bot di Viantra richiede un account Viantra gratuito, così il budget giornaliero condiviso resta equo. Il pianificatore integrato funziona anche senza.",
   "ai.quotaUser": "Hai usato tutti i piani del bot di Viantra del tuo piano attuale. Un Trip Pass toglie subito il limite, e il pianificatore integrato resta gratuito.",
+  "ai.quotaFree": "Hai usato i tuoi piani del bot di Viantra. Il pianificatore integrato pianifica ancora ogni giorno gratis.",
   "ai.quotaGlobal": "Il budget condiviso del bot di Viantra per oggi è esaurito. Si rinnova domani; il pianificatore integrato funziona subito.",
   "ai.balance": "Ti restano {left} piani del bot di Viantra su {cap}.",
   "ai.eventsNeedPass": "La ricerca di eventi dal vivo è inclusa con un pass. Senza pass il bot di Viantra costruisce comunque la tua giornata, con i luoghi di Viantra invece degli annunci dal vivo.",

@@ -71,7 +71,7 @@ Trust in the numbers is the product's only real asset.
 
 1. **Prices and plans, never sells.** No tickets, no beds, no ranking by earnings.
 2. **Never navigates.** No GPS or turn-by-turn. Every day ends in "Open in Google Maps" ("Open Day 2 in Google Maps"), never "Navigate" or "Start route".
-3. **Not entirely free, and never says it is.** Browsing, both planners, one saved trip, sharing, co-planners and GPX are free. A Trip Pass (60 days) or Year Pass (12 months) adds PDF, ICS and KML exports, more saved trips, booking import and more AI plans (`lib/pricing.js` TIERS, `hooks/usePaywall.jsx`). The line: "Planning is free. A Trip Pass adds exports, more saved trips and more AI plans." Never "100% free" or "free forever". The pass shows at a paid moment, in Account, on /pricing and on the home page.
+3. **Free for now.** Every feature is free; no screen offers a pass (`PASSES_ON = false` in `lib/pricing.js`, ROADMAP I-g). AI plans keep the server's allowance; when it runs out the app says so and sells nothing. Never promise "free forever": the passes (`TIERS`, `hooks/usePaywall.jsx`) can return.
 4. **Private by default.** Documents in a trip's Notes stay on the device. An imported booking is read once and not stored; a failed read keeps only its kind and size, for 30 days.
 5. **Every function stays.** A visual change never removes a feature, control, step, setting or field, and never changes what a button does. A secondary control may move into a menu if it stays reachable.
 6. **Say less.** Every sentence earns its place. No method notes, catalogue counts or coverage notes; say the unit once.

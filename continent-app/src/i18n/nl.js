@@ -1290,6 +1290,7 @@ export const nl = {
   "ai.generating": "Je dag in {city} wordt samengesteld...",
   "ai.signIn": "De Viantra-bot vraagt een gratis Viantra-account, zo blijft het gedeelde dagbudget eerlijk. De ingebouwde planner werkt ook zonder.",
   "ai.quotaUser": "Je hebt alle Viantra-bot plannen van je huidige pakket gebruikt. Met een Trip Pass vervalt de limiet meteen, en de ingebouwde planner blijft gratis werken.",
+  "ai.quotaFree": "Je Viantra-bot plannen zijn op. De ingebouwde planner plant elke dag nog gratis.",
   "ai.quotaGlobal": "Viantra's gedeelde Viantra-bot budget voor vandaag is op. Het reset morgen; de ingebouwde planner werkt nu gewoon.",
   "ai.balance": "{left} van {cap} Viantra-bot plannen over.",
   "ai.eventsNeedPass": "Live zoeken naar evenementen hoort bij een pass. Zonder pass stelt de Viantra-bot je dag nog steeds samen, uit Viantra's eigen plekken in plaats van live aanbod.",

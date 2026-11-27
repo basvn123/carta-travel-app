@@ -3026,6 +3026,8 @@ This section covers the parts of Viantra that sit around the travel content: the
 
 **What it does.** Most of Viantra is free. A Pass unlocks exports (PDFs, calendar and map files), imports, more than one saved trip, and more AI day plans with live (grounded) search. There are two paid options, both one payment that never renews: the Trip Pass (60 days) and the Year Pass (12 months) (decision 0010, ROADMAP I-f).
 
+**Switched off for now** (owner, 2026-11-27, ROADMAP I-g). `PASSES_ON = false` in `src/lib/pricing.js` makes the app entirely free: `usePaywall` treats everyone as paid, so every export, import and saved trip opens; `nudge` and `openPrices` do nothing; the pricing page, the footer's Pricing link, the home page plans, the expiry banner, Account's plan row, plan chip and Change plan, and the auto plan bar's "See the Trip Pass" are hidden; `/pricing` opens the map. The AI allowance is unchanged on the server (`ai_consume`, two plans for a free account): when it is spent the app says so (`ai.quotaFree`, six languages, instead of `ai.quotaUser`) and sells nothing. Setting the switch to `true` restores every pass surface as described below.
+
 **How it works.**
 - **Tiers** (`public.plan_tiers`, mirrored for display in `src/lib/pricing.js` `TIERS`):
 
