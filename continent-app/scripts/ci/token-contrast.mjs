@@ -69,7 +69,7 @@ const PAIRS = [
   ['--rate', '--rate-bg', 4.5, 'rating on its band'],
   ['--rate-soft', '--surface-page', 4.5, 'rating as text'],
   ['--on-fill', '--danger', 4.5, 'label on a destructive button'],
-  ['--danger', '--surface', 4.5, 'destructive text'],
+  ['--danger', '--surface', 4.5, 'destructive text'],
   ['--best', '--surface', 3, 'the best value outline tag on paper (K1 step C)'],
   ['--green', '--surface-page', 4.5, 'good news text'],
   ['--good-ink', '--surface', 4.5, 'open now and verified text'],
