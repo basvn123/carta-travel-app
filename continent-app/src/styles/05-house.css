@@ -348,18 +348,18 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   width: 24px;
   height: 24px;
   border-radius: var(--radius-pill);
-  background: var(--select-bg);
-  color: var(--select-ink);
-  transition: background-color var(--dur-2) var(--ease-out), color var(--dur-2) var(--ease-out);
+  background: transparent; /* no tint (K1 step C): the arrow alone, in the accent */
+  color: var(--action);
+  transition: color var(--dur-2) var(--ease-out);
 }
 .hs-go-disc svg { transition: translate var(--dur-2) var(--ease-out); }
 .hs-go-disc.is-lg { width: var(--tap); height: var(--tap); }
 @media (hover: hover) {
   .hs-rail-head .hs-see-all:hover { background: transparent; color: var(--action-press); }
-  .hs-see-all:hover .hs-go-disc { background: var(--action); color: var(--action-text); }
+  .hs-see-all:hover .hs-go-disc { color: var(--action-press); }
   .hs-see-all:hover .hs-go-disc svg { translate: 2px 0; }
 }
-.hs-see-all:active .hs-go-disc { background: var(--action-press); color: var(--action-text); }
+.hs-see-all:active .hs-go-disc { color: var(--action-press); }
 .hs-see-all:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 /* The rail arrows (G12, Explore top round 2): a 44 px paper disc on the
    photos, floating, so it casts the one shadow and draws no edge. */
