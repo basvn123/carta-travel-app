@@ -231,8 +231,8 @@
 .band-chip-ic { display: inline-flex; flex: none; color: var(--umber-600); }
 /* The heart item: the style, in the umber's own words (no painted pill on a
    desktop, so nothing pokes out of the column). */
-.band-chip.is-style,
-.band-chip.is-style .band-chip-ic { color: var(--umber-800); }
+.band-chip.is-style { color: var(--text); }
+.band-chip.is-style .band-chip-ic { color: var(--action); } /* the heart alone in the accent, no tint (K1 step C) */
 .band-chip:active { transform: scale(var(--press-scale)); }
 .band-chip:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 /* The held dot (the studio's one saffron mark), said in the chip's name. */
@@ -296,8 +296,6 @@
      flat ground); the focus ring keeps the outline when both apply. */
   .band.is-desk .band-chip:hover { background: var(--surface-hover); }
   .band.is-desk .band-chip:hover:not(:focus-visible) { outline: 6px solid var(--surface-hover); outline-offset: 0; }
-  .band.is-desk .band-chip.is-style:hover { background: var(--umber-100); }
-  .band.is-desk .band-chip.is-style:hover:not(:focus-visible) { outline-color: var(--umber-100); }
 }
 
 /* --- The desktop tab row (ExploreCategories, in the tab's scroller) ------
@@ -521,12 +519,10 @@ html.has-phone-band .top-bar::before {
   background: transparent;
   transition: background-color var(--dur-1) var(--ease-out);
 }
-.band-chips.is-swipe .band-chip.is-style::before { background: var(--umber-50); }
+.band-chips.is-swipe .band-chip.is-style::before { background: transparent; border: var(--stroke-edge) solid var(--edge); }
 .band-chips.is-swipe .band-chip:active::before { background: var(--surface-hover); }
-.band-chips.is-swipe .band-chip.is-style:active::before { background: var(--umber-100); }
 @media (hover: hover) {
   .band-chips.is-swipe .band-chip:hover::before { background: var(--surface-hover); }
-  .band-chips.is-swipe .band-chip.is-style:hover::before { background: var(--umber-100); }
 }
 .band-chips.is-swipe .band-chip:focus-visible { outline-offset: -1px; }
 .band-chips.is-swipe .band-chip-dot { top: 10px; left: calc(var(--space-3) + 12px); }
