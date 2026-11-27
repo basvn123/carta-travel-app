@@ -10,7 +10,8 @@ Print and share carry the same objects as the screens, so a PDF on a table, a ca
 
 | Object | Where it appears off the screen | Rule |
 |---|---|---|
-| **The blaze** (white halo, square umber stripe, short ink heel; 24 x 14) | The wordmark slot of every PDF page foot and cover, every OG card foot, the share receipt foot, the blog header, the 404; the app icon; "here" on a PDF pin map (the place itself) | Only "here" or the wordmark; never decoration. At 16 and 32 px (favicon frames) the heel is drawn heavier and the halo edge dropped |
+| **The logo, Gate V** (the terracotta arch with a V opening, `--brand-mark` #b5532c; files and sizes in `continent-app/brand/viantra/README.md`; story in `BRAND.md`) | The app icons and favicon, the header, the footer, the 404 and the sign-in screens already carry it (`BrandMark`, `src/components/BrandMarks.jsx`). The wordmark slot of every PDF page foot and cover, every OG card foot, the share receipt foot and the blog header still draws the blaze and moves to Gate V in page pass 4 (owner, K1, 2026-11-27) | The logo is never decoration and never recoloured; on a dark ground the light terracotta #d8774c |
+| **The blaze** (white halo, square umber stripe, short ink heel; 24 x 14) | "Here" on a PDF pin map (the place itself); the wordmark slots above until pass 4 | A UI mark for chosen and here, never the logo; never decoration. At 16 and 32 px the heel is drawn heavier and the halo edge dropped |
 | **The signpost plate** (ink, pointed end right, name in the plate face, second line in beige, figure on the square end) | The destination PDF cover (name, country, the day figure); every OG card for a record with a figure (a day, a height, a walking time, a Score) | Only where a name meets its figure. A trip, plan or day cover has no plate: a plain Overpass 800 title and its total on the **total plate** (ink, label above, figure big), once |
 | **The Score plate** (ink, white figure) | PDF cover line, OG cards (beside the kind when the plate's figure is a price) | Never stars, never coloured |
 | **The formation** (bed solid umber, food beige on the umber 500 edge, getting there outlined umber only when outside the total) | OG place cards (under the plate), the share receipt (cost bar and line wagons) | The figure stays the loudest; on the share receipt getting there is ink because it is inside the trip total |
@@ -55,7 +56,7 @@ The install hint is one line with a secondary "Add to home screen" in My trips, 
 
 ## Icons
 
-The mark is the blaze on an umber 600 tile: no letters, so it holds through a rename. `Logo.jsx` draws the same blaze in a square 32 box (every caller's layout unchanged); the manifest's `theme_color` and `background_color` are the stone ground `#eef0ea`, as `index.html`.
+The mark is Gate V, the Viantra arch (signed off 2026-11-26, decision 0018; kit in `continent-app/brand/viantra/`). The icon files in `public/` carry it; `check.mjs` still names its safe-circle constant after the blaze (`BLAZE_HALF_DIAGONAL`), which measures the same box; the manifest's `theme_color` and `background_color` are the stone ground `#eef0ea`, as `index.html`.
 
 ## The numbers explainer
 

@@ -34,7 +34,7 @@ PREFIXES = ("app/", "continent-app/", "pipeline/", "supabase/", "infra/", "scrip
             "tools/", "reports/", "src/", "docs/", "tests/", ".github/", ".claude/", ".work/",
             "cache/", "public/", "logs/", "data/", "config/", "functions/", "workers/",
             "services/", "prompts/", "evals/", "ops/", "content/", "app_data/", "Trips/")
-ROOT_FILES = {"CLAUDE.md", "ROADMAP.md", "PRODUCT.md", "DESIGN.md", "README.md",
+ROOT_FILES = {"CLAUDE.md", "ROADMAP.md", "PRODUCT.md", "DESIGN.md", "BRAND.md", "README.md",
               "run_pipeline.py", "run_pipeline.bat", "requirements.txt", "requirements-ml.txt",
               "requirements-docs.txt", "constraints.txt", "mkdocs.yml"}
 # Throwaway build output and per-session folders: allowed to be missing.

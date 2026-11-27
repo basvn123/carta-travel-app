@@ -4,7 +4,7 @@
      specific to Carta. Keep it under 200 lines; it is read by every session. -->
 
 ## What this project is
-A Europe trip planner for independent travellers: a Python data pipeline at the repo root and a Vite + React app in `continent-app/`, both tracked in this one git repo (branch `main`). Who it is for and how it speaks: `PRODUCT.md`.
+A Europe trip planner for independent travellers: a Python data pipeline at the repo root and a Vite + React app in `continent-app/`, both tracked in this one git repo (branch `main`). The promise, positioning and voice: `BRAND.md`. Who it is for, the number rules and the vocabulary: `PRODUCT.md`.
 
 ## Where things live
 Start at `docs/project-map.md`: every part, area and doc, with the files to open. Then go straight to the files. Big docs are grep-only, never read whole: `docs/HANDBOOK.md` (how each feature works, 480 KB), `ROADMAP.md` (the plan, item IDs like `D24`), `DESIGN.md`, `docs/reference/`. Why the project works this way: `docs/decisions/`. Mistakes not to repeat: `docs/lessons.md`.
@@ -41,7 +41,7 @@ CI: `.github/workflows/ci.yml` runs on every push (app lint, tests, fast build; 
 - A behaviour change updates its section in `docs/HANDBOOK.md` and its `ROADMAP.md` status in the same commit.
 
 ## Design
-- Read `PRODUCT.md` before any screen or string. Grep `DESIGN.md`; never read `continent-app/src/i18n/en.js`, `continent-app/src/styles.css` or a wire file whole.
+- Read `BRAND.md` and `PRODUCT.md` before any screen or string. Grep `DESIGN.md`; never read `continent-app/src/i18n/en.js`, `continent-app/src/styles.css` or a wire file whole.
 - `continent-app/src/styles/01-tokens.css` `:root` is the token source of truth; `DESIGN.md` records it. A token change updates `DESIGN.md` in the same commit.
 - The carta-design skill (the house style, `docs/decisions/0012-house-style.md`) wins over every other design source. Accessibility, honest numbers, the copy rules, licensed photography and every function kept always bind. Answer its pre-ship questions before shipping a visual change. General practice for any visual task: `docs/design/craft-guide.md`.
 - For anything a traveller sees, look at every touched screen at three angles: phone (390), tablet (820 and 1180) and desktop (1440), plus a width sweep. Prefer the DOM checks in `continent-app/scripts/verify_*.mjs` over screenshots. Screenshots go in the run folder and are never committed.

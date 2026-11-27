@@ -12,19 +12,21 @@ web. One web app (Vite and React, installable as a PWA) is also packaged for the
 
 ## Mission
 
-The owner's statement (2026-10-20), to reuse wherever the app explains what it does: a pitch, the home page, a store listing, an about page, a press note.
+The promise is the one in `BRAND.md` (owner, 2026-11-27, K1): "Tell us what you love. We'll show you Europe." The app finds the places that fit what a traveller likes, then shows what a day there costs, the bed and the food, before anything is booked. A pitch, the home page, a store listing, an about page or a press note takes its lines from `BRAND.md`.
+
+The cost half of that promise comes from the owner's statement (2026-10-20):
 
 > Waar traditionele zoekmachines zoals Skyscanner en Google Flights uitsluitend zicht bieden op goedkope vliegtickets, lopen reizigers in de praktijk tegen een financiële muur aan wanneer een ogenschijnlijk goedkope vlucht leidt naar een bestemming met exorbitante kosten voor accommodatie, horeca en dagelijks levensonderhoud. Het fundamentele doel van het platform is het elimineren van deze onzekerheid.
 
 In English: flight search engines such as Skyscanner and Google Flights only show the cheap ticket. In practice travellers hit a financial wall when a seemingly cheap flight leads to a place where the bed, eating out and daily living cost far more than they expected. The app exists to remove that uncertainty.
 
-Short form, for a subtitle or a store line: a cheap flight is not a cheap trip; the app shows what the days there cost.
+Short form, for the cost half only (an ad, the step after a flight is chosen; `BRAND.md` has the line): a cheap flight is not a cheap trip; the app shows what the days there cost.
 
 The app brings everything together: the flight, the bed and the days, in one total (owner, 2026-10-21, T511 to T519, reversing T272). When reusing the mission, keep the voice rules below: no superlatives, no claim the app cannot back with a figure, and never imply the flight price is the app's own: it is Google Flights' price, shown as theirs.
 
 ## What the app is
 
-The one app for planning a trip anywhere in Europe. The owner's sentence (2026-10-21, T471-b): "Stop stitching trips together from five apps. [The app] plans the whole trip in one place, with what each day costs." It cuts the coordination and the logistics, replacing the stack of planning tools with one overview. For people who start from "what can I afford", it says what a day costs, per person or for the whole group, in every place in its catalogue.
+A trip planner to explore Europe with: find the places that fit what you like, see what the days there cost, then plan the trip yourself or have it planned. It says what a day costs, per person or for the whole group, in every place in its catalogue. The promise and the positioning are in `BRAND.md` (K1, 2026-11-27).
 
 - **It prices the ground** for every place in the catalogue: the bed and the food, a person a day. Local transport and tickets are not in the day figure yet (`costIndex.js` sums stay and food); they arrive as their own receipt lines (roadmap 2.14), and until then no copy may say the day figure includes them (roadmap 1.16).
 - **It shows Google Flights' price** for the flight, with the airline, the times, when it was checked and a link to Google Flights; a fare the traveller types in replaces it. Bag fees per airline are the app's estimates.
@@ -32,19 +34,23 @@ The one app for planning a trip anywhere in Europe. The owner's sentence (2026-1
 - **Around the towns** sit walking routes, beaches, lakes, summits and cycling routes, each with a page; where a region is empty the page says so in one line.
 - **It sells nothing.** It takes no booking and never ranks by what it earns; it prices, plans and hands the traveller to the operator. Some links pay the app a small fee at no cost to the traveller (I-e, owner ticks T461-d and T1047-a, 2026-11-12).
 
-The catalogue is master data in `app_data/app_data.json` and grows with every ingest; never copy a count into the UI (read `meta`). Nothing on the map is live-searched; the pipeline precomputes everything and a CDN serves it as static JSON. Flight prices come from a sweep Worker that checks each route on a schedule; only the trip planner searches one day live. Live at carta-europetravel.com. Six languages: English, Dutch, French, German, Spanish and Italian, on every surface including the PDF, KML and ICS exports.
+The catalogue is master data in `app_data/app_data.json` and grows with every ingest; never copy a count into the UI (read `meta`). Nothing on the map is live-searched; the pipeline precomputes everything and a CDN serves it as static JSON. Flight prices come from a sweep Worker that checks each route on a schedule; only the trip planner searches one day live. Live at carta-europetravel.com until the move to a Viantra domain (owner step K1-a). Six languages: English, Dutch, French, German, Spanish and Italian, on every surface including the PDF, KML and ICS exports.
 
 ## Who it is for
 
-The launch speaks to hikers first: the person who travels to a town to walk from it, for a day or a weekend first and hut to hut second (owner-confirmed 2026-10-02, T275). Then families looking for beaches, cyclists and bikepackers, budget city-break travellers, car-free travellers and trail runners.
+Everyone travelling in Europe, on any budget (owner, 2026-11-27, K1; the brand's version is in `BRAND.md`):
+- **Every way of planning:** from a ready-made trip, planned day by day, to building the route or road trip yourself, to exploring with no plan at all.
+- **Every interest:** hikers, beach families, cyclists and bikepackers, food lovers, city breakers, car-free travellers, trail runners.
+- **Every budget:** from the student counting every euro to the traveller who books the 5-star hotel.
+- **Before and during the trip:** someone choosing where to go, and someone already there, planning tomorrow or the next town.
 
-People counting money. The core audience is budget-conscious travellers inside Europe: students, young workers, families on one income, retirees on a fixed one, anyone who starts from "what can I afford" rather than "where do I want to go". They fly low-cost carriers from secondary airports, take the bus from the airport, sleep in dorms, private rooms and small apartments, and care about the difference between €24.99 and €25. They are not a luxury audience; a premium feel comes from precision and honesty, not from the vocabulary of luxury travel.
+The cost of a day is what sets the app apart, whoever is planning and whatever they spend. For the budget-conscious traveller (students, young workers, families on one income, retirees on a fixed one, anyone who starts from "what can I afford"), that means low-cost carriers from secondary airports, the bus from the airport, dorms, private rooms and small apartments, and the difference between €24.99 and €25. The tone is never luxury, even for a 5-star stay: a premium feel comes from precision and honesty, not from the vocabulary of luxury travel.
 
 Two secondary audiences shape the surfaces: travellers in the planner who already know the place and want the days and the legs priced, and returning travellers with a saved trip who want to see what changed.
 
 ## What they are doing
 
-Comparing dense prices. The central act is reading many prices at once and finding the cheapest honest option for a fixed set of inputs (origin, dates, people, lifestyle). Each screen is a table of measured numbers first and a picture second: the map pins every place with its figure, the receipt itemises one total, the trip prices every leg, the day planner builds a day on a clock.
+Finding the place that fits, then reading what it costs (owner, 2026-11-27, K1). The traveller starts from what they like (a trail, a beach, a city, a style of trip) and narrows Europe down; the second act is reading many prices at once and finding the cheapest honest option for a fixed set of inputs (origin, dates, people, lifestyle). A list, the map and a receipt are measured numbers first and a picture second; the home page and rails let inspiration lead. The map pins every place with its figure, the receipt itemises one total, the trip prices every leg, the day planner builds a day on a clock.
 
 - **The inputs are always visible** and the figures update in place. Numbers line up in columns and do not jitter when they change.
 - **Whole euros where many places are compared** (rows, cards, pins, filters), cents on every receipt, total and ledger (owner, 2026-10-13). A figure is never rounded to look tidier anywhere else.
@@ -76,13 +82,12 @@ The product's only real asset is trust in its numbers. Every visual and copy cho
 
 ## Voice
 
-The app sounds like a well made instrument, not a brochure: a trail sign, a timetable, an itemised receipt. When a copy decision is open, ask what a good waymark or receipt would say: the place, the time on foot, the price, nothing else.
+`BRAND.md` sets the voice (owner, 2026-11-27, K1): human, catchy, short and clear, with no word that adds nothing. Figures, labels and receipts stay plain and exact. On tone, BRAND.md wins; the rules below are the mechanics, several checked in code.
 
-- **Plain, specific, verb first.** Every headline carries a verb the traveller recognises or a number. "What the whole trip costs" works; "Everything the price tag usually hides" could sit on any product and so does not.
-- **Short.** Labels are two or three words. The unit is said once per list or card ("A day, a person" in the column head), never under every figure.
-- **Honest, in its own voice.** A flight price is named as Google Flights' (with when it was checked where there is room); when the AI is off, the app says so. Ask's answers carry "AI, from our own figures. It can be wrong." No testimonials.
-- **Sentence case everywhere.** No terminal punctuation on labels, buttons or headings; helper text and body copy take full stops. Contractions are fine. Active voice. A button that says "Save trip" produces "Trip saved".
-- **Errors** say what happened and what to do, in one sentence, with no apology and no "Error:" prefix ("Type the fare you paid, in euros."). **Empty states** name the space and give the action ("No place fits", Clear all).
+- **Short.** A headline under ten words, a label or a button two or three. The unit is said once per list or card ("A day, a person" in the column head), never under every figure. A line that could sit on any product is cut.
+- **Honest.** A flight price is named as Google Flights' (with when it was checked where there is room); when the AI is off, the app says so. Ask's answers carry "AI, from our own figures. It can be wrong." No testimonials.
+- **Sentence case.** Labels, buttons and section heads take no full stop; a two-beat line keeps its stops and its question mark ("Choose where. We'll tell you what it costs."). Contractions, active voice. A button that says "Save trip" produces "Trip saved".
+- **Errors and empty states** follow BRAND.md's moments: one calm fix, no apology, no "Error:" prefix ("That didn't load. Try again."); an empty state gives a way out ("Nothing fits that budget yet. Stretch it a little?").
 - **No em dashes and no en dashes**, anywhere: a comma, a colon or two sentences instead. `stripDashes()` in `continent-app/src/lib/format.js` enforces it on every shipped string; the rule applies to source, docs and reports too. Middle dots and bullet characters as separators are banned. Ranges use "to" ("€100 to €149").
 - **No emojis.** No sparkle icon for AI: Ask carries a boxed "AI" tag.
 
@@ -131,7 +136,7 @@ These are not optional and are not announced in the UI.
 
 ## Positioning
 
-Every travel product shows a price; the app shows what the whole day costs, honestly. Each neighbouring category beats it on one axis and none can say the second half: route and trail products (Komoot, AllTrails) do not price the town the walk starts from; journey planners (Rome2Rio, Omio) price the leg but not the stay; flight discovery (Skyscanner, Google Flights) does not know what a bed and a day cost; itinerary planners (Wanderlog, TripIt) start from whatever the user types in; Google Maps is the best at getting there and knows neither what a bed costs nor how to build a trip; ViaMichelin prices the car leg (fuel, tolls, vignettes) and nothing else, no bed and no day. The app sits where cost and logistics meet, and hands over to the maps app at the last step.
+The competitors are in `BRAND.md`, "Where we sit" (K1, 2026-11-27). The product fact: the app sits where exploring, cost and logistics meet, and hands over to the maps app at the last step.
 
 ## Operating context
 
