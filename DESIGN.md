@@ -244,6 +244,37 @@ components:
 
 The look. Read `BRAND.md` and `PRODUCT.md` first. Tokens live in `continent-app/src/styles/01-tokens.css`; this file records them, and a token change updates it in the same commit. Why: `docs/decisions/0012-house-style.md`. Craft: `docs/design/craft-guide.md`. Every part, live: `/?styleguide`. The file says "the app".
 
+## Fixed rules and free choices
+
+This file enforces few rules and describes the rest as the current default. The look must stay quick to change, so values sit in tokens and parts in the kit: one edit restyles every screen.
+
+**Fixed.** These hold whatever the look:
+1. **Accessible:** 44 px targets (`--tap`), WCAG AA contrast (4.5 text, 3 marks, `scripts/ci/token-contrast.mjs`), a visible focus ring, full keyboard use, 12 px text floor, colour never alone, reduced motion shows the end state.
+2. **Honest numbers:** every figure from the price engine through `formatMoney()`, "Not yet" for a missing one, the engine's own total, no price moving unless the traveller changed it (`PRODUCT.md`).
+3. **Copy mechanics:** `PRODUCT.md` "Voice" and the vocabulary; tone from `BRAND.md`.
+4. **Every function stays:** restyle, never remove.
+5. **Tokens and kit only:** no hex outside `01-tokens.css` (the map mirror and flags excepted), no literal sizes, durations or easings, no local restyle of a kit class (`scripts/ci/design-lint.mjs`). This is what keeps the look changeable.
+6. **One main action per screen.**
+7. **Three angles:** phone, tablet and desktop each deliberate, no horizontal scroll from 360 px.
+8. **Photos:** licensed only, credited; no text on a photo outside `.hs-photo-scrim`.
+9. **Logo:** Gate V only (`BRAND.md`); the blaze is never the logo.
+10. **Light only**, until a theme is decided as its own feature.
+11. **Umber stays** the paint for links and chosen states (owner rule); terracotta is the one main action (`BRAND.md` "Colour").
+
+**Free to change** (edit the token or the kit part, its demo and this file, then run the checks):
+- Every colour value, as long as contrast passes and umber stays the paint: the shades, the kinds, the beige, the ground.
+- Radii, strokes, shadows, spacing, page widths and the type scale.
+- The two faces, if licensed and the glyph list still renders.
+- Durations, springs and which moments animate.
+- The anatomy of every component below: sizes, layouts, order, the signature parts themselves (blaze, plate, relief, formation). They are today's identity; keep the job each does, change how it looks.
+- The section specs below are a record of what is built, not a law: a new design updates them.
+
+**How to change the look:**
+- **A brand change:** edit the brand roles in `01-tokens.css` (plan step C adds them, OKLCH with hex fallback); components read roles, never raw colours.
+- **A part:** change it in `src/components/ui/` and its demo in `/?styleguide`; every screen follows.
+- **A one-off need:** add a variant to the kit, never a local style.
+- Then: `node scripts/ci/token-contrast.mjs`, `node scripts/ci/design-lint.mjs`, the three angles.
+
 ## The idea
 
 **The furniture of a European footpath, made for prices.**
@@ -394,29 +425,9 @@ The plate keeps its pointed end (`--plate-tip` 14 px); the blaze keeps its squar
 
 **Ledger before panel:** a list (settings rows, answers, plan lines, pass lists, group lists) is ruled onto the ground: a `--border` rule above and below, `--border-soft` between lines, no fill, radius or shadow, text aligned with the section head; touching ledgers share one rule. Hover lifts a row to `--surface`. A paper panel is only for one object that must read as a thing: an identity card, a form, a chart's ground, a card in a grid, a sheet or dialog.
 
-## Background graphics: the relief
-
-The one background graphic.
-
-1. **Only from real ground:** drawn from the peaks in the place's dossier (`nearby.mountains[]`: name, km, bearing, `elev_m`; `reliefPeaks()` in `src/lib/relief.js`). No peak, flat band. Prices are never drawn as terrain.
-2. **Prints a real height:** at least one tag ("Grand Combin 4,309 m") on paper (15.8).
-3. **Where:** the "Around" band on place and outdoor pages, the trip header, the home page's story band, print and share covers. Never on Explore, list headers, or behind figures, rows, fields, focus rings or map labels. At most two per screen.
-4. **Clear zone:** text sits on the flat side, ending `--space-6` before the cut, a thin umber line (`--stroke-edge`) with a blaze on top.
-5. **Contrast:** lit lines white 95 %, shade lines ink 20 %, on the band; `aria-hidden`.
-6. **Light** from the north-west; east-west at true scale, north-south squeezed.
-7. **Motion:** none, except one `--dur-4` fade when its data changes; instant under reduced motion.
-8. **Forced colours:** dropped.
-9. **Missing photo:** a world tint with a resting blaze (`WorldTile`), never stock.
-
-Check: `node scripts/verify_relief.mjs --port <port> --pages "/?styleguide,<your page>"` fails on a relief without a height, text in the zone, or text under 4.5.
-
-Use: `<ReliefBand mountains={dossier.nearby.mountains} seed={place.id} cut="55%">…flat-side text…</ReliefBand>`.
-
-**The opening screen** breaks rules 3 to 5 and 7 on purpose. A deep umber ground (`--umber-800`, a soft `--umber-700` glow) with the relief of Chamonix's peaks (`gem:chamonix`) in its bottom 40 % and one tag, "Mont Blanc 4,806 m"; no cut, the zone fades in over its top third and the words centre above it. Lit lines `--umber-100` at 42 %, shade ink 38 %. It rises once (a 1.4 s clip from the bottom), the blaze paints itself (halo, stripe, heel), the name lifts letter by letter, then `.hs-wait` shows. When the app is ready the screen lifts away like a curtain with rounded bottom corners. Reduced motion: at rest, gone at once. Files: `continent-app/index.html`, `src/styles/06-boot-splash.css`, `src/lib/bootSplash.js`, `src/components/LoadingScreen.jsx`; HANDBOOK "Opening screen".
-
 ## Signature components
 
-All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05-house.css` with the `hs-` prefix.
+The current defaults (see "Fixed rules and free choices"). All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05-house.css` with the `hs-` prefix.
 
 **Blaze** (`<Blaze size="sm|md|lg|xl" state="painted|rest|blank" kind=…/>`): 16 x 10, 24 x 14, 40 x 22, 72 x 40. Only for chosen or here: the current nav place, the chosen map pin, a sheet grip, the relief cut, the chosen row of a single-pick `ChoiceRows` and the chosen plan in the pass sheet (both painted in on the pick). As the waiting path: three painting blazes while loading, a dashed one in an empty state, a resting one on the missing-photo tile. Never on headings, bullets, plates, ordinary pins or panels.
 
@@ -546,6 +557,26 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 Licensed photos only, each with author and licence (credits under the gallery and in "Sources and photo credits"), corners `--radius-card`. No text on a photo; a control on a photo is a paper disc. Missing photo: the world tile. The one exception, a photo header carrying its title, uses `.hs-photo-scrim`: `--photo-scrim` (ink `#1e2421` at 78 %) under the bottom 45 %, where white text measures 7.7:1 even on a white photo.
 
+## Background graphics: the relief
+
+The one background graphic.
+
+1. **Only from real ground:** drawn from the peaks in the place's dossier (`nearby.mountains[]`: name, km, bearing, `elev_m`; `reliefPeaks()` in `src/lib/relief.js`). No peak, flat band. Prices are never drawn as terrain.
+2. **Prints a real height:** at least one tag ("Grand Combin 4,309 m") on paper (15.8).
+3. **Where:** the "Around" band on place and outdoor pages, the trip header, the home page's story band, print and share covers. Never on Explore, list headers, or behind figures, rows, fields, focus rings or map labels. At most two per screen.
+4. **Clear zone:** text sits on the flat side, ending `--space-6` before the cut, a thin umber line (`--stroke-edge`) with a blaze on top.
+5. **Contrast:** lit lines white 95 %, shade lines ink 20 %, on the band; `aria-hidden`.
+6. **Light** from the north-west; east-west at true scale, north-south squeezed.
+7. **Motion:** none, except one `--dur-4` fade when its data changes; instant under reduced motion.
+8. **Forced colours:** dropped.
+9. **Missing photo:** a world tint with a resting blaze (`WorldTile`), never stock.
+
+Check: `node scripts/verify_relief.mjs --port <port> --pages "/?styleguide,<your page>"` fails on a relief without a height, text in the zone, or text under 4.5.
+
+Use: `<ReliefBand mountains={dossier.nearby.mountains} seed={place.id} cut="55%">…flat-side text…</ReliefBand>`.
+
+**The opening screen** breaks rules 3 to 5 and 7 on purpose. A deep umber ground (`--umber-800`, a soft `--umber-700` glow) with the relief of Chamonix's peaks (`gem:chamonix`) in its bottom 40 % and one tag, "Mont Blanc 4,806 m"; no cut, the zone fades in over its top third and the words centre above it. Lit lines `--umber-100` at 42 %, shade ink 38 %. It rises once (a 1.4 s clip from the bottom), the blaze paints itself (halo, stripe, heel), the name lifts letter by letter, then `.hs-wait` shows. When the app is ready the screen lifts away like a curtain with rounded bottom corners. Reduced motion: at rest, gone at once. Files: `continent-app/index.html`, `src/styles/06-boot-splash.css`, `src/lib/bootSplash.js`, `src/components/LoadingScreen.jsx`; HANDBOOK "Opening screen".
+
 ## Interaction
 
 Character: **painted and placed**.
@@ -643,22 +674,14 @@ The same tokens: a cover with the total plate, a relief where the trip has peaks
 
 ## Do and don't
 
-Do:
-- Use the roles and the kit; one primary action per screen.
+The fixed rules above are the hard limits. Current defaults worth keeping unless a design replaces them:
 - Make the figure the loudest thing in its row; say the unit once.
 - Mark selected with the wash, umber text, an edge and a mark.
 - Draw the relief only from real peaks, with a printed height.
-- Check 390, 820, 1180 and 1440 and a width sweep before you ship.
-- Keep every function: restyle, never remove.
+- Overshoot only on the touched control; no stagger on rows; no animation at first paint.
+- No side stripes or coloured top borders on panels; no blaze as decoration; no plate as an ordinary card.
 
-Don't:
-- Text on photos or contours; side stripes or coloured top borders on panels.
-- A blaze as decoration; a plate as an ordinary card.
-- Overshoot on figures, plates, pins or surfaces; staggered rows; animation at first paint.
-- A new hex outside the token file (the map mirror and flags excepted); literal durations or easings; a third typeface.
-- A made-up figure: a missing one is "Not yet".
-
-## The AI-slop catalogue (never)
+## The AI-slop catalogue (avoid)
 
 Purple-blue gradients, glassmorphism, blurred blobs, a centred hero with two buttons, three identical feature cards, bento grids for their own sake, gradient text, a sparkle for AI, eyebrow kickers, cards in cards in cards, one big radius everywhere, a cream ground with a serif display and terracotta accent (the app keeps terracotta to the logo and the one main action, on stone, with a sans interface; the serif is the wordmark only), dark neon "tech", stock 3D or people at laptops, emoji icons, fake logo strips, filler copy. For travel: a dotted world map, a plane with a dashed trail, a globe icon, polaroid stacks, handwritten "wanderlust", passport stamps as wallpaper, a compass rose logo. Also the retired old look: a warm grey ground, white rounded cards, a booking-site structure.
 
