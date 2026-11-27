@@ -2,8 +2,8 @@
  * "Where the numbers come from" (T318, register rows T226-b and T207-c).
  *
  * One static page, assembled at build time from files, never typed:
- *   - the positioning sentence of PRODUCT.md (owner, T471-b, 21 October 2026;
- *     the app repo cannot read the root PRODUCT.md, so it is typed here and
+ *   - the one-line boilerplate of BRAND.md (owner, K1, 27 November 2026;
+ *     the app repo cannot read the root BRAND.md, so it is typed here and
  *     must match it), with its two counts read
  *     from public/boot.json meta.n_destinations and src/lib/urlScheme.js
  *     COUNTRY_SLUGS, so the sentence cannot go stale;
@@ -178,7 +178,7 @@ footer{margin-top:var(--space-8);padding-top:var(--space-4);border-top:1px solid
 /** Builds the page. Pure: facts in, HTML out. */
 export function renderNumbersPage(f) {
   const { en } = f;
-  const sentence = `Stop stitching trips together from five apps. Viantra plans the whole trip in one place, with what each day costs: a bed plus food and drink, per person, in ${fmt(f.destinations)} places across ${f.countries} countries, with every figure labelled for where it came from.`;
+  const sentence = `Viantra shows what a day costs across Europe, then plans the trip: a bed plus food and drink, per person, in ${fmt(f.destinations)} places across ${f.countries} countries, with every figure labelled for where it came from.`;
   const li = (keys) => keys.map((k) => `<li>${esc(en[k])}</li>`).join('');
   const rows = f.layers.map((l) => `<tr><td>${esc(l.label)}</td><td class="n">${fmt(l.published)}</td><td class="n">${fmt(l.listed)}</td><td class="n">${fmt(l.ok)}</td><td class="n">${fmt(l.thin)}</td><td class="n">${fmt(l.empty)}</td></tr>`).join('');
   const accuracy = fill(en['cost.accuracyMethod'], f.accuracy.vars);

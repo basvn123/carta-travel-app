@@ -5,10 +5,10 @@ description: The app's house style and way of working (the footpath style, decis
 
 # The house style
 
-The app plans a whole trip in Europe in one place, with what each day really costs. The traveller counts money, so trust in the numbers is the product. The house style dresses prices in **the furniture of a European footpath**: the blaze painted where you choose, the signpost plate that holds a place, a time on foot and euros as one unit, the relief drawn only from a place's real peaks, and the formation, where getting there, the bed and food couple in front of the day figure. Modern, unique, alive, clean and honest.
+Viantra is a trip planner to explore Europe with, and it shows what each day really costs. Whoever plans, the money is always on the table, so trust in the numbers is the product. The house style dresses prices in **the furniture of a European footpath**: the blaze painted where you choose, the signpost plate that holds a place, a time on foot and euros as one unit, the relief drawn only from a place's real peaks, and the formation, where getting there, the bed and food couple in front of the day figure. Modern, unique, alive, clean and honest.
 
 This skill wins over every other design source (CLAUDE.md says so). Read, in this order:
-1. `PRODUCT.md` (who, the voice, the vocabulary, the number rules) and `DESIGN.md` (every token, part and rule with values) at the repo root.
+1. `BRAND.md` (the promise, the brand lines, the voice, the logo and colour story; it wins on tone), `PRODUCT.md` (who, the vocabulary, the number rules, the banned words) and `DESIGN.md` (every token, part and rule with values) at the repo root.
 2. The reference file for your screens in `references/`: `explore.md`, `place.md`, `outdoors.md`, `plan.md`, `trip.md`, `account.md`, `home.md`, `brand.md`, and `shared-product-rules.md` for rules every screen keeps. Their product rules bind; their look sections were written by each screen's lane (2026-11) and win over any older dated section in the same file. `app-rules.md` is a pointer; `_split-log.md` records the 2026-11-15 split.
 3. `docs/design/craft-guide.md` for general practice (process, tools, judging).
 Token values live in `continent-app/src/styles/01-tokens.css` (copied in `assets/tokens.css` for sketches; the app file wins). The live index of every part: `/?styleguide`.

@@ -30,7 +30,7 @@ Numbers and money (precision, units, the opened price, flights, one day-cost bas
 
 ## Flights on the place
 
-Every flight rule (Google Flights' price never presented as Carta's own, the airline mark and times, the typed fare labelled as theirs, the sweep age limits, bag fees, the typical fare of T882-b): see shared-product-rules.md, "Numbers and money", Flights.
+Every flight rule (Google Flights' price never presented as Viantra's own, the airline mark and times, the typed fare labelled as theirs, the sweep age limits, bag fees, the typical fare of T882-b): see shared-product-rules.md, "Numbers and money", Flights.
 
 ## The day sentence and the page tabs
 
