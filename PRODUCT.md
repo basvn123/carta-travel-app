@@ -15,7 +15,7 @@ One web app (Vite, React, PWA), also wrapped for the App Store and Play Store.
 A trip planner to explore Europe with: find the places that fit what you like, see what a day there costs (the bed and the food, before anything is booked), then plan the trip yourself or have it planned. A cheap flight is not a cheap trip, so the flight, the bed and the days add up to one total.
 
 - **Ground prices** for every place in the catalogue, a person a day. Local transport and tickets are not in the day figure yet, and no copy may say they are.
-- **Google Flights' price** for the flight, with airline, times, when checked and a link; a fare the traveller types replaces it.
+- **Google Flights' price** for the flight, with airline and times; a fare the traveller types replaces it.
 - **Plans** city by city and hour by hour; the same figure carries from Explore to the receipt, the trip and the day planner.
 - **Walks, beaches, lakes, summits and cycling routes** around the towns, each with a page.
 
@@ -65,7 +65,7 @@ Tone: `BRAND.md` (human, catchy, short, clear). Figures and labels stay plain an
 - Headlines under ten words; labels and buttons two or three.
 - Sentence case. Labels and buttons take no full stop; a two-beat line keeps its stops ("Choose where. We'll tell you what it costs.").
 - Errors: one calm fix, no apology ("That didn't load. Try again."). Empty states offer a way out.
-- The flight price is Google Flights'. Ask's answers carry "AI, from our own figures. It can be wrong."
+- The flight price is Google Flights'.
 - **No em or en dashes** anywhere, docs included (`stripDashes()` in `continent-app/src/lib/format.js`); ranges use "to". No middle dots, no emojis, no AI sparkle.
 - Banned words: seamless, unlock, effortless, elevate, leverage, empower, curated, simply, just, easy.
 
