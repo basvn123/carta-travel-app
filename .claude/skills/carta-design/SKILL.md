@@ -23,6 +23,8 @@ Token values live in `continent-app/src/styles/01-tokens.css` (copied in `assets
 
 ## 2. The look in one screen
 
+The current defaults. `DESIGN.md` "Fixed rules and free choices" says which rules hold whatever the look; everything else here may change through the tokens and the kit.
+
 - Ground stone `#eef0ea`, paper `#ffffff` for sheets and cards, ink `#1e2421`; umber 600 `#8c5a2b` for the one primary action, the selected edge, the blaze, the route and the chosen pin; beige (umber 100 and 200) for the selected wash and the food wagon; dark ink plates for the Score and the signpost.
 - Overpass for every word and figure with tabular figures; Sofia Sans Extra Condensed for plate names only; nothing under 12 px.
 - Radius: 8 controls, 12 panels and sheets, 16 photos and cards, pills for chips, wagons and segments. Panels flat on a hairline; only floating things cast a shadow.

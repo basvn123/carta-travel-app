@@ -1739,6 +1739,7 @@ export const en = {
   "ai.generating": "Putting your day in {city} together...",
   "ai.signIn": "The Viantra bot needs a free Viantra account, so the shared daily budget stays fair. The built-in planner works without one.",
   "ai.quotaUser": "You have used all the Viantra bot plans on your current plan. A Trip Pass lifts the limit right away, and the built-in planner still works for free.",
+  "ai.quotaFree": "You've used your Viantra bot plans. The built-in planner still plans every day for free.",
   "ai.quotaGlobal": "Viantra's shared Viantra bot budget for today is fully used. It resets tomorrow; the built-in planner still works right now.",
   "ai.balance": "{left} of {cap} Viantra bot plans left.",
   "ai.eventsNeedPass": "Live event search comes with a pass. Without one the Viantra bot still builds your day, from Viantra's own places rather than live listings.",

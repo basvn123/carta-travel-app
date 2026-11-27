@@ -4,7 +4,7 @@ import { Button, Chip } from '../../components/ui/index.js';
 import { HouseIcon } from '../../components/HouseIcons.jsx';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { formatMoney } from '../../lib/money.js';
-import { TIERS, TIER_ORDER, formatPrice, monthlyCents } from '../../lib/pricing.js';
+import { TIERS, TIER_ORDER, PASSES_ON, formatPrice, monthlyCents } from '../../lib/pricing.js';
 import { useMedia, useReveal } from './useHome.js';
 
 /**
@@ -34,6 +34,7 @@ export function HomePlans() {
     if (tier.id === 'year') return t('pass.yearNote', { n: tier.periodDays, month: formatPrice(monthlyCents(tier.id)) });
     return null;
   };
+  if (!PASSES_ON) return null; // no pass to show while the app is free
   return (
     <section className="hv-section hv-plans" aria-labelledby="hv-plans-title" {...reveal}>
       <h2 id="hv-plans-title" className="hv-h2">{t('home.priceTitle')}</h2>

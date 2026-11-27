@@ -19,7 +19,7 @@ import { Imprint } from '../components/Imprint.jsx';
 import { TermsOfService } from '../components/TermsOfService.jsx';
 import { CookiesPage } from '../components/CookiesPage.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { TIERS } from '../lib/pricing.js';
+import { TIERS, PASSES_ON } from '../lib/pricing.js';
 import {
   MIN_PASSWORD_LENGTH, passwordStrength, checkPasswordRules, passwordMeetsRules,
 } from '../lib/passwordStrength.js';
@@ -824,7 +824,7 @@ export function AccountPanel({
         {' '}
         {storedHandle ? <span>@{storedHandle}</span> : storedName ? <span>{storedEmail}</span> : null}
       </span>
-      {entitlement.known && (
+      {PASSES_ON && entitlement.known && (
         <Chip kind="status" tone="neutral" className="ac-me-plan">{t(TIERS[tierKey].labelKey)}</Chip>
       )}
       {nums.length > 0 && (
@@ -857,7 +857,7 @@ export function AccountPanel({
       <Group id="ac-g-travel" title={t('ac.travel')}>{travelRows}</Group>
       {signedIn && (
         <Group id="ac-g-plan" title={t('ac.plan')}>
-          <Row icon={TicketIcon} label={t(TIERS[tierKey].labelKey)} value={planWhen} href={hrefOf('plan')} onClick={() => go('plan')} />
+          {PASSES_ON && <Row icon={TicketIcon} label={t(TIERS[tierKey].labelKey)} value={planWhen} href={hrefOf('plan')} onClick={() => go('plan')} />}
           {plansLine && <Row icon={AiTag} label={t('ac.meterPlans')} value={plansLine} href={hrefOf('plan')} onClick={() => go('plan')} />}
         </Group>
       )}
@@ -1320,7 +1320,7 @@ export function AccountPanel({
       <PlanView
         head={head(t('ac.plan'))}
         entitlement={entitlement}
-        onChangePlan={() => paywall.openPrices('browse')}
+        onChangePlan={PASSES_ON ? () => paywall.openPrices('browse') : undefined}
       />
     );
   }

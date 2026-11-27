@@ -117,6 +117,7 @@ Pipeline tasks touched most: `fame`, `poi_significance`, `trips`, `dossier`, `st
 | who Viantra is for, number rules, banned words, vocabulary | `PRODUCT.md` |
 | design tokens and components | `DESIGN.md` (grep), the carta-design skill; the house parts (blaze, plates, price formation, rails, relief, motion classes) in `continent-app/src/styles/05-house.css` and `continent-app/src/components/ui/` |
 | how to do any visual design task well (process, identity, background graphics, clarity, three angles, interaction, accessibility, AI-slop catalogue, judging) | `docs/design/craft-guide.md` |
+| how each house part, the map page and the motion patterns look and behave today (read only the part you build) | `docs/design/components.md` |
 | what is planned and its status | `ROADMAP.md` (grep the item ID, for example `D24`) |
 | a business rule with its constant and test | `docs/logic/` (checked by `scripts/docs/drift.py`) |
 | AI models, prompts, model cards | `docs/ai/` |

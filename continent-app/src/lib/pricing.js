@@ -72,6 +72,15 @@
 import { formatMoney } from './money.js';
 
 /** Tier ids in display order. Mirrors public.plan_tiers.rank. */
+/**
+ * The one switch for selling passes (owner, 2026-11-27: the app is entirely
+ * free for now). Off: every pass gate opens for everyone and no screen offers
+ * a pass; the AI allowance stays as the server meters it (ai_consume), with
+ * no sale when it runs out. On: the passes as before. Nothing else changes,
+ * so turning it back on restores every pass surface.
+ */
+export const PASSES_ON = false;
+
 export const TIER_ORDER = ['free', 'trip', 'year'];
 
 /**

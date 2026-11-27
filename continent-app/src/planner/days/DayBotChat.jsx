@@ -4,7 +4,8 @@ import { Button, Chip, IconButton } from '../../components/ui/index.js';
 import { ArrowRightIcon, CheckIcon, CloseIcon, CopyIcon, PlusIcon, RedoIcon, SparkIcon } from '../../components/Icons.jsx';
 import { useFocusTrap } from '../../hooks/useFocusTrap.js';
 import { AiMark } from '../../components/AiMark.jsx';
-import { planAnswerText } from '../../lib/aiReport.js';
+import { planAnswerText } from '../../lib/aiReport.js';
+import { PASSES_ON } from '../../lib/pricing.js';
 
 /**
  * The Viantra bot as a chat (T899, the owner's plan days board 2026-10-30),
@@ -31,7 +32,7 @@ import { planAnswerText } from '../../lib/aiReport.js';
  */
 const RETRYABLE = new Set(['ai_busy', 'ai_timeout', 'ai_error', 'network', 'ai_bad_output']);
 const FAIL_KEY = {
-  auth: 'ai.signIn', no_auth_config: 'ai.signIn', user_cap: 'ai.quotaUser', global_cap: 'ai.quotaGlobal',
+  auth: 'ai.signIn', no_auth_config: 'ai.signIn', user_cap: PASSES_ON ? 'ai.quotaUser' : 'ai.quotaFree', global_cap: 'ai.quotaGlobal',
   no_ai: 'ai.unavailable', too_few: 'ai.tooFew',
 };
 const NUDGES = ['ai.nudgeMore', 'ai.nudgeFewerSteps', 'ai.nudgeFood', 'ai.nudgeIndoor'];

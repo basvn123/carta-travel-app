@@ -95,6 +95,7 @@ import { useAppData } from './hooks/useAppData.js';
 import { Button } from './components/Button.jsx';
 import { CATALOGUE_MODE, loadFullCatalogue } from './lib/appData.js';
 import { readFirstVisit, markHomeSeen, HOME_OFF } from './lib/homeVisit.js';
+import { PASSES_ON } from './lib/pricing.js';
 import { useDestinationSearch } from './hooks/useDestinationSearch.js';
 import { useAccountSync } from './hooks/useAccountSync.js';
 import { useUrlSync } from './hooks/useUrlSync.js';
@@ -482,6 +483,7 @@ function TravelApp() {
   // commit at once.
   const goToTab = useCallback((key, opts = {}) => {
     if (HOME_OFF && key === 'home') key = 'map';
+    if (!PASSES_ON && key === 'pricing') key = 'map'; // no pricing page while the app is free
     const from = activeTabRef.current;
     const commit = () => {
       setSavedTripsOpen(false);
@@ -556,7 +558,7 @@ function TravelApp() {
   // T496: the places are Explore, Plan, My trips and Account; Explore opens
   // on Places (owner T489-h), so a return visit with no link lands there.
   // While the home page is off (lib/homeVisit.js HOME_OFF) a link to it opens Explore.
-  const urlTab = bootRoute && VIEW_KEYS.includes(bootRoute.view) ? (HOME_OFF && bootRoute.view === 'home' ? 'map' : bootRoute.view) : null;
+  const urlTab = bootRoute && VIEW_KEYS.includes(bootRoute.view) ? ((HOME_OFF && bootRoute.view === 'home') || (!PASSES_ON && bootRoute.view === 'pricing') ? 'map' : bootRoute.view) : null;
   const [activeTab, setActiveTab] = useState(urlTab || (firstVisit ? 'home' : 'map'));
   if (activeTabRef.current === null) activeTabRef.current = activeTab;
 
@@ -2025,7 +2027,7 @@ function TravelApp() {
       )}
 
       {/* The Trip Pass prices, a place with its own address (T496). */}
-      {activeTab === 'pricing' && (
+      {activeTab === 'pricing' && PASSES_ON && (
         <div inert={behindPanel} onClick={(e) => e.stopPropagation()}>
           <SectionBoundary name="pricing">
           <Suspense fallback={<TabFallback />}>

@@ -35,6 +35,7 @@ import {
   trackPaywall, trackPaywallOnExit, isLeavingForCheckout,
 } from '../lib/paywallEvents.js';
 import { E2E_SEAMS } from '../lib/e2eSeams.js';
+import { PASSES_ON } from '../lib/pricing.js';
 // T1171: keeps a ?pm=on preview of the Pass moment before the app rewrites the address.
 import '../pass/passMoment.js';
 
@@ -194,7 +195,7 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
    * server regardless of what this says.
    */
   const paid = useMemo(() => {
-    if (PAY_MOCK) return true;
+    if (PAY_MOCK || !PASSES_ON) return true;
     if (!signedIn) return false;
     if (entitlement.loading) return true;
     if (!entitlement.known) return true;
@@ -216,6 +217,8 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
    * decide whether to explain itself.
    */
   const require = useCallback((why) => {
+    // Passes off: every gate opens; a spent AI allowance is said by the caller, never sold.
+    if (!PASSES_ON) return !QUOTA_REASONS.has(why);
     // A paying traveller passes every gate except the ones that are only
     // asked when an allowance has run out or is about to (T460): those used
     // to return true for anyone who paid, so "See passes" did nothing for the
@@ -233,6 +236,7 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
    * on top of it.
    */
   const nudge = useCallback((why) => {
+    if (!PASSES_ON) return false;
     if (paid || !GATES[why]) return false;
     if (softAlreadyShown()) return false;
     const snooze = readSnooze();
@@ -253,6 +257,7 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
    * Opened by a press, so it never earns a snooze.
    */
   const openPrices = useCallback((why = 'browse') => {
+    if (!PASSES_ON) return;
     openedHard.current = true;
     setReason(typeof why === 'string' && GATES[why] ? why : 'browse');
   }, []);
@@ -284,13 +289,13 @@ export function PaywallProvider({ children, onSignIn, onOpenPricing }) {
   // value must not change with it.
   const pricingRef = useRef(onOpenPricing);
   pricingRef.current = onOpenPricing;
-  const hasPricing = typeof onOpenPricing === 'function';
+  const hasPricing = PASSES_ON && typeof onOpenPricing === 'function';
   const goPricing = useCallback(() => { pricingRef.current?.(); }, []);
   const openPricingPage = hasPricing ? goPricing : null;
   const value = useMemo(() => ({
     paid, signedIn, entitlement, reason,
     require, nudge, openPrices, close, signIn, openPricingPage,
-    tier: entitlement.tier,
+    tier: entitlement.tier, passesOn: PASSES_ON,
   }), [paid, signedIn, entitlement, reason, require, nudge, openPrices, close, signIn, openPricingPage]);
 
   return (

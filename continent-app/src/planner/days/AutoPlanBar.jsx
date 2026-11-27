@@ -1,4 +1,5 @@
 import React from 'react';
+import { PASSES_ON } from '../../lib/pricing.js';
 import { useI18n } from '../../i18n/index.jsx';
 import { Button } from '../../components/ui/index.js';
 import { SparkIcon, CheckIcon, CloseIcon } from '../../components/Icons.jsx';
@@ -6,7 +7,7 @@ import './AutoPlanBar.css';
 
 // The bot's failure codes, said the way its own form says them.
 const FAIL_KEY = {
-  auth: 'ai.signIn', no_auth_config: 'ai.signIn', user_cap: 'ai.quotaUser',
+  auth: 'ai.signIn', no_auth_config: 'ai.signIn', user_cap: PASSES_ON ? 'ai.quotaUser' : 'ai.quotaFree',
   global_cap: 'ai.quotaGlobal', no_ai: 'ai.unavailable', too_few: 'ai.tooFew',
 };
 const RETRYABLE = new Set(['ai_busy', 'ai_timeout', 'ai_error', 'network', 'ai_bad_output']);
@@ -53,7 +54,7 @@ export function AutoPlanBar({ queue, city, onStop, onResume, onPass, onClose }) 
       <span className="autoplan-acts">
         {queue.phase === 'run' && <Button size="sm" variant="secondary" onClick={onStop}>{t('tp.auto.stop')}</Button>}
         {canResume && <Button size="sm" variant="primary" onClick={onResume}>{t('tp.auto.resume')}</Button>}
-        {queue.phase === 'fail' && queue.code === 'user_cap' && (
+        {PASSES_ON && queue.phase === 'fail' && queue.code === 'user_cap' && (
           <Button size="sm" variant="primary" onClick={onPass}>{t('tp.auto.pass')}</Button>
         )}
         {queue.phase !== 'run' && (

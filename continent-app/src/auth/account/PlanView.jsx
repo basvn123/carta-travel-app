@@ -76,9 +76,11 @@ export function PlanView({ head, entitlement: e, onChangePlan }) {
               plans are once for the life of the account. */}
           <Meter label={t('ac.meterPlans')} used={e.plansUsed} cap={e.plansCap} locale={locale} />
           <Meter label={t('ac.meterSearches')} used={e.groundUsed} cap={e.groundCap} locale={locale} />
-          <div className="ac-plan-acts">
-            <Button onClick={onChangePlan}>{t('ac.changePlan')}</Button>
-          </div>
+          {onChangePlan && (
+            <div className="ac-plan-acts">
+              <Button onClick={onChangePlan}>{t('ac.changePlan')}</Button>
+            </div>
+          )}
         </section>
       )}
 
@@ -102,7 +104,7 @@ export function PlanView({ head, entitlement: e, onChangePlan }) {
                 <ul>
                   {FEATURES[key](t, x).map((f) => <li key={f}><CheckIcon size={16} />{f}</li>)}
                 </ul>
-                {!mine && key !== 'free' && (
+                {onChangePlan && !mine && key !== 'free' && (
                   <Button size="sm" onClick={onChangePlan}>{t('ac.choose')}</Button>
                 )}
               </div>

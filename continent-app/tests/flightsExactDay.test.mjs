@@ -104,7 +104,9 @@ test("the list: a trip whose dates may move flies on its own dates; the return i
   for (const t of moving) {
     const facts = t.slots.find((s) => s.id === "flight")?.pick?.facts;
     if (facts?.source !== "swept") continue;
-    if (t.shiftedBy) shifted += 1;
+    // On its flight days: moved there (shiftedBy), or started on the month's
+    // cheapest week (owner, 2026-11-27), so nothing had to move.
+    if (t.shiftedBy || (facts.out.date === t.dates.out && facts.back.date === t.dates.back)) shifted += 1;
     if (t.shiftedBy) {
       assert.equal(facts.out.date, t.dates.out, `${t.id}: out on check-in`);
       assert.equal(facts.back.date, t.dates.back, `${t.id}: home on check-out`);
@@ -122,7 +124,7 @@ test("the list: a trip whose dates may move flies on its own dates; the return i
     if (flightOffDays(t).out || flightOffDays(t).back) named += 1;
   }
   assert.ok(named >= 1, `${named} fixed-date trips name their flight's day`);
-  assert.ok(shifted >= 1, `${shifted} trips moved onto their flight days`);
+  assert.ok(shifted >= 1, `${shifted} trips fly on their own days`);
 });
 
 test("the trip page: the exact day's live flight replaces a held nearby-day fare; without an answer the held one stays", { skip }, () => {

@@ -7,7 +7,8 @@ import {
 } from '../components/Icons.jsx';
 import { ScoreChip } from '../components/RatingBadge.jsx';
 import { DayExploreMap } from '../map/DayExploreMap.jsx';
-import { geocodeAddress } from '../lib/geocode.js';
+import { geocodeAddress } from '../lib/geocode.js';
+import { PASSES_ON } from '../lib/pricing.js';
 
 /**
  * TownPickerStep, the Viantra chat's "where do you want to spend the day?"
@@ -37,7 +38,7 @@ const TABS = [
 ];
 
 const AI_FAIL_KEY = {
-  user_cap: 'ai.quotaUser', global_cap: 'ai.quotaGlobal', auth: 'ai.signIn',
+  user_cap: PASSES_ON ? 'ai.quotaUser' : 'ai.quotaFree', global_cap: 'ai.quotaGlobal', auth: 'ai.signIn',
 };
 
 export function TownPickerStep({

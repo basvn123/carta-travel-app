@@ -5,7 +5,7 @@ import { Button } from './Button.jsx';
 import { AlertIcon, CloseIcon, InfoIcon, TicketIcon } from './Icons.jsx';
 import { useI18n } from '../i18n/index.jsx';
 import { usePaywall } from '../hooks/usePaywall.jsx';
-import { TIERS, daysLeft } from '../lib/pricing.js';
+import { TIERS, PASSES_ON, daysLeft } from '../lib/pricing.js';
 
 // The one consumer of site_config the app ships with: a notice the admin
 // panel can switch on for every visitor without a deploy ("fares refresh
@@ -87,7 +87,7 @@ export function PassExpiryBanner() {
     try { return localStorage.getItem(EXPIRY_SEEN_KEY) || ''; } catch { return ''; }
   });
 
-  if (!entitlement?.known) return null;
+  if (!PASSES_ON || !entitlement?.known) return null;
   if (entitlement.tier === 'free' || !entitlement.expiresAt) return null;
   if (dismissed === entitlement.expiresAt) return null;
 
