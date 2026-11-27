@@ -108,7 +108,7 @@ test('contrast: text on the umber ground and band, segments against the cream tr
   const ground = hex('--home-ground-deep');
   const band = hex('--umber-700');
   const cream = hex('--umber-50');
-  const ink2 = mix(cream, hex('--umber-800'), 0.76);
+  const ink2 = mix(cream, hex('--umber-800'), 0.82);
   const text = [
     [cream, ground, 4.5, 'cream text on the ground'], [cream, band, 4.5, 'cream text on the band'],
     [ink2, ground, 4.5, 'quiet text on the ground'], [ink2, band, 4.5, 'quiet text on the band'],

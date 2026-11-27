@@ -125,9 +125,9 @@
    "Continue with Google" and the gate's "Create an account" stay secondary. */
 .auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost) {
   min-height: var(--tap);
-  background: var(--action);
-  border-color: var(--action);
-  color: var(--action-text);
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
 }
 @media (hover: hover) {
   .auth-modal .auth-submit:not(.auth-google):not(.auth-submit-ghost):hover:not(:disabled) { background: var(--action-hover); }

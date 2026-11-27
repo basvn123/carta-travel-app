@@ -14,7 +14,7 @@
    mixed from the cream itself, never grey. */
 .ccard {
   --ccard-ink: var(--umber-50);
-  --ccard-ink-2: color-mix(in srgb, var(--umber-50) 76%, var(--umber-800));
+  --ccard-ink-2: color-mix(in srgb, var(--umber-50) 82%, var(--umber-800)); /* 82 % since the terracotta scale (K1 step C): 4.86 on the band */
   --ccard-line: color-mix(in srgb, var(--umber-50) 14%, transparent);
   --ccard-travel: var(--sun-400);
   --ccard-around: var(--lagoon-300);

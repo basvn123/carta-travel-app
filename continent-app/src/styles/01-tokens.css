@@ -67,14 +67,18 @@
      and the chosen pin: 5.06 on stone, 5.81 on paper, white on it 5.81.
      700 is brown text, the pressed action and the focus ring: 6.80 on
      stone. 100 and 200 are the beige: tints, the food wagon, selected rows. */
-  --umber-50:     #faf6f1;
-  --umber-100:    #f6e7d3;
-  --umber-200:    #e7d3bc;
-  --umber-300:    #d4b48f;
-  --umber-500:    #a8733f;
-  --umber-600:    #8c5a2b;
-  --umber-700:    #744820;
-  --umber-800:    #5a3716;
+  /* One accent (owner, 2026-11-27, K1 step C, version A): the umber names now
+     hold the terracotta scale, so every link, chosen state, route, pin and
+     main action is terracotta from this one edit. The names stay because 300+
+     rules read them, as the neutral-* names did. Was #8c5a2b at 600. */
+  --umber-50:     #fbf1ec;
+  --umber-100:    #f6e1d6;
+  --umber-200:    #ecc5b2;
+  --umber-300:    #d99f85;
+  --umber-500:    #c0643f;
+  --umber-600:    #a54a26;
+  --umber-700:    #8e3f20;
+  --umber-800:    #73321a;
 
   /* Sun yellow: retired as a role (no yellow in the house style; --best is
      beige now). Kept as primitives only because the share images read them
@@ -112,9 +116,16 @@
   --action-text:     var(--neutral-0);    /* label on an --action fill */
   --action-tint:     var(--umber-100);    /* --action as text on it 4.80 */
 
-  /* K1 (decision 0018): the Viantra arch's terracotta, the logo only. A mark,
-     4.3 on stone; never a fill for UI. The palette move is a later step. */
-  --brand-mark:      #b5532c;
+  /* Brand roles (K1 step C, BRAND.md "Colour", DESIGN.md "Palette"). A brand
+     change edits these lines; components read the roles, never the hex.
+     Terracotta is the one main action per screen; umber stays the paint for
+     links and chosen states. Hex here because the contrast and mirror checks
+     read hex in this first block; oklch() equivalents are noted beside each. */
+  --brand-mark:      #b5532c;             /* the logo's arch, never text; oklch(0.57 0.14 40) */
+  --primary:         var(--umber-600);             /* the one main action; white on it 5.82, 5.07 on stone; oklch(0.53 0.14 40) */
+  --primary-hover:   var(--umber-700);             /* white on it 7.29; oklch(0.48 0.13 40) */
+  --primary-press:   var(--umber-800);             /* white on it 9.54; oklch(0.42 0.11 40) */
+  --primary-text:    var(--neutral-0);    /* the label on a --primary fill */
 
   /* The one selected state (DESIGN.md "Selected"): the beige wash, brown
      text, a brown edge, plus a mark (the blaze, a tick, the paint bar).
@@ -130,9 +141,9 @@
      its word ("Cheapest", "Best value"), never colour alone; it never
      outshouts the umber chosen pin. --text on it 11.6; the tint stays apart
      from the selected wash (token-contrast DISTINCT). */
-  --best:            var(--umber-200);
-  --best-bg:         var(--umber-50);
-  --best-ink:        var(--umber-800);
+  --best:            var(--neutral-900);
+  --best-bg:         transparent;
+  --best-ink:        var(--neutral-900);
 
   /* ---- 3. House parts ---------------------------------------------------- */
 
@@ -305,9 +316,12 @@
   --rate-soft:    var(--text-3);
   --rate-bg:      var(--surface-sunken);
   --green:        #3f6332;       /* good news text: 6.28 on stone */
-  --owe:          #b3402a;       /* a balance that is owed, the Reiskas bar and figure (G15): 4.9 on stone, 5.7 on paper */
-  --danger:       #a12a1c;       /* destructive, always with words: 6.43 on stone */
-  --danger-dark:  #86200f;
+  --owe:          #1e2421;       /* a balance that is owed, the Reiskas bar and figure (G15): 4.9 on stone, 5.7 on paper */
+  /* One accent (owner, 2026-11-27, K1 step C): destructive, warning, best value
+     and owed are ink, told apart by their words, icon, outline or sign; no tinted
+     boxes. Terracotta stays the only colour on a page. */
+  --danger:       #1e2421;       /* destructive, always with words: 6.43 on stone */
+  --danger-dark:  #2c3530;
   --status-success: #10b981;     /* indicator only */
 
   --kind-metro:   #1e2421;
@@ -360,20 +374,20 @@
   --warn-ink:           #b3402a;
   --warn-vivid:         #cc4433;
   --amber:              #c68a12;
-  --amber-ink:          #a8400f;   /* warning text, 6.2 on paper */
-  --amber-ink-alt:      #a8400f;
-  --amber-ink-deep:     #9c3d12;
+  --amber-ink:          #1e2421;   /* warning text, 6.2 on paper */
+  --amber-ink-alt:      #1e2421;
+  --amber-ink-deep:     #1e2421;
   --amber-warm:         #a8400f;
   --beach-ink:          #0e7c86;
-  --amber-bg:           #fdf3e2;
-  --amber-bg-alt:       #fcf2dd;
+  --amber-bg:           transparent;
+  --amber-bg-alt:       transparent;
   --amber-rule:         #efd9a3;
   --rate-rule:          #e0cba4;
   --crowd-hot:          #d06a2a;
   --orange:             #d35a26;
   --experience-ink:     #9a3a2a;
   --experience-rule:    #eec7bb;
-  --danger-bg:          #f6dcd8;
+  --danger-bg:          transparent;
   --ai-violet:          #5b3fa8;
   --ai-violet-bg:       #eee7fb;
   --mountain-ink:       #6248a8;

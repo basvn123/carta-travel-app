@@ -170,7 +170,7 @@
   font-weight: 500;
   cursor: pointer;
 }
-.upl-send { border: 1px solid var(--action); background: var(--action); color: var(--action-text); }
+.upl-send { border: 1px solid var(--primary); background: var(--primary); color: var(--primary-text); }
 .upl-btn { border: 1px solid var(--border); background: transparent; color: var(--text); }
 .upl-done p { margin: 0; }
 .upl-done svg { flex: none; margin-top: 2px; color: var(--status-success); }

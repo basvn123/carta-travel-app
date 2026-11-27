@@ -19,13 +19,13 @@ Token values live in `continent-app/src/styles/01-tokens.css` (copied in `assets
 - **Honest numbers.** Every euro through `formatMoney()`. No made-up figure; a missing one is "Not yet" and stays out of every sum. A total is the engine's own total, with a "Rounding" line where printed lines do not add up. The flight price is Google Flights', with a link and "prices may have changed"; its checked time shows where the screen has room (owner T840).
 - **Accessibility.** Text 4.5:1, marks 3:1 (`scripts/ci/token-contrast.mjs`), 44 px targets, a visible 3 px focus ring, reduced motion shows the end state, colour never alone, real links and buttons, axe serious and critical 0.
 - **Copy.** No em or en dashes, no middots as separators, no banned words (PRODUCT.md), six languages through i18n keys, sentence case, the vocabulary in PRODUCT.md (one name per object). Minimal text: no unit sentences or sublines the context gives; the unit is said once.
-- **The umber brown stays** as the paint. Licensed photography with its credit; never AI pictures of places.
+- **One accent:** terracotta is the only colour on a page (BRAND.md "Colour"). Licensed photography with its credit; never AI pictures of places.
 
 ## 2. The look in one screen
 
 The current defaults. `DESIGN.md` "Fixed rules and free choices" says which rules hold whatever the look; everything else here may change through the tokens and the kit.
 
-- Ground stone `#eef0ea`, paper `#ffffff` for sheets and cards, ink `#1e2421`; umber 600 `#8c5a2b` for the one primary action, the selected edge, the blaze, the route and the chosen pin; beige (umber 100 and 200) for the selected wash and the food wagon; dark ink plates for the Score and the signpost.
+- Ground stone `#eef0ea`, paper `#ffffff` for sheets and cards, ink `#1e2421`; terracotta `#a54a26` (the `--umber-*` scale) is the one accent: the main action, links, every chosen thing, the blaze, the route and the chosen pin. A chosen chip fills solid. Delete, warnings, best value and money owed are ink. No second accent and no tinted boxes.
 - Overpass for every word and figure with tabular figures; Sofia Sans Extra Condensed for plate names only; nothing under 12 px.
 - Radius: 8 controls, 12 panels and sheets, 16 photos and cards, pills for chips, wagons and segments. Panels flat on a hairline; only floating things cast a shadow.
 - The figure is always the loudest thing in its row or card.

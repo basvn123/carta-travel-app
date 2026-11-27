@@ -200,9 +200,9 @@
 .guide-next:not(.btn) {
   padding: 10px 22px;
   border-radius: var(--radius-control);
-  border: 1px solid var(--action);
-  background: var(--action);
-  color: var(--action-text);
+  border: 1px solid var(--primary);
+  background: var(--primary);
+  color: var(--primary-text);
   font-size: var(--text-body);
   font-weight: 600;
   transition: opacity var(--dur-1);

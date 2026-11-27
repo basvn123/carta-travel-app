@@ -73,11 +73,14 @@
 .ui-chip-filter:focus-visible,
 .ui-chip-choice:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .ui-chip.is-selected {
-  background: var(--select-bg);
-  border-color: var(--select-border);
-  color: var(--select-ink);
-  font-weight: 700;
+  /* One accent (K1 step C): a chosen chip fills solid, bold, no tick; fill
+     against outline tells it apart without the colour. */
+  background: var(--action);
+  border-color: var(--action);
+  color: var(--action-text);
+  font-weight: 800;
 }
+.ui-chip.is-selected .ui-chip-tick { display: none; }
 /* The Select primitive's mark: the tick arrives on the tick spring. */
 .ui-chip-tick { flex: none; margin-left: -2px; animation: ui-mark-in var(--dur-tick) var(--ease-tick) both; }
 @keyframes ui-mark-in { from { scale: 0.5; opacity: 0; } to { scale: 1; opacity: 1; } }
@@ -104,7 +107,7 @@
   font-weight: 600;
 }
 .ui-chip-tone-neutral { background: var(--surface-sunken); color: var(--text-2); }
-.ui-chip-tone-best { background: var(--best); color: var(--text); }
+.ui-chip-tone-best { background: transparent; color: var(--best-ink); outline: var(--stroke-edge) solid var(--best); outline-offset: calc(-1 * var(--stroke-edge)); } /* an ink outline tag (K1 step C) */
 .ui-chip-tone-gem { background: var(--gem-bg); color: var(--gem-ink); }
 .ui-chip-tone-rate { background: var(--rate-bg); color: var(--rate); }
 .ui-chip-tone-positive { background: var(--surface-sunken); color: var(--text); }

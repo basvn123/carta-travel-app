@@ -14,14 +14,14 @@ colors:
   neutral-700: "#465049"
   neutral-800: "#2c3530"
   neutral-900: "#1e2421"
-  umber-50: "#faf6f1"
-  umber-100: "#f6e7d3"
-  umber-200: "#e7d3bc"
-  umber-300: "#d4b48f"
-  umber-500: "#a8733f"
-  umber-600: "#8c5a2b"
-  umber-700: "#744820"
-  umber-800: "#5a3716"
+  umber-50: "#fbf1ec"
+  umber-100: "#f6e1d6"
+  umber-200: "#ecc5b2"
+  umber-300: "#d99f85"
+  umber-500: "#c0643f"
+  umber-600: "#a54a26"
+  umber-700: "#8e3f20"
+  umber-800: "#73321a"
   sun-100: "#fdf1d8"
   sun-400: "#f2b33d"
   sun-800: "#7a5000"
@@ -35,30 +35,30 @@ colors:
   border: "#cfd5cc"
   border-soft: "#dde2da"
   edge: "#7a847d"
-  action: "#8c5a2b"
-  action-hover: "#744820"
-  action-press: "#5a3716"
+  action: "#a54a26"
+  action-hover: "#8e3f20"
+  action-press: "#73321a"
   action-text: "#ffffff"
-  action-tint: "#f6e7d3"
-  select-bg: "#f6e7d3"
-  select-ink: "#5a3716"
-  select-border: "#8c5a2b"
-  select-row: "#faf6f1"
-  focus: "#744820"
+  action-tint: "#f6e1d6"
+  select-bg: "#f6e1d6"
+  select-ink: "#73321a"
+  select-border: "#a54a26"
+  select-row: "#fbf1ec"
+  focus: "#8e3f20"
   focus-on-dark: "#ffffff"
   plate: "#1e2421"
   plate-hover: "#2c3530"
   on-plate: "#ffffff"
-  on-plate-2: "#e7d3bc"
-  wagon-go-edge: "#8c5a2b"
-  wagon-go-ink: "#5a3716"
-  wagon-bed: "#8c5a2b"
+  on-plate-2: "#ecc5b2"
+  wagon-go-edge: "#a54a26"
+  wagon-go-ink: "#73321a"
+  wagon-bed: "#a54a26"
   wagon-bed-ink: "#ffffff"
-  wagon-food: "#f6e7d3"
-  wagon-food-edge: "#a8733f"
-  wagon-food-ink: "#5a3716"
+  wagon-food: "#f6e1d6"
+  wagon-food-edge: "#c0643f"
+  wagon-food-ink: "#73321a"
   wagon-none-edge: "#7a847d"
-  kind-places: "#8c5a2b"
+  kind-places: "#a54a26"
   kind-trails: "#2f7a45"
   kind-beaches: "#0e7c86"
   kind-lakes: "#2b5fa8"
@@ -70,17 +70,17 @@ colors:
   map-land: "#f8f9f5"
   map-water: "#d3dfe2"
   map-border: "#d7dcd3"
-  map-route: "#8c5a2b"
-  best: "#e7d3bc"
-  best-bg: "#faf6f1"
-  danger: "#a12a1c"
+  map-route: "#a54a26"
+  best: "#1e2421"
+  best-bg: "transparent"
+  danger: "#1e2421"
   danger-dark: "#86200f"
   danger-bg: "#f6dcd8"
   green: "#3f6332"
   good-ink: "#16794f"
-  amber-ink: "#a8400f"
-  gem-ink: "#744820"
-  rate: "#744820"
+  amber-ink: "#1e2421"
+  gem-ink: "#8e3f20"
+  rate: "#8e3f20"
   status-success: "#10b981"
 typography:
   display:
@@ -259,10 +259,10 @@ This file enforces few rules and describes the rest as the current default. The 
 8. **Photos:** licensed only, credited; no text on a photo outside `.hs-photo-scrim`.
 9. **Logo:** Gate V only (`BRAND.md`); the blaze is never the logo.
 10. **Light only**, until a theme is decided as its own feature.
-11. **Umber stays** the paint for links and chosen states (owner rule); terracotta is the one main action (`BRAND.md` "Colour").
+11. **One accent:** terracotta is the only colour on a page, for the main action, links and every chosen thing; everything else is stone and ink (`BRAND.md` "Colour").
 
 **Free to change** (edit the token or the kit part, its demo and this file, then run the checks):
-- Every colour value, as long as contrast passes and umber stays the paint: the shades, the kinds, the beige, the ground.
+- Every colour value, as long as contrast passes and the page keeps one accent: the shades, the kinds, the tints, the ground.
 - Radii, strokes, shadows, spacing, page widths and the type scale.
 - The two faces, if licensed and the glyph list still renders.
 - Durations, springs and which moments animate.
@@ -317,21 +317,21 @@ All values are hex in one `:root` block (several readers parse hex only). Ratios
 
 | Token | Hex | Job | Contrast |
 |---|---|---|---|
-| `--umber-600` = `--action`, `--select-border`, `--map-route`, `--wagon-bed` | `#8c5a2b` | The primary action, the selected edge, the blaze stripe, the route, the chosen pin, the bed wagon, the chosen segment | 5.06 on stone, 5.81 on paper; white on it 5.81 |
-| `--umber-700` = `--action-hover`, `--focus`, `--rate` | `#744820` | Brown text (quiet buttons, See all), action hover, the focus ring | 6.80 on stone |
-| `--umber-800` = `--action-press`, `--select-ink`, `--wagon-food-ink` | `#5a3716` | Pressed action, text on beige | 8.68 on umber 100 |
-| `--umber-500` = `--wagon-food-edge` | `#a8733f` | A mark only (the food wagon's edge) | |
-| `--umber-300` | `#d4b48f` | Decorative only | |
-| `--umber-200` = `--on-plate-2` | `#e7d3bc` | Beige 2: the second line on a plate | 11.4 on the plate |
-| `--umber-100` = `--select-bg`, `--action-tint`, `--wagon-food` | `#f6e7d3` | Beige: the selected wash, the food wagon, tags | |
-| `--umber-50` = `--select-row` | `#faf6f1` | A selected row in a list | |
+| `--umber-600` = `--action`, `--select-border`, `--map-route`, `--wagon-bed` | `#a54a26` | The primary action, the selected edge, the blaze stripe, the route, the chosen pin, the bed wagon, the chosen segment | 5.06 on stone, 5.81 on paper; white on it 5.81 |
+| `--umber-700` = `--action-hover`, `--focus`, `--rate` | `#8e3f20` | Brown text (quiet buttons, See all), action hover, the focus ring | 6.80 on stone |
+| `--umber-800` = `--action-press`, `--select-ink`, `--wagon-food-ink` | `#73321a` | Pressed action, text on the tint | 7.57 on umber 100 |
+| `--umber-500` = `--wagon-food-edge` | `#c0643f` | A mark only (the food wagon's edge) | |
+| `--umber-300` | `#d99f85` | Decorative only | |
+| `--umber-200` = `--on-plate-2` | `#ecc5b2` | Tint 2: the second line on a plate | 9.93 on the plate |
+| `--umber-100` = `--select-bg`, `--action-tint`, `--wagon-food` | `#f6e1d6` | Tint: the food wagon, tags | |
+| `--umber-50` = `--select-row` | `#fbf1ec` | A selected row in a list | |
 | `--brand-mark` | `#b5532c` | The logo's terracotta arch; never text | 4.3 on stone (a mark) |
 
-**Palette (`BRAND.md` "Colour"):** stone and ink are calm; terracotta pops.
-- **Terracotta** is the one main action per screen: #a54a26 wherever it carries or sits under text (5.07 on stone, 5.82 on paper). The logo keeps #b5532c.
-- **Umber** stays the paint for links, the selected thing, the blaze, the route and the chosen pin.
-- Both are equally light, so never let them alone tell two states apart: add weight, an underline or an icon.
-- The token lands in plan step C (`docs/research/2026-11-26-brand-system-toolkit.md` section 6); until then `--action` is umber. No other accent.
+**Palette (`BRAND.md` "Colour"):** stone and ink are calm; terracotta is the one accent.
+- The `--umber-*` names hold the terracotta scale: every link, chosen state, route, pin, tab bar and main action is terracotta. The names stay because hundreds of rules read them.
+- A chosen chip or segment fills solid terracotta with bold paper text; fill against outline tells it apart, never colour alone.
+- Delete and errors, warnings, best value and money owed are ink, told apart by their word, icon, outline or sign (`--danger`, `--amber-ink`, `--best`, `--owe`); no tinted boxes.
+- `--primary` (the main action) and `--brand-mark` (the logo, #b5532c) are the brand roles; a brand change edits the scale and these lines.
 
 ### Plates and parts
 
@@ -353,7 +353,7 @@ Each kind has its own paint, for its pictogram, swatch and tab underline only, *
 
 ### Status and the rest
 
-`--danger` `#a12a1c` for errors, always with words; `--owe` `#b3402a` only for the Trip kitty balance; best value a beige mark with its word, no yellow. Colours being retired, with their last readers: `docs/design/components.md`.
+`--danger`, `--owe`, `--amber-ink` and `--best` are ink: delete, errors, warnings, the Trip kitty balance and best value say what they are in words, an icon, an outline or a sign, never a second colour. Colours being retired, with their last readers: `docs/design/components.md`.
 
 ### Colour rules
 

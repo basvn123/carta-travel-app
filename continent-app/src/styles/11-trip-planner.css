@@ -234,7 +234,7 @@
   padding: 0 20px;
   border-radius: var(--radius-control);
   border: 1px solid var(--ink);
-  background: var(--action);
+  background: var(--primary);
   color: var(--paper);
   font-size: var(--text-label);
   font-weight: 500;

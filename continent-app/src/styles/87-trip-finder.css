@@ -503,7 +503,7 @@
 .tff-meter i.is-on { background: var(--text-2); }
 .tff-meter.is-high i.is-on { background: var(--danger); }
 .tff-card-tags { margin: 0; }
-.tff-card-best { display: inline-flex; padding: 2px var(--space-2); border-radius: var(--radius-pill); background: var(--best); color: var(--best-ink); font-size: var(--text-caption); font-weight: 700; }
+.tff-card-best { display: inline-flex; padding: 2px var(--space-2); border-radius: var(--radius-pill); background: transparent; outline: var(--stroke-edge) solid var(--best); outline-offset: calc(-1 * var(--stroke-edge)); color: var(--best-ink); font-size: var(--text-caption); font-weight: 700; }
 .tff-card-price { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: start; gap: var(--space-1); margin-top: auto; padding-top: var(--space-1); }
 .tff-card-total { display: grid; margin: 0; }
 .tff-total-eur { font-size: var(--text-figure); font-weight: 800; line-height: var(--leading-tight); letter-spacing: -0.01em; color: var(--text); font-variant-numeric: tabular-nums; }
@@ -654,7 +654,7 @@
 }
 .tff-pin-eur { font-weight: 600; font-variant-numeric: tabular-nums; }
 .tff-pin:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
-.tff-pin.is-cheapest { border-color: var(--best); background: var(--best); }
+.tff-pin.is-cheapest { border-color: var(--best); background: var(--surface); }
 .tff-pin.is-picked { border-color: var(--select-border); background: var(--select-bg); color: var(--select-ink); outline: 1px solid var(--select-border); }
 @media (hover: hover) { .tff-pin:hover { border-color: var(--text-3); } }
 @media (prefers-reduced-motion: reduce) { .tff-map-frame canvas { transition: none; } }
@@ -1219,7 +1219,7 @@
 .tff-pin-photo { display: block; width: 26px; height: 26px; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-sunken); }
 .tff-map .tff-pin-eur { font-weight: 700; }
 .tff-map .tff-pin-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
-.tff-map .tff-pin.is-cheapest { background: var(--best); }
+.tff-map .tff-pin.is-cheapest { background: var(--surface); }
 .tff-map .tff-pin.is-picked { background: var(--action); color: var(--action-text); outline: 2px solid var(--surface); outline-offset: 0; transform: scale(1.08); }
 .tff-map .tff-pin.is-hot { outline: 2px solid var(--text); outline-offset: 1px; transform: scale(1.06); }
 .tff-home { width: 18px; height: 18px; border: 3px solid var(--surface); border-radius: 50%; background: var(--text); box-shadow: var(--elev-1); }

@@ -249,8 +249,8 @@ export function trailKml(tr, detail = null, { link = null, stopNames = [], factL
   return buildKml({
     name: tr.name,
     description: `${factLine}${factLine ? '. ' : ''}${src.attribution_text || ''}`.trim(),
-    // The route in the house umber 600 (#8c5a2b as aabbggrr), as on the app's maps.
-    styles: [{ id: 'trail', color: 'ff2b5a8c' }],
+    // The route in the house umber 600 (terracotta #a54a26 as aabbggrr), as on the app's maps.
+    styles: [{ id: 'trail', color: 'ff264aa5' }],
     folders: [{
       name: tr.name,
       placemarks,

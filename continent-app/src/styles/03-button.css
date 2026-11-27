@@ -78,9 +78,9 @@
   cursor: not-allowed;
 }
 
-.btn-primary { background: var(--action); border-color: var(--action); color: var(--action-text); }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: var(--primary-text); }
 @media (hover: hover) {
-  .btn-primary:hover { background: var(--action-hover); border-color: var(--action-hover); }
+  .btn-primary:hover { background: var(--primary-hover); border-color: var(--primary-hover); }
 }
 .btn-primary:active:not(:disabled) { background: var(--action-press); border-color: var(--action-press); }
 
