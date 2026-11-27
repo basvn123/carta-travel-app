@@ -1013,8 +1013,12 @@ def run_scan(args):
         print(f"  {a}: {t['relations']:,} relations in the graph, "
               f"{t['superroutes']:,} superroutes, {t['node_networks']:,} node-network, "
               f"{t['in_store']:,} in store, {t['cross_border']:,} cross-border, "
-              f"{t['with_children']:,} with children; "
-              f"store rows without a relation row: {missing[a]:,}")
+              f"{t['with_children']:,} with children"
+              # Only STORED_ACTIVITIES have a store to check; the R8 graph-only
+              # ones have no entry in `missing` (a KeyError here soft-failed
+              # every full scan after the report was already written).
+              + (f"; store rows without a relation row: {missing[a]:,}"
+                 if a in missing else ""))
     print(f"  report: {REPORT.relative_to(ROOT).as_posix()}")
     # `ok` is None for an activity with no store to check against, which is
     # not a failure: `is False` rather than `not`.
