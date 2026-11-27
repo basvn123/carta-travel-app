@@ -203,8 +203,8 @@ The Explore map uses its own Protomaps basemap (`src/lib/map/cartaMapStyle.js`, 
 
 ## Colours being retired
 
-- `--danger` `#a12a1c` (6.43 on stone): destructive actions and errors, always with words.
-- `--owe` `#b3402a` (4.9 on stone, 5.7 on paper): only the Trip kitty balance a person still pays, always with its sign.
+- `--danger` is ink: destructive actions and errors, always with words.
+- `--owe` is ink: the Trip kitty balance a person still pays, always with its sign.
 - Best value is a beige mark (`--best` umber 200, `--best-bg` umber 50, `--best-ink` umber 800) with its word ("Cheapest", "Best value"). No yellow.
 - Retiring, no new readers: `--sun-*` (share images via `src/lib/share/draw.js`, the cost card `92-cost-card.css`, the taste chip, the search dock's Ask tile and beaches tab, one place template tag, the trip art), `--cost-*` (the trip summary bar's four groups, `TripSummary.css`), `--ai-violet` (the day planner's AI marks, `20-day-planner-flow.css`, `planners-held.css`).
 - "Domain colours" in the token file are single-job (water quality, climate, crowds, cost groups).

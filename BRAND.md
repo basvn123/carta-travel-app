@@ -94,9 +94,8 @@ The mechanical rules stay in `PRODUCT.md` because code checks them: no em or en 
 
 Two calm colours and one that pops.
 - **Calm:** stone (the ground) and ink (the text).
-- **The pop:** terracotta, on the logo and on the one main action per screen. Text and buttons use the darker #a54a26 (5.07:1 on stone, 5.82:1 on white); the logo keeps #b5532c.
-- **Umber** stays for links and chosen states.
-- Terracotta and umber are equally light, so they differ by hue alone. They are never the only thing that tells two states apart: add weight, an underline or an icon.
+- **The pop:** terracotta, and only terracotta: the logo, the main action, links and every chosen thing. Text and buttons use #a54a26 (5.07:1 on stone, 5.82:1 on white); the logo keeps #b5532c.
+- **Everything else is ink:** delete, warnings, best value and money owed say what they are in words, an icon, an outline or a sign, never a second colour.
 
 The tokens live in `continent-app/src/styles/01-tokens.css` and are recorded in `DESIGN.md`.
 

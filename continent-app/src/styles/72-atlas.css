@@ -1286,7 +1286,7 @@
   cursor: pointer;
 }
 .atlas-btn.is-soft { border-color: transparent; background: var(--umber-100); color: var(--umber-800); }
-.atlas-btn.is-primary { border-color: transparent; background: var(--action); color: var(--action-text); }
+.atlas-btn.is-primary { border-color: transparent; background: var(--primary); color: var(--primary-text); }
 .atlas-btn:focus-visible, .atlas-ycbtn:focus-visible, .atlas-bar:focus-visible { outline: var(--stroke-focus) solid var(--focus); outline-offset: 2px; }
 .atlas-softbtn { justify-self: start; min-height: var(--tap); padding: 0 var(--space-4); border: 0; border-radius: var(--radius-pill); background: var(--umber-100); color: var(--umber-800); font: 700 var(--text-body) / 1 var(--ui); cursor: pointer; }
 .atlas-lnk.is-start { justify-self: start; text-align: start; }

@@ -582,7 +582,7 @@
 }
 .pasttrip-save {
   border: 1px solid var(--ink);
-  background: var(--action);
+  background: var(--primary);
   color: var(--paper);
 }
 @media (hover: hover) {
