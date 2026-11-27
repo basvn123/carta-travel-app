@@ -25,7 +25,7 @@
  */
 import { quoteTrip, MAX_PARTY } from './tripTotal.js';
 import { addDays } from './dates.js';
-import { roundTripNear } from './flights/flights.js';
+import { roundTripNear, cheapestWeekIn } from './flights/flights.js';
 import { destAnchor } from './origins.js';
 
 export const BUFFER_DEFAULT = 0.1;
@@ -168,9 +168,13 @@ export function isEstimate(dest) {
  * price it (no bed rate or no food basket: "no figure when the data is too
  * thin"). Every euro is whole; the total is the sum of the lines as shown.
  */
-export function priceForBudget(dest, q, opts = {}) {
+export function priceForBudget(dest, q0, opts = {}) {
   if (!dest?.id || !dest.accommodation || !dest.costs) return null;
-  const fly = fliesPriced(q, opts);
+  const fly = fliesPriced(q0, opts);
+  // A month without dates starts on its cheapest week to this place (owner,
+  // 2026-11-27), else on its first Saturday (startForMonth).
+  const week = fly ? cheapestWeekIn(opts.flights, destAnchor(dest), q0.start.slice(0, 7), q0.nights) : null;
+  const q = week ? { ...q0, start: week.out.date, end: addDays(week.out.date, q0.nights) } : q0;
   // The return flight first: flying with the flights loaded, a place with
   // no flight near these dates has no total ("no figure when the data is
   // too thin"), never a total that quietly leaves the flight out.
@@ -214,6 +218,10 @@ export function priceForBudget(dest, q, opts = {}) {
     // without the flight.
     dayPp: Math.round((beds + days) / Math.max(1, q.head) / Math.max(1, q.nights)),
     est: isEstimate(dest),
+    // The trip's own dates: the month's cheapest week when the flights found one.
+    start: q.start,
+    end: q.end,
+    cheapestWeek: !!week,
   };
 }
 

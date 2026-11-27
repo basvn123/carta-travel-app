@@ -33,7 +33,7 @@ import { isGateway } from '../rating.js';
 import { pickAirport } from '../airportPick.js';
 import { destAnchor } from '../origins.js';
 import { haversineKm } from '../runtime_pricing.js';
-import { sweptNear, sweptCheapest } from '../flights/flights.js';
+import { sweptNear, sweptCheapest, cheapestWeekIn } from '../flights/flights.js';
 import { tripTaste, normalizeTaste } from '../taste.js';
 import { quizAnswers, spendFor } from '../../planner/flow/tripSettings.js';
 import { arrivalFromImports, staysFromImports } from '../../planner/flow/importStays.js';
@@ -410,17 +410,24 @@ export function buildCandidates(input) {
   const bookedGateway = arrivalDest
     ? { iata: destAnchor(arrivalDest) || fixes.arrival, minutes: transferMinutes(arrivalDest), mode: null, placeId: fixes.arrival, swept: false, booked: true }
     : null;
-  const make = (c, shape, places, month, dates) => {
+  const make = (c, shape, places, month, dates0) => {
     const placeIds = places.map((p) => p.id);
+    const gateway = flies
+      ? bookedGateway || gatewayFor(placeIds, { destinations, flights: homeFiles, getting, out: dates0.out, origin: origin?.iata || null })
+      : null;
+    // A month without dates starts on its cheapest week into the gateway
+    // (owner, 2026-11-27), else on the first startWeekday (startIn).
+    const week = !dates0.fromSetup && gateway?.swept && dates0.out
+      ? cheapestWeekIn(homeFiles, gateway.iata, dates0.out.slice(0, 7), dates0.nights)
+      : null;
+    const dates = week ? { ...dates0, out: week.out.date, back: week.back.date } : dates0;
     return {
       country: c.country,
       iso2: c.iso2,
       shape,
       transport: transportFor(shape, settings),
       places,
-      gateway: flies
-        ? bookedGateway || gatewayFor(placeIds, { destinations, flights: homeFiles, getting, out: dates.out, origin: origin?.iata || null })
-        : null,
+      gateway,
       month,
       dates: dates.out ? { out: dates.out, back: dates.back } : null,
       datesFromSetup: dates.fromSetup,

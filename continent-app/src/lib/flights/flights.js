@@ -232,6 +232,31 @@ export function cheapestReturnAnyMonth(file, airport, now = Date.now()) {
   return best;
 }
 
+/**
+ * The cheapest week of a month (owner, 2026-11-27): a month picked without
+ * dates starts on the day whose swept flight out plus the flight home
+ * `nights` later costs least a seat, across every file given (each ticked
+ * home airport). Beds move by the month, so the flights decide the week.
+ * Returns { out, back, perSeat } or null when no such pair is swept, and the
+ * caller keeps its first Saturday.
+ */
+export function cheapestWeekIn(files, airport, month, nights, now = Date.now()) {
+  if (!airport || !month || !(nights > 0)) return null;
+  let best = null;
+  for (const file of [].concat(files || []).filter(Boolean)) {
+    const backs = new Map([...sweptLegs(file, 'back', airport, month, now), ...sweptLegs(file, 'back', airport, nextMonth(month), now)]
+      .map((leg) => [leg.date, leg]));
+    for (const out of sweptLegs(file, 'out', airport, month, now)) {
+      const [y, m, d] = out.date.split('-').map(Number);
+      const home = backs.get(new Date(Date.UTC(y, m - 1, d + nights)).toISOString().slice(0, 10));
+      if (!home) continue;
+      const perSeat = out.price + home.price;
+      if (!best || perSeat < best.perSeat || (perSeat === best.perSeat && out.date < best.out.date)) best = { out, back: home, perSeat };
+    }
+  }
+  return best;
+}
+
 export function nextMonth(month) {
   if (!month) return null;
   const [y, m] = month.split('-').map(Number);
