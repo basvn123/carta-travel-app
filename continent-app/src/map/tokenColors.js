@@ -29,7 +29,7 @@ export const TOKEN_COLOURS = {
   '--green': '#3f6332',
   '--paper-dim': '#e3e7df',
   '--rule': '#cfd5cc',
-  '--accent-bg': '#f6e1d6',
+  '--accent-bg': '#e9ece5',
   '--rate': '#8e3f20',
   '--bg-card': '#ffffff',
   '--on-fill': '#ffffff',

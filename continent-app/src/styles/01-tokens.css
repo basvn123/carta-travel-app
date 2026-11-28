@@ -70,9 +70,10 @@
   /* One accent (owner, 2026-11-27, K1 step C, version A): the umber names now
      hold the terracotta scale, so every link, chosen state, route, pin and
      main action is terracotta from this one edit. The names stay because 300+
-     rules read them, as the neutral-* names did. Was #8c5a2b at 600. */
-  --umber-50:     #fbf1ec;
-  --umber-100:    #f6e1d6;
+     rules read them, as the neutral-* names did. Was #8c5a2b at 600. 50 and 100
+     are quiet stone shades, not tints (owner, 2026-11-28): no peach anywhere. */
+  --umber-50:     #f4f6f1;
+  --umber-100:    #e9ece5;
   --umber-200:    #ecc5b2;
   --umber-300:    #d99f85;
   --umber-500:    #c0643f;

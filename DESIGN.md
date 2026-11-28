@@ -14,8 +14,8 @@ colors:
   neutral-700: "#465049"
   neutral-800: "#2c3530"
   neutral-900: "#1e2421"
-  umber-50: "#fbf1ec"
-  umber-100: "#f6e1d6"
+  umber-50: "#f4f6f1"
+  umber-100: "#e9ece5"
   umber-200: "#ecc5b2"
   umber-300: "#d99f85"
   umber-500: "#c0643f"
@@ -39,11 +39,11 @@ colors:
   action-hover: "#8e3f20"
   action-press: "#73321a"
   action-text: "#ffffff"
-  action-tint: "#f6e1d6"
-  select-bg: "#f6e1d6"
+  action-tint: "#e9ece5"
+  select-bg: "#e9ece5"
   select-ink: "#73321a"
   select-border: "#a54a26"
-  select-row: "#fbf1ec"
+  select-row: "#f4f6f1"
   focus: "#8e3f20"
   focus-on-dark: "#ffffff"
   plate: "#1e2421"
@@ -54,7 +54,7 @@ colors:
   wagon-go-ink: "#73321a"
   wagon-bed: "#a54a26"
   wagon-bed-ink: "#ffffff"
-  wagon-food: "#f6e1d6"
+  wagon-food: "#e9ece5"
   wagon-food-edge: "#c0643f"
   wagon-food-ink: "#73321a"
   wagon-none-edge: "#7a847d"
@@ -323,13 +323,14 @@ All values are hex in one `:root` block (several readers parse hex only). Ratios
 | `--umber-500` = `--wagon-food-edge` | `#c0643f` | A mark only (the food wagon's edge) | |
 | `--umber-300` | `#d99f85` | Decorative only | |
 | `--umber-200` = `--on-plate-2` | `#ecc5b2` | Tint 2: the second line on a plate | 9.93 on the plate |
-| `--umber-100` = `--select-bg`, `--action-tint`, `--wagon-food` | `#f6e1d6` | Tint: the food wagon, tags | |
-| `--umber-50` = `--select-row` | `#fbf1ec` | A selected row in a list | |
+| `--umber-100` = `--select-bg`, `--action-tint`, `--wagon-food` | `#e9ece5` | Stone shade: the food wagon, tags, quiet discs | |
+| `--umber-50` = `--select-row` | `#f4f6f1` | A selected row in a list | |
 | `--brand-mark` | `#b5532c` | The logo's terracotta arch; never text | 4.3 on stone (a mark) |
 
 **Palette (`BRAND.md` "Colour"):** stone and ink are calm; terracotta is the one accent.
 - The `--umber-*` names hold the terracotta scale: every link, chosen state, route, pin, tab bar and main action is terracotta. The names stay because hundreds of rules read them.
-- A chosen chip or segment fills solid terracotta with bold paper text; fill against outline tells it apart, never colour alone.
+- A chosen chip or segment fills solid terracotta with bold paper text; fill against outline tells it apart, never colour alone. A selected row shows its terracotta edge and price mark; `--umber-50` and `--umber-100` are quiet stone shades, never a tint.
+- The header doors (Friends, the account split pill, the signed-in initial) are solid terracotta.
 - Delete and errors, warnings, best value and money owed are ink, told apart by their word, icon, outline or sign (`--danger`, `--amber-ink`, `--best`, `--owe`); no tinted boxes.
 - `--primary` (the main action) and `--brand-mark` (the logo, #b5532c) are the brand roles; a brand change edits the scale and these lines.
 
