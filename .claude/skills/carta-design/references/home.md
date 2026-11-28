@@ -12,7 +12,7 @@ Home is behind the logo on desktop and a "How Viantra works" row in Account on a
 
 ## The home page exception v2 (T462, owner 2026-10-17; T606, T618, T620, T621, 2026-10-23)
 
-The home page is the one surface that persuades rather than operates, so it may move on its own (the home tokens are in `01-tokens.css` under "The home page", named in DESIGN.md "Home page"). What it shows:
+The home page is the one surface that persuades rather than operates, so it may move on its own (the home tokens are in `01-tokens.css` under "The home page", named in DESIGN.md "Shell, home and print"). What it shows:
 
 - **A film, not a carousel of claims.** The hero is a film of real places that fills the first screen and the window's whole width at every size, under the app header (T621), crossfading as one continuous cut: no progress bars, no pills, no control on it. Each shot is a licensed clip (T618), its credit kept in `homeDemo.js`, a still only as fallback. It moves only on screen and in a visible tab; reduced motion stands it still. The owner chose no pause control (T620, 2026-10-23), which leaves WCAG 2.2.2 open (register T620-a); if this film stays live, a small text Pause button is added (T1128-b, 2026-11-12). The film's clips carry no credit on the page (owner, T621; the Pexels License asks for none); every other credit sits on the caption line under its picture.
 - **Words on the film** (T620, owner after Mindtrip and Komoot): the slogan, one line and Ask Viantra's field, whose "Ask Viantra" is the page's one primary (T621).

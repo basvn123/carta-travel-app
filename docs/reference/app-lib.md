@@ -1466,7 +1466,7 @@ The guided search (T442), the logic half. The owner asked for a search people wo
 
 ## `src/lib/haptics.js`
 
-Haptics (G1, G5; house style 2026-11, DESIGN.md "Interaction"): one short, optional tick, confirm or warn on a touch COMMIT. Never on pointerdown (a scroll that starts on a control would buzz), never on navigation, opening a sheet, scrolling, load or a timer. Android and a Play Store TWA use navigat
+Haptics (G1, G5; house style 2026-11, DESIGN.md "Motion & Micro-interaction"): one short, optional tick, confirm or warn on a touch COMMIT. Never on pointerdown (a scroll that starts on a control would buzz), never on navigation, opening a sheet, scrolling, load or a timer. Android and a Play Store TWA use navigat
 
 | Kind | Name | Summary |
 |---|---|---|
@@ -2006,11 +2006,11 @@ _No header comment._
 
 ## `src/lib/motionTokens.js`
 
-The house springs (G1, G5; house style 2026-11, DESIGN.md "Interaction"). One vocabulary for every moving thing, so a CSS control and a Motion control move the same way: the CSS linear() easings in 01-tokens.css (--ease-tick, --ease-pop, --ease-settle) are generated from these by scripts/ci/spring-e
+The house springs (G1, G5; house style 2026-11, DESIGN.md "Motion & Micro-interaction"). One vocabulary for every moving thing, so a CSS control and a Motion control move the same way: the CSS linear() easings in 01-tokens.css (--ease-tick, --ease-pop, --ease-settle) are generated from these by scripts/ci/spring-e
 
 | Kind | Name | Summary |
 |---|---|---|
-| const | `SPRING` | The house springs (G1, G5; house style 2026-11, DESIGN.md "Interaction"). One vocabulary for every moving thing, so a CSS control and a Motion control move the same way: the CSS linear() easings in 01-tokens.css (--ease-tick, --ease-pop, -- |
+| const | `SPRING` | The house springs (G1, G5; house style 2026-11, DESIGN.md "Motion & Micro-interaction"). One vocabulary for every moving thing, so a CSS control and a Motion control move the same way: the CSS linear() easings in 01-tokens.css (--ease-tick, --ease-pop, -- |
 | const | `INSTANT` | The end state at once: what every token becomes under reduced motion. |
 | function | `motionToken` | The transition for one token, or INSTANT when the traveller asked the system for less motion. Pass the answer of motion/react's useReducedMotion() (or prefersReducedMotion() outside React). |
 
@@ -2345,7 +2345,7 @@ paywallEvents.js, the client half of the pass funnel. Records three things and n
 
 ## `src/lib/pdfKit.js`
 
-pdfKit.js (T430, T431; house style G1 2026-11): the parts every PDF is made of, so the item pages and the trip page print as one family, and as the same system as the screens (DESIGN.md "Print and share"): the blaze in the wordmark slot, the signpost plate holding the name, the Score plate, the rece
+pdfKit.js (T430, T431; house style G1 2026-11): the parts every PDF is made of, so the item pages and the trip page print as one family, and as the same system as the screens (DESIGN.md "Shell, home and print"): the blaze in the wordmark slot, the signpost plate holding the name, the Score plate, the rece
 
 | Kind | Name | Summary |
 |---|---|---|
@@ -3169,7 +3169,7 @@ regions.js, the region layer: the unit between "beach" and "country". Three arti
 
 ## `src/lib/relief.js`
 
-The relief (G1, house style 2026-11, DESIGN.md "Background graphics"): the one background graphic, drawn only from real ground. Illuminated contours (Tanaka style: lit where the slope faces the north-west, shaded elsewhere) built from a place's own peaks in its dossier (`nearby.mountains[]` or `arou
+The relief (G1, house style 2026-11, DESIGN.md "Signature graphics"): the one background graphic, drawn only from real ground. Illuminated contours (Tanaka style: lit where the slope faces the north-west, shaded elsewhere) built from a place's own peaks in its dossier (`nearby.mountains[]` or `arou
 
 | Kind | Name | Summary |
 |---|---|---|

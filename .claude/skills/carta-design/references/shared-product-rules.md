@@ -28,7 +28,7 @@ Viantra once had a homepage that looked machine generated, because defaults accu
 
 The audience is everyone travelling in Europe, on any budget, with no lead group at launch: every way of planning (ready-made, built yourself, no plan at all), every interest, every budget (the student counting every euro to the 5-star traveller), before and during the trip. They find the place that fits, then read what it costs. The only real asset is trust in the numbers.
 
-The formation (DESIGN.md "Signature components") is the price row under every photo. The voice is plain, specific and short.
+The formation (DESIGN.md "Signature graphics") is the price row under every photo. The voice is plain, specific and short.
 
 ## App structure
 
@@ -143,7 +143,7 @@ Also never: catalogue counts, method sentences or coverage notes as page furnitu
 - 360 px wide with no horizontal scroll; one `h1` per view, headings in order.
 - Real `<a>` for navigation, real `<button>` for actions; visible focus on every interactive element (`:focus-visible`; never `outline: none` without a replacement).
 - `--tap` (44 px) is the floor for anything interactive, icon-only controls included; on a fine pointer a compact control such as the small Button or a chip may be 32 px.
-- No text under 12 px (the house floor, DESIGN.md "Type").
+- No text under 12 px (the house floor, DESIGN.md "Typography").
 - Every text pair 4.5:1 or better (`node scripts/ci/token-contrast.mjs`).
 - Colour is never the only carrier: selection carries a mark, place kind survives greyscale, good news and danger come with words.
 - `prefers-reduced-motion: reduce` on every transition; scripted motion asks `prefersReducedMotion()` or `durationMs()` in `src/lib/motion.js`.
