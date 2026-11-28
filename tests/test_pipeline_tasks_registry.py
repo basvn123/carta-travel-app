@@ -45,7 +45,9 @@ def _norm(v):
         # node and npm resolve to a different absolute path on every machine
         if os.path.isabs(v) and os.path.basename(v).lower() in ("node", "node.exe", "npm", "npm.cmd"):
             return "<" + os.path.basename(v).split(".")[0].upper() + ">"
-        return v.replace(str(rp.ROOT), "<ROOT>")
+        s = v.replace(str(rp.ROOT), "<ROOT>")
+        # A path under the repo reads the same on Windows and Linux CI.
+        return s.replace("\\", "/") if s.startswith("<ROOT>") else s
     if isinstance(v, os.PathLike):
         return "<path " + str(v).replace(str(rp.ROOT), "<ROOT>").replace("\\", "/") + ">"
     return v
