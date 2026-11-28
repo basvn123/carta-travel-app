@@ -20,45 +20,25 @@ colors:
   edge: "#7a847d"
   action: "#a54a26"
   action-hover: "#8e3f20"
-  action-press: "#73321a"
   action-text: "#ffffff"
-  select-ink: "#73321a"
-  select-border: "#a54a26"
-  select-row: "#f4f6f1"
-  focus: "#8e3f20"
-  focus-on-dark: "#ffffff"
   plate: "#1e2421"
-  plate-hover: "#2c3530"
   on-plate: "#ffffff"
-  on-plate-2: "#ecc5b2"
-  wagon-go-edge: "#a54a26"
   wagon-go-ink: "#73321a"
   wagon-bed: "#a54a26"
   wagon-bed-ink: "#ffffff"
   wagon-food: "#e9ece5"
-  wagon-food-edge: "#c0643f"
   wagon-food-ink: "#73321a"
-  wagon-none-edge: "#7a847d"
   kind-places: "#a54a26"
   kind-trails: "#2f7a45"
   kind-beaches: "#0e7c86"
   kind-lakes: "#2b5fa8"
   kind-mountains: "#6248a8"
   kind-cycling: "#b02a63"
-  world-water: "#d3dfe2"
-  world-lowland: "#dce5d4"
-  world-rock: "#e3ddd3"
-  map-land: "#f8f9f5"
-  map-water: "#d3dfe2"
-  map-border: "#d7dcd3"
   map-route: "#a54a26"
   danger: "#1e2421"
   owe: "#1e2421"
   warn-ink: "#1e2421"
   best: "#1e2421"
-  sun-100: "#fdf1d8"
-  sun-400: "#f2b33d"
-  sun-800: "#7a5000"
 typography:
   display:
     fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
@@ -268,6 +248,52 @@ components:
   warn-line:
     textColor: "{colors.warn-ink}"
     typography: "{typography.label}"
+  page:
+    backgroundColor: "{colors.surface-page}"
+    textColor: "{colors.text}"
+    typography: "{typography.body}"
+  band:
+    backgroundColor: "{colors.surface-sunken}"
+    textColor: "{colors.text-2}"
+  row-hover:
+    backgroundColor: "{colors.surface-hover}"
+    textColor: "{colors.text}"
+  meta-text:
+    textColor: "{colors.text-3}"
+    typography: "{typography.label}"
+  hairline:
+    backgroundColor: "{colors.border}"
+    height: "1px"
+  hairline-soft:
+    backgroundColor: "{colors.border-soft}"
+    height: "1px"
+  control-edge:
+    backgroundColor: "{colors.edge}"
+    width: "1.5px"
+  logo:
+    textColor: "{colors.brand-mark}"
+  route:
+    backgroundColor: "{colors.map-route}"
+    height: "3px"
+  best-tag:
+    textColor: "{colors.best}"
+    typography: "{typography.label}"
+    rounded: "{rounded.sm}"
+  owe-figure:
+    textColor: "{colors.owe}"
+    typography: "{typography.figure}"
+  kind-tab-places:
+    textColor: "{colors.kind-places}"
+  kind-tab-trails:
+    textColor: "{colors.kind-trails}"
+  kind-tab-beaches:
+    textColor: "{colors.kind-beaches}"
+  kind-tab-lakes:
+    textColor: "{colors.kind-lakes}"
+  kind-tab-mountains:
+    textColor: "{colors.kind-mountains}"
+  kind-tab-cycling:
+    textColor: "{colors.kind-cycling}"
   card:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
@@ -442,4 +468,4 @@ MapLibre with the house basemap (`src/map/houseBasemap.js`; Explore's Protomaps 
 | An icon | `src/components/HouseIcons.jsx` | The grid rules above |
 | The typefaces | `src/assets/fonts/`, `src/styles/00-fonts.css` | The preload in `index.html`, `tests/pwa.test.mjs`, `docs/tos/fonts.md` |
 
-**Before you ship:** one job and one main action, obvious in five seconds at 390 and 1440; every function still there; tokens and kit only (`design-lint` 0 new, `token-contrast` 0 under, `design-md-tokens --check` clean, axe serious and critical 0); phone, tablet and desktop each deliberate; reduced motion shows the end state; every euro through `formatMoney()`; six languages fit (German for length); a relief only from real peaks.
+**Before you ship:** one job and one main action, obvious in five seconds at 390 and 1440; every function still there; tokens and kit only (`design-lint` 0 new, `token-contrast` 0 under, `design-md-tokens --check` clean, Google's `npx -p @google/design.md designmd lint DESIGN.md` 0 errors, axe serious and critical 0); phone, tablet and desktop each deliberate; reduced motion shows the end state; every euro through `formatMoney()`; six languages fit (German for length); a relief only from real peaks.
