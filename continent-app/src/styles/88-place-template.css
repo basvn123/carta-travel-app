@@ -1195,7 +1195,7 @@ ul.pt-cells { list-style: none; margin: 0; padding: 0; }
    icon in a frosted disc, the name and count in white at the foot. */
 .ar-tiles { list-style: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); margin: 0; padding: 0; }
 @media (min-width: 700px) { .ar-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); } }
-/* The relief from the place's own peaks (DESIGN.md "Background graphics"):
+/* The relief from the place's own peaks (DESIGN.md "Signature graphics"):
    a band of the ground around it with the real heights on paper tags; no
    text of ours sits on it (the flat side is empty, cut at the left edge). */
 .pt-relief { height: 136px; border-radius: var(--radius-card); overflow: hidden; }

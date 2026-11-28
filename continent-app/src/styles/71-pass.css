@@ -62,7 +62,7 @@
 }
 .pass-holding { color: var(--text); }
 
-/* Two plans, one choice, drawn as leg plates (DESIGN.md "Plate"): paper in a
+/* Two plans, one choice, drawn as leg plates (docs/design/components.md "Plate"): paper in a
    1.5 px control edge; the chosen plan takes the umber edge, the umber 50
    row wash and the filled tick. The price is the loudest line. Equal weight:
    the free plan is never dimmed. */

@@ -4,7 +4,7 @@
  * Two formats share one drawing: 'og' is 1200 x 630 (Open Graph, X, LinkedIn,
  * Slack, iMessage, WhatsApp link previews) and 'square' is 1080 x 1080 (a post
  * or a story frame the traveller shares by hand). The grammar is the house
- * style's (DESIGN.md "Print and share", G1 2026-11), the same objects the
+ * style's (DESIGN.md "Shell, home and print", G1 2026-11), the same objects the
  * screens and the PDFs carry:
  *
  *   - the signpost plate: the name in the plate face with the line under it

@@ -1,5 +1,5 @@
 /**
- * The house springs (G1, G5; house style 2026-11, DESIGN.md "Interaction").
+ * The house springs (G1, G5; house style 2026-11, DESIGN.md "Motion & Micro-interaction").
  * One vocabulary for every moving thing, so a CSS control and a Motion
  * control move the same way: the CSS linear() easings in 01-tokens.css
  * (--ease-tick, --ease-pop, --ease-settle) are generated from these by

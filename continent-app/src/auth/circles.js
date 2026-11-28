@@ -152,9 +152,18 @@ export async function castCircleVote(circleId, proposalId, userId, value) {
     if (error) throw error;
     return;
   }
-  const { error } = await supabase.from('circle_votes').upsert(
-    { circle_id: circleId, proposal_id: proposalId, user_id: userId, value, updated_at: new Date().toISOString() },
-    { onConflict: 'proposal_id,user_id' },
+  // Change the vote first, insert only when there is none. An upsert would
+  // also try to update circle_id, proposal_id and user_id, which migration
+  // 078 rightly does not grant (members may change only value and updated_at).
+  const now = new Date().toISOString();
+  const { data, error: uErr } = await supabase.from('circle_votes')
+    .update({ value, updated_at: now })
+    .eq('proposal_id', proposalId).eq('user_id', userId)
+    .select('proposal_id');
+  if (uErr) throw uErr;
+  if (data && data.length) return;
+  const { error } = await supabase.from('circle_votes').insert(
+    { circle_id: circleId, proposal_id: proposalId, user_id: userId, value, updated_at: now },
   );
   if (error) throw error;
 }

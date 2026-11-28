@@ -174,7 +174,7 @@ export function StoryRail({
 
 /**
  * A photo card in a StoryRail, on the kit Card (layout tile), in the house
- * rail card grammar (house style 2026-11, DESIGN.md "Rail and RailCard"):
+ * rail card grammar (house style 2026-11, docs/design/components.md "Rail and RailCard"):
  * the photo with only the save disc on it (text never sits on a photo), then
  * the title with the Score beside it, the meta line with the status after
  * it, and the price, on the page ground.

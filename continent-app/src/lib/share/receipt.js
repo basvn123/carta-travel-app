@@ -40,7 +40,7 @@ export const RECEIPT_LINE_KEY = {
 };
 
 /** The cost colour of each line, the formation's (house style G1 2026-11,
- *  DESIGN.md "Formation"): the bed a solid umber wagon, food and drink the
+ *  docs/design/components.md "Formation"): the bed a solid umber wagon, food and drink the
  *  beige wagon on its umber 500 edge, getting there and back in ink (inside
  *  the trip total, so never the outlined pill), the rest a quiet grey. */
 export const RECEIPT_LINE_TONE = {

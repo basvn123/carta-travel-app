@@ -388,7 +388,7 @@ export function TripSummary({
 
       {/* House style (G1): the name, its places and where it stands sit on
           the page; the photo beside it (under it on a phone) carries no text
-          (DESIGN.md "Photography"). Without a photo the same head stands
+          (DESIGN.md "Signature graphics"). Without a photo the same head stands
           alone. */}
       <header className={`tpg-head${photos.length ? ' has-photo' : ''}`}>
         <div className="tpg-ov">

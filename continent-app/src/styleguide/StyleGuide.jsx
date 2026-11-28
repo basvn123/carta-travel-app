@@ -322,7 +322,7 @@ export default function StyleGuide() {
               <Demo title="Loading"><StateBlock kind="loading" /><Skeleton w="70%" h={18} /><Skeleton w="45%" h={14} /></Demo>
               <Demo title="Empty"><StateBlock kind="empty" title="No place fits" action={<Button variant="quiet">Clear all</Button>} /></Demo>
               <Demo title="Error"><StateBlock kind="error" title="The prices did not load" text="Check the connection and try again." action={<Button>Try again</Button>} /></Demo>
-              <Demo title="Warning line"><p><WarnLine>€120 over your budget</WarnLine></p><WarnLine as="p">Two stops were closed on this day, so the plan skips them.</WarnLine></Demo>
+              <Demo title="Warning line"><p><WarnLine>Over your budget</WarnLine></p><WarnLine as="p">Two stops were closed on this day, so the plan skips them.</WarnLine></Demo>
               <Demo title="Not yet and a missing photo"><p>Local transport <NotYet /></p><span className="sg-world"><WorldTile world="water" /></span></Demo>
             </div>
           </Section>

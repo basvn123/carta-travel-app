@@ -317,7 +317,7 @@ function DayTrips({ trips, city, t, onSelect, onOpenItin }) {
  */
 export function DestAround({ p }) {
   const { t, city, cats, members, memberFocus, onOpenFeature, onSelect, onOpenItin, d, destination } = p;
-  // G1 (house style, DESIGN.md "Background graphics"): the relief only from
+  // G1 (house style, DESIGN.md "Signature graphics"): the relief only from
   // this place's own peaks with a height in its dossier; none, no relief.
   const mountains = d?.nearby?.mountains;
   const hasRelief = reliefPeaks(mountains).length > 0;
