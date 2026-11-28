@@ -2,7 +2,7 @@
 
 What Viantra promises, who it talks to, how it sounds and how it looks at first sight. This file owns the promise, the positioning, the voice and the brand lines. `PRODUCT.md` owns the product truth (users, jobs, number rules, banned words, the vocabulary); `DESIGN.md` owns the look (tokens, components). When they disagree on voice, this file wins; on a fact about the product, `PRODUCT.md` wins.
 
-Decided by the owner on 2026-11-27 (ROADMAP K1), from `docs/research/2026-11-26-brand-system-toolkit.md` section 5. Master language: English. The other five languages follow it, written by a native speaker, not translated word for word.
+Master language: English. The other five languages follow it, written by a native speaker, not translated word for word.
 
 ## The promise
 
@@ -63,8 +63,6 @@ Direct, warm and a bit cheeky. We talk to you, not about travellers. You do the 
 - **Two beats.** You, then us: "Choose where. We'll tell you what it costs."
 - **Name the money.** "€19", "€500", "a day": real amounts beat the word "price".
 - **Cheeky about the travel industry, never about the traveller.** Cheap flights can "fool you"; a traveller is never silly for falling for one.
-- **Short.** A headline is under ten words. A button is two or three.
-- **Honest.** No superlative we cannot back with a figure. No testimonials, user counts, press or partner logos. The flight price is Google Flights', shown as theirs.
 
 The voice by moment:
 
@@ -77,27 +75,27 @@ The voice by moment:
 | An error | Calm, one fix | Something went wrong. | That didn't load. Try again. |
 | Sharing a trip | Proud, inviting | Shared trip | I worked out what this trip costs. Your turn. |
 
-The mechanical rules stay in `PRODUCT.md` because code checks them: no em or en dashes (`stripDashes()`), no emojis, the banned words, sentence case, one word per object.
+The mechanics (length, sentence case, no dashes, no emojis, the banned words, one word per object) and the honesty rules are in `PRODUCT.md`, because code checks them.
 
 ## The name
 
-**Viantra**, said vee-AN-tra: *via* (the way) and *tra* (Italian for between, through), "the way through". Chosen 2026-11-26 (`docs/decisions/0018-name-viantra.md`), replacing Carta. Clearance search and filing are owner steps (`docs/owner/accounts-and-signups.md`).
+**Viantra**, said vee-AN-tra: *via* (the way) and *tra* (Italian for between, through), "the way through" (`docs/decisions/0018-name-viantra.md`). Clearance search and filing are owner steps (`docs/owner/accounts-and-signups.md`).
 
 ## The logo
 
-**Gate V**: an arch whose opening is a V, the way through. Wordmark in Fraunces (SIL OFL 1.1), opsz 144, weight 600, SOFT 100. Signed off 2026-11-26. Every file and where it goes: `continent-app/brand/viantra/README.md`.
+**Gate V**: an arch whose opening is a V, the way through. Wordmark in Fraunces (SIL OFL 1.1), opsz 144, weight 600, SOFT 100. Every file and where it goes: `continent-app/brand/viantra/README.md`.
 
-- The mark is terracotta #b5532c; on dark grounds the light terracotta #d8774c (`continent-app/brand/viantra/svg/colours.md`).
+- The mark is terracotta, lighter on dark grounds; the exact values are in `continent-app/brand/viantra/svg/colours.md` and `DESIGN.md` ({colors.brand-mark}).
 - The arch is the brand sign: the header, the app icons, the share cards, the PDFs and the press kit. The blaze (the painted path mark) stays in the app as a UI mark for "chosen" and "here", never as the logo.
 
 ## Colour
 
 Two calm colours and one that pops.
-- **Calm:** stone (the ground) and ink (the text).
-- **The pop:** terracotta, and only terracotta: the logo, the main action, links and every chosen thing. Text and buttons use #a54a26 (5.07:1 on stone, 5.82:1 on white); the logo keeps #b5532c.
+- **Calm:** stone, the ground, and ink, the text. Quiet, so the photographs and the figures carry the warmth.
+- **The pop:** terracotta, and only terracotta: the logo, the main action, links and every chosen thing. Because it is the only colour, it always means "this one" or "do this".
 - **Everything else is ink:** delete, warnings, best value and money owed say what they are in words, an icon, an outline or a sign, never a second colour.
 
-The tokens live in `continent-app/src/styles/01-tokens.css` and are recorded in `DESIGN.md`.
+The values and contrast live in `DESIGN.md` (generated from `continent-app/src/styles/01-tokens.css`); this file only tells the story.
 
 ## Boilerplate
 
