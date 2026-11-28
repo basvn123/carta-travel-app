@@ -132,8 +132,6 @@ const DISTINCT = [
   ['--cost-travel', '--cost-food', 15, 'flights against food'],
   ['--cost-stay', '--action', 15, 'stay against the action brown'],
   ['--cost-food', '--action', 15, 'food against the action brown'],
-  ['--select-bg', '--rate-bg', 8, 'selected against a quiet band'],
-  ['--select-bg', '--gem-bg', 8, 'selected against a gem badge'],
 ];
 
 function lab(hex) {

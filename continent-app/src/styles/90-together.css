@@ -16,8 +16,11 @@
 /* ── The header door ─────────────────────────────────────────────────── */
 
 .tg-door { position: relative; }
-.tg-door svg { color: var(--text-2); }
-.tg-door.on svg { color: var(--select-ink); }
+/* The header doors are solid terracotta (owner, 2026-11-28). */
+.tg-door.hdr-pill { background: var(--action); border-color: var(--action); color: var(--action-text); }
+.tg-door svg, .tg-door.on svg { color: var(--action-text); }
+.tg-door.hdr-pill.on { background: var(--action-press); border-color: var(--action-press); }
+@media (hover: hover) { .tg-door.hdr-pill:hover { background: var(--action-hover); border-color: var(--action-hover); } }
 .tg-door-n {
   position: absolute;
   top: -4px;
@@ -87,17 +90,18 @@
   flex: none;
   align-items: center;
   height: var(--tap);
-  border: 1px solid var(--edge);
+  border: 1px solid var(--action);
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  transition: border-color var(--dur-1) var(--ease-out);
+  background: var(--action);
+  color: var(--action-text);
+  transition: background-color var(--dur-1) var(--ease-out);
 }
 .app-header .acct-split .account-door { width: calc(var(--tap) - 2px); height: calc(var(--tap) - 2px); }
 .app-header .acct-split .account-door-disc {
   width: 32px;
   height: 32px;
-  background: var(--select-bg);
-  color: var(--select-ink);
+  background: var(--action-hover);
+  color: var(--action-text);
   box-shadow: none;
 }
 .app-header .acct-split .btn.hdr-pill.signin-pill {
@@ -105,21 +109,20 @@
   padding: 0 var(--space-4) 0 var(--space-1);
   border: 0;
   background: transparent;
+  color: var(--action-text);
   font-weight: 700;
 }
 @media (hover: hover) {
-  .app-header .acct-split:hover { border-color: var(--text); }
+  .app-header .acct-split:hover { background: var(--action-hover); border-color: var(--action-hover); }
   .app-header .acct-split .account-door:not(.on):hover { background: transparent; }
-  .app-header .acct-split .account-door:not(.on):hover .account-door-disc { background: var(--umber-200); }
+  .app-header .acct-split .account-door:not(.on):hover .account-door-disc { background: var(--action-press); }
 }
 /* Signed in, the avatar is the initial on beige with a thin umber ring,
    so it reads as a person, not as an empty button. */
 .app-header .account-door-disc.has-initial {
-  background: var(--select-bg);
-  color: var(--select-ink);
+  background: var(--action);
+  color: var(--action-text);
   font-weight: 700;
-  outline: 1.5px solid var(--umber-300);
-  outline-offset: -1.5px;
 }
 /* G16 (decision 0017): the glyph and the badge on every width, the word
    "Vrienden" from 1100 px. */

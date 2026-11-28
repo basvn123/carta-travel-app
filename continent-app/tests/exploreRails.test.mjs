@@ -136,7 +136,8 @@ test('signed out, Account and Sign in share one split pill', () => {
   const acc = src.slice(src.indexOf('function AccountLink'), src.indexOf('function TogetherDoor'));
   assert.match(acc, /<span className="acct-split">\s*\{door\}\s*<Button[^>]*signin-pill/);
   const css = read('src/styles/90-together.css');
-  assert.match(css, /\.app-header \.acct-split \{[^}]*border: 1px solid var\(--edge\)/);
+  // Solid terracotta since the owner's choice of 2026-11-28 (K1 step C).
+  assert.match(css, /\.app-header \.acct-split \{[^}]*border: 1px solid var\(--action\);[^}]*background: var\(--action\)/);
 });
 
 test('one spacing rule for Explore: T983 no longer squeezes the rails', () => {
