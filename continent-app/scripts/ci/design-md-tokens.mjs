@@ -67,6 +67,7 @@ const TYPE = [
   ['figure', 'text-figure', 800, 1, null, UI],
   ['lead', 'text-lead', 400, 1.5, null, UI],
   ['body', 'text-body', 400, 1.35, null, UI],
+  ['button', 'text-body', 700, 1.2, null, UI],
   ['label', 'text-label', 600, 1.35, null, UI],
   ['micro', 'text-micro', 600, 1.35, null, UI],
 ];
@@ -83,14 +84,16 @@ const MOTION = [
 // The common parts as the format's component recipes (references only).
 const C = (bg, fg, extra = {}) => ({ ...(bg && { backgroundColor: `{colors.${bg}}` }), ...(fg && { textColor: `{colors.${fg}}` }), ...extra });
 const COMPONENTS = {
-  'button-primary': C('primary', 'on-primary', { typography: '{typography.label}', rounded: '{rounded.control}', padding: '0 16px', height: '44px' }),
+  'button-primary': C('primary', 'on-primary', { typography: '{typography.button}', rounded: '{rounded.control}', padding: '0 16px', height: '44px' }),
+  // A place's or a sheet's one main action: the same button at the 48 px target.
+  'button-main': C('primary', 'on-primary', { typography: '{typography.button}', rounded: '{rounded.control}', padding: '0 16px', height: '48px', width: '100%' }),
   'button-primary-hover': C('primary-hover', 'on-primary'),
   'button-primary-press': C('primary-press', 'on-primary'),
-  'button-secondary': C('surface', 'text', { rounded: '{rounded.control}', padding: '0 16px', height: '44px' }),
+  'button-secondary': C('surface', 'text', { typography: '{typography.button}', rounded: '{rounded.control}', padding: '0 16px', height: '44px' }),
   'button-quiet': C(null, 'action-hover', { rounded: '{rounded.control}', height: '44px' }),
   'button-danger': C('danger', 'on-primary', { rounded: '{rounded.control}', height: '44px' }),
-  chip: C('surface', 'text', { rounded: '{rounded.pill}', padding: '0 14px', height: '36px' }),
-  'chip-selected': C('action', 'action-text', { rounded: '{rounded.pill}', height: '36px' }),
+  chip: C('surface', 'text', { typography: '{typography.label}', rounded: '{rounded.pill}', padding: '0 14px', height: '36px' }),
+  'chip-selected': C('action', 'action-text', { typography: '{typography.label}', rounded: '{rounded.pill}', height: '36px' }),
   'segmented-selected': C('action', 'action-text', { rounded: '{rounded.pill}', height: '44px' }),
   'header-door': C('action', 'action-text', { rounded: '{rounded.pill}', size: '44px' }),
   field: C('surface', 'text', { typography: '{typography.lead}', rounded: '{rounded.control}', height: '44px' }),
@@ -117,6 +120,8 @@ const COMPONENTS = {
   'kind-tab-lakes': C(null, 'kind-lakes'), 'kind-tab-mountains': C(null, 'kind-mountains'), 'kind-tab-cycling': C(null, 'kind-cycling'),
   card: C('surface', 'text', { rounded: '{rounded.card}' }),
   sheet: C('surface', 'text', { rounded: '{rounded.panel}' }),
+  'sheet-close': C('surface', 'text', { rounded: '{rounded.pill}', size: '44px' }),
+  'receipt-total': C(null, 'text', { typography: '{typography.lead}' }),
 };
 
 // ---- write it ------------------------------------------------------------------
