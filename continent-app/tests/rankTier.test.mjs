@@ -154,6 +154,13 @@ test("the published rank tier matches its boot index and the core", { skip: !REA
   assert.equal(liteCore.partial, true);
 });
 
+// The schema 20 provenance stamps (_src, _asof) on a block stay in the full
+// record: no list, card or price reads them from the lite one (only the place
+// page's access facts read _asof, from the full record). Every amount and
+// every other field must still match.
+const noStamps = (k, v) => (k === "_src" || k === "_asof" ? undefined : v);
+const unstamped = (x) => (x == null ? x : JSON.parse(JSON.stringify(x, noStamps)));
+
 test("every destination prices the same from its lite record as from its full one", { skip: !REAL }, () => {
   const { want, liteCore } = realCatalogues();
   const origin = defaultOrigin(want);
@@ -177,12 +184,12 @@ test("every destination prices the same from its lite record as from its full on
     for (const id of Object.keys(full.destinations)) {
       const a = quoteComposed(full.destinations[id], depart, ret, choices, full.destinations);
       const b = quoteComposed(lite.destinations[id], depart, ret, choices, lite.destinations);
-      assert.equal(JSON.stringify(b), JSON.stringify(a), `${id} prices the same (${JSON.stringify(choices).slice(0, 60)})`);
+      assert.equal(JSON.stringify(b, noStamps), JSON.stringify(a, noStamps), `${id} prices the same (${JSON.stringify(choices).slice(0, 60)})`);
       if (a) priced += 1;
     }
     const ca = computeCosts(full.destinations, choices);
     const cb = computeCosts(lite.destinations, choices);
-    for (const [id, row] of ca) assert.deepEqual(cb.get(id), row, `${id} costs the same`);
+    for (const [id, row] of ca) assert.deepEqual(unstamped(cb.get(id)), unstamped(row), `${id} costs the same`);
   }
   assert.ok(priced > 1000, `a vacuous comparison prices nothing (${priced} priced)`);
 });
@@ -201,10 +208,11 @@ test("every field a list row projects reads the same from the lite record", { sk
       if (how && how !== true && a[f] && typeof a[f] === "object") {
         for (const [k, v] of Object.entries(a[f])) {
           if ((how.pick && !how.pick.includes(k)) || (how.omit && how.omit.includes(k))) continue;
+          if (k === "_src" || k === "_asof") continue; // provenance stamps stay in the full record
           assert.deepEqual(b[f][k], v, `${id}.${f}.${k}`);
         }
       } else {
-        assert.deepEqual(b[f], a[f], `${id}.${f}`);
+        assert.deepEqual(unstamped(b[f]), unstamped(a[f]), `${id}.${f}`);
       }
     }
     assert.equal(b.image?.url ?? null, a.image?.url ?? null, `${id}.image.url`);
