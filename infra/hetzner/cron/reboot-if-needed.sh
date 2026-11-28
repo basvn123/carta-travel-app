@@ -14,6 +14,14 @@
 #   a CAX41 spawn is live                     spawn.sh drives a worker for hours;
 #                                             a reboot TERMs it, its trap deletes
 #                                             the worker and the run is lost (T047-l)
+#   a hand-started follow-up job is active    carta-chain*, carta-famous-*,
+#                                             carta-catchup-*: systemd-run jobs
+#                                             that queue behind each other and
+#                                             poll every 10 minutes, so between
+#                                             stages none of the checks above
+#                                             holds; a reboot deletes these
+#                                             transient units and the queue
+#                                             stops for good (2026-11-28)
 set -uo pipefail
 
 REPO="${CARTA_REPO:-/home/carta/carta}"
@@ -31,6 +39,12 @@ for unit in carta-weekly.service carta-monthly.service carta-quarterly.service; 
     exit 0
   fi
 done
+followup="$(systemctl list-units --type=service --state=active --no-legend --plain \
+  'carta-chain*' 'carta-famous-*' 'carta-catchup-*' 2>/dev/null | awk '{print $1}' | tr '\n' ' ')"
+if [ -n "${followup// /}" ]; then
+  say "reboot required (${pkgs:-packages unknown}) but follow-up jobs are queued or running (${followup% }); skipped until next week"
+  exit 0
+fi
 if [ -e "$REPO/logs/carta-run.lock" ] && ! flock -n "$REPO/logs/carta-run.lock" true; then
   say "reboot required but $REPO/logs/carta-run.lock is held (a hand run or verify_tasks.sh); skipped"
   exit 0
