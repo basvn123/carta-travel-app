@@ -1,6 +1,6 @@
 import React from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button, Chip, ChipGroup } from './ui/index.js';
+import { Button, Chip, ChipGroup, WarnLine } from './ui/index.js';
 import { AiTag } from './AiTag.jsx';
 import { SUPPORT_EMAIL } from '../lib/contact.js';
 import { REASONS, LIMITS, sendAiReport } from '../lib/aiReport.js';
@@ -83,11 +83,11 @@ export function AiReport({ feature, question = '', answer = '', model = null }) 
         value={note} onChange={(e) => setNote(e.target.value)} />
       <p className="ai-report-what">{t('aiReport.what')}</p>
       {(state === 'not_live' || state === 'error') && (
-        <p className="ai-report-fail" role="alert">
+        <WarnLine as="p" className="ai-report-fail" role="alert">
           {t('aiReport.failed')} <a href={mail}>{t('aiReport.mail')}</a>
-        </p>
+        </WarnLine>
       )}
-      {state === 'too_many' && <p className="ai-report-fail" role="alert">{t('aiReport.tooMany')}</p>}
+      {state === 'too_many' && <WarnLine as="p" className="ai-report-fail" role="alert">{t('aiReport.tooMany')}</WarnLine>}
       <div className="ai-report-actions">
         <Button type="submit" variant="secondary" size="sm" className="ai-report-btn" disabled={!reason} loading={state === 'sending'}>
           {t('aiReport.send')}

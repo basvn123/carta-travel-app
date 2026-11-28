@@ -118,6 +118,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 - `ChoiceRows`: one ruled list on the ground; the chosen row takes the wash, an umber outline and the blaze; multi-pick keeps the ticked square.
 - `DialogSheet`: a bottom sheet on a phone, a centred dialog from 700 px; plays its exit, then closes; no entrance under reduced motion.
 - Also `Card`, `Tile`, `CostRow`, `Money` (every euro through `formatMoney()`), `CarouselArrows`, `StepRail`, `AiTag` (the boxed "AI" on Ask, `.ai-tag`, sized in em; never a sparkle).
+- `WarnLine`: the one warning, an outline warning icon and ink words at 700, no box and no second colour; inline by default, `as="p"` for a line of its own. Used for an unsure imported field, the plan going over budget, a flagged route, a long or off-path leg and a failed AI report.
 - The facts board (`.pt-page .pt-facts`: a 1 px frame, two columns on a phone, three from 820) is one part for place, journey and outdoor pages.
 
 ## Icons

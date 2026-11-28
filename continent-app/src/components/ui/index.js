@@ -23,6 +23,7 @@ export { PlaceHead, PlaceTag } from './PlaceHead.jsx';
 export { CarouselArrows } from './CarouselArrows.jsx';
 export { DialogSheet } from './DialogSheet.jsx';
 export { AiTag } from './AiTag.jsx';
+export { WarnLine } from './WarnLine.jsx';
 // The house parts (house style 2026-11, 05-house.css).
 export { Blaze } from './Blaze.jsx';
 export { Plate, PlateGroup, ScorePlate } from './Plate.jsx';

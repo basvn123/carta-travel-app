@@ -1,3 +1,4 @@
+import { esc, mailHtml, mailLine, mailNote, mailFigure, mailPage } from '../_shared/mailFrame.mjs';
 /**
  * notify/logic.mjs, the pure half of the notify Edge Function (T944): what
  * is due, what was already sent, the unsubscribe token and the words of
@@ -155,6 +156,8 @@ const W = {
     dropSubjectOne: '{city} costs less now',
     dropSubjectMany: 'Places you saved cost less now',
     dropLine: '{city}: {now} a person a day, {was} when you saved it.',
+    unitDay: 'a person a day',
+    savedAt: '{was} when you saved it.',
     dropOpen: 'Open your saved places',
     whyTrip: 'You get this email because you turned on trip reminders in Viantra.',
     whyPrice: 'You get this email because you turned on price drops in Viantra.',
@@ -172,6 +175,8 @@ const W = {
     dropSubjectOne: '{city} kost nu minder',
     dropSubjectMany: 'Plekken die je bewaarde kosten nu minder',
     dropLine: '{city}: {now} per persoon per dag, {was} toen je het bewaarde.',
+    unitDay: 'per persoon per dag',
+    savedAt: '{was} toen je het bewaarde.',
     dropOpen: 'Open je bewaarde plekken',
     whyTrip: 'Je krijgt deze e-mail omdat je reisherinneringen aanzette in Viantra.',
     whyPrice: 'Je krijgt deze e-mail omdat je prijsdalingen aanzette in Viantra.',
@@ -189,6 +194,8 @@ const W = {
     dropSubjectOne: '{city} coûte moins cher',
     dropSubjectMany: 'Des lieux enregistrés coûtent moins cher',
     dropLine: '{city} : {now} par personne et par jour, {was} quand vous l’avez enregistré.',
+    unitDay: 'par personne et par jour',
+    savedAt: '{was} quand vous l’avez enregistré.',
     dropOpen: 'Ouvrir vos lieux enregistrés',
     whyTrip: 'Vous recevez cet e-mail car vous avez activé les rappels de voyage dans Viantra.',
     whyPrice: 'Vous recevez cet e-mail car vous avez activé les baisses de prix dans Viantra.',
@@ -206,6 +213,8 @@ const W = {
     dropSubjectOne: '{city} kostet jetzt weniger',
     dropSubjectMany: 'Gemerkte Orte kosten jetzt weniger',
     dropLine: '{city}: {now} pro Person und Tag, {was} beim Merken.',
+    unitDay: 'pro Person und Tag',
+    savedAt: '{was} beim Merken.',
     dropOpen: 'Gemerkte Orte öffnen',
     whyTrip: 'Du bekommst diese E-Mail, weil du Reiseerinnerungen in Viantra eingeschaltet hast.',
     whyPrice: 'Du bekommst diese E-Mail, weil du Preissenkungen in Viantra eingeschaltet hast.',
@@ -223,6 +232,8 @@ const W = {
     dropSubjectOne: '{city} cuesta menos ahora',
     dropSubjectMany: 'Lugares que guardaste cuestan menos ahora',
     dropLine: '{city}: {now} por persona y día, {was} cuando lo guardaste.',
+    unitDay: 'por persona y día',
+    savedAt: '{was} cuando lo guardaste.',
     dropOpen: 'Abrir tus lugares guardados',
     whyTrip: 'Recibes este correo porque activaste los recordatorios de viaje en Viantra.',
     whyPrice: 'Recibes este correo porque activaste las bajadas de precio en Viantra.',
@@ -240,6 +251,8 @@ const W = {
     dropSubjectOne: '{city} costa meno ora',
     dropSubjectMany: 'Luoghi salvati costano meno ora',
     dropLine: '{city}: {now} a persona al giorno, {was} quando l’hai salvato.',
+    unitDay: 'a persona al giorno',
+    savedAt: '{was} quando l’hai salvato.',
     dropOpen: 'Apri i luoghi salvati',
     whyTrip: 'Ricevi questa email perché hai attivato i promemoria di viaggio in Viantra.',
     whyPrice: 'Ricevi questa email perché hai attivato i cali di prezzo in Viantra.',
@@ -256,30 +269,12 @@ export const words = (lang) => W[langOf(lang)];
 
 const fill = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (v[k] != null ? String(v[k]) : ''));
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 function listOf(names, lang) {
   try { return new Intl.ListFormat(LOCALE[langOf(lang)], { type: 'conjunction' }).format(names); } catch { return names.join(', '); }
 }
 
-// One quiet layout for every email: Viantra's ink on white, one brown link
-// (the hex values of --text, --text-2, --surface-page and --action in
-// continent-app/src/styles/01-tokens.css, since an email has no stylesheet),
-// system fonts (an email client loads no web font reliably).
-function shell(lang, lines, cta, why, unsub) {
-  const w = words(lang);
-  const body = lines.map((l) => `<p style="margin:0 0 12px;font-size:16px;line-height:1.5;color:#1e2421">${esc(l)}</p>`).join('');
-  return `<!doctype html><html lang="${langOf(lang)}"><body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">`
-    + '<div style="max-width:520px;margin:0 auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
-    // The wordmark slot (house style): the blaze, then the name.
-    + '<p style="margin:0 0 16px;font-size:20px;font-weight:800;color:#1e2421">'
-    + '<span style="display:inline-block;vertical-align:middle;width:16px;height:5px;margin:0 8px 3px 0;background:#8c5a2b;border:4px solid #ffffff;outline:1px solid #a5ada7"></span>Viantra</p>'
-    + body
-    + `<p style="margin:16px 0 0"><a href="${esc(cta.href)}" style="color:#744820;font-weight:700;font-size:16px">${esc(cta.label)}</a></p>`
-    + '</div>'
-    + `<p style="max-width:520px;margin:16px auto 0;font-size:13px;line-height:1.5;color:#465049">${esc(why)} <a href="${esc(unsub)}" style="color:#465049">${esc(w.unsub)}</a></p>`
-    + '</body></html>';
-}
+// Every email and its pages draw through the one shared frame (K1 step C).
 
 /** The trip reminder: subject, text and html. */
 export function reminderEmail({ lang, label, places, starts, days, appUrl, unsub }) {
@@ -292,7 +287,7 @@ export function reminderEmail({ lang, label, places, starts, days, appUrl, unsub
   return {
     subject,
     text: `${line}\n\n${w.tripOpen}: ${href}\n\n${w.whyTrip}\n${w.unsub}: ${unsub}\n`,
-    html: shell(lang, [line], { href, label: w.tripOpen }, w.whyTrip, unsub),
+    html: mailHtml({ lang: langOf(lang), title: subject, body: mailLine(esc(line)), cta: { href, label: w.tripOpen }, why: w.whyTrip, unsub: { href: unsub, label: w.unsub } }),
   };
 }
 
@@ -305,20 +300,24 @@ export function dropEmail({ lang, items, appUrl, unsub }) {
   return {
     subject,
     text: `${lines.join('\n')}\n\n${w.dropOpen}: ${href}\n\n${w.whyPrice}\n${w.unsub}: ${unsub}\n`,
-    html: shell(lang, lines, { href, label: w.dropOpen }, w.whyPrice, unsub),
+    // One place: its figure first, then what it was. Several: a line each.
+    html: mailHtml({
+      lang: langOf(lang),
+      title: subject,
+      body: items.length === 1
+        ? mailFigure({ now: euros(items[0].now, lang), unit: w.unitDay, was: euros(items[0].was, lang) }) + mailNote(esc(fill(w.savedAt, { was: euros(items[0].was, lang) })))
+        : lines.map((l) => mailLine(esc(l))).join(''),
+      cta: { href, label: w.dropOpen },
+      why: w.whyPrice,
+      unsub: { href: unsub, label: w.unsub },
+    }),
   };
 }
 
 /** The page an unsubscribe link opens. */
 export function unsubPage(lang, ok, appUrl) {
   const w = words(lang);
-  return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(w.pageTitle)}</title></head>`
-    + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
-    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
-    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(ok ? w.pageTitle : 'Viantra')}</h1>`
-    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1e2421">${esc(ok ? w.pageOk : w.pageBad)}</p>`
-    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#744820;font-weight:700">${esc(w.pageBack)}</a></p>`
-    + '</main></body></html>';
+  return mailPage({ lang: langOf(lang), title: w.pageTitle, heading: ok ? w.pageTitle : 'Viantra', body: ok ? w.pageOk : w.pageBad, back: { href: appUrl, label: w.pageBack } });
 }
 
 /** Which switch an unsubscribe kind turns off. */

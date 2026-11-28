@@ -1,3 +1,4 @@
+import { esc, mailHtml, mailLine, mailPage } from '../_shared/mailFrame.mjs';
 // The waitlist Edge Function's pure rules (T1110, ROADMAP K3): address check,
 // the signed confirm and unsubscribe links, the mails and the result pages.
 // Plain ES module with no Deno API, so continent-app/tests/waitlist.test.mjs
@@ -94,7 +95,6 @@ const W = {
 };
 export const words = (lang) => W[lang] || W.en;
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
 /** The confirmation mail: subject, plain text and html, with the unsubscribe link in both. */
 export function confirmEmail({ lang, confirm, unsub }) {
@@ -102,11 +102,7 @@ export function confirmEmail({ lang, confirm, unsub }) {
   return {
     subject: w.confirmSubject,
     text: `${w.confirmBody}\n\n${w.confirmButton}: ${confirm}\n\n${w.confirmIgnore}\n${w.unsub}: ${unsub}\n`,
-    html: '<div style="font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#1e2421">'
-      + `<p style="font-size:16px;line-height:1.5">${esc(w.confirmBody)}</p>`
-      + `<p><a href="${esc(confirm)}" style="display:inline-block;background:#8c5a2b;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:8px">${esc(w.confirmButton)}</a></p>`
-      + `<p style="font-size:13px;line-height:1.5;color:#465049">${esc(w.confirmIgnore)}</p>`
-      + `<p style="font-size:13px"><a href="${esc(unsub)}" style="color:#465049">${esc(w.unsub)}</a></p></div>`,
+    html: mailHtml({ lang: langOf(lang), body: mailLine(esc(w.confirmBody)), cta: { href: confirm, label: w.confirmButton }, why: w.confirmIgnore, unsub: { href: unsub, label: w.unsub } }),
   };
 }
 
@@ -115,11 +111,5 @@ export function resultPage(lang, kind, appUrl) {
   const w = words(lang);
   const [title, body] = kind === 'confirm' ? [w.pageConfirmed, w.pageConfirmedBody]
     : kind === 'unsub' ? [w.pageUnsub, w.pageUnsubBody] : ['Viantra', w.pageBad];
-  return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)}</title></head>`
-    + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
-    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
-    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(title)}</h1>`
-    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1e2421">${esc(body)}</p>`
-    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#744820;font-weight:700">${esc(w.pageBack)}</a></p>`
-    + '</main></body></html>';
+  return mailPage({ lang: langOf(lang), title, heading: title, body, back: { href: appUrl, label: w.pageBack } });
 }

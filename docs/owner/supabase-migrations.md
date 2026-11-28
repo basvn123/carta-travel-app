@@ -61,3 +61,11 @@ T1110-b and T1205-b were merged into steps 2 and 3 by owner sweep round 2.
 | ID | Item | Order |
 |---|---|---|
 | T1205-c | After step 1 (073), step 2 (`PRICE_ALERTS_BOX_SECRET`) and step 3 (Resend): a session turns price alerts on for a preview. Sign in with your own account, open a place, press Price alert, open the confirmation mail and click the link. It worked when the place shows the alert as active. Tell a session "T1205-c done" and it switches the flags on for everyone (`PRICE_ALERTS_ENABLED=1`, `VITE_PRICE_ALERTS=1`). | after steps 1 to 3 |
+
+## K1 step C: the new mail frame (2026-11-28)
+
+The trip reminder, price drop, price alert and waitlist mails and their result pages now share one frame (`supabase/functions/_shared/mailFrame.mjs`): the Gate V arch, a terracotta button, the figure first. Nothing changes for senders until these three run in Supabase.
+
+| ID | Step |
+|---|---|
+| K1-c-mail | Deploy the three functions: `supabase functions deploy notify`, `supabase functions deploy price-alerts`, `supabase functions deploy waitlist`. Then send yourself one waitlist confirmation and check the arch shows; it loads from `https://carta-europetravel.com/icon-192.png`, so after the domain move (K1-a) change `MAIL.logo` in `mailFrame.mjs` and deploy again. |

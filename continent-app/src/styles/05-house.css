@@ -704,3 +704,11 @@ button.hs-plate, a.hs-plate { cursor: pointer; width: 100%; }
   .hs-rcard-photo img { transition: none; }
   .hs-go-disc, .hs-go-disc svg { transition: none; }
 }
+
+/* WarnLine (K1 step C): an outline warning icon and ink words at 700, no box,
+   no second colour. Inline, so it sits in a sentence, a hint or a flag. */
+.hs-warn { display: inline-flex; align-items: flex-start; gap: var(--space-1); color: var(--text); font-weight: 700; }
+.hs-warn-icon { flex: none; margin-top: 0.1em; }
+p.hs-warn { display: flex; margin: 0; }
+.field.is-unsure .field-control input,
+.field.is-unsure .field-control select { border-color: var(--text); }

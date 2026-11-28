@@ -6,7 +6,7 @@ import {
   RouteIcon, StarIcon, ChevronDownIcon, CloseIcon, ShoeIcon, BusIcon, CarIcon,
   DiningIcon, HomeIcon, ClockIcon, SparkIcon, PlusIcon, MoreIcon, TicketIcon, CheckIcon,
 } from '../components/Icons.jsx';
-import { Button, IconButton } from '../components/ui/index.js';
+import { Button, IconButton, WarnLine } from '../components/ui/index.js';
 import { DAY_BANDS, dayPhase, fmtClock, fmtClockLoose } from './daySchedule.js';
 import { DETAIL_LEVELS } from './dayDetail.js';
 import { formatMoney } from '../lib/money.js';
@@ -134,7 +134,7 @@ function LegRow({ leg, from, to, t, lang, stepFree }) {
             : t('dayws.legWalk', { min: leg.min ?? '?', km: fmtKm(leg.km, lang) })}
           {leg.status === 'long' && (
             <>
-              {' '}<span className="dayt-flag">{t(stepFree ? 'dayws.legLongStepFree' : 'dayws.legLong')}</span>
+              {' '}<WarnLine className="dayt-flag">{t(stepFree ? 'dayws.legLongStepFree' : 'dayws.legLong')}</WarnLine>
               {/* T435 (T463-c): a space between the flag's sentence and the link. */}
               {transitUrl && <>{' '}<a className="dayt-link" href={transitUrl} target="_blank" rel="noreferrer">{t('dayws.legTransit')}</a></>}
             </>
@@ -255,7 +255,7 @@ function StopRow({
         <TicketLine ticket={ticket} t={t} lang={lang} />
         <span className="dayt-links">
           {url && <a className="dayt-link" href={url} target="_blank" rel="noreferrer">{t('dayws.checkHours')}</a>}
-          {offPathM != null && <span className="dayt-flag">{t('dayws.offPath', { m: offPathM })}</span>}
+          {offPathM != null && <WarnLine className="dayt-flag">{t('dayws.offPath', { m: offPathM })}</WarnLine>}
         </span>
       </span>
       {compact ? (
