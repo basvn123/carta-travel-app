@@ -99,7 +99,7 @@ def encode_placeholder(path):
     try:
         with Image.open(path) as im:
             px = im.convert("RGB").resize(GRID, Image.BOX)
-            raw = bytes(c for rgb in px.getdata() for c in rgb)
+            raw = px.tobytes()  # the RGB bytes, as the old getdata() walk gave; getdata is deprecated in newer Pillow
     except (OSError, ValueError):
         return None
     return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
