@@ -111,6 +111,14 @@ def test_reboot_window_waits_for_every_tier(sched):
         assert f"{t['unit']}.service" in text
 
 
+def test_reboot_window_waits_for_follow_up_jobs():
+    # The hand-started follow-up queue (systemd-run, transient) polls between
+    # stages with no run lock held; a reboot in that gap deletes the queue.
+    text = (CRON / "reboot-if-needed.sh").read_text(encoding="utf-8")
+    for pattern in ("'carta-chain*'", "'carta-famous-*'", "'carta-catchup-*'"):
+        assert pattern in text
+
+
 def test_lock_is_taken_before_the_code_update():
     text = (CAX11 / "weekly.sh").read_text(encoding="utf-8")
     assert text.index('flock -w "$lock_wait" 9') < text.index("reset -q --hard")
