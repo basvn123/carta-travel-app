@@ -68,4 +68,4 @@ The trip reminder, price drop, price alert and waitlist mails and their result p
 
 | ID | Step |
 |---|---|
-| K1-c-mail | Deploy the three functions: `supabase functions deploy notify`, `supabase functions deploy price-alerts`, `supabase functions deploy waitlist`. Then send yourself one waitlist confirmation and check the arch shows; it loads from `https://carta-europetravel.com/icon-192.png`, so after the domain move (K1-a) change `MAIL.logo` in `mailFrame.mjs` and deploy again. |
+| K1-c-mail | The three functions were deployed on 2026-11-28. Left for you: send yourself one waitlist confirmation and check the arch shows; it loads from `https://carta-europetravel.com/icon-192.png`, so after the domain move (K1-a) change `MAIL.logo` in `supabase/functions/_shared/mailFrame.mjs` and deploy again. |
