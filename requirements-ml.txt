@@ -10,7 +10,7 @@
 #   # half 2, guided search, into its own venv (CPU torch first, as on the box):
 #   python -m venv ~/venv-guided
 #   ~/venv-guided/bin/python -m pip install -r infra/hetzner/jobs/requirements-torch-cpu.txt
-#   ~/venv-guided/bin/python -m pip install sentence-transformers==5.6.0 "huggingface-hub>=0.34,<1.0" -c constraints.txt
+#   ~/venv-guided/bin/python -m pip install sentence-transformers==6.3.0 "huggingface-hub>=0.34,<1.0" -c constraints.txt
 #   # then run guided_search with CARTA_GUIDED_PY=~/venv-guided/bin/python
 #
 # On Windows the venv python is ~/venv-guided/Scripts/python.exe. The box
@@ -23,7 +23,7 @@
 # constraints.txt pins.
 # 5.6.0 (2026-11-28): the patched release for Dependabot's critical advisory;
 # it keeps transformers below 6 and accepts huggingface-hub below 1.0.
-sentence-transformers==5.6.0
+sentence-transformers==6.3.0
 huggingface-hub>=0.34,<1.0
 
 # pipeline/ask_index_layer.py (T551), half 1: the Ask Carta index, embedded
