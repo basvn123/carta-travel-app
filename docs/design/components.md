@@ -1,7 +1,9 @@
 # Components and patterns
 
-The detail behind `DESIGN.md`: how each part looks and behaves today. Read the section for the part you build; `DESIGN.md` "Fixed rules and free choices" says what may change (all of this, within the fixed rules). Change a part in `continent-app/src/components/ui/` and its demo at `/?styleguide`, then update its section here.
+The detail behind `DESIGN.md`: how each part looks and behaves today. Read the section for the part you build; `DESIGN.md` "Overview" says what may change (all of this, within the fixed rules). Change a part in `continent-app/src/components/ui/` and its demo at `/?styleguide`, then update its section here.
 
+
+**Colour words in this file** predate the one-accent change (K1 step C, 2026-11-28): read "umber" as the accent, terracotta (`{colors.primary}` in `DESIGN.md`), and "beige" or "wash" as a quiet stone shade. Chosen chips and segments fill solid terracotta with no tick; warnings are a WarnLine; the header doors are solid terracotta.
 ## Signature components
 
 All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05-house.css` with the `hs-` prefix.
@@ -27,7 +29,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 - It formats, never sums. Props: `est` (true or per part, spoken as an estimate, draws nothing), `dayWrap`, `figure={false}` (no day slot), `around` (a getting around wagon, umber 200), `extras` (more wagons, flights on sunken paper) for a trip total.
 
 **Rail and RailCard:** the section labelled by its heading; arrows "Scroll back" and "Scroll forward", disabled at the ends; ArrowLeft and ArrowRight move focus card to card; "See all" a real button (a link only with an href).
-- **Head:** a 28 px line, the title left, "See all" in umber 700 with a 24 px beige arrow disc (painted on hover, the arrow nudges 2 px; 44 px target; named "See all: {rail}"), two round outlined arrows right from 1024 px (touch scrolls).
+- **Head:** a 28 px line, the title left, "See all" in the accent with its arrow and no disc (the arrow nudges 2 px on hover; 44 px target; named "See all: {rail}"), two round outlined arrows right from 1024 px (touch scrolls).
 - **Card:** a 4:3 photo at 16 px corners, the name with its Score plate, flag and country (the Hidden gem diamond in umber 700), the weighted formation, a paper save disc on the photo. 76 % wide to 599 px, about two across from 600, four and a quarter from 1024 (`max(256px, ...)`).
 - **Explore's card** (`ExploreRails.jsx`, `styles/85-explore-rails.css`): a column with the name and Score plate (wraps, never cut), flag and country under it, room for the strip's longest name (`--xrc-name-lines`, `.xrc-top`), then at the foot the figure (`--text-title`, 800) with its basis under it (caption, dotted `--umber-300` underline). A travel style's match mark sits at the foot's end in the same grid cell (`.xrc-body`), adding no height. Cards stretch, so a strip's figures share one line. No sign after the figure. The photo is the link. Each strip ends on a photo-sized See all tile: beige, three round photo faces of the next places, "See all", the rail's name and the umber 44 px arrow disc.
 - **Rhythm:** title to strip 12 px (16 from 1024), rail to rail 40 px (56 from 1024).
@@ -49,7 +51,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 **Receipt sheet** (`components/price/PriceSheet.jsx`, `styles/86-price-items.css`, prefix `rcp-`): opened from a figure. One sheet, no tabs:
 - The place name (800) with flag and country; the total at display size with its basis; at most one insight line with an umber arrow; the settings chips (the style chip in the selected wash, 13 px chevrons).
-- Three rows, Bed, Food and drink and the way there, each a 36 px icon tile (radius 8, 1.5 px edge, umber 800 ink): bed 16 % umber 600 with an umber 600 edge, food umber 100 with an umber 500 edge, way umber 50 with an umber 600 edge. A row opens in place to its lever (options with wash and tick).
+- Three rows, Bed, Food and drink and the way there, each a 36 px icon tile: radius 8, a 1.5 px `--border` edge, no fill, ink icon, the same for all three. A row opens in place to its lever (options with the chosen look).
 - The total line, then one sticky primary, Plan this trip. Phone: the modal bottom sheet. From 769: a non-modal popover off the tapped figure.
 - **Flights screen** (`components/price/FlightTab.jsx`, `styles/87-flights-screen.css`, prefix `fls-`), behind a back button, "Flights to {place}": the return a person at headline size; the two legs as plates in a radio group; day bars in `--sun-400` with a `--sun-800` cap (cheapest saffron, the shown day umber 600, a break mark over long gaps); the hours segment; the day's rows (an airline badge with the IATA code in the airline's colour under its logo, times, name, length, stops, fare, a saffron "Cheapest" tag), skeletons while loading; one primary, Book on Google Flights, with a 48 px info button; Change airport or dates as the quiet button (primary only when no airport has data).
 
@@ -110,7 +112,7 @@ All in `src/components/ui/` (exported from `index.js`), styled in `src/styles/05
 
 - `Button`: primary umber, default paper with a 1.5 px ink edge, quiet umber text, danger; 44 px. Disabled always reads unavailable (sunken paper, its edge, muted text), never dim umber.
 - `IconButton`: round 44 px; `surface` with an edge, `photo` a paper disc.
-- `Chip`, `ChipGroup`: pills, 1.5 px edge, the selected wash with a springing tick.
+- `Chip`, `ChipGroup`: pills, 1.5 px edge; chosen fills solid terracotta with bold paper text, no tick.
 - `Segmented`: a pill, the chosen segment painted, 44 px high.
 - `Tabs`: a 3 px umber bar strokes in under the chosen tab.
 - `Switch`: umber when on, the thumb springs.
@@ -152,6 +154,23 @@ Use: `<ReliefBand mountains={dossier.nearby.mountains} seed={place.id} cut="55%"
 **The opening screen** breaks rules 3 to 5 and 7 on purpose. A deep umber ground (`--umber-800`, a soft `--umber-700` glow) with the relief of Chamonix's peaks (`gem:chamonix`) in its bottom 40 % and one tag, "Mont Blanc 4,806 m"; no cut, the zone fades in over its top third and the words centre above it. Lit lines `--umber-100` at 42 %, shade ink 38 %. It rises once (a 1.4 s clip from the bottom), the blaze paints itself (halo, stripe, heel), the name lifts letter by letter, then `.hs-wait` shows. When the app is ready the screen lifts away like a curtain with rounded bottom corners. Reduced motion: at rest, gone at once. Files: `continent-app/index.html`, `src/styles/06-boot-splash.css`, `src/lib/bootSplash.js`, `src/components/LoadingScreen.jsx`; HANDBOOK "Opening screen".
 
 ## Motion patterns
+
+The motion tokens (`01-tokens.css`; the same names in `DESIGN.md`'s `motion` group):
+
+| Token | Value | For |
+|---|---|---|
+| `--dur-press` | 80 ms (`--ease-out`) | The finger lands: `--press-scale` 0.97 (0.92 small icons, 0.985 cards and rows), `--press-shade` 0.78; `--lift-scale` 1.03 lifts a row picked up to reorder |
+| `--dur-tick`, `--ease-tick` | 300 ms, spring 180 ms visual, bounce 0.3 | Release, a switch thumb, a check mark, a segment |
+| `--dur-pop`, `--ease-pop` | 550 ms, spring 260 ms, bounce 0.45 | The Add icon only |
+| `--dur-settle`, `--ease-settle` | 400 ms, spring 200 ms, no bounce | Figures rolling, plates arriving, the chosen pin, rows gliding, the nav marker |
+| `--dur-paint` | 220 ms | A blaze stripe or the tab bar stroking in |
+| `--dur-save` | 240 ms | A save on Explore: the bookmark ticks (1, 1.14, 1) and sends one ring out |
+| `--dur-couple` | 420 ms | A wagon coupling into the formation |
+| `--dur-sheet`, `--ease-sheet` | 420 ms, `cubic-bezier(0.32, 0.72, 0, 1)` | A sheet rising |
+| `--dur-1` to `--dur-4` | 120, 200, 320, 480 ms | Colour, routine changes, surfaces, one authored movement |
+| `--dur-note` | 4000 ms | A delta note ("+€328") |
+| `--dur-fill-step` | 240 ms | One year's step in Your Europe's fill (1200 ms in all at most) |
+| `--dur-reveal` | 640 ms | A route on the My trips plate and the journey line drawing in |
 
 ### Primitives
 

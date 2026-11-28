@@ -23,7 +23,7 @@ Token values live in `continent-app/src/styles/01-tokens.css` (copied in `assets
 
 ## 2. The look in one screen
 
-The current defaults. `DESIGN.md` "Fixed rules and free choices" says which rules hold whatever the look; everything else here may change through the tokens and the kit.
+The current defaults. `DESIGN.md` "Overview" says which rules hold whatever the look; everything else here may change through the tokens and the kit.
 
 - Ground stone `#eef0ea`, paper `#ffffff` for sheets and cards, ink `#1e2421`; terracotta `#a54a26` (the `--umber-*` scale) is the one accent: the main action, links, every chosen thing, the blaze, the route and the chosen pin. A chosen chip fills solid. Delete, warnings, best value and money owed are ink. No second accent and no tinted boxes.
 - Overpass for every word and figure with tabular figures; Sofia Sans Extra Condensed for plate names only; nothing under 12 px.
@@ -42,7 +42,7 @@ Design and check every screen at phone (390 x 844, holding at 360), tablet (820 
 
 ## 5. Alive, from one system
 
-Every selection, toggle, add, save, step and screen change answers from the interaction kit (DESIGN.md "Interaction"): the press springs back on `--ease-tick`, a selection paints, a switch thumb springs, a saved thing pops, a sheet follows the finger, a figure the traveller changed rolls once with a delta note (`Figure`). Overshoot only on the control the finger touched; figures, plates, pins and surfaces settle. One signature moment per screen. Never animate a price the traveller did not change, list order while reading, or anything at first paint. Haptics (`src/lib/haptics.js`) only on a touch commit, through the kit; never on navigation or opening a sheet. Reduced motion: the end state at once.
+Every selection, toggle, add, save, step and screen change answers from the interaction kit (DESIGN.md "Motion & Micro-interaction"): the press springs back on `--ease-tick`, a selection paints, a switch thumb springs, a saved thing pops, a sheet follows the finger, a figure the traveller changed rolls once with a delta note (`Figure`). Overshoot only on the control the finger touched; figures, plates, pins and surfaces settle. One signature moment per screen. Never animate a price the traveller did not change, list order while reading, or anything at first paint. Haptics (`src/lib/haptics.js`) only on a touch commit, through the kit; never on navigation or opening a sheet. Reduced motion: the end state at once.
 
 ## 6. Always use impeccable
 
