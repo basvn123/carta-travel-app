@@ -60,7 +60,7 @@ export function interleaveByCountry(rows) {
 }
 
 
-/** One place as a house rail card (DESIGN.md "Rail and RailCard"): the photo
+/** One place as a house rail card (docs/design/components.md "Rail and RailCard"): the photo
  *  with only the save disc on it (no text on a photo), then the name with
  *  its Score plate, the flag and country, and at the card's foot the figure
  *  with its basis right under it, one unit (G12, D10, Explore clean

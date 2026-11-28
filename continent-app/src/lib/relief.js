@@ -1,5 +1,5 @@
 /**
- * The relief (G1, house style 2026-11, DESIGN.md "Background graphics"): the
+ * The relief (G1, house style 2026-11, DESIGN.md "Signature graphics"): the
  * one background graphic, drawn only from real ground. Illuminated contours
  * (Tanaka style: lit where the slope faces the north-west, shaded elsewhere)
  * built from a place's own peaks in its dossier (`nearby.mountains[]` or

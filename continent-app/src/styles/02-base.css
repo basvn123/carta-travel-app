@@ -48,7 +48,7 @@ body {
   scrollbar-color: var(--neutral-300) transparent;
 }
 
-/* Headings in the house face: tight, never uppercase (DESIGN.md "Type"). */
+/* Headings in the house face: tight, never uppercase (DESIGN.md "Typography"). */
 h1, h2, h3 { letter-spacing: var(--tracking-title); text-wrap: balance; }
 
 /* The browser's own surfaces carry the palette too (T421). */
@@ -84,7 +84,7 @@ input, select {
 :is(button, a[href], summary, label, [role="button"], [role="tab"], [role="switch"],
     [role="checkbox"], [role="radio"], [tabindex="0"], input[type="checkbox"],
     input[type="radio"]):active:not(:disabled):not([aria-disabled="true"]) {
-  /* The Press primitive (house style, DESIGN.md "Interaction"): in over
+  /* The Press primitive (house style, DESIGN.md "Motion & Micro-interaction"): in over
      --dur-press, out on the tick spring (the release springs back past 1
      by 4 percent, only on the control the finger touched). */
   opacity: var(--press-shade);

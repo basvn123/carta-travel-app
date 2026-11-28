@@ -1,4 +1,4 @@
-// Haptics (G1, G5; house style 2026-11, DESIGN.md "Interaction"): one short,
+// Haptics (G1, G5; house style 2026-11, DESIGN.md "Motion & Micro-interaction"): one short,
 // optional tick, confirm or warn on a touch COMMIT. Never on pointerdown (a
 // scroll that starts on a control would buzz), never on navigation, opening a
 // sheet, scrolling, load or a timer.

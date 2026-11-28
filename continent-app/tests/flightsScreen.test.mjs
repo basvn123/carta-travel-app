@@ -109,6 +109,6 @@ test('every airline badge reads at 4.5:1 or more; an unknown code is the house u
     const { bg, ink } = airlineColour(code);
     assert.ok(contrast(bg, ink) >= 4.5, `${code}: ${bg} on ${ink} is ${contrast(bg, ink).toFixed(2)}`);
   }
-  assert.equal(airlineColour('ZZ').bg, '#5a3716');
+  assert.equal(airlineColour('ZZ').bg, '#73321a'); // the house's deepest terracotta since K1 step C
   assert.equal(airlineColour('fr').bg, airlineColour('FR').bg);
 });

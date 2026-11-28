@@ -216,7 +216,8 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
   const set = buildSet();
   const text = `${JSON.stringify(set, null, 1)}\n`;
   if (process.argv.includes('--check')) {
-    const now = readFileSync(OUT, 'utf8');
+    // A Windows checkout (core.autocrlf) has CRLF; compare as LF, like CI.
+    const now = readFileSync(OUT, 'utf8').replace(/\r\n/g, '\n');
     if (now !== text) { console.error('set.json is not what build-set.mjs builds'); process.exit(1); }
     console.log('set.json matches its build');
   } else {

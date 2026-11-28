@@ -45,7 +45,7 @@
 
 /* House style (G1, 2026-11, the trip lane): the head. The name, its places
    and where it stands sit on the page; the photo beside them from 769 px
-   and above them on a phone, never under text (DESIGN.md "Photography").
+   and above them on a phone, never under text (DESIGN.md "Signature graphics").
    Without a photo the same block stands alone. */
 .tpg-head { display: grid; gap: var(--space-3); min-width: 0; }
 .tpg-head.has-photo { grid-template-areas: "photo" "ov"; }

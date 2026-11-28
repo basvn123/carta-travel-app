@@ -30,7 +30,7 @@
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const APP = process.env.CARTA_APP || join(ROOT, 'continent-app');
@@ -40,7 +40,8 @@ if (!existsSync(join(APP, 'node_modules'))) {
   console.error(`No node_modules in ${APP}: run \`npm ci\` there first (the price engine imports app modules).`);
   process.exit(2);
 }
-const lib = async (p) => import(join(APP, 'src', p));
+// A file URL, not a path: Node's ESM loader refuses a bare Windows path (C:\...).
+const lib = async (p) => import(pathToFileURL(join(APP, 'src', p)).href);
 const { priceDays, priceDay } = await lib('lib/price/priceDay.js');
 const { DEFAULT_PRICE_REQUEST, atDates } = await lib('lib/price/request.js');
 const { setStayRecords, mergeStayFiles } = await lib('lib/staysData.js');

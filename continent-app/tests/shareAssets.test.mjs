@@ -10,6 +10,7 @@ import { receiptModel, receiptOps, checkReceipt, RECEIPT_LINE_KEY } from '../src
 import { shareReceiptOn, SHARE_RECEIPT_KEY } from '../src/lib/share/flag.js';
 import { formatMoney } from '../src/lib/money.js';
 import { en } from '../src/i18n/en.js';
+import { fileURLToPath } from 'node:url';
 
 const DATA = new URL('../public/app_data.json', import.meta.url);
 const have = existsSync(DATA);
@@ -129,7 +130,7 @@ test('the cheapest week calendar: 52 weeks at their own dates, the cheapest mark
   assert.equal(S.weeksOf(2027).length, 52);
   assert.equal(S.weeksOf(2027)[0], '2027-01-04');
   const dests = data.destinations;
-  S.loadStaysDir(new URL('./fixtures/share/', import.meta.url).pathname);
+  S.loadStaysDir(fileURLToPath(new URL('./fixtures/share/', import.meta.url)));
   const c = S.calendarModel(dests.LIS, dests, { year: 2027 });
   assert.ok(c, 'a fixture curve gives a calendar');
   assert.equal(c.weeks.length, 52);

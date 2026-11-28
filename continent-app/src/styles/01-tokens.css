@@ -148,7 +148,7 @@
 
   /* ---- 3. House parts ---------------------------------------------------- */
 
-  /* The plate (DESIGN.md "Signature components"): the Score and the
+  /* The plate (DESIGN.md "Signature graphics"): the Score and the
      signpost plate are dark ink with paper text; the second line beige. */
   --plate:           var(--neutral-900);
   --plate-hover:     var(--neutral-800);
@@ -181,7 +181,7 @@
   --world-lowland:   #dce5d4;
   --world-rock:      #e3ddd3;
 
-  /* The relief (DESIGN.md "Background graphics"): lit and shaded contours,
+  /* The relief (DESIGN.md "Signature graphics"): lit and shaded contours,
      decorative only, never behind text; the zone sits on the band. */
   --relief-lit:      rgba(255, 255, 255, 0.95);
   --relief-shade:    rgba(30, 36, 33, 0.20);
@@ -242,7 +242,7 @@
   --elev-3:          0 0 0 1px rgba(30, 36, 33, 0.06), 0 18px 48px -12px rgba(30, 36, 33, 0.32);
   --scrim:           rgba(30, 36, 33, 0.42);
   --blaze-edge:      rgba(30, 36, 33, 0.38);   /* the blaze's halo outline */
-  /* The one photo scrim (DESIGN.md "Photography"): ink at 78 % under the
+  /* The one photo scrim (DESIGN.md "Signature graphics"): ink at 78 % under the
      bottom 45 % of a photo header. White text on it measures 7.7:1 even
      where the photo is pure white, so a title there passes AA at any size. */
   --photo-scrim:     rgba(30, 36, 33, 0.78);
@@ -413,7 +413,7 @@
   --bottom-nav-h: calc(64px + env(safe-area-inset-bottom, 0px));
   --drawer-strip: 72px;
 
-  /* Motion (DESIGN.md "Interaction"): one vocabulary. --dur-1 to --dur-4 and
+  /* Motion (DESIGN.md "Motion & Micro-interaction"): one vocabulary. --dur-1 to --dur-4 and
      the two cubic easings stay for the rules that read them. The spring
      easings are generated from src/lib/motionTokens.js by
      scripts/ci/spring-easings.mjs; never edit them by hand. Overshoot
@@ -453,7 +453,7 @@
   --dur-loop:     2800ms;
   --dur-drift:    24000ms;
 
-  /* The home page (DESIGN.md "Home page"): read by the home stylesheets;
+  /* The home page (DESIGN.md "Shell, home and print"): read by the home stylesheets;
      --home-ground-deep, --radius-stage and --text-total are also read by
      the cost card, My trips and the taste and search surfaces. */
   --text-hero:        clamp(44px, 6.8vw, 112px);

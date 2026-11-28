@@ -24,7 +24,7 @@
 .score-chip.xs,
 .score-chip.sm { font-size: var(--text-caption); }
 .score-chip.lg { font-size: var(--text-lead); gap: var(--space-2); }
-/* G1 (house style, DESIGN.md "Score plate"): no stars; the figure sits on
+/* G1 (house style, docs/design/components.md "Score plate"): no stars; the figure sits on
    the small ink plate, the band word after it in ink. The markup (star svg,
    data-band, data-score) stays for the readers and checks that use it. */
 .score-star { display: none; }

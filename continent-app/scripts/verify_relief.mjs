@@ -1,6 +1,6 @@
 /**
  * The background graphic rulebook, checked in the browser (G1, house style
- * 2026-11, DESIGN.md "Background graphics"). No installed tool measures text
+ * 2026-11, DESIGN.md "Signature graphics"). No installed tool measures text
  * near a graphic, so this does, on every relief band a page draws:
  *
  *   1. honest: a band with contours prints at least one real height ("4,309 m");

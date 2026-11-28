@@ -43,7 +43,7 @@ def _norm(v):
         if v == rp.PY:
             return "<PY>"
         # node and npm resolve to a different absolute path on every machine
-        if os.path.isabs(v) and os.path.basename(v) in ("node", "node.exe", "npm", "npm.cmd"):
+        if os.path.isabs(v) and os.path.basename(v).lower() in ("node", "node.exe", "npm", "npm.cmd"):
             return "<" + os.path.basename(v).split(".")[0].upper() + ">"
         return v.replace(str(rp.ROOT), "<ROOT>")
     if isinstance(v, os.PathLike):

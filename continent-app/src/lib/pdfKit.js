@@ -1,7 +1,7 @@
 /**
  * pdfKit.js (T430, T431; house style G1 2026-11): the parts every PDF is
  * made of, so the item pages and the trip page print as one family, and as
- * the same system as the screens (DESIGN.md "Print and share"): the blaze in
+ * the same system as the screens (DESIGN.md "Shell, home and print"): the blaze in
  * the wordmark slot, the signpost plate holding the name, the Score plate,
  * the receipt with dotted leaders, the months as umber wagons, the relief
  * from a place's real peaks on the cover.
@@ -182,7 +182,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
   C.shadeIdx = mix(C.sunken, C.text, 0.32);
   C.blazeEdge = mix(C.white, C.text, 0.38);
 
-  /** The blaze (DESIGN.md "Signature components"), w mm wide at (x, y):
+  /** The blaze (DESIGN.md "Signature graphics"), w mm wide at (x, y):
    *  a white halo, the square umber paint stripe, the short ink heel. The
    *  same proportions as `.hs-blaze`. Only where it means "here": the
    *  wordmark slot, the place on its own map, the relief cut.
@@ -359,7 +359,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     state.y += 6.2;
   };
 
-  /** A receipt line (DESIGN.md "Receipt"): the words reach their figure
+  /** A receipt line (docs/design/components.md "Receipt"): the words reach their figure
    *  along a dotted leader. A `bold` line is the total: ruled off in ink
    *  above it, no leader, the figure the loudest on the page section. */
   const moneyRow = (label, value, { bold = false } = {}) => {
@@ -540,7 +540,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
   };
 
   /**
-   * The signpost plate (DESIGN.md "Plate", place variant): an ink plate,
+   * The signpost plate (docs/design/components.md "Plate", place variant): an ink plate,
    * the pointed end to the right, the name in the plate face, a second line
    * in beige, the figure at the right in Overpass 800. Only where a place
    * meets its figure; never as an ordinary banner. Long names wrap to two
@@ -585,7 +585,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
   };
 
   /**
-   * The relief (DESIGN.md "Background graphics"), drawn only from a place's
+   * The relief (DESIGN.md "Signature graphics"), drawn only from a place's
    * real peaks, in a band `h` mm high across the column: illuminated
    * contours on the band, a hard umber cut with the blaze, and the peaks'
    * real heights on the flat side, a gutter before the cut, never on the
@@ -631,7 +631,7 @@ export async function createPdf({ footerLabel = APP_NAME, pageLabel = (n, of) =>
     doc.line(zoneX, top, zoneX, top + h);
     blaze(zoneX - 3, top + 2.5, 6);
     // Each height at its own summit: an ink point and the name and height
-    // on a paper tag above it (DESIGN.md "Background graphics": a height on
+    // on a paper tag above it (DESIGN.md "Signature graphics": a height on
     // a paper tag, never words straight on the contours).
     for (const sp of drawn.spots.slice(0, 3)) {
       const sx = zoneX + sp.x * k;

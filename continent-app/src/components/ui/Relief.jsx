@@ -1,5 +1,5 @@
 /*
- * Relief (G1, house style 2026-11, DESIGN.md "Background graphics"): the
+ * Relief (G1, house style 2026-11, DESIGN.md "Signature graphics"): the
  * background graphic, drawn only from a place's real peaks, to the right of a
  * hard umber cut with a blaze on top. Text sits only on the flat side, never
  * on the contours; every relief prints at least one real height.

@@ -37,7 +37,7 @@ export function accented(t, key, vars, accentKey, accent) {
  * The real cost (T950, owner 2026-10-31; house style 2026-11, home lane,
  * fix round 1). The page's one umber band says what the flight leaves out.
  * Its head carries the relief of the story place's own peaks with their
- * real heights (DESIGN.md "Background graphics"; none drawn when the place
+ * real heights (DESIGN.md "Signature graphics"; none drawn when the place
  * has no measured peak). Under it the bed and the days are the story, in
  * words, and the house's paper cost post carries the money, each figure
  * once: the place's day as a formation, the week's lines, a Rounding line

@@ -16,11 +16,7 @@
 /* ── The header door ─────────────────────────────────────────────────── */
 
 .tg-door { position: relative; }
-/* The header doors are solid terracotta (owner, 2026-11-28). */
-.app-header .tg-door.hdr-pill, .tg-door.hdr-pill { background: var(--action); border-color: var(--action); color: var(--action-text); }
 .tg-door svg, .tg-door.on svg { color: var(--action-text); }
-.app-header .tg-door.hdr-pill.on { background: var(--action-press); border-color: var(--action-press); }
-@media (hover: hover) { .app-header .tg-door.hdr-pill:hover { background: var(--action-hover); border-color: var(--action-hover); } }
 .tg-door-n {
   position: absolute;
   top: -4px;
@@ -69,6 +65,12 @@
   .hdr-pill:hover { border-color: var(--edge); }
 }
 .hdr-pill.on { background: var(--select-bg); border-color: var(--select-border); color: var(--select-ink); }
+/* The header doors are solid terracotta (owner, 2026-11-28). Kept at the
+   base pill's weight (0,2,0, :where() for the states) and placed after it,
+   so they win by order without outranking the route sheets (css-routes). */
+.app-header .tg-door { background: var(--action); border-color: var(--action); color: var(--action-text); }
+.app-header :where(.tg-door).on { background: var(--action-press); border-color: var(--action-press); color: var(--action-text); }
+@media (hover: hover) { .app-header :where(.tg-door):hover { background: var(--action-hover); border-color: var(--action-hover); } }
 /* The kit Button draws Sign in; this keeps it the pill's size and shape. */
 .btn.hdr-pill.signin-pill {
   min-height: var(--tap);

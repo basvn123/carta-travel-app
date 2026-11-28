@@ -1,5 +1,5 @@
 /*
- * Blaze (G1, house style 2026-11, DESIGN.md "Signature components"): the
+ * Blaze (G1, house style 2026-11, DESIGN.md "Signature graphics"): the
  * waymark painted on a rock or a post. A white halo, a square umber paint
  * stripe, a short ink heel under its right end. It means "chosen" or "here"
  * and nothing else: the current tab, the chosen pin, a sheet grip, the

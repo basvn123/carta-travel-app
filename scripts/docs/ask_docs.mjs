@@ -40,7 +40,8 @@ export function loadPassages(dir = join(ROOT, 'docs')) {
   const all = [];
   for (const p of listDocs(dir)) {
     const rel = relative(dir, p).replace(/\\/g, '/');
-    all.push(...core.chunkMarkdown(rel, readFileSync(p, 'utf8')));
+    // LF whatever the checkout: a Windows CRLF copy chunked differently and scored lower than CI.
+    all.push(...core.chunkMarkdown(rel, readFileSync(p, 'utf8').replace(/\r\n/g, '\n')));
   }
   return all;
 }

@@ -38,7 +38,7 @@ export function HomeTry({ rows, places, onSearch, wide = true }) {
   React.useEffect(() => { setBudget(start); }, [start]);
   const fit = list.filter((p) => p.day <= budget).length;
   // A tick when the traveller lets go on a new budget (a commit), never
-  // while dragging and never on pointerdown (DESIGN.md "Interaction").
+  // while dragging and never on pointerdown (DESIGN.md "Motion & Micro-interaction").
   const grabbed = React.useRef(null);
   const grab = () => { grabbed.current = budget; };
   const release = (e) => {
