@@ -28,7 +28,8 @@ import { fragmentsSha, parseByFormat, PLACEHOLDER_RE } from '../../scripts/promp
 import * as bundled from '../functions/_lib/prompts.js';
 
 const ROOT = resolve(fileURLToPath(new URL('../..', import.meta.url)));
-const read = (p) => readFileSync(join(ROOT, p), 'utf8');
+// A Windows checkout (core.autocrlf) has CRLF, CI has LF; hash and compare both as LF.
+const read = (p) => readFileSync(join(ROOT, p), 'utf8').replace(/\r\n/g, '\n');
 const golden = JSON.parse(read('prompts/_golden/js.json'));
 const sha = (s) => createHash('sha256').update(s).digest('hex');
 // K1 (decision 0018, 2026-11-26): the product is Viantra now. The runtime

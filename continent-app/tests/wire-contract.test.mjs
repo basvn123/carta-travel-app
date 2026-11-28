@@ -99,7 +99,7 @@ test('catalogue mode checks presence, as the Python twin does', () => {
 });
 
 test('docs/SCHEMA.md carries the table the schema renders', () => {
-  const md = fs.readFileSync(path.join(REPO, 'docs', 'SCHEMA.md'), 'utf8');
+  const md = fs.readFileSync(path.join(REPO, 'docs', 'SCHEMA.md'), 'utf8').replace(/\r\n/g, '\n');
   assert.deepEqual(checkSchemaTable(md), []);
   const keys = schemaKeySet(WIRE_SCHEMA);
   assert.equal(renderWireTable().split('\n').length, 2 + keys.meta.size + keys.every.size + keys.some.size + keys.pending.size);

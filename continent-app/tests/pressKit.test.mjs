@@ -46,7 +46,7 @@ test('the founder line is a placeholder and the images are own files', async () 
 });
 
 test('journalist template: columns, selection rule, no personal details', () => {
-  const csv = fs.readFileSync(new URL('../../docs/marketing/journalist-list-template.csv', import.meta.url), 'utf8');
+  const csv = fs.readFileSync(new URL('../../docs/marketing/journalist-list-template.csv', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
   const head = csv.split('\n')[0];
   assert.equal(head, 'outlet,desk,country,why_they_would_care,beat,owner_fills_name,owner_fills_contact,status,notes');
   assert.doesNotMatch(csv, /[\w.+-]+@[\w-]+\.[a-z]+/i);

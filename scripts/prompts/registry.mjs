@@ -40,7 +40,9 @@ const writeRegistry = (reg, root = ROOT) => writeFileSync(join(root, REGISTRY), 
 export function loadEntry(id, entry, root = ROOT) {
   const path = join(root, entry.file);
   if (!existsSync(path)) throw new Error(`${id}: ${entry.file} is missing`);
-  return parseByFormat(readFileSync(path, 'utf8'), entry.format, { file: entry.file });
+  // LF whatever the checkout (a Windows core.autocrlf copy is CRLF), so the
+  // prompt text, its hash and the built module are the same as on CI.
+  return parseByFormat(readFileSync(path, 'utf8').replace(/\r\n/g, '\n'), entry.format, { file: entry.file });
 }
 
 /** camelCase export name of a prompt id ("plan-day" -> "planDay"). */
@@ -143,7 +145,7 @@ export function checkTree(root = ROOT) {
   for (const copy of MODULE_COPIES) {
     const p = join(root, copy);
     if (!existsSync(p)) failures.push(`${copy} is missing (node scripts/prompts/registry.mjs build)`);
-    else if (mod != null && readFileSync(p, 'utf8') !== mod) failures.push(`${copy} is not what the prompt files build (node scripts/prompts/registry.mjs build)`);
+    else if (mod != null && readFileSync(p, 'utf8').replace(/\r\n/g, '\n') !== mod) failures.push(`${copy} is not what the prompt files build (node scripts/prompts/registry.mjs build)`);
   }
   return { failures, reg };
 }
