@@ -17,10 +17,10 @@
 
 .tg-door { position: relative; }
 /* The header doors are solid terracotta (owner, 2026-11-28). */
-.tg-door.hdr-pill { background: var(--action); border-color: var(--action); color: var(--action-text); }
+.app-header .tg-door.hdr-pill, .tg-door.hdr-pill { background: var(--action); border-color: var(--action); color: var(--action-text); }
 .tg-door svg, .tg-door.on svg { color: var(--action-text); }
-.tg-door.hdr-pill.on { background: var(--action-press); border-color: var(--action-press); }
-@media (hover: hover) { .tg-door.hdr-pill:hover { background: var(--action-hover); border-color: var(--action-hover); } }
+.app-header .tg-door.hdr-pill.on { background: var(--action-press); border-color: var(--action-press); }
+@media (hover: hover) { .app-header .tg-door.hdr-pill:hover { background: var(--action-hover); border-color: var(--action-hover); } }
 .tg-door-n {
   position: absolute;
   top: -4px;
