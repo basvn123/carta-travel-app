@@ -16,16 +16,17 @@ function fakeApp(min = null) {
   };
 }
 
-test("a month answer sets the month's first day and the nights", () => {
+test("a month answer sets the month's first Saturday and the nights (T815-a)", () => {
   const app = fakeApp();
   syncWhen(app, { mode: "months", months: [5], nights: 7 }, new Date(2026, 10, 3));
+  // 1 May 2027 is a Saturday.
   assert.deepEqual(app.calls, { flex: "month", depart: "2027-05-01", ret: "2027-05-08" });
 });
 
 test("the next of several months comes first", () => {
   const app = fakeApp();
   syncWhen(app, { mode: "months", months: [2, 12], nights: 3 }, new Date(2026, 10, 3));
-  assert.equal(app.calls.depart, "2026-12-01");
+  assert.equal(app.calls.depart, "2026-12-05"); // the first Saturday of December 2026
 });
 
 test("exact dates and any time", () => {
@@ -37,10 +38,13 @@ test("exact dates and any time", () => {
   assert.deepEqual(b.calls, { flex: "any" });
 });
 
-test("the earliest allowed day wins inside its month", () => {
+test("the first Saturday on or after the earliest allowed day, inside its month", () => {
   const app = fakeApp("2026-11-20");
   syncWhen(app, { mode: "months", months: [11], nights: 4 }, new Date(2026, 10, 3));
-  assert.equal(app.calls.depart, "2026-11-20");
+  assert.equal(app.calls.depart, "2026-11-21"); // 20 November is a Friday
+  const late = fakeApp("2026-11-29");
+  syncWhen(late, { mode: "months", months: [11], nights: 2 }, new Date(2026, 10, 3));
+  assert.equal(late.calls.depart, "2026-11-29", "no Saturday left in the month: the earliest day");
 });
 
 test("party parts", () => {
