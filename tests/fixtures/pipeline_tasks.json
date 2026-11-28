@@ -2094,7 +2094,7 @@
      "cycling",
      "region",
      "--out",
-     "<ROOT>\\logs\\img_sources",
+     "<ROOT>/logs/img_sources",
      "--upload",
      "auto",
      "--allow-missing"
