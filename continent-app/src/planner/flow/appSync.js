@@ -7,6 +7,12 @@
  * November).
  */
 
+/** The first Saturday on or after `iso` ('YYYY-MM-DD'), in local time. */
+function saturdayOnOrAfter(iso) {
+  const d = new Date(`${iso}T12:00:00`);
+  return addDaysISO(iso, (6 - d.getDay() + 7) % 7);
+}
+
 function addDaysISO(iso, n) {
   const d = new Date(`${iso}T12:00:00`);
   d.setDate(d.getDate() + n);
@@ -41,7 +47,12 @@ export function syncWhen(app, when, today = new Date()) {
     const year = m >= now ? today.getFullYear() : today.getFullYear() + 1;
     const first = `${year}-${String(m).padStart(2, '0')}-01`;
     const min = app.dateBounds?.min;
-    const start = min && min > first ? min : first;
+    const from = min && min > first ? min : first;
+    // T815-a: a month with no dates starts on its first Saturday, as on every
+    // other screen (lib/budgetSearch.js startForMonth, firstRun.js); a trip with
+    // a place then moves to that month's cheapest week (cheapestWeekIn).
+    const sat = saturdayOnOrAfter(from);
+    const start = sat.slice(0, 7) === from.slice(0, 7) ? sat : from;
     app.setDateFlex?.('month');
     app.setDepartDate?.(start);
     app.setReturnDate?.(addDaysISO(start, when.nights || 7));
