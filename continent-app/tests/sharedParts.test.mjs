@@ -8,6 +8,7 @@ import assert from 'node:assert/strict';
 import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { createServer } from 'vite';
+import { fileURLToPath } from 'node:url';
 
 const vite = await createServer({ server: { middlewareMode: true }, appType: 'custom', logLevel: 'silent', optimizeDeps: { noDiscovery: true } });
 test.after(() => vite.close());
@@ -107,14 +108,14 @@ test('CarouselArrows: the arrow pairs the carousels drew by hand', async () => {
 });
 
 // ── Source guards: one implementation each ─────────────────────────────
-const SRC = new URL('../src/', import.meta.url).pathname;
+const SRC = fileURLToPath(new URL('../src/', import.meta.url));
 function files(dir) {
   return readdirSync(dir).flatMap((n) => {
     const p = join(dir, n);
     return statSync(p).isDirectory() ? files(p) : /\.jsx?$/.test(n) ? [p] : [];
   });
 }
-const ALL = files(SRC).map((p) => ({ p: p.slice(SRC.length), s: readFileSync(p, 'utf8') }));
+const ALL = files(SRC).map((p) => ({ p: p.slice(SRC.length).replace(/\\/g, '/'), s: readFileSync(p, 'utf8') }));
 const hits = (re, except = []) => ALL.filter(({ p, s }) => !except.includes(p) && re.test(s)).map(({ p }) => p);
 
 test('guards: no hand-written button links, place heads, carousel arrows, slot helpers or frr sheets', () => {

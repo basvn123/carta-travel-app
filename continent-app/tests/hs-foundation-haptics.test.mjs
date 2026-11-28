@@ -5,6 +5,7 @@
 import { test, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
 const calls = [];
 const store = new Map();
@@ -97,7 +98,7 @@ test('no screen vibrates directly: navigator.vibrate lives in haptics.js only', 
         && /navigator\.vibrate\s*\(/.test(fs.readFileSync(p, 'utf8'))) hits.push(p);
     }
   };
-  walk(new URL('../src', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
+  walk(fileURLToPath(new URL('../src', import.meta.url)));
   assert.deepEqual(hits, []);
 });
 

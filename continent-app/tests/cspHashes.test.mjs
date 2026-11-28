@@ -4,6 +4,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import { expectedStyleSrc, shippedStyleSrc, HEADERS } from '../scripts/csp-hashes.mjs';
+import { fileURLToPath } from 'node:url';
 
 const headers = fs.readFileSync(HEADERS, 'utf8');
 const csp = /Content-Security-Policy:\s*(.+)/.exec(headers)[1];
@@ -29,7 +30,7 @@ test('the CSP line stays under the Pages 2,000 character header limit', () => {
 test('no source file writes an inline style the CSP would refuse', async () => {
   const { readdirSync, readFileSync, statSync } = fs;
   const path = await import('node:path');
-  const root = new URL('../src/', import.meta.url).pathname;
+  const root = fileURLToPath(new URL('../src/', import.meta.url));
   const files = [];
   const walk = (d) => readdirSync(d).forEach((n) => {
     const p = path.join(d, n);
@@ -48,8 +49,8 @@ test('no source file writes an inline style the CSP would refuse', async () => {
       if (/^\s*(\/\/|\*|\/\*)/.test(line)) return;
       for (const [re, what] of rules) {
         if (!re.test(line)) continue;
-        if (what === '<style> element' && f.endsWith('lib/tripExport.js') && line.includes('<style>${PRINT_CSS}</style>')) continue;
-        bad.push(`${path.relative(root, f)}:${i + 1} ${what}`);
+        if (what === '<style> element' && f.split(path.sep).join('/').endsWith('lib/tripExport.js') && line.includes('<style>${PRINT_CSS}</style>')) continue;
+        bad.push(`${path.relative(root, f).split(path.sep).join('/')}:${i + 1} ${what}`);
       }
     });
   }

@@ -5,6 +5,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { openStudio, openStudioAt } from '../src/browse/styles/studioDoors.js';
 import { studioOpen } from '../src/lib/travelStyles.js';
 
@@ -41,7 +42,7 @@ test('the old style flows are gone', () => {
   }
   const old = /\b(TravelStylesSheet|LifestylePanel|TasteSheetHost|TasteRow|openTasteSheet|StylePicker|StyleExploreFields|openLifestyle|setLifestyleOpen|TasteLearnPrompt)\b|lifestyle-panel|lifestyle-scrim|style-dock-|\.style-door\b|taste-door/;
   // Comments may name what retired; code and CSS rules may not.
-  const hits = walk(SRC.pathname.replace(/^\/([A-Za-z]:)/, '$1'))
+  const hits = walk(fileURLToPath(SRC))
     .filter((p) => !p.endsWith('79-travel-styles.css'))
     .filter((p) => readFileSync(p, 'utf8').split('\n').some((l) => old.test(l) && !/^\s*(\/\/|\*|\/\*)/.test(l)));
   assert.deepEqual(hits, []);
