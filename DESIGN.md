@@ -96,6 +96,12 @@ typography:
     fontWeight: 400
     lineHeight: 1.35
     fontFeature: "tnum, lnum"
+  button:
+    fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
+    fontSize: "14px"
+    fontWeight: 700
+    lineHeight: 1.2
+    fontFeature: "tnum, lnum"
   label:
     fontFamily: "Overpass, system-ui, -apple-system, Segoe UI, sans-serif"
     fontSize: "13px"
@@ -161,10 +167,18 @@ components:
   button-primary:
     backgroundColor: "{colors.primary}"
     textColor: "{colors.on-primary}"
-    typography: "{typography.label}"
+    typography: "{typography.button}"
     rounded: "{rounded.control}"
     padding: "0 16px"
     height: "44px"
+  button-main:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.on-primary}"
+    typography: "{typography.button}"
+    rounded: "{rounded.control}"
+    padding: "0 16px"
+    height: "48px"
+    width: "100%"
   button-primary-hover:
     backgroundColor: "{colors.primary-hover}"
     textColor: "{colors.on-primary}"
@@ -174,6 +188,7 @@ components:
   button-secondary:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
+    typography: "{typography.button}"
     rounded: "{rounded.control}"
     padding: "0 16px"
     height: "44px"
@@ -189,12 +204,14 @@ components:
   chip:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
+    typography: "{typography.label}"
     rounded: "{rounded.pill}"
     padding: "0 14px"
     height: "36px"
   chip-selected:
     backgroundColor: "{colors.action}"
     textColor: "{colors.action-text}"
+    typography: "{typography.label}"
     rounded: "{rounded.pill}"
     height: "36px"
   segmented-selected:
@@ -302,6 +319,14 @@ components:
     backgroundColor: "{colors.surface}"
     textColor: "{colors.text}"
     rounded: "{rounded.panel}"
+  sheet-close:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.pill}"
+    size: "44px"
+  receipt-total:
+    textColor: "{colors.text}"
+    typography: "{typography.lead}"
 ---
 # Viantra house style
 
@@ -388,7 +413,16 @@ Breakpoints come from `scripts/ci/css-breakpoints.mjs` (360, 380, 420, 430, 480,
 
 ## Elevation & Depth
 
-Only what floats casts a shadow: `--elev-2` for sheets, menus, popovers, toasts and the action bar, `--elev-3` for a dialog. Cards and panels lie flat on a hairline (`--elev-1`). No coloured top or side border on a panel; no decorative gradient, glass or glow.
+Only what floats casts a shadow; every shadow is ink, never colour.
+
+| Token | Value | For |
+|---|---|---|
+| `--elev-1` | `0 0 0 1px` ink at 7 % | Cards and panels: a hairline ring, flat on the ground |
+| `--elev-2` | ink ring at 6 %, then `0 12px 32px -8px` ink at 24 % | Sheets, menus, popovers, toasts, the action bar |
+| `--elev-3` | ink ring at 6 %, then `0 18px 48px -12px` ink at 32 % | A dialog |
+| `--scrim` | ink at 42 % | Behind a modal sheet or dialog |
+
+No coloured top or side border on a panel; no decorative gradient, glass or glow.
 
 ## Shapes
 
@@ -415,12 +449,14 @@ The tone is `BRAND.md`'s: human, catchy, short and clear. The mechanics are `PRO
 
 One line each; the full spec of every part is in `@docs/design/components.md`. States for every part: loading (three painting blazes and still bands), empty (a dashed blaze and a way out), error (one calm fix), missing figure ("Not yet", outside every sum).
 
-- **Buttons** (`button-primary`, `button-secondary`, `button-quiet`, `button-danger`): 44 px; the primary solid terracotta, danger solid ink with its word; disabled always reads unavailable.
-- **Chips** (`chip`, `chip-selected`): pills with a 1.5 px edge; chosen fills solid terracotta with bold paper text, no tick.
+- **Buttons** (`button-primary`, `button-main`, `button-secondary`, `button-quiet`, `button-danger`): {typography.button}, at least 44 px; a place's or a sheet's one main action is `button-main`, full width at 48 px. The primary is solid terracotta, the secondary paper with a 1.5 px ink edge, quiet is terracotta words, danger solid ink with its word; disabled always reads unavailable.
+- **Chips** (`chip`, `chip-selected`): {typography.label} pills, 36 px drawn inside a 44 px target, a 1.5 px {colors.edge} edge on paper; chosen fills solid terracotta with bold paper text, no tick. A chip that opens a choice (a setting, the style door) is an ordinary chip with its icon in the accent and a small chevron; it is never painted as chosen.
 - **Segmented and tabs** (`segmented-selected`): the chosen segment solid terracotta; a 3 px terracotta bar under the chosen tab.
 - **Header doors** (`header-door`): Friends, the account split pill and the signed-in initial, solid terracotta.
 - **Field** (`field`): 16 px text, 1.5 px edge, the error under it; an unsure value gets an ink edge and a WarnLine.
 - **WarnLine** (`warn-line`): an outline warning icon and ink words at 700, no box.
+- **Sheets** (`sheet`, `sheet-close`): from the bottom on a phone, a popover or dialog from 769 px; a short grey grip bar on top, the title as the sheet's `h2`, a 44 px round close top right, `--elev-2` over the `--scrim`, the one main action (`button-main`) sticky at the foot.
+- **Receipt** (`receipt-total`): the headline is the day figure in whole euros with its basis beside it ("€138 per day, per person"); every line and the Total are in cents ("€137.76"), so the two differ by rounding on purpose, and a "Rounding" line appears only when the printed lines do not add up to the Total. The Total line is {typography.lead} at 800 under a hairline; getting there sits after it, apart, because it is outside the day. The unit chip ("Per day, per person") is the setting that switches per person and whole group, not a second unit label.
 - **Signature parts:** the blaze (chosen or here), the plate (`plate`, `plate-mark`, `score-plate`), the formation (`wagon-go`, `wagon-bed`, `wagon-food`): `@docs/design/components.md#signature-components`.
 - **The kit** (Switch, ChoiceRows, DialogSheet, Card, Tile, CostRow, Money, CarouselArrows, StepRail, AiTag): `@docs/design/components.md#the-kit`. A missing variant is added to the kit, never styled locally.
 - **Icons:** `src/components/HouseIcons.jsx`, a 24 px grid, 1.75 stroke, square caps, currentColor: `@docs/design/components.md#icons`.
