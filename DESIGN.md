@@ -428,7 +428,7 @@ The parts that make a screen this product, each in `src/components/ui/` with its
 
 ## The kit
 
-`src/components/ui/`: Button, IconButton, Chip, Segmented, Tabs, Switch, Field, ChoiceRows, DialogSheet, Card, Tile, CostRow, Money, CarouselArrows, StepRail, AiTag. A missing variant is added to the kit, never styled locally. Specs: `docs/design/components.md`.
+`src/components/ui/`: Button, IconButton, Chip, Segmented, Tabs, Switch, Field, ChoiceRows, DialogSheet, Card, Tile, CostRow, Money, CarouselArrows, StepRail, AiTag, WarnLine. A missing variant is added to the kit, never styled locally. Specs: `docs/design/components.md`.
 
 ## Icons
 

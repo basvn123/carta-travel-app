@@ -2,7 +2,7 @@ import NotYet from '../components/NotYet.jsx';
 import React, { useEffect, useId, useRef, useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
 import { useSettings } from '../components/SettingsLine.jsx';
-import { Button, CostRow, Money } from '../components/ui/index.js';
+import { Button, CostRow, Money, WarnLine } from '../components/ui/index.js';
 import { PartyEditor } from './PartyEditor.jsx';
 import { partyText } from '../lib/party.js';
 import { useSettledFigure } from '../lib/figureChange.js';
@@ -239,9 +239,10 @@ export function PlanTotal({
           method line (carta-design, Numbers and money). */}
       {hasTrip && budget && (
         <p className="plan-total-note">
-          <span className={budget.over ? 'is-over' : ''}>
-            {t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) })}
-          </span>
+          {(() => {
+            const line = t(budget.over ? 'plan.budgetOver' : 'plan.budgetUnder', { price: formatEst(budget.gap, t('money.est'), { precision: 'whole', locale: lang }) });
+            return budget.over ? <WarnLine className="is-over">{line}</WarnLine> : <span>{line}</span>;
+          })()}
         </p>
       )}
 

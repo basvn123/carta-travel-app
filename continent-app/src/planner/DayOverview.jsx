@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useI18n } from '../i18n/index.jsx';
-import { Button } from '../components/ui/index.js';
+import { Button, WarnLine } from '../components/ui/index.js';
 import { SheetShell } from '../browse/SheetShell.jsx';
 import {
   DownloadIcon, ShareIcon, LinkIcon, MapPinIcon, RouteIcon, CalendarIcon, ChevronDownIcon, PencilIcon, TicketIcon, BulbIcon, CheckIcon,
@@ -47,7 +47,7 @@ export function DaySummary({
         <p className={`days-route is-${route.state}`} role="status">
           {route.state === 'checked' && <CheckIcon size={14} />}
           {route.state === 'checked' && t('dayws.routeChecked')}
-          {route.state === 'flagged' && t(route.flagged === 1 ? 'dayws.routeFlaggedOne' : 'dayws.routeFlagged', { n: route.flagged })}
+          {route.state === 'flagged' && <WarnLine>{t(route.flagged === 1 ? 'dayws.routeFlaggedOne' : 'dayws.routeFlagged', { n: route.flagged })}</WarnLine>}
           {route.state === 'checking' && t('dayws.routeChecking')}
           {route.state === 'offline' && t('dayws.routeOffline')}
         </p>

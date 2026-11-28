@@ -1,3 +1,4 @@
+import { esc, mailHtml, mailLine, mailNote, mailPage } from '../_shared/mailFrame.mjs';
 /**
  * price-alerts/logic.mjs, the pure half of the price-alerts Edge Function
  * (T1205, ROADMAP I17): the signed opt-in and unsubscribe links, the box's
@@ -211,12 +212,7 @@ const W = {
 export const words = (lang) => W[langOf(lang)];
 export const WORDS = W;
 
-const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const fill = (s, v) => s.replace(/\{(\w+)\}/g, (_, k) => (k in v ? String(v[k]) : `{${k}}`));
-
-const FRAME_OPEN = '<div style="font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;max-width:480px;margin:0 auto;padding:24px;color:#1e2421">';
-const button = (href, label) => `<p><a href="${esc(href)}" style="display:inline-block;background:#8c5a2b;color:#ffffff;text-decoration:none;font-weight:700;padding:14px 22px;border-radius:8px">${esc(label)}</a></p>`;
-const small = (html) => `<p style="font-size:13px;line-height:1.5;color:#465049">${html}</p>`;
 
 /** The one confirmation email of the double opt-in. Plain, no promotion. */
 export function optinEmail({ lang, confirm, unsub }) {
@@ -224,8 +220,7 @@ export function optinEmail({ lang, confirm, unsub }) {
   return {
     subject: w.optinSubject,
     text: `${w.optinBody}\n\n${w.optinButton}: ${confirm}\n\n${w.optinIgnore}\n${w.unsub}: ${unsub}\n`,
-    html: `${FRAME_OPEN}<p style="font-size:16px;line-height:1.5">${esc(w.optinBody)}</p>${button(confirm, w.optinButton)}`
-      + `${small(esc(w.optinIgnore))}${small(`<a href="${esc(unsub)}" style="color:#465049">${esc(w.unsub)}</a>`)}</div>`,
+    html: mailHtml({ lang: langOf(lang), body: mailLine(esc(w.optinBody)), cta: { href: confirm, label: w.optinButton }, why: w.optinIgnore, unsub: { href: unsub, label: w.unsub } }),
   };
 }
 
@@ -244,9 +239,7 @@ export function dropEmail({ lang, label, was, now, since, open, unsub }) {
   return {
     subject: fill(w.dropSubject, v),
     text: `${fill(w.dropBody, v)}\n\n${w.dropNote}\n\n${w.dropOpen}: ${open}\n\n${w.why}\n${w.unsub}: ${unsub}\n`,
-    html: `${FRAME_OPEN}<p style="font-size:16px;line-height:1.5">${fill(esc(w.dropBody), ve)}</p>`
-      + `${small(esc(w.dropNote))}${button(open, w.dropOpen)}`
-      + `${small(esc(w.why))}${small(`<a href="${esc(unsub)}" style="color:#465049">${esc(w.unsub)}</a>`)}</div>`,
+    html: mailHtml({ lang: langOf(lang), title: fill(w.dropSubject, v), body: mailLine(fill(esc(w.dropBody), ve)) + mailNote(esc(w.dropNote)), cta: { href: open, label: w.dropOpen }, why: w.why, unsub: { href: unsub, label: w.unsub } }),
   };
 }
 
@@ -260,11 +253,5 @@ export function resultPage(lang, kind, appUrl) {
   const w = words(lang);
   const [title, body] = kind === 'confirm' ? [w.pageConfirmed, w.pageConfirmedBody]
     : kind === 'unsub' ? [w.pageUnsub, w.pageUnsubBody] : ['Viantra', w.pageBad];
-  return `<!doctype html><html lang="${langOf(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${esc(title)}</title></head>`
-    + '<body style="margin:0;padding:24px;background:#eef0ea;font-family:Overpass,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif">'
-    + '<main style="max-width:480px;margin:48px auto;background:#ffffff;border:1px solid #cfd5cc;border-radius:12px;padding:24px">'
-    + `<h1 style="margin:0 0 12px;font-size:20px;color:#1e2421">${esc(title)}</h1>`
-    + `<p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#1e2421">${esc(body)}</p>`
-    + `<p style="margin:0"><a href="${esc(appUrl)}" style="color:#744820;font-weight:700">${esc(w.pageBack)}</a></p>`
-    + '</main></body></html>';
+  return mailPage({ lang: langOf(lang), title, heading: title, body, back: { href: appUrl, label: w.pageBack } });
 }

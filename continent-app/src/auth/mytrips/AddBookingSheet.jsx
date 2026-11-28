@@ -2,7 +2,7 @@ import React, { useMemo, useRef, useState } from 'react';
 import { useI18n } from '../../i18n/index.jsx';
 import { usePaywall } from '../../hooks/usePaywall.jsx';
 import { SheetShell } from '../../browse/SheetShell.jsx';
-import { Button, Chip, ChipGroup, Field } from '../../components/ui/index.js';
+import { Button, Chip, ChipGroup, Field, WarnLine } from '../../components/ui/index.js';
 import { UploadIcon, CameraIcon, PencilIcon, BedIcon, PlaneIcon, TicketIcon } from '../../components/Icons.jsx';
 import { AiTag } from '../../components/AiTag.jsx';
 import { formatMoney } from '../../lib/money.js';
@@ -211,7 +211,7 @@ export function AddBookingSheet({ plans = [], planId = '', costs = null, onClose
           {rows.map((b) => {
             const Icon = ICON[b.kind] || PlaneIcon;
             const unsure = (f) => b.unsure.includes(f);
-            const hint = (f) => (unsure(f) ? t(f === 'eur' && b.currency && b.currency !== 'EUR' ? 'mt.checkConverted' : 'mt.checkThis') : undefined);
+            const hint = (f) => (unsure(f) ? <WarnLine>{t(f === 'eur' && b.currency && b.currency !== 'EUR' ? 'mt.checkConverted' : 'mt.checkThis')}</WarnLine> : undefined);
             const cmp = compare.find((c) => c.key === b.key);
             return (
               <section key={b.key} className="mt-read-item" aria-label={b.title || kindLabel(b.kind)}>

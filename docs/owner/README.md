@@ -16,7 +16,7 @@ How to use it:
 | `docs/owner/data-and-pipeline-runs.md` | phone, people and drive checks left from the data runs | 6 |
 | `docs/owner/legal.md` | legal, tax and brand | 4 |
 | `docs/owner/hetzner-box.md` | the Hetzner box and workers | 4 |
-| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 3 (063 to 078 applied; 076 to 078 on 2026-11-24) |
+| `docs/owner/supabase-migrations.md` | migrations, Edge Functions and secrets | 4 (063 to 078 applied; 076 to 078 on 2026-11-24; K1-c-mail) |
 | `docs/owner/stripe.md` | Stripe prices, keys, webhook, test purchases, legal review | 5 |
 | `docs/owner/accounts-and-signups.md` | accounts, mailboxes and programme sign-ups | 7 |
 | `docs/owner/google-and-search.md` | Google, Gemini billing, Search Console | 1 |
